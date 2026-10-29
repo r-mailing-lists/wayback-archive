@@ -1,0 +1,282 @@
+From jsingh at hbs.edu  Wed Feb  5 12:46:20 2003
+From: jsingh at hbs.edu (Jasjit Singh)
+Date: Wed, 05 Feb 2003 12:46:20 -0500
+Subject: [relogit] error message with ReLogit when used with finite sample
+  correction
+Message-ID: <5.1.0.14.2.20030205123228.01d27400@pop.hbs.edu>
+
+Dear Gary
+
+I get an error message "no observations" with relogit. I have included the 
+output with trace on to show where the error occured. Any idea how to deal 
+with it? The error message goes away when I use the "nomcn" option, but I 
+do want to make finite sample corrections. The program seems to be failing 
+at the piece of code inside ReLogit:
+
+matrix accum `A' = `rhsvars' [pw=`wtmcn'] if `touse', `noconst'
+
+giving r(2000) "no observations" error
+
+I have a feeling it has something to do with some of my variables on the 
+RHS (same_pclass same_nclass same_subcat same_cat) being dummies to capture 
+fixed effects, and some of the successes being "completely determined", 
+though I am not sure. In any case, I don't think the program should just 
+crash if that is the case (e.g. just a simple logit on the same data runs 
+just fine even though it tells that some of the successes being "completely 
+determined").
+
+many thanks!
+Jasjit
+
+[I am taking the liberty of ccing this to the ReLogit list as others might 
+have seen this problem too]
+
+relogit cite_wc_1 same_pclass same_nclass same_subcat same_cat n_overlap 
+lag lag2
+ >  , wc(0.000005)
+- version 6.0
+- syntax varlist [if] [in] [aw fw pw iw/] [, pc(numlist sort max=2 >=0 <=1) 
+wc(numli
+ > st max=1 >=0 <=1) NOMCN FIRTH NORobust CLuster(varname) NOCONstant 
+Level(int $S_le
+ > vel)]
+- marksample touse
+- if "`firth'" ~= "" {
+   di in r _n "Relogit for Stata does not yet support the FIRTH option"
+   exit 198
+   }
+- if "`norobust'" == "" { local robust robust }
+- if "`cluster'" ~= "" {
+   local cluster cl(`cluster')
+   if "`norobust'" ~= "" {
+   di in r "Error: the norobust & cluster options are incompatible"
+   exit 198
+   }
+   }
+- if "`wc'" ~= "" {
+- if "`norobust'" ~= "" {
+   di in r _n "Warning: Traditional variance estimates do not make sense"
+   di in r "with the wc() option"
+   }
+- if `wc' == 0 { local wc = .1^8 }
+- else if `wc' == 1 { local wc = 1 - .1^8 }
+- }
+- if "`pc'" ~= "" {
+   if "`wc'" ~= "" {
+   di in r _n "Error: Can't use the pc() & wc() options together."
+   exit 198
+   }
+   if "`noconst'" ~= "" {
+   di in r "Error: Can't use the pc() & noconstant options together."
+   exit 198
+   }
+   gettoken pcLO pcHI : pc
+   if "`pcHI'" == "" {
+   if `pc' == 0 { local pc = .1^8 }
+   else if `pc' == 1 { local pc = 1 - .1^8 }
+   }
+   else {
+   if `pcLO' == 0 { local pcLO = .1^8 }
+   if `pcHI' == 1 { local pcHI = 1 - .1^8 }
+   }
+   }
+- tempname cat ybar wt0 wt1 b V bfull Vfull df_m k
+- gettoken depvar rhsvars : varlist
+- tab `depvar' if `touse', matrow(`cat')
+
+  cite_wc_11 |      Freq.     Percent        Cum.
+------------+-----------------------------------
+           0 |     126330       96.91       96.91
+           1 |       4023        3.09      100.00
+------------+-----------------------------------
+       Total |     130353      100.00
+- if `cat'[1,1] ~= 0 | `cat'[2,1] ~= 1 {
+   di in r "Error: Dependent variable can only take-on values of 0 or 1"
+   exit 198
+   }
+- su `depvar' if `touse', meanonly
+- scalar `ybar' = r(mean)
+- if "`wc'" ~= "" {
+- scalar `wt0' = (1-`wc') / (1-`ybar')
+- scalar `wt1' = `wc' / `ybar'
+- }
+- else {
+   scalar `wt0' = 1
+   scalar `wt1' = 1
+   }
+- tempvar wt
+- if "`exp'" == "" { local exp 1 }
+- gen `wt' = `exp'* (`wt0'*(1-`depvar')+`wt1'*`depvar')
+- display "doing logit"
+doing logit
+- logit `varlist' if `touse' [aweight=`wt'], `robust' `cluster' `noconst'
+
+(sum of wgt is   1.3035e+05)
+Iteration 0:   log likelihood = -8.6072543
+Iteration 1:   log likelihood = -7.5214269
+Iteration 2:   log likelihood = -6.6296738
+Iteration 3:   log likelihood = -6.4399945
+Iteration 4:   log likelihood = -6.2323357
+Iteration 5:   log likelihood = -6.2131791
+Iteration 6:   log likelihood = -6.2127935
+Iteration 7:   log likelihood = -6.2127932
+
+Logit estimates                                   Number of obs   =     130353
+                                                   Wald chi2(7)    =    6748.41
+                                                   Prob > chi2     =     0.0000
+Log likelihood = -6.2127932                       Pseudo R2       =     0.2782
+
+------------------------------------------------------------------------------
+              |               Robust
+   cite_wc_11 |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  same_pclass |  -.4992331   .9210067    -0.54   0.588    -2.304373    1.305907
+  same_nclass |   2.383971   .0905139    26.34   0.000     2.206567    2.561375
+  same_subcat |   1.607911   .0696091    23.10   0.000      1.47148    1.744343
+     same_cat |   1.292383    .064568    20.02   0.000     1.165832    1.418934
+    n_overlap |   2.137836   .1874946    11.40   0.000     1.770353    2.505319
+          lag |   .2288113   .0481226     4.75   0.000     .1344928    .3231298
+         lag2 |  -.0130391   .0028906    -4.51   0.000    -.0187046   -.0073735
+        _cons |  -14.44045   .1554302   -92.91   0.000    -14.74509   -14.13581
+------------------------------------------------------------------------------
+- display "logit done"
+logit done
+- matrix `b' = e(b)
+- matrix `V' = e(V)
+- scalar `df_m' = e(df_m)
+- scalar `k' = colsof(`V')
+- local N = e(N)
+- if "`nomcn'" == "" & "`firth'" == "" {
+- tempname A Ainv row biasMCN
+- tempvar pi wtmcn ksi
+- predict `pi', p
+- version 7.0
+- if _caller()<=5 | "`e(predict)'"=="" {
+   _predict `0'
+   }
+- else {
+- local v=_caller()
+- version `v'
+- `e(predict)' `0'
+- version 6
+- local myopts "DBeta DEviance DX2 DDeviance Hat Number Pr Residuals RStandard"
+- _pred_se "`myopts'" `0'
+- version 6.0
+- sret clear
+- gettoken ouser 0 : 0
+- local orig `"`0'"'
+- gettoken varn 0 : 0, parse(" ,[")
+- gettoken nxt : 0, parse(" ,[(")
+- if !(`"`nxt'"'=="" | `"`nxt'"'=="if" | `"`nxt'"'=="in" | `"`nxt'"'==",") {
+   local typ `varn'
+   gettoken varn 0 : 0, parse(" ,[")
+   }
+- syntax [if] [in] [, `ouser' CONStant(varname numeric) noOFFset *]
+- if `"`options'"' != "" {
+   _predict `orig'
+   sret local done 1
+   exit
+   }
+- confirm new var `varn'
+- sret local done 0
+- sret local typ `"`typ'"'
+- sret local varn `"`varn'"'
+- sret local rest `"`0'"'
+- if `s(done)' { exit }
+- local vtyp `s(typ)'
+- local varn `s(varn)'
+- local 0 `"`s(rest)'"'
+- syntax [if] [in] [, `myopts' noOFFset]
+- local type 
+"`dbeta'`devianc'`dx2'`ddevian'`hat'`number'`pr'`residua'`rstanda'"
+- if "`type'"=="" | "`type'"=="pr" {
+- if "`type'"=="" {
+   di in gr "(option p assumed; Pr(`e(depvar)'))"
+   }
+- _predict `vtyp' `varn' `if' `in', `offset'
+- label var `varn' "Pr(`e(depvar)')"
+- exit
+- }
+- gen `wtmcn' = (`pi'-`pi'^2)*`wt'
+- matrix accum `A' = `rhsvars' [pw=`wtmcn'] if `touse', `noconst'
+no observations
+   matrix `Ainv' = inv(`A')
+   local vars : colnames `Ainv'
+   local sum 0
+   local i 1
+   while `i' <= `k' {
+   gettoken var vars : vars
+   matrix `row' = (`Ainv'[1...,`i'])'
+   tempvar c`i'
+   matrix score `c`i'' = `row'
+   if `i'==`k' & "`noconst'" == "" { local sum `sum' + `c`i'' }
+   else { local sum `sum' + `c`i''*`var' }
+   local i = `i' + 1
+   }
+   display "generating ksi..."
+   gen `ksi'= .5 * (`sum') * [(1+`wt1')*`pi'-`wt1']
+   display "regressing ksi ..."
+   regress `ksi' `rhsvars' [aw=`wtmcn'] if `touse', `noconst'
+   display "get estimated bias..."
+   matrix `biasMCN' = e(b)
+   display "correct coefs.."
+   matrix `b' = `b' - `biasMCN'
+   display "fix covariance matrix..."
+   matrix `V' = `V'*(`N'/(`N'+`k'))^2
+   }
+r(2000); t=23.36 12:21:42
+
+
+
+______________________________________________________
+Jasjit Singh
+PhD Candidate, Business Economics, Harvard University
+jsingh at hbs.edu                       http://www.people.hbs.edu/jsingh
+617 495 6041 (office)                                  617 497 8436 (home)
+Mail:  Baker 180-F, Harvard Business School, Boston, MA 02163
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/relogit/attachments/20030205/63b0f44d/attachment.html>
+
+From newsletter at vid-software.com  Wed Feb 12 07:33:10 2003
+From: newsletter at vid-software.com (Stefano Marinello, VID-Software GmbH )
+Date: Wed, 12 Feb 2003 13:33:10 +0100
+Subject: [relogit] VID-Software GmbH +41 (0) 1 932 14 04
+Message-ID: <E18iw4c-0002HM-00@server8.hostpoint.ch>
+
+Wir sind ?berzeugt, dass Sie unsern SQLArtist testen sollten!
+
+Mit dem SQLArtist verwalten Sie auch komplexe Datenbanken m?helos und sicher.
+
+- Editieren von DB-Strukturen
+- SQL-Scripts erstellen (Wizard)
+- DB-Versions-Verwaltung
+- M?glichkeit der Anbindung an Borland Delphi und PowerDesigner
+- und noch viele weitere Funktionen
+
+URL zu Produktebeschreibung und Download Vollversion:
+http://www.vid-software.com/prod_sqlartist.php
+
+Mit freundlichen Gr?ssen
+VID-Software GmbH
+Stefano Marinello
+Hofstrasse 99
+8620 Wetzikon
+Switzerland
+
+-----------------------------------------------------------------------
+Um sich von dieser Mailingliste abzumelden
+http://www.vid-software.com/newsletter/lists/?p=unsubscribe&hash=a0a0303866b4d4c2f1ce3984c70e054f
+
+Um Ihre Benutzerdaten zu manipulieren
+http://www.vid-software.com/newsletter/lists/?p=preferences&uid=a0a0303866b4d4c2f1ce3984c70e054f
+
+
+
+-
+relogit mailing list served by Harvard-MIT Data Center
+List Address: relogit at latte.harvard.edu
+Subscribe/Unsubscribe: http://lists.hmdc.harvard.edu/?info=relogit
+
+

@@ -1,0 +1,758 @@
+From one at healingzoom.com  Mon Apr  1 14:17:53 2013
+From: one at healingzoom.com (One Hwang)
+Date: Mon, 1 Apr 2013 14:17:53 -0400
+Subject: [amelia] using bounds and log transform
+Message-ID: <SNT002-W3797746E4B2C4D4E969901A6DE0@phx.gbl>
+
+Hi all,
+
+How can I set up Amelia runs so that I get imputations with logical bounds and log transforms? I tried using the following code:
+
+> require(Amelia)
+## (Version 1.7, built: 2013-02-10)
+> require(Zelig)
+ZELIG (Versions 4.1-3, built: 2013-01-30)
+> 
+> data(freetrade)
+
+> ameliaBounds = matrix(c(
++ 3,7,9,                                # set bounds for tariff, intresmi, and fiveop
++ 0,.9, 12.3,                         #lower bounds for tariff, intresmi, and fiveop respectively
++ 100,8, 13.2), ncol=3)        #upper bounds 
+> 
+> a.out <- amelia(
++  freetrade, 
++  m=5, 
++  ts = "year", 
++  cs = "country",
++  logs = c("tariff", "intresmi", "fiveop"), 
++   bounds = ameliaBounds,
++  cite = FALSE 
++ )
+-- Imputation 1 --
+
+  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
+
+-- Imputation 2 --
+
+  1  2  3  4  5  6  7  8  9 10 11
+
+-- Imputation 3 --
+
+  1  2  3  4  5  6  7  8  9 10 11 12
+
+-- Imputation 4 --
+
+  1  2  3  4  5  6  7  8  9 10 11 12
+
+-- Imputation 5 --
+
+  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18
+
+> a.out$imputations[2]
+$imp2
+    year     country     tariff    polity       pop     gdp.pc   intresmi
+1   1981    SriLanka  36.318740  6.000000  14988000   461.0236  1.9373473
+2   1982    SriLanka  33.061655  5.000000  15189000   473.7634  1.9644299
+3   1983    SriLanka  41.299999  5.000000  15417000   489.2266  1.6639363
+4   1984    SriLanka  48.823829  5.000000  15599000   508.1739  2.7974622
+5   1985    SriLanka  31.000000  5.000000  15837000   525.5609  2.2591159
+6   1986    SriLanka  27.139452  5.000000  16117000   538.9237  1.8325486
+7   1987    SriLanka  27.299999  5.000000  16361000   540.0475  1.4229829
+8   1988    SriLanka  27.299999  5.000000  16587000   545.8610  1.0596240
+9   1989    SriLanka  31.667828  5.000000  16806000   551.1353  1.1375573
+10  1990    SriLanka  28.299999  5.000000  16993000   579.9548  1.6636324
+11  1991    SriLanka  26.900000  5.000000  17247000   597.6987  2.2852130
+12  1992    SriLanka  25.000000  5.000000  17405000   618.3329  2.8778768
+13  1993    SriLanka  24.200001  5.000000  17628420   652.6205  4.2803612
+14  1994    SriLanka  26.000000  5.000000  17865000   680.0408  4.3899121
+15  1995    SriLanka  20.000000  5.000000  18112000   707.6591  3.9959190
+16  1996    SriLanka  29.706501  5.000000  18300000   727.0039  3.6767628
+17  1997    SriLanka  20.000000  5.000000  18552000   763.0638  3.5143008
+18  1998    SriLanka  32.062553  5.000000  18778000   789.3003  2.6723332
+19  1999    SriLanka  17.404191  6.000000  18985000   814.2686  3.8810768
+20  1981       India  74.300003  8.000000 702821248   236.0894  5.5428457
+21  1982       India  34.649343  8.000000 718425600   239.6947  5.9615273
+22  1983       India 135.465600  8.000000 734071936   252.0074  5.6787739
+23  1984       India  37.492611  8.000000 749676928   255.8381  5.6151156
+24  1985       India  81.597851  8.000000 765147008   264.3729  5.6777949
+25  1986       India 100.000000  8.000000 781892992   271.3088  6.0622978
+26  1987       India  98.800003  8.000000 798680000   278.2737  5.7676215
+27  1988       India 150.345496  8.000000 815590016   299.5461  3.8956485
+28  1989       India 107.173565  8.000000 832534976   312.7361  3.2554514
+29  1990       India  81.800003  8.000000 849515008   323.8349  2.0127988
+30  1991       India  79.199997  8.000000 866530432   318.8200  3.2970126
+31  1992       India  53.000000  8.000000 882300032   330.0941  3.6984935
+32  1993       India  47.799999  8.000000 898200000   340.3172  5.1200824
+33  1994       India  47.799999  8.000000 913600000   359.1398  6.3580613
+34  1995       India  41.000000  9.000000 929358016   380.0712  4.8719177
+35  1996       India  38.700001  9.000000 945611776   399.5068  4.9265795
+36  1997       India  35.000000  9.000000 962377664   410.4688  5.3202863
+37  1998       India  30.000000  9.000000 979672896   430.4632  5.6912227
+38  1999       India  32.200001  9.000000 997515200   450.2433  8.2935090
+39  1981   Indonesia  45.245845 -7.000000 151304976   534.1083  2.9180412
+40  1982   Indonesia  31.565257 -7.000000 154244608   529.7137  2.0481887
+41  1983   Indonesia  45.287486 -7.000000 157156544   563.8297  2.2353837
+42  1984   Indonesia  37.000000 -7.000000 160075456   593.2498  2.8442452
+43  1985   Indonesia  27.000000 -7.000000 163036000   602.7329  3.2447402
+44  1986   Indonesia  31.500000 -7.000000 166015056   627.2222  3.1365039
+45  1987   Indonesia  26.476169 -7.000000 168989536   648.8398  4.0184855
+46  1988   Indonesia  43.566359 -7.000000 171994064   678.0231  3.2952881
+47  1989   Indonesia  25.200001 -7.000000 175063344   726.6517  2.9932704
+48  1990   Indonesia  20.600000 -7.000000 178232000   777.9812  3.1374667
+49  1991   Indonesia  20.299999 -7.000000 181397024   832.6502  3.2799203
+50  1992   Indonesia  20.000000 -7.000000 184556192   877.4985  3.3316619
+51  1993   Indonesia  19.400000 -7.000000 187707264   925.3455  3.3837914
+52  1994   Indonesia  20.528203 -7.000000 190847968   978.7410  3.2307374
+53  1995   Indonesia  34.771601 -7.000000 193976000  1042.0466  2.9021389
+54  1996   Indonesia  13.200000 -7.000000 197156480  1105.4620  3.4949601
+55  1997   Indonesia  23.383819 -7.000000 200390288  1138.7395  2.9548082
+56  1998   Indonesia   9.500000 -5.000000 203678368   974.6287  5.2577205
+57  1999   Indonesia  10.900000  7.000000 207021616   961.8376 11.4458620
+58  1981       Korea  70.502965 -5.000000  38723000  3937.6125  1.0570642
+59  1982       Korea  23.700001 -5.000000  39326000  4171.4204  1.1417191
+60  1983       Korea  23.700001 -5.000000  39910000  4583.0039  0.9219497
+61  1984       Korea  21.900000 -5.000000  40406000  4919.5259  0.9729462
+62  1985       Korea  46.677636 -5.000000  40806000  5190.2485  1.0485235
+63  1986       Korea   8.906519 -5.000000  41184000  5736.8276  1.0933198
+64  1987       Korea  22.900000  4.826127  41575000  6337.4648  0.9516343
+65  1988       Korea  18.900000  6.000000  41975000  6984.6323  2.5869560
+66  1989       Korea  14.900000  6.000000  42380000  7359.5601  2.6701207
+67  1990       Korea  13.300000  6.000000  42869000  7967.3906  2.2559617
+68  1991       Korea  11.400000  6.000000  43268000  8622.3135  1.7905118
+69  1992       Korea  10.100000  6.000000  43663000  9008.9160  2.1899016
+70  1993       Korea   8.900000  6.000000  44056000  9418.8623  2.4988637
+71  1994       Korea   8.236350  6.000000  44453000 10104.8682  2.5817108
+72  1995       Korea  11.357425  6.000000  44995000 10873.6016  2.4654078
+73  1996       Korea  13.400000  6.000000  45545000 11467.4053  2.2771194
+74  1997       Korea  13.300000  6.000000  45991000 11925.2627  1.3825226
+75  1998       Korea  11.100000  8.000000  46430000 11022.3311  5.0923381
+76  1999       Korea   8.700000  8.000000  46858000 12086.2324  3.6777790
+77  1981    Malaysia  10.600000  4.000000  14105080  2397.0015  3.6918523
+78  1982    Malaysia  22.638768  4.000000  14465810  2476.0813  3.2455084
+79  1983    Malaysia  33.613404  4.000000  14847000  2563.2966  2.8454931
+80  1984    Malaysia  15.487945  4.000000  15250250  2689.2180  2.5748692
+81  1985    Malaysia  14.529842  4.000000  15677000  2586.6553  3.7058082
+82  1986    Malaysia  15.800000  4.000000  16143010  2540.9355  5.0967517
+83  1987    Malaysia  13.600000  4.000000  16633580  2598.8804  5.5652966
+84  1988    Malaysia  13.000000  4.000000  17144390  2772.0222  3.9440835
+85  1989    Malaysia  17.000000  4.000000  17669600  2933.2661  3.6590879
+86  1990    Malaysia  28.282294  4.000000  18201900  3104.0334  3.6044145
+87  1991    Malaysia  16.900000  4.000000  18656950  3317.3928  3.2112672
+88  1992    Malaysia  12.800000  4.000000  19127100  3523.3594  4.4357429
+89  1993    Malaysia  14.300000  4.000000  19609110  3776.8167  5.8374891
+90  1994    Malaysia  13.000000  4.000000  20103260  4023.3499  4.3134141
+91  1995    Malaysia  12.750533  3.000000  20609860  4310.1919  3.1658885
+92  1996    Malaysia   8.700000  3.000000  21129230  4624.7827  3.4246469
+93  1997    Malaysia   9.100000  3.000000  21667000  4840.2520  2.6002250
+94  1998    Malaysia   7.100000  3.000000  22180000  4379.9424  4.5051543
+95  1999    Malaysia  13.158568  4.000000  22710000  4525.9541  3.7193424
+96  1981       Nepal  29.310426 -2.000000  14874560   156.3544  7.7400808
+97  1982       Nepal  43.840093 -2.000000  15262920   158.1348  7.7678432
+98  1983       Nepal  22.100000 -2.000000  15663490   149.5029  4.7332282
+99  1984       Nepal  39.917911 -2.000000  16076710   159.7617  3.6014018
+100 1985       Nepal  26.324703 -2.000000  16503000   165.1985  2.4010794
+101 1986       Nepal  29.675365 -2.000000  16938310   168.3015  3.0573549
+102 1987       Nepal  21.000000 -2.000000  17382740   166.7793  4.9377427
+103 1988       Nepal  22.600000 -2.000000  17836420   175.0473  4.4469566
+104 1989       Nepal  16.808770 -2.000000  18299470   178.0051  4.2687879
+105 1990       Nepal  24.363633  5.000000  18772000   181.5673  5.4928718
+106 1991       Nepal  26.692135  5.000000  19253590   188.2990  6.1504669
+107 1992       Nepal  13.803265  5.000000  19744320   191.1591  6.6667037
+108 1993       Nepal  16.100000  5.000000  20244250   193.6161  7.9346037
+109 1994       Nepal   9.757862  5.000000  20753450   204.3828  7.0388422
+110 1995       Nepal  11.000000  5.000000  21272000   206.3166  5.0656819
+111 1996       Nepal  34.464682  5.000000  21794680   212.0982  4.5800462
+112 1997       Nepal  26.105136  5.000000  22321160   217.5510  4.2696733
+113 1998       Nepal  16.299999  5.000000  22851110   218.7851  5.7470169
+114 1999       Nepal  17.700001  6.000000  23384180   222.2162  5.8787630
+115 1981    Pakistan  28.703158 -7.000000  85096000   333.4097  2.5595610
+116 1982    Pakistan  77.599998 -7.000000  87436144   345.6995  3.0479228
+117 1983    Pakistan  77.000000 -7.000000  89831888   359.2879  4.5125327
+118 1984    Pakistan  77.000000 -7.000000  92284304   367.4550  2.5139329
+119 1985    Pakistan  77.000000 -4.000000  94794432   384.8838  2.2084200
+120 1986    Pakistan  66.000000 -4.000000  97353880   395.3834  2.2022588
+121 1987    Pakistan  68.900002 -4.000000  99953232   409.9492  2.2189448
+122 1988    Pakistan  69.000000  8.000000 102621984   429.7351  1.5439408
+123 1989    Pakistan  65.000000  8.000000 105269632   439.7046  1.6029303
+124 1990    Pakistan  64.800003  8.000000 107975056   447.8007  1.2045232
+125 1991    Pakistan  66.000000  8.000000 110750016   460.3921  1.2399414
+126 1992    Pakistan  61.099998  8.000000 113561960   484.1700  1.4281969
+127 1993    Pakistan  56.000000  8.000000 116444160   481.2280  1.6599897
+128 1994    Pakistan  51.000000  8.000000 119401848   487.5894  3.4947820
+129 1995    Pakistan  50.700001  8.000000 122374952   500.1006  2.0452147
+130 1996    Pakistan  41.700001  8.000000 125409848   506.8169  0.9035686
+131 1997    Pakistan  41.422027  7.000000 128457312   499.8134  1.2861589
+132 1998    Pakistan  46.500000  7.000000 131582000   500.3802  5.8610605
+133 1999    Pakistan  18.470970 -6.000000 134790000   507.8308  4.0938462
+134 1981 Philippines  34.599998 -8.000000  49740480  1171.4153  2.9328992
+135 1982 Philippines  31.400000 -7.000000  51039800  1182.9126  1.7864840
+136 1983 Philippines  29.500000 -6.000000  52262480  1176.8947  0.9042833
+137 1984 Philippines  28.799999 -6.000000  53456040  1066.3496  1.0449501
+138 1985 Philippines  27.600000 -6.000000  54668000   966.5225  1.5818520
+139 1986 Philippines  27.900000  8.330351  55866680   978.1002  3.8589563
+140 1987 Philippines  27.900000  8.000000  57020400   999.6287  2.7225583
+141 1988 Philippines  27.900000  8.000000  58176680  1045.9196  2.1998901
+142 1989 Philippines  27.600000  8.000000  59383040  1088.2557  1.9586543
+143 1990 Philippines  27.799999  8.000000  60687000  1097.2126  1.4865717
+144 1991 Philippines  26.000000  8.000000  62148312  1065.2173  3.2610879
+145 1992 Philippines  24.299999  8.000000  63644808  1043.6821  3.3457856
+146 1993 Philippines  22.600000  8.000000  65177340  1040.7100  3.1525953
+147 1994 Philippines  21.700001  8.000000  66746768  1060.8284  3.0627861
+148 1995 Philippines  20.000000  8.000000  68354000  1084.3506  2.6057911
+149 1996 Philippines  14.300000  8.000000  69913752  1122.1346  3.1971264
+150 1997 Philippines  13.400000  8.000000  71421040  1155.4116  1.9547111
+151 1998 Philippines  10.700000  7.000000  72871008  1123.7935  3.0419078
+152 1999 Philippines  10.100000  7.000000  74258872  1137.7983  4.5551747
+153 1981    Thailand  32.299999  2.000000  47688900  1161.3615  2.7221076
+154 1982    Thailand  19.728575  2.000000  48633368  1199.7605  3.0265975
+155 1983    Thailand  25.293043  2.000000  49535192  1243.6954  2.4778438
+156 1984    Thailand  44.667879  2.000000  50378140  1293.2310  2.5394394
+157 1985    Thailand  41.200001  2.000000  51146000  1333.0128  3.0223274
+158 1986    Thailand  25.449852  2.000000  51952480  1384.9415  3.7410393
+159 1987    Thailand  26.221142  2.000000  52799040  1492.4540  3.8199978
+160 1988    Thailand  25.535664  3.000000  53687208  1662.8018  3.6140218
+161 1989    Thailand  40.799999  3.000000  54618620  1833.6932  4.2566657
+162 1990    Thailand  39.799999  3.000000  55595000  2002.6646  4.4117045
+163 1991    Thailand  37.799999 -1.000000  56454008  2140.9771  4.8411651
+164 1992    Thailand  31.110931  9.000000  57189720  2284.2720  5.0973606
+165 1993    Thailand  45.599998  9.000000  57796980  2449.7668  5.3830957
+166 1994    Thailand  23.299999  9.000000  58271528  2647.3428  5.3520565
+167 1995    Thailand  23.100000  9.000000  58610000  2866.3428  5.0294995
+168 1996    Thailand  12.832306  9.000000  58976152  3017.3818  5.1052136
+169 1997    Thailand  11.386266  9.000000  59370472  2946.9143  4.0518551
+170 1998    Thailand  20.100000  9.000000  59793500  2628.5005  3.9246270
+171 1999    Thailand  17.100000  9.000000  60245800  2717.2185  4.0744723
+         signed   fiveop     usheg
+1    0.00000000 12.40000 0.2593112
+2    0.00000000 12.50000 0.2558008
+3    1.00000000 12.30000 0.2655022
+4    0.00000000 12.30000 0.2988009
+5    0.00000000 12.30000 0.2952431
+6    0.00000000 12.50000 0.2886563
+7    0.00000000 12.50000 0.2734092
+8    1.00000000 12.60000 0.2756469
+9    0.00000000 12.60000 0.2785387
+10   0.00000000 12.70000 0.2608332
+11   1.00000000 12.80000 0.2589872
+12   0.07426419 13.10000 0.2623017
+13   0.00000000 13.20000 0.2812928
+14   0.00000000 13.20000 0.2783585
+15   0.00000000 13.20000 0.2627195
+16   0.00000000 13.20000 0.2681700
+17   0.00000000 13.20000 0.2844036
+18   0.00000000 13.72028 0.2956678
+19   0.00000000 13.70971 0.3083147
+20   1.00000000 12.40000 0.2593112
+21   0.00000000 12.50000 0.2558008
+22   0.00000000 12.30000 0.2655022
+23   0.00000000 12.30000 0.2988009
+24   0.00000000 12.30000 0.2952431
+25   0.00000000 12.50000 0.2886563
+26   0.00000000 12.50000 0.2734092
+27   0.00000000 12.60000 0.2756469
+28   0.00000000 12.60000 0.2785387
+29   0.00000000 12.70000 0.2608332
+30   1.00000000 12.80000 0.2589872
+31   0.00000000 13.10000 0.2623017
+32   0.00000000 13.20000 0.2812928
+33   0.00000000 13.20000 0.2783585
+34   0.00000000 13.20000 0.2627195
+35   0.00000000 13.20000 0.2681700
+36   0.00000000 13.20000 0.2844036
+37   0.00000000 14.00975 0.2956678
+38   0.00000000 13.69269 0.3083147
+39   0.00000000 12.40000 0.2593112
+40   0.00000000 12.50000 0.2558008
+41   0.00000000 12.30000 0.2655022
+42   0.00000000 12.30000 0.2988009
+43   0.00000000 12.30000 0.2952431
+44   0.00000000 12.50000 0.2886563
+45   0.00000000 12.50000 0.2734092
+46   0.31936935 12.60000 0.2756469
+47   0.00000000 12.60000 0.2785387
+48   0.00000000 12.70000 0.2608332
+49   0.00000000 12.80000 0.2589872
+50   0.00000000 13.10000 0.2623017
+51   0.00000000 13.20000 0.2812928
+52   0.00000000 13.20000 0.2783585
+53   0.00000000 13.20000 0.2627195
+54   0.00000000 13.20000 0.2681700
+55   1.00000000 13.20000 0.2844036
+56   0.00000000 13.82329 0.2956678
+57   0.00000000 14.16236 0.3083147
+58   1.00000000 12.40000 0.2593112
+59   0.00000000 12.50000 0.2558008
+60   1.00000000 12.30000 0.2655022
+61   0.00000000 12.30000 0.2988009
+62   1.00000000 12.30000 0.2952431
+63   0.00000000 12.50000 0.2886563
+64   0.00000000 12.50000 0.2734092
+65   0.00000000 12.60000 0.2756469
+66   0.00000000 12.60000 0.2785387
+67   0.00000000 12.70000 0.2608332
+68   0.00000000 12.80000 0.2589872
+69   0.00000000 13.10000 0.2623017
+70   0.00000000 13.20000 0.2812928
+71   0.00000000 13.20000 0.2783585
+72   0.00000000 13.20000 0.2627195
+73   0.00000000 13.20000 0.2681700
+74   1.00000000 13.20000 0.2844036
+75   0.00000000 13.97298 0.2956678
+76   0.00000000 14.22676 0.3083147
+77   0.00000000 12.40000 0.2593112
+78   0.00000000 12.50000 0.2558008
+79   0.00000000 12.30000 0.2655022
+80   0.00000000 12.30000 0.2988009
+81   0.00000000 12.30000 0.2952431
+82   0.00000000 12.50000 0.2886563
+83   0.00000000 12.50000 0.2734092
+84   0.00000000 12.60000 0.2756469
+85   0.00000000 12.60000 0.2785387
+86   0.00000000 12.70000 0.2608332
+87   0.00000000 12.80000 0.2589872
+88   0.00000000 13.10000 0.2623017
+89   0.00000000 13.20000 0.2812928
+90   0.00000000 13.20000 0.2783585
+91   0.00000000 13.20000 0.2627195
+92   0.00000000 13.20000 0.2681700
+93   0.00000000 13.20000 0.2844036
+94   0.00000000 13.96470 0.2956678
+95   0.00000000 13.63974 0.3083147
+96   0.00000000 12.40000 0.2593112
+97   0.00000000 12.50000 0.2558008
+98   0.00000000 12.30000 0.2655022
+99   0.00000000 12.30000 0.2988009
+100  1.00000000 12.30000 0.2952431
+101  0.00000000 12.50000 0.2886563
+102  1.00000000 12.50000 0.2734092
+103  0.00000000 12.60000 0.2756469
+104  0.00000000 12.60000 0.2785387
+105  0.00000000 12.70000 0.2608332
+106  0.00000000 12.80000 0.2589872
+107  1.00000000 13.10000 0.2623017
+108  0.00000000 13.20000 0.2812928
+109  0.00000000 13.20000 0.2783585
+110  0.00000000 13.20000 0.2627195
+111  0.00000000 13.20000 0.2681700
+112  0.00000000 13.20000 0.2844036
+113  0.00000000 13.61816 0.2956678
+114  0.00000000 13.57960 0.3083147
+115  0.00000000 12.40000 0.2593112
+116  0.00000000 12.50000 0.2558008
+117  0.00000000 12.30000 0.2655022
+118  0.00000000 12.30000 0.2988009
+119  0.00000000 12.30000 0.2952431
+120  0.00000000 12.50000 0.2886563
+121  0.00000000 12.50000 0.2734092
+122  1.00000000 12.60000 0.2756469
+123  0.00000000 12.60000 0.2785387
+124  0.00000000 12.70000 0.2608332
+125  0.00000000 12.80000 0.2589872
+126  0.00000000 13.10000 0.2623017
+127  1.00000000 13.20000 0.2812928
+128  1.00000000 13.20000 0.2783585
+129  1.00000000 13.20000 0.2627195
+130  0.00000000 13.20000 0.2681700
+131  0.00000000 13.20000 0.2844036
+132  0.00000000 13.70486 0.2956678
+133  0.00000000 13.12571 0.3083147
+134  0.00000000 12.40000 0.2593112
+135  0.00000000 12.50000 0.2558008
+136  1.00000000 12.30000 0.2655022
+137  0.00000000 12.30000 0.2988009
+138  0.00000000 12.30000 0.2952431
+139  1.00000000 12.50000 0.2886563
+140  0.00000000 12.50000 0.2734092
+141  0.00000000 12.60000 0.2756469
+142  1.00000000 12.60000 0.2785387
+143  0.00000000 12.70000 0.2608332
+144  1.00000000 12.80000 0.2589872
+145  0.00000000 13.10000 0.2623017
+146  0.00000000 13.20000 0.2812928
+147  0.00000000 13.20000 0.2783585
+148  1.00000000 13.20000 0.2627195
+149  0.00000000 13.20000 0.2681700
+150  0.00000000 13.20000 0.2844036
+151  1.00000000 13.71363 0.2956678
+152  0.00000000 13.84711 0.3083147
+153  1.00000000 12.40000 0.2593112
+154  1.00000000 12.50000 0.2558008
+155  0.00000000 12.30000 0.2655022
+156  0.00000000 12.30000 0.2988009
+157  1.00000000 12.30000 0.2952431
+158  0.00000000 12.50000 0.2886563
+159  0.00000000 12.50000 0.2734092
+160  0.00000000 12.60000 0.2756469
+161  0.00000000 12.60000 0.2785387
+162  0.00000000 12.70000 0.2608332
+163  0.00000000 12.80000 0.2589872
+164  0.00000000 13.10000 0.2623017
+165  0.00000000 13.20000 0.2812928
+166  0.00000000 13.20000 0.2783585
+167  0.00000000 13.20000 0.2627195
+168  0.00000000 13.20000 0.2681700
+169 -0.28744710 13.20000 0.2844036
+170  0.00000000 13.89898 0.2956678
+171  0.00000000 13.66779 0.3083147
+
+It appears that only the lower bounds were applied during the imputations. 
+
+Thanks for your suggestions on how I can tell amelia to put in logical bounds and do natural log transforms.
+
+ 
+ 		 	   		  
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20130401/7fe3d0bf/attachment-0001.html>
+
+From markseeto at gmail.com  Fri Apr  5 00:27:41 2013
+From: markseeto at gmail.com (Mark Seeto)
+Date: Fri, 5 Apr 2013 15:27:41 +1100
+Subject: [amelia] Trouble with Amelia 1.7.1
+Message-ID: <CAK2mLtODiAW7Yukq9mXQ-c_VX9BuVA+FRyhX2X9eZY4mD5AtcA@mail.gmail.com>
+
+Dear Amelia mailing list,
+
+I have some code that runs in Amelia 1.6.1 (with R 2.15.0) without any
+problems. When I run that same code in Amelia 1.7.1 (with R 3.0.0), a
+few imputations might finish without any error messages, but many
+finish with the message "The resulting variance matrix was not
+invertible.   Please check your data for highly collinear variables".
+I understand that this suggests that there may be a problem with the
+data, but I don't understand why there would be a problem in version
+1.7.1 but not in 1.6.1.
+
+Also, when I'm using Amelia 1.7.1 in R 3.0.0, R will sometimes crash
+during the imputation process. I'm running R in emacs in Windows, and
+I'll sometimes get a pop-up window saying "R for Windows terminal
+front-end has stopped working", with the following message appearing
+in emacs:
+
+"error: chol(): failed to converge
+
+This application has requested the Runtime to terminate it in an unusual way.
+Please contact the application's support team for more information.
+terminate called after throwing an instance of 'std::runtime_error'
+  what():
+
+Process R exited abnormally with code 3 at Fri Apr 05 15:04:58 2013"
+
+Amelia 1.7.1 worked without any problems when I tried it on some small
+made-up data, but not on my real data. I understand that it's almost
+impossible to diagnose problems without a reproducible example, but I
+was wondering whether others have had similar problems.
+
+Thanks for any comments you can give.
+
+Mark Seeto
+
+From m.blackwell at rochester.edu  Fri Apr  5 08:26:11 2013
+From: m.blackwell at rochester.edu (Matt Blackwell)
+Date: Fri, 5 Apr 2013 08:26:11 -0400
+Subject: [amelia] Trouble with Amelia 1.7.1
+In-Reply-To: <CAK2mLtODiAW7Yukq9mXQ-c_VX9BuVA+FRyhX2X9eZY4mD5AtcA@mail.gmail.com>
+References: <CAK2mLtODiAW7Yukq9mXQ-c_VX9BuVA+FRyhX2X9eZY4mD5AtcA@mail.gmail.com>
+Message-ID: <CAK1YySGPddaDiZe=HkXXEaet0oXbAQ=r-qOvbX2bufuhfe8mog@mail.gmail.com>
+
+Hi Mark,
+
+We changed the infrastructure of Amelia in 1.7 to improve the speed
+considerably, but there may be consequences in terms of tolerance for
+highly correlated data. You might want to check to see if there are
+variables in the data with correlation above .95 or use the "findLinearCombos"
+function from the "caret" package to see if there are linear combinations
+hidden somewhere in the data. Unfortunately, a lot has changed from 1.6.1
+to 1.7.1, so it's hard to exactly pin down your issues, but it seems very
+likely due to the structure of the data.
+
+Hope that helps!
+
+Cheers,
+matt.
+
+~~~~~~~~~~~
+Matthew Blackwell
+Assistant Professor of Political Science
+University of Rochester
+url: http://www.mattblackwell.org
+
+
+On Fri, Apr 5, 2013 at 12:27 AM, Mark Seeto <markseeto at gmail.com> wrote:
+
+> Dear Amelia mailing list,
+>
+> I have some code that runs in Amelia 1.6.1 (with R 2.15.0) without any
+> problems. When I run that same code in Amelia 1.7.1 (with R 3.0.0), a
+> few imputations might finish without any error messages, but many
+> finish with the message "The resulting variance matrix was not
+> invertible.   Please check your data for highly collinear variables".
+> I understand that this suggests that there may be a problem with the
+> data, but I don't understand why there would be a problem in version
+> 1.7.1 but not in 1.6.1.
+>
+> Also, when I'm using Amelia 1.7.1 in R 3.0.0, R will sometimes crash
+> during the imputation process. I'm running R in emacs in Windows, and
+> I'll sometimes get a pop-up window saying "R for Windows terminal
+> front-end has stopped working", with the following message appearing
+> in emacs:
+>
+> "error: chol(): failed to converge
+>
+> This application has requested the Runtime to terminate it in an unusual
+> way.
+> Please contact the application's support team for more information.
+> terminate called after throwing an instance of 'std::runtime_error'
+>   what():
+>
+> Process R exited abnormally with code 3 at Fri Apr 05 15:04:58 2013"
+>
+> Amelia 1.7.1 worked without any problems when I tried it on some small
+> made-up data, but not on my real data. I understand that it's almost
+> impossible to diagnose problems without a reproducible example, but I
+> was wondering whether others have had similar problems.
+>
+> Thanks for any comments you can give.
+>
+> Mark Seeto
+> --
+> Amelia mailing list served by HUIT
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+> Amelia mailing list
+> Amelia at lists.gking.harvard.edu
+>
+> To unsubscribe from this list or get other information:
+>
+> https://lists.gking.harvard.edu/mailman/listinfo/amelia
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20130405/4cbc2f34/attachment.html>
+
+From markseeto at gmail.com  Fri Apr  5 22:11:27 2013
+From: markseeto at gmail.com (Mark Seeto)
+Date: Sat, 6 Apr 2013 13:11:27 +1100
+Subject: [amelia] Trouble with Amelia 1.7.1
+In-Reply-To: <CAK1YySGPddaDiZe=HkXXEaet0oXbAQ=r-qOvbX2bufuhfe8mog@mail.gmail.com>
+References: <CAK2mLtODiAW7Yukq9mXQ-c_VX9BuVA+FRyhX2X9eZY4mD5AtcA@mail.gmail.com>
+	<CAK1YySGPddaDiZe=HkXXEaet0oXbAQ=r-qOvbX2bufuhfe8mog@mail.gmail.com>
+Message-ID: <CAK2mLtPMf6iHRKSMf9Sw-e+DGmL7B50pMSXkXJqkax+mFgcc8A@mail.gmail.com>
+
+Thanks for your reply Matt (and thank you to you and your colleagues
+for providing this great software!).
+
+If I ignore my two nominal variables, the highest correlation is 0.92
+(and I'm confident that there's no correlation problem with the
+nominal variables). I tried using findLinearCombos, but it appears not
+to work with data having missing values.
+
+I'm happy to just use version 1.6.1, but I'm looking to use the
+"priors" argument for the first time. I note that the package news
+page says that in version 1.7 a bug with priors was fixed - how
+serious was that bug, and does it mean that using priors with version
+1.6.1 would be a bad idea?
+
+Thanks,
+Mark
+
+On Fri, Apr 5, 2013 at 11:26 PM, Matt Blackwell
+<m.blackwell at rochester.edu> wrote:
+> Hi Mark,
+>
+> We changed the infrastructure of Amelia in 1.7 to improve the speed
+> considerably, but there may be consequences in terms of tolerance for highly
+> correlated data. You might want to check to see if there are variables in
+> the data with correlation above .95 or use the "findLinearCombos" function
+> from the "caret" package to see if there are linear combinations hidden
+> somewhere in the data. Unfortunately, a lot has changed from 1.6.1 to 1.7.1,
+> so it's hard to exactly pin down your issues, but it seems very likely due
+> to the structure of the data.
+>
+> Hope that helps!
+>
+> Cheers,
+> matt.
+>
+> ~~~~~~~~~~~
+> Matthew Blackwell
+> Assistant Professor of Political Science
+> University of Rochester
+> url: http://www.mattblackwell.org
+>
+>
+> On Fri, Apr 5, 2013 at 12:27 AM, Mark Seeto <markseeto at gmail.com> wrote:
+>>
+>> Dear Amelia mailing list,
+>>
+>> I have some code that runs in Amelia 1.6.1 (with R 2.15.0) without any
+>> problems. When I run that same code in Amelia 1.7.1 (with R 3.0.0), a
+>> few imputations might finish without any error messages, but many
+>> finish with the message "The resulting variance matrix was not
+>> invertible.   Please check your data for highly collinear variables".
+>> I understand that this suggests that there may be a problem with the
+>> data, but I don't understand why there would be a problem in version
+>> 1.7.1 but not in 1.6.1.
+>>
+>> Also, when I'm using Amelia 1.7.1 in R 3.0.0, R will sometimes crash
+>> during the imputation process. I'm running R in emacs in Windows, and
+>> I'll sometimes get a pop-up window saying "R for Windows terminal
+>> front-end has stopped working", with the following message appearing
+>> in emacs:
+>>
+>> "error: chol(): failed to converge
+>>
+>> This application has requested the Runtime to terminate it in an unusual
+>> way.
+>> Please contact the application's support team for more information.
+>> terminate called after throwing an instance of 'std::runtime_error'
+>>   what():
+>>
+>> Process R exited abnormally with code 3 at Fri Apr 05 15:04:58 2013"
+>>
+>> Amelia 1.7.1 worked without any problems when I tried it on some small
+>> made-up data, but not on my real data. I understand that it's almost
+>> impossible to diagnose problems without a reproducible example, but I
+>> was wondering whether others have had similar problems.
+>>
+>> Thanks for any comments you can give.
+>>
+>> Mark Seeto
+>> --
+>> Amelia mailing list served by HUIT
+>> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>> More info about Amelia: http://gking.harvard.edu/amelia
+>> Amelia mailing list
+>> Amelia at lists.gking.harvard.edu
+>>
+>> To unsubscribe from this list or get other information:
+>>
+>> https://lists.gking.harvard.edu/mailman/listinfo/amelia
+>
+>
+
+From m.blackwell at rochester.edu  Fri Apr  5 22:26:50 2013
+From: m.blackwell at rochester.edu (Matt Blackwell)
+Date: Fri, 5 Apr 2013 22:26:50 -0400
+Subject: [amelia] Trouble with Amelia 1.7.1
+In-Reply-To: <CAK2mLtPMf6iHRKSMf9Sw-e+DGmL7B50pMSXkXJqkax+mFgcc8A@mail.gmail.com>
+References: <CAK2mLtODiAW7Yukq9mXQ-c_VX9BuVA+FRyhX2X9eZY4mD5AtcA@mail.gmail.com>
+	<CAK1YySGPddaDiZe=HkXXEaet0oXbAQ=r-qOvbX2bufuhfe8mog@mail.gmail.com>
+	<CAK2mLtPMf6iHRKSMf9Sw-e+DGmL7B50pMSXkXJqkax+mFgcc8A@mail.gmail.com>
+Message-ID: <CAK1YySFsPCvU7Zrfna=O+xpfkTYmJcMtJfyzbfsucmpsuhpzsg@mail.gmail.com>
+
+Hi Mark,
+
+You definitely want to use 1.7.1 for work with priors. One slight laborious
+approach to detecting issues is to run Amelia with a small subet of
+covariates, then increase that subet slowly to find the culprit.
+
+Having said that, a correlation of 0.92 is quite high. You might want to
+try to omit one of those variables first.
+
+Cheers,
+Matt.
+
+On Friday, April 5, 2013, Mark Seeto wrote:
+
+> Thanks for your reply Matt (and thank you to you and your colleagues
+> for providing this great software!).
+>
+> If I ignore my two nominal variables, the highest correlation is 0.92
+> (and I'm confident that there's no correlation problem with the
+> nominal variables). I tried using findLinearCombos, but it appears not
+> to work with data having missing values.
+>
+> I'm happy to just use version 1.6.1, but I'm looking to use the
+> "priors" argument for the first time. I note that the package news
+> page says that in version 1.7 a bug with priors was fixed - how
+> serious was that bug, and does it mean that using priors with version
+> 1.6.1 would be a bad idea?
+>
+> Thanks,
+> Mark
+>
+> On Fri, Apr 5, 2013 at 11:26 PM, Matt Blackwell
+> <m.blackwell at rochester.edu <javascript:;>> wrote:
+> > Hi Mark,
+> >
+> > We changed the infrastructure of Amelia in 1.7 to improve the speed
+> > considerably, but there may be consequences in terms of tolerance for
+> highly
+> > correlated data. You might want to check to see if there are variables in
+> > the data with correlation above .95 or use the "findLinearCombos"
+> function
+> > from the "caret" package to see if there are linear combinations hidden
+> > somewhere in the data. Unfortunately, a lot has changed from 1.6.1 to
+> 1.7.1,
+> > so it's hard to exactly pin down your issues, but it seems very likely
+> due
+> > to the structure of the data.
+> >
+> > Hope that helps!
+> >
+> > Cheers,
+> > matt.
+> >
+> > ~~~~~~~~~~~
+> > Matthew Blackwell
+> > Assistant Professor of Political Science
+> > University of Rochester
+> > url: http://www.mattblackwell.org
+> >
+> >
+> > On Fri, Apr 5, 2013 at 12:27 AM, Mark Seeto <markseeto at gmail.com<javascript:;>>
+> wrote:
+> >>
+> >> Dear Amelia mailing list,
+> >>
+> >> I have some code that runs in Amelia 1.6.1 (with R 2.15.0) without any
+> >> problems. When I run that same code in Amelia 1.7.1 (with R 3.0.0), a
+> >> few imputations might finish without any error messages, but many
+> >> finish with the message "The resulting variance matrix was not
+> >> invertible.   Please check your data for highly collinear variables".
+> >> I understand that this suggests that there may be a problem with the
+> >> data, but I don't understand why there would be a problem in version
+> >> 1.7.1 but not in 1.6.1.
+> >>
+> >> Also, when I'm using Amelia 1.7.1 in R 3.0.0, R will sometimes crash
+> >> during the imputation process. I'm running R in emacs in Windows, and
+> >> I'll sometimes get a pop-up window saying "R for Windows terminal
+> >> front-end has stopped working", with the following message appearing
+> >> in emacs:
+> >>
+> >> "error: chol(): failed to converge
+> >>
+> >> This application has requested the Runtime to terminate it in an unusual
+> >> way.
+> >> Please contact the application's support team for more information.
+> >> terminate called after throwing an instance of 'std::runtime_error'
+> >>   what():
+> >>
+> >> Process R exited abnormally with code 3 at Fri Apr 05 15:04:58 2013"
+> >>
+> >> Amelia 1.7.1 worked without any problems when I tried it on some small
+> >> made-up data, but not on my real data. I understand that it's almost
+> >> impossible to diagnose problems without a reproducible example, but I
+> >> was wondering whether others have had similar problems.
+> >>
+> >> Thanks for any comments you can give.
+> >>
+> >> Mark Seeto
+> >> --
+> >> Amelia mailing list served by HUIT
+> >> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> >> More info about Amelia: http://gking.harvard.edu/amelia
+> >> Amelia mailing list
+> >> Amelia at lists.gking.harvard.edu <javascript:;>
+> >>
+> >> To unsubscribe from this list or get other information:
+> >>
+> >> https://lists.gking.harvard.edu/mailman/listinfo/amelia
+> >
+> >
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20130405/ce905eb8/attachment.html>
+

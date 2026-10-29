@@ -1,0 +1,258 @@
+From king at harvard.edu  Sun Nov  1 11:17:11 2009
+From: king at harvard.edu (Gary King)
+Date: Sun, 01 Nov 2009 11:17:11 -0500
+Subject: [amelia] Multiple imputaton question/ coding issue
+In-Reply-To: <f33174dc0910291038x75f3150dge1003804fb8b7115@mail.gmail.com>
+References: <f33174dc0910291038x75f3150dge1003804fb8b7115@mail.gmail.com>
+Message-ID: <4AEDB487.2050004@harvard.edu>
+
+Helen, on your particular problem, you might have a look at work on 
+dealing with noncompliance in experiments; here's one example: 
+http://gking.harvard.edu/files/abs/cluster-abs.shtml
+
+for amelia, a reasonable strategy is to impute everything and then 
+revert imputations that are really structural missingness back to 
+missing.  you don't want to use the imputed value when there can be no 
+value.
+
+Gary
+---
+http://gking.harvard.edu
+
+
+Helen Brown wrote:
+> Dear all,
+>
+> I am using Amelia II to impute but I have a question regarding one of
+> my variables which seems to pose a problem for multiple imputation
+> unless I can find a better coding rule:
+>
+> I want to control for **compliance with treatment*** (binary variable
+> 1,0) but I am not sure how to deal with the following:
+>
+> say patient1 is under T1 in 1990 and complies, then dummy for T1=1 and
+> dummy for compliance=1
+>
+> say patient2 is under T1 in 1999 and does not comply, then dummy for
+> T1=1 and dummy for compliance=0
+>
+> But, then, say patient1 is NOT under T1 in 1980 (T1=0)
+> what value should I assign to compliance in this case?  Should I leave
+> it as a missing -no value- (it makes sense but I will lose many
+> observations). On the other hand, it doesnt' make sense to assign 1 or
+> 0 to compliance if there was nothing to comply (or fail to comply)
+> with in the first place.
+> Moreover, if I leave the compliance value as missing in this case,
+> when I use Amelia II the missing value for compliance will be imputed
+> and I am not sure this would be correct given that in reality
+> compliance did not exist b/c there was no treatment to comply with.
+>
+> Thanks in advance,
+> Regards,
+> Helen A. Brown
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+>   
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From napaxton at fas.harvard.edu  Thu Nov 12 18:35:57 2009
+From: napaxton at fas.harvard.edu (Nathan Paxton)
+Date: Thu, 12 Nov 2009 18:35:57 -0500
+Subject: [amelia] Error that hasn't occurred before
+Message-ID: <6F467859-FF5C-4F76-902E-E93DA7D1405A@fas.harvard.edu>
+
+	I am using Amelia 1.2-12 and R 2.9.1.
+
+	I am using a batch file for R that I haven't used in a year, and as I last recall, it worked without generating errors. But as I ran it this time, I got the following error. This occurred in imputation 1, "run" 1000-1200 (I tried a few times)....
+
+
+> Error in dimnames(impdata$covMatrices)[[1]] <- prepped$theta.names : 
+>   length of 'dimnames' [1] not equal to array extent
+> In addition: Warning message:
+> In amcheck(x = x, m = m, idvars = numopts$idvars, priors = priors,  :
+>   You've set the polynomials of time to zero with no interaction with 
+>  the cross-sectional variable.  This has no effect on the imputation.
+
+	Although I've gotten decent with Amelia, I'm not quite sure what this means.
+
+Best,
+-Nathan 
+----------
+Nathan A. Paxton, Ph.D.
+Dept. of Government, Harvard University
+
+napaxton AT fas DOT harvard DOT edu
+http://www.fas.harvard.edu/~napaxton
+========================================================
+If every professor who backed a lunatic politician were to be sacked, half the interesting minds in academia would be lost.
+	- The Economist, 5 Jan 2002
+
+A morning without coffee is like something without something else.
+========================================================
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20091112/1a43cd38/attachment.html>
+
+From davidhughjones at gmail.com  Mon Nov 16 11:28:56 2009
+From: davidhughjones at gmail.com (David Hugh-Jones)
+Date: Mon, 16 Nov 2009 17:28:56 +0100
+Subject: [amelia] integer-related bug in amcheck
+Message-ID: <f5d848060911160828v7bc80de1kb8fb27a7e01d8034@mail.gmail.com>
+
+Hi all,
+
+I get a strange bug when using the "disperse" function with some
+ordinal variables. The output of Amelia correctly gives these ordinal
+variables integer values. However, they are stored in R as numeric
+types. When I call "disperse", it calls the Amelia internal function
+"amcheck". A few of the ordinal variables then fail the test
+
+if (any(unique(na.omit(x[, i]))%%1 != 0))
+
+and the disperse function fails.
+
+Here's a simple test case that fails for me:
+
+tmp <- data.frame(a=1:10000, b=round(rnorm(100000,0,3)))
+tmp$b[1:2000*5] <- NA
+a.out.try <- amelia(tmp, ords="b")
+ disperse(a.out.try)
+
+David Hugh-Jones
+Post-doctoral Researcher
+Max Planck Institute of Economics, Jena
+http://davidhughjones.googlepages.com
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From blackwel at fas.harvard.edu  Tue Nov 17 00:17:22 2009
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Tue, 17 Nov 2009 00:17:22 -0500
+Subject: [amelia] integer-related bug in amcheck
+In-Reply-To: <f5d848060911160828v7bc80de1kb8fb27a7e01d8034@mail.gmail.com>
+References: <f5d848060911160828v7bc80de1kb8fb27a7e01d8034@mail.gmail.com>
+Message-ID: <839691710911162117g6037d7f7rf97e427049f90000@mail.gmail.com>
+
+Hi David,
+
+This is a bug with the "ords" command that we (finally) tracked down,
+thanks to your test case. The newest version of Amelia (1.2-14) fixed
+this problem.
+
+If you have R 2.10.x, you can update your version of Amelia with the
+following command:
+
+install.packages("Amelia", repos="http://gking.harvard.edu")
+
+Otherwise, the updated version will be on CRAN whenever they can
+process it, probably in the next few days.
+
+I hope this helps and please let us know if you have any further issues.
+
+Thanks!
+matt.
+
+On Mon, Nov 16, 2009 at 11:28 AM, David Hugh-Jones
+<davidhughjones at gmail.com> wrote:
+> Hi all,
+>
+> I get a strange bug when using the "disperse" function with some
+> ordinal variables. The output of Amelia correctly gives these ordinal
+> variables integer values. However, they are stored in R as numeric
+> types. When I call "disperse", it calls the Amelia internal function
+> "amcheck". A few of the ordinal variables then fail the test
+>
+> if (any(unique(na.omit(x[, i]))%%1 != 0))
+>
+> and the disperse function fails.
+>
+> Here's a simple test case that fails for me:
+>
+> tmp <- data.frame(a=1:10000, b=round(rnorm(100000,0,3)))
+> tmp$b[1:2000*5] <- NA
+> a.out.try <- amelia(tmp, ords="b")
+> ?disperse(a.out.try)
+>
+> David Hugh-Jones
+> Post-doctoral Researcher
+> Max Planck Institute of Economics, Jena
+> http://davidhughjones.googlepages.com
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From blackwel at fas.harvard.edu  Tue Nov 17 00:44:14 2009
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Tue, 17 Nov 2009 00:44:14 -0500
+Subject: [amelia] Error that hasn't occurred before
+In-Reply-To: <6F467859-FF5C-4F76-902E-E93DA7D1405A@fas.harvard.edu>
+References: <6F467859-FF5C-4F76-902E-E93DA7D1405A@fas.harvard.edu>
+Message-ID: <839691710911162144n7a67a448kebdb5a8c3b0b9f0b@mail.gmail.com>
+
+Hi Nathan,
+
+We changed some of the syntax of Amelia in recent versions to more
+closely align it with the rest of R. I imagine that this could problem
+could be a result of this change. Try giving this a shot and see what
+happens: change polytime = 0 to polytime =NULL. It will produce the
+same imputations, but there is a slight problem when both intercs and
+polytime are 0.
+
+Let us know if that doesn't work.
+
+Cheers,
+matt.
+
+On Thu, Nov 12, 2009 at 6:35 PM, Nathan Paxton <napaxton at fas.harvard.edu> wrote:
+> I am using Amelia 1.2-12 and R 2.9.1.
+> I am using a batch file for R that I haven't used in a year, and as I last
+> recall, it worked without generating errors. But as I ran it this time, I
+> got the following error. This occurred in imputation 1, "run" 1000-1200 (I
+> tried a few times)....
+>
+> Error in dimnames(impdata$covMatrices)[[1]] <- prepped$theta.names :
+> ??length of 'dimnames' [1] not equal to array extent
+> In addition: Warning message:
+> In amcheck(x = x, m = m, idvars = numopts$idvars, priors = priors, ?:
+> ??You've set the polynomials of time to zero with no interaction with
+> ?the cross-sectional variable. ?This has no effect on the imputation.
+>
+> Although I've gotten decent with Amelia, I'm not quite sure what this means.
+> Best,
+> -Nathan
+> ----------
+> Nathan A. Paxton,?Ph.D.
+> Dept. of Government, Harvard University
+> napaxton AT fas DOT harvard DOT edu
+> http://www.fas.harvard.edu/~napaxton
+> ========================================================
+> If every professor who backed a lunatic politician were to be sacked, half
+> the interesting minds in?academia would be lost.
+> - The Economist, 5 Jan 2002
+> A morning without coffee is like something without something else.
+> ========================================================
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+

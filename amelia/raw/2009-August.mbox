@@ -1,0 +1,536 @@
+From Daphne.vanderPas at student.uva.nl  Fri Aug  7 09:13:08 2009
+From: Daphne.vanderPas at student.uva.nl (D.J. van der Pas)
+Date: Fri, 07 Aug 2009 15:13:08 +0200
+Subject: [amelia] Arima and VAR
+Message-ID: <fa6c90c2a7d8.a7d8fa6c90c2@student.uva.nl>
+
+Dear Amelia users and creators,
+I am trying to fill in a ts dataset using Amalia, after which I want to do a VAR (Vector Autoregression) analysis in Stata. As I understand it Ken Scheve's MI program and Clarify can not automatically combine the results of a VAR analysis (or ARIMA). Is this correct? Is there an alternative way to automatically combine the VAR results? 
+Thanks a lot and kind regards,
+Daphne van der Pas
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20090807/6191968e/attachment.html>
+
+From king at harvard.edu  Fri Aug  7 09:16:23 2009
+From: king at harvard.edu (Gary King)
+Date: Fri, 07 Aug 2009 09:16:23 -0400
+Subject: [amelia] Arima and VAR
+In-Reply-To: <fa6c90c2a7d8.a7d8fa6c90c2@student.uva.nl>
+References: <fa6c90c2a7d8.a7d8fa6c90c2@student.uva.nl>
+Message-ID: <4A7C2927.2020104@harvard.edu>
+
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20090807/78f09ddb/attachment.html>
+
+From Roel.Mocking at student.uva.nl  Mon Aug 10 12:56:16 2009
+From: Roel.Mocking at student.uva.nl (R.J.T. Mocking)
+Date: Mon, 10 Aug 2009 18:56:16 +0200
+Subject: [amelia] More variables in data subset
+In-Reply-To: <4A7C2927.2020104@harvard.edu>
+References: <fa6c90c2a7d8.a7d8fa6c90c2@student.uva.nl> <4A7C2927.2020104@harvard.edu>
+Message-ID: <f8bf9443bd7f.bd7ff8bf9443@student.uva.nl>
+
+Dear Amelia users and creators,
+
+I am using Amelia to multiply impute missing data in a data set. In 
+this data set, more variables are assessed for cases than for the 
+controls. There exists a strong correlation between this additional 
+data and the missing values that I would like to impute. Should I 
+incorporate these additional variables in Amelia, even if none of the 
+controls have an existing value for these variables? It is not my 
+intention to include these additional variables in any further 
+statistical analyses, I just want to use this additional data to make 
+a better estimation of the missing values.
+
+Thanks in advance,
+
+Roel Mocking
+-------------- next part --------------
+An embedded message was scrubbed...
+From: Gary King <king at harvard.edu>
+Subject: Re: [amelia] Arima and VAR
+Date: Fri, 07 Aug 2009 09:16:23 -0400
+Size: 4995
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20090810/a17caf5e/attachment.mht>
+
+From thornton at fas.harvard.edu  Mon Aug 10 23:37:34 2009
+From: thornton at fas.harvard.edu (Wayne Thornton)
+Date: Mon, 10 Aug 2009 23:37:34 -0400
+Subject: [amelia] error in how AMELIA counts number of categories for nominal variables 
+Message-ID: <23E6AF0C467A447C95BCE322B09BAEDB@IBMT42>
+
+Hi Matt---
+
+ 
+
+I uncovered a couple small glitches in AMELIA.
+
+ 
+
+(1)  If I identify a nominal variable with exactly 10 unique values, AMELIA
+gives the following message:
+
+ 
+
+"Warning in amcheck(x = x, m = m, idvars = numopts$idvars, priors = priors,
+: 
+
+ The number of catagories in one of the variables marked nominal has greater
+than 10 categories. Check nominal specification"
+
+ 
+
+I suspect that AMELIA is counting "NA" as one of the unique values.
+
+ 
+
+This can be corrected by rewriting the statement that counts the number of
+unique values, as follows:
+
+ 
+
+     categories <- length( unique(IVs) [ !is.na (unique (IVs) ) ] )
+
+ 
+
+I'm not sure whether AMELIA only checks the number of unique values for the
+variables passed in the "bounds" input file, or if it also checks the number
+of unique values passed in the "noms" and "ords" input files. If it checks
+all of these, then there may be more than one statement that needs to be
+modified.
+
+ 
+
+(2) Also, the error message cited above has a misspelled word
+("catagories").
+
+ 
+
+ 
+
+Wayne A. Thornton
+
+ 
+
+Harvard University
+
+ 
+
+thornton at fas.harvard.edu 
+
+ 
+
+
+
+ 
+<http://1429236.signature1.mailinfo.com/confirm2.6/000C0108/010B024D/000D014
+D/0111831384.jpg> 
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20090810/a0256b62/attachment.html>
+
+From king at harvard.edu  Wed Aug 12 12:07:24 2009
+From: king at harvard.edu (Gary King)
+Date: Wed, 12 Aug 2009 12:07:24 -0400
+Subject: [amelia] More variables in data subset
+In-Reply-To: <f8bf9443bd7f.bd7ff8bf9443@student.uva.nl>
+References: <fa6c90c2a7d8.a7d8fa6c90c2@student.uva.nl> <4A7C2927.2020104@harvard.edu> <f8bf9443bd7f.bd7ff8bf9443@student.uva.nl>
+Message-ID: <4A82E8BC.4070609@harvard.edu>
+
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20090812/0fe9c07d/attachment.html>
+
+From thornton at fas.harvard.edu  Wed Aug 26 00:09:36 2009
+From: thornton at fas.harvard.edu (Wayne Thornton)
+Date: Wed, 26 Aug 2009 00:09:36 -0400
+Subject: [amelia] Amelia error message
+In-Reply-To: <839691710908121336o70e5f8bv726cef8a71473439@mail.gmail.com>
+References: <23E6AF0C467A447C95BCE322B09BAEDB@IBMT42> <839691710908121336o70e5f8bv726cef8a71473439@mail.gmail.com>
+Message-ID: <CF2CD4EBD14F4B1DB0BB581EA1C3C6FA@IBMT42>
+
+Matt---
+
+ 
+
+I'm getting an error message I haven't seen before...
+
+ 
+
+            "Error in newx[, j - 1] <- ifelse(x[, i] == values[j], 1, 0) : 
+
+            subscript out of bounds"
+
+ 
+
+-------------------------------------------
+
+My settings are as follows:
+
+ 
+
+impruns            <-  5
+
+tolerX               <-  1.0E-4
+
+autopriX            <-  0.05 
+
+empriX              <-  round( 0.005* colDATA8* rowDATA8, digits= 0)
+
+ 
+
+   imputed <- amelia(DATA8i,
+
+                     m  = impruns   ,  p2s = 2     ,
+idvars = c(3,4,5)   ,
+
+                     ts = 1         ,  cs  = 2  , polytime  = NULL,
+
+                                                   startvals = 0   ,
+tolerance = tolerX  ,
+
+                                                                        noms
+= nomIV8ji     ,
+
+                     ords = ordIV8ji,  incheck = T , collect = F     ,
+outname = "DATA8imp",
+
+                     write.out = T  ,  archive = T ,
+keep.data = T       ,
+
+                     empri = empriX ,
+autopri = autopriX  ,
+
+                     bounds = IVlims,                 max.resample =
+resampleX                 )
+
+ 
+
+The input files are attached.
+
+ 
+
+-------------------------------------------
+
+ 
+
+Thanks much for your help.
+
+ 
+
+Wayne
+
+ 
+
+ 
+
+Wayne A. Thornton
+
+ 
+
+Harvard University
+
+thornton at fas.harvard.edu 
+
+
+
+ 
+<http://1429236.signature1.mailinfo.com/confirm2.6/0205010E/0006074D/01010B4
+B/0013137251.jpg> 
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20090826/cd002fe8/attachment.html>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Amelia input files.zip
+Type: application/x-zip-compressed
+Size: 865103 bytes
+Desc: not available
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20090826/cd002fe8/attachment.bin>
+
+From mblackwell at iq.harvard.edu  Thu Aug 27 11:36:50 2009
+From: mblackwell at iq.harvard.edu (Matt Blackwell)
+Date: Thu, 27 Aug 2009 11:36:50 -0400
+Subject: [amelia] Amelia error message
+In-Reply-To: <CF2CD4EBD14F4B1DB0BB581EA1C3C6FA@IBMT42>
+References: <23E6AF0C467A447C95BCE322B09BAEDB@IBMT42> <839691710908121336o70e5f8bv726cef8a71473439@mail.gmail.com> <CF2CD4EBD14F4B1DB0BB581EA1C3C6FA@IBMT42>
+Message-ID: <839691710908270836o588c8f2s5cf9080fc9e281c5@mail.gmail.com>
+
+Hi Wayne,
+
+After taking a look at your data, it looks like you have about 50 or
+so variables that don't vary all marked as "nominals." You'll have to
+put those variables into the idvars argument to keep them out of the
+imputations.
+
+Here is the code I used to find the problematic variables, along with
+their column numbers, for your reference.
+
+
+> jj <- list()
+> for (i in 1:ncol(DATA8i)) jj[i] <- length(unique(na.omit(DATA8i[,i])))
+> jj <- unlist(jj)
+> which(jj==1)
+ [1]  44  46  47  48  49  52  53  54  55  56  61  62 105 141 146 148 151 165 172
+[20] 174 179 239 244 245 246 247 248 249 250 251 253 254 257 259 260 269 270 271
+[39] 275 278 283 285 287 288 289 290 302 303 304 309
+
+One more thing you should consider is that you will probably not be
+able to impute 600+ variables with only 1000 observations. Remember
+that if p is the number of variables, then Amelia has to estimate
+roughly p^2/2 parameters.
+
+I hope this helps,
+matt.
+
+On Wed, Aug 26, 2009 at 12:09 AM, Wayne
+Thornton<thornton at fas.harvard.edu> wrote:
+> Matt---
+>
+>
+>
+> I'm getting an error message I haven't seen before...
+>
+>
+>
+> ??????????? "Error in newx[, j - 1] <- ifelse(x[, i] == values[j], 1, 0) :
+>
+> ? ????????? subscript out of bounds"
+>
+>
+>
+> -------------------------------------------
+>
+> My settings are as follows:
+>
+>
+>
+> impruns??????????? <- ?5
+>
+> tolerX?? ??????????? <- ?1.0E-4
+>
+> autopriX? ????????? <- ?0.05
+>
+> empriX? ??????????? <- ?round( 0.005* colDATA8* rowDATA8, digits= 0)
+>
+>
+>
+> ?? imputed <- amelia(DATA8i,
+>
+> ????????????????? ?? m ?= impruns ??, ?p2s = 2? ?? ,
+> idvars = c(3,4,5)? ?,
+>
+> ????????????????? ?? ts = 1???????? ,? cs? = 2? , polytime ?= NULL,
+>
+> ???????????????????? ??????????????????????? ?? ?? startvals = 0?? ,
+> tolerance = tolerX? ,
+>
+> ???????????????????? ????????????????????????????????????????? ? ?????? noms
+> = nomIV8ji? ???,
+>
+> ????????????????? ?? ords = ordIV8ji,? incheck = T , collect = F ??? ,
+> outname = "DATA8imp",
+>
+> ????????????????? ?? write.out = T? , ?archive = T ,
+> keep.data = T???? ? ,
+>
+> ? ??????????????? ?? empri = empriX ,
+> autopri = autopriX? ,
+>
+> ????? ??????????? ?? bounds = IVlims, ???????????? ???max.resample =
+> resampleX?? ???? ?????????)
+>
+>
+>
+> The input files are attached.
+>
+>
+>
+> -------------------------------------------
+>
+>
+>
+> Thanks much for your help?
+>
+>
+>
+> Wayne
+>
+>
+>
+>
+>
+> Wayne A. Thornton
+>
+>
+>
+> Harvard University
+>
+> thornton at fas.harvard.edu
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From thornton at fas.harvard.edu  Mon Aug 31 14:32:27 2009
+From: thornton at fas.harvard.edu (Wayne Thornton)
+Date: Mon, 31 Aug 2009 14:32:27 -0400
+Subject: [amelia] Amelia error message
+In-Reply-To: <839691710908270836o588c8f2s5cf9080fc9e281c5@mail.gmail.com>
+References: <23E6AF0C467A447C95BCE322B09BAEDB@IBMT42> <839691710908121336o70e5f8bv726cef8a71473439@mail.gmail.com> <CF2CD4EBD14F4B1DB0BB581EA1C3C6FA@IBMT42> <839691710908270836o588c8f2s5cf9080fc9e281c5@mail.gmail.com>
+Message-ID: <B861E7AD56D3466D9C1E80BE091A9D8C@IBMT42>
+
+Matt--
+
+Many thanks...
+The problem was indeed exactly as you said...
+
+(The program I'm working with deletes all IVs that have only NAs...
+But a later step created some more-- which I then tried to pass to
+Amelia...)
+
+Anyway, I modified my program, and Amelia now accepts my data with no
+complaint...
+
+Thanks again!...
+
+Wayne
+
+-----Original Message-----
+From: Matt Blackwell [mailto:mblackwell at iq.harvard.edu]
+Sent: Thursday, August 27, 2009 11:37
+To: Wayne Thornton
+Cc: amelia at lists.gking.harvard.edu
+Subject: Re: [amelia] Amelia error message
+
+Hi Wayne,
+
+After taking a look at your data, it looks like you have about 50 or
+so variables that don't vary all marked as "nominals." You'll have to
+put those variables into the idvars argument to keep them out of the
+imputations.
+
+Here is the code I used to find the problematic variables, along with
+their column numbers, for your reference.
+
+
+> jj <- list()
+> for (i in 1:ncol(DATA8i)) jj[i] <- length(unique(na.omit(DATA8i[,i])))
+> jj <- unlist(jj)
+> which(jj==1)
+ [1]  44  46  47  48  49  52  53  54  55  56  61  62 105 141 146 148 151 165
+172
+[20] 174 179 239 244 245 246 247 248 249 250 251 253 254 257 259 260 269 270
+271
+[39] 275 278 283 285 287 288 289 290 302 303 304 309
+
+One more thing you should consider is that you will probably not be
+able to impute 600+ variables with only 1000 observations. Remember
+that if p is the number of variables, then Amelia has to estimate
+roughly p^2/2 parameters.
+
+I hope this helps,
+matt.
+
+On Wed, Aug 26, 2009 at 12:09 AM, Wayne
+Thornton<thornton at fas.harvard.edu> wrote:
+> Matt---
+>
+>
+>
+> I'm getting an error message I haven't seen before...
+>
+>
+>
+>             "Error in newx[, j - 1] <- ifelse(x[, i] == values[j], 1, 0) :
+>
+>             subscript out of bounds"
+>
+>
+>
+> -------------------------------------------
+>
+> My settings are as follows:
+>
+>
+>
+> impruns            <-  5
+>
+> tolerX               <-  1.0E-4
+>
+> autopriX            <-  0.05
+>
+> empriX              <-  round( 0.005* colDATA8* rowDATA8, digits= 0)
+>
+>
+>
+>    imputed <- amelia(DATA8i,
+>
+>                      m  = impruns   ,  p2s = 2     ,
+> idvars = c(3,4,5)   ,
+>
+>                      ts = 1         ,  cs  = 2  , polytime  = NULL,
+>
+>                                                    startvals = 0   ,
+> tolerance = tolerX  ,
+>
+>
+noms
+> = nomIV8ji     ,
+>
+>                      ords = ordIV8ji,  incheck = T , collect = F     ,
+> outname = "DATA8imp",
+>
+>                      write.out = T  ,  archive = T ,
+> keep.data = T       ,
+>
+>                      empri = empriX ,
+> autopri = autopriX  ,
+>
+>                      bounds = IVlims,                 max.resample =
+> resampleX                 )
+>
+>
+>
+> The input files are attached.
+>
+>
+>
+> -------------------------------------------
+>
+>
+>
+> Thanks much for your help
+
+>
+>
+>
+> Wayne
+>
+>
+>
+>
+>
+> Wayne A. Thornton
+>
+>
+>
+> Harvard University
+>
+> thornton at fas.harvard.edu
+>
+>
+
+
+
+
+ 
+<http://1429236.signature1.mailinfo.com/confirm2.6/04060100/0003014E/07030B4
+5/0025239207.jpg> 
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20090831/9bd9f1fc/attachment.html>
+

@@ -1,0 +1,281 @@
+From lia.bedelia at gmail.com  Thu Jan  6 14:38:04 2011
+From: lia.bedelia at gmail.com (Emily C)
+Date: Thu, 6 Jan 2011 14:38:04 -0500
+Subject: [amelia] model selection and stepAIC
+Message-ID: <AANLkTim9NE68CPO0LoKxPqoXGqGKmtximBUUNxSUa5_o@mail.gmail.com>
+
+Hi,
+
+I'm trying to use the stepAIC function after creating a model via zelig like
+this (where a.out is an amelia object with 5 multiply imputed data sets):
+
+m<-zelig(y ~ x1 + x2 + x3 + x4 + x5, data=a.out$imputations, model="negbin")
+
+
+selected<-stepAIC(m, direction="backward")
+
+
+But it gives me this error at the stepAIC step: "Error in
+terms.default(object) : no terms component"
+
+Anyone know how to perform model selection with amelia/zelig?
+
+Thanks in advance!
+
+Emily
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110106/40ea488d/attachment.html>
+
+From pmitnik at stanford.edu  Sun Jan 16 22:55:44 2011
+From: pmitnik at stanford.edu (Pablo Mitnik)
+Date: Sun, 16 Jan 2011 19:55:44 -0800
+Subject: [amelia] Multiple imputation in an atypical context
+Message-ID: <4D33BDC0.3010304@stanford.edu>
+
+Dear all,
+
+I need to do multiple imputation in a context that, I believe, is at 
+least somewhat atypical.
+
+I have two datasets. In one dataset, family income is measured in broad 
+dollar intervals (e.g., $0 - $4,999, $5,000 - $9,999, and so forth).  In 
+the other, family income is measured in dollars. Many demographic 
+variables are common to both datasets. I want to do MI of income 
+measured in dollars in the first dataset using the information contained 
+in the second and the interval measure of income included in the first. 
+I have two questions:
+
+(a) Is there any methodological reason NOT to do MI using information in 
+one dataset to impute in the other?
+
+(b) In order to use the information contained in the interval measure of 
+income, I am considering doing MI by interval. That is, I would create 
+as many auxiliary datasets as income intervals there are in the first 
+dataset. Each of these auxiliary datasets would have all observations in 
+that income interval from both original datasets. The idea is to do MI 
+in each auxiliary dataset separately, and then put together MI'ed 
+complete datasets by combining in the obvious way the original 
+observations (including the imputed variable) from all auxiliary 
+datasets, but discarding the observations contributed by the second 
+original dataset. My question is whether this would  be a legit 
+procedure, and whether there may be a better way of achieving my goal.
+
+I would appreciate any help with these issues enormously.
+
+All best,
+
+Pablo Mitnik
+
+-- 
+Pablo A. Mitnik
+Postdoctoral Scholar
+Stanford University (http://www.stanford.edu)
+Center for the Study of Poverty and Inequality 
+(http://stanford.edu/group/scspi-dev/index.html)
+450 Serra Mall, Building 80
+Room 110
+Stanford, CA 94305-2029
+650 724 3889
+pmitnik at stanford.edu
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From blais.martin at uqam.ca  Sun Jan 23 23:13:28 2011
+From: blais.martin at uqam.ca (Blais, Martin)
+Date: Sun, 23 Jan 2011 23:13:28 -0500
+Subject: [amelia] imputation without taking into account the "not applicable" value
+Message-ID: <B3C24EA955FF0C4EA14658997CD3E25E3542D99F@CAHIER.gst.uqam.ca>
+
+Hi
+
+I need to impute data with two types of missing. Some are real missing that I want to impute (participants should have answered the questions, but they skipped it or they were not exposed to it (planned missingness)). Others are "not applicable" items, so I do not want to impute them...
+
+The two types have different codes in the database (888 for N/A and 999 for missing). The problem is that I don't know how to prevent the 888s to be taken as valid value in the imputation model... I want the items to be taken into account in the imputation model when they have a valid value (that is not 888) and to be imputed when their value is 999.
+
+How can I avoid the "not applicable" code 888 being taken as a valid value? Is there an easy way to implement this in AmeliaView? (I do not use R.)
+
+Hope I am clear enough... I could not find any information about this issue (although it must be very common), but I might not have the right keywords.
+
+Very many thanks, 
+Martin
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110123/eba8602c/attachment.html>
+
+From king at harvard.edu  Mon Jan 24 01:26:05 2011
+From: king at harvard.edu (Gary King)
+Date: Sun, 23 Jan 2011 22:26:05 -0800 (PST)
+Subject: [amelia] imputation without taking into account the "not applicable" value
+In-Reply-To: <B3C24EA955FF0C4EA14658997CD3E25E3542D99F@CAHIER.gst.uqam.ca>
+References: <B3C24EA955FF0C4EA14658997CD3E25E3542D99F@CAHIER.gst.uqam.ca>
+Message-ID: <4d3d1b7d.4d8ee50a.3713.2e28@mx.google.com>
+
+either code the NA value as a real value and code and treat it as a number, 
+or impute it and then ignore the imputation and set it back to NA.
+Gary
+--
+*Gary King* - Albert J. Weatherhead III University Professor - Director, 
+IQSS - Harvard University
+GKing.Harvard.edu <http://gking.harvard.edu/> - King at Harvard.edu - @kinggary<http://twitter.com/kinggary>- 617-500-7570 - Asst 495-9271 - Fax 812-8581
+ 
+
+
+On Sun, Jan 23, 2011 at 11:13 PM, Blais, Martin <blais.martin at uqam.ca>wrote:
+
+>  Hi
+>
+> I need to impute data with two types of missing. Some are real missing that 
+> I want to impute (participants should have answered the questions, but they 
+> skipped it or they were not exposed to it (planned missingness)). Others are 
+> "not applicable" items, so I do not want to impute them...
+>
+> The two types have different codes in the database (888 for N/A and 999 for 
+> missing). The problem is that I don't know how to prevent the 888s to be 
+> taken as valid value in the imputation model... I want the items to be taken 
+> into account in the imputation model when they have a valid value (that is 
+> not 888) and to be imputed when their value is 999.
+>
+> How can I avoid the "not applicable" code 888 being taken as a valid value? 
+> Is there an easy way to implement this in AmeliaView? (I do not use R.)
+>
+> Hope I am clear enough... I could not find any information about this issue 
+> (although it must be very common), but I might not have the right keywords.
+>
+> Very many thanks,
+> Martin
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110123/ee253606/attachment.html>
+
+From blackwel at fas.harvard.edu  Tue Jan 25 12:32:21 2011
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Tue, 25 Jan 2011 12:32:21 -0500
+Subject: [amelia] model selection and stepAIC
+In-Reply-To: <AANLkTim9NE68CPO0LoKxPqoXGqGKmtximBUUNxSUa5_o@mail.gmail.com>
+References: <AANLkTim9NE68CPO0LoKxPqoXGqGKmtximBUUNxSUa5_o@mail.gmail.com>
+Message-ID: <AANLkTikWFOwUmWU4dknqgBkQKW8U_phnzZYHzsqfsESd@mail.gmail.com>
+
+Hi Emily,
+
+Unfortunately, we didn't write stepAIC(), so it's not currently
+compatible directly.
+
+One approach you could take is to run stepAIC() on each of the imputed
+datasets (a.out$imputations[[1]] and the like). Then, use a majority
+rule to include terms in the overall model. So, if variable x1
+survives the stepwise elimination in 3 or more imputed data sets, then
+include it in the final zelig model for combined imputation inference
+(the zelig call you currently have). If x1 is eliminated in 3 or more,
+then exclude it from that model.
+
+Cheers,
+matt.
+
+On Thu, Jan 6, 2011 at 2:38 PM, Emily C <lia.bedelia at gmail.com> wrote:
+> Hi,
+> I'm trying to use the stepAIC function after creating a model via zelig like
+> this (where a.out is an amelia object with 5 multiply imputed data sets):
+> m<-zelig(y ~ x1 + x2 + x3 + x4 + x5, data=a.out$imputations, model="negbin")
+>
+> selected<-stepAIC(m, direction="backward")
+>
+> But it gives me this error at the stepAIC step: "Error in
+> terms.default(object) : no terms component"
+> Anyone know how to perform model selection with amelia/zelig?
+> Thanks in advance!
+> Emily
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From blackwel at fas.harvard.edu  Tue Jan 25 12:48:01 2011
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Tue, 25 Jan 2011 12:48:01 -0500
+Subject: [amelia] Multiple imputation in an atypical context
+In-Reply-To: <4D33BDC0.3010304@stanford.edu>
+References: <4D33BDC0.3010304@stanford.edu>
+Message-ID: <AANLkTikDKVPSKTnF9HPj=tBYndO3wY=RWTrLWEVRtMuu@mail.gmail.com>
+
+Hi Pablo,
+
+I'm not sure I completely follow what is happening in your data. If
+both datasets contain information on the same units, the I would merge
+the two datasets by unit, impute family income in dollars, and then
+recreate the imputed intervals based on the categories. That is, if
+the intervals are deterministic functions of the incomes, then the
+goal should be to just impute the dollar incomes.
+
+If you observe the interval but not the dollar value, you could use
+your procedure in (b) along with the "bounds" argument in amelia to
+produce imputations of the dollar income that are consistent with the
+intervals.
+
+Cheers,
+matt.
+
+
+
+On Sun, Jan 16, 2011 at 10:55 PM, Pablo Mitnik <pmitnik at stanford.edu> wrote:
+> Dear all,
+>
+> I need to do multiple imputation in a context that, I believe, is at least
+> somewhat atypical.
+>
+> I have two datasets. In one dataset, family income is measured in broad
+> dollar intervals (e.g., $0 - $4,999, $5,000 - $9,999, and so forth). ?In the
+> other, family income is measured in dollars. Many demographic variables are
+> common to both datasets. I want to do MI of income measured in dollars in
+> the first dataset using the information contained in the second and the
+> interval measure of income included in the first. I have two questions:
+>
+> (a) Is there any methodological reason NOT to do MI using information in one
+> dataset to impute in the other?
+>
+> (b) In order to use the information contained in the interval measure of
+> income, I am considering doing MI by interval. That is, I would create as
+> many auxiliary datasets as income intervals there are in the first dataset.
+> Each of these auxiliary datasets would have all observations in that income
+> interval from both original datasets. The idea is to do MI in each auxiliary
+> dataset separately, and then put together MI'ed complete datasets by
+> combining in the obvious way the original observations (including the
+> imputed variable) from all auxiliary datasets, but discarding the
+> observations contributed by the second original dataset. My question is
+> whether this would ?be a legit procedure, and whether there may be a better
+> way of achieving my goal.
+>
+> I would appreciate any help with these issues enormously.
+>
+> All best,
+>
+> Pablo Mitnik
+>
+> --
+> Pablo A. Mitnik
+> Postdoctoral Scholar
+> Stanford University (http://www.stanford.edu)
+> Center for the Study of Poverty and Inequality
+> (http://stanford.edu/group/scspi-dev/index.html)
+> 450 Serra Mall, Building 80
+> Room 110
+> Stanford, CA 94305-2029
+> 650 724 3889
+> pmitnik at stanford.edu
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+

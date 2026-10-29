@@ -1,0 +1,463 @@
+From hugheskellond at vision.net.au  Thu Dec 11 07:58:27 2008
+From: hugheskellond at vision.net.au (Catherine Hughes)
+Date: Thu, 11 Dec 2008 23:58:27 +1100
+Subject: [amelia] Amelia II query:  large data set and insufficient number of observations
+Message-ID: <8F2BA01AF6F94477AB4FCF26C2EF643A@Hughes>
+
+Hi
+
+I am a PhD student and a statistics novice. I would very much appreciate your advice regarding my approach to using Amelia. I have administered 4 research instruments to 218 study participants. The instruments and number of items in each is as follows:
+
+  1.. CDI - 36 items
+  2.. SDQII - 66 items
+  3.. Parental Bonding Instrument (PBI) - 25 items for Female Parent form and 25 items for Male Parent Form
+  4.. "I am . Test" - yields a single score for each subject.  
+Out of the total sample of 218, only 140 (64.22%) of the total sample provided complete information across all research questionnaires. The proportion of cases with missing data  is consistent with King, Honaker, Joseph, & Scheve's (2001) estimate that on average one third of cases in a data set will have missing values. To preserve as many cases as possible I want to use Amelia II to multiply impute missing values. 
+
+ 
+
+Initially this is what I did:
+
+1.       Data were not MCAR, but MAR assumption appeared to hold, therefore Amelia II seemed promising.
+
+2.       When all items of the CDI, PBI, SDQ, and "I am ." Test were combined into one large data set, the number of cases or observations (n = 218) was only slightly greater than the  number of variables in the combined data set.  Even a ridge prior of 11 (5.05% of 218) was found to be insufficient to estimate the imputations. Following the failure Amelia II to estimate the imputations with the implementation of a moderate ridge prior, the CDI data set, the PBI data set, and the SDQII data set were submitted to Amelia separately. This ensured that the number of observations was adequate for the number of imputations to be estimated by Amelia II. For each of the CDI, SDQ, PBI Mother Form and PBI Father Form, this preserved all cases except where the participant did not provide any data whatsoever for the questionnaire concerned.  The resulting 5 data sets for each instrument were produced.  The "I am Test" could not be submitted to AmeIia II for multiple imputation of missing values because the test yields only one score (the %S score which is the % of Collectivist responses based on content analysis of answers provided by the participant). 
+
+3.       I calculated scale scores for each of the instruments, involving each of the 5 datasets produced by Amelia II for each instrument. The scale scores were to be used for multiple regression analysis.
+
+My new problem is that where study participants did not complete any of the items in an instrument, Amelia II inserted NA in the entire row. This means that there are still missing values in the data set comprised of scale scores that I wish to analyse using multiple regression.  
+
+Another approach I had in mind is to:
+
+1. Before submitting the instruments to Amelia II, calculate scale scores for all instruments, except for cases that have skipped items and therefore have missing values on one or more items in a scale.
+2. Submit the scale scores for all instruments to Amelia II to produce 5 data sets with imputed missing values.
+3. Run multiple regression analysis with each of the 5 datasets comprised of the same obseved and different estimates of missing values for scale scores.
+This approach would mean that Amelia II would be imputing values for missing scale scores even when a study participant did not complete any items whatsoever in the scale concerned, or indeed, the entire instrument.  This is like "getting something out of nothing". Would this be an appropriate or inappropriate use of Amelia II?
+
+Your assistance would be greatly appreciated. I apologise for the length of the query. I also apologise if my query is somewhat elementary.
+
+
+
+Regards
+
+
+
+Cathy Hughes
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20081211/1efebe24/attachment.html>
+
+From king at harvard.edu  Thu Dec 11 10:56:30 2008
+From: king at harvard.edu (Gary King)
+Date: Thu, 11 Dec 2008 10:56:30 -0500
+Subject: [amelia] Amelia II query:  large data set and insufficient number of observations
+In-Reply-To: <8F2BA01AF6F94477AB4FCF26C2EF643A@Hughes>
+References: <8F2BA01AF6F94477AB4FCF26C2EF643A@Hughes>
+Message-ID: <4941382E.1010401@harvard.edu>
+
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20081211/beca5443/attachment.html>
+
+From levi at bigred.unl.edu  Mon Dec 15 05:47:52 2008
+From: levi at bigred.unl.edu (LevI Littvay (UNL))
+Date: Mon, 15 Dec 2008 11:47:52 +0100
+Subject: [amelia] Is this possible to impute
+Message-ID: <0F0DF149-133D-4C2B-A80D-8768CF14ECED@bigred.unl.edu>
+
+Dear Amelia Developers
+
+I have the following situation.  Lets take two independently collected  
+samples from the same population (drawn with the same sampling  
+technique, with low chance of overlap and data collected around the  
+same time).  Sample 1 has variables A and C-E.   Sample 2 has  
+variables B-E.  Both samples have 500 observations.  I merge the  
+datasets so I get a dataset with 1000 observations with variables A  
+through E (where A-E are continuous normal).  A and C-E is observed  
+for the first 500 cases and B-E for case 501-1000.  I can assume that  
+data is missing completely at random.  My imputation model would  
+include all variables (from A-E) and in my analysis model I want to  
+regress A on B for example (correlate A with B).  I just talked to  
+Craig Enders and he verified that this imputation will not work with  
+Proc MI or NORM as the maximum likelihood model is not identified due  
+to no cases where A and B are observed at the same time.  But I know  
+Amelia uses a different procedure.  Is it possible to run this in  
+Amelia and get unbiased results?
+
+Thanks
+
+Levi
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From blackwel at fas.harvard.edu  Mon Dec 15 12:21:40 2008
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Mon, 15 Dec 2008 12:21:40 -0500
+Subject: [amelia] Is this possible to impute
+In-Reply-To: <0F0DF149-133D-4C2B-A80D-8768CF14ECED@bigred.unl.edu>
+References: <0F0DF149-133D-4C2B-A80D-8768CF14ECED@bigred.unl.edu>
+Message-ID: <839691710812150921y731a8ee7ye227bc059bbb1430@mail.gmail.com>
+
+Hi Levi,
+
+Amelia does use a different algorithm for creating imputations, but
+the underlying statistical model is very similar to both NORM and proc
+MI. The long and short of it is that there will be a "ridge" in the
+likelihood because there is no way to determine the correlation
+between A and B from the data. This makes the model unidentified as
+there are an infinite number of parameters that are the MLE (as we can
+arbitrarily change that correlation and not affect the likelihood).
+See Schafer (1997) p51-55 for a concise and clear treatment of this
+issue.
+
+Your best bets are to try and collect *some* observations that are
+observed on both(1) or begin to make strong identifying assumptions.
+Your situation is similar to the fundamental problem of causal
+inference, where we have data on either the potential outcome for
+treatment or the potential outcome for control, but not both on any
+observation. In the causal inference literature, they make strong
+assumptions (exogeneity, ignorability, etc) on how these two variables
+relate in order to make inferences.
+
+Finally, there is always the option to run a Bayesian model with
+informative priors on that correlation. This will change the
+likelihood ridge into a posterior "wide hill" that will have a unique
+mode.
+
+
+(1) It should be noted that collecting information on both is not
+necessarily going to solve the problem as these observations could be
+uninformative. This can happen, when the only observations on A and B
+have the same values for both in each observation. No variation = no
+information.
+
+Hope that helps,
+matt.
+
+
+
+On Mon, Dec 15, 2008 at 5:47 AM, LevI Littvay (UNL) <levi at bigred.unl.edu> wrote:
+> Dear Amelia Developers
+>
+> I have the following situation.  Lets take two independently collected
+> samples from the same population (drawn with the same sampling technique,
+> with low chance of overlap and data collected around the same time).  Sample
+> 1 has variables A and C-E.   Sample 2 has variables B-E.  Both samples have
+> 500 observations.  I merge the datasets so I get a dataset with 1000
+> observations with variables A through E (where A-E are continuous normal).
+>  A and C-E is observed for the first 500 cases and B-E for case 501-1000.  I
+> can assume that data is missing completely at random.  My imputation model
+> would include all variables (from A-E) and in my analysis model I want to
+> regress A on B for example (correlate A with B).  I just talked to Craig
+> Enders and he verified that this imputation will not work with Proc MI or
+> NORM as the maximum likelihood model is not identified due to no cases where
+> A and B are observed at the same time.  But I know Amelia uses a different
+> procedure.  Is it possible to run this in Amelia and get unbiased results?
+>
+> Thanks
+>
+> Levi
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From jreilly at iq.harvard.edu  Mon Dec 15 23:38:13 2008
+From: jreilly at iq.harvard.edu (James Reilly)
+Date: Mon, 15 Dec 2008 23:38:13 -0500
+Subject: [amelia] Is this possible to impute
+In-Reply-To: <839691710812150921y731a8ee7ye227bc059bbb1430@mail.gmail.com>
+References: <0F0DF149-133D-4C2B-A80D-8768CF14ECED@bigred.unl.edu> <839691710812150921y731a8ee7ye227bc059bbb1430@mail.gmail.com>
+Message-ID: <494730B5.5040502@iq.harvard.edu>
+
+Hi Levi,
+
+You may also find some useful ideas in the literature on statistical 
+matching. This usually (though not always) involves assuming that the 
+separately measured variables are conditionally independent given the 
+jointly measured variables. In your context, it would assume that A and 
+B are independent conditional on C, D and E.
+
+You could regress A on B after imputing for A given C, D and E, and 
+imputing for B given C, D and E. The advantage of this approach is that 
+it can be done using your favorite imputation package. It relies on the 
+conditional independence assumption, however, so would give biased 
+results if this assumption fails. You would need to judge how worrisome 
+this would be in your situation. Imputing the whole dataset using a 
+weakly informative prior for the conditional dependence structure, or a 
+variety of stronger priors, may help here.
+
+A more informative approach (assuming it's feasible) is to collect some 
+data jointly on A, B, C, D and E, as Matt suggests.
+
+Hope this helps,
+James
+
+On 15/12/08 12:21 PM, Matt Blackwell wrote:
+> Hi Levi,
+>
+> Amelia does use a different algorithm for creating imputations, but
+> the underlying statistical model is very similar to both NORM and proc
+> MI. The long and short of it is that there will be a "ridge" in the
+> likelihood because there is no way to determine the correlation
+> between A and B from the data. This makes the model unidentified as
+> there are an infinite number of parameters that are the MLE (as we can
+> arbitrarily change that correlation and not affect the likelihood).
+> See Schafer (1997) p51-55 for a concise and clear treatment of this
+> issue.
+>
+> Your best bets are to try and collect *some* observations that are
+> observed on both(1) or begin to make strong identifying assumptions.
+> Your situation is similar to the fundamental problem of causal
+> inference, where we have data on either the potential outcome for
+> treatment or the potential outcome for control, but not both on any
+> observation. In the causal inference literature, they make strong
+> assumptions (exogeneity, ignorability, etc) on how these two variables
+> relate in order to make inferences.
+>
+> Finally, there is always the option to run a Bayesian model with
+> informative priors on that correlation. This will change the
+> likelihood ridge into a posterior "wide hill" that will have a unique
+> mode.
+>
+>
+> (1) It should be noted that collecting information on both is not
+> necessarily going to solve the problem as these observations could be
+> uninformative. This can happen, when the only observations on A and B
+> have the same values for both in each observation. No variation = no
+> information.
+>
+> Hope that helps,
+> matt.
+>
+>
+>
+> On Mon, Dec 15, 2008 at 5:47 AM, LevI Littvay (UNL) <levi at bigred.unl.edu> wrote:
+>   
+>> Dear Amelia Developers
+>>
+>> I have the following situation.  Lets take two independently collected
+>> samples from the same population (drawn with the same sampling technique,
+>> with low chance of overlap and data collected around the same time).  Sample
+>> 1 has variables A and C-E.   Sample 2 has variables B-E.  Both samples have
+>> 500 observations.  I merge the datasets so I get a dataset with 1000
+>> observations with variables A through E (where A-E are continuous normal).
+>>  A and C-E is observed for the first 500 cases and B-E for case 501-1000.  I
+>> can assume that data is missing completely at random.  My imputation model
+>> would include all variables (from A-E) and in my analysis model I want to
+>> regress A on B for example (correlate A with B).  I just talked to Craig
+>> Enders and he verified that this imputation will not work with Proc MI or
+>> NORM as the maximum likelihood model is not identified due to no cases where
+>> A and B are observed at the same time.  But I know Amelia uses a different
+>> procedure.  Is it possible to run this in Amelia and get unbiased results?
+>>
+>> Thanks
+>>
+>> Levi
+>> -
+>> Amelia mailing list served by Harvard-MIT Data Center
+>> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>> More info about Amelia: http://gking.harvard.edu/amelia
+>>
+>>
+>>     
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+>   
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From helenabrownhelen at gmail.com  Tue Dec 23 19:31:25 2008
+From: helenabrownhelen at gmail.com (Helen Brown)
+Date: Tue, 23 Dec 2008 16:31:25 -0800
+Subject: [amelia] Standarda erros
+Message-ID: <f33174dc0812231631j48c7d886occbaa931366644d9@mail.gmail.com>
+
+>
+> hello,
+
+
+a very basic question: why is it that the standard errors (calculated with
+misum) over the 10 imputed datasets with Amelia II are much smaller than the
+ones from my original dataset (even for variables that did not have so many
+missing obs. or at all in the latter)?  Am I doing sth. wrong with the
+imputation process?
+
+thanks so much
+Helen
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20081223/86eaa34c/attachment.html>
+
+From kenneth.scheve at yale.edu  Tue Dec 23 19:41:22 2008
+From: kenneth.scheve at yale.edu (Ken Scheve)
+Date: Tue, 23 Dec 2008 19:41:22 -0500
+Subject: [amelia] Standarda erros
+In-Reply-To: <f33174dc0812231631j48c7d886occbaa931366644d9@mail.gmail.com>
+References: <f33174dc0812231631j48c7d886occbaa931366644d9@mail.gmail.com>
+Message-ID: <49518532.8070408@yale.edu>
+
+Helen,
+
+"misum" gives you the multiple imputation estimate of the mean and the 
+standard error of this estimate. It does not give you the standard 
+deviation of the variable. I suspect you may be comparing these two 
+things and they are not the same thing. Of course, if upon further 
+investigation you see a problem, let me know.
+
+Thanks,
+Ken
+
+Helen Brown wrote:
+>
+>     hello,
+>
+>  
+> a very basic question: why is it that the standard errors (calculated 
+> with misum) over the 10 imputed datasets with Amelia II are much 
+> smaller than the ones from my original dataset (even for variables 
+> that did not have so many missing obs. or at all in the latter)?  Am I 
+> doing sth. wrong with the imputation process?
+>  
+> thanks so much
+> Helen
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From helenabrownhelen at gmail.com  Sun Dec 28 22:21:30 2008
+From: helenabrownhelen at gmail.com (Helen Brown)
+Date: Sun, 28 Dec 2008 19:21:30 -0800
+Subject: [amelia] miest and ivregress?
+Message-ID: <f33174dc0812281921j2c44adf0od560e3e8f6c82f38@mail.gmail.com>
+
+Thank you for the clarification.  I now understand what the output of misum
+means.
+
+I have another doubt, though.  It seems that miest does not support
+ivregress in Stata so I am not sure how to combine the imputed datasets for
+IV-estimation.
+
+Thanks.
+
+Regards,
+Helen
+
+On Tue, Dec 23, 2008 at 4:41 PM, Ken Scheve <kenneth.scheve at yale.edu> wrote:
+
+> Helen,
+>
+> "misum" gives you the multiple imputation estimate of the mean and the
+> standard error of this estimate. It does not give you the standard deviation
+> of the variable. I suspect you may be comparing these two things and they
+> are not the same thing. Of course, if upon further investigation you see a
+> problem, let me know.
+>
+> Thanks,
+> Ken
+>
+>
+> Helen Brown wrote:
+>
+>>
+>>    hello,
+>>
+>>  a very basic question: why is it that the standard errors (calculated
+>> with misum) over the 10 imputed datasets with Amelia II are much smaller
+>> than the ones from my original dataset (even for variables that did not have
+>> so many missing obs. or at all in the latter)?  Am I doing sth. wrong with
+>> the imputation process?
+>>  thanks so much
+>> Helen
+>>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20081228/511c5434/attachment.html>
+
+From kenneth.scheve at yale.edu  Tue Dec 30 07:37:41 2008
+From: kenneth.scheve at yale.edu (Ken Scheve)
+Date: Tue, 30 Dec 2008 07:37:41 -0500
+Subject: [amelia] miest and ivregress?
+In-Reply-To: <f33174dc0812281921j2c44adf0od560e3e8f6c82f38@mail.gmail.com>
+References: <f33174dc0812281921j2c44adf0od560e3e8f6c82f38@mail.gmail.com>
+Message-ID: <495A1615.6010705@yale.edu>
+
+Hi Helen,
+
+Unfortunately, you are correct that "miest" does not support the ivreg 
+command. The simplest thing for you to do is to estimate your model for 
+each of the imputed datasets and then combine the results following the 
+standard formulas (described for example on p. 53 of our article on 
+missing data, available at 
+http://pantheon.yale.edu/~ks298/index_files/Missing2001.pdf). Of course, 
+you could also use the code for "miest" as a template to write code for 
+the ivreg command in stata.
+
+Best wishes,
+Ken
+
+Helen Brown wrote:
+> Thank you for the clarification.  I now understand what the output of 
+> misum means.
+>  
+> I have another doubt, though.  It seems that miest does not support 
+> ivregress in Stata so I am not sure how to combine the imputed 
+> datasets for IV-estimation.
+>  
+> Thanks.
+>  
+> Regards,
+> Helen
+>
+> On Tue, Dec 23, 2008 at 4:41 PM, Ken Scheve <kenneth.scheve at yale.edu 
+> <mailto:kenneth.scheve at yale.edu>> wrote:
+>
+>     Helen,
+>
+>     "misum" gives you the multiple imputation estimate of the mean and
+>     the standard error of this estimate. It does not give you the
+>     standard deviation of the variable. I suspect you may be comparing
+>     these two things and they are not the same thing. Of course, if
+>     upon further investigation you see a problem, let me know.
+>
+>     Thanks,
+>     Ken
+>
+>
+>     Helen Brown wrote:
+>
+>
+>            hello,
+>
+>          a very basic question: why is it that the standard errors
+>         (calculated with misum) over the 10 imputed datasets with
+>         Amelia II are much smaller than the ones from my original
+>         dataset (even for variables that did not have so many missing
+>         obs. or at all in the latter)?  Am I doing sth. wrong with the
+>         imputation process?
+>          thanks so much
+>         Helen
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+

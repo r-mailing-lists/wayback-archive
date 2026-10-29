@@ -1,0 +1,162 @@
+From scott.otterson at iwes.fraunhofer.de  Mon Oct 17 15:07:28 2011
+From: scott.otterson at iwes.fraunhofer.de (Scott Otterson)
+Date: Mon, 17 Oct 2011 21:07:28 +0200
+Subject: [amelia] multiple lags or just one?
+Message-ID: <4E9C99100200009D00000A42@iwesmail-bhv.iwes.fraunhofer.de>
+
+Hello,
+ 
+When Amelia is given a lags or lead argument, does it only include in the model a time advance or delay of one sample, or does it explore multiple lags and pick them with some algorithm?
+ 
+Thanks,
+ 
+Scott
+ 
+ 
+Dr. Scott Otterson
+Abteilung Energiemeteorologie und Netzintegration
+Fraunhofer IWES
+Tel: +49 (0)561 7294-252
+E-Mail: scott.otterson at fraunhofer.iwes.de
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20111017/96056f9f/attachment.html>
+
+From sera.onalan at gmail.com  Sat Oct 22 14:19:41 2011
+From: sera.onalan at gmail.com (Sera Choma)
+Date: Sat, 22 Oct 2011 14:19:41 -0400
+Subject: [amelia] Bounds Issue
+Message-ID: <CAJ8Oq3nwV0DstOiaaHk+98fQzL1b-VghzDkHNSjmV4Y6iZh+XA@mail.gmail.com>
+
+Hi,
+
+I would like to set bounds for some of my variables. For example I have a
+variable that measures the number of health personnel in a given province.
+The min should be 0, but I do not require a max bound. What would be the
+best approach for this type of bound? Should I be setting the max to
+infinity?
+
+Also, I have set a bound for one of my dependent variables that is a
+percentage of votes in a given province. The min is 0 and the max is 1.
+However, when I impute my data the min for this variable is -1.388e-17,
+which is nearly 0. I am not sure why this happens and if it is ok for me to
+keep a negative number (even though it is so small) as my dependent variable
+(that is a proportion). Any suggestions?
+
+Thank you for your help.
+
+Sera
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20111022/7823094d/attachment.html>
+
+From king at harvard.edu  Sat Oct 22 15:40:43 2011
+From: king at harvard.edu (Gary King)
+Date: Sat, 22 Oct 2011 15:40:43 -0400
+Subject: [amelia] Bounds Issue
+In-Reply-To: <CAJ8Oq3nwV0DstOiaaHk+98fQzL1b-VghzDkHNSjmV4Y6iZh+XA@mail.gmail.com>
+References: <CAJ8Oq3nwV0DstOiaaHk+98fQzL1b-VghzDkHNSjmV4Y6iZh+XA@mail.gmail.com>
+Message-ID: <CANHDHZyQ9D7995jM_6Ske7X0VGqQRpy=bB4a7As7WrZgZ9mRAA@mail.gmail.com>
+
+for the first, you can use the square root transformation.  for the second,
+rounding i'm sure will be fine.
+
+Gary
+--
+*Gary King* - Albert J. Weatherhead III University Professor - Director,
+IQSS - Harvard University
+GKing.Harvard.edu <http://gking.harvard.edu/> - King at Harvard.edu -
+@kinggary<http://twitter.com/kinggary>- 617-500-7570 - Asst 495-9271 -
+Fax 812-8581
+
+
+
+On Sat, Oct 22, 2011 at 2:19 PM, Sera Choma <sera.onalan at gmail.com> wrote:
+
+>       Hi,
+>
+> I would like to set bounds for some of my variables. For example I have a
+> variable that measures the number of health personnel in a given province.
+> The min should be 0, but I do not require a max bound. What would be the
+> best approach for this type of bound? Should I be setting the max to
+> infinity?
+>
+> Also, I have set a bound for one of my dependent variables that is a
+> percentage of votes in a given province. The min is 0 and the max is 1.
+> However, when I impute my data the min for this variable is -1.388e-17,
+> which is nearly 0. I am not sure why this happens and if it is ok for me to
+> keep a negative number (even though it is so small) as my dependent
+> variable
+> (that is a proportion). Any suggestions?
+>
+> Thank you for your help.
+>
+> Sera
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20111022/2246f4b3/attachment.html>
+
+From fernandomayer at gmail.com  Tue Oct 25 00:55:50 2011
+From: fernandomayer at gmail.com (Fernando Mayer)
+Date: Tue, 25 Oct 2011 02:55:50 -0200
+Subject: [amelia] Using Amelia and the Central Limit Theorem
+Message-ID: <CAO4bAdPk9dejodpHQMY4kKAp0c01L9N8eLswTwzGgQzKSWROtQ@mail.gmail.com>
+
+Hello Amelia list,
+
+nearly one year ago I've posted a question in this list (it can be
+seen here [1]) about a dataset I was making imputations using Amelia.
+The objective of such imputations is only to complete missing data and
+stop there. No further analysis should be made.
+
+Now I have a similar dataset which I'm trying to impute, with the same
+objective. In summary I'm using Amelia to impute, say m = 15, and
+using the mean and variance of these 15 imputations as my final result
+(more specifically, the mean is the variable of interest). However
+I've noticed that when I make two or more Amelia runs with m = 15, I
+can have very different final results (the means), most possibly due
+to the high variability of the data itself. I understand this is
+normal, since Amelia uses bootstrapped data to generate each
+imputation, so the results are expected to differ. However the high
+discrepancy I'm getting with different Amelia runs is a problem since
+I'm using only the mean of m imputations as the final result. So, if I
+use one Amelia run, my result is totally dependent of what happened in
+this unique run.
+
+What I'm trying to do now is to get more "consistent" results, in the
+sense that my final result is not dependent of only one Amelia run. To
+achieve this, I thought in using the Central Limit Theorem (CLT) to
+get my final mean, as follows:
+
+1) Run the same Amelia model 1000 times, with m = 15
+2) Within each of the 1000 runs I extract the mean of the m
+imputations, so I have 1000 means (assuming that each Amelia run is
+independent from each other, so I treat the means as iid random
+variables)
+3) Calculate the mean from the distribution of these 1000 means, which
+should be normally distributed by the CLT (and that E(\bar{X}) = \mu
+and Var(\bar{X}) = \sigma^2/n).
+
+I've made a few runs of 1000 Amelia runs following this pseudo-code,
+and the final result is very similar among them (i.e. they have almost
+identical normal distributions and very similar final means). For me
+this sounds more reasonable to use than one only Amelia run to extract
+a mean, but I would like to hear yours opinion about this, and in
+particular if this is a valid methodology to do what I'm trying to do
+with Amelia.
+
+Thank you very much in advance.
+
+[1] http://lists.gking.harvard.edu/lists/amelia/2010_09/msg00012.html
+
+---
+Fernando Mayer
+URL: http://sites.google.com/site/fernandomayer
+e-mail: fernandomayer [@] gmail.com
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+

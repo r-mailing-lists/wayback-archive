@@ -1,0 +1,370 @@
+From king at harvard.edu  Mon Nov 11 16:13:08 2002
+From: king at harvard.edu (Gary King)
+Date: Mon, 11 Nov 2002 16:13:08 -0500 (EST)
+Subject: [relogit] Re: Logistic regression in Rare Events Data
+In-Reply-To: <3DCFA4E4.20987.3C6D3C@localhost>
+Message-ID: <Pine.LNX.4.44.0211111610110.25317-100000@willow.harvard.edu>
+
+
+We show empirically and theoretically that Pr(Y=1)=p is underestimated in
+logistic regression (at the stage of computing the coefficients and again
+at the stage of computing p given the coefficients).  this also implies
+that 1-p is overestimated.  the two cancel each other out in your
+calculation, which means that the calculation doesn't bear on the issue of
+bias.
+
+Gary King
+
+     : Gary King, King at Harvard.Edu    http://GKing.Harvard.Edu :
+     : Center for Basic Research      Direct    (617) 495-2027 :
+     :   in the Social Sciences       Assistant (617) 495-9271 :
+     : 34 Kirkland Street, Rm. 2      HU-MIT DC (617) 495-4734 :
+     : Harvard U, Cambridge, MA 02138    eFax   (928) 832-7022 :
+
+
+
+On Mon, 11 Nov 2002, Harald Scheule wrote:
+
+> Dear professor King,
+> 
+> I am working at the business faculty of the University of Regensburg, 
+> Germany and we are estimating the probabilities of corporate defaults using 
+> logistic regression models. With this background I have read your article 
+> "Logistic regression in Rare Events Data" with great interest. 
+> 
+> In Chapter 5: Rare Event, Finite Sample Corrections you argue that the 
+> probability for an event is underestimated because of rare events and  
+> randomness of the estimated paramter.
+> 
+> What I do not understand is: If I run a logistic regression e.g. with PROC 
+> LOGISTIC in SAS and estimate the default probabilities, their sum equals the 
+> observed sum of events. If probabilities are underestimated, shouldn't their 
+> sum be lower that the observed number of events?
+> 
+> I would be very thankful if you could help me to solve my problem
+> 
+> 
+> Harald Scheule_________________
+> 
+> Harald Scheule
+> Dipl.-Kfm.
+> Lehrstuhl f?r Statistik
+> Universit?t Regensburg
+> 93040 Regensburg
+> Germany
+> 
+> Tel.: +49 (0)941/943-2287
+> Fax.: +49 (0)941/943-4936
+> ________________
+> 
+
+
+-
+relogit mailing list served by Harvard-MIT Data Center
+List Address: relogit at latte.harvard.edu
+Subscribe/Unsubscribe: http://lists.hmdc.harvard.edu/?info=relogit
+
+
+From king at harvard.edu  Mon Nov 11 16:19:35 2002
+From: king at harvard.edu (Gary King)
+Date: Mon, 11 Nov 2002 16:19:35 -0500 (EST)
+Subject: [relogit] Re: FW: [S] general statistical issue: weighting observations in
+ logi
+In-Reply-To: <BFA37DCFEBFCD4119B6C00D0B7910D5D01A712B6@RFC1918-Host>
+Message-ID: <Pine.LNX.4.44.0211111615180.25317-100000@willow.harvard.edu>
+
+
+Thanks for your note.  The best way to fix the two forms of bias in rare 
+events logistic regression is to use one of the techniques we discussed in 
+the paper you cite.  Weighting so that they have a 50:50 distribution 
+would not help since you'd have to weight it back down (using what we call 
+prior correction or weighting) to get unbiased estimates.
+
+the point that is easy to confuse is that there are 2 things going on.  
+first is in case-control data, you must correct for the fact that you're 
+sampling retrospectively.  Then whether or not you have case-control data 
+or prospectively collected data, "rare events" is defined as the fraction 
+of y's in the population, not in your sample.  With rare events, logistic 
+regression (or logistic regression with a correction for case-control 
+sampling) underestimates Pr(Y=1).  the corrections we discuss will fix 
+this problem.
+
+
+Gary King
+David Florence Professor of Government 
+Director, Harvard-MIT Data Center
+
+http://GKing.Harvard.Edu, King at Harvard.Edu    
+Direct (617) 495-2027, Assistant (617) 495-9271
+Data Center (617) 495-4734, eFax (928) 832-7022
+
+
+On Mon, 11 Nov 2002, Siwik, Thomas (DE - Duesseldorf) wrote:
+
+> Bitte beachten Sie zun?chst die Informationen am Ende dieser E-Mail / at
+> first please note the information at the end of this email 
+> ----------------------------------------------------------------------------
+> 
+> 
+> 
+> Dear Mr. King,
+> 
+> I found at your HP the interesting paper:
+> Logistic Regression in Rare Events Data
+> Gary King & Langche Zeng
+> 
+> I have to evaluate an logistic regression, in which
+> the rare events are weighted equally to the frequent events
+> to avoid the problem of bias of coefficients.  
+> 
+> May I allowed to ask an expert on that field two simple question:
+> - Is a 50%/50%-weighting an appropriate method to avoid bias?
+> - Aren't the drawbacks even worse biased betas and the risk
+> of overfitting the rare events?
+> 
+> I cannot find any reliable reference emphasizing this method.
+> However, may be it makes sense as an easy to apply rule of thumb.
+> 
+> Forth following I have attached the short discussion I have initiated
+> at the s-news-list.
+> 
+> Thank you & Best regards
+> Thomas Siwik
+> ________________________________________________
+> 
+>   Dr. Thomas Siwik
+>   Deloitte & Touche
+>   Financial Risk Solutions
+>   Bahnstrasse 16
+>   40212 Duesseldorf 
+>   Germany
+> 
+>   eMail:   tsiwik at deloitte.de
+>   Fon:     ++49.(0)211.8772 - 147 / - 133
+>   Fax:     ++49.(0)211.8772 - 443
+>   http:     www.deloitte.de/Dienstl/Bran-fr1.htm
+> ________________________________________________
+> 
+> 
+> -----Original Message-----
+> From: Siwik, Thomas (DE - Duesseldorf) [mailto:tsiwik at deloitte.de]
+> Sent: Montag, 4. November 2002 20:24
+> To: 'Hongjiew at aol.com'
+> Cc: 's-news at lists.biostat.wustl.edu'
+> Subject: Re: [S] general statistical issue: weighting observations in
+> logi
+> 
+> > Statistician (1999). One of the nice properties of logistic 
+> > regression (not sure it carries over to general logit models) 
+> > is that if oversample is done based on the response variable, 
+> > the coefficients estimates of the predictors are not changed. 
+> > Only the intercept needs to be adjusted. There are researches
+> 
+> I understand your point. If one gives weight lambda to the
+> observations with Y=1 the odds-ratio is - heuristically speaking -
+> changed by lambda as well. That results in an adjustment of the
+> intercept.
+> 
+> However, couldn't it be an asympthotic property of the
+> predictors? I tried to find your assertion in the normal equation:
+> lambda*Sum(P(Y=0|x_i)*x_i;i|y_i=1) = Sum(P(Y=1|x_i)*x_i;i|y_i=0)
+> If this equation is re-written with the adjusted P(Y) there
+> remains still a term, which vanishes only for T->infinity. Maybe
+> I put it wrong, but additionally I ran an example in S+ showing
+> different estimates for all coefficients.
+> 
+> My intuition tells me that the overweighting of rare events
+> causes overfitting and high sensibility to rare events. It
+> seems to me to be not an appropriate method to reduce a possible
+> bias of predictors of rare events.
+> 
+> I found a very readable paper illustrating the problem of
+> rare events:
+> Logistic Regression in Rare Events Data
+> Gary King & Langche Zeng
+> http://gking.harvard.edu
+> 
+> Thomas
+> 
+> > -----Original Message-----
+> > From: Hongjiew at aol.com [mailto:Hongjiew at aol.com]
+> > Sent: Donnerstag, 31. Oktober 2002 17:48
+> > To: fharrell at virginia.edu; dcts at dcts.de
+> > Cc: s-news at lists.biostat.wustl.edu
+> > Subject: Re: [S] general statistical issue: weighting observations in
+> > logit-regression
+> > 
+> > 
+> > I agree that if any weighted sampling is used, the parameters 
+> > need to be adjusted to make valid inference on the original 
+> > population. But there might be practical reasons to use 
+> > response based sampling. In the area I am in (database 
+> > marketing), we frequently encounter situation where the 
+> > occurrences of events are very "rare" or E(Y=1)<=0.01 for 
+> > example. There will be computational problems associated with 
+> > the prediction, see "Predictive performance of the binary 
+> > logit model in unbalanced samples" by J. S Cramer in "The 
+> > Statistician (1999). One of the nice properties of logistic 
+> > regression (not sure it carries over to general logit models) 
+> > is that if oversample is done based on the response variable, 
+> > the coefficients estimates of the predictors are not changed. 
+> > Only the intercept needs to be adjusted. There are researches 
+> > on the area of comparing statistical efficiency between 
+> > multiple sampling schemes in logistic regression setting. For 
+> > example, if N (overall population) =100K where 10% of them 
+> > Y=1.One may take a response based sample (so #y=1 is close to 
+> > #y=0) and one may make a true random sample. The first sample 
+> > usually can be much smaller than the second one to generate 
+> > comparable estimates (see " The effect of sample size and 
+> > proportion of buyers in the sample on the performance of list 
+> > segmentation equations generated by regression analysis" by 
+> > Berger and Magliozzi in Journal of direct marketing. 
+> > 
+> >  
+> > 
+> > 
+> > 
+> > In a message dated 10/30/2002 8:27:15 PM Eastern Standard 
+> > Time, fharrell at virginia.edu writes:
+> > 
+> > > 
+> > > 
+> > > On Wed, 30 Oct 2002 23:22:05 +0100
+> > > DCTS <dcts at dcts.de> wrote:
+> > > 
+> > > > 
+> > > > I am confronted with a Logit-regression, in which y=0 is 
+> > much less frequent
+> > > > than y=1. It is argued that the less frequent 
+> > observations with y=0 should
+> > > > receive higher weights in the regression, such that the 
+> > proportion is
+> > > > balanced between Ys being 0 and 1.
+> > > 
+> > > Who argues that?  No, you don't want to distort the data.  
+> > If your sample is a random sample from the population to 
+> > which you want to infer, then rely on maximum likelihood to 
+> > give good parameter estimates.  You weight observations if 
+> > you oversampled a segment of the population and you want to 
+> > represent the original population [even then don't always 
+> > weight as this reduces efficiency when compared with 
+> > covariate adjustment for oversampling factors].
+> > > 
+> > > Frank Harrell
+> > > 
+> > > > 
+> > > > To my knowledge there are usually two motivations to use 
+> > weights others than
+> > > > unity:
+> > > > - prior knowledge of the probability of y=0
+> > > > - optimisation of a cost function (in the example above 
+> > y=0 is much more
+> > > > expensive and should be predicted with higher attention)
+> > > > 
+> > > > In my limited econometric library and in the internet I 
+> > wasn't able to find
+> > > > a discussion on the issue of weighting observations. If 
+> > someone has a good
+> > > > hint to a source or could sketch the ideas of 
+> > consequences, pros and cons I
+> > > > would be very pleased.
+> > > > 
+> > > > 
+> > > > Thank you,
+> > > > Thomas
+> > > > 
+> > > > 
+> > --------------------------------------------------------------------
+> > > > This message was distributed by 
+> > s-news at lists.biostat.wustl.edu.  To
+> > > > unsubscribe send e-mail to 
+> > s-news-request at lists.biostat.wustl.edu with
+> > > > the BODY of the message:  unsubscribe s-news
+> > > 
+> > > 
+> > > -- 
+> > > Frank E Harrell Jr              Prof. of Biostatistics & Statistics
+> > > Div. of Biostatistics & Epidem. Dept. of Health Evaluation Sciences
+> > > U. Virginia School of Medicine  
+> > http://hesweb1.med.virginia.edu/biostat
+> > > --------------------------------------------------------------------
+> 
+> ----------------------------------------------------------------------------
+> 
+> Diese Nachricht und jeder ?bermittelte Anhang beinhaltet vertrauliche
+> Informationen und ist nur f?r die Personen oder das Unternehmen bestimmt, an
+> welche sie tats?chlich gerichtet ist. 
+> Sollten Sie nicht der Bestimmungsempf?nger sein, weisen wir Sie darauf hin,
+> dass die Verbreitung, das (auch teilweise) Kopieren sowie der Gebrauch der
+> empfangenen E-Mail und der darin enthaltenen Informationen gesetzlich
+> verboten ist und gegebenenfalls Schadensersatzpflichten ausl?sen kann.
+> Sollten Sie diese Nachricht aufgrund eines ?bermittlungsfehlers erhalten
+> haben, bitten wir Sie, den Sender unverz?glich hiervon in Kenntnis zu
+> setzen. 
+> Sicherheitswarnung: Bitte beachten Sie, dass das Internet kein sicheres
+> Kommunikationsmedium ist. Obwohl wir im Rahmen unseres Qualit?tsmanagements
+> und der gebotenen Sorgfalt Schritte eingeleitet haben, um einen
+> Computervirenbefall weitestgehend zu verhindern, k?nnen wir wegen der Natur
+> des Internet das Risiko eines Computervirenbefalls dieser E-Mail nicht
+> ausschliessen. 
+> This message (including any attachments) contains confidential information
+> intended for a specific individual or entity as the intended recipient. 
+> If you are not the intended recipient, you are hereby notified that any
+> distribution, any copying of this message in part or in whole, or any taking
+> of action based on it, is strictly prohibited by law and may cause
+> liability. In case you have received this message due to an error in
+> transmission, we ask you to notify the sender immediately. 
+> Safety warning: Please note that the Internet is not a safe means of
+> communication or form of media. Although we are continuously increasing our
+> due care of preventing virus attacks as a part of our Quality Management, we
+> are not able to fully prevent virus attacks as a result of the nature of the
+> Internet. 
+> ----------------------------------------------------------------------------
+> 
+
+
+-
+relogit mailing list served by Harvard-MIT Data Center
+List Address: relogit at latte.harvard.edu
+Subscribe/Unsubscribe: http://lists.hmdc.harvard.edu/?info=relogit
+
+
+From king at harvard.edu  Tue Nov 12 16:05:39 2002
+From: king at harvard.edu (Gary King)
+Date: Tue, 12 Nov 2002 16:05:39 -0500 (EST)
+Subject: [relogit] Re: download
+In-Reply-To: <3DD170EA.F05209C4@ksu.edu>
+Message-ID: <Pine.LNX.4.44.0211121604170.488-100000@willow.harvard.edu>
+
+
+download relogit.zip from my web page, and follow the directions in the 
+readme.txt file.
+
+thanks for the kind words.
+
+Gary King
+
+     : Gary King, King at Harvard.Edu    http://GKing.Harvard.Edu :
+     : Center for Basic Research      Direct    (617) 495-2027 :
+     :   in the Social Sciences       Assistant (617) 495-9271 :
+     : 34 Kirkland Street, Rm. 2      HU-MIT DC (617) 495-4734 :
+     : Harvard U, Cambridge, MA 02138    eFax   (928) 832-7022 :
+
+On Tue, 12 Nov 2002, Kisangani Emizet wrote:
+
+> Dear Professor King:
+> 
+> Your argument criticizing "fixed effects" advocated by Green, Kim, and
+> Yoon was a time and "sample" saver.  I tried to run "relogit" with
+> Stata7, but couldn't.  What should I do to download or run it?
+> Thanks
+> Kisangani Emizet
+> 
+
+
+-
+relogit mailing list served by Harvard-MIT Data Center
+List Address: relogit at latte.harvard.edu
+Subscribe/Unsubscribe: http://lists.hmdc.harvard.edu/?info=relogit
+
+

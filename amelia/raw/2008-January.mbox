@@ -1,0 +1,925 @@
+From corr at fas.harvard.edu  Sun Jan  6 10:42:11 2008
+From: corr at fas.harvard.edu (Anders Schwartz Corr)
+Date: Sun, 6 Jan 2008 10:42:11 -0500 (EST)
+Subject: [amelia] NAs are not allowed in subscripted assignments
+Message-ID: <Pine.LNX.4.64.0801061028350.7619@ls03.fas.harvard.edu>
+
+
+Hi,
+
+I got the following error message from Amelia:
+
+> ameliaoutput10<-amelia(merge24, 
+p2s=2,lgstc=c(8,9,33,40,82:96),ords=c(10,37,38,39,49,50,51,52,53,72:81),
+logs=c(3:7,25,26,29,36,41:47,54:71),ts=1,cs=2,polytime=2,intercs=TRUE, 
+archive=TRUE)
+
+amelia starting
+beginning prep functions
+running bootstrap
+-- Imputation 1 --
+setting up EM chain indicies
+
+  1(347357!) 2(51802!) 3(45797!) 4(40634!) 5(46795!) 6(40806!) 7(40043!) 
+8(35876!) 9(33598!)10(34136!)
+11(28776!)12(25746!)13(23438!)14(21293!)15(30009!)16(32754!)17(24128!)18(23706!)19
+
+Loading required package: foreign
+Error in e[e > tol] <- 1/e[e > tol] :
+   NAs are not allowed in subscripted assignments
+Calls: amelia -> emarch -> emfred -> amsweep -> mpinv
+Execution halted
+
+Any suggestions?
+
+Thanks,
+
+Anders
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From tercer at ucla.edu  Mon Jan  7 04:51:48 2008
+From: tercer at ucla.edu (James Honaker)
+Date: Mon, 7 Jan 2008 01:51:48 -0800 (PST)
+Subject: [amelia] NAs are not allowed in subscripted assignments
+In-Reply-To: <Pine.LNX.4.64.0801061028350.7619@ls03.fas.harvard.edu>
+References: <Pine.LNX.4.64.0801061028350.7619@ls03.fas.harvard.edu>
+Message-ID: <Pine.GSO.4.60.0801070120280.10599@weber.sscnet.ucla.edu>
+
+
+Anders,
+
+Clearly the code is crashing out, and that is something I would like to 
+fix.  If you have the ability to send me the dataset I'll find out exactly 
+what is going on.
+
+However, in the short term, the "!" sign, which you see after every 
+iteration denotes that covariance matrix created at the end of the E-step 
+is not positive definite.  Sometimes this happens with EM algorithms, and 
+generally they get back into positive definite territory after a couple 
+iterations and it is nothing to worry about if it is early in the chain.
+
+In your case, from the end of step one until things crash, you never leave 
+a non-positive definite space.  My guess then is poor starting values for 
+the EM chain.  I don't see starting values modified as an option in your amelia() call. 
+You might try amelia(...,startvals=1).
+
+The default of "startvals=0" uses the covariance matrix of the 
+list-wise deleted dataset.  Changing to "startvals=1" uses an identity 
+matrix, after a normalizing transformation where all variables have mean 
+0, variance 1.  Thus, the starting value is essentially the observed 
+variances in the incomplete dataset, and covariances equal to 0.  If there 
+are not enough observations to use startvals=0, amelia automatically 
+switches to startval=1.  Therefore, it's possible that making this change 
+in your options will have zero effect, as it is already being done by 
+necessity.  There are more complicated ways of creating starting values if 
+this change still does not work for you.
+
+Anyway, in short, I'd like to get this error fixed so that such a problem 
+never crashes the code in future (so send me your dataset if that is 
+allowable/convenient), but changing the starting values of the EM chain is 
+a probable way to get you up and running in your particular case.
+
+(Thanks for sending the p2s=2 screen output.  That is what showed what the 
+root cause of the problem was.  I'm not sure all the commenting symbols 
+like the "!" you found are in the current manual, but they will be in the 
+next draft.)
+
+Just as a final note, it looks like your dataset is very large--at 
+least 96 variables BEFORE adding polynomials of time interacted with 
+cross-section.  Getting up there.  Computationally, I'm not certain what 
+the upper bound is on the current algorithm.  Although it was engineered 
+with large datasets specificially in mind, someone always has something 
+even larger.  A useful approach (which you may already have tried) is to 
+start with a pared-back dataset and then keep adding subsets of variables 
+and see which are giving you problems.  That might jog your thinking about 
+whether you are accidentally violating any of the linearity and 
+identification assumptions.
+
+regards,
+James.
+
+
+On Sun, 6 Jan 2008, Anders Schwartz Corr wrote:
+
+>
+> Hi,
+>
+> I got the following error message from Amelia:
+>
+>> ameliaoutput10<-amelia(merge24, 
+> p2s=2,lgstc=c(8,9,33,40,82:96),ords=c(10,37,38,39,49,50,51,52,53,72:81),
+> logs=c(3:7,25,26,29,36,41:47,54:71),ts=1,cs=2,polytime=2,intercs=TRUE, 
+> archive=TRUE)
+>
+> amelia starting
+> beginning prep functions
+> running bootstrap
+> -- Imputation 1 --
+> setting up EM chain indicies
+>
+> 1(347357!) 2(51802!) 3(45797!) 4(40634!) 5(46795!) 6(40806!) 7(40043!) 
+> 8(35876!) 9(33598!)10(34136!)
+> 11(28776!)12(25746!)13(23438!)14(21293!)15(30009!)16(32754!)17(24128!)18(23706!)19
+>
+> Loading required package: foreign
+> Error in e[e > tol] <- 1/e[e > tol] :
+>  NAs are not allowed in subscripted assignments
+> Calls: amelia -> emarch -> emfred -> amsweep -> mpinv
+> Execution halted
+>
+> Any suggestions?
+>
+> Thanks,
+>
+> Anders
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From blais.martin at uqam.ca  Tue Jan 29 17:06:03 2008
+From: blais.martin at uqam.ca (Blais, Martin)
+Date: Tue, 29 Jan 2008 17:06:03 -0500
+Subject: [amelia] longitudinal data imputation
+In-Reply-To: <Pine.GSO.4.60.0801070120280.10599@weber.sscnet.ucla.edu>
+References: <Pine.LNX.4.64.0801061028350.7619@ls03.fas.harvard.edu> <Pine.GSO.4.60.0801070120280.10599@weber.sscnet.ucla.edu>
+Message-ID: <B3C24EA955FF0C4EA14658997CD3E25E19A1C9F7@CAHIER.gst.uqam.ca>
+
+Hello
+
+We are using longitudinal data (3 time-point) to evaluate the effects of an intervention program. We have missing data (about 80% of missing cases at T2 for the control group and some missing cases for both experimental and control group at T3) and want to impute missing data using Amelia II.
+
+I am looking for detail procedures for imputation of longitudinal missing data with Amelia II to answer simple questions like: Should the data be organised in long or wide format? Are there any tutorials (website, technical papers) available for this purpose beside the Amelia II documentation?
+
+Any reference on imputation of longitudinal data (mostly about the options and the best practices in the context of program evaluation) are also welcome.
+
+Very many thanks for any help,
+
+
+
+Martin Blais, Ph.D.
+Professeur
+D?partement de sexologie
+Universit? du Qu?bec ? Montr?al
+C.P. 8888, succ. Centre-ville
+Montr?al (Qu?bec)
+Canada?????H3C 3P8
+?
+Vox : (514) 987-3000 poste 4031
+Fax :?(514) 987-6787
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From king at harvard.edu  Tue Jan 29 18:32:28 2008
+From: king at harvard.edu (Gary  King)
+Date: Tue, 29 Jan 2008 23:32:28 +0000
+Subject: [amelia] longitudinal data imputation
+In-Reply-To: <B3C24EA955FF0C4EA14658997CD3E25E19A1C9F7@CAHIER.gst.uqam.ca>
+References: <Pine.LNX.4.64.0801061028350.7619@ls03.fas.harvard.edu> <Pine.GSO.4.60.0801070120280.10599@weber.sscnet.ucla.edu><B3C24EA955FF0C4EA14658997CD3E25E19A1C9F7@CAHIER.gst.uqam.ca>
+Message-ID: <792832393-1201649548-cardhu_decombobulator_blackberry.rim.net-1733938105-@bxe022.bisx.prod.on.blackberry>
+
+
+Have a look at the paper by Honaker and King on this subject at the web site. That and the manual should do it. 
+
+---
+Sent from my phone; please excuse the terse note.
+Gary King
+http://gking.harvard.edu
+
+
+-----Original Message-----
+From: "Blais, Martin" <blais.martin at uqam.ca>
+
+Date: Tue, 29 Jan 2008 17:06:03 
+To:amelia at lists.gking.harvard.edu
+Cc:"Raymond, Sarah" <raymond.sarah at uqam.ca>
+Subject: [amelia] longitudinal data imputation
+
+
+Hello
+
+We are using longitudinal data (3 time-point) to evaluate the effects of an intervention program. We have missing data (about 80% of missing cases at T2 for the control group and some missing cases for both experimental and control group at T3) and want to impute missing data using Amelia II.
+
+I am looking for detail procedures for imputation of longitudinal missing data with Amelia II to answer simple questions like: Should the data be organised in long or wide format? Are there any tutorials (website, technical papers) available for this purpose beside the Amelia II documentation?
+
+Any reference on imputation of longitudinal data (mostly about the options and the best practices in the context of program evaluation) are also welcome.
+
+Very many thanks for any help,
+
+
+
+Martin Blais, Ph.D.
+Professeur
+D?partement de sexologie
+Universit? du Qu?bec ? Montr?al
+C.P. 8888, succ. Centre-ville
+Montr?al (Qu?bec)
+Canada?????H3C 3P8
+?
+Vox : (514) 987-3000 poste 4031
+Fax :?(514) 987-6787
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+From blais.martin at uqam.ca  Tue Jan 29 20:56:30 2008
+From: blais.martin at uqam.ca (Blais, Martin)
+Date: Tue, 29 Jan 2008 20:56:30 -0500
+Subject: [amelia] longitudinal data imputation
+References: <Pine.LNX.4.64.0801061028350.7619@ls03.fas.harvard.edu> <Pine.GSO.4.60.0801070120280.10599@weber.sscnet.ucla.edu><B3C24EA955FF0C4EA14658997CD3E25E19A1C9F7@CAHIER.gst.uqam.ca> <792832393-1201649548-cardhu_decombobulator_blackberry.rim.net-1733938105-@bxe022.bisx.prod.on.blackberry>
+Message-ID: <B3C24EA955FF0C4EA14658997CD3E25E124EF2C9@CAHIER.gst.uqam.ca>
+
+
+Thank you, I'll have a look to it!
+
+Martin
+
+
+
+-------- Message d'origine--------
+De: Gary  King [mailto:king at harvard.edu]
+Date: mar. 2008-01-29 18:32
+?: Blais, Martin; amelia at lists.gking.harvard.edu
+Cc: Raymond, Sarah
+Objet : Re: [amelia] longitudinal data imputation
+ 
+
+Have a look at the paper by Honaker and King on this subject at the web site. That and the manual should do it. 
+
+---
+Sent from my phone; please excuse the terse note.
+Gary King
+http://gking.harvard.edu
+
+
+-----Original Message-----
+From: "Blais, Martin" <blais.martin at uqam.ca>
+
+Date: Tue, 29 Jan 2008 17:06:03 
+To:amelia at lists.gking.harvard.edu
+Cc:"Raymond, Sarah" <raymond.sarah at uqam.ca>
+Subject: [amelia] longitudinal data imputation
+
+
+Hello
+
+We are using longitudinal data (3 time-point) to evaluate the effects of an intervention program. We have missing data (about 80% of missing cases at T2 for the control group and some missing cases for both experimental and control group at T3) and want to impute missing data using Amelia II.
+
+I am looking for detail procedures for imputation of longitudinal missing data with Amelia II to answer simple questions like: Should the data be organised in long or wide format? Are there any tutorials (website, technical papers) available for this purpose beside the Amelia II documentation?
+
+Any reference on imputation of longitudinal data (mostly about the options and the best practices in the context of program evaluation) are also welcome.
+
+Very many thanks for any help,
+
+
+
+Martin Blais, Ph.D.
+Professeur
+D?partement de sexologie
+Universit? du Qu?bec ? Montr?al
+C.P. 8888, succ. Centre-ville
+Montr?al (Qu?bec)
+Canada     H3C 3P8
+ 
+Vox : (514) 987-3000 poste 4031
+Fax : (514) 987-6787
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20080129/edab2dc6/attachment.html>
+
+From ari at ftml.net  Wed Jan 30 06:08:57 2008
+From: ari at ftml.net (Ari Ho-Foster (ari@ciet.org))
+Date: Wed, 30 Jan 2008 13:08:57 +0200
+Subject: [amelia] error code 1 from Lapack routine 'dgesdd'
+In-Reply-To: <courier.0000000047A045A0.00004884@mail-1.hmdc.harvard.edu>
+References: <courier.0000000047A045A0.00004884@mail-1.hmdc.harvard.edu>
+Message-ID: <007a01c86330$8769ff70$4001a8c0@HOFOSTER>
+
+Hello 
+
+I am a new user of Amelia II, and multiple imputation in general. In trying
+to run an imputation on a rather large dataset, I have come across the error
+below. 
+
+Looking through the list's archives, I see it is advisable to work with
+pared-back datasets containing subsets of variables, to see where the
+problem is. I will try that, however I wondered if this error might have
+arisen from another issue?
+
+I would be grateful for any assistance anyone could offer.
+
+Thanks
+
+Ari Ho-Foster
+Research Associate
+CIET
+
+> x<-read.dbf("2c2qa")
+> 
+> amelia(x, m=5, p2s=2, frontend=FALSE, 
++ idvars = c(1L, 17L, 93L, 111L, 134L, 135L, 136L, 137L, 138L, 139L, 
++ 140L, 141L), 
++ logs=NULL, ts=NULL, cs=NULL, casepri=NULL, priors=NULL, empri=NULL,
+tolerance=0.0005, 
++ polytime=NULL, startvals=1, lags=NULL, leads=NULL, intercs=FALSE,
+archive=TRUE, sqrts=NULL, 
++ lgstc=NULL, 
++ noms = c(3L, 7L, 8L, 9L, 10L, 11L, 12L, 13L, 14L, 15L, 16L, 18L, 
++ 19L, 20L, 21L, 22L, 23L, 24L, 25L, 26L, 27L, 28L, 29L, 30L, 31L, 
++ 32L, 33L, 34L, 35L, 36L, 37L, 38L, 39L, 40L, 41L, 42L, 43L, 44L, 
++ 45L, 46L, 47L, 48L, 49L, 50L, 51L, 52L, 53L, 54L, 55L, 56L, 57L, 
++ 58L, 59L, 60L, 61L, 62L, 63L, 64L, 65L, 66L, 67L, 68L, 69L, 70L, 
++ 71L, 72L, 73L, 74L, 75L, 76L, 77L, 78L, 79L, 80L, 81L, 82L, 83L, 
++ 84L, 85L, 86L, 87L, 88L, 89L, 90L, 91L, 92L, 94L, 95L, 96L, 97L, 
++ 99L, 100L, 101L, 103L, 104L, 105L, 106L, 107L, 108L, 109L, 110L, 
++ 112L, 113L, 114L, 115L, 116L, 117L, 118L, 119L, 120L, 121L, 122L, 
++ 123L, 124L, 125L, 126L, 127L, 128L, 129L, 130L, 131L, 132L, 133L), 
++ incheck=T, 
++ ords = c(2L, 4L, 5L, 6L, 98L, 102L), collect=FALSE, outname="2c2qaMI",
+write.out=TRUE, arglist=NULL, keep.data=TRUE) 
+
+amelia starting
+beginning prep functions
+running bootstrap
+-- Imputation 1 --
+setting up EM chain indicies
+
+ 1(22546) 2(16875) 3(5120) 4(2514) 5(1999) 6(1816!) 7Error in La.svd(x, nu,
+nv) : error code 1 from Lapack routine 'dgesdd'
+
+No virus found in this outgoing message.
+Checked by AVG Free Edition. 
+Version: 7.5.516 / Virus Database: 269.19.16/1250 - Release Date: 29/01/2008
+22:20
+ 
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From josephnathancohen at yahoo.com  Wed Jan 30 08:03:42 2008
+From: josephnathancohen at yahoo.com (Joseph Cohen)
+Date: Wed, 30 Jan 2008 05:03:42 -0800 (PST)
+Subject: [amelia] longitudinal data imputation
+Message-ID: <194110.26060.qm@web60125.mail.yahoo.com>
+
+I have encountered this question in my own research recently, although with large-T, small-N data.  For what it's worth, this is what I've pieced together from the manuals and paper, and my other readings.  Can anyone tell me if I'm way off on this?
+
+There will always be some uncertainty about our estimates, because
+they are simulations that represent possible values of data that we do
+not have. The only sure-fire means of validating the imputations is to
+have the actual values, which would eliminate the need for imputation.
+Ultimately, you have to make a judgment about the credibility of the
+imputation model itself ? does it create reasonable estimates?
+
+ 
+
+AMELIA II offers two diagnostics tools for judging imputed values ?
+compare and overimpute (both explained in Prof. King's recommended readings). 
+
+
+
+The former command lets you compare the distribution of
+reported and imputed variable?s values. Ask yourself, should the missing values have
+the same distribution as reported values, or should their distribution
+have a different central tendency, dispersion and/or skew than the
+reported values?  The graphs produced here will allow you to assess your imputation's conformity to these expectations.
+
+
+
+Compare will allow you to check whether these
+expectations about imputed value distributions are fulfilled. Imputed values?s distribution do not have
+to match the distribution of reported values, but the differences
+between the two should be explainable.
+
+
+
+Overimpute treats a sub-sample of
+your reported data as if it were missing, then allows you to compare
+simulated and actual values. For this test, you are basically trying to
+see whether your imputation model renders predictions that approximate
+actual values. 
+
+
+
+Under some circumstances, your model will not predict
+extreme values well. This has happened to me some times. My principle
+concern here is that these extreme values do not constitute much of
+your sample, or do not present data points with undue influence on your
+results.  If such observations influence your model, then you have a concern with which I have not yet dealt.
+
+
+
+
+In addition, you can use your preferred spreadsheet or statistical
+package to graph reported and imputed values within panels. Compare the
+imptued and reported values within panels, and ask yourself whether the
+imputed models make sense. If the variable is expected to take the form
+of a random walk, then do the imputed values also suggest such a walk?
+If the variable is one that maintains stable trends within panels over
+time, do the imputed values roughly approximate this stable trend?
+
+
+
+There is always judgment involved, and it is important that you are
+able to make a case for the reader to believe in your imputations.
+
+This is how I've interpreted the materials recommended by Prof. King, but I am not a leading expert in missing data imputation.  If I am completely mistaken, someone please tell me.
+
+Joe
+ 
+
+
+Joseph Nathan Cohen  
+Assistant Professor of Sociology
+City University of New York, Queens College
+Powdermaker 252CC
+65-30 Kissena Blvd
+Flushing, NY    11367
+e-mail: joseph.cohen at qc.cuny.edu
+web: www.josephncohen.com
+
+
+
+
+----- Original Message ----
+From: "Blais, Martin" <blais.martin at uqam.ca>
+To: king at harvard.edu; amelia at lists.gking.harvard.edu
+Cc: "Raymond, Sarah" <raymond.sarah at uqam.ca>
+Sent: Tuesday, January 29, 2008 8:56:30 PM
+Subject: RE : [amelia] longitudinal data imputation
+
+RE : [amelia] longitudinal data imputation
+
+
+
+ 
+ 
+
+
+
+
+
+
+Thank you, I'll have a look to it!
+
+
+
+Martin
+
+
+
+
+
+
+
+-------- Message d'origine--------
+
+De: Gary  King [mailto:king at harvard.edu]
+
+Date: mar. 2008-01-29 18:32
+
+?: Blais, Martin; amelia at lists.gking.harvard.edu
+
+Cc: Raymond, Sarah
+
+Objet : Re: [amelia] longitudinal data imputation
+
+
+
+
+
+Have a look at the paper by Honaker and King on this subject at the web site. That and the manual should do it.
+
+
+
+---
+
+Sent from my phone; please excuse the terse note.
+
+Gary King
+
+http://gking.harvard.edu
+
+
+
+
+
+-----Original Message-----
+
+From: "Blais, Martin" <blais.martin at uqam.ca>
+
+
+
+Date: Tue, 29 Jan 2008 17:06:03
+
+To:amelia at lists.gking.harvard.edu
+
+Cc:"Raymond, Sarah" <raymond.sarah at uqam.ca>
+
+Subject: [amelia] longitudinal data imputation
+
+
+
+
+
+Hello
+
+
+
+We are using longitudinal data (3 time-point) to evaluate the effects of an intervention program. We have missing data (about 80% of missing cases at T2 for the control group and some missing cases for both experimental and control group at T3) and want to impute missing data using Amelia II.
+
+
+
+I am looking for detail procedures for imputation of longitudinal missing data with Amelia II to answer simple questions like: Should the data be organised in long or wide format? Are there any tutorials (website, technical papers) available for this purpose beside the Amelia II documentation?
+
+
+
+Any reference on imputation of longitudinal data (mostly about the options and the best practices in the context of program evaluation) are also welcome.
+
+
+
+Very many thanks for any help,
+
+
+
+
+
+
+
+Martin Blais, Ph.D.
+
+Professeur
+
+D?partement de sexologie
+
+Universit? du Qu?bec ? Montr?al
+
+C.P. 8888, succ. Centre-ville
+
+Montr?al (Qu?bec)
+
+Canada     H3C 3P8
+
+
+
+Vox : (514) 987-3000 poste 4031
+
+Fax : (514) 987-6787
+
+-
+
+Amelia mailing list served by Harvard-MIT Data Center
+
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+
+
+
+
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20080130/57477338/attachment.html>
+
+From blais.martin at uqam.ca  Wed Jan 30 11:35:35 2008
+From: blais.martin at uqam.ca (Blais, Martin)
+Date: Wed, 30 Jan 2008 11:35:35 -0500
+Subject: [amelia] longitudinal data imputation
+In-Reply-To: <194110.26060.qm@web60125.mail.yahoo.com>
+References: <194110.26060.qm@web60125.mail.yahoo.com>
+Message-ID: <B3C24EA955FF0C4EA14658997CD3E25E19A1D04C@CAHIER.gst.uqam.ca>
+
+ 
+
+Thank you Joseph for your input. Very clear and helpful. 
+
+ 
+
+Another question... Because we have to groups (experimental and control) which are suspect to follow different trajectory in time, I was wondering if we should impute data in both groups separately (create two different files, one for control, one for experimental group... so that the trajectory of one group doesn't contaminate the trajectory of the other group)...
+
+ 
+
+Martin
+
+ 
+
+ 
+
+Martin Blais, Ph.D.
+
+Professeur
+
+D?partement de sexologie
+
+Universit? du Qu?bec ? Montr?al
+
+C.P. 8888, succ. Centre-ville
+
+Montr?al (Qu?bec)
+
+Canada     H3C 3P8
+
+ 
+
+Vox : (514) 987-3000 poste 4031
+
+Fax : (514) 987-6787
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+De : Joseph Cohen [mailto:josephnathancohen at yahoo.com] 
+Envoy? : 30 janvier 2008 08:04
+? : Blais, Martin; king at harvard.edu; amelia at lists.gking.harvard.edu
+Objet : Re: RE : [amelia] longitudinal data imputation
+
+ 
+
+I have encountered this question in my own research recently, although with large-T, small-N data.  For what it's worth, this is what I've pieced together from the manuals and paper, and my other readings.  Can anyone tell me if I'm way off on this?
+
+There will always be some uncertainty about our estimates, because they are simulations that represent possible values of data that we do not have. The only sure-fire means of validating the imputations is to have the actual values, which would eliminate the need for imputation. Ultimately, you have to make a judgment about the credibility of the imputation model itself - does it create reasonable estimates?
+
+ 
+
+AMELIA II offers two diagnostics tools for judging imputed values - compare and overimpute (both explained in Prof. King's recommended readings). 
+
+ 
+
+The former command lets you compare the distribution of reported and imputed variable's values. Ask yourself, should the missing values have the same distribution as reported values, or should their distribution have a different central tendency, dispersion and/or skew than the reported values?  The graphs produced here will allow you to assess your imputation's conformity to these expectations.
+
+ 
+
+Compare will allow you to check whether these expectations about imputed value distributions are fulfilled. Imputed values's distribution do not have to match the distribution of reported values, but the differences between the two should be explainable.
+
+ 
+
+Overimpute treats a sub-sample of your reported data as if it were missing, then allows you to compare simulated and actual values. For this test, you are basically trying to see whether your imputation model renders predictions that approximate actual values. 
+
+ 
+
+Under some circumstances, your model will not predict extreme values well. This has happened to me some times. My principle concern here is that these extreme values do not constitute much of your sample, or do not present data points with undue influence on your results.  If such observations influence your model, then you have a concern with which I have not yet dealt.
+
+ 
+
+In addition, you can use your preferred spreadsheet or statistical package to graph reported and imputed values within panels. Compare the imptued and reported values within panels, and ask yourself whether the imputed models make sense. If the variable is expected to take the form of a random walk, then do the imputed values also suggest such a walk? If the variable is one that maintains stable trends within panels over time, do the imputed values roughly approximate this stable trend?
+
+ 
+
+There is always judgment involved, and it is important that you are able to make a case for the reader to believe in your imputations.
+
+
+This is how I've interpreted the materials recommended by Prof. King, but I am not a leading expert in missing data imputation.  If I am completely mistaken, someone please tell me.
+
+Joe
+
+ 
+
+Joseph Nathan Cohen  
+
+Assistant Professor of Sociology
+City University of New York, Queens College
+Powdermaker 252CC
+65-30 Kissena Blvd
+Flushing, NY    11367
+e-mail: joseph.cohen at qc.cuny.edu
+web: www.josephncohen.com
+
+ 
+
+----- Original Message ----
+From: "Blais, Martin" <blais.martin at uqam.ca>
+To: king at harvard.edu; amelia at lists.gking.harvard.edu
+Cc: "Raymond, Sarah" <raymond.sarah at uqam.ca>
+Sent: Tuesday, January 29, 2008 8:56:30 PM
+Subject: RE : [amelia] longitudinal data imputation
+
+
+
+Thank you, I'll have a look to it!
+
+Martin
+
+
+
+-------- Message d'origine--------
+De: Gary  King [mailto:king at harvard.edu]
+Date: mar. 2008-01-29 18:32
+?: Blais, Martin; amelia at lists.gking.harvard.edu
+Cc: Raymond, Sarah
+Objet : Re: [amelia] longitudinal data imputation
+
+
+Have a look at the paper by Honaker and King on this subject at the web site. That and the manual should do it.
+
+---
+Sent from my phone; please excuse the terse note.
+Gary King
+http://gking.harvard.edu
+
+
+-----Original Message-----
+From: "Blais, Martin" <blais.martin at uqam.ca>
+
+Date: Tue, 29 Jan 2008 17:06:03
+To:amelia at lists.gking.harvard.edu
+Cc:"Raymond, Sarah" <raymond.sarah at uqam.ca>
+Subject: [amelia] longitudinal data imputation
+
+
+Hello
+
+We are using longitudinal data (3 time-point) to evaluate the effects of an intervention program. We have missing data (about 80% of missing cases at T2 for the control group and some missing cases for both experimental and control group at T3) and want to impute missing data using Amelia II.
+
+I am looking for detail procedures for imputation of longitudinal missing data with Amelia II to answer simple questions like: Should the data be organised in long or wide format? Are there any tutorials (website, technical papers) available for this purpose beside the Amelia II documentation?
+
+Any reference on imputation of longitudinal data (mostly about the options and the best practices in the context of program evaluation) are also welcome.
+
+Very many thanks for any help,
+
+
+
+Martin Blais, Ph.D.
+Professeur
+D?partement de sexologie
+Universit? du Qu?bec ? Montr?al
+C.P. 8888, succ. Centre-ville
+Montr?al (Qu?bec)
+Canada     H3C 3P8
+
+Vox : (514) 987-3000 poste 4031
+Fax : (514) 987-6787
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20080130/0939d589/attachment.html>
+
+From levi at bigred.unl.edu  Wed Jan 30 17:47:23 2008
+From: levi at bigred.unl.edu (LevI Littvay (UNL))
+Date: Wed, 30 Jan 2008 23:47:23 +0100
+Subject: [amelia] longitudinal data imputation
+In-Reply-To: <194110.26060.qm@web60125.mail.yahoo.com>
+References: <194110.26060.qm@web60125.mail.yahoo.com>
+Message-ID: <7E86D13A-AB0E-4E23-B501-33CD686BF81B@bigred.unl.edu>
+
+Dear Joseph
+
+This is great.  I wanted to see such a discussion for a while.  Here  
+is my $0.02
+> There will always be some uncertainty about our estimates, because  
+> they are simulations that represent possible values of data that we  
+> do not have. The only sure-fire means of validating the imputations  
+> is to have the actual values, which would eliminate the need for  
+> imputation. Ultimately, you have to make a judgment about the  
+> credibility of the imputation model itself ? does it create  
+> reasonable estimates?
+>
+Yes.  This is true.  But you make it sound like this uncertainty is a  
+bad thing.  It is a good thing as the imputation model needs to model  
+the uncertainty.  If we were to impute the expected values (ala SPSS  
+MVA) we would be artificially reducing our standard errors.
+> AMELIA II offers two diagnostics tools for judging imputed values ?  
+> compare and overimpute (both explained in Prof. King's recommended  
+> readings).
+>
+> The former command lets you compare the distribution of reported and  
+> imputed variable?s values. Ask yourself, should the missing values  
+> have the same distribution as reported values, or should their  
+> distribution have a different central tendency, dispersion and/or  
+> skew than the reported values?  The graphs produced here will allow  
+> you to assess your imputation's conformity to these expectations.
+>
+> Compare will allow you to check whether these expectations about  
+> imputed value distributions are fulfilled. Imputed values?s  
+> distribution do not have to match the distribution of reported  
+> values, but the differences between the two should be explainable.
+>
+Lets formalize this just a little more.  If your missingness is MCAR  
+you should expect the distribution of the imputed values to be the  
+same as the observed values.  If you have MAR missing data you might  
+end up seeing differences.  If you have good predictors of income (or  
+the missingness of income) and low income people tend to non-respond  
+to the income question, you will see more imputations on the lower end  
+of the observed distribution.
+
+You should justify why you are assuming MAR missing data.  Therefore  
+you should be making claims like: I believe education is a good  
+predictor of the missingness of income and therefore for low education  
+people I expect imputations on the lower end of the distribution.  I  
+do not believe either graphical diagnostics is much useful for making  
+such statements (and wonder if there is a good way of producing such a  
+visual).
+
+So I really do wonder what is the purpose of the graphical description  
+of the two distributions.  It can tell me if my data is more MAR or  
+MCAR (I guess, maybe not).  It can tell me if the imputations looked  
+the same as the observeds.  While seeing this is kinda *fun* in a very  
+geekish way, I would love to know if anyone else makes better use of  
+this information in arguing any points, etc.
+> Under some circumstances, your model will not predict extreme values  
+> well. This has happened to me some times. My principle concern here  
+> is that these extreme values do not constitute much of your sample,  
+> or do not present data points with undue influence on your results.   
+> If such observations influence your model, then you have a concern  
+> with which I have not yet dealt.
+>
+Interesting.  Very good point.  You should see how much of these cases  
+are off.  I never thought of it this way.
+
+In my book I drew the conclusion that our inferences for cases with  
+extreme values will be less reliable.  I suggested to be more cautious  
+when drawing inferences for the variables that suffered from this issue.
+
+But I have no fixes.  There might be practical implications not too  
+well discussed in the manual.  Sorry I have not yet read the newer  
+paper carefully but I skimmed it and it did not seem helpful in these  
+aspects.  Just found it last week or so.  Should have put a note here  
+when you posed it.  Please do so when you post future materials,  
+publish papers on or using Amelia, etc.  everyone, not just Matt and  
+Gary.  Here is mine:
+
+Levente Littvay (2007) Corruption and Democratic Performance.  VDM  
+Verlag Dr. Mueller e.K
+
+http://www.amazon.com/Corruption-Democratic-Performance-Levente-Littvay/dp/3836417588/ref=sr_1_1?ie=UTF8&s=books&qid=1201732538&sr=8-1
+> In addition, you can use your preferred spreadsheet or statistical  
+> package to graph reported and imputed values within panels. Compare  
+> the imptued and reported values within panels, and ask yourself  
+> whether the imputed models make sense. If the variable is expected  
+> to take the form of a random walk, then do the imputed values also  
+> suggest such a walk? If the variable is one that maintains stable  
+> trends within panels over time, do the imputed values roughly  
+> approximate this stable trend?
+>
+> There is always judgment involved, and it is important that you are  
+> able to make a case for the reader to believe in your imputations.
+>
+Again, the imputations do model a level of uncertainty.  So I would  
+argue that what you describe above would be easy to do if only the  
+expected values were imputed.  You can average your imputations across  
+the m datasets and you should get exactly what is above.  But it is  
+not the expected values we use in the analysis.  So if one imputation  
+is off of the trend line, that could be because it was drawn from the  
+tail end of the expected distribution.  From the perspective of trends  
+it would look off.  (Or am I off on this?)
+
+I wonder if there is an easy way of doing this.  I often wish I could  
+ask Amelia to produce datasets where only the imputed values are  
+present and the originals are not.  Or output a file where 0s  
+represent observed case and 1s the imputed case.  (I guess this would  
+not be hard in R, but I am not that good with R so I tend to use the  
+GUI.  One day...)
+
+> This is how I've interpreted the materials recommended by Prof.  
+> King, but I am not a leading expert in missing data imputation.  If  
+> I am completely mistaken, someone please tell me.
+
+What I am missing from Dr. King and coautors is good practical  
+perscriptions on the diagnistics features.  If you see X, what could  
+that mean, how can you figure out what that means, is it a concern,  
+how much of a concern, anything you can do to alleviate the concern,  
+anything you can do to fix it, etc.  A practical guide as such would  
+be VERY useful for all of us.
+
+Levi
+
+PS: Matt, have you gotten anywhere with the bug that Sheeder and Lynne  
+ran into?  I saw a recent posting with a similar error message.  I'd  
+appreciate and update on this.  I need to talk to Lynne about  
+something I want from him.  He might ask.  Thanks.
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+

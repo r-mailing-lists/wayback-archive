@@ -1,0 +1,1397 @@
+From melaniegoodrich at gmail.com  Mon Aug  1 16:17:26 2011
+From: melaniegoodrich at gmail.com (Melanie Goodrich)
+Date: Mon, 1 Aug 2011 16:17:26 -0400
+Subject: [amelia] Using priors with nominal variables
+Message-ID: <CANTny2Hy1ian69S7LDs+wQTuEgUUgMKVGdciE70nWyWjk8y+mg@mail.gmail.com>
+
+Hello,
+
+I have a dataset with dichotomous variables that has missingness that I am
+trying to use Amelia to address.  In addition, I need to include
+observational priors (ridge priors are not an option).
+
+Given the data I am using, I originally tried to run Amelia with these
+dichotomous variables identified as "noms".  However, I got the follwoing
+error message when I did this:
+"
+Error in muPriors[priors[, 1:2]] <- priors[, 3] :
+  NAs are not allowed in subscripted assignments
+"
+
+According to the documentation (footnote 8 on page 17):  "Dichotomous (two
+category) variables are a special case of nominal variables. For these
+variables, the nominal and ordinal methods of transformation in Amelia
+agree."  So, I was particularly confused by this error message given that I
+had already tried running the exact same code with the only difference being
+that I had used "ords" to identify my dichotomous variables.  And that code
+had worked.
+
+For now, I have the code running using using the "ords" option instead of
+the "noms".  I can only assume that the introduction of priors is causing
+the problem.  It is not clear to me why this should be, though.  Also the
+fact that, contrary to the documentation, I am not getting the same results
+for the ordinal and the nominal methods makes me wonder if the two methods
+are not actually identical, in which case maybe it does matter which option
+I use (beyond, of course, the matter of which method actually runs!).
+
+I would appreciate any guidance you can offer as to what is causing this
+error message.  I have attached code, and the resulting output, replicating
+the problem with the freetrade data, in case that helps clarify the issue.
+
+Thank you in advance for your assisstance.
+
+Best,
+Melanie Goodrich
+http://www.linkedin.com/in/melaniegoodrich
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110801/20d706fc/attachment.html>
+-------------- next part --------------
+R version 2.13.1 (2011-07-08)
+Copyright (C) 2011 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+Platform: i386-pc-mingw32/i386 (32-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> library(foreign)
+> library(MASS)
+> library(boot)
+> library(Amelia)
+## 
+## Amelia II: Multiple Imputation
+## (Version 1.2-18, built: 2010-11-04)
+## Copyright (C) 2005-2011 James Honaker, Gary King and Matthew Blackwell
+## Refer to http://gking.harvard.edu/amelia/ for more information
+##
+> library(MatchIt)
+## 
+##  MatchIt (Version 2.4-18, built: 2011-04-26)
+##  Please refer to http://gking.harvard.edu/matchit for full documentation 
+##  or help.matchit() for help with commands supported by MatchIt.
+##
+> library(Zelig)
+## 
+##  Zelig (Version 3.5, built: 2010-01-20)
+##  Please refer to http://gking.harvard.edu/zelig for full
+##  documentation or help.zelig() for help with commands and
+##  models supported by Zelig.
+##
+
+##  Zelig project citations:
+##    Kosuke Imai, Gary King, and Olivia Lau. (2009).
+##    ``Zelig: Everyone's Statistical Software,''
+##    http://gking.harvard.edu/zelig.
+##  and
+##    Kosuke Imai, Gary King, and Olivia Lau. (2008).
+##    ``Toward A Common Framework for Statistical Analysis
+##    and Development,'' Journal of Computational and
+##    Graphical Statistics, Vol. 17, No. 4 (December)
+##    pp. 892-913. 
+
+##  To cite individual Zelig models, please use the citation format printed with
+##  each model run and in the documentation.
+##
+
+Attaching package: 'Zelig'
+
+The following object(s) are masked from 'package:MatchIt':
+
+    user.prompt
+
+Warning message:
+'.readRDS' is deprecated.
+Use 'readRDS' instead.
+See help("Deprecated") 
+> 
+> 
+> data(freetrade)
+> 
+> #Test to see if imputation works without priors, without noms, and without ords
+> a.out = amelia(freetrade, m=5, ts = "year", cs = "country")
+-- Imputation 1 --
+
+ 1  2  3  4  5  6  7  8  9 10 11 12 13 14 
+
+-- Imputation 2 --
+
+ 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 
+
+-- Imputation 3 --
+
+ 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 
+
+-- Imputation 4 --
+
+ 1  2  3  4  5  6  7  8  9 10 11 12 13 14 
+
+-- Imputation 5 --
+
+ 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 
+21 22 23 
+
+> 
+> 
+> #Found the mean and standard deviation for each variable that has at least one NA
+> #I created a matrix of the locations of the NAs(rows and columns), the means and SDs
+> 
+> newtrade = which(is.na(freetrade), arr.ind = TRUE)
+> newtradeMean = c(30,29,28,31,32,34,30,34,26,32,30,29,28,31,32,34,30,34,26,32,30,29,28,31,32,
++      34,30,34,26,32,30,29,28,31,32,34,30,34,26,32,30,29,28,31,32,34,30,34,26,32,
++      31,31,32,33,34,35,20,21,7,8,2.0,2.1,2.2,2.0,2.5,2.3,2.5,2.1,1.9,1.8,1.7,2.9,
++      2.0,0,0,1,.3,.4,.5,.3,.2,.3,.2,.4,.5,.3,.2,.3,.3,.4,.5,.3,.2,.3)
+> newishtrade = cbind(newtrade,newtradeMean)
+> newtradeSD = c(5,5,5,4,3,3,2,4,5,4,5,5,5,4,3,3,2,4,5,4,5,5,5,4,3,3,2,4,5,4,5,5,5,4,3,3,2,4,5,
++    4,5,5,5,4,3,3,2,4,5,4,3,4,5,6,4,3,4,2,4,1,1.2,.3,.4,.3,.4,.3,.2,.3,.4,.3,.3,.3,
++   .2,.3,.2,.3,.3,.1,.1,.2,.2,.3,.3,.1,.1,.2,.2,.3,.3,.1,.1,.2,.2,.3)
+> newishtrade = cbind(newtrade,newtradeMean, newtradeSD)
+> newishtrade
+      row col newtradeMean newtradeSD
+ [1,]   1   3         30.0        5.0
+ [2,]   2   3         29.0        5.0
+ [3,]   4   3         28.0        5.0
+ [4,]   6   3         31.0        4.0
+ [5,]   9   3         32.0        3.0
+ [6,]  16   3         34.0        3.0
+ [7,]  18   3         30.0        2.0
+ [8,]  19   3         34.0        4.0
+ [9,]  21   3         26.0        5.0
+[10,]  22   3         32.0        4.0
+[11,]  23   3         30.0        5.0
+[12,]  24   3         29.0        5.0
+[13,]  27   3         28.0        5.0
+[14,]  28   3         31.0        4.0
+[15,]  39   3         32.0        3.0
+[16,]  40   3         34.0        3.0
+[17,]  41   3         30.0        2.0
+[18,]  45   3         34.0        4.0
+[19,]  46   3         26.0        5.0
+[20,]  52   3         32.0        4.0
+[21,]  53   3         30.0        5.0
+[22,]  55   3         29.0        5.0
+[23,]  58   3         28.0        5.0
+[24,]  62   3         31.0        4.0
+[25,]  63   3         32.0        3.0
+[26,]  71   3         34.0        3.0
+[27,]  72   3         30.0        2.0
+[28,]  78   3         34.0        4.0
+[29,]  79   3         26.0        5.0
+[30,]  80   3         32.0        4.0
+[31,]  81   3         30.0        5.0
+[32,]  86   3         29.0        5.0
+[33,]  91   3         28.0        5.0
+[34,]  95   3         31.0        4.0
+[35,]  96   3         32.0        3.0
+[36,]  97   3         34.0        3.0
+[37,]  99   3         30.0        2.0
+[38,] 100   3         34.0        4.0
+[39,] 101   3         26.0        5.0
+[40,] 104   3         32.0        4.0
+[41,] 105   3         30.0        5.0
+[42,] 106   3         29.0        5.0
+[43,] 107   3         28.0        5.0
+[44,] 109   3         31.0        4.0
+[45,] 111   3         32.0        3.0
+[46,] 112   3         34.0        3.0
+[47,] 115   3         30.0        2.0
+[48,] 131   3         34.0        4.0
+[49,] 133   3         26.0        5.0
+[50,] 154   3         32.0        4.0
+[51,] 155   3         31.0        3.0
+[52,] 156   3         31.0        4.0
+[53,] 158   3         32.0        5.0
+[54,] 159   3         33.0        6.0
+[55,] 160   3         34.0        4.0
+[56,] 164   3         35.0        3.0
+[57,] 168   3         20.0        4.0
+[58,] 169   3         21.0        2.0
+[59,]  64   4          7.0        4.0
+[60,] 139   4          8.0        1.0
+[61,]  18   7          2.0        1.2
+[62,]  19   7          2.1        0.3
+[63,]  38   7          2.2        0.4
+[64,]  57   7          2.0        0.3
+[65,]  76   7          2.5        0.4
+[66,]  94   7          2.3        0.3
+[67,]  95   7          2.5        0.2
+[68,] 114   7          2.1        0.3
+[69,] 132   7          1.9        0.4
+[70,] 133   7          1.8        0.3
+[71,] 152   7          1.7        0.3
+[72,] 170   7          2.9        0.3
+[73,] 171   7          2.0        0.2
+[74,]  12   8          0.0        0.3
+[75,]  46   8          0.0        0.2
+[76,] 169   8          1.0        0.3
+[77,]  18   9          0.3        0.3
+[78,]  19   9          0.4        0.1
+[79,]  37   9          0.5        0.1
+[80,]  38   9          0.3        0.2
+[81,]  56   9          0.2        0.2
+[82,]  57   9          0.3        0.3
+[83,]  75   9          0.2        0.3
+[84,]  76   9          0.4        0.1
+[85,]  94   9          0.5        0.1
+[86,]  95   9          0.3        0.2
+[87,] 113   9          0.2        0.2
+[88,] 114   9          0.3        0.3
+[89,] 132   9          0.3        0.3
+[90,] 133   9          0.4        0.1
+[91,] 151   9          0.5        0.1
+[92,] 152   9          0.3        0.2
+[93,] 170   9          0.2        0.2
+[94,] 171   9          0.3        0.3
+> 
+> #Test to see if imputation works with priors, without noms, and with ords
+> a.out = amelia(freetrade, m=5, ts = "year", cs = "country", priors = newishtrade, p2s=2, ords="signed")
+
+amelia starting
+beginning prep functions
+Variables used:  tariff polity pop gdp.pc intresmi signed fiveop usheg 
+running bootstrap
+-- Imputation 1 --
+setting up EM chain indicies
+
+ 1(41) 2(17) 3(0)
+
+ saving and cleaning
+
+running bootstrap
+-- Imputation 2 --
+setting up EM chain indicies
+
+ 1(39) 2(7) 3(0)
+
+ saving and cleaning
+
+running bootstrap
+-- Imputation 3 --
+setting up EM chain indicies
+
+ 1(38) 2(18) 3(2) 4(0)
+
+ saving and cleaning
+
+running bootstrap
+-- Imputation 4 --
+setting up EM chain indicies
+
+ 1(41) 2(15) 3(1) 4(0)
+
+ saving and cleaning
+
+running bootstrap
+-- Imputation 5 --
+setting up EM chain indicies
+
+ 1(40) 2(22) 3(1) 4(0)
+
+ saving and cleaning
+
+> 
+> #Test to see if imputation works with priors, with noms, and without ords
+> a.out = amelia(freetrade, m=5, ts = "year", cs = "country", priors = newishtrade, p2s=2, noms="signed")
+
+amelia starting
+beginning prep functions
+Variables used:  tariff polity pop gdp.pc intresmi fiveop usheg noms.signed.2 
+running bootstrap
+Error in muPriors[priors[, 1:2]] <- priors[, 3] : 
+  NAs are not allowed in subscripted assignments
+>
+-------------- next part --------------
+library(foreign)
+library(MASS)
+library(boot)
+library(Amelia)
+library(MatchIt)
+library(Zelig)
+
+
+data(freetrade)
+
+#Test to see if imputation works without priors, without noms, and without ords
+a.out = amelia(freetrade, m=5, ts = "year", cs = "country")
+
+
+#Found the mean and standard deviation for each variable that has at least one NA
+#I created a matrix of the locations of the NAs(rows and columns), the means and SDs
+
+newtrade = which(is.na(freetrade), arr.ind = TRUE)
+newtradeMean = c(30,29,28,31,32,34,30,34,26,32,30,29,28,31,32,34,30,34,26,32,30,29,28,31,32,
+		     34,30,34,26,32,30,29,28,31,32,34,30,34,26,32,30,29,28,31,32,34,30,34,26,32,
+		     31,31,32,33,34,35,20,21,7,8,2.0,2.1,2.2,2.0,2.5,2.3,2.5,2.1,1.9,1.8,1.7,2.9,
+		     2.0,0,0,1,.3,.4,.5,.3,.2,.3,.2,.4,.5,.3,.2,.3,.3,.4,.5,.3,.2,.3)
+newishtrade = cbind(newtrade,newtradeMean)
+newtradeSD = c(5,5,5,4,3,3,2,4,5,4,5,5,5,4,3,3,2,4,5,4,5,5,5,4,3,3,2,4,5,4,5,5,5,4,3,3,2,4,5,
+		   4,5,5,5,4,3,3,2,4,5,4,3,4,5,6,4,3,4,2,4,1,1.2,.3,.4,.3,.4,.3,.2,.3,.4,.3,.3,.3,
+		  .2,.3,.2,.3,.3,.1,.1,.2,.2,.3,.3,.1,.1,.2,.2,.3,.3,.1,.1,.2,.2,.3)
+newishtrade = cbind(newtrade,newtradeMean, newtradeSD)
+newishtrade
+
+#Test to see if imputation works with priors, without noms, and with ords
+a.out = amelia(freetrade, m=5, ts = "year", cs = "country", priors = newishtrade, p2s=2, ords="signed")
+
+#Test to see if imputation works with priors, with noms, and without ords
+a.out = amelia(freetrade, m=5, ts = "year", cs = "country", priors = newishtrade, p2s=2, noms="signed")
+
+From blackwel at fas.harvard.edu  Tue Aug  2 11:19:51 2011
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Tue, 2 Aug 2011 11:19:51 -0400
+Subject: [amelia] Re: Missing Data in amelia output
+In-Reply-To: <CACNozQe9+fwn1PSTKdm8eqW_4403cCfBDAFhUzVHm3aM+STh9Q@mail.gmail.com>
+References: <CACNozQfKHJNRX2PK0n3mOpgd9Cf0smhjnKCiHonRQBWLXiJqHw@mail.gmail.com> <CACNozQe9+fwn1PSTKdm8eqW_4403cCfBDAFhUzVHm3aM+STh9Q@mail.gmail.com>
+Message-ID: <CAK1YySHrUdokRG7jfCAECEHb4AXOU8Tm4yjTK_hz2s-EKBNS1w@mail.gmail.com>
+
+Hi Luis,
+
+You want to make sure that you save the output to a name:
+
+a.out <- amelia(y)
+
+Once you do this, you can see your imputed datasets here:
+
+a.out$imputations[[1]]
+
+That is, for example, the first imputed dataset. You can access others by
+changing the "1" to another number. Hope that helps.
+
+Cheers,
+matt.
+
+On Thu, Jul 28, 2011 at 1:03 PM, Luis Felipe Parra <
+felipe.parra at quantil.com.co> wrote:
+
+> Hello, I've just discovered amelia today and I am trying to use to to fill
+> some missing values in the attached dataset. I am using amelia in R, when I
+> call amelia(y) I am getting my output with still some missing values.
+>
+> Does somebody know what might be I doing wrong, or what might be going on.
+> Thank you
+>
+> Felipe Parra
+>
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110802/1b5043bb/attachment.html>
+
+From felipe.parra at quantil.com.co  Tue Aug  2 11:48:49 2011
+From: felipe.parra at quantil.com.co (Luis Felipe Parra)
+Date: Tue, 2 Aug 2011 10:48:49 -0500
+Subject: [amelia] Re: Missing Data in amelia output
+In-Reply-To: <CAK1YySHrUdokRG7jfCAECEHb4AXOU8Tm4yjTK_hz2s-EKBNS1w@mail.gmail.com>
+References: <CACNozQfKHJNRX2PK0n3mOpgd9Cf0smhjnKCiHonRQBWLXiJqHw@mail.gmail.com> <CACNozQe9+fwn1PSTKdm8eqW_4403cCfBDAFhUzVHm3aM+STh9Q@mail.gmail.com> <CAK1YySHrUdokRG7jfCAECEHb4AXOU8Tm4yjTK_hz2s-EKBNS1w@mail.gmail.com>
+Message-ID: <CACNozQeutH6+XJ+AMCQL87D=x0LeVc5hpVCiPtAjNDsA9tN+Fw@mail.gmail.com>
+
+Hello, Thank you Matt. I am doing exactly this
+a.out$imputations[[1]]
+but I'am still getting NA's on this imputations. Do you know which migh be
+the reason?
+
+Thank you
+
+Felipe Parra
+
+
+On Tue, Aug 2, 2011 at 10:19 AM, Matt Blackwell <blackwel at fas.harvard.edu>wrote:
+
+> Hi Luis,
+>
+> You want to make sure that you save the output to a name:
+>
+> a.out <- amelia(y)
+>
+> Once you do this, you can see your imputed datasets here:
+>
+> a.out$imputations[[1]]
+>
+> That is, for example, the first imputed dataset. You can access others by
+> changing the "1" to another number. Hope that helps.
+>
+>  Cheers,
+> matt.
+>
+>
+> On Thu, Jul 28, 2011 at 1:03 PM, Luis Felipe Parra <
+> felipe.parra at quantil.com.co> wrote:
+>
+>> Hello, I've just discovered amelia today and I am trying to use to to fill
+>> some missing values in the attached dataset. I am using amelia in R, when I
+>> call amelia(y) I am getting my output with still some missing values.
+>>
+>> Does somebody know what might be I doing wrong, or what might be going on.
+>> Thank you
+>>
+>> Felipe Parra
+>>
+>>
+>>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110802/743789d3/attachment.html>
+
+From blackwel at fas.harvard.edu  Tue Aug  2 12:19:19 2011
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Tue, 2 Aug 2011 12:19:19 -0400
+Subject: [amelia] Using priors with nominal variables
+In-Reply-To: <CANTny2Hy1ian69S7LDs+wQTuEgUUgMKVGdciE70nWyWjk8y+mg@mail.gmail.com>
+References: <CANTny2Hy1ian69S7LDs+wQTuEgUUgMKVGdciE70nWyWjk8y+mg@mail.gmail.com>
+Message-ID: <CAK1YySEsjvqUX8B00Lbhpjb0YgkixGxVnP0df=m-5Myb0Xk4aQ@mail.gmail.com>
+
+Hi Melanie,
+
+Thanks for reporting this bug. Amelia should have a more graceful error
+message for setting prior values on nominal variables. Thus, it is better in
+this case to use "ords".
+
+More technical discussion for the curious:
+
+Even though dichotomous variables can be specified as either "noms" or
+"ords", Amelia does not handle them both identically. Ordinals are imputed
+on the scale of the original variable and then converted into one of the
+ordinal categories, while nominal variables are broken up into k-1 dummy
+variables in the imputation and then the final imputation is reformed from
+these variables (where k is the number of categories). These processes are
+identical when there are only 2 categories. The error you see is because
+"noms" moves the variable around in the data matrix and Amelia never tells
+the priors matrix. We'll fix this up in a future release.
+
+Also: thanks a ton for the short, reproducible example!
+
+Cheers,
+matt.
+
+~~~~~~~~~~~
+Matthew Blackwell
+PhD Candidate
+Institute for Quantitative Social Science
+Department of Government
+Harvard University
+url: http://people.fas.harvard.edu/~blackwel/
+
+On Mon, Aug 1, 2011 at 4:17 PM, Melanie Goodrich
+<melaniegoodrich at gmail.com>wrote:
+
+> Hello,
+>
+> I have a dataset with dichotomous variables that has missingness that I am
+> trying to use Amelia to address.  In addition, I need to include
+> observational priors (ridge priors are not an option).
+>
+> Given the data I am using, I originally tried to run Amelia with these
+> dichotomous variables identified as "noms".  However, I got the follwoing
+> error message when I did this:
+> "
+> Error in muPriors[priors[, 1:2]] <- priors[, 3] :
+>   NAs are not allowed in subscripted assignments
+> "
+>
+> According to the documentation (footnote 8 on page 17):  "Dichotomous (two
+> category) variables are a special case of nominal variables. For these
+> variables, the nominal and ordinal methods of transformation in Amelia
+> agree."  So, I was particularly confused by this error message given that
+> I had already tried running the exact same code with the only difference
+> being that I had used "ords" to identify my dichotomous variables.  And that
+> code had worked.
+>
+> For now, I have the code running using using the "ords" option instead of
+> the "noms".  I can only assume that the introduction of priors is causing
+> the problem.  It is not clear to me why this should be, though.  Also the
+> fact that, contrary to the documentation, I am not getting the same results
+> for the ordinal and the nominal methods makes me wonder if the two methods
+> are not actually identical, in which case maybe it does matter which option
+> I use (beyond, of course, the matter of which method actually runs!).
+>
+> I would appreciate any guidance you can offer as to what is causing this
+> error message.  I have attached code, and the resulting output, replicating
+> the problem with the freetrade data, in case that helps clarify the issue.
+>
+> Thank you in advance for your assisstance.
+>
+> Best,
+> Melanie Goodrich
+> http://www.linkedin.com/in/melaniegoodrich
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110802/edb3852b/attachment.html>
+
+From blackwel at fas.harvard.edu  Tue Aug  2 12:23:03 2011
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Tue, 2 Aug 2011 12:23:03 -0400
+Subject: [amelia] Re: Missing Data in amelia output
+In-Reply-To: <CACNozQeutH6+XJ+AMCQL87D=x0LeVc5hpVCiPtAjNDsA9tN+Fw@mail.gmail.com>
+References: <CACNozQfKHJNRX2PK0n3mOpgd9Cf0smhjnKCiHonRQBWLXiJqHw@mail.gmail.com> <CACNozQe9+fwn1PSTKdm8eqW_4403cCfBDAFhUzVHm3aM+STh9Q@mail.gmail.com> <CAK1YySHrUdokRG7jfCAECEHb4AXOU8Tm4yjTK_hz2s-EKBNS1w@mail.gmail.com> <CACNozQeutH6+XJ+AMCQL87D=x0LeVc5hpVCiPtAjNDsA9tN+Fw@mail.gmail.com>
+Message-ID: <CAK1YySEj2naJW4nBWE-WFWMEBbc5CNOewNw8oY2H-PdJLpziGg@mail.gmail.com>
+
+Hi Felipe,
+
+Without more information about the data and the exact code you are using to
+impute it, it is hard to know what is happening. It could be the case that
+the NAs in your data are not coded correctly and therefore not recognized as
+missing by R. You can check this by using:
+
+sum(is.na(a.out$imputations[[1]]))
+
+This code will tell you how many missing observations there are in the
+(supposedly) imputed dataset. This number might be greater than zero if you
+tagged certain variables as "idvars"---these variables are not imputed.
+
+Cheers,
+matt.
+
+On Tue, Aug 2, 2011 at 11:48 AM, Luis Felipe Parra <
+felipe.parra at quantil.com.co> wrote:
+
+> Hello, Thank you Matt. I am doing exactly this
+> a.out$imputations[[1]]
+> but I'am still getting NA's on this imputations. Do you know which migh be
+> the reason?
+>
+> Thank you
+>
+> Felipe Parra
+>
+>
+> On Tue, Aug 2, 2011 at 10:19 AM, Matt Blackwell <blackwel at fas.harvard.edu>wrote:
+>
+>> Hi Luis,
+>>
+>> You want to make sure that you save the output to a name:
+>>
+>> a.out <- amelia(y)
+>>
+>> Once you do this, you can see your imputed datasets here:
+>>
+>> a.out$imputations[[1]]
+>>
+>> That is, for example, the first imputed dataset. You can access others by
+>> changing the "1" to another number. Hope that helps.
+>>
+>>  Cheers,
+>> matt.
+>>
+>>
+>> On Thu, Jul 28, 2011 at 1:03 PM, Luis Felipe Parra <
+>> felipe.parra at quantil.com.co> wrote:
+>>
+>>> Hello, I've just discovered amelia today and I am trying to use to to
+>>> fill some missing values in the attached dataset. I am using amelia in R,
+>>> when I call amelia(y) I am getting my output with still some missing values.
+>>>
+>>> Does somebody know what might be I doing wrong, or what might be going
+>>> on. Thank you
+>>>
+>>> Felipe Parra
+>>>
+>>>
+>>>
+>>
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110802/43ae08cd/attachment.html>
+
+From felipe.parra at quantil.com.co  Tue Aug  2 12:32:10 2011
+From: felipe.parra at quantil.com.co (Luis Felipe Parra)
+Date: Tue, 2 Aug 2011 11:32:10 -0500
+Subject: [amelia] Re: Missing Data in amelia output
+In-Reply-To: <CAK1YySEj2naJW4nBWE-WFWMEBbc5CNOewNw8oY2H-PdJLpziGg@mail.gmail.com>
+References: <CACNozQfKHJNRX2PK0n3mOpgd9Cf0smhjnKCiHonRQBWLXiJqHw@mail.gmail.com> <CACNozQe9+fwn1PSTKdm8eqW_4403cCfBDAFhUzVHm3aM+STh9Q@mail.gmail.com> <CAK1YySHrUdokRG7jfCAECEHb4AXOU8Tm4yjTK_hz2s-EKBNS1w@mail.gmail.com> <CACNozQeutH6+XJ+AMCQL87D=x0LeVc5hpVCiPtAjNDsA9tN+Fw@mail.gmail.com> <CAK1YySEj2naJW4nBWE-WFWMEBbc5CNOewNw8oY2H-PdJLpziGg@mail.gmail.com>
+Message-ID: <CACNozQd2D2BcgC1x=gTHvXsaoD4wYx1JAM3Sw28HO=5=RpHC1A@mail.gmail.com>
+
+Hello Matt, thanks for your answer, the code I am using is the following
+
+path = "C:\\Users\\Hp\\Desktop"
+load(paste(path,"\\y.rdata",sep=""))
+
+out = amelia(y)#[4000:5000,])
+summary(y)#[4000:5000,])
+for(i in 1:length(out$imputations)){ print(summary(out$imputations[[i]])) }
+
+and the data I send it attached. Thanks again for any help you can give me
+with this
+
+Felipe Parra
+
+
+On Tue, Aug 2, 2011 at 11:23 AM, Matt Blackwell <blackwel at fas.harvard.edu>wrote:
+
+> Hi Felipe,
+>
+> Without more information about the data and the exact code you are using to
+> impute it, it is hard to know what is happening. It could be the case that
+> the NAs in your data are not coded correctly and therefore not recognized as
+> missing by R. You can check this by using:
+>
+> sum(is.na(a.out$imputations[[1]]))
+>
+> This code will tell you how many missing observations there are in the
+> (supposedly) imputed dataset. This number might be greater than zero if you
+> tagged certain variables as "idvars"---these variables are not imputed.
+>
+> Cheers,
+> matt.
+>
+>
+> On Tue, Aug 2, 2011 at 11:48 AM, Luis Felipe Parra <
+> felipe.parra at quantil.com.co> wrote:
+>
+>> Hello, Thank you Matt. I am doing exactly this
+>> a.out$imputations[[1]]
+>> but I'am still getting NA's on this imputations. Do you know which migh be
+>> the reason?
+>>
+>> Thank you
+>>
+>> Felipe Parra
+>>
+>>
+>> On Tue, Aug 2, 2011 at 10:19 AM, Matt Blackwell <blackwel at fas.harvard.edu
+>> > wrote:
+>>
+>>> Hi Luis,
+>>>
+>>> You want to make sure that you save the output to a name:
+>>>
+>>> a.out <- amelia(y)
+>>>
+>>> Once you do this, you can see your imputed datasets here:
+>>>
+>>> a.out$imputations[[1]]
+>>>
+>>> That is, for example, the first imputed dataset. You can access others by
+>>> changing the "1" to another number. Hope that helps.
+>>>
+>>>  Cheers,
+>>> matt.
+>>>
+>>>
+>>> On Thu, Jul 28, 2011 at 1:03 PM, Luis Felipe Parra <
+>>> felipe.parra at quantil.com.co> wrote:
+>>>
+>>>> Hello, I've just discovered amelia today and I am trying to use to to
+>>>> fill some missing values in the attached dataset. I am using amelia in R,
+>>>> when I call amelia(y) I am getting my output with still some missing values.
+>>>>
+>>>> Does somebody know what might be I doing wrong, or what might be going
+>>>> on. Thank you
+>>>>
+>>>> Felipe Parra
+>>>>
+>>>>
+>>>>
+>>>
+>>
+>>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110802/fb013d0e/attachment.html>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: y.rdata
+Type: application/octet-stream
+Size: 130159 bytes
+Desc: not available
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110802/fb013d0e/attachment.obj>
+
+From blackwel at fas.harvard.edu  Tue Aug  2 12:37:11 2011
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Tue, 2 Aug 2011 12:37:11 -0400
+Subject: [amelia] Re: Missing Data in amelia output
+In-Reply-To: <CACNozQd2D2BcgC1x=gTHvXsaoD4wYx1JAM3Sw28HO=5=RpHC1A@mail.gmail.com>
+References: <CACNozQfKHJNRX2PK0n3mOpgd9Cf0smhjnKCiHonRQBWLXiJqHw@mail.gmail.com> <CACNozQe9+fwn1PSTKdm8eqW_4403cCfBDAFhUzVHm3aM+STh9Q@mail.gmail.com> <CAK1YySHrUdokRG7jfCAECEHb4AXOU8Tm4yjTK_hz2s-EKBNS1w@mail.gmail.com> <CACNozQeutH6+XJ+AMCQL87D=x0LeVc5hpVCiPtAjNDsA9tN+Fw@mail.gmail.com> <CAK1YySEj2naJW4nBWE-WFWMEBbc5CNOewNw8oY2H-PdJLpziGg@mail.gmail.com> <CACNozQd2D2BcgC1x=gTHvXsaoD4wYx1JAM3Sw28HO=5=RpHC1A@mail.gmail.com>
+Message-ID: <CAK1YySF4aSSHo9SYXYv6RzgPbMZ2EXyYePrJZqM_cEzQHRmK3g@mail.gmail.com>
+
+Hi Felipe,
+
+The problem with the data you are using is that there are rows that are
+completely missing. That is, there is no observed information for those
+rows. Amelia cannot impute rows with no observed data, so it returns those
+rows with all NAs. There is a warning message about this when you run
+Amelia, but you may have missed it at the beginning of the imputation
+procedure.
+
+Cheers,
+matt.
+
+On Tue, Aug 2, 2011 at 12:32 PM, Luis Felipe Parra <
+felipe.parra at quantil.com.co> wrote:
+
+> Hello Matt, thanks for your answer, the code I am using is the following
+>
+> path = "C:\\Users\\Hp\\Desktop"
+> load(paste(path,"\\y.rdata",sep=""))
+>
+> out = amelia(y)#[4000:5000,])
+> summary(y)#[4000:5000,])
+> for(i in 1:length(out$imputations)){ print(summary(out$imputations[[i]])) }
+>
+> and the data I send it attached. Thanks again for any help you can give me
+> with this
+>
+> Felipe Parra
+>
+>
+> On Tue, Aug 2, 2011 at 11:23 AM, Matt Blackwell <blackwel at fas.harvard.edu>wrote:
+>
+>> Hi Felipe,
+>>
+>> Without more information about the data and the exact code you are using
+>> to impute it, it is hard to know what is happening. It could be the case
+>> that the NAs in your data are not coded correctly and therefore not
+>> recognized as missing by R. You can check this by using:
+>>
+>> sum(is.na(a.out$imputations[[1]]))
+>>
+>> This code will tell you how many missing observations there are in the
+>> (supposedly) imputed dataset. This number might be greater than zero if you
+>> tagged certain variables as "idvars"---these variables are not imputed.
+>>
+>> Cheers,
+>> matt.
+>>
+>>
+>> On Tue, Aug 2, 2011 at 11:48 AM, Luis Felipe Parra <
+>> felipe.parra at quantil.com.co> wrote:
+>>
+>>> Hello, Thank you Matt. I am doing exactly this
+>>> a.out$imputations[[1]]
+>>> but I'am still getting NA's on this imputations. Do you know which migh
+>>> be the reason?
+>>>
+>>> Thank you
+>>>
+>>> Felipe Parra
+>>>
+>>>
+>>> On Tue, Aug 2, 2011 at 10:19 AM, Matt Blackwell <
+>>> blackwel at fas.harvard.edu> wrote:
+>>>
+>>>> Hi Luis,
+>>>>
+>>>> You want to make sure that you save the output to a name:
+>>>>
+>>>> a.out <- amelia(y)
+>>>>
+>>>> Once you do this, you can see your imputed datasets here:
+>>>>
+>>>> a.out$imputations[[1]]
+>>>>
+>>>> That is, for example, the first imputed dataset. You can access others
+>>>> by changing the "1" to another number. Hope that helps.
+>>>>
+>>>>  Cheers,
+>>>> matt.
+>>>>
+>>>>
+>>>> On Thu, Jul 28, 2011 at 1:03 PM, Luis Felipe Parra <
+>>>> felipe.parra at quantil.com.co> wrote:
+>>>>
+>>>>> Hello, I've just discovered amelia today and I am trying to use to to
+>>>>> fill some missing values in the attached dataset. I am using amelia in R,
+>>>>> when I call amelia(y) I am getting my output with still some missing values.
+>>>>>
+>>>>> Does somebody know what might be I doing wrong, or what might be going
+>>>>> on. Thank you
+>>>>>
+>>>>> Felipe Parra
+>>>>>
+>>>>>
+>>>>>
+>>>>
+>>>
+>>>
+>>
+>
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110802/ed6c3065/attachment.html>
+
+From Albrecht.Gradmann at ecologic.eu  Tue Aug  9 11:50:05 2011
+From: Albrecht.Gradmann at ecologic.eu (Albrecht Gradmann)
+Date: Tue, 09 Aug 2011 17:50:05 +0200
+Subject: [amelia] Calculating summary statistics from Amelia objects
+Message-ID: <4E41572D.4000200@ecologic.eu>
+
+Hello,
+
+is there an easy way to calculate the mean and standard deviation 
+(Rubins Formula) for Amelia objects? Right now I do the following:
+
+* create an "imputed matrix" using the following call
+a.out <- amelia(merged, m=10, ts= "Year", cs ="GEO")
+
+* output the individual imputations using the following:
+write.amelia(obj=a.out, file.stem = "outdata")
+
+* Reading in "outdata1.csv" to  "outdata10.csv" as individual dataframes
+
+* Using the 10 dataframes as arguments to calculate the statistics
+
+Is there any "more straightforward" way that you could suggest to 
+achieve this?
+
+With best regards
+Albrecht
+
+
+
+-- 
+Albrecht Gradmann, Fellow
+
+Ecologic Institute
+Berlin - Brussels - Vienna - Washington DC 
+
+Pfalzburger Strasse 43/44 | 10717 Berlin | Germany 
+Tel. +49 (30) 86880-170 | Fax +49 (30) 86880-100 
+http://www.ecologic.eu/ | http://www.ecologic-events.eu/
+
+Ecologic Institute publishes a monthly newsletter. 
+To subscribe, please register at: http://www.ecologic.eu/subscribe.htm
+
+- - - 
+
+Ecologic Institut gemeinnuetzige GmbH 
+GF/Director: R. Andreas Kraemer | AG Charlottenburg HRB 57947 | USt/VAT-IdNr. DE811963464
+'Ecologic' is a Trade Mark (TM) of Ecologic Institut gemeinnuetzige GmbH, Berlin.
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From blackwel at fas.harvard.edu  Tue Aug  9 15:45:56 2011
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Tue, 9 Aug 2011 15:45:56 -0400
+Subject: [amelia] Calculating summary statistics from Amelia objects
+In-Reply-To: <4E41572D.4000200@ecologic.eu>
+References: <4E41572D.4000200@ecologic.eu>
+Message-ID: <CAK1YySH1KZXNxUjXLW79bjmZBKM74Qt9PcwpGAVF98YmPVGU0g@mail.gmail.com>
+
+Hi Albrecht,
+
+For a large class of statistical models, you can use Zelig:
+
+http://gking.harvard.edu/zelig/
+
+Alternatively you can always use for loops on each imputed dataset, which
+are in a list called "a.out$imputations". Here is a quick example:
+
+stat.holder <- rep(NA, times = 10)
+se.holder <- rep(NA, times = 10)
+
+for (i in 1:10) {
+  stat.holder[i] <- my.stat(a.out$imputations[[i]])
+  se.holder[i] <- my.se(a.out$imputations[[i]])
+}
+
+The "my.stat" and "my.se" functions are just the function that calculates
+your point estimates and standard errors on each imputed dataset. That is,
+those are the estimates you would have done without missing data.Then, you
+can just run the Rubin rules on those vectors instead of saving and
+reloading each data frame individually.
+
+Hope that helps.
+
+Cheers,
+matt.
+
+On Tue, Aug 9, 2011 at 11:50 AM, Albrecht Gradmann <
+Albrecht.Gradmann at ecologic.eu> wrote:
+
+> Hello,
+>
+> is there an easy way to calculate the mean and standard deviation (Rubins
+> Formula) for Amelia objects? Right now I do the following:
+>
+> * create an "imputed matrix" using the following call
+> a.out <- amelia(merged, m=10, ts= "Year", cs ="GEO")
+>
+> * output the individual imputations using the following:
+> write.amelia(obj=a.out, file.stem = "outdata")
+>
+> * Reading in "outdata1.csv" to  "outdata10.csv" as individual dataframes
+>
+> * Using the 10 dataframes as arguments to calculate the statistics
+>
+> Is there any "more straightforward" way that you could suggest to achieve
+> this?
+>
+> With best regards
+> Albrecht
+>
+>
+>
+> --
+> Albrecht Gradmann, Fellow
+>
+> Ecologic Institute
+> Berlin - Brussels - Vienna - Washington DC
+> Pfalzburger Strasse 43/44 | 10717 Berlin | Germany Tel. +49 (30) 86880-170| Fax +49
+> (30) 86880-100 http://www.ecologic.eu/ | http://www.ecologic-events.eu/
+>
+> Ecologic Institute publishes a monthly newsletter. To subscribe, please
+> register at: http://www.ecologic.eu/**subscribe.htm<http://www.ecologic.eu/subscribe.htm>
+>
+> - - -
+> Ecologic Institut gemeinnuetzige GmbH GF/Director: R. Andreas Kraemer | AG
+> Charlottenburg HRB 57947 | USt/VAT-IdNr. DE811963464
+> 'Ecologic' is a Trade Mark (TM) of Ecologic Institut gemeinnuetzige GmbH,
+> Berlin.
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.**edu/?info=amelia<http://lists.gking.harvard.edu/?info=amelia>
+> More info about Amelia: http://gking.harvard.edu/**amelia<http://gking.harvard.edu/amelia>
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110809/6b84dae0/attachment.html>
+
+From nreiblin at mail.uni-mannheim.de  Wed Aug 10 05:56:34 2011
+From: nreiblin at mail.uni-mannheim.de (Nadine Reibling)
+Date: Wed, 10 Aug 2011 11:56:34 +0200
+Subject: [amelia] Observation-level priors and overdispersion graph
+Message-ID: <CAERFVchA6n-CX1G2UKG+wx8oMJ+2GhBLcineJTSa01uRJmYD+Q@mail.gmail.com>
+
+Hello everyone,
+
+I encountered a problem trying to introduce observation-level priors. I
+expected that the imputation for the specifed observations would be better
+(closer to my expectations, smaller variation). What indeed happens is three
+things:
+1) The convergence process completely changes. The number of iterations goes
+down by at least 50% compared to not using the prior. I tried different
+priors specifiying information from 3 to 50 observations; the same thing
+always occurred. The imputation without the priors works fine and
+diagnostics indicate a good fit of the imputation model.
+2) The imputations for a lot of other variables and observations not
+specified by the prior changed tremendously. Imputation diagnostics look a
+lot worse for many variables even if I specify only three variables.
+3) Imputations for the observations for which priors are introduced change
+only slightly.
+
+My code:
+
+pr3 <- matrix(c(75, 76, 77, 25, 25, 25, 1, 1, 1, 2.29, 2.29, 2.28, 0.95,
+0.95, 0.95), nrow=3, ncol=5)
+pr3
+
+a.out.new3 <- amelia(macimp, m=5, ts = "_j", cs = "countries", polytime=0,
+intercs=TRUE, p2s=2, empri=0.01*nrow(macimp), priors = pr3)
+
+My data encompass 1127 observations and 133 variables (of which 48 are year
+dummies).
+
+A non-related problem occurs when I use the imputation without priors and
+try to create the overdispersion plot with 5 imputations.
+I get an error message:
+
+A vector of this size cannot be allocated [translated from German].
+
+When I use only 3 imputations, I get an overdispersion graph that looks
+fine.
+
+Thank you for any suggestions how to solve these problems!
+
+Nadine
+
+-- 
+Nadine Reibling
+PhD candidate
+Mannheim Centre for European Social Research
+A5,6
+68131 Mannheim
+0049-621-181-3302
+nreiblin at mail.uni-mannheim.de
+Website: http://cdss.uni-mannheim.de/index.php?id=346
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110810/9b2fe57c/attachment.html>
+
+From Albrecht.Gradmann at ecologic.eu  Wed Aug 10 11:04:21 2011
+From: Albrecht.Gradmann at ecologic.eu (Albrecht Gradmann)
+Date: Wed, 10 Aug 2011 17:04:21 +0200
+Subject: [amelia] Logging from AmeliaView
+Message-ID: <4E429DF5.5090209@ecologic.eu>
+
+Hello,
+
+is there some way to access a log of the commands that are sent to 
+Amelia by using AmeliaView? That would be helpful to generate a script 
+that replicates the results that were achieved during a session with 
+"AmeliaView". I guess that Amelia writes some kind of log, but I don't 
+know where to find it.
+
+With thanks in advance,
+Albrecht Gradmann
+
+-- 
+Albrecht Gradmann, Fellow
+
+Ecologic Institute
+Berlin - Brussels - Vienna - Washington DC 
+
+Pfalzburger Strasse 43/44 | 10717 Berlin | Germany 
+Tel. +49 (30) 86880-170 | Fax +49 (30) 86880-100 
+http://www.ecologic.eu/ | http://www.ecologic-events.eu/
+
+Ecologic Institute publishes a monthly newsletter. 
+To subscribe, please register at: http://www.ecologic.eu/subscribe.htm
+
+- - - 
+
+Ecologic Institut gemeinnuetzige GmbH 
+GF/Director: R. Andreas Kraemer | AG Charlottenburg HRB 57947 | USt/VAT-IdNr. DE811963464
+'Ecologic' is a Trade Mark (TM) of Ecologic Institut gemeinnuetzige GmbH, Berlin.
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From blackwel at fas.harvard.edu  Thu Aug 11 14:50:04 2011
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Thu, 11 Aug 2011 14:50:04 -0400
+Subject: [amelia] Observation-level priors and overdispersion graph
+In-Reply-To: <CAERFVchA6n-CX1G2UKG+wx8oMJ+2GhBLcineJTSa01uRJmYD+Q@mail.gmail.com>
+References: <CAERFVchA6n-CX1G2UKG+wx8oMJ+2GhBLcineJTSa01uRJmYD+Q@mail.gmail.com>
+Message-ID: <CAK1YySEnRfqdrT0=TFkx3eg-i+Why36DvFSTJ+DsVxgAVUiYNQ@mail.gmail.com>
+
+Hi Nadine,
+
+A few points.
+
+1) You should expect that the convergence properties will change when adding
+priors since these change the optimization problem. Are the imputations
+converging to different places in the plot? That would be more of a problem.
+
+2) The sensitivity is strange, but I wonder if it is due to the number of
+parameters the imputation model is trying to fit. Note that you have 133
+variables plus a fixed effect for each country (as specified by your call to
+amelia), which means you are estimating roughly 6000 parameters in the
+model. You have added a ridge prior, which will help, but it might not be
+enough. The imputations could still be poorly behaved with this large of a
+dataset.
+
+3) It's hard to say anything else without seeing your data at all. If you
+would like me to take a look at it, feel free to send me mail off-list, so
+that I can track down the problem.
+
+Hope that helps.
+
+Cheers,
+matt.
+
+On Wed, Aug 10, 2011 at 5:56 AM, Nadine Reibling <
+nreiblin at mail.uni-mannheim.de> wrote:
+
+> Hello everyone,
+>
+> I encountered a problem trying to introduce observation-level priors. I
+> expected that the imputation for the specifed observations would be better
+> (closer to my expectations, smaller variation). What indeed happens is three
+> things:
+> 1) The convergence process completely changes. The number of iterations
+> goes down by at least 50% compared to not using the prior. I tried different
+> priors specifiying information from 3 to 50 observations; the same thing
+> always occurred. The imputation without the priors works fine and
+> diagnostics indicate a good fit of the imputation model.
+> 2) The imputations for a lot of other variables and observations not
+> specified by the prior changed tremendously. Imputation diagnostics look a
+> lot worse for many variables even if I specify only three variables.
+> 3) Imputations for the observations for which priors are introduced change
+> only slightly.
+>
+> My code:
+>
+> pr3 <- matrix(c(75, 76, 77, 25, 25, 25, 1, 1, 1, 2.29, 2.29, 2.28, 0.95,
+> 0.95, 0.95), nrow=3, ncol=5)
+> pr3
+>
+> a.out.new3 <- amelia(macimp, m=5, ts = "_j", cs = "countries", polytime=0,
+> intercs=TRUE, p2s=2, empri=0.01*nrow(macimp), priors = pr3)
+>
+> My data encompass 1127 observations and 133 variables (of which 48 are year
+> dummies).
+>
+> A non-related problem occurs when I use the imputation without priors and
+> try to create the overdispersion plot with 5 imputations.
+> I get an error message:
+>
+> A vector of this size cannot be allocated [translated from German].
+>
+> When I use only 3 imputations, I get an overdispersion graph that looks
+> fine.
+>
+> Thank you for any suggestions how to solve these problems!
+>
+> Nadine
+>
+> --
+> Nadine Reibling
+> PhD candidate
+> Mannheim Centre for European Social Research
+> A5,6
+> 68131 Mannheim
+> 0049-621-181-3302
+> nreiblin at mail.uni-mannheim.de
+> Website: http://cdss.uni-mannheim.de/index.php?id=346
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110811/73d6af16/attachment.html>
+
+From blackwel at fas.harvard.edu  Thu Aug 11 14:56:08 2011
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Thu, 11 Aug 2011 14:56:08 -0400
+Subject: [amelia] Logging from AmeliaView
+In-Reply-To: <4E429DF5.5090209@ecologic.eu>
+References: <4E429DF5.5090209@ecologic.eu>
+Message-ID: <CAK1YySE5KXwffYxXJ2ZkFre68ZqMOCKo-25jrXqwzuiYnERw0w@mail.gmail.com>
+
+Hi Albrecht,
+
+In the latest versions of Amelia (1.5), there is an "Output Log" button
+(next to the "Impute" Button) that displays the output from the amelia run.
+It also shows the R syntax used to generate the imputations. You can get the
+latest version of amelia using the following command in R:
+
+install.packages("Amelia", repos="http://r.iq.harvard.edu")
+
+Hope that helps.
+
+Cheers,
+matt.
+
+On Wed, Aug 10, 2011 at 11:04 AM, Albrecht Gradmann <
+Albrecht.Gradmann at ecologic.eu> wrote:
+
+> Hello,
+>
+> is there some way to access a log of the commands that are sent to Amelia
+> by using AmeliaView? That would be helpful to generate a script that
+> replicates the results that were achieved during a session with
+> "AmeliaView". I guess that Amelia writes some kind of log, but I don't know
+> where to find it.
+>
+> With thanks in advance,
+> Albrecht Gradmann
+>
+> --
+> Albrecht Gradmann, Fellow
+>
+> Ecologic Institute
+> Berlin - Brussels - Vienna - Washington DC
+> Pfalzburger Strasse 43/44 | 10717 Berlin | Germany Tel. +49 (30) 86880-170| Fax +49
+> (30) 86880-100 http://www.ecologic.eu/ | http://www.ecologic-events.eu/
+>
+> Ecologic Institute publishes a monthly newsletter. To subscribe, please
+> register at: http://www.ecologic.eu/**subscribe.htm<http://www.ecologic.eu/subscribe.htm>
+>
+> - - -
+> Ecologic Institut gemeinnuetzige GmbH GF/Director: R. Andreas Kraemer | AG
+> Charlottenburg HRB 57947 | USt/VAT-IdNr. DE811963464
+> 'Ecologic' is a Trade Mark (TM) of Ecologic Institut gemeinnuetzige GmbH,
+> Berlin.
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.**edu/?info=amelia<http://lists.gking.harvard.edu/?info=amelia>
+> More info about Amelia: http://gking.harvard.edu/**amelia<http://gking.harvard.edu/amelia>
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110811/99cb5a8a/attachment.html>
+
+From vmara at ciesin.columbia.edu  Thu Aug 11 17:39:12 2011
+From: vmara at ciesin.columbia.edu (Vali Mara)
+Date: Thu, 11 Aug 2011 17:39:12 -0400
+Subject: [amelia] tscsPlot and un-imputed cases
+Message-ID: <4E444C00.7020904@ciesin.columbia.edu>
+
+Hello,
+
+I'm trying to plot the observed and imputed values (with confidence 
+interval) in a time series cross sectional dataset, using tscsPlot. The 
+problem is that some of the observation in the Amelia output are 
+missing, and these observations are displayed with NA. When trying to 
+use tscsPlot to plot data for one particular country that has NA in the 
+Amelia output, the missing data are not accounted for, and the values 
+are displayed consecutively (without regard of the year).
+Here is the code line, for one particular country:
+
+tscsPlot(output,cs="AND",ts="Year", main = "Andorra", var="HDI", 
+ylim=c(0,1))
+
+I'm probably missing something. Any help would be much appreciated.
+Thank you.
+Regards,
+Vali
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From blackwel at fas.harvard.edu  Fri Aug 12 14:22:03 2011
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Fri, 12 Aug 2011 14:22:03 -0400
+Subject: [amelia] tscsPlot and un-imputed cases
+In-Reply-To: <4E444C00.7020904@ciesin.columbia.edu>
+References: <4E444C00.7020904@ciesin.columbia.edu>
+Message-ID: <CAK1YySFcqEbx=5Q+_A-5NxgMwvv6TEHLR_2TcSKDEZ1GCiQx=A@mail.gmail.com>
+
+Hi Vali,
+
+Thanks for pointing this bug out. We have pushed a fix to the development
+version (1.5-3) of Amelia. You can install the development version using the
+following command:
+
+install.packages("Amelia", repos="http://r.iq.harvard.edu", type = "source")
+
+Hope that helps.
+
+Cheers,
+matt.
+
+On Thu, Aug 11, 2011 at 5:39 PM, Vali Mara <vmara at ciesin.columbia.edu>wrote:
+
+> Hello,
+>
+> I'm trying to plot the observed and imputed values (with confidence
+> interval) in a time series cross sectional dataset, using tscsPlot. The
+> problem is that some of the observation in the Amelia output are missing,
+> and these observations are displayed with NA. When trying to use tscsPlot to
+> plot data for one particular country that has NA in the Amelia output, the
+> missing data are not accounted for, and the values are displayed
+> consecutively (without regard of the year).
+> Here is the code line, for one particular country:
+>
+> tscsPlot(output,cs="AND",ts="**Year", main = "Andorra", var="HDI",
+> ylim=c(0,1))
+>
+> I'm probably missing something. Any help would be much appreciated.
+> Thank you.
+> Regards,
+> Vali
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.**edu/?info=amelia<http://lists.gking.harvard.edu/?info=amelia>
+> More info about Amelia: http://gking.harvard.edu/**amelia<http://gking.harvard.edu/amelia>
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110812/4e4eee61/attachment.html>
+
+From DawnM at usca.edu  Sat Aug 13 11:52:11 2011
+From: DawnM at usca.edu (Dawn Morales)
+Date: Sat, 13 Aug 2011 11:52:11 -0400
+Subject: [amelia] windows version, help
+Message-ID: <F16C2A01924BF645B0247B89E4C7C91680CF6B354E@EXCHANGE.usca.edu>
+
+Hi,
+
+I've followed the instructions for installing the Windows version of Amelia, but have struggled in the past to learn R and do not want to try again while trying to learn Amelia.  Can someone send me to a link for instructions on how to use the Windows version?  All I can find are the R instructions.
+
+Best,
+Dawn
+Dawn A. Morales, PhD
+Asst. Professor of Psychology
+University of South Carolina, Aiken
+http://www.usca.edu/psychology/Morales_files/index.html
+desk phone: 803-641-3422
+fax: 803-641-3726
+
+Chance favors only the prepared mind."  Louis Pasteur
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110813/b3f4cc55/attachment.html>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Dawn Morales (DawnM at usca.edu).vcf
+Type: text/x-vcard
+Size: 676 bytes
+Desc: Dawn Morales (DawnM at usca.edu).vcf
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110813/b3f4cc55/attachment.vcf>
+
+From blackwel at fas.harvard.edu  Thu Aug 18 10:04:32 2011
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Thu, 18 Aug 2011 10:04:32 -0400
+Subject: [amelia] windows version, help
+In-Reply-To: <F16C2A01924BF645B0247B89E4C7C91680CF6B354E@EXCHANGE.usca.edu>
+References: <AcxZ0PbevJq58Qc0TVSdGSxX29R3oQ=?=> <F16C2A01924BF645B0247B89E4C7C91680CF6B354E@EXCHANGE.usca.edu>
+Message-ID: <CAK1YySERi1F2488qrXQfZbDsGrLtng8BFaWwX=LCBemDhaapaw@mail.gmail.com>
+
+Hi Dawn,
+
+In Section 5 of the documentation, there is coverage of all of the
+AmeliaView GUI functions. It covers almost all of the functionality that is
+covered in the R sections. Any of the references to R functions or arguments
+in the main documentation has a corresponding GUI element. We do not
+currently have an AmeliaView-specific documentation, but that may come in
+future releases.
+
+Cheers,
+matt.
+
+On Sat, Aug 13, 2011 at 11:52 AM, Dawn Morales <DawnM at usca.edu> wrote:
+
+> Hi,****
+>
+> ** **
+>
+> I?ve followed the instructions for installing the Windows version of
+> Amelia, but have struggled in the past to learn R and do not want to try
+> again while trying to learn Amelia.  Can someone send me to a link for
+> instructions on how to use the Windows version?  All I can find are the R
+> instructions. ****
+>
+> ** **
+>
+> Best, ****
+>
+> Dawn****
+>
+> Dawn A. Morales, PhD
+> Asst. Professor of Psychology
+> University of South Carolina, Aiken
+> http://www.usca.edu/psychology/M orales_files/index.html<http://www.usca.edu/psychology/Morales_files/index.html>
+> desk phone: 803-641-3422
+> fax: 803-641-3726 ****
+>
+> ** **
+>
+> *Chance favors only the prepared mind."  Louis Pasteur*
+>
+> ** **
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110818/b9f0d6b3/attachment.html>
+

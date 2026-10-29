@@ -1,0 +1,414 @@
+From jhonaker at iq.harvard.edu  Mon Oct  1 10:55:56 2012
+From: jhonaker at iq.harvard.edu (Honaker, James)
+Date: Mon, 1 Oct 2012 10:55:56 -0400
+Subject: [amelia] Relationships to other variables
+In-Reply-To: <CAD_4bA-A1f7a8YyMOpd8Zn61HJBiGyy1BwOY+jhBy+jQoKRBHw@mail.gmail.com>
+References: <CAKV6_L9mEBAjA61AL8UO+DrtT0yYdoj32SCmPeUpQin+KcRavg@mail.gmail.com>
+	<CANHDHZzmr0oYMLAvFq576EBe6WZtaMHx8dyEqhPsxbmPZ6yqKA@mail.gmail.com>,
+	<CAD_4bA-A1f7a8YyMOpd8Zn61HJBiGyy1BwOY+jhBy+jQoKRBHw@mail.gmail.com>
+Message-ID: <C20BA9DEEA2CB344BFC0EA2B8E9952105D4713E2EE@FASXCH01.fasmail.priv>
+
+Laura,
+
+If your variables are x1, x2, x3, you could transform them to two log ratios.  That is, create new variables, z1= log(x2/x1) and z2=log(x3/x1) using natural logarithms.  The choice of which variable serves as the common denominator is arbitrary, so if one of your variables has no missingness, choose that one.  The transformed variables are now independent, unconstrained, and contain all the information of the original variables.  If you model them as distributed by a Normal (the working assumption in the base Amelia model with no additional options), then the original x1, x2, x3 are distributed additive logistic normal. 
+
+Then include the z's (and omit the x's) from the imputation model.  When you have the z's imputed, transform them back into the x's (if the x's are needed for your model purposes).  The reverse transformations are:
+x1=1/w; x2=exp(z1)/w; x3=exp(z2)/w; where w=1 + exp(z1) + exp(z2)
+
+Key cites on this transformation, if you want more information, are:
+Aitchison, J. 1986.  ``The Statistical Analysis of Compositional Data.'' London: Chapman and Hall
+
+Katz, Jonathan and Gary King.  1999.  ``A Statistical Model for Multiparty Electoral Data.''  American Political Science Review  93(1)(March): 15-32.
+
+Some papers with imputation using this model are:
+Honaker, James, Jonathan Katz and Gary King. 2002. ?A Fast, Easy, and Efficient Esti- mator for Multiparty Electoral Data.? Political Analysis 10(1): 84-100.
+
+Frisina, Laurin, Michael Herron, James Honaker and Jeffrey B. Lewis. 2008.  ?Ballot Formats, Touchscreens, and Undervotes: A Study of the 2006 Midterm Elec- tions in Florida.? Election Law Journal 7(1):25-47.
+
+But these are both cases where the imputation is of a counter factual "what would have happened if some variable in the composition that was forced to be zero, was not forced to be zero."  Your application might be much simpler and more straightforward if you don't need to use the additional information of bounds to add constraints from a factual observation to a counter factual estimation.
+
+The hardest problem in this model, is if some of the observed x's contain zeros, thus the logarithms become log(0) or log(infinity).  If this is the case in your data, let me know, and I'll send you some review notes on the half dozen popular ways people deal this this.  Aitchison includes the simplest of these, which is to just change the 0's to a small value.
+
+Best,
+James.
+
+--
+James Honaker, Senior Research Scientist
+//// Institute for Quantitative Social Science, Harvard University
+________________________________________
+From: amelia-bounces at lists.gking.harvard.edu [amelia-bounces at lists.gking.harvard.edu] On Behalf Of laura mayoral [lm139 at nyu.edu]
+Sent: Thursday, September 27, 2012 7:34 AM
+Cc: amelia at lists.gking.harvard.edu
+Subject: Re: [amelia] Relationships to other variables
+
+Dear all
+
+I have to impute three variables that have to verify that are all between 0 and 1 and that the sum of the three adds up to 1. Do you have an idea of how I could introduce the latter restriction in AmeliaView?
+
+Thanks a million in advance!
+
+Laura Mayoral
+
+On Fri, Sep 7, 2012 at 4:46 PM, Gary King <king at harvard.edu<mailto:king at harvard.edu>> wrote:
+you can do a multivariate transformation.  e.g., if you have X, Y as your variables, you could do a=X+Y and b=X-Y.  then if you know b > 0, you could enter into amelia say B=ln(b) and then no matter what value Amelia imputes for B, you'd be ok
+Gary
+--
+Gary King - Albert J. Weatherhead III University Professor - Director, IQSS <http://iq.harvard.edu/> - Harvard University
+GKing.Harvard.edu<http://gking.harvard.edu/> - King at Harvard.edu<mailto:King at Harvard.edu> - @kinggary<http://twitter.com/kinggary> - 617-500-7570<tel:617-500-7570> - Asst 495-9271 - Fax 812-8581
+
+
+
+On Thu, Sep 6, 2012 at 6:27 PM, Patrick Lam <plam at fas.harvard.edu<mailto:plam at fas.harvard.edu>> wrote:
+Is there a way to bound variables via relationships with other variables in the dataset when multiply imputing with Amelia?  For example, if we have a household income variable and a household savings variable (both with some missingness) in our dataset, is there a way to specify that savings must be less than income for each observation in the imputed datasets?  Priors and logical bounds currently in Amelia don't seem like they are set up to do this exactly.
+
+Thanks!
+
+--
+Patrick Lam
+Department of Government and Institute for Quantitative Social Science, Harvard University
+http://www.people.fas.harvard.edu/~plam
+
+--
+Amelia mailing list served by HUIT
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+Amelia mailing list
+Amelia at lists.gking.harvard.edu<mailto:Amelia at lists.gking.harvard.edu>
+https://lists.gking.harvard.edu/mailman/listinfo/amelia
+
+
+--
+Amelia mailing list served by HUIT
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+Amelia mailing list
+Amelia at lists.gking.harvard.edu<mailto:Amelia at lists.gking.harvard.edu>
+https://lists.gking.harvard.edu/mailman/listinfo/amelia
+
+From fg2296 at tc.columbia.edu  Mon Oct  1 12:13:42 2012
+From: fg2296 at tc.columbia.edu (Francesco Giudici)
+Date: Mon, 01 Oct 2012 12:13:42 -0400
+Subject: [amelia] help: income panel data
+Message-ID: <5069C136.8010807@tc.columbia.edu>
+
+Dear Amelia Users and Developers,
+I just started to use Amelia II to impute missing values a longitudinal 
+dataset. I have a specific question about that and would like to know if 
+you could help me to understand what is the correct way to impute the 
+data in my case. My data are really simple: units are individuals with 
+ID, gender, race, years of education, etc. and the income per hour for 
+every year between age 30 and age 50. I would like to impute the missing 
+values on the income per hour. I tried to impute the data already but it 
+seems that the imputed values do not take into consideration prior and 
+later observations. For example, if income at age 38 is missing, I would 
+like to impute a value based on the income at age 37 and age 39, which 
+is not the case for the moment.
+
+On this topic, I also found this post on a blog:
+
+http://stats.stackexchange.com/questions/12873/multiple-imputation-for-missing-count-data-in-a-time-series-from-a-panel-study/37983#37983
+
+but I am not sure if this correspond to my situation. The imputation I 
+made was with the format I had (one line - one unit: first line = ID 1, 
+income.age.30, income.age.31, ...; second line = ID 2, income.age.30, 
+income.age.31...). Attached to this email you will find an extract of 
+the data under this form. Based on this post, If I understood it 
+correctly, I have to create a times series variables and transpose the 
+same individual on different lines (e.g. first line = ID 1, 
+income.age.30, income.age.31; second line = ID 1, income.age.30, 
+income.age.31, ...). But I am not really sure about that.
+
+I will be happy if you could give me an advice or if you could tell me 
+if the topic where already discussed in this mailing list.
+
+Thank you very much!
+
+Best wishes,
+Francesco Giudici
+
+
+
+-- 
+Francesco Giudici
+Postdoctoral Fellow
+Teachers College, Columbia University
+New York, NY 10027
+fg2296 at columbia.edu
+
+
+-- 
+Francesco Giudici
+Postdoctoral Fellow
+Teachers College, Columbia University
+New York, NY 10027
+fg2296 at columbia.edu
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Example_300.csv
+Type: application/vnd.ms-excel
+Size: 46837 bytes
+Desc: not available
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20121001/38cafbc6/attachment-0001.xlb>
+
+From m.blackwell at rochester.edu  Mon Oct  1 12:57:48 2012
+From: m.blackwell at rochester.edu (Matt Blackwell)
+Date: Mon, 1 Oct 2012 12:57:48 -0400
+Subject: [amelia] help: income panel data
+In-Reply-To: <5069C136.8010807@tc.columbia.edu>
+References: <5069C136.8010807@tc.columbia.edu>
+Message-ID: <CAK1YySFCM8d85z7rJCH5mRxSbimurYH3nQV-4TkOu=FYk-9WUA@mail.gmail.com>
+
+Hi Francesco,
+
+It seems as though your data are currently in "wide" format, but Amelia
+usually takes data in "long" format (where each row is a unit-year, as
+opposed to each row being one unit). In the wide format, Amelia will
+actually use 37 and 39 to impute 38, since each of those is a variable in
+the dataset. If you convert to long format, you will have to set the "ts"
+and "cs" arguments in order to include the time-series information.
+
+You can see some information on how to reshape your data in the following
+question from Stack Exchange:
+
+http://stats.stackexchange.com/questions/7439/how-to-change-data-between-wide-and-long-formats-in-r
+
+Hope that helps!
+
+Cheers,
+matt.
+
+On Mon, Oct 1, 2012 at 12:13 PM, Francesco Giudici
+<fg2296 at tc.columbia.edu>wrote:
+
+> Dear Amelia Users and Developers,
+> I just started to use Amelia II to impute missing values a longitudinal
+> dataset. I have a specific question about that and would like to know if
+> you could help me to understand what is the correct way to impute the data
+> in my case. My data are really simple: units are individuals with ID,
+> gender, race, years of education, etc. and the income per hour for every
+> year between age 30 and age 50. I would like to impute the missing values
+> on the income per hour. I tried to impute the data already but it seems
+> that the imputed values do not take into consideration prior and later
+> observations. For example, if income at age 38 is missing, I would like to
+> impute a value based on the income at age 37 and age 39, which is not the
+> case for the moment.
+>
+> On this topic, I also found this post on a blog:
+>
+> http://stats.stackexchange.**com/questions/12873/multiple-**
+> imputation-for-missing-count-**data-in-a-time-series-from-a-**
+> panel-study/37983#37983<http://stats.stackexchange.com/questions/12873/multiple-imputation-for-missing-count-data-in-a-time-series-from-a-panel-study/37983#37983>
+>
+> but I am not sure if this correspond to my situation. The imputation I
+> made was with the format I had (one line - one unit: first line = ID 1,
+> income.age.30, income.age.31, ...; second line = ID 2, income.age.30,
+> income.age.31...). Attached to this email you will find an extract of the
+> data under this form. Based on this post, If I understood it correctly, I
+> have to create a times series variables and transpose the same individual
+> on different lines (e.g. first line = ID 1, income.age.30, income.age.31;
+> second line = ID 1, income.age.30, income.age.31, ...). But I am not really
+> sure about that.
+>
+> I will be happy if you could give me an advice or if you could tell me if
+> the topic where already discussed in this mailing list.
+>
+> Thank you very much!
+>
+> Best wishes,
+> Francesco Giudici
+>
+>
+>
+> --
+> Francesco Giudici
+> Postdoctoral Fellow
+> Teachers College, Columbia University
+> New York, NY 10027
+> fg2296 at columbia.edu
+>
+>
+> --
+> Francesco Giudici
+> Postdoctoral Fellow
+> Teachers College, Columbia University
+> New York, NY 10027
+> fg2296 at columbia.edu
+>
+>
+> --
+> Amelia mailing list served by HUIT
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+> Amelia mailing list
+> Amelia at lists.gking.harvard.edu
+>
+> To unsubscribe from this list or get other information:
+>
+> https://lists.gking.harvard.edu/mailman/listinfo/amelia
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20121001/ba702e01/attachment.html>
+
+From nj248 at cam.ac.uk  Fri Oct 19 17:36:39 2012
+From: nj248 at cam.ac.uk (N. Janz)
+Date: 19 Oct 2012 22:36:39 +0100
+Subject: [amelia] Imputation of subsets for different Models / comparability
+Message-ID: <Prayer.1.3.5.1210192236390.26294@hermes-1.csi.cam.ac.uk>
+
+Dear all,
+
+I have a panel data set with economic and political variables for 
+country-years. I want to estimate 2 slightly different models and compare 
+the results. One Model includes Var1 and some controls, the second includes 
+a break-down of Var1 into its components, and the same (!) controls. I 
+claim that Var1 can better explain the outcome when broken down into its 
+components. More concretely, I compare the effects of total FDI with 
+effects of FDI broken down into business sectors.
+
+Model 1 is:
+Y = Var1 + Controls                            
+
+Model 2 is:
+Y = Var1a + Var1b + Var1c + Controls
+
+Ideally I would run an imputation that includes all variables (in model 1 
+and 2), and then estimate the models. However, my problem is: For Model 2 I 
+have very bad data availability for a bulk of country-years in Var1a, 
+Var1b, Var1c.
+
+Solution 1: I could kick out country-years with >80% missingness from the 
+complete panel data set and run one overall imputation. I would then 
+estimate Model 1 and 2 with the same imputed data set(s) and the estimates 
+would remain comparable. However, this means that Model 1 would be 
+estimated with less country-years than originally possible, just because I 
+want to compare it with Model 2 which has high missingness in its 
+variables.
+
+Solution 2: I am also thinking of building subsets of my master table to 
+run 2 separate imputations. Subset 1 for Model 1 would include all years 
+and countries - but not Var1a + Var1b + Var1c from model 2. Subest 2 for 
+Model 2 would include all variables; but I would cut out 5 years and 20 
+countries which have >80% missingness. Var1a + Var1b + Var1c would 
+obviously remain in the subset. I am hesitating because there is an overlap 
+in the variables in the two models (controls are the same, Var1 is broken 
+down into its components), and I want to compare the results.
+
+What do you think conceptually and from the imputation point of view about 
+the trade-off between comparability and preservation of data points for 
+Model 1?
+
+Thank you very much in advance!
+Best,
+Nicole
+-
+Nicole Janz
+Doctoral Researcher
+University of Cambridge
+Politics and International Studies
+www.nicolejanz.de | nj248 at cam.ac.uk | +44 (0) 7905 70 1 69 4
+Skype: nicole.janz
+
+
+From nj248 at cam.ac.uk  Sat Oct 27 03:50:38 2012
+From: nj248 at cam.ac.uk (N. Janz)
+Date: 27 Oct 2012 08:50:38 +0100
+Subject: [amelia] 1) subsets 2) lags
+Message-ID: <Prayer.1.3.5.1210270850380.22155@hermes-1.csi.cam.ac.uk>
+
+Dear all,
+
+I have two questions and would be very grateful for your help:
+
+1) Is there a problem with running imputations on different subsets of your 
+full data set when I use the same variables in my models from different 
+imputations?
+
+2) Do I have to include lags in the imputation specification that I expect 
+I 'might' use in my models (although I'm not sure yet)? For example, all 
+independent variables 'might' be lagged one year to allow for their effect 
+to 'spread' to the outcome variable. If I don't include them and decide to 
+use lags after a first run of imputations, do I have to go back to Amelia, 
+include the lags, and run it again?
+
+Best,
+Nicole
+
+
+Nicole Janz, PhD Cand.
+Lecturer at Social Sciences Research Methods Centre 2012/13
+University of Cambridge
+Department of Politics and International Studies
+www.nicolejanz.de | nj248 at cam.ac.uk | Mobile: +44 (0) 7905 70 1 69 4
+Skype: nicole.janz
+
+From king at harvard.edu  Sun Oct 28 10:50:18 2012
+From: king at harvard.edu (Gary King)
+Date: Sun, 28 Oct 2012 10:50:18 -0400
+Subject: [amelia] 1) subsets 2) lags
+In-Reply-To: <Prayer.1.3.5.1210270850380.22155@hermes-1.csi.cam.ac.uk>
+References: <Prayer.1.3.5.1210270850380.22155@hermes-1.csi.cam.ac.uk>
+Message-ID: <CANHDHZz=bCJfNf1CRGVpREE1moANxL+mnnjSmx7viCY+E+VmrA@mail.gmail.com>
+
+Nicole, I think this is the principle you're after:  your imputation model
+should include all the variables that could predict which items are
+missing.   This should then include all the variables you'd use in your
+analysis models.
+
+It's generally a good idea to impute once (or as many times as you like
+until you conclude you get it right), and then to take that one set of
+imputed data  (i.e., the one collection 5 or so imputed data sets) and run
+as many analysis models as you like from that starting point.
+Gary
+--
+*Gary King* - Albert J. Weatherhead III University Professor - Director, IQSS
+<http://iq.harvard.edu>- Harvard University
+GKing.Harvard.edu <http://gking.harvard.edu/> - King at Harvard.edu -
+@kinggary<http://twitter.com/kinggary>- 617-500-7570 - Asst 495-9271 -
+Fax 812-8581
+
+
+
+On Sat, Oct 27, 2012 at 3:50 AM, N. Janz <nj248 at cam.ac.uk> wrote:
+
+> Dear all,
+>
+> I have two questions and would be very grateful for your help:
+>
+> 1) Is there a problem with running imputations on different subsets of
+> your full data set when I use the same variables in my models from
+> different imputations?
+>
+> 2) Do I have to include lags in the imputation specification that I expect
+> I 'might' use in my models (although I'm not sure yet)? For example, all
+> independent variables 'might' be lagged one year to allow for their effect
+> to 'spread' to the outcome variable. If I don't include them and decide to
+> use lags after a first run of imputations, do I have to go back to Amelia,
+> include the lags, and run it again?
+>
+> Best,
+> Nicole
+>
+>
+> Nicole Janz, PhD Cand.
+> Lecturer at Social Sciences Research Methods Centre 2012/13
+> University of Cambridge
+> Department of Politics and International Studies
+> www.nicolejanz.de | nj248 at cam.ac.uk | Mobile: +44 (0) 7905 70 1 69 4
+> Skype: nicole.janz
+> --
+> Amelia mailing list served by HUIT
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.**edu/?info=amelia<http://lists.gking.harvard.edu/?info=amelia>
+> More info about Amelia: http://gking.harvard.edu/**amelia<http://gking.harvard.edu/amelia>
+> Amelia mailing list
+> Amelia at lists.gking.harvard.edu
+>
+> To unsubscribe from this list or get other information:
+>
+> https://lists.gking.harvard.**edu/mailman/listinfo/amelia<https://lists.gking.harvard.edu/mailman/listinfo/amelia>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20121028/913be785/attachment.html>
+

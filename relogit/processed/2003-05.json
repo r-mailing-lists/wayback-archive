@@ -1,0 +1,90 @@
+{
+  "list": "relogit",
+  "description": "",
+  "month": "2003-05",
+  "messages": [
+    {
+      "id": "msg-f4e80097fcf3",
+      "message_id": "<Pine.LNX.4.44.0305151540470.19296-100000@willow.harvard.edu>",
+      "from_name": "Gary King",
+      "from_email_hash": "ab5174122eed39b9a624c4a0e4480dfca9e3a7b61575242cb96f53f1495d1f7f",
+      "date": "2003-05-15T19:42:15Z",
+      "subject": "[relogit] Re: Clarify & Relogit",
+      "subject_clean": "[relogit] Re: Clarify & Relogit",
+      "in_reply_to": "<5.1.1.5.2.20030515140428.0315fb38@garnet.acns.fsu.edu>",
+      "references": [],
+      "body_plain": "Thanks Bill & Lanny.  I'm forwarding this to the Clarify and Relogit\nmailing lists so others might see too.  Gary\n\n     : Gary King, King at Harvard.Edu    http://GKing.Harvard.Edu :\n     : Center for Basic Research      Direct    (617) 495-2027 :\n     :   in the Social Sciences       Assistant (617) 495-9271 :\n     : 34 Kirkland Street, Rm. 2      HU-MIT DC (617) 495-4734 :\n     : Harvard U, Cambridge, MA 02138    eFax   (928) 832-7022 :\n\nOn Thu, 15 May 2003, William Berry wrote:\n\n> Folks,\n> \n> As I noted in my previous email, Clarify and Relogit are designed to \n> simulate quantities of interest for case n from the estimation sample with \n> the command \"setx [n].\"  As the exchange that follows shows, my colleague, \n> Lanny Martin, has devised a clever strategy for using Clarify and Relogit \n> to simulate quantities of interest for out-of-sample cases.  Using Clarify \n> as an example, one appends the out of sample cases to the estimation data \n> set (adding a dummy variable which indicates whether a case is in the \n> estimation sample (insample=1) or out of sample (insample=0).  Then one \n> uses the command\n> \n> estsimp modelname depvar indepvars if insample==1\n> \n> to estimate one's model using just the cases for which insample equals \n> 1.  Then one uses the command\n> \n> setx[#]\n> \n> where # is the observation number for a case for which insample equals 0.\n> \n> Perhaps you might consider noting this strategy in the next version of your \n> documentation for Clarify and Relogit.  (While the \"if\" qualifier is \n> included in your description of the estsimp and relogit commands, its \n> usefulness for out-of-sample predictions is not immediately obvious.)\n> \n> This strategy also creates the option for users to input independent \n> variable values for a set of hypothetical cases by specifying values in an \n> input file.  While for most applications, using setx commands to assign \n> independent variable values is simpler than inputting these values from a \n> file (through, for example, the command \"setx mean\"), there are other cases \n> where it would be simpler to use an input file... in which one can enter \n> just variable values in a spreadsheet and avoid the need to type many \n> commands with long lists of variable names.\n> \n> Bill\n> \n> >X-Sender: lanny at letter.net@mail.letter.net\n> >X-Mailer: QUALCOMM Windows Eudora Version 5.2.0.9\n> >Date: Thu, 15 May 2003 09:54:28 -0400\n> >To: William Berry <wberry at garnet.acns.fsu.edu>\n> >From: \"Lanny W. Martin\" <lmartin at garnet.acns.fsu.edu>\n> >Subject: Re: clarify\n> >X-Note: Report abuse to abuse at emailsrvr.com\n> >X-From: lmartin at garnet.acns.fsu.edu - user139.net031.fl.sprint-hsd.net \n> >([207.30.5.139]), outgoing 1.\n> >X-Note: HELOBOGUS, IPMX (-1)\n> >\n> >\n> >Bill,\n> >\n> >I just did a little experiment to see whether my suggestion yesterday \n> >would work, and the good news is that I think it does.  I took two \n> >separate datasets that had the same explanatory variables (actually, I \n> >just created the two separate data sets by splitting my original data set \n> >into two files).  Then, within each dataset I created a variable \"sample\" \n> >which took a value of 1 for all obs. in one dataset and 0 for all obs. in \n> >the other dataset.  I then just appended one data set to the other.\n> >\n> >Next, using clarify, I ran:\n> >\n> >estsimp modelname variables if sample==1,\n> >\n> >which generated simulated parameters based on only my sample observations \n> >(i.e., the observations in the first of the two datasets that were \n> >appended).  Then I just setx as usual with:\n> >\n> >setx [#],\n> >\n> >but the # I used was an observation that was NOT in the estimation sample \n> >(i.e., from the second of the two datasets that were appended).\n> >\n> >I checked everything to make sure that setx was using the correct \n> >observation, and it was.  I also downloaded relogit (since I should \n> >probably have it anyway) and tried the same thing, and it works fine.\n> >\n> >So, solving the problem basically just boils down to appending the \n> >out-of-sample data to the sample data, doing relogit with an IF condition, \n> >and then doing setx to an out-of-sample observation.  A little more \n> >brute-force than changing code, but it looks like everything worked correctly.\n> >\n> >Lanny\n> >\n> >\n> >At 05:09 PM 5/14/2003 -0400, you wrote:\n> >>Hi Lanny...\n> >>\n> >>The short answer is yes; you have it right.  But just to be precise...\n> >>\n> >>It's actually RELOGIT that I'd be using to estimate the model.  But \n> >>RELOGIT relies on the setx command in Clarify to specify a set of X \n> >>values for which predicted Pr(Y=1) is to be calculated.  With the \n> >>existing setx command, one can set the values of the Xs to the X values \n> >>for observation number n in the estimation data set with the command \n> >>\"setx [n].\"  I would be looking to modify the code (I presume in the \n> >>'setx.ado' file) so that the command \"setx [n]\" would set X values to the \n> >>X values of the nth case in a user-specified (non-estimation) data set... \n> >>or I suppose, leave setx alone but create another command, say \"setnewx \n> >>[n]\", that would do the same thing.\n> >>\n> >>Thanks for your willingness to take a quick look and see if what I want \n> >>to do might be doable in a \"quick easy fix\" to the Clarify code.\n> >>\n> >>Bill\n> >>\n> >>At 03:36 PM 5/14/2003 -0400, you wrote:\n> >>\n> >>>Hey Bill,\n> >>>\n> >>>I was going to sit down with clarify for a few minutes, but I wanted to \n> >>>make sure I understood your question first:  So, what you want to do is \n> >>>estimate your model as usual in clarify using \"estsimp\" on one sample of \n> >>>data, then you want to set the x values equal to the values of the \n> >>>explanatory variables for observations that are outside your \n> >>>dataset.  And after you do this, you would just generate whatever \n> >>>quantities of interest to you.  Is that right?\n> >>>\n> >>>Lanny\n> >>>\n> >>>___________________________________\n> >>>Lanny W. Martin\n> >>>Assistant Professor\n> >>>Department of Political Science\n> >>>Florida State University\n> >>>Tallahassee, FL 32306-2230\n> >>>\n> >>>Email: lanny.martin at fsu.edu\n> >>>Web: http://garnet.acns.fsu.edu/~lmartin/\n> >>>\n> >>>Phone:  (850) 644-7328\n> >>>Fax:      (850) 644-1367\n> >>>___________________________________\n> >>\n> >>\n> >>****************************************************\n> >>William D. Berry\n> >>Marian D. Irish Professor of Political Science\n> >>Department of Political Science\n> >>Florida State University\n> >>Tallahassee, FL 32306-2230\n> >>e-mail: wberry at garnet.acns.fsu.edu\n> >>voice: 850-644-7321     FAX: 850-644-1367\n> >>http://garnet.acns.fsu.edu/~wberry\n> >>****************************************************\n> \n\n\n-\nrelogit mailing list served by Harvard-MIT Data Center\nList Address: relogit at latte.harvard.edu\nSubscribe/Unsubscribe: http://lists.hmdc.harvard.edu/?info=relogit",
+      "body_snippet": "Thanks Bill & Lanny.  I'm forwarding this to the Clarify and Relogit\nmailing lists so others might see too.  Gary\n\n     : Gary King, King at Harvard.Edu    http://GKing.Harvard.Edu :\n     : Center for",
+      "thread_id": "thread-f4e80097fcf3",
+      "thread_depth": 0,
+      "month": "2003-05"
+    },
+    {
+      "id": "msg-b2d607a8ed11",
+      "message_id": "<courier.3EC5F429.00003909@latte.harvard.edu>",
+      "from_name": "Miranda Pocock",
+      "from_email_hash": "906cf81aa42f5907e6cc9d1e2b48ac9a9119ca04870e9ff1f19837273140beaf",
+      "date": "2003-05-17T09:34:20Z",
+      "subject": "[relogit] The cheapest and best Viagra!",
+      "subject_clean": "[relogit] The cheapest and best Viagra!",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "An HTML attachment was scrubbed...\nURL: <http://lists.gking.harvard.edu/pipermail/relogit/attachments/20030517/ec381043/attachment.html>",
+      "body_snippet": "An HTML attachment was scrubbed...\nURL: <http://lists.gking.harvard.edu/pipermail/relogit/attachments/20030517/ec381043/attachment.html>",
+      "thread_id": "thread-b2d607a8ed11",
+      "thread_depth": 0,
+      "month": "2003-05"
+    },
+    {
+      "id": "msg-4a8364a9b18a",
+      "message_id": "<courier.3ECDABCA.00001CF0@latte.harvard.edu>",
+      "from_name": "Flint Seaton",
+      "from_email_hash": "4e59e52b7832545bb225eb27724f7aae65719f94a17dbfb1096295a69241bf08",
+      "date": "2003-05-23T07:36:36Z",
+      "subject": "[relogit] **copy any dvd/sony game.**",
+      "subject_clean": "[relogit] **copy any dvd/sony game.**",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "An HTML attachment was scrubbed...\nURL: <http://lists.gking.harvard.edu/pipermail/relogit/attachments/20030523/d9979744/attachment.html>",
+      "body_snippet": "An HTML attachment was scrubbed...\nURL: <http://lists.gking.harvard.edu/pipermail/relogit/attachments/20030523/d9979744/attachment.html>",
+      "thread_id": "thread-4a8364a9b18a",
+      "thread_depth": 0,
+      "month": "2003-05"
+    }
+  ],
+  "threads": [
+    {
+      "id": "thread-f4e80097fcf3",
+      "subject": "[relogit] Re: Clarify & Relogit",
+      "message_count": 1,
+      "participants": [
+        "Gary King"
+      ],
+      "started": "2003-05-15T19:42:15Z",
+      "last_reply": "2003-05-15T19:42:15Z",
+      "root_message_id": "msg-f4e80097fcf3"
+    },
+    {
+      "id": "thread-b2d607a8ed11",
+      "subject": "[relogit] The cheapest and best Viagra!",
+      "message_count": 1,
+      "participants": [
+        "Miranda Pocock"
+      ],
+      "started": "2003-05-17T09:34:20Z",
+      "last_reply": "2003-05-17T09:34:20Z",
+      "root_message_id": "msg-b2d607a8ed11"
+    },
+    {
+      "id": "thread-4a8364a9b18a",
+      "subject": "[relogit] **copy any dvd/sony game.**",
+      "message_count": 1,
+      "participants": [
+        "Flint Seaton"
+      ],
+      "started": "2003-05-23T07:36:36Z",
+      "last_reply": "2003-05-23T07:36:36Z",
+      "root_message_id": "msg-4a8364a9b18a"
+    }
+  ]
+}

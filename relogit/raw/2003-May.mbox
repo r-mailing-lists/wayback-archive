@@ -1,0 +1,190 @@
+From king at harvard.edu  Thu May 15 15:42:15 2003
+From: king at harvard.edu (Gary King)
+Date: Thu, 15 May 2003 15:42:15 -0400 (EDT)
+Subject: [relogit] Re: Clarify & Relogit
+In-Reply-To: <5.1.1.5.2.20030515140428.0315fb38@garnet.acns.fsu.edu>
+Message-ID: <Pine.LNX.4.44.0305151540470.19296-100000@willow.harvard.edu>
+
+
+Thanks Bill & Lanny.  I'm forwarding this to the Clarify and Relogit
+mailing lists so others might see too.  Gary
+
+     : Gary King, King at Harvard.Edu    http://GKing.Harvard.Edu :
+     : Center for Basic Research      Direct    (617) 495-2027 :
+     :   in the Social Sciences       Assistant (617) 495-9271 :
+     : 34 Kirkland Street, Rm. 2      HU-MIT DC (617) 495-4734 :
+     : Harvard U, Cambridge, MA 02138    eFax   (928) 832-7022 :
+
+On Thu, 15 May 2003, William Berry wrote:
+
+> Folks,
+> 
+> As I noted in my previous email, Clarify and Relogit are designed to 
+> simulate quantities of interest for case n from the estimation sample with 
+> the command "setx [n]."  As the exchange that follows shows, my colleague, 
+> Lanny Martin, has devised a clever strategy for using Clarify and Relogit 
+> to simulate quantities of interest for out-of-sample cases.  Using Clarify 
+> as an example, one appends the out of sample cases to the estimation data 
+> set (adding a dummy variable which indicates whether a case is in the 
+> estimation sample (insample=1) or out of sample (insample=0).  Then one 
+> uses the command
+> 
+> estsimp modelname depvar indepvars if insample==1
+> 
+> to estimate one's model using just the cases for which insample equals 
+> 1.  Then one uses the command
+> 
+> setx[#]
+> 
+> where # is the observation number for a case for which insample equals 0.
+> 
+> Perhaps you might consider noting this strategy in the next version of your 
+> documentation for Clarify and Relogit.  (While the "if" qualifier is 
+> included in your description of the estsimp and relogit commands, its 
+> usefulness for out-of-sample predictions is not immediately obvious.)
+> 
+> This strategy also creates the option for users to input independent 
+> variable values for a set of hypothetical cases by specifying values in an 
+> input file.  While for most applications, using setx commands to assign 
+> independent variable values is simpler than inputting these values from a 
+> file (through, for example, the command "setx mean"), there are other cases 
+> where it would be simpler to use an input file... in which one can enter 
+> just variable values in a spreadsheet and avoid the need to type many 
+> commands with long lists of variable names.
+> 
+> Bill
+> 
+> >X-Sender: lanny at letter.net@mail.letter.net
+> >X-Mailer: QUALCOMM Windows Eudora Version 5.2.0.9
+> >Date: Thu, 15 May 2003 09:54:28 -0400
+> >To: William Berry <wberry at garnet.acns.fsu.edu>
+> >From: "Lanny W. Martin" <lmartin at garnet.acns.fsu.edu>
+> >Subject: Re: clarify
+> >X-Note: Report abuse to abuse at emailsrvr.com
+> >X-From: lmartin at garnet.acns.fsu.edu - user139.net031.fl.sprint-hsd.net 
+> >([207.30.5.139]), outgoing 1.
+> >X-Note: HELOBOGUS, IPMX (-1)
+> >
+> >
+> >Bill,
+> >
+> >I just did a little experiment to see whether my suggestion yesterday 
+> >would work, and the good news is that I think it does.  I took two 
+> >separate datasets that had the same explanatory variables (actually, I 
+> >just created the two separate data sets by splitting my original data set 
+> >into two files).  Then, within each dataset I created a variable "sample" 
+> >which took a value of 1 for all obs. in one dataset and 0 for all obs. in 
+> >the other dataset.  I then just appended one data set to the other.
+> >
+> >Next, using clarify, I ran:
+> >
+> >estsimp modelname variables if sample==1,
+> >
+> >which generated simulated parameters based on only my sample observations 
+> >(i.e., the observations in the first of the two datasets that were 
+> >appended).  Then I just setx as usual with:
+> >
+> >setx [#],
+> >
+> >but the # I used was an observation that was NOT in the estimation sample 
+> >(i.e., from the second of the two datasets that were appended).
+> >
+> >I checked everything to make sure that setx was using the correct 
+> >observation, and it was.  I also downloaded relogit (since I should 
+> >probably have it anyway) and tried the same thing, and it works fine.
+> >
+> >So, solving the problem basically just boils down to appending the 
+> >out-of-sample data to the sample data, doing relogit with an IF condition, 
+> >and then doing setx to an out-of-sample observation.  A little more 
+> >brute-force than changing code, but it looks like everything worked correctly.
+> >
+> >Lanny
+> >
+> >
+> >At 05:09 PM 5/14/2003 -0400, you wrote:
+> >>Hi Lanny...
+> >>
+> >>The short answer is yes; you have it right.  But just to be precise...
+> >>
+> >>It's actually RELOGIT that I'd be using to estimate the model.  But 
+> >>RELOGIT relies on the setx command in Clarify to specify a set of X 
+> >>values for which predicted Pr(Y=1) is to be calculated.  With the 
+> >>existing setx command, one can set the values of the Xs to the X values 
+> >>for observation number n in the estimation data set with the command 
+> >>"setx [n]."  I would be looking to modify the code (I presume in the 
+> >>'setx.ado' file) so that the command "setx [n]" would set X values to the 
+> >>X values of the nth case in a user-specified (non-estimation) data set... 
+> >>or I suppose, leave setx alone but create another command, say "setnewx 
+> >>[n]", that would do the same thing.
+> >>
+> >>Thanks for your willingness to take a quick look and see if what I want 
+> >>to do might be doable in a "quick easy fix" to the Clarify code.
+> >>
+> >>Bill
+> >>
+> >>At 03:36 PM 5/14/2003 -0400, you wrote:
+> >>
+> >>>Hey Bill,
+> >>>
+> >>>I was going to sit down with clarify for a few minutes, but I wanted to 
+> >>>make sure I understood your question first:  So, what you want to do is 
+> >>>estimate your model as usual in clarify using "estsimp" on one sample of 
+> >>>data, then you want to set the x values equal to the values of the 
+> >>>explanatory variables for observations that are outside your 
+> >>>dataset.  And after you do this, you would just generate whatever 
+> >>>quantities of interest to you.  Is that right?
+> >>>
+> >>>Lanny
+> >>>
+> >>>___________________________________
+> >>>Lanny W. Martin
+> >>>Assistant Professor
+> >>>Department of Political Science
+> >>>Florida State University
+> >>>Tallahassee, FL 32306-2230
+> >>>
+> >>>Email: lanny.martin at fsu.edu
+> >>>Web: http://garnet.acns.fsu.edu/~lmartin/
+> >>>
+> >>>Phone:  (850) 644-7328
+> >>>Fax:      (850) 644-1367
+> >>>___________________________________
+> >>
+> >>
+> >>****************************************************
+> >>William D. Berry
+> >>Marian D. Irish Professor of Political Science
+> >>Department of Political Science
+> >>Florida State University
+> >>Tallahassee, FL 32306-2230
+> >>e-mail: wberry at garnet.acns.fsu.edu
+> >>voice: 850-644-7321     FAX: 850-644-1367
+> >>http://garnet.acns.fsu.edu/~wberry
+> >>****************************************************
+> 
+
+
+-
+relogit mailing list served by Harvard-MIT Data Center
+List Address: relogit at latte.harvard.edu
+Subscribe/Unsubscribe: http://lists.hmdc.harvard.edu/?info=relogit
+
+
+From hexproerrectx at juno.com  Sat May 17 05:34:20 2003
+From: hexproerrectx at juno.com (Miranda Pocock)
+Date: Sat, 17 May 2003 02:34:20 -0700
+Subject: [relogit] The cheapest and best Viagra!
+Message-ID: <courier.3EC5F429.00003909@latte.harvard.edu>
+
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/relogit/attachments/20030517/ec381043/attachment.html>
+
+From lgbjxcopy_soft at netscape.com  Fri May 23 03:36:36 2003
+From: lgbjxcopy_soft at netscape.com (Flint Seaton)
+Date: Fri, 23 May 2003 00:36:36 -0700
+Subject: [relogit] **copy any dvd/sony game.**
+Message-ID: <courier.3ECDABCA.00001CF0@latte.harvard.edu>
+
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/relogit/attachments/20030523/d9979744/attachment.html>
+

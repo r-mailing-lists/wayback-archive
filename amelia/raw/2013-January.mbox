@@ -1,0 +1,735 @@
+From nj248 at cam.ac.uk  Thu Jan  3 16:31:21 2013
+From: nj248 at cam.ac.uk (N. Janz)
+Date: 03 Jan 2013 21:31:21 +0000
+Subject: [amelia] Problem with logs
+Message-ID: <Prayer.1.3.5.1301032131210.9307@hermes-1.csi.cam.ac.uk>
+
+Dear all, Amelia works fine when I do NOT specify any variables that should 
+be logged. As soon as I include logs, I get an error ("#Error in 
+matrix(unlist(value, recursive = FALSE, use.names = FALSE), nrow = nr, : 
+negative extents to matrix"). I checked that the variables to log can be 
+logged (no negative/zero values). I'm grateful for any hints. Best, Nicole
+
+--Rcode--
+
+#load MI package
+require(Amelia)
+set.seed(1000)
+
+#load data set
+load(url("http://schreiberin.de/nicole.Rdata"))
+n <- nicole
+
+dim(n)   #3822   59
+class(n) #"data.frame"
+
+# Declare variables to be logged vlogs <- c("GDP_const2000" , "GDP_curr" 
+,"population" , "lifeexp" ,"infmortality" ,"trade" , "l_US_fdi_total" , 
+"l_US_fdi_petrol" , "l_US_fdi_total_manuf","l_US_fdi_food" , 
+"l_US_fdi_chemical" , "l_US_fdi_prim_fab_metal" ,"l_US_fdi_machinery",
+  "l_US_fdi_electrical" , "l_US_fdi_transport" ,"l_US_fdi_whole_trade", 
+"l_US_fdi_depository" ,
+ "l_US_fdi_finance_except" ,"l_US_fdi_mining" , "l_WB_FDI_percentGDP" , 
+"l_WB_FDI_curr" , "l_UN_FDI_flow" , "l_UN_FDI_flow_pgdp" , 
+"l_UN_FDI_stock", "l_UN_FDI_stock_pgdp" )
+
+amelia.out <- amelia(n, m=5, ts="year", 
+cs="country",intercs=TRUE,polytime=1,logs=vlogs) #Error in 
+matrix(unlist(value, recursive = FALSE, use.names = FALSE), nrow = nr, : 
+negative extents to matrix
+
+--END Rcode--
+
+--
+Nicole Janz, PhD Cand.
+Lecturer at Social Sciences Research Methods Centre 2012/13
+University of Cambridge
+Department of Politics and International Studies
+www.nicolejanz.de | nj248 at cam.ac.uk | Mobile: +44 (0) 7905 70 1 69 4
+Skype: nicole.janz
+
+From antoine.pierucci at ined.fr  Fri Jan  4 05:53:55 2013
+From: antoine.pierucci at ined.fr (PIERUCCI Antoine)
+Date: Fri, 4 Jan 2013 11:53:55 +0100 (CET)
+Subject: [amelia] missmap() when there's no missing data
+Message-ID: <11488077.8131357296835959.JavaMail.root@chablis.ined.fr>
+
+Hi,
+
+I'm surprised by the behaviour of missmap() when the argument is a dataframe with no missing data. It seems to plot everything as missing.
+
+I did not see this feature documented in the help. I also didn't find any thread about that in this mailing list.
+
+I realise this package is not for datasets without missing data, but this may still be misleading.
+
+Example :
+
+library(package = "Amelia")
+tabComplete <- data.frame(a = 1:10, b = 11:20, c = 21:30)
+missmap(tabComplete) # everything plotted missing
+
+is.na(tabComplete$a) <- 1
+missmap(tabComplete) # works when at least one observation is missing
+
+
+Best regards,
+
+Antoine Filipovic Pierucci
+Institut national d'?tudes d?mographiques INED
+133 Bd Davout - 75 980 Paris 20 - France
+
+From jhonaker at iq.harvard.edu  Fri Jan  4 18:49:21 2013
+From: jhonaker at iq.harvard.edu (Honaker, James)
+Date: Fri, 4 Jan 2013 18:49:21 -0500
+Subject: [amelia] Problem with logs
+In-Reply-To: <Prayer.1.3.5.1301032131210.9307@hermes-1.csi.cam.ac.uk>
+References: <Prayer.1.3.5.1301032131210.9307@hermes-1.csi.cam.ac.uk>
+Message-ID: <C20BA9DEEA2CB344BFC0EA2B8E9952105D776923A4@FASXCH01.fasmail.priv>
+
+Dear Ms. Janz,
+
+There was an error in one of the checking routines we use in Amelia to see if there are any problems in the data that can be preempted.  I fixed the error and it will be changed in the next Amelia release.  In the meantime, you can avoid this issue by turning off the checking routines as an option in the amelia() call with the "incheck" argument.
+
+In your example, this would be:
+
+amelia.out <- amelia(n, m=5, ts="year", incheck=FALSE, cs="country",intercs=TRUE,polytime=1,logs=vlogs)
+
+Thanks for your help in finding this error and making your data available so we could resolve it.
+
+Best,
+James.
+
+
+--
+James Honaker, Senior Research Scientist
+//// Institute for Quantitative Social Science, Harvard University
+________________________________________
+From: amelia-bounces at lists.gking.harvard.edu [amelia-bounces at lists.gking.harvard.edu] On Behalf Of N. Janz [nj248 at cam.ac.uk]
+Sent: Thursday, January 03, 2013 4:31 PM
+To: amelia at lists.gking.harvard.edu
+Cc: nicolejanz at gmail.com
+Subject: [amelia] Problem with logs
+
+Dear all, Amelia works fine when I do NOT specify any variables that should
+be logged. As soon as I include logs, I get an error ("#Error in
+matrix(unlist(value, recursive = FALSE, use.names = FALSE), nrow = nr, :
+negative extents to matrix"). I checked that the variables to log can be
+logged (no negative/zero values). I'm grateful for any hints. Best, Nicole
+
+--Rcode--
+
+#load MI package
+require(Amelia)
+set.seed(1000)
+
+#load data set
+load(url("http://schreiberin.de/nicole.Rdata"))
+n <- nicole
+
+dim(n)   #3822   59
+class(n) #"data.frame"
+
+# Declare variables to be logged vlogs <- c("GDP_const2000" , "GDP_curr"
+,"population" , "lifeexp" ,"infmortality" ,"trade" , "l_US_fdi_total" ,
+"l_US_fdi_petrol" , "l_US_fdi_total_manuf","l_US_fdi_food" ,
+"l_US_fdi_chemical" , "l_US_fdi_prim_fab_metal" ,"l_US_fdi_machinery",
+  "l_US_fdi_electrical" , "l_US_fdi_transport" ,"l_US_fdi_whole_trade",
+"l_US_fdi_depository" ,
+ "l_US_fdi_finance_except" ,"l_US_fdi_mining" , "l_WB_FDI_percentGDP" ,
+"l_WB_FDI_curr" , "l_UN_FDI_flow" , "l_UN_FDI_flow_pgdp" ,
+"l_UN_FDI_stock", "l_UN_FDI_stock_pgdp" )
+
+amelia.out <- amelia(n, m=5, ts="year",
+cs="country",intercs=TRUE,polytime=1,logs=vlogs) #Error in
+matrix(unlist(value, recursive = FALSE, use.names = FALSE), nrow = nr, :
+negative extents to matrix
+
+--END Rcode--
+
+--
+Nicole Janz, PhD Cand.
+Lecturer at Social Sciences Research Methods Centre 2012/13
+University of Cambridge
+Department of Politics and International Studies
+www.nicolejanz.de | nj248 at cam.ac.uk | Mobile: +44 (0) 7905 70 1 69 4
+Skype: nicole.janz
+--
+Amelia mailing list served by HUIT
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+Amelia mailing list
+Amelia at lists.gking.harvard.edu
+
+To unsubscribe from this list or get other information:
+
+https://lists.gking.harvard.edu/mailman/listinfo/amelia
+
+From jhonaker at iq.harvard.edu  Fri Jan  4 18:59:13 2013
+From: jhonaker at iq.harvard.edu (Honaker, James)
+Date: Fri, 4 Jan 2013 18:59:13 -0500
+Subject: [amelia] Problem with logs - supplemental
+Message-ID: <C20BA9DEEA2CB344BFC0EA2B8E9952105D776923A5@FASXCH01.fasmail.priv>
+
+Dear Ms. Janz,
+
+Since you were kind enough to post the data so we could track down this issue, I thought I'd just mention a few more specifics about your issue in the context of your data, off-list since it's your own data.
+
+The Amelia error revealed itself because there are variables to be logged, "l_US_fdi_petrol" and "l_US_fdi_mining", which had no observations in common (every observation is missing one or the other or both).  That's not a problem with the data necessarily, just a curious feature I assume.  Additionally, I see that in working around this you have made additional copies of all the variables to be logged with all non-positive values changed to 1's.  That is fine, if the negative values really are better measured as 1's, but not necessary.  Amelia will shift variables to be logged to the right so they are positive in the event there are negative values for the imputation dataset, and then return the imputations on the original scale.  That's slightly different than your fix; it's of course your choice to substantively decide which you think is appropriate for your data.  Finally, the dataset you posted has both the variables to be logged, and the original unlogged variables in the imputation model.  That's certainly identified, and a good choice if you don't know whether the effect is with the linear or logged term, but perhaps also an oversight if you believe from theory these need to be logged.
+
+Thanks again for your help in tracking this down and making your data so easily available.
+Let me know if anything just raises more questions,
+Best,
+James.
+
+--
+James Honaker, Senior Research Scientist
+//// Institute for Quantitative Social Science, Harvard University
+________________________________________
+From: Honaker, James
+Sent: Friday, January 04, 2013 6:49 PM
+To: N. Janz; amelia at lists.gking.harvard.edu
+Cc: nicolejanz at gmail.com
+Subject: RE: [amelia] Problem with logs
+
+Dear Ms. Janz,
+
+There was an error in one of the checking routines we use in Amelia to see if there are any problems in the data that can be preempted.  I fixed the error and it will be changed in the next Amelia release.  In the meantime, you can avoid this issue by turning off the checking routines as an option in the amelia() call with the "incheck" argument.
+
+In your example, this would be:
+
+amelia.out <- amelia(n, m=5, ts="year", incheck=FALSE, cs="country",intercs=TRUE,polytime=1,logs=vlogs)
+
+Thanks for your help in finding this error and making your data available so we could resolve it.
+
+Best,
+James.
+
+
+--
+James Honaker, Senior Research Scientist
+//// Institute for Quantitative Social Science, Harvard University
+________________________________________
+From: amelia-bounces at lists.gking.harvard.edu [amelia-bounces at lists.gking.harvard.edu] On Behalf Of N. Janz [nj248 at cam.ac.uk]
+Sent: Thursday, January 03, 2013 4:31 PM
+To: amelia at lists.gking.harvard.edu
+Cc: nicolejanz at gmail.com
+Subject: [amelia] Problem with logs
+
+Dear all, Amelia works fine when I do NOT specify any variables that should
+be logged. As soon as I include logs, I get an error ("#Error in
+matrix(unlist(value, recursive = FALSE, use.names = FALSE), nrow = nr, :
+negative extents to matrix"). I checked that the variables to log can be
+logged (no negative/zero values). I'm grateful for any hints. Best, Nicole
+
+--Rcode--
+
+#load MI package
+require(Amelia)
+set.seed(1000)
+
+#load data set
+load(url("http://schreiberin.de/nicole.Rdata"))
+n <- nicole
+
+dim(n)   #3822   59
+class(n) #"data.frame"
+
+# Declare variables to be logged vlogs <- c("GDP_const2000" , "GDP_curr"
+,"population" , "lifeexp" ,"infmortality" ,"trade" , "l_US_fdi_total" ,
+"l_US_fdi_petrol" , "l_US_fdi_total_manuf","l_US_fdi_food" ,
+"l_US_fdi_chemical" , "l_US_fdi_prim_fab_metal" ,"l_US_fdi_machinery",
+  "l_US_fdi_electrical" , "l_US_fdi_transport" ,"l_US_fdi_whole_trade",
+"l_US_fdi_depository" ,
+ "l_US_fdi_finance_except" ,"l_US_fdi_mining" , "l_WB_FDI_percentGDP" ,
+"l_WB_FDI_curr" , "l_UN_FDI_flow" , "l_UN_FDI_flow_pgdp" ,
+"l_UN_FDI_stock", "l_UN_FDI_stock_pgdp" )
+
+amelia.out <- amelia(n, m=5, ts="year",
+cs="country",intercs=TRUE,polytime=1,logs=vlogs) #Error in
+matrix(unlist(value, recursive = FALSE, use.names = FALSE), nrow = nr, :
+negative extents to matrix
+
+--END Rcode--
+
+--
+Nicole Janz, PhD Cand.
+Lecturer at Social Sciences Research Methods Centre 2012/13
+University of Cambridge
+Department of Politics and International Studies
+www.nicolejanz.de | nj248 at cam.ac.uk | Mobile: +44 (0) 7905 70 1 69 4
+Skype: nicole.janz
+--
+Amelia mailing list served by HUIT
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+Amelia mailing list
+Amelia at lists.gking.harvard.edu
+
+To unsubscribe from this list or get other information:
+
+https://lists.gking.harvard.edu/mailman/listinfo/amelia
+
+From simon.woodward at lincolnagritech.co.nz  Sun Jan  6 14:42:20 2013
+From: simon.woodward at lincolnagritech.co.nz (Simon Woodward)
+Date: Mon, 7 Jan 2013 08:42:20 +1300
+Subject: [amelia] amelia in matlab
+Message-ID: <50d79220-badb-4c63-9ae9-db427254deba@lincolnagritech.co.nz>
+
+Is there a matlab  version of the amelia engine available? 
+ 
+Thanks
+ 
+Simon  Woodward
+Modelling  Scientist
+LINCOLN  AGRITECH LTD
+W: www.lincolnagritech.co.nz
+ 
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20130107/686b0cd3/attachment.html>
+
+From king at harvard.edu  Sun Jan  6 15:21:04 2013
+From: king at harvard.edu (Gary King)
+Date: Sun, 6 Jan 2013 15:21:04 -0500
+Subject: [amelia] amelia in matlab
+In-Reply-To: <50d79220-badb-4c63-9ae9-db427254deba@lincolnagritech.co.nz>
+References: <50d79220-badb-4c63-9ae9-db427254deba@lincolnagritech.co.nz>
+Message-ID: <CANHDHZy1V3Pv3iEcPiwSyjsFJzn+oyTPMz=eXnYERvrOQjaqxw@mail.gmail.com>
+
+no, I'm afraid not.
+
+Gary
+--
+*Gary King* - Albert J. Weatherhead III University Professor - Director, IQSS
+<http://iq.harvard.edu>- Harvard University
+GKing.Harvard.edu <http://gking.harvard.edu/> - King at Harvard.edu -
+@kinggary<http://twitter.com/kinggary>- 617-500-7570 - Asst 495-9271 -
+Fax 812-8581
+
+
+On Sun, Jan 6, 2013 at 2:42 PM, Simon Woodward <
+simon.woodward at lincolnagritech.co.nz> wrote:
+
+> **
+> Is there a matlab version of the amelia engine available?
+>
+> Thanks
+>
+>
+> *Simon Woodward*
+>
+> Modelling Scientist
+>
+> *LINCOLN AGRITECH** **LTD***
+>
+> *W:* *www.lincolnagritech.co.nz*
+>
+>
+> --
+> Amelia mailing list served by HUIT
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+> Amelia mailing list
+> Amelia at lists.gking.harvard.edu
+>
+> To unsubscribe from this list or get other information:
+>
+> https://lists.gking.harvard.edu/mailman/listinfo/amelia
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20130106/53e0abb7/attachment.html>
+
+From xlu at bushschool.tamu.edu  Mon Jan  7 12:57:50 2013
+From: xlu at bushschool.tamu.edu (Lu, Xiaobo)
+Date: Mon, 7 Jan 2013 11:57:50 -0600
+Subject: [amelia] Broken link on Amelia II webpage
+Message-ID: <AE4EAF2F-65DA-4AE8-B2DA-38BEAAC8F7B7@bushschool.tamu.edu>
+
+Dear Gary,
+
+The link to Ken Scheve's MI program to analyze multiple-imputed dataset is broken (http://gking.harvard.edu/amelia/amelia1/docs/mi.zip). Is it possible to fix it?
+
+Thanks a lot in advance.
+
+
+Best,
+Xiaobo
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20130107/5478441d/attachment.html>
+
+From king at harvard.edu  Mon Jan  7 15:10:53 2013
+From: king at harvard.edu (Gary King)
+Date: Mon, 7 Jan 2013 15:10:53 -0500
+Subject: [amelia] Broken link on Amelia II webpage
+In-Reply-To: <AE4EAF2F-65DA-4AE8-B2DA-38BEAAC8F7B7@bushschool.tamu.edu>
+References: <AE4EAF2F-65DA-4AE8-B2DA-38BEAAC8F7B7@bushschool.tamu.edu>
+Message-ID: <CANHDHZwGRaCPAhypZvnvUjJZceAS_-0vHTjZEa1=bZTEtG3MwQ@mail.gmail.com>
+
+this is a little OpenScholar issue.  Guys, can you fix this and let us know
+when its done?
+thanks,
+
+Gary
+--
+*Gary King* - Albert J. Weatherhead III University Professor - Director, IQSS
+<http://iq.harvard.edu>- Harvard University
+GKing.Harvard.edu <http://gking.harvard.edu/> - King at Harvard.edu -
+@kinggary<http://twitter.com/kinggary>- 617-500-7570 - Asst 495-9271 -
+Fax 812-8581
+
+
+On Mon, Jan 7, 2013 at 12:57 PM, Lu, Xiaobo <xlu at bushschool.tamu.edu> wrote:
+
+> Dear Gary,
+>
+> The link to Ken Scheve's MI program to analyze multiple-imputed dataset is
+> broken (http://gking.harvard.edu/amelia/amelia1/docs/mi.zip). Is it
+> possible to fix it?
+>
+> Thanks a lot in advance.
+>
+>
+> Best,
+> Xiaobo
+>
+> --
+> Amelia mailing list served by HUIT
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+> Amelia mailing list
+> Amelia at lists.gking.harvard.edu
+>
+> To unsubscribe from this list or get other information:
+>
+> https://lists.gking.harvard.edu/mailman/listinfo/amelia
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20130107/191db796/attachment.html>
+
+From openscholar_support at help.hmdc.harvard.edu  Mon Jan  7 15:18:22 2013
+From: openscholar_support at help.hmdc.harvard.edu (Gary King via RT)
+Date: Mon, 7 Jan 2013 15:18:22 -0500
+Subject: [amelia] [hmdc.harvard.edu #150468] Re: Broken link on Amelia II
+	webpage
+In-Reply-To: <CANHDHZwGRaCPAhypZvnvUjJZceAS_-0vHTjZEa1=bZTEtG3MwQ@mail.gmail.com>
+References: <RT-Ticket-150468@hmdc.harvard.edu>
+	<AE4EAF2F-65DA-4AE8-B2DA-38BEAAC8F7B7@bushschool.tamu.edu>
+	<CANHDHZwGRaCPAhypZvnvUjJZceAS_-0vHTjZEa1=bZTEtG3MwQ@mail.gmail.com>
+Message-ID: <rt-4.0.6-14110-1357589902-1193.150468-122-0@hmdc.harvard.edu>
+
+<See all of this ticket: https://help.hmdc.harvard.edu/Ticket/Display.html?id=150468 >
+
+this is a little OpenScholar issue.  Guys, can you fix this and let us know
+when its done?
+thanks,
+
+Gary
+--
+*Gary King* - Albert J. Weatherhead III University Professor - Director, IQSS
+<http://iq.harvard.edu>- Harvard University
+GKing.Harvard.edu <http://gking.harvard.edu/> - King at Harvard.edu -
+@kinggary<http://twitter.com/kinggary>- 617-500-7570 - Asst 495-9271 -
+Fax 812-8581
+
+
+On Mon, Jan 7, 2013 at 12:57 PM, Lu, Xiaobo <xlu at bushschool.tamu.edu> wrote:
+
+> Dear Gary,
+>
+> The link to Ken Scheve's MI program to analyze multiple-imputed dataset is
+> broken (http://gking.harvard.edu/amelia/amelia1/docs/mi.zip). Is it
+> possible to fix it?
+>
+> Thanks a lot in advance.
+>
+>
+> Best,
+> Xiaobo
+>
+> --
+> Amelia mailing list served by HUIT
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+> Amelia mailing list
+> Amelia at lists.gking.harvard.edu
+>
+> To unsubscribe from this list or get other information:
+>
+> https://lists.gking.harvard.edu/mailman/listinfo/amelia
+>
+
+
+From jhonaker at iq.harvard.edu  Mon Jan  7 16:32:11 2013
+From: jhonaker at iq.harvard.edu (Honaker, James)
+Date: Mon, 7 Jan 2013 16:32:11 -0500
+Subject: [amelia] Broken link on Amelia II webpage
+In-Reply-To: <CANHDHZwGRaCPAhypZvnvUjJZceAS_-0vHTjZEa1=bZTEtG3MwQ@mail.gmail.com>
+References: <AE4EAF2F-65DA-4AE8-B2DA-38BEAAC8F7B7@bushschool.tamu.edu>,
+	<CANHDHZwGRaCPAhypZvnvUjJZceAS_-0vHTjZEa1=bZTEtG3MwQ@mail.gmail.com>
+Message-ID: <C20BA9DEEA2CB344BFC0EA2B8E9952105D776923AC@FASXCH01.fasmail.priv>
+
+Dear Xiaobo,
+
+Thank you for pointing this out; the link should hopefully be repaired shortly.  In addition to Ken Scheve's MI program, another manner to combine quantities of interest across imputed datasets from Amelia, within Stata, is the "mi estimate:" command.  There is a short explanation of this command, and how to most easily take imputed datasets from Amelia into the stacked format that Stata uses using Stata's "mi import" at the end of section 4.9, page 44 of the current Amelia manual.  This may perhaps be of additional use.
+
+http://r.iq.harvard.edu/docs/amelia/amelia.pdf
+
+James 
+
+--
+James Honaker, Senior Research Scientist
+//// Institute for Quantitative Social Science, Harvard University
+________________________________________
+From: amelia-bounces at lists.gking.harvard.edu [amelia-bounces at lists.gking.harvard.edu] On Behalf Of Gary King [king at harvard.edu]
+Sent: Monday, January 07, 2013 3:10 PM
+To: Lu, Xiaobo
+Cc: OpenScholar; amelia at lists.gking.harvard.edu
+Subject: Re: [amelia] Broken link on Amelia II webpage
+
+this is a little OpenScholar issue.  Guys, can you fix this and let us know when its done?
+thanks,
+
+Gary
+--
+Gary King - Albert J. Weatherhead III University Professor - Director, IQSS <http://iq.harvard.edu> - Harvard University
+GKing.Harvard.edu<http://gking.harvard.edu/> - King at Harvard.edu<mailto:King at Harvard.edu> - @kinggary<http://twitter.com/kinggary> - 617-500-7570 - Asst 495-9271 - Fax 812-8581
+
+
+On Mon, Jan 7, 2013 at 12:57 PM, Lu, Xiaobo <xlu at bushschool.tamu.edu<mailto:xlu at bushschool.tamu.edu>> wrote:
+Dear Gary,
+
+The link to Ken Scheve's MI program to analyze multiple-imputed dataset is broken (http://gking.harvard.edu/amelia/amelia1/docs/mi.zip). Is it possible to fix it?
+
+Thanks a lot in advance.
+
+
+Best,
+Xiaobo
+
+--
+Amelia mailing list served by HUIT
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+Amelia mailing list
+Amelia at lists.gking.harvard.edu<mailto:Amelia at lists.gking.harvard.edu>
+
+To unsubscribe from this list or get other information:
+
+https://lists.gking.harvard.edu/mailman/listinfo/amelia
+
+From openscholar_support at help.hmdc.harvard.edu  Mon Jan  7 17:25:39 2013
+From: openscholar_support at help.hmdc.harvard.edu (Oren Robinson via RT)
+Date: Mon, 7 Jan 2013 17:25:39 -0500
+Subject: [amelia] [hmdc.harvard.edu #150468] Re: Broken link on Amelia II
+	webpage
+In-Reply-To: <CANHDHZwGRaCPAhypZvnvUjJZceAS_-0vHTjZEa1=bZTEtG3MwQ@mail.gmail.com>
+References: <RT-Ticket-150468@hmdc.harvard.edu>
+	<AE4EAF2F-65DA-4AE8-B2DA-38BEAAC8F7B7@bushschool.tamu.edu>
+	<CANHDHZwGRaCPAhypZvnvUjJZceAS_-0vHTjZEa1=bZTEtG3MwQ@mail.gmail.com>
+Message-ID: <rt-4.0.6-15165-1357597538-941.150468-6-0@hmdc.harvard.edu>
+
+<See all of this ticket: https://help.hmdc.harvard.edu/Ticket/Display.html?id=150468 >
+
+Hi again,
+
+The link to mi.zip has been fixed.
+
+On Mon Jan 07 15:18:22 2013, king wrote:
+> this is a little OpenScholar issue. Guys, can you fix this and let us
+> know
+> when its done?
+> thanks,
+>
+> Gary
+> --
+> *Gary King* - Albert J. Weatherhead III University Professor -
+> Director, IQSS
+> <http://iq.harvard.edu>- Harvard University
+> GKing.Harvard.edu <http://gking.harvard.edu/> - King at Harvard.edu -
+> @kinggary<http://twitter.com/kinggary>- 617-500-7570 - Asst 495-9271 -
+> Fax 812-8581
+>
+>
+> On Mon, Jan 7, 2013 at 12:57 PM, Lu, Xiaobo <xlu at bushschool.tamu.edu>
+> wrote:
+>
+> > Dear Gary,
+> >
+> > The link to Ken Scheve's MI program to analyze multiple-imputed
+> dataset is
+> > broken (http://gking.harvard.edu/amelia/amelia1/docs/mi.zip). Is it
+> > possible to fix it?
+> >
+> > Thanks a lot in advance.
+> >
+> >
+> > Best,
+> > Xiaobo
+> >
+> > --
+> > Amelia mailing list served by HUIT
+> > [Un]Subscribe/View Archive:
+> http://lists.gking.harvard.edu/?info=amelia
+> > More info about Amelia: http://gking.harvard.edu/amelia
+> > Amelia mailing list
+> > Amelia at lists.gking.harvard.edu
+> >
+> > To unsubscribe from this list or get other information:
+> >
+> > https://lists.gking.harvard.edu/mailman/listinfo/amelia
+> >
+
+
+From jsorens at buffalo.edu  Thu Jan 10 14:51:27 2013
+From: jsorens at buffalo.edu (Jason Sorens)
+Date: Thu, 10 Jan 2013 14:51:27 -0500
+Subject: [amelia] chain length in "out" object: "error in 1:m: argument of
+	length 0"
+Message-ID: <50EF1BBF.1090709@buffalo.edu>
+
+Amelia no longer seems to be recording chain lengths in imputations 
+correctly. I get the error "Error in 1:m : argument of length 0" after 
+the command "summary(a.out)." Because of this error, I also can't write 
+the imputation output to a file.
+
+I'm running R 2.15.2 (latest version) and even uninstalled and 
+reinstalled R and all packages and am still getting the problem. I get 
+the problem whenever I run an imputation of any kind, even the simplest 
+conceivable, like this:
+
+a.out<-amelia(data,m=2,ts="Year",cs="State")
+
+on a file with two imputation variables.
+
+Any insights appreciated!
+
+-- 
+Jason Sorens, PhD
+Assistant Professor
+Department of Political Science
+520 Park Hall (North Campus)
+University at Buffalo, SUNY
+Buffalo, NY 14260
+(716) 645-8436
+
+
+From m.blackwell at rochester.edu  Sun Jan 13 00:53:52 2013
+From: m.blackwell at rochester.edu (Matt Blackwell)
+Date: Sun, 13 Jan 2013 00:53:52 -0500
+Subject: [amelia] chain length in "out" object: "error in 1:m: argument
+ of length 0"
+In-Reply-To: <50EF1BBF.1090709@buffalo.edu>
+References: <50EF1BBF.1090709@buffalo.edu>
+Message-ID: <CAK1YySF=V-O0iH1TVK-i4Z_jPetkZrWGJPfaJxvm1Aqpjkjocg@mail.gmail.com>
+
+Hi Jason,
+
+I believe this is a bug in the Zelig package that is being fixed. Check to
+make sure that Zelig isn't being loaded during the R session and Amelia
+should work. Note that this has been fixed in the development version of
+Zelig, which you can install with the following code:
+
+install.packages("Zelig", type="source", repos="http://iqss.github.com/")
+
+Hope that helps!
+
+Cheers,
+matt.
+
+~~~~~~~~~~~
+Matthew Blackwell
+Assistant Professor of Political Science
+University of Rochester
+url: http://www.mattblackwell.org
+
+
+On Thu, Jan 10, 2013 at 2:51 PM, Jason Sorens <jsorens at buffalo.edu> wrote:
+
+> Amelia no longer seems to be recording chain lengths in imputations
+> correctly. I get the error "Error in 1:m : argument of length 0" after the
+> command "summary(a.out)." Because of this error, I also can't write the
+> imputation output to a file.
+>
+> I'm running R 2.15.2 (latest version) and even uninstalled and reinstalled
+> R and all packages and am still getting the problem. I get the problem
+> whenever I run an imputation of any kind, even the simplest conceivable,
+> like this:
+>
+> a.out<-amelia(data,m=2,ts="**Year",cs="State")
+>
+> on a file with two imputation variables.
+>
+> Any insights appreciated!
+>
+> --
+> Jason Sorens, PhD
+> Assistant Professor
+> Department of Political Science
+> 520 Park Hall (North Campus)
+> University at Buffalo, SUNY
+> Buffalo, NY 14260
+> (716) 645-8436
+>
+> --
+> Amelia mailing list served by HUIT
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.**edu/?info=amelia<http://lists.gking.harvard.edu/?info=amelia>
+> More info about Amelia: http://gking.harvard.edu/**amelia<http://gking.harvard.edu/amelia>
+> Amelia mailing list
+> Amelia at lists.gking.harvard.edu
+>
+> To unsubscribe from this list or get other information:
+>
+> https://lists.gking.harvard.**edu/mailman/listinfo/amelia<https://lists.gking.harvard.edu/mailman/listinfo/amelia>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20130113/26a05994/attachment.html>
+
+From jsorens at buffalo.edu  Tue Jan 15 10:10:29 2013
+From: jsorens at buffalo.edu (Jason Sorens)
+Date: Tue, 15 Jan 2013 10:10:29 -0500
+Subject: [amelia] chain length in "out" object: "error in 1:m: argument
+ of length 0"
+In-Reply-To: <CAK1YySF=V-O0iH1TVK-i4Z_jPetkZrWGJPfaJxvm1Aqpjkjocg@mail.gmail.com>
+References: <50EF1BBF.1090709@buffalo.edu>
+	<CAK1YySF=V-O0iH1TVK-i4Z_jPetkZrWGJPfaJxvm1Aqpjkjocg@mail.gmail.com>
+Message-ID: <50F57165.8040008@buffalo.edu>
+
+
+On 1/13/2013 12:53 AM, Matt Blackwell wrote:
+> Hi Jason,
+>
+> I believe this is a bug in the Zelig package that is being fixed. 
+> Check to make sure that Zelig isn't being loaded during the R session 
+> and Amelia should work. Note that this has been fixed in the 
+> development version of Zelig, which you can install with the following 
+> code:
+>
+> install.packages("Zelig", type="source", repos="http://iqss.github.com/")
+>
+> Hope that helps!
+That was it precisely. Thanks much!
+>
+> Cheers,
+> matt.
+>
+> ~~~~~~~~~~~
+> Matthew Blackwell
+> Assistant Professor of Political Science
+> University of Rochester
+> url: http://www.mattblackwell.org
+>
+
+Jason Sorens, PhD
+Assistant Professor
+Department of Political Science
+520 Park Hall (North Campus)
+University at Buffalo, SUNY
+Buffalo, NY 14260
+(716) 645-8436
+
+
+

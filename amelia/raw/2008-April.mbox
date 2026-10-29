@@ -1,0 +1,983 @@
+From mdapp at ethz.ch  Tue Apr  1 12:05:01 2008
+From: mdapp at ethz.ch (Marcus M. Dapp)
+Date: Tue, 01 Apr 2008 18:05:01 +0200
+Subject: [amelia] "Out of bounds" error message (again)
+Message-ID: <47F25D2D.2020008@ethz.ch>
+
+Hello
+
+I reported this error message a few weeks back (search for subject "Hard
+to trace error message"). Now, with a different (improved, I hope) data
+setup I am still getting stuck at this same point. Amelia runs through
+the first MI step and then aborts with the message shown below.
+
+What can I do about it? What could be the problem? (Whom could I provide
+more information about the error/data to locate the problem?)
+
+Thank you very much for your help.
+
+Best regards,
+Marcus
+
+PS. Having N=2441, I tried different values for empri: NULL,50,100,200.
+
+
+> am <- amelia(mdi,m=5,p2s=2,idvars=ids,noms=noms,ords=ords,collect=FALSE,
++ outname="Routput/imputed", write.out=TRUE,empri=NULL)
+
+amelia starting
+beginning prep functions
+running bootstrap
+-- Imputation 1 --
+setting up EM chain indicies
+
+ 1(1705) 2(1523) 3(924) 4(285) 5(55) 6(4) 7(1) 8(0)
+Error in unsubset(x.orig = prepped$trans.x, x.imp = ximp, blanks =
+prepped$blanks,  :
+        subscript out of bounds
+
+> traceback()
+2: unsubset(x.orig = prepped$trans.x, x.imp = ximp, blanks = prepped$blanks,
+       idvars = prepped$idvars, ts = prepped$ts, cs = prepped$cs,
+       polytime = polytime, intercs = intercs, noms = prepped$noms,
+       index = prepped$index, ords = prepped$ords)
+1: amelia(mdi, m = 5, p2s = 2, idvars = ids, noms = noms, ords = ords,
+       collect = FALSE, outname = "Routput/imputed", write.out = TRUE,
+       empri = NULL)
+
+
+-- 
+
+Marcus M. Dapp | PhD student | ETH Zurich | www.ib.ethz.ch/people/mdapp
+Prof. Thomas Bernauer, International Relations | www.ib.ethz.ch
+
+On the shoulders of giants?  http://science.creativecommons.org
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From leekyun3 at msu.edu  Tue Apr  1 12:23:34 2008
+From: leekyun3 at msu.edu (KyungSook Lee)
+Date: Tue, 1 Apr 2008 11:23:34 -0500
+Subject: [amelia] Problem with Amelia II
+Message-ID: <e48480680804010923k3e452049wa4e648ed0fded5bd@mail.gmail.com>
+
+Hello,
+
+I am writing this because I had some problem to run "Amilia II" with missing
+data. I cannot get the output.
+Message says, "Amelia Error Code: 34 The number of observations in
+too low to estimate the number of parameters. You can either remove
+some variables, reduce the order of the time polynomial, or increase
+the empirical prior. You have received an error. You can close this
+window and reset various options to correct the error."
+
+What do I have to do? Do you have any suggestions?
+It's very hard to figure it out. Thank you for your information!
+
+KyungSook
+******************************
+KyungSook Lee
+3010 Staten Ave. #12
+Lansing, MI 48910
+leekyun3 at msu.edu
+******************************
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20080401/b03ab955/attachment.html>
+
+From blackwel at fas.harvard.edu  Tue Apr  1 14:55:11 2008
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Tue, 1 Apr 2008 14:55:11 -0400
+Subject: [amelia] Problem with Amelia II
+In-Reply-To: <e48480680804010923k3e452049wa4e648ed0fded5bd@mail.gmail.com>
+References: <e48480680804010923k3e452049wa4e648ed0fded5bd@mail.gmail.com>
+Message-ID: <839691710804011155t43fe2aa3ob4d86cb18596315@mail.gmail.com>
+
+Hello KyungSook,
+
+The imputation process estimates p(p+3)/2 parameters, where p is the
+number of variables in the imputation model (including polynomials of
+time, lags, leads, etc). Typically, you would need at least this many
+observations to estimate all of these parameters.  Amelia allows you
+to run the procedure below this amount, but the number of observations
+must be at least twice the the number of variables included in the
+model.
+
+The best idea here is to remove variables from your dataset (either by
+removing them from the data file or denoting them as IDvars in
+AmeliaView). The best variables to remove are those that have little
+predictive power for the missing values.
+
+Hope that helps,
+matt.
+
+On Tue, Apr 1, 2008 at 12:23 PM, KyungSook Lee <leekyun3 at msu.edu> wrote:
+>
+> Hello,
+>
+> I am writing this because I had some problem to run "Amilia II" with missing
+> data. I cannot get the output.
+> Message says, "Amelia Error Code: 34 The number of observations in
+>  too low to estimate the number of parameters. You can either remove
+> some variables, reduce the order of the time polynomial, or increase
+> the empirical prior. You have received an error. You can close this
+> window and reset various options to correct the error."
+>
+> What do I have to do? Do you have any suggestions?
+> It's very hard to figure it out. Thank you for your information!
+>
+> KyungSook
+> ******************************
+> KyungSook Lee
+> 3010 Staten Ave. #12
+>  Lansing, MI 48910
+> leekyun3 at msu.edu
+> ******************************
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From guoqi at gse.harvard.edu  Wed Apr  2 10:26:49 2008
+From: guoqi at gse.harvard.edu (Qian Guo)
+Date: Wed, 02 Apr 2008 10:26:49 -0400
+Subject: [amelia] imputing for highly skewed distributions
+Message-ID: <web-85493764@gse.harvard.edu>
+
+Hi Amelia folks,
+
+I have a question about imputing for highly skewed distributions. My data have missing test scores 
+for 540 out of 709 observations in a lower-achieving subgroup and no missing scores for the other 
+students (about 129,000 in size). The problem is that the subgroup has a highly left skewed 
+distribution while the overall distribution is highly right skewed.
+
+I set priors by giving the mean (16.07 out of 40, versus 31.68 for the other students) and 
+standard deviation (9.30 vs. 7.20) of the subgroup. But would it still be a problem that the 
+subgroup distribution is highly left skewed (and so unlike the rest of the population)? Thanks a 
+lot.
+
+All very best,
+Qian Guo
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From king at harvard.edu  Wed Apr  2 10:37:35 2008
+From: king at harvard.edu (Gary King)
+Date: Wed, 2 Apr 2008 10:37:35 -0400 (EDT)
+Subject: [amelia] imputing for highly skewed distributions
+In-Reply-To: <web-85493764@gse.harvard.edu>
+References: <web-85493764@gse.harvard.edu>
+Message-ID: <Pine.LNX.4.64.0804021037210.22822@w5.hmdc.harvard.edu>
+
+
+why don't you try taking the log before imputation.
+Gary
+
+On Wed, 2 Apr 2008, Qian Guo wrote:
+
+> Hi Amelia folks,
+>
+> I have a question about imputing for highly skewed distributions. My data 
+> have missing test scores for 540 out of 709 observations in a lower-achieving 
+> subgroup and no missing scores for the other students (about 129,000 in 
+> size). The problem is that the subgroup has a highly left skewed distribution 
+> while the overall distribution is highly right skewed.
+>
+> I set priors by giving the mean (16.07 out of 40, versus 31.68 for the other 
+> students) and standard deviation (9.30 vs. 7.20) of the subgroup. But would 
+> it still be a problem that the subgroup distribution is highly left skewed 
+> (and so unlike the rest of the population)? Thanks a lot.
+>
+> All very best,
+> Qian Guo
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From guoqi at gse.harvard.edu  Wed Apr  2 10:59:56 2008
+From: guoqi at gse.harvard.edu (Qian Guo)
+Date: Wed, 02 Apr 2008 10:59:56 -0400
+Subject: [amelia] imputing for highly skewed distributions
+In-Reply-To: <Pine.LNX.4.64.0804021037210.22822@w5.hmdc.harvard.edu>
+References: <web-85493764@gse.harvard.edu> <Pine.LNX.4.64.0804021037210.22822@w5.hmdc.harvard.edu>
+Message-ID: <web-85495875@gse.harvard.edu>
+
+Thank you, Gary. I changed about 100 zeros to 0.1 and took the log. Now both the subgroup and the 
+"other" distribution are right skewed. The subgroup looks a little better: the bulk looks almost 
+normal but it has a VERY long left tail.
+
+And I'm still concerned if imputations for the subgroup will be affected by the higher scores in 
+the "other." Is setting mean and SE for the subgroup enough to take care of that?
+
+Qian
+
+
+On Wed, 2 Apr 2008 10:37:35 -0400 (EDT)
+  Gary King <king at harvard.edu> wrote:
+> 
+> why don't you try taking the log before imputation.
+> Gary
+> 
+> On Wed, 2 Apr 2008, Qian Guo wrote:
+> 
+>> Hi Amelia folks,
+>>
+>> I have a question about imputing for highly skewed distributions. My data 
+>> have missing test scores for 540 out of 709 observations in a lower-achieving 
+>> subgroup and no missing scores for the other students (about 129,000 in 
+>> size). The problem is that the subgroup has a highly left skewed distribution 
+>> while the overall distribution is highly right skewed.
+>>
+>> I set priors by giving the mean (16.07 out of 40, versus 31.68 for the other 
+>> students) and standard deviation (9.30 vs. 7.20) of the subgroup. But would 
+>> it still be a problem that the subgroup distribution is highly left skewed 
+>> (and so unlike the rest of the population)? Thanks a lot.
+>>
+>> All very best,
+>> Qian Guo
+>> -
+>> Amelia mailing list served by Harvard-MIT Data Center
+>> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From napaxton at fas.harvard.edu  Wed Apr  2 11:56:38 2008
+From: napaxton at fas.harvard.edu (Nathan Paxton)
+Date: Wed, 2 Apr 2008 11:56:38 -0400
+Subject: [amelia] imputing for highly skewed distributions
+In-Reply-To: <web-85495875@gse.harvard.edu>
+References: <web-85493764@gse.harvard.edu> <Pine.LNX.4.64.0804021037210.22822@w5.hmdc.harvard.edu> <web-85495875@gse.harvard.edu>
+Message-ID: <04AC1D02-3472-4185-A775-3CB3B03D0D03@fas.harvard.edu>
+
+	Here's some sample code (you may have to modify) to deal with the  
+scores another way, I think.  Set the whole scale to vary between 0  
+and 1, and then do a logit transformation, which AmII can also deal  
+with. (This is mostly to get around the way you're dealing with 0  
+values.)
+
+	Instead of taking 0 to be 0.1, you can add the infinitesimally small  
+value (R has a super-tiny value that's almost but not quite zero) to  
+zero and subtract it from your maximum value.
+
+yourvarsofinterest <- XXX
+for(i in yourvarsofinterest) {
+        data[,i] <-     ifelse(data[,i] >= 100, 1 - .Machine$double.eps,
+                        ifelse(data[,i] <= 0,       .Machine$double.eps,
+data[,i] / 100))
+}
+
+And to transform back (assuming five imputed sets, etc.):
+for(j in 1:5)
+for(i in yourvarsofinterest) {
+        outdata0[[j]][,i] <- outdata0[[j]][,i] * 100
+}
+
+-Nathan
+On 2 Apr 2008, at 10:59 AM, Qian Guo wrote:
+
+> Thank you, Gary. I changed about 100 zeros to 0.1 and took the log.  
+> Now both the subgroup and the "other" distribution are right skewed.  
+> The subgroup looks a little better: the bulk looks almost normal but  
+> it has a VERY long left tail.
+>
+> And I'm still concerned if imputations for the subgroup will be  
+> affected by the higher scores in the "other." Is setting mean and SE  
+> for the subgroup enough to take care of that?
+>
+> Qian
+>
+>
+> On Wed, 2 Apr 2008 10:37:35 -0400 (EDT)
+> Gary King <king at harvard.edu> wrote:
+>> why don't you try taking the log before imputation.
+>> Gary
+>> On Wed, 2 Apr 2008, Qian Guo wrote:
+>>> Hi Amelia folks,
+>>>
+>>> I have a question about imputing for highly skewed distributions.  
+>>> My data have missing test scores for 540 out of 709 observations  
+>>> in a lower-achieving subgroup and no missing scores for the other  
+>>> students (about 129,000 in size). The problem is that the subgroup  
+>>> has a highly left skewed distribution while the overall  
+>>> distribution is highly right skewed.
+>>>
+>>> I set priors by giving the mean (16.07 out of 40, versus 31.68 for  
+>>> the other students) and standard deviation (9.30 vs. 7.20) of the  
+>>> subgroup. But would it still be a problem that the subgroup  
+>>> distribution is highly left skewed (and so unlike the rest of the  
+>>> population)? Thanks a lot.
+>>>
+>>> All very best,
+>>> Qian Guo
+>>> -
+>>> Amelia mailing list served by Harvard-MIT Data Center
+>>> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>>>
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/? 
+> info=amelia
+
+----------
+Nathan A. Paxton
+Ph.D. Candidate
+Dept. of Government, Harvard University
+
+Resident Tutor
+John Winthrop House, Harvard University
+
+napaxton AT fas DOT harvard DOT edu
+http://www.fas.harvard.edu/~napaxton
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+========================================================================
+When you have to stay eight years away from California, you live in a  
+perpetual state of homesickness.
+         - Ronald Reagan
+
+The most courageous act is still to think for yourself.  Aloud.
+         -Coco Chanel
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+= 
+========================================================================
+
+
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20080402/1600c66b/attachment.html>
+
+From steven.shewfelt at yale.edu  Thu Apr  3 10:37:19 2008
+From: steven.shewfelt at yale.edu (Steve Shewfelt)
+Date: Thu, 03 Apr 2008 10:37:19 -0400
+Subject: [amelia] Incomplete imputation
+Message-ID: <47F4EB9F.2070906@yale.edu>
+
+Hello,
+
+I am trying to impute missing values for a dataset with 1752 
+observations. I've tried several times with different combinations of 
+variables included in the imputation, and the problems described here 
+occur in exactly the same way every time.
+
+First, there are several variables for which the imputation does not 
+occur. That is, for a handful of variables, there are the same number of 
+missing values in the output datasets as there are in the input. This 
+only happens for a handful of the variables, but it is the same ones 
+every time. I've looked at these variables both in their original format 
+(stata) and in the "summarize" feature in AmeliaView, and can't detect 
+anything different about them compared to all the other variables.
+
+Second, there are a few other variables that I assigned to have an 
+ordinal output but for which the output is a near-zero number (2e-17). 
+Again, it is the same variables every time. This problem seems less 
+significant, as I can just change these to zeros.
+
+Any suggestions on what might be causing this or what I can do about it 
+would be welcome.
+
+Thank you,
+
+Steve Shewfelt
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From king at harvard.edu  Sat Apr  5 18:42:51 2008
+From: king at harvard.edu (Gary King)
+Date: Sat, 5 Apr 2008 18:42:51 -0400 (EDT)
+Subject: [amelia] Feature Request
+In-Reply-To: <59029208-47A0-4F91-A2FC-A682EC7CB55A@bigred.unl.edu>
+References: <59029208-47A0-4F91-A2FC-A682EC7CB55A@bigred.unl.edu>
+Message-ID: <Pine.LNX.4.64.0804051842140.22822@w5.hmdc.harvard.edu>
+
+
+I'm not sure that we've responded to this note, but its got some excellent 
+points that we've been talking about and seeing what we can do about.
+many thanks,
+Gary
+
+On Fri, 28 Mar 2008, LevI Littvay (UNL) wrote:
+
+> Dear Developers
+>
+> I have been a strong advocate of Amelia II.  To date I have taught four 
+> missing data workshops in both the US and Europe demoing Amelia II.  Two my 
+> workshops had a hands on component where I made the participants do their own 
+> imputations.  My experience teaching Amelia II has pointed out one feature 
+> that is badly missing from the GUI.  A random generator seed setter.  It 
+> would be really nice if we could set a seed in the GUI if we wanted to so we 
+> could get the same imputations on every computer in the classroom.  It would 
+> also be very nice in terms of logging replication information of which I am a 
+> very strong proponents of (mainly due to the efforts of Gary King himself). 
+> But right now (as far as I know) appropriate logging facilities through the 
+> use of random number generator seeds are only available to command line users 
+> of Amelia II.  Additionally, some easy to use logging function that logs the 
+> R syntax of every step taken in the GUI would also be beneficial.
+>
+> Please include these feature in a future release of Amelia II.
+>
+> Thanks.
+>
+> Levi Littvay
+> Central European University
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From blackwel at fas.harvard.edu  Wed Apr 23 14:19:50 2008
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Wed, 23 Apr 2008 14:19:50 -0400
+Subject: [amelia] bugfix in the 'ords' argument
+Message-ID: <839691710804231119l1da86e70v97262bb39ab69c56@mail.gmail.com>
+
+Hello all,
+
+We just patched up a bug in the handling of "ordinals" in Amelia. The
+"ords" argument forces imputations into the ordinal categories, but
+this transformation had a bug in it, resulting in some incorrect
+imputations. The problem was limited only to those variables marked as
+"ords" so the other imputed variables would be fine. The version of
+Amelia (1.1-29) will be up on CRAN shortly, but until then, you can
+use the following command to update your version of Amelia:
+
+install.packages("Amelia", repos="http://gking.harvard.edu")
+
+The fix should resolve any issues with problematic ordinal imputations
+such as unimputed variables and/or strange imputations. Note that this
+transformation is usually unnecessary for most analyses and is useful
+when the variable will be a dependent variable in the analysis stage.
+See the Amelia manual for more information.
+
+Please let us know if you have any problems.
+
+regards,
+the amelia team.
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From gad2108 at columbia.edu  Thu Apr 24 08:24:47 2008
+From: gad2108 at columbia.edu (Gustavo de las Casas)
+Date: Thu, 24 Apr 2008 08:24:47 -0400
+Subject: [amelia] Fraction of missingness question
+Message-ID: <20080424082447.0gp7vgo0g8sckg40@cubmail.cc.columbia.edu>
+
+Is there a cut-off for rate of missingness, past which we should  
+employ other methods (i.e. Not Amelia 2)? Or does it depend on the  
+diagnostic results?
+
+More specifically, if my imputations:
+a) don't give me error 34 (which says there is not enough data to do  
+imputations
+properly) and;
+b) my diagnostics seem kosher (distributions of imputed/actual  
+observations overlap nicely, there is convergence, etc.),
+
+can I relax about the rate of missingness in the original data?
+
+Simply: I got a time-series, cross-sectional dataset. 10 years, 50  
+countries. 6 independent vars. Of the 6, 3 have 65% missingness. Yet,  
+these 3 independent vars with 65% missingness have significant  
+relationships with the rest of the vars, and Amelia 2 was able to give  
+me a decent-looking imputation. [I can offer the misschk results from  
+Stata if necessary to answer this question.]
+
+Is there a cut-off in the fraction of missingness past which I must  
+worry? Or Amelia would have already told me so?
+
+King also mentions that upping the imputations (to, say, 10) can help  
+deal with higher rates of missingness. Something I should do just to  
+make sure?
+
+You can also direct me to somewhere in the literature where you think  
+this is specifically addressed. Thanks much.
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From king at harvard.edu  Fri Apr 25 04:46:33 2008
+From: king at harvard.edu (Gary King)
+Date: Fri, 25 Apr 2008 04:46:33 -0400 (EDT)
+Subject: [amelia] Fraction of missingness question
+In-Reply-To: <20080424082447.0gp7vgo0g8sckg40@cubmail.cc.columbia.edu>
+References: <20080424082447.0gp7vgo0g8sckg40@cubmail.cc.columbia.edu>
+Message-ID: <alpine.LRH.1.10.0804250443180.28323@w5.hmdc.harvard.edu>
+
+
+increasing the number of imputations will help with simulation error if 
+you have lots of missingness.
+
+but the big problem in this situation is model-dependence.  you don't want 
+your answers to depend heavily on your choices of an imputation model. 
+but the more missingness you have, the more model dependent your 
+inferences will be.  this is true whether you use Amelia II or any other 
+method.  there isn't much you can do about this other than either (a) go 
+out and collect some of the missing observations, and/or (b) remove 
+imputations that require inferences outside of or far from the convex hull 
+(see the first 2 papers at http://gking.harvard.edu/projects/cause.shtml)
+
+Gary
+
+On Thu, 24 Apr 2008, Gustavo de las Casas wrote:
+
+> Is there a cut-off for rate of missingness, past which we should employ other 
+> methods (i.e. Not Amelia 2)? Or does it depend on the diagnostic results?
+>
+> More specifically, if my imputations:
+> a) don't give me error 34 (which says there is not enough data to do 
+> imputations
+> properly) and;
+> b) my diagnostics seem kosher (distributions of imputed/actual observations 
+> overlap nicely, there is convergence, etc.),
+>
+> can I relax about the rate of missingness in the original data?
+>
+> Simply: I got a time-series, cross-sectional dataset. 10 years, 50 countries. 
+> 6 independent vars. Of the 6, 3 have 65% missingness. Yet, these 3 
+> independent vars with 65% missingness have significant relationships with the 
+> rest of the vars, and Amelia 2 was able to give me a decent-looking 
+> imputation. [I can offer the misschk results from Stata if necessary to 
+> answer this question.]
+>
+> Is there a cut-off in the fraction of missingness past which I must worry? Or 
+> Amelia would have already told me so?
+>
+> King also mentions that upping the imputations (to, say, 10) can help deal 
+> with higher rates of missingness. Something I should do just to make sure?
+>
+> You can also direct me to somewhere in the literature where you think this is 
+> specifically addressed. Thanks much.
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From blackwel at fas.harvard.edu  Fri Apr 25 11:18:16 2008
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Fri, 25 Apr 2008 11:18:16 -0400
+Subject: [amelia] Fraction of missingness question
+In-Reply-To: <alpine.LRH.1.10.0804250443180.28323@w5.hmdc.harvard.edu>
+References: <20080424082447.0gp7vgo0g8sckg40@cubmail.cc.columbia.edu> <alpine.LRH.1.10.0804250443180.28323@w5.hmdc.harvard.edu>
+Message-ID: <839691710804250818q1287d7afn4cc96b1f07a7e3d5@mail.gmail.com>
+
+To follow up slightly, the amount of information in the missing data
+dictates how many imputations you need to get the right answer. We
+can't, of course, observe this since it is defined by the missing
+data.
+
+A different issue (very much related to Gary's point) is the validity
+of the assumptions underlying the procedure. The central assumption
+(called MAR, or missing at random), is the following: the missing
+values can depend on variables we observe, but not on unobserved
+variables. This, again, is an untestable assumption, at least from the
+data at hand. In addition, increasing the number of imputations will
+not fix the problem. The best solution, as Gary points out, is to
+collect more data.
+
+A more satisfying approach may be to make sure the imputation model is
+rich enough for the amount of missing data. That is, there are enough
+observed variables to make the MAR assumption plausible.
+
+regards,
+matt.
+
+On Fri, Apr 25, 2008 at 4:46 AM, Gary King <king at harvard.edu> wrote:
+>
+>  increasing the number of imputations will help with simulation error if you
+> have lots of missingness.
+>
+>  but the big problem in this situation is model-dependence.  you don't want
+> your answers to depend heavily on your choices of an imputation model. but
+> the more missingness you have, the more model dependent your inferences will
+> be.  this is true whether you use Amelia II or any other method.  there
+> isn't much you can do about this other than either (a) go out and collect
+> some of the missing observations, and/or (b) remove imputations that require
+> inferences outside of or far from the convex hull (see the first 2 papers at
+> http://gking.harvard.edu/projects/cause.shtml)
+>
+>  Gary
+>
+>
+>
+>  On Thu, 24 Apr 2008, Gustavo de las Casas wrote:
+>
+>
+> > Is there a cut-off for rate of missingness, past which we should employ
+> other methods (i.e. Not Amelia 2)? Or does it depend on the diagnostic
+> results?
+> >
+> > More specifically, if my imputations:
+> > a) don't give me error 34 (which says there is not enough data to do
+> imputations
+> > properly) and;
+> > b) my diagnostics seem kosher (distributions of imputed/actual
+> observations overlap nicely, there is convergence, etc.),
+> >
+> > can I relax about the rate of missingness in the original data?
+> >
+> > Simply: I got a time-series, cross-sectional dataset. 10 years, 50
+> countries. 6 independent vars. Of the 6, 3 have 65% missingness. Yet, these
+> 3 independent vars with 65% missingness have significant relationships with
+> the rest of the vars, and Amelia 2 was able to give me a decent-looking
+> imputation. [I can offer the misschk results from Stata if necessary to
+> answer this question.]
+> >
+> > Is there a cut-off in the fraction of missingness past which I must worry?
+> Or Amelia would have already told me so?
+> >
+> > King also mentions that upping the imputations (to, say, 10) can help deal
+> with higher rates of missingness. Something I should do just to make sure?
+> >
+> > You can also direct me to somewhere in the literature where you think this
+> is specifically addressed. Thanks much.
+> > -
+> > Amelia mailing list served by Harvard-MIT Data Center
+> > [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> >
+>  -
+>  Amelia mailing list served by Harvard-MIT Data Center
+>  [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From guoqi at gse.harvard.edu  Fri Apr 25 18:04:16 2008
+From: guoqi at gse.harvard.edu (Qian Guo)
+Date: Fri, 25 Apr 2008 18:04:16 -0400
+Subject: [amelia] add range prior
+Message-ID: <web-86192803@gse.harvard.edu>
+
+Hi all,
+
+I ran into a problem when I tried adding range prior. I added the minimum and maximum values of 
+the prior and pressed OK, but got this error message "Please enter a mean value."  It doesn't help 
+even if I add distribution prior beforehand. This did not happen when I ran AmeliaII about a month 
+ago. Can someone help? Many thanks.
+
+All best,
+Qian Guo
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From gad2108 at columbia.edu  Sat Apr 26 14:09:19 2008
+From: gad2108 at columbia.edu (Gustavo de las Casas)
+Date: Sat, 26 Apr 2008 14:09:19 -0400
+Subject: [amelia] Fraction of missingness question
+In-Reply-To: <alpine.LRH.1.10.0804250443180.28323@w5.hmdc.harvard.edu>
+References: <20080424082447.0gp7vgo0g8sckg40@cubmail.cc.columbia.edu> <alpine.LRH.1.10.0804250443180.28323@w5.hmdc.harvard.edu>
+Message-ID: <20080426140919.tlb806nsmcso0kc4@cubmail.cc.columbia.edu>
+
+Follow-up q to the answers by King n Blackwell.
+
+First of all, thanks f/the help.
+
+The follow-up is whether we can/should use linear interpolation to  
+check against the multiple imputations. More below.
+
+Going back to my story (skip this para. if u remember): I got a  
+time-series, cross-sectional dataset. 10 years, 50 countries. 6  
+independent vars. Of the 6, 3 have 65% missingness. Yet, these 3  
+independent vars with 65% missingness have significant relationships  
+with the rest of the vars, and Amelia 2 was able to give me a  
+decent-looking imputation. i.e. diagnostics look fine.
+
+Of the 3 independent vars with missingness, 2 have this feature: Out  
+of 10 possible years for data, these two variables each have values in  
+2 years only. (Note I say "each", so the previous feature applies to  
+each individual variable). Further, the years with values for these 2  
+variables are 8 years apart. Remember though, that for the other vars  
+in the dataset, there is data for all those in-between years, that  
+these other vars have significant relationships with the vars  
+w/missingness, and that Amelia has been able to give me good results  
+so far. Finally, because these 2 vars w/missingness really came from 2  
+cross-sectional datasets (at t and t+8), I didn't treat the data as  
+time-series in Amelia 2 (that is, I performed the MIs without a time  
+indicator).
+
+A suggestion has been to linearly interpolate between t and t+8 for  
+these 2 vars w/65% missingness, kind of as a check of the Amelia  
+results. Is it necessary in principle? I see it as an inexpensive  
+"just to make sure" test. Any thoughts or particular cautions I should  
+take? I'm implementing the previous advice I got here, btw.
+
+My position on this stuff, as mentioned before, is that the best way  
+to know whether MI can work, is to try it and then diagnose the  
+results. That is, we should not dismiss a dataset for MI treatment  
+just because it looks to have a worrisome pattern of missingness - in  
+fact, these are some of the best opportunities to put MI to work. Is  
+this on the money?
+
+Thanks.
+
+
+
+Quoting Gary King <king at harvard.edu>:
+
+>
+> increasing the number of imputations will help with simulation error if
+> you have lots of missingness.
+>
+> but the big problem in this situation is model-dependence.  you don't
+> want your answers to depend heavily on your choices of an imputation
+> model. but the more missingness you have, the more model dependent your
+> inferences will be.  this is true whether you use Amelia II or any
+> other method.  there isn't much you can do about this other than either
+> (a) go out and collect some of the missing observations, and/or (b)
+> remove imputations that require inferences outside of or far from the
+> convex hull (see the first 2 papers at
+> http://gking.harvard.edu/projects/cause.shtml)
+>
+> Gary
+>
+> On Thu, 24 Apr 2008, Gustavo de las Casas wrote:
+>
+>> Is there a cut-off for rate of missingness, past which we should   
+>> employ other methods (i.e. Not Amelia 2)? Or does it depend on the   
+>> diagnostic results?
+>>
+>> More specifically, if my imputations:
+>> a) don't give me error 34 (which says there is not enough data to   
+>> do imputations
+>> properly) and;
+>> b) my diagnostics seem kosher (distributions of imputed/actual   
+>> observations overlap nicely, there is convergence, etc.),
+>>
+>> can I relax about the rate of missingness in the original data?
+>>
+>> Simply: I got a time-series, cross-sectional dataset. 10 years, 50   
+>> countries. 6 independent vars. Of the 6, 3 have 65% missingness.   
+>> Yet, these 3 independent vars with 65% missingness have significant  
+>>  relationships with the rest of the vars, and Amelia 2 was able to   
+>> give me a decent-looking imputation. [I can offer the misschk   
+>> results from Stata if necessary to answer this question.]
+>>
+>> Is there a cut-off in the fraction of missingness past which I must  
+>>  worry? Or Amelia would have already told me so?
+>>
+>> King also mentions that upping the imputations (to, say, 10) can   
+>> help deal with higher rates of missingness. Something I should do   
+>> just to make sure?
+>>
+>> You can also direct me to somewhere in the literature where you   
+>> think this is specifically addressed. Thanks much.
+>> -
+>> Amelia mailing list served by Harvard-MIT Data Center
+>> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From xiaobo.lu at yale.edu  Tue Apr 29 15:16:50 2008
+From: xiaobo.lu at yale.edu (Xiaobo Lu)
+Date: Tue, 29 Apr 2008 15:16:50 -0400
+Subject: [amelia] Amelia Update and Diagnostics
+Message-ID: <48177422.7090100@yale.edu>
+
+Hello all,
+
+I have three questions concerning Amelia II, and I would greatly 
+appreciate any information you may provide.
+
+First, I have been trying to install the updated version of Amelia II 
+(1.1-29) onto my computer today, but I keep getting the older version 
+(1.1-26). Could someone please point me to the right direction? Here is 
+the R command I used, and results shown in my R program:
+
+**********************************************************************
+ > install.packages("Amelia",repos="http://gking.harvard.edu")
+trying URL 
+'http://gking.harvard.edu/bin/windows/contrib/2.5/Amelia_1.1-26.zip'
+Content type 'application/zip' length 2148370 bytes
+opened URL
+downloaded 2098Kb
+**********************************************************************
+
+Second, I am trying to do some diagnostics on the imputed datasets. 
+However, the program is always idle at iteration 18 of the third imputed 
+dataset. I can tell that that the CPU of my computer is not working at 
+at full speed, as it drops down to 1% or 2% as opposed to 100% 
+previously. I have tried to modify the imputation code several times and 
+this problem always exists. Note that I don't have any problem when I 
+imputed the same dataset with fewer variables. Is this a bug?
+
+Third, it seems that I have to conduct diagnostics immediately after the 
+imputation. Is there a way to call the imputed dataset and do 
+diagnostics on a later time without imputing the datasets all over again?
+
+Thanks a lot in advance for your help.
+
+
+Best,
+Xiaobo
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From tercer at ucla.edu  Tue Apr 29 16:02:42 2008
+From: tercer at ucla.edu (James Honaker)
+Date: Tue, 29 Apr 2008 13:02:42 -0700 (PDT)
+Subject: [amelia] Amelia Update and Diagnostics 
+Message-ID: <Pine.GSO.4.60.0804291300530.11142@weber.sscnet.ucla.edu>
+
+
+Dear Xiaobo,
+
+For your first question, regarding updating to the latest version of Amelia II, 
+it looks like you are using R 2.5 (even if you are using the AmeliaView 
+version of Amelia, your most recently installed version of R on your 
+machine was version 2.5).  Therefore, R is finding the last version of 
+Amelia created under R 2.5. 
+If you update R to the current R 2.7.0, and then type in exactly the same 
+install.packages() command you used, you will get the most recent version of 
+Amelia.
+
+For your second question, set the argument p2s=2, which will give more screen 
+output and help us understand what is going on in your EM chain. Repost the 
+problem with the new screen output, or send it to me directly, and I should 
+have a more accurate diagnosis.
+
+For your third question, this depends on whether you are using the GUI 
+AmeliaView, or calling Amelia from R directly.  Which are you doing?
+
+regards,
+James Honaker
+
+
+
+
+> Hello all,
+> 
+> I have three questions concerning Amelia II, and I would greatly appreciate 
+> any information you may provide.
+> 
+> First, I have been trying to install the updated version of Amelia II 
+> (1.1-29) onto my computer today, but I keep getting the older version 
+> (1.1-26). Could someone please point me to the right direction? Here is the 
+> R command I used, and results shown in my R program:
+> 
+> **********************************************************************
+>> install.packages("Amelia",repos="http://gking.harvard.edu")
+> trying URL 
+> 'http://gking.harvard.edu/bin/windows/contrib/2.5/Amelia_1.1-26.zip'
+> Content type 'application/zip' length 2148370 bytes
+> opened URL
+> downloaded 2098Kb
+> **********************************************************************
+> 
+> Second, I am trying to do some diagnostics on the imputed datasets. However, 
+> the program is always idle at iteration 18 of the third imputed dataset. I 
+> can tell that that the CPU of my computer is not working at at full speed, 
+> as it drops down to 1% or 2% as opposed to 100% previously. I have tried to 
+> modify the imputation code several times and this problem always exists. 
+> Note that I don't have any problem when I imputed the same dataset with 
+> fewer variables. Is this a bug?
+> 
+> Third, it seems that I have to conduct diagnostics immediately after the 
+> imputation. Is there a way to call the imputed dataset and do diagnostics on 
+> a later time without imputing the datasets all over again?
+> 
+> Thanks a lot in advance for your help.
+> 
+> 
+> Best,
+> Xiaobo
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+

@@ -1,0 +1,551 @@
+From corr at fas.harvard.edu  Fri Sep  7 15:37:53 2007
+From: corr at fas.harvard.edu (Anders Schwartz Corr)
+Date: Fri, 7 Sep 2007 15:37:53 -0400 (EDT)
+Subject: [amelia] Time series, error 33, and lags
+Message-ID: <Pine.LNX.4.64.0709071521151.600@ls03.fas.harvard.edu>
+
+
+Hi,
+
+I'm using a dataset with a country-year format and I have reason to 
+believe that there are trends within countries. So I assume I should set 
+ts=1 and cs=2 (for columns 1 and 2 respectively, correct? Is there also a 
+way to indicate
+which variables in particular need to be controlled by tscs 
+considerations? Some of my vars should be trendlines, and some not.
+
+Also it is unclear to me from the information on lags produced by 
+help(amelia), "lags: a vector of numbers or names indicating columns in 
+the data that should have their lags included in the imputation model," 
+whether, in lags=x, s should be the un-lagged variable that I want lagged 
+or the lagged variable I created myself. I assume Amelia cannot create a 
+lagged variable for me, giving me an extra column in the output?
+
+
+> # Run Amelia Multiple imputation program.
+> ameliaoutput5<-amelia(merge22, p2s=2,
++     idvars=which(names(merge22)==c("year","ccode")),
++     lgstc=c(8,9,33,40), ords=c(10,37,38,39,45,47,48),
++     ts=which(names(merge22)=="year"),
++     cs=which(names(merge22)=="ccode"),polytime=2,intercs=TRUE)
+
+amelia starting
+Amelia Error Code:  33
+  The time series and cross sectional variables cannot be transformed.
+> save(ameliaoutput5,file="ameliaoutput5.rData")
+>
+
+Finally, I get the error code 33 above but I'm not sure what I'm doing 
+wrong and a perusal of the help archives "error code 33" didn't produce 
+much.
+
+Any assistance from the seasoned Amelia-users on this list is much 
+appreciated!
+
+Thanks,
+
+Anders
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From bmircheva at american.edu  Fri Sep  7 18:12:24 2007
+From: bmircheva at american.edu (Bobbie Mircheva)
+Date: Fri, 7 Sep 2007 18:12:24 -0400
+Subject: [amelia] negative values
+Message-ID: <OF5C90C79A.733E5640-ON8525734F.0079FC5C-8525734F.0079FC61@american.edu>
+
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20070907/b08a7c13/attachment.html>
+
+From king at harvard.edu  Fri Sep  7 18:20:18 2007
+From: king at harvard.edu (Gary King)
+Date: Fri, 7 Sep 2007 18:20:18 -0400 (EDT)
+Subject: [amelia] negative values
+In-Reply-To: <OF5C90C79A.733E5640-ON8525734F.0079FC5C-8525734F.0079FC61@american.edu>
+References: <OF5C90C79A.733E5640-ON8525734F.0079FC5C-8525734F.0079FC61@american.edu>
+Message-ID: <Pine.LNX.4.64.0709071817290.22391@w5.hmdc.harvard.edu>
+
+
+one way is to transform the data to an unbounded scale.  e.g., if all 
+observed and unobserved values of a variable are positive, then transform 
+the positive ones by taking the log.  then impute with Amelia (on the 
+unbounded log scale).  then transform the resulting imputed and observed 
+values by taking the exponential.
+
+you can also use the priors in Amelia II to help as well.
+
+Gary
+
+---
+Gary King
+David Florence Professor of Government,
+Director, Institute for Quantitative Social Science
+Harvard University, 1737 Cambridge St, Cambridge, MA 02138
+http://GKing.Harvard.Edu, King at Harvard.Edu
+Direct 617-495-2027, Assistant 495-9271, eFax 812-8581
+
+
+
+On Fri, 7 Sep 2007, Bobbie Mircheva wrote:
+
+> Hi,
+> I have a big panel dataset on countries in Sun-Saharan African with
+> information on trade and infrastructure between 1990 and 2005.
+> Unfortunately some of the infrastructure data is missing and I was using
+> Amelia to fill in the gaps. However, the program returned a bunch of
+> negative values. How can I fix this?
+> Thanks a lot
+> Bobbie
+> - Amelia mailing list served by Harvard-MIT Data Center [Un]Subscribe/View
+> Archive: http://lists.gking.harvard.edu/?info=amelia
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From bmircheva at american.edu  Fri Sep  7 21:27:51 2007
+From: bmircheva at american.edu (Bobbie Mircheva)
+Date: Fri, 7 Sep 2007 21:27:51 -0400
+Subject: [amelia] negative values
+In-Reply-To: <Pine.LNX.4.64.0709071817290.22391@w5.hmdc.harvard.edu>
+References: <OF5C90C79A.733E5640-ON8525734F.0079FC5C-8525734F.0079FC61@american.edu>, <Pine.LNX.4.64.0709071817290.22391@w5.hmdc.harvard.edu>
+Message-ID: <OF12F48DC2.3B893A32-ON85257350.00080B43-85257350.00080B4B@american.edu>
+
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20070907/26b411e2/attachment.html>
+
+From king at harvard.edu  Sat Sep  8 03:39:20 2007
+From: king at harvard.edu (Gary King)
+Date: Sat, 8 Sep 2007 03:39:20 -0400 (EDT)
+Subject: [amelia] negative values
+In-Reply-To: <OF12F48DC2.3B893A32-ON85257350.00080B43-85257350.00080B4B@american.edu>
+References: <OF5C90C79A.733E5640-ON8525734F.0079FC5C-8525734F.0079FC61@american.edu>, <Pine.LNX.4.64.0709071817290.22391@w5.hmdc.harvard.edu> <OF12F48DC2.3B893A32-ON85257350.00080B43-85257350.00080B4B@american.edu>
+Message-ID: <Pine.LNX.4.64.0709080336430.18173@w5.hmdc.harvard.edu>
+
+
+use each data set as if it contained fully observed data, and then take 
+the 5 estimates and combine them as described in our APSR paper (which you 
+can find on our web site).  Clarify in Stata will do this automatically if 
+you use one of its models, or Zelig in R will do it for a much larger and 
+growing range of models (both are on my web site).  But its easy to do by 
+hand too. Gary
+
+On Fri, 7 Sep 2007, Bobbie Mircheva wrote:
+
+> Gary,
+> Thanks a lot for the quick response. I did what you suggested and it worked great. I
+> do have one more question if you do not mind. Since I know have 5 output, which one
+> am I supposed to use. Or is there a way to compile them? I am working with STATA and
+> tries to I tried to use Ken Schieve's program, but somehow could not manage to make
+> it work. I still need to do more manipulations with the data (take first differences,
+> etc) before I start running regressions.
+> Any suggestions would be greatly appreciated.
+> Thanks again!
+> Borislava?Mircheva
+> PhD?Candidate
+> Department?of?Economics
+> American?University
+> https://eagle1.american.edu/~bm6265a/
+> 
+> -----Gary King <king at harvard.edu> wrote: -----
+>
+>       To: Bobbie Mircheva <bmircheva at american.edu>
+>       From: Gary King <king at harvard.edu>
+>       Date: 09/07/2007 06:20PM
+>       cc: amelia at lists.gking.harvard.edu
+>       Subject: Re: [amelia] negative values
+>
+>       one way is to transform the data to an unbounded scale. ?e.g., if all
+>       observed and unobserved values of a variable are positive, then transform
+>       the positive ones by taking the log. ?then impute with Amelia (on the
+>       unbounded log scale). ?then transform the resulting imputed and observed
+>       values by taking the exponential.
+>
+>       you can also use the priors in Amelia II to help as well.
+>
+>       Gary
+>
+>       ---
+>       Gary King
+>       David Florence Professor of Government,
+>       Director, Institute for Quantitative Social Science
+>       Harvard University, 1737 Cambridge St, Cambridge, MA 02138
+>       http://GKing.Harvard.Edu, King at Harvard.Edu
+>       Direct 617-495-2027, Assistant 495-9271, eFax 812-8581
+> 
+> 
+>
+>       On Fri, 7 Sep 2007, Bobbie Mircheva wrote:
+>
+>       > Hi,
+>       > I have a big panel dataset on countries in Sun-Saharan African with
+>       > information on trade and infrastructure between 1990 and 2005.
+>       > Unfortunately some of the infrastructure data is missing and I was
+>       using
+>       > Amelia to fill in the gaps. However, the program returned a bunch of
+>       > negative values. How can I fix this?
+>       > Thanks a lot
+>       > Bobbie
+>       > - Amelia mailing list served by Harvard-MIT Data Center
+>       [Un]Subscribe/View
+>       > Archive: http://lists.gking.harvard.edu/?info=amelia
+>       >
+> 
+> 
+> 
+>
+
+From blackwel at fas.harvard.edu  Sat Sep  8 09:59:22 2007
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Sat, 8 Sep 2007 09:59:22 -0400
+Subject: [amelia] Time series, error 33, and lags
+In-Reply-To: <Pine.LNX.4.64.0709071521151.600@ls03.fas.harvard.edu>
+References: <Pine.LNX.4.64.0709071521151.600@ls03.fas.harvard.edu>
+Message-ID: <839691710709080659s68ca74fcp86208ac5df0e2530@mail.gmail.com>
+
+Hello Anders,
+
+> I'm using a dataset with a country-year format and I have reason to
+> believe that there are trends within countries. So I assume I should set
+> ts=1 and cs=2 (for columns 1 and 2 respectively, correct? Is there also a
+> way to indicate
+> which variables in particular need to be controlled by tscs
+> considerations? Some of my vars should be trendlines, and some not.
+
+This is the correct usage of the ts and cs arguments. You can also
+specify the name of the variable, such as ts="year" or cs="ccode".
+Currently, Amelia uses time trends globally, that is, for all
+variables. However, if time has no explanatory power for a variable,
+then the algorithm will use other information in the dataset in place
+of time.
+
+
+> Also it is unclear to me from the information on lags produced by
+> help(amelia), "lags: a vector of numbers or names indicating columns in
+> the data that should have their lags included in the imputation model,"
+> whether, in lags=x, s should be the un-lagged variable that I want lagged
+> or the lagged variable I created myself. I assume Amelia cannot create a
+> lagged variable for me, giving me an extra column in the output?
+>
+
+The lags argument tells Amelia which variables should be lagged in the
+dataset. Amelia, then, will create lags of those variables and add
+them as variables in the dataset. These variables are dumped after the
+imputation. Thus, there is no need to specify lagged variables if you
+have already lagged them yourself.
+
+
+> > # Run Amelia Multiple imputation program.
+> > ameliaoutput5<-amelia(merge22, p2s=2,
+> +     idvars=which(names(merge22)==c("year","ccode")),
+> +     lgstc=c(8,9,33,40), ords=c(10,37,38,39,45,47,48),
+> +     ts=which(names(merge22)=="year"),
+> +     cs=which(names(merge22)=="ccode"),polytime=2,intercs=TRUE)
+>
+> amelia starting
+> Amelia Error Code:  33
+>   The time series and cross sectional variables cannot be transformed.
+> > save(ameliaoutput5,file="ameliaoutput5.rData")
+> >
+>
+> Finally, I get the error code 33 above but I'm not sure what I'm doing
+> wrong and a perusal of the help archives "error code 33" didn't produce
+> much.
+>
+
+The error here results from trying to set your "year" and "ccode"
+variables as ID and ts/cs variables. They can only be one or the other
+and it looks like you want them to be ts/cs in this case. The idvars
+argument is for variables that have no explanatory power at all, such
+as coding notes or long country names. Basically, variables that you
+will never use in an analysis model, but need to keep in the data for
+housekeeping or readability purposes.
+
+
+hope that helps,
+matt.
+
+> Any assistance from the seasoned Amelia-users on this list is much
+> appreciated!
+>
+> Thanks,
+>
+> Anders
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From bmircheva at american.edu  Sat Sep  8 10:16:46 2007
+From: bmircheva at american.edu (Bobbie Mircheva)
+Date: Sat, 8 Sep 2007 10:16:46 -0400
+Subject: [amelia] negative values
+In-Reply-To: <Pine.LNX.4.64.0709080336430.18173@w5.hmdc.harvard.edu>
+References: <OF5C90C79A.733E5640-ON8525734F.0079FC5C-8525734F.0079FC61@american.edu>, <Pine.LNX.4.64.0709071817290.22391@w5.hmdc.harvard.edu> <OF12F48DC2.3B893A32-ON85257350.00080B43-85257350.00080B4B@american.edu>, <Pine.LNX.4.64.0709080336430.18173@w5.hmdc.harvard.edu>
+Message-ID: <OFA06E8469.3738CE4F-ON85257350.004E709D-85257350.004E70A1@american.edu>
+
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20070908/94f26923/attachment.html>
+
+From bhalfu at braemore.com  Wed Sep 12 05:22:58 2007
+From: bhalfu at braemore.com (Christoper Crabtree)
+Date: Wed, 12 Sep 2007 11:22:58 +0200
+Subject: [amelia] FWD: Update News1etter
+Message-ID: <469037885.50131852482738@braemore.com>
+
+EXTREME RED HOT ALERT!
+Buy Wednesday September 12th 2007
+
+WW Energy Inc
+Symbol : WWNG
+
+This will EXPLODED TODAY, and will again TOMORROW!
+
+Yesterday we told you this stock would sky rocket, and today it did!
+Moving over 4.1 million shares, and up 100%.
+The stock doubled, and is going to double again tomorrow!
+There is an odour in the air a huge press release is coming out tomorroW!
+
+Current: $.02
+Expected: $.54
+
+WWNG WAS ONE OF THE HOTTEST STOCKS TRADED, AND IS EXPECTED TO DO
+BETTER TOMORROW!
+
+Check 07/10/07. 2 months ago. This stock traded milions and milions of
+shares, over 7 million on the 2nd day. It's doing it AGAIN! TOMORROW
+IS THE 2ND DAY!
+
+Get in on the action Wednesday September 12th 2007!
+WWNG is the winner for this week!
+
+Company info:
+WW Energy, Inc., through its subsidiaries, provides services 
+to the oil and gas industry. The company engages in the 
+acquisition, exploration, exploitation, and development of 
+leases, and oil and gas related assets. It has exploitation 
+projects in Texas, Utah, and New Mexico. The company also 
+engages in transporting fresh production water for oil drilling 
+and exploration, and waste water for disposal. In addition, it 
+provides services for heavy hauling of drilling and well 
+equipment used in oil and gas production and exploration 
+industry. The company also operates in Colorado and 
+Arizona. WW Energy was founded in 1999 and is based in 
+Farmington, New Mexico.
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From blackwel at fas.harvard.edu  Wed Sep 12 15:47:14 2007
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Wed, 12 Sep 2007 15:47:14 -0400
+Subject: [amelia] followup question regarding Amelia error
+In-Reply-To: <000101c7ebfa$ad398d90$3a6fef80@campus.wm.edu>
+References: <Acfr+qxPtVWzeNIKTwqfNCNinmIvdA=?=> <000101c7ebfa$ad398d90$3a6fef80@campus.wm.edu>
+Message-ID: <839691710709121247m6bce9ca1r199c01a20e3bdf81@mail.gmail.com>
+
+Hello Paul,
+
+There is no need to transform the variable in question since it is
+fully observed. The transformations are generally for those variables
+with missing values. Some may help the data fit the normality
+assumption more closely, but the "ordinal" transformation isn't one of
+those. It simply controls the actual imputed values and their format.
+So, other transformations, such as the logistic, square root and
+natural log *do* help the algorithm with the data. We'll try to update
+the manual to reflect this distinction.
+
+Thanks,
+matt.
+
+On 8/31/07, Paul Manna <pmanna at wm.edu> wrote:
+> Hello,
+>
+> My question is regarding this recent response from James Honaker to Glenys
+> Lafrance, pasted below.  I'm using AmeliaView, and I received the same error
+> message for a small data set I'm using (N=126; and 23 variables--one is an
+> ID string).  For some reason, Amelia returns that error when I try to set
+> one particular dummy variable as "ordinal" in the Step 2 "Variables"
+> options.  All the other transformations I use under the Variables settings
+> work without error.  In other words, if I don't transform the problematic
+> dummy variable but set all my other transformations, the program runs fine.
+> One final detail: the variable that is causing my error does not contain any
+> missing values.  In fact, there are only 5 variables in the data set with
+> any missing values at all, and the degree of missingness is really minor.
+>
+> So here's my followup question: When I run AmeliaView, should I still use a
+> transformation for variables even when they contain no missing values?  In
+> reading the first two paragraphs of section 7.2 of the Amelia II manual, I
+> inferred that one should make these transformations for all variables (even
+> those with no missing values) because it would help the imputation procedure
+> to run.  Am I reading that correctly?
+>
+> Thanks,
+> Paul
+>
+>
+> Paul Manna
+> Assistant Professor
+> Department of Government
+> Thomas Jefferson Program in Public Policy
+> College of William and Mary
+>
+> http://pmanna.people.wm.edu/
+> tel: 757-221-3024 / fax: 757-221-1868
+>
+> On Thu, 30 Aug 2007, Glenys Lafrance wrote:
+>
+>
+> I am trying to set variable options for 41 variables.  25 are ordinal, the
+> remainder are ID variables.  I'm getting the following message:
+>
+>
+>
+> First off, you might not need to declare variables as ordinal. Generally you
+> only need to do this for variables that are going to be used in an analysis
+> model that requires ordinality (like a Logit, Poisson, Ordered Probit, and
+> the like), and even then, only for the Dependent variable. (Remember,
+> Nominal variables are another matter, and always need to be declared.) It
+> might seem unintuitive to allow imputations to have a space that is not the
+> same as the original data, but if you are rounding the imputations you are
+> losing information. An imputation of .51 on a dichotomous variable tells you
+> that in that imputed dataset, the imputation was nearly as likely to be a 1
+> as a 0. Very few models require right hand side variables to be ordinal,
+> although it may make graphs look more intuitive.
+>
+>
+> Anyway, not to deny your question, it seems like something might be wrong in
+> the way you are setting either the "ords" or "idvars" arguments. We have a
+> list of checks to try to catch common errors (and I make most of them
+> myself, commonly) but there are always interesting ways to define these
+> arguments in ways that are logically incompatible, that we've yet to think
+> of. Just check over them one more time. In the latest version of Amelia you
+> can set them either by using the a vector of the column number, or a vector
+> of variable names. The latter is less likely to trip you up. This is all
+> assuming you are using R code of your own, and not using the AmeliaView
+> interface, which ought not to allow you to do anything you can't do. Let me
+> know if you don't find your error, or are certain you've set things out
+> right. We try to write in useful error messages, but whatever event occured
+> did not trip one.
+>
+>
+> "error in unsubset(x.orig = prepped$trans.x, x.imp = ximp, blanks =
+> prepped$blanks,  :
+>
+>            subscript out of bounds".  Is there something I can do to
+> proceed.
+>
+>
+>
+> Also, is there a way to round an imputed data point to the closest observed
+> value?  Thanks in advance,
+>
+>
+>
+> There is not something built in to do this, although declaring variables as
+> Ordinal will make certain that the imputations take integer values (if the
+> original data is integer). But it does not do this by rounding.
+>
+> regards,
+> James Honaker
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From mcghee at ppic.org  Wed Sep 26 14:44:57 2007
+From: mcghee at ppic.org (Eric McGhee)
+Date: Wed, 26 Sep 2007 11:44:57 -0700
+Subject: [amelia] model fit
+Message-ID: <BDF087569ED6AA4B97928C6B53F2608F01268B3C@whitney.ppic.org>
+
+Are measures of model fit treated as point estimates for the sake of
+combining imputed results?  That is, do they just get averaged?
+ 
+Thanks,
+Eric McGhee
+
+Research Fellow
+
+Public Policy Institute of California
+
+500 Washington Street, Suite 800
+
+San Francisco, CA 94111
+
+415-291-4439 (p)
+
+415-291-4428 (f)
+
+mcghee at ppic.org <mailto:emcghee at ppic.org> 
+
+ 
+
+Any opinions expressed in this message are those of the author alone and
+do not necessarily reflect any position of the Public Policy Institute
+of California.
+
+ 
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20070926/cd7b9f0a/attachment.html>
+
+From king at harvard.edu  Wed Sep 26 17:23:19 2007
+From: king at harvard.edu (Gary King)
+Date: Wed, 26 Sep 2007 17:23:19 -0400 (EDT)
+Subject: [amelia] model fit
+In-Reply-To: <BDF087569ED6AA4B97928C6B53F2608F01268B3C@whitney.ppic.org>
+References: <BDF087569ED6AA4B97928C6B53F2608F01268B3C@whitney.ppic.org>
+Message-ID: <Pine.LNX.4.64.0709261722540.19087@w5.hmdc.harvard.edu>
+
+
+Yes, I'd just average them.
+Gary
+
+On Wed, 26 Sep 2007, Eric McGhee wrote:
+
+> Are measures of model fit treated as point estimates for the sake of
+> combining imputed results?  That is, do they just get averaged?
+>
+> Thanks,
+> Eric McGhee
+>
+> Research Fellow
+>
+> Public Policy Institute of California
+>
+> 500 Washington Street, Suite 800
+>
+> San Francisco, CA 94111
+>
+> 415-291-4439 (p)
+>
+> 415-291-4428 (f)
+>
+> mcghee at ppic.org <mailto:emcghee at ppic.org>
+>
+>
+>
+> Any opinions expressed in this message are those of the author alone and
+> do not necessarily reflect any position of the Public Policy Institute
+> of California.
+>
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+

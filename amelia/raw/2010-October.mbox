@@ -1,0 +1,1017 @@
+From m73hollis at yahoo.com  Tue Oct 12 22:13:56 2010
+From: m73hollis at yahoo.com (Matissa Hollister)
+Date: Tue, 12 Oct 2010 19:13:56 -0700 (PDT)
+Subject: [amelia] Losing the most common value in nominal imputation
+Message-ID: <864629.90745.qm@web65705.mail.ac4.yahoo.com>
+
+Hi,
+
+I'm experimenting for the first time with MI and Amelia so I apologize if I'm 
+missing something obvious. I'm also perhaps trying to do something that is 
+unfeasible and/or inadvisable. I'm trying to do MI for a nominal variable with 
+many possible values, and many of those values are very uncommon. In certain 
+cases Amelia is giving me results that are highly suspicious. In particular, it 
+seems to be greatly reducing the probability of imputing the most common value, 
+and at times dropping this value completely. In other words, value "b" accounts 
+for 85% of the complete cases, and yet not a single one of the imputed values is 
+assigned "b" in any of the five sets of imputations. This doesn't seem right.
+
+Here are more details about the specifics of what I'm trying to do. I'm looking 
+to do a rough approximation of an MI approach covered in the following paper:
+
+Clogg, C.C., D.B. Rubin, Nathaniel Schenker, Bradley Schultz, and Lynn Weidman. 
+1991. "Multiple Imputation of Industry and Occupation Codes in Census Public-use 
+Samples Using Bayesian Logistic Regression." Journal of the American Statistical 
+Association 86:68?78. http://www.jstor.org/stable/2289716.
+
+The authors used a sub-sample of Census observations that were double-coded 
+under both the 1970 and 1980 occupation coding schemes to multiply impute 1980 
+occupation codes for the entire 1970 Census. I'm looking to do a similar thing 
+but for the 1990 to 2000 change in occupation coding schemes. Clogg & al's 
+approach was to tackle each 1970 occupation code separately. So, for instance, 
+they would take all observations with 1970 occupation "funeral director" and 
+make this a separate sample (the sample would include both double-coded funeral 
+directors (complete cases) and those without 1980 codes (missing values)). They 
+examined the variety of 1980 occupation codes that were assigned to the "funeral 
+directors" in the double-coded dataset, and used observed characteristics (sex, 
+education, industry, etc) to impute 1980 occupation codes for those funeral 
+directors that were not double-coded. I'm looking to do a similar procedure, but 
+assigning 1990 occupation codes to observations with only 2000 codes. I have a 
+large sample of double-coded observations.
+
+The challenge is that some occupations have a very large number of possible 1990 
+codes. For instance, I have 7,463 "chief executives" in my double-coded dataset, 
+and they are assigned to 183 different 1990 occupation codes. Most of these 183 
+codes are very uncommon, though, and over 75% of the double-coded observations 
+are assigned to a single code of "managers n.e.c.". When I use Amelia to do MI 
+and impute 1990 occupation codes for the "chief executives" in my dataset, 
+though, not a single observation in any of the five imputations is assigned the 
+"managers n.e.c." code. Instead they are distributed across pretty much every 
+code except the "managers n.e.c" code.
+
+I think this has to do with very large number of possible values being imputed 
+in this nominal variable. Similar cases where there are a large number of 
+possible values tend to either have the same problem (no imputations at all of 
+the most common value) or it vastly under-represents the most common category 
+(e.g. 96% of the double-coded dataset has a particular code but only 22% of the 
+imputed values do). Cases where the number of possible codes are small seem to 
+have distributions that are more similar between the complete (double-coded) and 
+imputed values.
+
+Does this have to do with how nominal variables are treated within Amelia? The 
+documentation indicates that nominal variables are transformed into a set of 
+dummy variables for the MI process, and then converted back to a nominal 
+variable at the end. Does the transformation to the set of dummy variables leave 
+the most common value as the omitted group? Is it possible that each of the 
+dummy variables is given a slightly higher probability than it should, so that 
+by the time it gets to the omitted group it's much less likely to be imputed 
+than it should be?
+
+These are only vague guesses. As I said, I realize that trying to impute a 
+nominal variable with so many possible values is quite unusual, but at the same 
+time I am trying to use it for an application for which MI was originally 
+developed.
+
+Any thoughts, advice, or criticism would be greatly appreciated. I am happy to 
+provide a sample dataset (just 200k) that demonstrates this problem.
+
+Thank you for your help,
+
+Matissa Hollister
+
+
+      
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From jmarca at translab.its.uci.edu  Wed Oct 13 01:20:11 2010
+From: jmarca at translab.its.uci.edu (James Marca)
+Date: Tue, 12 Oct 2010 22:20:11 -0700
+Subject: [amelia] Losing the most common value in nominal imputation
+In-Reply-To: <864629.90745.qm@web65705.mail.ac4.yahoo.com>
+References: <864629.90745.qm@web65705.mail.ac4.yahoo.com>
+Message-ID: <20101013052011.GB27402@translab.its.uci.edu>
+
+Hi,
+
+I'm afraid I can't offer any insights into your excellent questions.
+However, I would suggest reading through the source code to see what
+is going on.  I found that the code is fairly well organized, and once
+you get over the initial learning curve of figuring out the logic, it
+helps a great deal with lifting the veil of the "magic" of the
+multiple imputation steps.  
+
+Regards, 
+James Marca
+
+On Tue, Oct 12, 2010 at 07:13:56PM -0700, Matissa Hollister wrote:
+> Hi,
+> 
+> I'm experimenting for the first time with MI and Amelia so I apologize if I'm 
+> missing something obvious. I'm also perhaps trying to do something that is 
+> unfeasible and/or inadvisable. I'm trying to do MI for a nominal variable with 
+> many possible values, and many of those values are very uncommon. In certain 
+> cases Amelia is giving me results that are highly suspicious. In particular, it 
+> seems to be greatly reducing the probability of imputing the most common value, 
+> and at times dropping this value completely. In other words, value "b" accounts 
+> for 85% of the complete cases, and yet not a single one of the imputed values is 
+> assigned "b" in any of the five sets of imputations. This doesn't seem right.
+> 
+> Here are more details about the specifics of what I'm trying to do. I'm looking 
+> to do a rough approximation of an MI approach covered in the following paper:
+> 
+> Clogg, C.C., D.B. Rubin, Nathaniel Schenker, Bradley Schultz, and Lynn Weidman. 
+> 1991. "Multiple Imputation of Industry and Occupation Codes in Census Public-use 
+> Samples Using Bayesian Logistic Regression." Journal of the American Statistical 
+> Association 86:68?78. http://www.jstor.org/stable/2289716.
+> 
+> The authors used a sub-sample of Census observations that were double-coded 
+> under both the 1970 and 1980 occupation coding schemes to multiply impute 1980 
+> occupation codes for the entire 1970 Census. I'm looking to do a similar thing 
+> but for the 1990 to 2000 change in occupation coding schemes. Clogg & al's 
+> approach was to tackle each 1970 occupation code separately. So, for instance, 
+> they would take all observations with 1970 occupation "funeral director" and 
+> make this a separate sample (the sample would include both double-coded funeral 
+> directors (complete cases) and those without 1980 codes (missing values)). They 
+> examined the variety of 1980 occupation codes that were assigned to the "funeral 
+> directors" in the double-coded dataset, and used observed characteristics (sex, 
+> education, industry, etc) to impute 1980 occupation codes for those funeral 
+> directors that were not double-coded. I'm looking to do a similar procedure, but 
+> assigning 1990 occupation codes to observations with only 2000 codes. I have a 
+> large sample of double-coded observations.
+> 
+> The challenge is that some occupations have a very large number of possible 1990 
+> codes. For instance, I have 7,463 "chief executives" in my double-coded dataset, 
+> and they are assigned to 183 different 1990 occupation codes. Most of these 183 
+> codes are very uncommon, though, and over 75% of the double-coded observations 
+> are assigned to a single code of "managers n.e.c.". When I use Amelia to do MI 
+> and impute 1990 occupation codes for the "chief executives" in my dataset, 
+> though, not a single observation in any of the five imputations is assigned the 
+> "managers n.e.c." code. Instead they are distributed across pretty much every 
+> code except the "managers n.e.c" code.
+> 
+> I think this has to do with very large number of possible values being imputed 
+> in this nominal variable. Similar cases where there are a large number of 
+> possible values tend to either have the same problem (no imputations at all of 
+> the most common value) or it vastly under-represents the most common category 
+> (e.g. 96% of the double-coded dataset has a particular code but only 22% of the 
+> imputed values do). Cases where the number of possible codes are small seem to 
+> have distributions that are more similar between the complete (double-coded) and 
+> imputed values.
+> 
+> Does this have to do with how nominal variables are treated within Amelia? The 
+> documentation indicates that nominal variables are transformed into a set of 
+> dummy variables for the MI process, and then converted back to a nominal 
+> variable at the end. Does the transformation to the set of dummy variables leave 
+> the most common value as the omitted group? Is it possible that each of the 
+> dummy variables is given a slightly higher probability than it should, so that 
+> by the time it gets to the omitted group it's much less likely to be imputed 
+> than it should be?
+> 
+> These are only vague guesses. As I said, I realize that trying to impute a 
+> nominal variable with so many possible values is quite unusual, but at the same 
+> time I am trying to use it for an application for which MI was originally 
+> developed.
+> 
+> Any thoughts, advice, or criticism would be greatly appreciated. I am happy to 
+> provide a sample dataset (just 200k) that demonstrates this problem.
+> 
+> Thank you for your help,
+> 
+> Matissa Hollister
+> 
+> 
+>       
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+
+-- 
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: not available
+Type: application/pgp-signature
+Size: 189 bytes
+Desc: not available
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20101012/204b90c2/attachment.sig>
+
+From m73hollis at yahoo.com  Thu Oct 14 10:01:53 2010
+From: m73hollis at yahoo.com (Matissa Hollister)
+Date: Thu, 14 Oct 2010 07:01:53 -0700 (PDT)
+Subject: [amelia] Losing the most common value in nominal imputation
+In-Reply-To: <20101013052011.GB27402@translab.its.uci.edu>
+References: <864629.90745.qm@web65705.mail.ac4.yahoo.com> <20101013052011.GB27402@translab.its.uci.edu>
+Message-ID: <131520.75338.qm@web65709.mail.ac4.yahoo.com>
+
+Thanks for the advice. So how do I view the source code? I'm not a R user. I 
+tried loading the library in R and typed amelia, but the only code it revealed 
+was:
+function (x, ...) 
+{
+    UseMethod("amelia", x)
+}
+<environment: namespace:Amelia>
+
+I'm skeptical that I'll be able to figure it out on my own, but I'll certainly 
+take a look. Meanwhile I'm hoping that someone more familiar with the nominal 
+option in Amelia, particularly the developers, might respond to my plea.
+
+I've run a few more tests and it seems to be a persistent problem even with 
+small numbers of possible values. I reduced the dataset down to just 8 possible 
+outcomes, and yet still the value that represents 89% of the complete cases is 
+imputed in only 66% of the missing cases. I understand that random variation 
+means that the distribution of the imputed values should not exactly match the 
+complete cases, but this 66% is consistent across all five imputations. This 
+occurs even when I just use a single variable, sex, for the imputation. The 
+missing values are missing completely at random, so there are no differences in 
+measured characteristics that should cause this difference. Any additional 
+insights would be gratefully welcomed.
+
+Thanks,
+
+Matissa Hollister
+
+
+
+----- Original Message ----
+From: James Marca <jmarca at translab.its.uci.edu>
+To: amelia at lists.gking.harvard.edu
+Sent: Wed, October 13, 2010 1:20:11 AM
+Subject: Re: [amelia] Losing the most common value in nominal imputation
+
+Hi,
+
+I'm afraid I can't offer any insights into your excellent questions.
+However, I would suggest reading through the source code to see what
+is going on.  I found that the code is fairly well organized, and once
+you get over the initial learning curve of figuring out the logic, it
+helps a great deal with lifting the veil of the "magic" of the
+multiple imputation steps.  
+
+Regards, 
+James Marca
+
+On Tue, Oct 12, 2010 at 07:13:56PM -0700, Matissa Hollister wrote:
+> Hi,
+> 
+> I'm experimenting for the first time with MI and Amelia so I apologize if I'm 
+> missing something obvious. I'm also perhaps trying to do something that is 
+> unfeasible and/or inadvisable. I'm trying to do MI for a nominal variable with 
+
+> many possible values, and many of those values are very uncommon. In certain 
+> cases Amelia is giving me results that are highly suspicious. In particular, it 
+>
+> seems to be greatly reducing the probability of imputing the most common value, 
+>
+> and at times dropping this value completely. In other words, value "b" accounts 
+>
+> for 85% of the complete cases, and yet not a single one of the imputed values 
+>is 
+>
+> assigned "b" in any of the five sets of imputations. This doesn't seem right.
+> 
+> Here are more details about the specifics of what I'm trying to do. I'm looking 
+>
+> to do a rough approximation of an MI approach covered in the following paper:
+> 
+> Clogg, C.C., D.B. Rubin, Nathaniel Schenker, Bradley Schultz, and Lynn Weidman. 
+>
+> 1991. "Multiple Imputation of Industry and Occupation Codes in Census 
+>Public-use 
+>
+> Samples Using Bayesian Logistic Regression." Journal of the American 
+>Statistical 
+>
+> Association 86:68?78. http://www.jstor.org/stable/2289716.
+> 
+> The authors used a sub-sample of Census observations that were double-coded 
+> under both the 1970 and 1980 occupation coding schemes to multiply impute 1980 
+
+> occupation codes for the entire 1970 Census. I'm looking to do a similar thing 
+
+> but for the 1990 to 2000 change in occupation coding schemes. Clogg & al's 
+> approach was to tackle each 1970 occupation code separately. So, for instance, 
+
+> they would take all observations with 1970 occupation "funeral director" and 
+> make this a separate sample (the sample would include both double-coded funeral 
+>
+> directors (complete cases) and those without 1980 codes (missing values)). They 
+>
+> examined the variety of 1980 occupation codes that were assigned to the 
+>"funeral 
+>
+> directors" in the double-coded dataset, and used observed characteristics (sex, 
+>
+> education, industry, etc) to impute 1980 occupation codes for those funeral 
+> directors that were not double-coded. I'm looking to do a similar procedure, 
+>but 
+>
+> assigning 1990 occupation codes to observations with only 2000 codes. I have a 
+
+> large sample of double-coded observations.
+> 
+> The challenge is that some occupations have a very large number of possible 
+>1990 
+>
+> codes. For instance, I have 7,463 "chief executives" in my double-coded 
+>dataset, 
+>
+> and they are assigned to 183 different 1990 occupation codes. Most of these 183 
+>
+> codes are very uncommon, though, and over 75% of the double-coded observations 
+
+> are assigned to a single code of "managers n.e.c.". When I use Amelia to do MI 
+
+> and impute 1990 occupation codes for the "chief executives" in my dataset, 
+> though, not a single observation in any of the five imputations is assigned the 
+>
+> "managers n.e.c." code. Instead they are distributed across pretty much every 
+> code except the "managers n.e.c" code.
+> 
+> I think this has to do with very large number of possible values being imputed 
+
+> in this nominal variable. Similar cases where there are a large number of 
+> possible values tend to either have the same problem (no imputations at all of 
+
+> the most common value) or it vastly under-represents the most common category 
+> (e.g. 96% of the double-coded dataset has a particular code but only 22% of the 
+>
+> imputed values do). Cases where the number of possible codes are small seem to 
+
+> have distributions that are more similar between the complete (double-coded) 
+>and 
+>
+> imputed values.
+> 
+> Does this have to do with how nominal variables are treated within Amelia? The 
+
+> documentation indicates that nominal variables are transformed into a set of 
+> dummy variables for the MI process, and then converted back to a nominal 
+> variable at the end. Does the transformation to the set of dummy variables 
+>leave 
+>
+> the most common value as the omitted group? Is it possible that each of the 
+> dummy variables is given a slightly higher probability than it should, so that 
+
+> by the time it gets to the omitted group it's much less likely to be imputed 
+> than it should be?
+> 
+> These are only vague guesses. As I said, I realize that trying to impute a 
+> nominal variable with so many possible values is quite unusual, but at the same 
+>
+> time I am trying to use it for an application for which MI was originally 
+> developed.
+> 
+> Any thoughts, advice, or criticism would be greatly appreciated. I am happy to 
+
+> provide a sample dataset (just 200k) that demonstrates this problem.
+> 
+> Thank you for your help,
+> 
+> Matissa Hollister
+> 
+> 
+>      
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+
+-- 
+
+
+
+      
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From blackwel at fas.harvard.edu  Thu Oct 14 10:19:25 2010
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Thu, 14 Oct 2010 10:19:25 -0400
+Subject: [amelia] Losing the most common value in nominal imputation
+In-Reply-To: <131520.75338.qm@web65709.mail.ac4.yahoo.com>
+References: <864629.90745.qm@web65705.mail.ac4.yahoo.com> <20101013052011.GB27402@translab.its.uci.edu> <131520.75338.qm@web65709.mail.ac4.yahoo.com>
+Message-ID: <AANLkTi=xfFy1FX1bn9yudAUiTSkBLkeZk+TEF0ZddKuh@mail.gmail.com>
+
+Hi Matissa,
+
+Thanks for pointing this out, we'll look into this. I just want to
+confirm that you are setting these values as nominals, correct?
+
+I should point out that Amelia is designed to handle multivariate
+normal data. It is true that even when the model is non-normal, Amelia
+still does quite well. Unfortunately, even an 8 category nominal
+variable is fairy non-normal. If you plan to impute a categorical
+variable with 180 levels, you may need a different approach that is
+better suited to that type of data.  Having said this, the behavior
+you are describing sounds like a bug that we can take a look at.
+
+Thanks,
+matt.
+
+On Thu, Oct 14, 2010 at 10:01 AM, Matissa Hollister <m73hollis at yahoo.com> wrote:
+> Thanks for the advice. So how do I view the source code? I'm not a R user. I
+> tried loading the library in R and typed amelia, but the only code it revealed
+> was:
+> function (x, ...)
+> {
+> ? ?UseMethod("amelia", x)
+> }
+> <environment: namespace:Amelia>
+>
+> I'm skeptical that I'll be able to figure it out on my own, but I'll certainly
+> take a look. Meanwhile I'm hoping that someone more familiar with the nominal
+> option in Amelia, particularly the developers, might respond to my plea.
+>
+> I've run a few more tests and it seems to be a persistent problem even with
+> small numbers of possible values. I reduced the dataset down to just 8 possible
+> outcomes, and yet still the value that represents 89% of the complete cases is
+> imputed in only 66% of the missing cases. I understand that random variation
+> means that the distribution of the imputed values should not exactly match the
+> complete cases, but this 66% is consistent across all five imputations. This
+> occurs even when I just use a single variable, sex, for the imputation. The
+> missing values are missing completely at random, so there are no differences in
+> measured characteristics that should cause this difference. Any additional
+> insights would be gratefully welcomed.
+>
+> Thanks,
+>
+> Matissa Hollister
+>
+>
+>
+> ----- Original Message ----
+> From: James Marca <jmarca at translab.its.uci.edu>
+> To: amelia at lists.gking.harvard.edu
+> Sent: Wed, October 13, 2010 1:20:11 AM
+> Subject: Re: [amelia] Losing the most common value in nominal imputation
+>
+> Hi,
+>
+> I'm afraid I can't offer any insights into your excellent questions.
+> However, I would suggest reading through the source code to see what
+> is going on. ?I found that the code is fairly well organized, and once
+> you get over the initial learning curve of figuring out the logic, it
+> helps a great deal with lifting the veil of the "magic" of the
+> multiple imputation steps.
+>
+> Regards,
+> James Marca
+>
+> On Tue, Oct 12, 2010 at 07:13:56PM -0700, Matissa Hollister wrote:
+>> Hi,
+>>
+>> I'm experimenting for the first time with MI and Amelia so I apologize if I'm
+>> missing something obvious. I'm also perhaps trying to do something that is
+>> unfeasible and/or inadvisable. I'm trying to do MI for a nominal variable with
+>
+>> many possible values, and many of those values are very uncommon. In certain
+>> cases Amelia is giving me results that are highly suspicious. In particular, it
+>>
+>> seems to be greatly reducing the probability of imputing the most common value,
+>>
+>> and at times dropping this value completely. In other words, value "b" accounts
+>>
+>> for 85% of the complete cases, and yet not a single one of the imputed values
+>>is
+>>
+>> assigned "b" in any of the five sets of imputations. This doesn't seem right.
+>>
+>> Here are more details about the specifics of what I'm trying to do. I'm looking
+>>
+>> to do a rough approximation of an MI approach covered in the following paper:
+>>
+>> Clogg, C.C., D.B. Rubin, Nathaniel Schenker, Bradley Schultz, and Lynn Weidman.
+>>
+>> 1991. "Multiple Imputation of Industry and Occupation Codes in Census
+>>Public-use
+>>
+>> Samples Using Bayesian Logistic Regression." Journal of the American
+>>Statistical
+>>
+>> Association 86:68?78. http://www.jstor.org/stable/2289716.
+>>
+>> The authors used a sub-sample of Census observations that were double-coded
+>> under both the 1970 and 1980 occupation coding schemes to multiply impute 1980
+>
+>> occupation codes for the entire 1970 Census. I'm looking to do a similar thing
+>
+>> but for the 1990 to 2000 change in occupation coding schemes. Clogg & al's
+>> approach was to tackle each 1970 occupation code separately. So, for instance,
+>
+>> they would take all observations with 1970 occupation "funeral director" and
+>> make this a separate sample (the sample would include both double-coded funeral
+>>
+>> directors (complete cases) and those without 1980 codes (missing values)). They
+>>
+>> examined the variety of 1980 occupation codes that were assigned to the
+>>"funeral
+>>
+>> directors" in the double-coded dataset, and used observed characteristics (sex,
+>>
+>> education, industry, etc) to impute 1980 occupation codes for those funeral
+>> directors that were not double-coded. I'm looking to do a similar procedure,
+>>but
+>>
+>> assigning 1990 occupation codes to observations with only 2000 codes. I have a
+>
+>> large sample of double-coded observations.
+>>
+>> The challenge is that some occupations have a very large number of possible
+>>1990
+>>
+>> codes. For instance, I have 7,463 "chief executives" in my double-coded
+>>dataset,
+>>
+>> and they are assigned to 183 different 1990 occupation codes. Most of these 183
+>>
+>> codes are very uncommon, though, and over 75% of the double-coded observations
+>
+>> are assigned to a single code of "managers n.e.c.". When I use Amelia to do MI
+>
+>> and impute 1990 occupation codes for the "chief executives" in my dataset,
+>> though, not a single observation in any of the five imputations is assigned the
+>>
+>> "managers n.e.c." code. Instead they are distributed across pretty much every
+>> code except the "managers n.e.c" code.
+>>
+>> I think this has to do with very large number of possible values being imputed
+>
+>> in this nominal variable. Similar cases where there are a large number of
+>> possible values tend to either have the same problem (no imputations at all of
+>
+>> the most common value) or it vastly under-represents the most common category
+>> (e.g. 96% of the double-coded dataset has a particular code but only 22% of the
+>>
+>> imputed values do). Cases where the number of possible codes are small seem to
+>
+>> have distributions that are more similar between the complete (double-coded)
+>>and
+>>
+>> imputed values.
+>>
+>> Does this have to do with how nominal variables are treated within Amelia? The
+>
+>> documentation indicates that nominal variables are transformed into a set of
+>> dummy variables for the MI process, and then converted back to a nominal
+>> variable at the end. Does the transformation to the set of dummy variables
+>>leave
+>>
+>> the most common value as the omitted group? Is it possible that each of the
+>> dummy variables is given a slightly higher probability than it should, so that
+>
+>> by the time it gets to the omitted group it's much less likely to be imputed
+>> than it should be?
+>>
+>> These are only vague guesses. As I said, I realize that trying to impute a
+>> nominal variable with so many possible values is quite unusual, but at the same
+>>
+>> time I am trying to use it for an application for which MI was originally
+>> developed.
+>>
+>> Any thoughts, advice, or criticism would be greatly appreciated. I am happy to
+>
+>> provide a sample dataset (just 200k) that demonstrates this problem.
+>>
+>> Thank you for your help,
+>>
+>> Matissa Hollister
+>>
+>>
+>>
+>> -
+>> Amelia mailing list served by Harvard-MIT Data Center
+>> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>> More info about Amelia: http://gking.harvard.edu/amelia
+>
+> --
+>
+>
+>
+>
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From p.bernhagen at abdn.ac.uk  Sat Oct 23 11:24:04 2010
+From: p.bernhagen at abdn.ac.uk (Bernhagen, Patrick)
+Date: Sat, 23 Oct 2010 16:24:04 +0100
+Subject: [amelia] Installation problem with AmeliaView
+Message-ID: <D7E1CF24D3461E4BB5EF8F69DE8AADF30109BAFAAE95@VMAILB.uoa.abdn.ac.uk>
+
+Dear Ameliaists,
+
+Trying to install the latest version of AmeliaView on my laptop I get an error message at the "Choose install location" stage of the setup wizard, telling me that the R directory is incorrect.
+
+I am not an R user but have R (version 2.12.0) installed and it seems to be working fine. Locating the R directory manually at this stage of the setup wizard does not get me past this stage either. The R directory is C:\Program Files\R\R-2.12.0.
+
+I would be grateful for any hints as to where I'm going wrong.
+
+Best wishes,
+
+Patrick
+
+
+
+
+***
+University of Aberdeen
+Department of Politics and International Relations
+Edward Wright Building
+Dunbar Street
+Aberdeen, AB24 3QY
+United Kingdom
+
+Phone: +44 (0)1224 272720
+Fax: +44 (0)1224 27 2552
+E-mail: p.bernhagen at abdn.ac.uk
+Web: http://www.abdn.ac.uk/~pol209/
+
+
+The University of Aberdeen is a charity registered in Scotland, No SC013683.
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From blackwel at fas.harvard.edu  Sat Oct 23 12:34:54 2010
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Sat, 23 Oct 2010 12:34:54 -0400
+Subject: [amelia] Installation problem with AmeliaView
+In-Reply-To: <D7E1CF24D3461E4BB5EF8F69DE8AADF30109BAFAAE95@VMAILB.uoa.abdn.ac.uk>
+References: <D7E1CF24D3461E4BB5EF8F69DE8AADF30109BAFAAE95@VMAILB.uoa.abdn.ac.uk>
+Message-ID: <AANLkTinTm-D7CvGdXYhEd_WRAdwEV0eps-e6n1tTWNbj@mail.gmail.com>
+
+Hi Patrick,
+
+Can you confirm that the following file exists: C:\Program
+Files\R\R-2.12.0\bin\Rcmd.exe ?
+
+Also what version of Windows are you using? We are currently updating
+the installer so it will likely be fixed quite soon.
+
+Thanks for letting us know.
+
+Cheers,
+matt.
+
+On Sat, Oct 23, 2010 at 11:24 AM, Bernhagen, Patrick
+<p.bernhagen at abdn.ac.uk> wrote:
+> Dear Ameliaists,
+>
+> Trying to install the latest version of AmeliaView on my laptop I get an error message at the "Choose install location" stage of the setup wizard, telling me that the R directory is incorrect.
+>
+> I am not an R user but have R (version 2.12.0) installed and it seems to be working fine. Locating the R directory manually at this stage of the setup wizard does not get me past this stage either. The R directory is C:\Program Files\R\R-2.12.0.
+>
+> I would be grateful for any hints as to where I'm going wrong.
+>
+> Best wishes,
+>
+> Patrick
+>
+>
+>
+>
+> ***
+> University of Aberdeen
+> Department of Politics and International Relations
+> Edward Wright Building
+> Dunbar Street
+> Aberdeen, AB24 3QY
+> United Kingdom
+>
+> Phone: +44 (0)1224 272720
+> Fax: +44 (0)1224 27 2552
+> E-mail: p.bernhagen at abdn.ac.uk
+> Web: http://www.abdn.ac.uk/~pol209/
+>
+>
+> The University of Aberdeen is a charity registered in Scotland, No SC013683.
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From p.bernhagen at abdn.ac.uk  Sat Oct 23 12:46:40 2010
+From: p.bernhagen at abdn.ac.uk (Bernhagen, Patrick)
+Date: Sat, 23 Oct 2010 17:46:40 +0100
+Subject: [amelia] Installation problem with AmeliaView
+In-Reply-To: <AANLkTinTm-D7CvGdXYhEd_WRAdwEV0eps-e6n1tTWNbj@mail.gmail.com>
+References: <D7E1CF24D3461E4BB5EF8F69DE8AADF30109BAFAAE95@VMAILB.uoa.abdn.ac.uk>,<AANLkTinTm-D7CvGdXYhEd_WRAdwEV0eps-e6n1tTWNbj@mail.gmail.com>
+Message-ID: <D7E1CF24D3461E4BB5EF8F69DE8AADF30109BAFAAE96@VMAILB.uoa.abdn.ac.uk>
+
+Hi Matt,
+
+Thanks for your swift reply. Rcmd.exe exists, though not in the folder you mentioned but in one of its subfolders: C:\Program Files\R\R-2.12.0\bin\i386.
+
+I'm using Windows XP Pro, SP3.
+
+Best wishes,
+
+Patrick
+
+
+________________________________________
+From: Matt Blackwell [blackwel at fas.harvard.edu]
+Sent: 23 October 2010 17:34
+To: Bernhagen, Patrick
+Cc: amelia at lists.gking.harvard.edu
+Subject: Re: [amelia] Installation problem with AmeliaView
+
+Hi Patrick,
+
+Can you confirm that the following file exists: C:\Program
+Files\R\R-2.12.0\bin\Rcmd.exe ?
+
+Also what version of Windows are you using? We are currently updating
+the installer so it will likely be fixed quite soon.
+
+Thanks for letting us know.
+
+Cheers,
+matt.
+
+On Sat, Oct 23, 2010 at 11:24 AM, Bernhagen, Patrick
+<p.bernhagen at abdn.ac.uk> wrote:
+> Dear Ameliaists,
+>
+> Trying to install the latest version of AmeliaView on my laptop I get an error message at the "Choose install location" stage of the setup wizard, telling me that the R directory is incorrect.
+>
+> I am not an R user but have R (version 2.12.0) installed and it seems to be working fine. Locating the R directory manually at this stage of the setup wizard does not get me past this stage either. The R directory is C:\Program Files\R\R-2.12.0.
+>
+> I would be grateful for any hints as to where I'm going wrong.
+>
+> Best wishes,
+>
+> Patrick
+>
+>
+>
+>
+> ***
+> University of Aberdeen
+> Department of Politics and International Relations
+> Edward Wright Building
+> Dunbar Street
+> Aberdeen, AB24 3QY
+> United Kingdom
+>
+> Phone: +44 (0)1224 272720
+> Fax: +44 (0)1224 27 2552
+> E-mail: p.bernhagen at abdn.ac.uk
+> Web: http://www.abdn.ac.uk/~pol209/
+>
+>
+> The University of Aberdeen is a charity registered in Scotland, No SC013683.
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+>
+>
+
+
+The University of Aberdeen is a charity registered in Scotland, No SC013683.
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From blackwel at fas.harvard.edu  Sat Oct 23 17:25:04 2010
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Sat, 23 Oct 2010 17:25:04 -0400
+Subject: [amelia] Installation problem with AmeliaView
+In-Reply-To: <D7E1CF24D3461E4BB5EF8F69DE8AADF30109BAFAAE96@VMAILB.uoa.abdn.ac.uk>
+References: <D7E1CF24D3461E4BB5EF8F69DE8AADF30109BAFAAE95@VMAILB.uoa.abdn.ac.uk> <AANLkTinTm-D7CvGdXYhEd_WRAdwEV0eps-e6n1tTWNbj@mail.gmail.com> <D7E1CF24D3461E4BB5EF8F69DE8AADF30109BAFAAE96@VMAILB.uoa.abdn.ac.uk>
+Message-ID: <AANLkTi=pqtPUsRm36MYWKLZDdMTgWm3ydAA__tsWwj0J@mail.gmail.com>
+
+Hi Patrick,
+
+There is a new installer up on the website. You should be able to
+install AmeliaView now. Sorry for the bug.
+
+Thanks!
+matt.
+
+On Sat, Oct 23, 2010 at 12:46 PM, Bernhagen, Patrick
+<p.bernhagen at abdn.ac.uk> wrote:
+> Hi Matt,
+>
+> Thanks for your swift reply. Rcmd.exe exists, though not in the folder you mentioned but in one of its subfolders: C:\Program Files\R\R-2.12.0\bin\i386.
+>
+> I'm using Windows XP Pro, SP3.
+>
+> Best wishes,
+>
+> Patrick
+>
+>
+> ________________________________________
+> From: Matt Blackwell [blackwel at fas.harvard.edu]
+> Sent: 23 October 2010 17:34
+> To: Bernhagen, Patrick
+> Cc: amelia at lists.gking.harvard.edu
+> Subject: Re: [amelia] Installation problem with AmeliaView
+>
+> Hi Patrick,
+>
+> Can you confirm that the following file exists: C:\Program
+> Files\R\R-2.12.0\bin\Rcmd.exe ?
+>
+> Also what version of Windows are you using? We are currently updating
+> the installer so it will likely be fixed quite soon.
+>
+> Thanks for letting us know.
+>
+> Cheers,
+> matt.
+>
+> On Sat, Oct 23, 2010 at 11:24 AM, Bernhagen, Patrick
+> <p.bernhagen at abdn.ac.uk> wrote:
+>> Dear Ameliaists,
+>>
+>> Trying to install the latest version of AmeliaView on my laptop I get an error message at the "Choose install location" stage of the setup wizard, telling me that the R directory is incorrect.
+>>
+>> I am not an R user but have R (version 2.12.0) installed and it seems to be working fine. Locating the R directory manually at this stage of the setup wizard does not get me past this stage either. The R directory is C:\Program Files\R\R-2.12.0.
+>>
+>> I would be grateful for any hints as to where I'm going wrong.
+>>
+>> Best wishes,
+>>
+>> Patrick
+>>
+>>
+>>
+>>
+>> ***
+>> University of Aberdeen
+>> Department of Politics and International Relations
+>> Edward Wright Building
+>> Dunbar Street
+>> Aberdeen, AB24 3QY
+>> United Kingdom
+>>
+>> Phone: +44 (0)1224 272720
+>> Fax: +44 (0)1224 27 2552
+>> E-mail: p.bernhagen at abdn.ac.uk
+>> Web: http://www.abdn.ac.uk/~pol209/
+>>
+>>
+>> The University of Aberdeen is a charity registered in Scotland, No SC013683.
+>> -
+>> Amelia mailing list served by Harvard-MIT Data Center
+>> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>> More info about Amelia: http://gking.harvard.edu/amelia
+>>
+>>
+>
+>
+> The University of Aberdeen is a charity registered in Scotland, No SC013683.
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From p.bernhagen at abdn.ac.uk  Sun Oct 24 09:58:59 2010
+From: p.bernhagen at abdn.ac.uk (Bernhagen, Patrick)
+Date: Sun, 24 Oct 2010 14:58:59 +0100
+Subject: [amelia] Installation problem with AmeliaView
+In-Reply-To: <AANLkTi=pqtPUsRm36MYWKLZDdMTgWm3ydAA__tsWwj0J@mail.gmail.com>
+References: <D7E1CF24D3461E4BB5EF8F69DE8AADF30109BAFAAE95@VMAILB.uoa.abdn.ac.uk> <AANLkTinTm-D7CvGdXYhEd_WRAdwEV0eps-e6n1tTWNbj@mail.gmail.com> <D7E1CF24D3461E4BB5EF8F69DE8AADF30109BAFAAE96@VMAILB.uoa.abdn.ac.uk> <AANLkTi=pqtPUsRm36MYWKLZDdMTgWm3ydAA__tsWwj0J@mail.gmail.com>
+Message-ID: <D7E1CF24D3461E4BB5EF8F69DE8AADF30109BB5AA63A@VMAILB.uoa.abdn.ac.uk>
+
+Thanks for your help, Matt, it's working fine now.
+
+Best wishes,
+
+Patrick
+
+
+
+-----Original Message-----
+From: Matt Blackwell [mailto:blackwel at fas.harvard.edu]
+Sent: 23 October 2010 22:25
+To: Bernhagen, Patrick
+Cc: amelia at lists.gking.harvard.edu
+Subject: Re: [amelia] Installation problem with AmeliaView
+
+Hi Patrick,
+
+There is a new installer up on the website. You should be able to
+install AmeliaView now. Sorry for the bug.
+
+Thanks!
+matt.
+
+On Sat, Oct 23, 2010 at 12:46 PM, Bernhagen, Patrick
+<p.bernhagen at abdn.ac.uk> wrote:
+> Hi Matt,
+>
+> Thanks for your swift reply. Rcmd.exe exists, though not in the folder you mentioned but in one of its subfolders: C:\Program Files\R\R-2.12.0\bin\i386.
+>
+> I'm using Windows XP Pro, SP3.
+>
+> Best wishes,
+>
+> Patrick
+>
+>
+> ________________________________________
+> From: Matt Blackwell [blackwel at fas.harvard.edu]
+> Sent: 23 October 2010 17:34
+> To: Bernhagen, Patrick
+> Cc: amelia at lists.gking.harvard.edu
+> Subject: Re: [amelia] Installation problem with AmeliaView
+>
+> Hi Patrick,
+>
+> Can you confirm that the following file exists: C:\Program
+> Files\R\R-2.12.0\bin\Rcmd.exe ?
+>
+> Also what version of Windows are you using? We are currently updating
+> the installer so it will likely be fixed quite soon.
+>
+> Thanks for letting us know.
+>
+> Cheers,
+> matt.
+>
+> On Sat, Oct 23, 2010 at 11:24 AM, Bernhagen, Patrick
+> <p.bernhagen at abdn.ac.uk> wrote:
+>> Dear Ameliaists,
+>>
+>> Trying to install the latest version of AmeliaView on my laptop I get an error message at the "Choose install location" stage of the setup wizard, telling me that the R directory is incorrect.
+>>
+>> I am not an R user but have R (version 2.12.0) installed and it seems to be working fine. Locating the R directory manually at this stage of the setup wizard does not get me past this stage either. The R directory is C:\Program Files\R\R-2.12.0.
+>>
+>> I would be grateful for any hints as to where I'm going wrong.
+>>
+>> Best wishes,
+>>
+>> Patrick
+>>
+>>
+>>
+>>
+>> ***
+>> University of Aberdeen
+>> Department of Politics and International Relations
+>> Edward Wright Building
+>> Dunbar Street
+>> Aberdeen, AB24 3QY
+>> United Kingdom
+>>
+>> Phone: +44 (0)1224 272720
+>> Fax: +44 (0)1224 27 2552
+>> E-mail: p.bernhagen at abdn.ac.uk
+>> Web: http://www.abdn.ac.uk/~pol209/
+>>
+>>
+>> The University of Aberdeen is a charity registered in Scotland, No SC013683.
+>> -
+>> Amelia mailing list served by Harvard-MIT Data Center
+>> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>> More info about Amelia: http://gking.harvard.edu/amelia
+>>
+>>
+>
+>
+> The University of Aberdeen is a charity registered in Scotland, No SC013683.
+>
+>
+
+
+The University of Aberdeen is a charity registered in Scotland, No SC013683.
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+

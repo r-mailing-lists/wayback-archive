@@ -1,0 +1,301 @@
+{
+  "list": "amelia",
+  "description": "",
+  "month": "2009-10",
+  "messages": [
+    {
+      "id": "msg-eee3036f6585",
+      "message_id": "<2888F5B6-754E-4B0D-9907-9C5F87D7059E@indiana.edu>",
+      "from_name": "Dan Matisoff",
+      "from_email_hash": "b36a48a0ea1d281924aea60326d08f4f86381ebf8b21db6f5c6ed8fcb517c9fe",
+      "date": "2009-10-07T22:03:58Z",
+      "subject": "[amelia] (highly) stochastic imputed data with Amelia",
+      "subject_clean": "[amelia] (highly) stochastic imputed data with Amelia",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hi all-\n\nI have a (panel) dataset of about 1000 powerplants in the U.S., over  \n13 years, including cost data, which includes total non-fuel  \nexpenditures, fixed costs, operations & maintenance expenses, and  \nhours of operation. For each of the variables, I am missing about 20%  \nof the observations.. overall, I have about 50% complete observations,  \nmeaning, with listwise deletion I would lose 50% of my observations.   \nThus, this seems like a perfect application of Amelia.\n\nIf I were to run a simple OLS, I could predict each of the variables  \nat an r squared of 75% to 95%, depending on whether I include lagged  \nvalues.  However, I can't use this to fill in missing data, because of  \nthe many missing values of predictor variable.  Again, the perfect  \nreason to use Amelia.\n\nWhen I run Amelia, I am running into several problems.\nFirst, regardless of whether I use polynomials of time 0, 1, 2, or 3,  \nmy imputed dataset seems highly, highly stochastic - much more so than  \nthe original data.  fixed cost data is fluctuating from -$5 million  \none year, to $17 the next year, when all of the observed data for the  \nsame powerplant is a relatively stable  $8mil to $11mil over 8 years.   \nAnother case, where I don't have observed data to compare it to - cost  \ndata varies from -$5 to +$2mil, to -$13mil, and then to +$11 million,  \nall in a 4 year span! Even when I average the five datasets, the  \nimputed data seems extremely stochastic and unrealistic, and highly  \ndependent upon the polynomial of time I select.\n\nAm I doing something wrong?  Why is the imputed dataset so stochastic?\n\nIt appears that much of the advice on the listserve suggests that one  \nshould proceed with the regressions, and not worry about the  \nstochasticity of 20% of the observations; however, if I am going to be  \nusing this data as part of a dependent variable in a difference in  \ndifferences model or as part of many other complex techniques -  \nseveral steps down the road, after performing matching, etc - I would  \nstrongly prefer not to have to do each statistical step 5x each, and  \ninstead, come up with a reasonable dataset from which to proceed with  \nmy regression (and perform the regression steps once). Can I simply  \naverage each dataset to generate 1 useful dataset? (and again, why is  \nthe imputed data so variable?)\n\nSecond, if I attempt to allow an individual time trend to be estimated  \nfor each individual, by interacting with the cross-section, my  \ncomputer grinds for hours and never produces anything.  Once, after  \nseveral hours, I got an unknown error.  Normally - with a 1, 2, or 3  \ntime polynomial, it takes my computer (a Macbook OS X, with 2 gb ram,  \nand a 2.4 ghz intel core duo chip) about 20 seconds to 1 minute to  \nproduce all five datasets.  Do I need a supercomputer - or am I doing  \nsomething wrong?\n\nThanks in advance for your help,\n\nDaniel Matisoff\n\nIndiana University\nGeorgia Institute of Technology\n-\nAmelia mailing list served by Harvard-MIT Data Center\n[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia\nMore info about Amelia: http://gking.harvard.edu/amelia",
+      "body_snippet": "Hi all-\n\nI have a (panel) dataset of about 1000 powerplants in the U.S., over  \n13 years, including cost data, which includes total non-fuel  \nexpenditures, fixed costs, operations & maintenance expen",
+      "thread_id": "thread-eee3036f6585",
+      "thread_depth": 0,
+      "month": "2009-10"
+    },
+    {
+      "id": "msg-d87e5e8d6ca3",
+      "message_id": "<200910080031.n980V4ZY027326@mail04.syd.optusnet.com.au>",
+      "from_name": "paulandpen at optusnet.com.au",
+      "from_email_hash": "2f11c1d8c9acaf33a3ba8c90abd15e02c31510cfc97b8b04cde88525557f0927",
+      "date": "2009-10-08T00:31:04Z",
+      "subject": "[amelia] (highly) stochastic imputed data with Amelia",
+      "subject_clean": "[amelia] (highly) stochastic imputed data with Amelia",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Daniel,\n\nThere are a lot of people who know a lot more about this than me, but I am writing a response to try and help anyway. \n\nThere is an option in Amelia 2 to use priors on the imputations. I used amelia quite extensively with survey data and found that quite often the data would exceed the range I expected for the survey question. For example, if a question was scored on a scale of 1-7, i would often get zero, -1, or 8,9,10 values on individual imputations. Using a bayesian rationale, I set my prior to (1-7) to ensure that the  imputations did not extend beyond credible limits in the eyes of my colleagues who were seeing multiple imputation for the first time. Mind you, they never questioned listwise deletion because they were taught this by their professors at university or it was the default on their package. \n\nMy sense is that your errors in the imputation can be modified using prior historical knowledge and beliefs - so that for example with the fixed costs, you could impose a prior on the range that you would expect to see from the variable (for example 'your cost values will not extend outside the historical range of 8-11 million and the very stochastic patterns you are seeing will be constrained by your prior). In other words the min and max they will be 8 and 11 million respectively \n\nAlso, if I was going to take an average of my datasets (which is against conventional wisdom and not what I would recommend), I would probably impute a minimum of 30 datasets. Intuitively, if I was using a sampling approach from a distribution to estimate an average, based on the CLT, I would expect 30 samples to start to converage to a normal distribution. Never tried this. I would probably check the distribution of my data imputations as well. NB - I don't use this - so this advice could be totally wrong. \n\nI would also run my models with listwise versus multiple imputation to see if my parameters are different.  \n\nHTH Paul\n\n\n\n\n> Dan Matisoff <dmatisof at umail.iu.edu> wrote:\n> \n> Hi all-\n> \n> I have a (panel) dataset of about 1000 powerplants in the U.S., over  \n> 13 years, including cost data, which includes total non-fuel  \n> expenditures, fixed costs, operations & maintenance expenses, and  \n> hours of operation. For each of the variables, I am missing about 20%  \n> of the observations.. overall, I have about 50% complete observations,  \n> meaning, with listwise deletion I would lose 50% of my observations.   \n> Thus, this seems like a perfect application of Amelia.\n> \n> If I were to run a simple OLS, I could predict each of the variables  \n> at an r squared of 75% to 95%, depending on whether I include lagged  \n> values.  However, I can't use this to fill in missing data, because of  \n> the many missing values of predictor variable.  Again, the perfect  \n> reason to use Amelia.\n> \n> When I run Amelia, I am running into several problems.\n> First, regardless of whether I use polynomials of time 0, 1, 2, or 3,  \n> my imputed dataset seems highly, highly stochastic - much more so than  \n> the original data.  fixed cost data is fluctuating from -$5 million  \n> one year, to $17 the next year, when all of the observed data for the  \n> same powerplant is a relatively stable  $8mil to $11mil over 8 years.   \n> Another case, where I don't have observed data to compare it to - cost  \n> data varies from -$5 to +$2mil, to -$13mil, and then to +$11 million,  \n> all in a 4 year span! Even when I average the five datasets, the  \n> imputed data seems extremely stochastic and unrealistic, and highly  \n> dependent upon the polynomial of time I select.\n> \n> Am I doing something wrong?  Why is the imputed dataset so stochastic?\n> \n> It appears that much of the advice on the listserve suggests that one  \n> should proceed with the regressions, and not worry about the  \n> stochasticity of 20% of the observations; however, if I am going to be  \n> using this data as part of a dependent variable in a difference in  \n> differences model or as part of many other complex techniques -  \n> several steps down the road, after performing matching, etc - I would  \n> strongly prefer not to have to do each statistical step 5x each, and  \n> instead, come up with a reasonable dataset from which to proceed with  \n> my regression (and perform the regression steps once). Can I simply  \n> average each dataset to generate 1 useful dataset? (and again, why is  \n> the imputed data so variable?)\n> \n> Second, if I attempt to allow an individual time trend to be estimated  \n> for each individual, by interacting with the cross-section, my  \n> computer grinds for hours and never produces anything.  Once, after  \n> several hours, I got an unknown error.  Normally - with a 1, 2, or 3  \n> time polynomial, it takes my computer (a Macbook OS X, with 2 gb ram,  \n> and a 2.4 ghz intel core duo chip) about 20 seconds to 1 minute to  \n> produce all five datasets.  Do I need a supercomputer - or am I doing  \n> something wrong?\n> \n> Thanks in advance for your help,\n> \n> Daniel Matisoff\n> \n> Indiana University\n> Georgia Institute of Technology\n> -\n> Amelia mailing list served by Harvard-MIT Data Center\n> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia\n> More info about Amelia: http://gking.harvard.edu/amelia\n-\nAmelia mailing list served by Harvard-MIT Data Center\n[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia\nMore info about Amelia: http://gking.harvard.edu/amelia",
+      "body_snippet": "Daniel,\n\nThere are a lot of people who know a lot more about this than me, but I am writing a response to try and help anyway. \n\nThere is an option in Amelia 2 to use priors on the imputations. I used",
+      "thread_id": "thread-d87e5e8d6ca3",
+      "thread_depth": 0,
+      "month": "2009-10"
+    },
+    {
+      "id": "msg-88ea5edbfe48",
+      "message_id": "<a6f585d20910080536r5b183468xd4797841eb106d74@mail.gmail.com>",
+      "from_name": "Donald Braman",
+      "from_email_hash": "0f278ce71a25f291e40f53f9b5b472fde570e8ee50a23f04fa6bd6d6dc60ac50",
+      "date": "2009-10-08T12:36:08Z",
+      "subject": "[amelia] Is there a way to specify interaction effects when imputing missing data?",
+      "subject_clean": "[amelia] Is there a way to specify interaction effects when imputing missing data?",
+      "in_reply_to": "<a6f585d20910072150t667e6ff0lef76ffef1953f90d@mail.gmail.com>",
+      "references": [
+        "<a6f585d20910072150t667e6ff0lef76ffef1953f90d@mail.gmail.com>"
+      ],
+      "body_plain": "I don't see anything about it in the manual.\n\nDonald Braman\nphone: 413-628-1221\nhttp://www.culturalcognition.net/braman/\nhttp://ssrn.com/author=286206\nhttp://www.law.gwu.edu/Faculty/profile.aspx?id=10123\n-------------- next part --------------\nAn HTML attachment was scrubbed...\nURL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20091008/5656467d/attachment.html>",
+      "body_snippet": "I don't see anything about it in the manual.\n\nDonald Braman\nphone: 413-628-1221\nhttp://www.culturalcognition.net/braman/\nhttp://ssrn.com/author=286206\nhttp://www.law.gwu.edu/Faculty/profile.aspx?id=10",
+      "thread_id": "thread-88ea5edbfe48",
+      "thread_depth": 0,
+      "month": "2009-10"
+    },
+    {
+      "id": "msg-e39b683d1e52",
+      "message_id": "<839691710910080550s6fdedc0fj96c9d181a8d1ca16@mail.gmail.com>",
+      "from_name": "Matt Blackwell",
+      "from_email_hash": "70686df7f9a157792209573107c169fd8eb7e803e5b7d994905307b826806e57",
+      "date": "2009-10-08T12:50:21Z",
+      "subject": "[amelia] Is there a way to specify interaction effects when imputing missing data?",
+      "subject_clean": "[amelia] Is there a way to specify interaction effects when imputing missing data?",
+      "in_reply_to": "<a6f585d20910080536r5b183468xd4797841eb106d74@mail.gmail.com>",
+      "references": [
+        "<a6f585d20910072150t667e6ff0lef76ffef1953f90d@mail.gmail.com>",
+        "<a6f585d20910080536r5b183468xd4797841eb106d74@mail.gmail.com>"
+      ],
+      "body_plain": "Hi Donald,\n\nAmelia does not have an option for imputing interactions currently.\nYou should definitely include interaction terms in your imputation\nmodel if you need to (it's in your analysis model or it's an important\npredictor of missingness). However, if you need to use that variable\nsubsequently, you should replace the imputation of the interaction\nwith the interaction of the imputations.\n\nI hope this helps,\nmatt.\n\nOn Thu, Oct 8, 2009 at 8:36 AM, Donald Braman <dbraman at law.gwu.edu> wrote:\n> I don't see anything about it in the manual.\n> Donald Braman\n> phone: 413-628-1221\n> http://www.culturalcognition.net/braman/\n> http://ssrn.com/author=286206\n> http://www.law.gwu.edu/Faculty/profile.aspx?id=10123\n>\n>\n>\n>\n-\nAmelia mailing list served by Harvard-MIT Data Center\n[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia\nMore info about Amelia: http://gking.harvard.edu/amelia",
+      "body_snippet": "Hi Donald,\n\nAmelia does not have an option for imputing interactions currently.\nYou should definitely include interaction terms in your imputation\nmodel if you need to (it's in your analysis model or ",
+      "thread_id": "thread-88ea5edbfe48",
+      "thread_depth": 1,
+      "month": "2009-10"
+    },
+    {
+      "id": "msg-1d273a5376ca",
+      "message_id": "<4279245A-B501-44A8-B483-D70DC40044AD@indiana.edu>",
+      "from_name": "Dan Matisoff",
+      "from_email_hash": "b36a48a0ea1d281924aea60326d08f4f86381ebf8b21db6f5c6ed8fcb517c9fe",
+      "date": "2009-10-08T16:19:25Z",
+      "subject": "[amelia] (highly) stochastic imputed data with Amelia",
+      "subject_clean": "[amelia] (highly) stochastic imputed data with Amelia",
+      "in_reply_to": "<839691710910080612r4f44c155p755a3bd328763b3d@mail.gmail.com>",
+      "references": [
+        "<2888F5B6-754E-4B0D-9907-9C5F87D7059E@indiana.edu>",
+        "<839691710910080612r4f44c155p755a3bd328763b3d@mail.gmail.com>"
+      ],
+      "body_plain": "Matt -\n\nThank you, this is very helpful, and it has given me a lot to think  \nabout.\n\nWhen I leave out polynomials of time the data seems to be quite  \nstochastic (I'm not sure if its worse or better than with polynomials  \nof time).  It does seem that the imputations are being heavily  \ninfluenced by variance between units.  There is a lot of variation in  \nthe between unit data.  Powerplants in the dataset vary from over a  \nhundred years old, to new plants.  New plants often have negative cost  \ndata, due to capital depreciation schedules (which is why I can't use  \nBayesian priors to bound the data), while older plants have higher  \ncosts.  Many plants are not operated in certain years, or are operated  \nat very low capacity, which leads them to have costs of 0.  Plant age,  \ncapacity, electricity generation, etc - provide a lot of explanatory  \npower for costs, but certainly there is certainly a lot of variation  \nbetween units.  This is why it's particularly important to use a MI  \nprogram that accounts for unit.\n\nI also understand why I can't interact the cross-section with time due  \nto computational resources...\n\n\nMy remaining / follow-up questions are:\n\nIs it possible to interact a linear trend with a cross-section using  \nAmelia?  I'm not exactly positive what you mean... does this require  \nestimating a single time trend, and interacting it with fixed effect  \nintercepts for each unit?\n\n\n\nKind regards,\nDan Matisoff\n\n\n\n\nOn Oct 8, 2009, at 9:12 AM, Matt Blackwell wrote:\n\nHi Dan,\n\nI am curious what happens to these imputations when you leave out\npolynomials of time. It sounds to me like the imputations are being\nheavily influenced by the variance between units and not within units.\nPerhaps you could simply impute with fixed effects.\n\nThe problem with adding an interaction with the cross section is that\nit adds NxT variables to the dataset, where N is the number of units\nand T is the order of the polynomials of time. You can see how this\nwould add roughly 3000 variables to your model and why this would slow\ndown your imputations considerably. Using just polynomials of time,\nyou only add 3 (or fewer) variables to the regression.\n\nPerhaps you could try a linear trend interacted with the cross section.\n\nI hope that helps.\n\nOn Wed, Oct 7, 2009 at 6:03 PM, Dan Matisoff <dmatisof at umail.iu.edu>  \nwrote:\n> Hi all-\n>\n> I have a (panel) dataset of about 1000 powerplants in the U.S., over  \n> 13\n> years, including cost data, which includes total non-fuel  \n> expenditures,\n> fixed costs, operations & maintenance expenses, and hours of  \n> operation. For\n> each of the variables, I am missing about 20% of the observations..  \n> overall,\n> I have about 50% complete observations, meaning, with listwise  \n> deletion I\n> would lose 50% of my observations.  Thus, this seems like a perfect\n> application of Amelia.\n>\n> If I were to run a simple OLS, I could predict each of the variables  \n> at an r\n> squared of 75% to 95%, depending on whether I include lagged values.\n>  However, I can't use this to fill in missing data, because of the  \n> many\n> missing values of predictor variable.  Again, the perfect reason to  \n> use\n> Amelia.\n>\n> When I run Amelia, I am running into several problems.\n> First, regardless of whether I use polynomials of time 0, 1, 2, or  \n> 3, my\n> imputed dataset seems highly, highly stochastic - much more so than  \n> the\n> original data.  fixed cost data is fluctuating from -$5 million one  \n> year, to\n> $17 the next year, when all of the observed data for the same  \n> powerplant is\n> a relatively stable  $8mil to $11mil over 8 years.  Another case,  \n> where I\n> don't have observed data to compare it to - cost data varies from - \n> $5 to\n> +$2mil, to -$13mil, and then to +$11 million, all in a 4 year span!  \n> Even\n> when I average the five datasets, the imputed data seems extremely\n> stochastic and unrealistic, and highly dependent upon the polynomial  \n> of time\n> I select.\n>\n> Am I doing something wrong?  Why is the imputed dataset so stochastic?\n>\n> It appears that much of the advice on the listserve suggests that  \n> one should\n> proceed with the regressions, and not worry about the stochasticity  \n> of 20%\n> of the observations; however, if I am going to be using this data as  \n> part of\n> a dependent variable in a difference in differences model or as part  \n> of many\n> other complex techniques - several steps down the road, after  \n> performing\n> matching, etc - I would strongly prefer not to have to do each  \n> statistical\n> step 5x each, and instead, come up with a reasonable dataset from  \n> which to\n> proceed with my regression (and perform the regression steps once).  \n> Can I\n> simply average each dataset to generate 1 useful dataset? (and  \n> again, why is\n> the imputed data so variable?)\n>\n> Second, if I attempt to allow an individual time trend to be  \n> estimated for\n> each individual, by interacting with the cross-section, my computer  \n> grinds\n> for hours and never produces anything.  Once, after several hours, I  \n> got an\n> unknown error.  Normally - with a 1, 2, or 3 time polynomial, it  \n> takes my\n> computer (a Macbook OS X, with 2 gb ram, and a 2.4 ghz intel core  \n> duo chip)\n> about 20 seconds to 1 minute to produce all five datasets.  Do I  \n> need a\n> supercomputer - or am I doing something wrong?\n>\n> Thanks in advance for your help,\n>\n> Daniel Matisoff\n>\n> Indiana University\n> Georgia Institute of Technology\n> -\n> Amelia mailing list served by Harvard-MIT Data Center\n> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/? \n> info=amelia\n> More info about Amelia: http://gking.harvard.edu/amelia\n>\n>\n-\nAmelia mailing list served by Harvard-MIT Data Center\n[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia\nMore info about Amelia: http://gking.harvard.edu/amelia",
+      "body_snippet": "Matt -\n\nThank you, this is very helpful, and it has given me a lot to think  \nabout.\n\nWhen I leave out polynomials of time the data seems to be quite  \nstochastic (I'm not sure if its worse or better ",
+      "thread_id": "thread-1d273a5376ca",
+      "thread_depth": 0,
+      "month": "2009-10"
+    },
+    {
+      "id": "msg-300a111d22c3",
+      "message_id": "<1c72fbf10910101059y7303e019o6e82bf287ac0ac4e@mail.gmail.com>",
+      "from_name": "Fabrício Mendes Fialho",
+      "from_email_hash": "7e8eb2d5ced6b4d97e7fb838bcc09e85b9c2293f9691f0f4c363cfbb665ae273",
+      "date": "2009-10-10T17:59:15Z",
+      "subject": "[amelia] Including information abouth survey design in MI",
+      "subject_clean": "[amelia] Including information abouth survey design in MI",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hi Amelia II developers and users,\n\nAccording King et al (APSR 95(1), 2001, p. 57, footnote 18):\n\n\"If the data are generated using a complex or multistage survey design, then\ninformation abouth the design should be included in the imputation model.\nFor example. ot accoount for stratified sampling, the imputation model\nshould include the strata coded as dummy variables.\"\n\nHow should I proceed if my data come from a survey design using clusters?\nAlmost all data I analyze use census tracts as PSU: first, n census tracts\nare randomly selected (in dataset I'm currently working, n = 127); then\nhouseholds are randomly selected from each census tract (each tract\ncontaining around dozen of cases). Dataset includes one variable indicating\nfrom which census tract/PSU each case is from. Should I just include this\nvariable in the MI process like it is (numbering census tracts from 1 to\n127), or should I create dummy variables (one dummy variable for each of the\n127 census tracts in my sample)?\n\nThanks for all help (again).\n\nSincerely,\n\nFabricio Fialho\n-------------- next part --------------\nAn HTML attachment was scrubbed...\nURL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20091010/2f292b33/attachment.html>",
+      "body_snippet": "Hi Amelia II developers and users,\n\nAccording King et al (APSR 95(1), 2001, p. 57, footnote 18):\n\n\"If the data are generated using a complex or multistage survey design, then\ninformation abouth the de",
+      "thread_id": "thread-300a111d22c3",
+      "thread_depth": 0,
+      "month": "2009-10"
+    },
+    {
+      "id": "msg-8efb5158fb19",
+      "message_id": "<4AD38372.4090602@harvard.edu>",
+      "from_name": "Gary King",
+      "from_email_hash": "ab5174122eed39b9a624c4a0e4480dfca9e3a7b61575242cb96f53f1495d1f7f",
+      "date": "2009-10-12T19:28:50Z",
+      "subject": "[amelia] Including information abouth survey design in MI",
+      "subject_clean": "[amelia] Including information abouth survey design in MI",
+      "in_reply_to": "<1c72fbf10910101059y7303e019o6e82bf287ac0ac4e@mail.gmail.com>",
+      "references": [
+        "<1c72fbf10910101059y7303e019o6e82bf287ac0ac4e@mail.gmail.com>"
+      ],
+      "body_plain": "An HTML attachment was scrubbed...\nURL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20091012/75e3759e/attachment.html>",
+      "body_snippet": "An HTML attachment was scrubbed...\nURL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20091012/75e3759e/attachment.html>",
+      "thread_id": "thread-300a111d22c3",
+      "thread_depth": 1,
+      "month": "2009-10"
+    },
+    {
+      "id": "msg-7d927bb261f9",
+      "message_id": "<839691710910121305v7824caft86a69a735b05461e@mail.gmail.com>",
+      "from_name": "Matt Blackwell",
+      "from_email_hash": "70686df7f9a157792209573107c169fd8eb7e803e5b7d994905307b826806e57",
+      "date": "2009-10-12T20:05:09Z",
+      "subject": "[amelia] (highly) stochastic imputed data with Amelia",
+      "subject_clean": "[amelia] (highly) stochastic imputed data with Amelia",
+      "in_reply_to": "<4279245A-B501-44A8-B483-D70DC40044AD@indiana.edu>",
+      "references": [
+        "<2888F5B6-754E-4B0D-9907-9C5F87D7059E@indiana.edu>",
+        "<839691710910080612r4f44c155p755a3bd328763b3d@mail.gmail.com>",
+        "<4279245A-B501-44A8-B483-D70DC40044AD@indiana.edu>"
+      ],
+      "body_plain": "Hi Dan,\n\nFor the unit specific linear trends, you can use the polynomials of\ntime argument (polytime = 1) and the cross-section interaction\nargument (intercs = TRUE) to impute with a linear trend within each\nunit. Your interpretation of how this works is right on--a time-trend\nwith interactions to account for between unit variation.\n\nCheers,\nmatt.\n\nOn Thu, Oct 8, 2009 at 12:19 PM, Dan Matisoff <dmatisof at umail.iu.edu> wrote:\n> Matt -\n>\n> Thank you, this is very helpful, and it has given me a lot to think about.\n>\n> When I leave out polynomials of time the data seems to be quite stochastic\n> (I'm not sure if its worse or better than with polynomials of time). ?It\n> does seem that the imputations are being heavily influenced by variance\n> between units. ?There is a lot of variation in the between unit data.\n> ?Powerplants in the dataset vary from over a hundred years old, to new\n> plants. ?New plants often have negative cost data, due to capital\n> depreciation schedules (which is why I can't use Bayesian priors to bound\n> the data), while older plants have higher costs. ?Many plants are not\n> operated in certain years, or are operated at very low capacity, which leads\n> them to have costs of 0. ?Plant age, capacity, electricity generation, etc -\n> provide a lot of explanatory power for costs, but certainly there is\n> certainly a lot of variation between units. ?This is why it's particularly\n> important to use a MI program that accounts for unit.\n>\n> I also understand why I can't interact the cross-section with time due to\n> computational resources...\n>\n>\n> My remaining / follow-up questions are:\n>\n> Is it possible to interact a linear trend with a cross-section using Amelia?\n> ?I'm not exactly positive what you mean... does this require estimating a\n> single time trend, and interacting it with fixed effect intercepts for each\n> unit?\n>\n>\n>\n> Kind regards,\n> Dan Matisoff\n>\n>\n>\n>\n> On Oct 8, 2009, at 9:12 AM, Matt Blackwell wrote:\n>\n> Hi Dan,\n>\n> I am curious what happens to these imputations when you leave out\n> polynomials of time. It sounds to me like the imputations are being\n> heavily influenced by the variance between units and not within units.\n> Perhaps you could simply impute with fixed effects.\n>\n> The problem with adding an interaction with the cross section is that\n> it adds NxT variables to the dataset, where N is the number of units\n> and T is the order of the polynomials of time. You can see how this\n> would add roughly 3000 variables to your model and why this would slow\n> down your imputations considerably. Using just polynomials of time,\n> you only add 3 (or fewer) variables to the regression.\n>\n> Perhaps you could try a linear trend interacted with the cross section.\n>\n> I hope that helps.\n>\n> On Wed, Oct 7, 2009 at 6:03 PM, Dan Matisoff <dmatisof at umail.iu.edu> wrote:\n>>\n>> Hi all-\n>>\n>> I have a (panel) dataset of about 1000 powerplants in the U.S., over 13\n>> years, including cost data, which includes total non-fuel expenditures,\n>> fixed costs, operations & maintenance expenses, and hours of operation.\n>> For\n>> each of the variables, I am missing about 20% of the observations..\n>> overall,\n>> I have about 50% complete observations, meaning, with listwise deletion I\n>> would lose 50% of my observations. ?Thus, this seems like a perfect\n>> application of Amelia.\n>>\n>> If I were to run a simple OLS, I could predict each of the variables at an\n>> r\n>> squared of 75% to 95%, depending on whether I include lagged values.\n>> ?However, I can't use this to fill in missing data, because of the many\n>> missing values of predictor variable. ?Again, the perfect reason to use\n>> Amelia.\n>>\n>> When I run Amelia, I am running into several problems.\n>> First, regardless of whether I use polynomials of time 0, 1, 2, or 3, my\n>> imputed dataset seems highly, highly stochastic - much more so than the\n>> original data. ?fixed cost data is fluctuating from -$5 million one year,\n>> to\n>> $17 the next year, when all of the observed data for the same powerplant\n>> is\n>> a relatively stable ?$8mil to $11mil over 8 years. ?Another case, where I\n>> don't have observed data to compare it to - cost data varies from -$5 to\n>> +$2mil, to -$13mil, and then to +$11 million, all in a 4 year span! Even\n>> when I average the five datasets, the imputed data seems extremely\n>> stochastic and unrealistic, and highly dependent upon the polynomial of\n>> time\n>> I select.\n>>\n>> Am I doing something wrong? ?Why is the imputed dataset so stochastic?\n>>\n>> It appears that much of the advice on the listserve suggests that one\n>> should\n>> proceed with the regressions, and not worry about the stochasticity of 20%\n>> of the observations; however, if I am going to be using this data as part\n>> of\n>> a dependent variable in a difference in differences model or as part of\n>> many\n>> other complex techniques - several steps down the road, after performing\n>> matching, etc - I would strongly prefer not to have to do each statistical\n>> step 5x each, and instead, come up with a reasonable dataset from which to\n>> proceed with my regression (and perform the regression steps once). Can I\n>> simply average each dataset to generate 1 useful dataset? (and again, why\n>> is\n>> the imputed data so variable?)\n>>\n>> Second, if I attempt to allow an individual time trend to be estimated for\n>> each individual, by interacting with the cross-section, my computer grinds\n>> for hours and never produces anything. ?Once, after several hours, I got\n>> an\n>> unknown error. ?Normally - with a 1, 2, or 3 time polynomial, it takes my\n>> computer (a Macbook OS X, with 2 gb ram, and a 2.4 ghz intel core duo\n>> chip)\n>> about 20 seconds to 1 minute to produce all five datasets. ?Do I need a\n>> supercomputer - or am I doing something wrong?\n>>\n>> Thanks in advance for your help,\n>>\n>> Daniel Matisoff\n>>\n>> Indiana University\n>> Georgia Institute of Technology\n>> -\n>> Amelia mailing list served by Harvard-MIT Data Center\n>> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia\n>> More info about Amelia: http://gking.harvard.edu/amelia\n>>\n>>\n>\n>\n-\nAmelia mailing list served by Harvard-MIT Data Center\n[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia\nMore info about Amelia: http://gking.harvard.edu/amelia",
+      "body_snippet": "Hi Dan,\n\nFor the unit specific linear trends, you can use the polynomials of\ntime argument (polytime = 1) and the cross-section interaction\nargument (intercs = TRUE) to impute with a linear trend with",
+      "thread_id": "thread-1d273a5376ca",
+      "thread_depth": 1,
+      "month": "2009-10"
+    },
+    {
+      "id": "msg-78597ecb1954",
+      "message_id": "<a6f585d20910170825ofdd209fj9795b1f2fe2a3af6@mail.gmail.com>",
+      "from_name": "Donald Braman",
+      "from_email_hash": "0f278ce71a25f291e40f53f9b5b472fde570e8ee50a23f04fa6bd6d6dc60ac50",
+      "date": "2009-10-17T15:25:36Z",
+      "subject": "[amelia] odd post-imputation levels",
+      "subject_clean": "[amelia] odd post-imputation levels",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hi Folks,\nI'm getting some odd levels in my post-imputation data:\n\n> levels(as.factor(a.out$imputations[[1]]$facts_convict))\n[1] \"1\" \"1\" \"2\" \"3\" \"4\" \"5\" \"6\"\n\n\nThe \"facts_convict\" variable is imputed as ordinal, but the double \"1\"s\naren't there prior to imputing:\n\n> levels(as.factor(my.data$facts_convict))\n[1] \"1\" \"2\" \"3\" \"4\" \"5\" \"6\"\n\n\nAlso, I can't seem to cure this by converting to numeric and back:\n\n> levels(as.factor(as.numeric(a.out$imputations[[1]]$facts_convict)))\n[1] \"1\" \"1\" \"2\" \"3\" \"4\" \"5\" \"6\"\n\n\nNot sure how/why the double \"1\" crept in during imputation.  As you can\nimagine, ologits end up being odd, with two estimates for \"1\".  Any\nthoughts?\n\nDon\n\nDonald Braman\nphone: 413-628-1221\nhttp://www.culturalcognition.net/braman/\nhttp://ssrn.com/author=286206\nhttp://www.law.gwu.edu/Faculty/profile.aspx?id=10123\n-------------- next part --------------\nAn HTML attachment was scrubbed...\nURL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20091017/2d37de15/attachment.html>",
+      "body_snippet": "Hi Folks,\nI'm getting some odd levels in my post-imputation data:\n\n> levels(as.factor(a.out$imputations[[1]]$facts_convict))\n[1] \"1\" \"1\" \"2\" \"3\" \"4\" \"5\" \"6\"\n\n\nThe \"facts_convict\" variable is imputed a",
+      "thread_id": "thread-78597ecb1954",
+      "thread_depth": 0,
+      "month": "2009-10"
+    },
+    {
+      "id": "msg-a460787db9d7",
+      "message_id": "<a6f585d20910171010s29ba7771qf1817a1c72eeea06@mail.gmail.com>",
+      "from_name": "Donald Braman",
+      "from_email_hash": "0f278ce71a25f291e40f53f9b5b472fde570e8ee50a23f04fa6bd6d6dc60ac50",
+      "date": "2009-10-17T17:10:15Z",
+      "subject": "[amelia] Re: odd post-imputation levels",
+      "subject_clean": "[amelia] Re: odd post-imputation levels",
+      "in_reply_to": "<a6f585d20910170825ofdd209fj9795b1f2fe2a3af6@mail.gmail.com>",
+      "references": [
+        "<a6f585d20910170825ofdd209fj9795b1f2fe2a3af6@mail.gmail.com>"
+      ],
+      "body_plain": "Also, Amelia doesn't always produce that odd result, but it tends to do it\nmore frequently for some variables than it does for others.  I'm happy to\nprovide data, scripts, etc.\n\nOn Sat, Oct 17, 2009 at 10:25 AM, Donald Braman <dbraman at law.gwu.edu> wrote:\n\n> Hi Folks,\n> I'm getting some odd levels in my post-imputation data:\n>\n> > levels(as.factor(a.out$imputations[[1]]$facts_convict))\n> [1] \"1\" \"1\" \"2\" \"3\" \"4\" \"5\" \"6\"\n>\n>\n> The \"facts_convict\" variable is imputed as ordinal, but the double \"1\"s\n> aren't there prior to imputing:\n>\n> > levels(as.factor(my.data$facts_convict))\n> [1] \"1\" \"2\" \"3\" \"4\" \"5\" \"6\"\n>\n>\n> Also, I can't seem to cure this by converting to numeric and back:\n>\n> > levels(as.factor(as.numeric(a.out$imputations[[1]]$facts_convict)))\n> [1] \"1\" \"1\" \"2\" \"3\" \"4\" \"5\" \"6\"\n>\n>\n> Not sure how/why the double \"1\" crept in during imputation.  As you can\n> imagine, ologits end up being odd, with two estimates for \"1\".  Any\n> thoughts?\n>\n> Don\n>\n> Donald Braman\n> phone: 413-628-1221\n> http://www.culturalcognition.net/braman/\n> http://ssrn.com/author=286206\n> http://www.law.gwu.edu/Faculty/profile.aspx?id=10123\n>\n-------------- next part --------------\nAn HTML attachment was scrubbed...\nURL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20091017/b64a9dd8/attachment.html>",
+      "body_snippet": "Also, Amelia doesn't always produce that odd result, but it tends to do it\nmore frequently for some variables than it does for others.  I'm happy to\nprovide data, scripts, etc.\n\nOn Sat, Oct 17, 2009 a",
+      "thread_id": "thread-78597ecb1954",
+      "thread_depth": 1,
+      "month": "2009-10"
+    },
+    {
+      "id": "msg-266938cb7215",
+      "message_id": "<839691710910182057i664bb61akffba32250c1c0612@mail.gmail.com>",
+      "from_name": "Matt Blackwell",
+      "from_email_hash": "70686df7f9a157792209573107c169fd8eb7e803e5b7d994905307b826806e57",
+      "date": "2009-10-19T03:57:49Z",
+      "subject": "[amelia] Re: odd post-imputation levels",
+      "subject_clean": "[amelia] Re: odd post-imputation levels",
+      "in_reply_to": "<a6f585d20910171010s29ba7771qf1817a1c72eeea06@mail.gmail.com>",
+      "references": [
+        "<a6f585d20910170825ofdd209fj9795b1f2fe2a3af6@mail.gmail.com>",
+        "<a6f585d20910171010s29ba7771qf1817a1c72eeea06@mail.gmail.com>"
+      ],
+      "body_plain": "Hi Donald,\n\nThat is quite odd. Is one of the new factor levels empty? You can see\nhow many observations are in each level using:\n\nsummary(a.out$imputations[[1]]$facts_convict)\n\nIf one of the \"1\"s is empty, I think you can get rid of that factor\nlevel by running:\n\na.out$imputations[[1]]$facts_convict <-\nfactor(a.out$imputations[[1]]$facts_convict)\n\nLet me know if that works. If not, we can try to locate the bug.\n\nThanks!\nmatt.\n\nOn Sat, Oct 17, 2009 at 1:10 PM, Donald Braman <dbraman at law.gwu.edu> wrote:\n> Also, Amelia doesn't always produce that odd result, but it tends to do it\n> more frequently for some variables than it does for others. ?I'm happy to\n> provide data, scripts, etc.\n>\n> On Sat, Oct 17, 2009 at 10:25 AM, Donald Braman <dbraman at law.gwu.edu> wrote:\n>>\n>> Hi Folks,\n>> I'm getting some odd levels in my post-imputation data:\n>>\n>> > levels(as.factor(a.out$imputations[[1]]$facts_convict))\n>> [1] \"1\" \"1\" \"2\" \"3\" \"4\" \"5\" \"6\"\n>>\n>> The \"facts_convict\" variable is imputed as ordinal, but?the double \"1\"s\n>> aren't there prior to imputing:\n>>\n>> > levels(as.factor(my.data$facts_convict))\n>> [1] \"1\" \"2\" \"3\" \"4\" \"5\" \"6\"\n>>\n>> Also, I can't seem to cure this by converting to numeric and back:\n>>\n>> > levels(as.factor(as.numeric(a.out$imputations[[1]]$facts_convict)))\n>> [1] \"1\" \"1\" \"2\" \"3\" \"4\" \"5\" \"6\"\n>>\n>> Not sure how/why the double \"1\" crept in during imputation. ?As you can\n>> imagine, ologits end up being odd, with two estimates for \"1\". ?Any\n>> thoughts?\n>> Don\n>>\n>> Donald Braman\n>> phone: 413-628-1221\n>> http://www.culturalcognition.net/braman/\n>> http://ssrn.com/author=286206\n>> http://www.law.gwu.edu/Faculty/profile.aspx?id=10123\n>\n-\nAmelia mailing list served by Harvard-MIT Data Center\n[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia\nMore info about Amelia: http://gking.harvard.edu/amelia",
+      "body_snippet": "Hi Donald,\n\nThat is quite odd. Is one of the new factor levels empty? You can see\nhow many observations are in each level using:\n\nsummary(a.out$imputations[[1]]$facts_convict)\n\nIf one of the \"1\"s is e",
+      "thread_id": "thread-78597ecb1954",
+      "thread_depth": 2,
+      "month": "2009-10"
+    },
+    {
+      "id": "msg-b27c97cfc028",
+      "message_id": "<f33174dc0910291038x75f3150dge1003804fb8b7115@mail.gmail.com>",
+      "from_name": "Helen Brown",
+      "from_email_hash": "f130bfb9bce3bcc591823fec9d28c1050f3366cb7b91f9828c89d09bfc9cd901",
+      "date": "2009-10-29T17:38:07Z",
+      "subject": "[amelia] Multiple imputaton question/ coding issue",
+      "subject_clean": "[amelia] Multiple imputaton question/ coding issue",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Dear all,\n\nI am using Amelia II to impute but I have a question regarding one of\nmy variables which seems to pose a problem for multiple imputation\nunless I can find a better coding rule:\n\nI want to control for **compliance with treatment*** (binary variable\n1,0) but I am not sure how to deal with the following:\n\nsay patient1 is under T1 in 1990 and complies, then dummy for T1=1 and\ndummy for compliance=1\n\nsay patient2 is under T1 in 1999 and does not comply, then dummy for\nT1=1 and dummy for compliance=0\n\nBut, then, say patient1 is NOT under T1 in 1980 (T1=0)\nwhat value should I assign to compliance in this case?  Should I leave\nit as a missing -no value- (it makes sense but I will lose many\nobservations). On the other hand, it doesnt' make sense to assign 1 or\n0 to compliance if there was nothing to comply (or fail to comply)\nwith in the first place.\nMoreover, if I leave the compliance value as missing in this case,\nwhen I use Amelia II the missing value for compliance will be imputed\nand I am not sure this would be correct given that in reality\ncompliance did not exist b/c there was no treatment to comply with.\n\nThanks in advance,\nRegards,\nHelen A. Brown\n-\nAmelia mailing list served by Harvard-MIT Data Center\n[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia\nMore info about Amelia: http://gking.harvard.edu/amelia",
+      "body_snippet": "Dear all,\n\nI am using Amelia II to impute but I have a question regarding one of\nmy variables which seems to pose a problem for multiple imputation\nunless I can find a better coding rule:\n\nI want to c",
+      "thread_id": "thread-b27c97cfc028",
+      "thread_depth": 0,
+      "month": "2009-10"
+    }
+  ],
+  "threads": [
+    {
+      "id": "thread-eee3036f6585",
+      "subject": "[amelia] (highly) stochastic imputed data with Amelia",
+      "message_count": 1,
+      "participants": [
+        "Dan Matisoff"
+      ],
+      "started": "2009-10-07T22:03:58Z",
+      "last_reply": "2009-10-07T22:03:58Z",
+      "root_message_id": "msg-eee3036f6585"
+    },
+    {
+      "id": "thread-d87e5e8d6ca3",
+      "subject": "[amelia] (highly) stochastic imputed data with Amelia",
+      "message_count": 1,
+      "participants": [
+        "paulandpen at optusnet.com.au"
+      ],
+      "started": "2009-10-08T00:31:04Z",
+      "last_reply": "2009-10-08T00:31:04Z",
+      "root_message_id": "msg-d87e5e8d6ca3"
+    },
+    {
+      "id": "thread-88ea5edbfe48",
+      "subject": "[amelia] Is there a way to specify interaction effects when imputing missing data?",
+      "message_count": 2,
+      "participants": [
+        "Donald Braman",
+        "Matt Blackwell"
+      ],
+      "started": "2009-10-08T12:36:08Z",
+      "last_reply": "2009-10-08T12:50:21Z",
+      "root_message_id": "msg-88ea5edbfe48"
+    },
+    {
+      "id": "thread-1d273a5376ca",
+      "subject": "[amelia] (highly) stochastic imputed data with Amelia",
+      "message_count": 2,
+      "participants": [
+        "Dan Matisoff",
+        "Matt Blackwell"
+      ],
+      "started": "2009-10-08T16:19:25Z",
+      "last_reply": "2009-10-12T20:05:09Z",
+      "root_message_id": "msg-1d273a5376ca"
+    },
+    {
+      "id": "thread-300a111d22c3",
+      "subject": "[amelia] Including information abouth survey design in MI",
+      "message_count": 2,
+      "participants": [
+        "Fabrício Mendes Fialho",
+        "Gary King"
+      ],
+      "started": "2009-10-10T17:59:15Z",
+      "last_reply": "2009-10-12T19:28:50Z",
+      "root_message_id": "msg-300a111d22c3"
+    },
+    {
+      "id": "thread-78597ecb1954",
+      "subject": "[amelia] odd post-imputation levels",
+      "message_count": 3,
+      "participants": [
+        "Donald Braman",
+        "Matt Blackwell"
+      ],
+      "started": "2009-10-17T15:25:36Z",
+      "last_reply": "2009-10-19T03:57:49Z",
+      "root_message_id": "msg-78597ecb1954"
+    },
+    {
+      "id": "thread-b27c97cfc028",
+      "subject": "[amelia] Multiple imputaton question/ coding issue",
+      "message_count": 1,
+      "participants": [
+        "Helen Brown"
+      ],
+      "started": "2009-10-29T17:38:07Z",
+      "last_reply": "2009-10-29T17:38:07Z",
+      "root_message_id": "msg-b27c97cfc028"
+    }
+  ]
+}

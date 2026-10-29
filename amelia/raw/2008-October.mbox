@@ -1,0 +1,202 @@
+From carlosrodriguez1993 at gmail.com  Wed Oct 15 00:57:50 2008
+From: carlosrodriguez1993 at gmail.com (Carlos Rodriguez)
+Date: Tue, 14 Oct 2008 21:57:50 -0700
+Subject: [amelia] questions about implementation of MI with Amelia software: fixed effects and priors
+Message-ID: <cb1a3d80810142157q2edae9c2k6a7aa9e6c0f4e1cc@mail.gmail.com>
+
+Dear list,
+
+I have been trying to use priors in Amelia with no success.  I only
+want to set the range as > 0 for the variables that are percentages
+because I have noticed in Amelia output datasets that some of the
+imputed values are negative.  I am not sure how much of a problem the
+latter is because, as I understand it, MI is about distributions not
+exact values of missing obs.  I selected the option "range" in the
+priors tab but when I wrote 0 as minimum I got an error message asking
+me to include the mean.  I only wanted to get positive imputed values
+and I have no priors about the mean.  Could you please tell me how
+this should be done?
+
+Second, I have been told that if one plans to run a (coutnry) fixed
+effects model, the country dummies should be included in the dataset
+that is loaded in Amelia to perform the multiple imputation. Is this
+right or should fixed effects be included in a different way...or not
+included at all in the MI but added to each imputed datasets after the
+imputation is done?
+
+Finally, could you please let me know where I can get some guidance on
+the interpretation of Amelia diagnostics.  I got all the graphs but I
+am not sure what they are telling me or whether overall my MI is ok.
+
+Thanks so much in advance for your help!
+Carlos
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From king at harvard.edu  Wed Oct 15 10:24:10 2008
+From: king at harvard.edu (Gary King)
+Date: Wed, 15 Oct 2008 10:24:10 -0400
+Subject: [amelia] questions about implementation of MI with Amelia software: fixed effects and priors
+In-Reply-To: <cb1a3d80810142157q2edae9c2k6a7aa9e6c0f4e1cc@mail.gmail.com>
+References: <cb1a3d80810142157q2edae9c2k6a7aa9e6c0f4e1cc@mail.gmail.com>
+Message-ID: <48F5FD0A.4020905@harvard.edu>
+
+
+
+On 10/15/2008 12:57 AM, Carlos Rodriguez wrote:
+> Dear list,
+>
+> I have been trying to use priors in Amelia with no success.  I only
+> want to set the range as > 0 for the variables that are percentages
+> because I have noticed in Amelia output datasets that some of the
+> imputed values are negative.  I am not sure how much of a problem the
+> latter is because, as I understand it, MI is about distributions not
+> exact values of missing obs.  I selected the option "range" in the
+> priors tab but when I wrote 0 as minimum I got an error message asking
+> me to include the mean.  I only wanted to get positive imputed values
+> and I have no priors about the mean.  Could you please tell me how
+> this should be done?
+>   
+if you want to constrain the outputs in this way, you can either round 
+to [0,1] after imputation or (better) you can transform your variables 
+going into Amelia as for example ln(p/(1-p)) and then untransform after 
+imputation.  There are some examples of this in our APSR paper.
+> Second, I have been told that if one plans to run a (coutnry) fixed
+> effects model, the country dummies should be included in the dataset
+> that is loaded in Amelia to perform the multiple imputation. Is this
+> right or should fixed effects be included in a different way...or not
+> included at all in the MI but added to each imputed datasets after the
+> imputation is done?
+>   
+either way.  Amelia will create these dummies for you if you like or you 
+can enter them yourself if that would be convenient.
+> Finally, could you please let me know where I can get some guidance on
+> the interpretation of Amelia diagnostics.  I got all the graphs but I
+> am not sure what they are telling me or whether overall my MI is ok.
+>   
+This is a paper that we plan to write but haven't quite gotten to!  For 
+now, the manual is the best source.
+
+Gary
+---
+http://gking.harvard.edu
+
+> Thanks so much in advance for your help!
+> Carlos
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+>   
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From steven.shewfelt at yale.edu  Sun Oct 26 06:47:18 2008
+From: steven.shewfelt at yale.edu (Steve Shewfelt)
+Date: Sun, 26 Oct 2008 06:47:18 -0400
+Subject: [amelia] Question about analysis of imputed data
+Message-ID: <49044AB6.8060102@yale.edu>
+
+Hello,
+
+I'm using site dummies in lieu of fixed effects and the "miest" command 
+in Stata. When I do this, I get a "conformability" error. I am pretty 
+sure is a consequence of different sites being dropped from different 
+imputed datasets when I run the logit model. For example, the imputation 
+process generated a situation in which site A is dropped from the 
+analysis in imputed dataset 1 because there is no variation on the 
+dependent variable for site A in dataset 1. However, for dataset 2, the 
+imputation process generated variation in the dependent variable for 
+site A, so site A is not dropped from that analysis. Then, when "miest" 
+attempts to combine the coefficients and standard errors from the 
+imputed datasets, it is doing so with different matrices and running 
+into problems.
+
+Since I don't really care about the coefficients for the site dummies, 
+can I just run the regressions one at a time on each of the imputed 
+datasets and then manually combine the coefficients on the variables 
+with which I am concerned? I understand it is necessary to sum the 
+within and between variance to get proper standard errors; my question 
+is whether the fact that different sites will be dropped from different 
+analyses invalidates the combining of the coefficients and their 
+standard errors.
+
+Thanks to anyone who can help.
+
+Steve Shewfelt
+PhD Candidate
+Department of Political Science
+Yale University
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From king at harvard.edu  Sun Oct 26 21:09:27 2008
+From: king at harvard.edu (Gary King)
+Date: Sun, 26 Oct 2008 21:09:27 -0400
+Subject: [amelia] Question about analysis of imputed data
+In-Reply-To: <49044AB6.8060102@yale.edu>
+References: <49044AB6.8060102@yale.edu>
+Message-ID: <490514C7.5080807@harvard.edu>
+
+a better idea would be to figure out why Stata is dropping your 
+variables.  you don't  want to let a computer program decide what your 
+specification is.  This can only happen if you have perfect collinearity 
+or perfect discrimination (of Y); sounds like its the former.  But 
+either way, I suggest that you make the choices yourself so that Stata 
+doesn't have to.
+
+Gary
+---
+http://gking.harvard.edu
+
+
+On 10/26/2008 6:47 AM, Steve Shewfelt wrote:
+> Hello,
+>
+> I'm using site dummies in lieu of fixed effects and the "miest" 
+> command in Stata. When I do this, I get a "conformability" error. I am 
+> pretty sure is a consequence of different sites being dropped from 
+> different imputed datasets when I run the logit model. For example, 
+> the imputation process generated a situation in which site A is 
+> dropped from the analysis in imputed dataset 1 because there is no 
+> variation on the dependent variable for site A in dataset 1. However, 
+> for dataset 2, the imputation process generated variation in the 
+> dependent variable for site A, so site A is not dropped from that 
+> analysis. Then, when "miest" attempts to combine the coefficients and 
+> standard errors from the imputed datasets, it is doing so with 
+> different matrices and running into problems.
+>
+> Since I don't really care about the coefficients for the site dummies, 
+> can I just run the regressions one at a time on each of the imputed 
+> datasets and then manually combine the coefficients on the variables 
+> with which I am concerned? I understand it is necessary to sum the 
+> within and between variance to get proper standard errors; my question 
+> is whether the fact that different sites will be dropped from 
+> different analyses invalidates the combining of the coefficients and 
+> their standard errors.
+>
+> Thanks to anyone who can help.
+>
+> Steve Shewfelt
+> PhD Candidate
+> Department of Political Science
+> Yale University
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+

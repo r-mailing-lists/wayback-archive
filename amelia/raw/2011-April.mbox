@@ -1,0 +1,343 @@
+From blackwel at fas.harvard.edu  Sun Apr  3 20:44:22 2011
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Sun, 3 Apr 2011 20:44:22 -0400
+Subject: [amelia] Amelia not running
+In-Reply-To: <AANLkTikMRjZtJKrqvG0k4EBfUOTpcqdD1TMOQ+FTQm7D@mail.gmail.com>
+References: <AANLkTikMRjZtJKrqvG0k4EBfUOTpcqdD1TMOQ+FTQm7D@mail.gmail.com>
+Message-ID: <BANLkTikYFsE3UChmCT-1MbCGnoTU-7VTvw@mail.gmail.com>
+
+Hi Antonio,
+
+Just took a quick look through your data and the problem is that you
+have an "NA" in your cross-section variable, which is what is causing
+the problem. I'm not sure if that's really missing or you have a
+category of the CS variable that is called NA. You might want to
+change it and it should run.
+
+Cheers,
+matt.
+
+On Thu, Mar 31, 2011 at 10:43 PM, Antonio P. Ramos
+<ramos.grad.student at gmail.com> wrote:
+> Hi all,
+>
+> I am wondering what is happening here: the program does not run but no error
+> message is provided. Maybe I am making a very basic mistake but so far I
+> have not clue.
+>
+> Help and advice really appreciated,
+>
+> Antonio.
+>
+>> out <-amelia(imp.data,noms=c("poor.pooled","president","adm"),
+> +??????????? m=1,ts="year",cs="party",polytime=2,intercs=TRUE,p2s=2)
+>
+> amelia starting
+> beginning prep functions
+> Variables used:? toelec switch coord1D with.exec.x rel1D pure.pres pure.auth
+> pure.emp pure.liq pure.paid legisl eleant other.legis executive age success
+> m.with.exec m.rel1D m.relideo inv other invoth cabshare maxp.pure p.pure N
+> with.exec.y Npres totsn incab party.ideo pork noms.poor.pooled.2
+> noms.president.2 noms.adm.2 noms.adm.3 time.1 time.2 time.3 time.4 time.5
+> time.6 time.7 time.8 time.9 time.10 time.11 time.12 time.13 time.14 time.15
+> time.16 time.17 time.18 time.19 time.20 time.21 time.22 time.23 time.24
+> time.25 time.26 time.27 time.28 time.29 time.30 time.31 time.32 time.33
+> time.34 time.35 time.36 time.37 time.38 time.39 time.40 time.41 time.42
+> time.43 time.44 time.45 time.46 time.47 time.48 time.49 time.50 time.51
+> time.52 time.53 time.54 time.55 time.56 time.57 time.58 time.59 time.60
+> time.61 time.62 time.63 time.64 time.65 time.66 time.67 time.68 time.69
+> time.70 time.71 time.72 time.73 time.74 time.75 time.76 time.77
+> running bootstrap
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From matthew-c.johnson at ubs.com  Wed Apr  6 20:03:03 2011
+From: matthew-c.johnson at ubs.com (matthew-c.johnson at ubs.com)
+Date: Thu, 7 Apr 2011 10:03:03 +1000
+Subject: [amelia] tscs + PCA
+Message-ID: <0B3D04B9A3E43D49807BE67A26D55CF816714C27@NSYDC101PEX1.ubsw.net>
+
+Dear All, 
+
+I am using Amelia to fill in some gaps in national accounts data (and
+similar panels of data); as a result of the structure of my panel, there
+is no 'cs' parameter -- just 'ts'. 
+
+I intend to use the EM algorithim to complete my panel, and then to
+extract factors via PCA -- as a reuslt i have two related questions. 
+
+1/ I would like to use the tscsPlot command (or similar) to plot the
+observed values and the imputations (mean + 95% confidence bands) -- is
+this possible?
+
+2/ What's the best way to use the output from the imputations to
+generate the factors in the PCA? I have considered two methods, but am
+unsure which is best (most valid) --
+
+1/ fill the gaps in the panel with the the mean of the imputations and
+use the single data set to extract the eigenvales and eigenvectors of
+the assocaited covariance matrix - and then use these weights and the
+'mean-filled in' data set to generate the factors. 
+
+2/ stack the imputation panels and use the stacked panel to generate the
+eigenvalues and eigenvectors of the associated covariance matrix - and
+then use the mean values from the imputation runs to fill the gaps in my
+original panel, and the weights from the stacked panel? 
+
+thanks and best regards
+
+Matt Johnson 
+
+ 
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110407/0fd01f47/attachment.html>
+-------------- next part --------------
+Visit our website at http://www.ubs.com
+
+This message contains confidential information and is intended only 
+for the individual named.  If you are not the named addressee you 
+should not disseminate, distribute or copy this e-mail.  Please 
+notify the sender immediately by e-mail if you have received this 
+e-mail by mistake and delete this e-mail from your system.
+	
+E-mails are not encrypted and cannot be guaranteed to be secure or 
+error-free as information could be intercepted, corrupted, lost, 
+destroyed, arrive late or incomplete, or contain viruses.  The sender 
+therefore does not accept liability for any errors or omissions in the 
+contents of this message which arise as a result of e-mail transmission.  
+If verification is required please request a hard-copy version.  This 
+message is provided for informational purposes and should not be 
+construed as a solicitation or offer to buy or sell any securities 
+or related financial instruments.
+
+ 
+UBS reserves the right to retain all messages. Messages are protected
+and accessed only in legally justified cases.
+
+From elias.naumann at uni-mannheim.de  Fri Apr  8 08:47:05 2011
+From: elias.naumann at uni-mannheim.de (Elias Naumann)
+Date: Fri, 08 Apr 2011 14:47:05 +0200
+Subject: [amelia] Imputation of  (right-censored) income
+Message-ID: <4D9F03C9.3090007@uni-mannheim.de>
+
+Dear all,
+I'm currently using amelia to impute income in cross-sectional data 
+(about 30% are missing). The distribution of the available income data 
+is right skewed, so I transformed the income using the natural 
+logarithm. Unfortunately the income data is also top-coded or 
+right-censored - that is all respondents with an income above a certain 
+limit are summarized into one category. (see example in the following 
+paper, dealing exactly with this problem: 
+http://www.fcsm.gov/07papers/Buettner.X-C.pdf)
+Comparison of observed and imputed data
+(I've also added the comparison of imputed and observed data in a 
+jpeg-file where the imputation worked and I hope that the graph is visible)
+
+So I have two problems:
+1.) In some of the data sets, when there are a lot of people in the top 
+category the imputation is not succesfull at all.
+2.) But even if the imputation is working, the imputed values in the 
+upper categories are smaller than the observed values - and only very 
+few imputed values are above the maximum of the observed values.
+
+Is there any way to deal with these problems in Amelia? Or do I have to 
+transform the income data to get a good imputation?
+
+Thanks for your help,
+
+Elias
+-- 
+
+Elias Naumann
+
+SFB 884
+Universit?t Mannheim
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110408/bee75825/attachment.html>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: incomeimputed.jpeg
+Type: image/jpeg
+Size: 30888 bytes
+Desc: not available
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110408/bee75825/attachment.jpeg>
+
+From josse at agrocampus-ouest.fr  Mon Apr 11 03:57:05 2011
+From: josse at agrocampus-ouest.fr (Julie Josse)
+Date: Mon, 11 Apr 2011 09:57:05 +0200
+Subject: [amelia] tscs + PCA
+In-Reply-To: <0B3D04B9A3E43D49807BE67A26D55CF816714C27@NSYDC101PEX1.ubsw.net>
+References: <0B3D04B9A3E43D49807BE67A26D55CF816714C27@NSYDC101PEX1.ubsw.net>
+Message-ID: <4DA2B451.3000004@agrocampus-ouest.fr>
+
+
+
+Dear Matt,
+
+  I do not answer your question directly but I can suggest another way to deal
+  with missing values in the framework of PCA. Indeed, it is possible to
+  modify PCA algorithms such that it can handle missing values. In my lab, we
+  work on this topic and we have developed an R package named missMDA. This
+  package is dedicated to handle missing values in principal components method
+  such as principal component analysis.
+
+  The rationale of the proposed method is the following:
+  First, an EM algorithm (named EM-PCA) is implemented to obtain estimate of
+  the scores and of the loadings despite the missing values. The algorithm
+  consists in alternating two steps: one step to estimate the parameters via
+  PCA and one step to impute the missing values using the PCA model (named
+  also the reconstruction formulae). Consequently, at the end of the
+  algorithm, a completed data set is obtained as well as the scores and
+  loadings (if you achieve your PCA on the completed data set, you find the
+  same loadings and scores).
+
+  Then we have proposed a multiple imputation procedure using the PCA model.
+    To visualize the different plausible imputations on the PCA maps, we have
+  proposed confidences areas around the position of the individuals and the
+  variables. References can be found in the following article: Josse, Julie;
+  Pag?s, J?r?me; Husson, Fran?ois (2011). Multiple imputation in principal
+  component analysis./Advances in Data Analysis and Classification/: 1-16,
+  March 06, 2011.
+
+  J. Josse
+
+
+
+Le 07/04/2011 02:03, matthew-c.johnson at ubs.com a ?crit :
+>
+> Dear All,
+>
+> I am using Amelia to fill in some gaps in national accounts data (and 
+> similar panels of data); as a result of the structure of my panel, 
+> there is no 'cs' parameter -- just 'ts'.
+>
+> I intend to use the EM algorithim to complete my panel, and then to 
+> extract factors via PCA -- as a reuslt i have two related questions.
+>
+> 1/ I would like to use the tscsPlot command (or similar) to plot the 
+> observed values and the imputations (mean + 95% confidence bands) -- 
+> is this possible?
+>
+> 2/ What's the best way to use the output from the imputations to 
+> generate the factors in the PCA? I have considered two methods, but am 
+> unsure which is best (most valid) --
+>
+> 1/ fill the gaps in the panel with the the mean of the imputations and 
+> use the single data set to extract the eigenvales and eigenvectors of 
+> the assocaited covariance matrix - and then use these weights and the 
+> 'mean-filled in' data set to generate the factors.
+>
+> 2/ stack the imputation panels and use the stacked panel to generate 
+> the eigenvalues and eigenvectors of the associated covariance matrix - 
+> and then use the mean values from the imputation runs to fill the gaps 
+> in my original panel, and the weights from the stacked panel?
+>
+> thanks and best regards
+>
+> Matt Johnson
+>
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110411/714d2f5f/attachment.html>
+
+From king at harvard.edu  Mon Apr 11 10:19:20 2011
+From: king at harvard.edu (Gary King)
+Date: Mon, 11 Apr 2011 10:19:20 -0400
+Subject: [amelia] Imputation of (right-censored) income
+In-Reply-To: <4D9F03C9.3090007@uni-mannheim.de>
+References: <4D9F03C9.3090007@uni-mannheim.de>
+Message-ID: <BANLkTikaPNkoO_CgFxkc-6CmfdvGp55tJA@mail.gmail.com>
+
+So if the problem is that what you observe, when you observe something, is
+income if income is less than (say) $100K, and $100K otherwise.   And then
+some of the income items are missing.  So the key here is that the top
+category is only partially observed since its  censored at $100K.  Setting
+aside the problem of the fully missing observations, you need to impute this
+censored category too, but under the constraint that its really > $100K.
+You might be able to deal with that via cell priors.  If you do that, then
+it ought to help you with the fully missing observations too.
+Gary
+--
+*Gary King* - Albert J. Weatherhead III University Professor - Director,
+IQSS - Harvard University
+GKing.Harvard.edu <http://gking.harvard.edu/> - King at Harvard.edu -
+@kinggary<http://twitter.com/kinggary>- 617-500-7570 - Asst 495-9271 -
+Fax 812-8581
+
+
+
+2011/4/8 Elias Naumann <elias.naumann at uni-mannheim.de>
+
+>  Dear all,
+> I'm currently using amelia to impute income in cross-sectional data (about
+> 30% are missing). The distribution of the available income data is right
+> skewed, so I transformed the income using the natural logarithm.
+> Unfortunately the income data is also top-coded or right-censored - that is
+> all respondents with an income above a certain limit are summarized into one
+> category. (see example in the following paper, dealing exactly with this
+> problem: http://www.fcsm.gov/07papers/Buettner.X-C.pdf)
+> [image: Comparison of observed and imputed data]
+> (I've also added the comparison of imputed and observed data in a jpeg-file
+> where the imputation worked and I hope that the graph is visible)
+>
+> So I have two problems:
+> 1.) In some of the data sets, when there are a lot of people in the top
+> category the imputation is not succesfull at all.
+> 2.) But even if the imputation is working, the imputed values in the upper
+> categories are smaller than the observed values - and only very few imputed
+> values are above the maximum of the observed values.
+>
+> Is there any way to deal with these problems in Amelia? Or do I have to
+> transform the income data to get a good imputation?
+>
+> Thanks for your help,
+>
+> Elias
+> --
+>
+> Elias Naumann
+>
+> SFB 884
+> Universit?t Mannheim
+>
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110411/3033251e/attachment.html>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: incomeimputed.jpeg
+Type: image/jpeg
+Size: 30888 bytes
+Desc: not available
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110411/3033251e/attachment.jpeg>
+
+From tariq_uvas at hotmail.com  Fri Apr 29 17:56:36 2011
+From: tariq_uvas at hotmail.com (Tariq Abbas)
+Date: Fri, 29 Apr 2011 21:56:36 +0000
+Subject: [amelia] 
+Message-ID: <BLU157-w15ECE92E186DDCF66A444BFE9A0@phx.gbl>
+
+
+Hi, 
+There are 535 sites in Pakistan where wild birds are counted by volunteers once per year usually in the mid of winter. I have data from 1987-2007. The data contain missing values that I want to impute through Amelia II.
+I have restructured subset of data into three columns (site code, year, count). Would you please guide me what should be the model specifications (options) [knots, priors, and numeric options if required]? I get error message when I set "count" as time series variable and try to impute it.
+I can provide you data if required. 
+Regards 
+Tariq Abbas 
+Free university of Berlin 
+Germany
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110429/694003ea/attachment.html>
+

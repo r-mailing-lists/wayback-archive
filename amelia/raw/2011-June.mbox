@@ -1,0 +1,296 @@
+From dkaplan at education.wisc.edu  Wed Jun 29 11:32:52 2011
+From: dkaplan at education.wisc.edu (David Kaplan)
+Date: Wed, 29 Jun 2011 10:32:52 -0500
+Subject: [amelia] Basic question about Amelia
+Message-ID: <4E0B45A4.5090205@education.wisc.edu>
+
+Greetings,
+
+I am using Amelia (among other packages) for a large scale statistical 
+matching project.  In reading Honaker and King (2010) and the Amelia 
+users guide, I am a bit confused as to what EMB actually does.  From 
+Honaker and King pg. 565, the paragraph starting with "Specifically...", 
+seems to suggest that there is no Bayesian component to the algorithm.  
+That is, only draws from the data are taken, EM is used for estimating 
+model parameters, etc.  However, earlier, it is indicated that Bayesian 
+analysis is used for all other parts of the imputation process.  I don't 
+see the relationship between the two statements.  The Amelia users guide 
+states that draws are taken from the posterior of the model parameters. 
+So, I'm confused as to where the Bayes, EM, and Bootstrap phases of the 
+algorithm come into play.
+
+Feel free to respond off the list.
+
+Thanks in advance,
+
+-- 
+
+=======================================================================
+David Kaplan, Ph.D.
+Professor
+Department of Educational Psychology
+University of Wisconsin - Madison
+Educational Sciences, Room, 1082B
+1025 W. Johnson Street
+Madison, WI 53706
+
+email: dkaplan at education.wisc.edu
+homepage:
+http://www.education.wisc.edu/edpsych/default.aspx?content=kaplan.html
+Phone: 608-262-0836
+=======================================================================
+
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110629/2c809cf6/attachment.html>
+
+From tercer at psu.edu  Thu Jun 30 00:06:51 2011
+From: tercer at psu.edu (JAMES HONAKER)
+Date: Thu, 30 Jun 2011 00:06:51 -0400
+Subject: [amelia] Basic question about Amelia
+In-Reply-To: 4E0B45A4.5090205@education.wisc.edu
+References: <4E0B45A4.5090205@education.wisc.edu>
+Message-ID: <1309406811l.528612l.0l@psu.edu>
+
+The shortest answer to, "in what phase does anything Bayesian enter EMB?" is the
+inclusion of priors in the EM estimator.  Below are increasingly more detailed
+discussions of this, as I was not certain the level of detail you were seeking
+(and do let me know if I still haven't reached that level of detail or clarity).
+
+In EMB, first, the original incomplete dataset is bootstrapped to create
+multiple (m) versions of the incomplete data.  Second, on each bootstrapped
+dataset we then run the EM algorithm.  However, (third) the implementation of
+the EM algorithm chosen by the user might include prior distributions for some
+of the parameters estimated by EM.  At the convergence of each EM run a
+different set of estimates of all the parameters is obtained.  Fourth, each
+version of this set of parameter estimates is used to impute one draw of all 
+the missing values to create m imputed datasets in total.  
+
+A schematic representation of these steps, that might be useful, is found in
+the user manual for Amelia that you have seen, in Figure 1 of:
+http://r.iq.harvard.edu/docs/amelia/amelia.pdf
+
+The paragraph that you mention in Honaker and King (2010) does not describe any
+priors on any parameters.  There are many different reasons we might want to
+set priors, most common of which is to impose some shrinkage across the very
+large number of parameters needed in imputation models.  Amelia allows the user
+to include setting a ridge (empirical) prior that shrinks the estimated
+covariance matrix of the dataset to a diagonal matrix  (For discussion, see Ch
+5.2 Schafer 1997,  Ch 3.4.1 Hastie, Tibshirani and Friedman 2009, and 4.6.1 in
+the Amelia II manual).  
+
+It is possible to conceptualize "ridge regression" simply as a form of Penalized
+maximum likelihood, thus we wouldn't strictly need to draw on any Bayesian
+foundation to implement this shrinkage.  However, we also allow prior
+distributions
+for other and varied purposes in the Amelia package.  For example Amelia
+allows priors on any of the parameters in the estimated covariance matrix of
+the data.  Also, and much more usefully, the 2010 article later goes on to
+describe how to implement prior distributions on individual cell values in the
+incomplete data (p569-72, and Appendix 1).  Our current research projects
+examine
+implementation and applications of these priors (for example as a treatment for
+measurement error, see Blackwell, Honaker King 2011 
+http://gking.harvard.edu/files/measure.pdf)
+
+Thus there are components of the Bootstrap, Likelihoodist and Bayesian systems
+of inference in the Amelia package.  That can be disconcerting, although the
+original work of Rubin doesn't require a fully Bayesian estimator to generate
+imputations, just to meet the set of conditions he refers to as "proper."
+
+If a unified grounding is more satisfactory, from a Machine Learning
+perspective, the entire analysis--the first stage EMB algorithm, coupled with
+the recombination of second stage analysis estimates using Rubin's rules for
+MI--is simply a Bagging of the EM estimator (Ch 8.7 Hastie, Tibshirani and
+Friedman 2009).
+
+Let me know if anything simply creates more questions,
+James Honaker
+
+On Wed, Jun 29, 2011 11:32 AM David Kaplan <dkaplan at education.wisc.edu> wrote:
+>
+>Greetings,
+>
+>I am using Amelia (among other packages) for a large scale statistical 
+>matching project.  In reading Honaker and King (2010) and the Amelia 
+>users guide, I am a bit confused as to what EMB actually does.  From 
+>Honaker and King pg. 565, the paragraph starting with "Specifically...", 
+>seems to suggest that there is no Bayesian component to the algorithm.  
+>That is, only draws from the data are taken, EM is used for estimating 
+>model parameters, etc.  However, earlier, it is indicated that Bayesian 
+>analysis is used for all other parts of the imputation process.  I don't 
+>see the relationship between the two statements.  The Amelia users guide 
+>states that draws are taken from the posterior of the model parameters. 
+>So, I'm confused as to where the Bayes, EM, and Bootstrap phases of the 
+>algorithm come into play.
+>
+>Feel free to respond off the list.
+>
+>Thanks in advance,
+>
+>-- 
+>
+>=======================================================================
+>David Kaplan, Ph.D.
+>Professor
+>Department of Educational Psychology
+>University of Wisconsin - Madison
+>Educational Sciences, Room, 1082B
+>1025 W. Johnson Street
+>Madison, WI 53706
+>
+>email: dkaplan at education.wisc.edu
+>homepage:
+>http://www.education.wisc.edu/edpsych/default.aspx?content=kaplan.html
+>Phone: 608-262-0836
+>=======================================================================
+>
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From dkaplan at education.wisc.edu  Thu Jun 30 00:26:37 2011
+From: dkaplan at education.wisc.edu (David Kaplan)
+Date: Wed, 29 Jun 2011 23:26:37 -0500
+Subject: [amelia] Basic question about Amelia
+In-Reply-To: <1309406811l.528612l.0l@psu.edu>
+References: <4E0B45A4.5090205@education.wisc.edu> <1309406811l.528612l.0l@psu.edu>
+Message-ID: <4E0BFAFD.80005@education.wisc.edu>
+
+This is an extraordinarily detailed response.  I will digest this and 
+get back to you if I have any questions.
+
+Thank you.
+
+David
+
+=======================================================================
+David Kaplan, Ph.D.
+Professor
+Department of Educational Psychology
+University of Wisconsin - Madison
+Educational Sciences, Room, 1082B
+1025 W. Johnson Street
+Madison, WI 53706
+
+email: dkaplan at education.wisc.edu
+homepage:
+http://www.education.wisc.edu/edpsych/default.aspx?content=kaplan.html
+Phone: 608-262-0836
+=======================================================================
+
+
+
+
+On 6/29/11 11:06 PM, JAMES HONAKER wrote:
+> The shortest answer to, "in what phase does anything Bayesian enter EMB?" is the
+> inclusion of priors in the EM estimator.  Below are increasingly more detailed
+> discussions of this, as I was not certain the level of detail you were seeking
+> (and do let me know if I still haven't reached that level of detail or clarity).
+>
+> In EMB, first, the original incomplete dataset is bootstrapped to create
+> multiple (m) versions of the incomplete data.  Second, on each bootstrapped
+> dataset we then run the EM algorithm.  However, (third) the implementation of
+> the EM algorithm chosen by the user might include prior distributions for some
+> of the parameters estimated by EM.  At the convergence of each EM run a
+> different set of estimates of all the parameters is obtained.  Fourth, each
+> version of this set of parameter estimates is used to impute one draw of all
+> the missing values to create m imputed datasets in total.
+>
+> A schematic representation of these steps, that might be useful, is found in
+> the user manual for Amelia that you have seen, in Figure 1 of:
+> http://r.iq.harvard.edu/docs/amelia/amelia.pdf
+>
+> The paragraph that you mention in Honaker and King (2010) does not describe any
+> priors on any parameters.  There are many different reasons we might want to
+> set priors, most common of which is to impose some shrinkage across the very
+> large number of parameters needed in imputation models.  Amelia allows the user
+> to include setting a ridge (empirical) prior that shrinks the estimated
+> covariance matrix of the dataset to a diagonal matrix  (For discussion, see Ch
+> 5.2 Schafer 1997,  Ch 3.4.1 Hastie, Tibshirani and Friedman 2009, and 4.6.1 in
+> the Amelia II manual).
+>
+> It is possible to conceptualize "ridge regression" simply as a form of Penalized
+> maximum likelihood, thus we wouldn't strictly need to draw on any Bayesian
+> foundation to implement this shrinkage.  However, we also allow prior
+> distributions
+> for other and varied purposes in the Amelia package.  For example Amelia
+> allows priors on any of the parameters in the estimated covariance matrix of
+> the data.  Also, and much more usefully, the 2010 article later goes on to
+> describe how to implement prior distributions on individual cell values in the
+> incomplete data (p569-72, and Appendix 1).  Our current research projects
+> examine
+> implementation and applications of these priors (for example as a treatment for
+> measurement error, see Blackwell, Honaker King 2011
+> http://gking.harvard.edu/files/measure.pdf)
+>
+> Thus there are components of the Bootstrap, Likelihoodist and Bayesian systems
+> of inference in the Amelia package.  That can be disconcerting, although the
+> original work of Rubin doesn't require a fully Bayesian estimator to generate
+> imputations, just to meet the set of conditions he refers to as "proper."
+>
+> If a unified grounding is more satisfactory, from a Machine Learning
+> perspective, the entire analysis--the first stage EMB algorithm, coupled with
+> the recombination of second stage analysis estimates using Rubin's rules for
+> MI--is simply a Bagging of the EM estimator (Ch 8.7 Hastie, Tibshirani and
+> Friedman 2009).
+>
+> Let me know if anything simply creates more questions,
+> James Honaker
+>
+> On Wed, Jun 29, 2011 11:32 AM David Kaplan<dkaplan at education.wisc.edu>  wrote:
+>> Greetings,
+>>
+>> I am using Amelia (among other packages) for a large scale statistical
+>> matching project.  In reading Honaker and King (2010) and the Amelia
+>> users guide, I am a bit confused as to what EMB actually does.  From
+>> Honaker and King pg. 565, the paragraph starting with "Specifically...",
+>> seems to suggest that there is no Bayesian component to the algorithm.
+>> That is, only draws from the data are taken, EM is used for estimating
+>> model parameters, etc.  However, earlier, it is indicated that Bayesian
+>> analysis is used for all other parts of the imputation process.  I don't
+>> see the relationship between the two statements.  The Amelia users guide
+>> states that draws are taken from the posterior of the model parameters.
+>> So, I'm confused as to where the Bayes, EM, and Bootstrap phases of the
+>> algorithm come into play.
+>>
+>> Feel free to respond off the list.
+>>
+>> Thanks in advance,
+>>
+>> -- 
+>>
+>> =======================================================================
+>> David Kaplan, Ph.D.
+>> Professor
+>> Department of Educational Psychology
+>> University of Wisconsin - Madison
+>> Educational Sciences, Room, 1082B
+>> 1025 W. Johnson Street
+>> Madison, WI 53706
+>>
+>> email: dkaplan at education.wisc.edu
+>> homepage:
+>> http://www.education.wisc.edu/edpsych/default.aspx?content=kaplan.html
+>> Phone: 608-262-0836
+>> =======================================================================
+>>
+>>
+>>
+>
+>
+>
+>
+>
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110629/050cee6b/attachment.html>
+

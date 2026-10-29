@@ -1,0 +1,176 @@
+From pinkston at fas.harvard.edu  Wed Aug 18 16:12:33 2010
+From: pinkston at fas.harvard.edu (Amanda Pinkston)
+Date: Wed, 18 Aug 2010 16:12:33 -0400
+Subject: [amelia] amelia error: Error in if (diff > iter.hist[count, 1] && count > 2)
+Message-ID: <4C6C3EB1.5030901@fas.harvard.edu>
+
+I receive the following error when running amelia on a dataset with high 
+missingness:
+
+Error in if (diff > iter.hist[count, 1] && count > 2) { :
+  missing value where TRUE/FALSE needed
+
+This error has popped up several times, in different imputations (I'm 
+trying for five) and at different points of the EM chain.  I can't get 
+through five imputations without this crash.  What does the error mean?
+
+Here is my code:
+
+output <- amelia(data_1, cs = "country", ts = "year", intercs = TRUE, 
+polytime = 2, p2s = 2, logs = c("gdpPPP2005", "gdppcppp", "pop", 
+"gnipc"), ords = c("inc_group", "polxcons", "bnkv137", "bnkv114", 
+"iaeexbgt"), noms = c("region", "legor"), empri = 0.01*nrow(data_1))
+
+thanks,
+
+Amanda Pinkston
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From dbraman at law.gwu.edu  Wed Aug 18 16:44:33 2010
+From: dbraman at law.gwu.edu (Donald Braman)
+Date: Wed, 18 Aug 2010 16:44:33 -0400
+Subject: [amelia] imputation error
+Message-ID: <AANLkTikwjKDGvSh6YjaPbkQqW3qwAkxHSo3iquHV-cX_@mail.gmail.com>
+
+I get the following error when attempting to impute missing data in the
+attached dataset:
+
+ 1 Error in eigen(thetanew[2:nrow(thetanew), 2:ncol(thetanew)], only.values
+> = TRUE,  :
+
+  infinite or missing values in 'x'
+
+
+A summary of the data set reveals no column with entirely missing or
+constant values, and if I reduce the tolerance greatly, the problem goes
+away.
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20100818/e4bc3296/attachment.html>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: imputation.problem.R
+Type: application/octet-stream
+Size: 1812 bytes
+Desc: not available
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20100818/e4bc3296/attachment.obj>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: to.impute.csv
+Type: application/octet-stream
+Size: 395769 bytes
+Desc: not available
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20100818/e4bc3296/attachment-0001.obj>
+
+From blackwel at fas.harvard.edu  Sun Aug 22 15:54:34 2010
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Sun, 22 Aug 2010 15:54:34 -0400
+Subject: [amelia] amelia error: Error in if (diff > iter.hist[count, 1] && count > 2)
+In-Reply-To: <4C6C3EB1.5030901@fas.harvard.edu>
+References: <4C6C3EB1.5030901@fas.harvard.edu>
+Message-ID: <AANLkTikd7VMs4GQm=PpQXHRZymFMBuQezEjpOd5TOebA@mail.gmail.com>
+
+Hi Amanda,
+
+Most likely there is an issue in the data that is causing the
+numerical instability. First, I would try to run Amelia without the
+time-trends, to see how it performs. In situations with many units and
+few time periods, adding a time trend for each unit can vastly
+increase the number of parameters to be estimated.
+
+Second, you may have variables that are linear combinations of others
+in your data. If I am interpreting your input correctly, this might be
+the problem since
+
+log(GDP per capita) = log(GDP) - log(population),
+
+and each of those appear to be in the imputation model. You might want
+to exclude one of the GDP measures to see if that improves the
+situation.
+
+If neither of those things helps your situation, you may found a bug.
+In that case, please contact me off-list and we can troubleshoot the
+error. Hope that helps.
+
+Cheers,
+matt.
+
+On Wed, Aug 18, 2010 at 4:12 PM, Amanda Pinkston
+<pinkston at fas.harvard.edu> wrote:
+> I receive the following error when running amelia on a dataset with high
+> missingness:
+>
+> Error in if (diff > iter.hist[count, 1] && count > 2) { :
+> ?missing value where TRUE/FALSE needed
+>
+> This error has popped up several times, in different imputations (I'm trying
+> for five) and at different points of the EM chain. ?I can't get through five
+> imputations without this crash. ?What does the error mean?
+>
+> Here is my code:
+>
+> output <- amelia(data_1, cs = "country", ts = "year", intercs = TRUE,
+> polytime = 2, p2s = 2, logs = c("gdpPPP2005", "gdppcppp", "pop", "gnipc"),
+> ords = c("inc_group", "polxcons", "bnkv137", "bnkv114", "iaeexbgt"), noms =
+> c("region", "legor"), empri = 0.01*nrow(data_1))
+>
+> thanks,
+>
+> Amanda Pinkston
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From blackwel at fas.harvard.edu  Sun Aug 22 16:19:00 2010
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Sun, 22 Aug 2010 16:19:00 -0400
+Subject: [amelia] imputation error
+In-Reply-To: <AANLkTikwjKDGvSh6YjaPbkQqW3qwAkxHSo3iquHV-cX_@mail.gmail.com>
+References: <AANLkTikwjKDGvSh6YjaPbkQqW3qwAkxHSo3iquHV-cX_@mail.gmail.com>
+Message-ID: <AANLkTi=9HjvJy2t1T_YVdOghwL-rbAE=wGYFen8tzid_@mail.gmail.com>
+
+Hi Donald,
+
+I think there are a few things going on. First, you have some very
+highly correlated variables in your dataset. It's very possible that
+one bootstrapped dataset could have two of the "policy" variables
+identical, which would lead to the kind of problems you are seeing.
+Second, you have roughly 100 variables, which leads to roughly 9000
+parameters for Amelia to estimate. With only 1500 observations, this
+could be problematic. If there are repetitive variables in the data,
+you may want to try and omit them (especially if you are not going to
+use them in any analysis model).
+
+Cheers,
+matt.
+
+On Wed, Aug 18, 2010 at 4:44 PM, Donald Braman <dbraman at law.gwu.edu> wrote:
+> I get the following error when attempting to impute missing data in the
+> attached dataset:
+>>
+>> ?1 Error in eigen(thetanew[2:nrow(thetanew), 2:ncol(thetanew)],
+>> only.values = TRUE, ?:
+>>
+>> ??infinite or missing values in 'x'
+>
+> A summary of the data set reveals no column with entirely missing or
+> constant values, and if I reduce the tolerance greatly, the problem goes
+> away.
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+

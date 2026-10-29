@@ -1,0 +1,1359 @@
+From mark.manger at mcgill.ca  Fri Mar 14 11:42:25 2008
+From: mark.manger at mcgill.ca (Mark Manger)
+Date: Fri, 14 Mar 2008 11:42:25 -0400
+Subject: [amelia] what slows the imputation down so much?
+Message-ID: <47DA9CE1.7070107@mcgill.ca>
+
+Hi,
+
+I apologize in advance for the lengthy question, but it's representative 
+of many issues I face when working with large panels of economic data, 
+so I would be extremely grateful for your suggestions, best practices, 
+experiences etc.
+
+I'm wondering what I could do to speed up the imputation of my rather 
+large dataset (a panel of N 2120 x T 80 = 169600 obs). At this pace, my 
+imputations would run months. Memory is not the issue, rather I think 
+that I have too many priors and/or too many missings on certain 
+variables. See below, especially lnAid and lnFDI. Note that the missings 
+are concentrated on certain T points (in early time points) rather than 
+specific cross-sectional units.
+|
+Variable    ||    ||  |       Obs        Mean    Std. Dev.       
+Min        Max
+Polity    ||      ||  |    168160    .8924833    6.955011        
+-10         10
+Corruptlvl||   ||     |    157820    5.441431    1.799652          
+0         10
+RuleofLaw  ||   ||    |    157820    5.247434    2.204846          
+0         10
+GovStab     ||      |||    157820    5.935454    2.064963          
+0         10
+log of bilat. Aid |     76079    1.919392    2.338255  -2.302585   9.692112
+log of FDI in host|     32080    3.918487    2.928901  -2.372018   10.98025
+Capital openness||||  |    155200   -.2888318    1.379179  -1.766966   
+2.602508
+Polcon V  ||     ||   |    154320    .3490876    .3158385          
+0        .89
+log of GDPcap_host|    154560     7.95649    1.053043   4.933741   10.48464
+||log of ||GDP_host   |    166480    29.62135     3.04193   22.97718   
+43.12974
+||log of ||GDP_home   |    147381     31.1144    2.128313   26.15253   
+37.36032
+
+|If I don't set range priors, I get nonsensical values for most of the 
+variables: negative GDP (real GDP, not negative log values), polity 
+scores out of range, etc. I haven't even tried higher-order polynomials 
+or interactions with cross-sectional units, although I would prefer to 
+given that FDI exhibits a clear trend. Breaking up the dataset randomly 
+into pieces by cross-sections doesn't improve speed.
+
+It seems that I have to make tradeoffs. What do you think would be the 
+best thing to do, i.e. what is the most time-consuming issue for the EM 
+algorithm?
+Constrain/shorten the sample to have a higher proportion of observed 
+values on lnAid and lnFDI?
+Accept imputations that are out of range (probably not)?
+||Break up the dataset "vertically" into one with Aid and one with the 
+FDI variable, run two sets of imputations, and merge it again?
+
+Many thanks,
+
+Mark
+
+-- 
+Mark S. Manger, PhD
+Assistant Professor
+Department of Political Science, McGill University
+mark.manger at mcgill.ca
+
+on leave 2007-08:
+Advanced Research Fellow, Program on US-Japan Relations
+Weatherhead Center for International Affairs
+Harvard University
+61 Kirkland Street, Room 301
+Cambridge, MA 02138
+617-495-5998
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From corr at fas.harvard.edu  Fri Mar 14 12:34:44 2008
+From: corr at fas.harvard.edu (Anders Schwartz Corr)
+Date: Fri, 14 Mar 2008 12:34:44 -0400 (EDT)
+Subject: [amelia] what slows the imputation down so much?
+In-Reply-To: <47DA9CE1.7070107@mcgill.ca>
+References: <47DA9CE1.7070107@mcgill.ca>
+Message-ID: <Pine.LNX.4.64.0803141224290.1777@ls01.fas.harvard.edu>
+
+Mark, Are you running Amelia on hmdc condor? I found running 50 separate 
+Amelia programs simultaneously on hmdc relatively quick and easy -- the 
+first 5 imputed datasets were returned within two or three weeks, and then 
+after that I got about 1 more condor egg ;) per day. I could start my data 
+analysis with the first five datasets and then additional datasets were 
+added as they came in. Anders
+
+Note to the powers that be: it would be useful to set condor to give 
+streaming output. It is a little difficult to know what is going on with 
+Amelia (can't take advantage of the verbose function) when this standard 
+condor function isn't set. Thank you for such a great service hmdc!
+
+On Fri, 14 Mar 2008, Mark Manger wrote:
+
+> Hi,
+>
+> I apologize in advance for the lengthy question, but it's representative of 
+> many issues I face when working with large panels of economic data, so I 
+> would be extremely grateful for your suggestions, best practices, experiences 
+> etc.
+>
+> I'm wondering what I could do to speed up the imputation of my rather large 
+> dataset (a panel of N 2120 x T 80 = 169600 obs). At this pace, my imputations 
+> would run months. Memory is not the issue, rather I think that I have too 
+> many priors and/or too many missings on certain variables. See below, 
+> especially lnAid and lnFDI. Note that the missings are concentrated on 
+> certain T points (in early time points) rather than specific cross-sectional 
+> units.
+> |
+> Variable    ||    ||  |       Obs        Mean    Std. Dev.       Min 
+> Max
+> Polity    ||      ||  |    168160    .8924833    6.955011        -10 
+> 10
+> Corruptlvl||   ||     |    157820    5.441431    1.799652          0 
+> 10
+> RuleofLaw  ||   ||    |    157820    5.247434    2.204846          0 
+> 10
+> GovStab     ||      |||    157820    5.935454    2.064963          0 
+> 10
+> log of bilat. Aid |     76079    1.919392    2.338255  -2.302585   9.692112
+> log of FDI in host|     32080    3.918487    2.928901  -2.372018   10.98025
+> Capital openness||||  |    155200   -.2888318    1.379179  -1.766966 
+> 2.602508
+> Polcon V  ||     ||   |    154320    .3490876    .3158385          0 
+> .89
+> log of GDPcap_host|    154560     7.95649    1.053043   4.933741   10.48464
+> ||log of ||GDP_host   |    166480    29.62135     3.04193   22.97718 
+> 43.12974
+> ||log of ||GDP_home   |    147381     31.1144    2.128313   26.15253 
+> 37.36032
+>
+> |If I don't set range priors, I get nonsensical values for most of the 
+> variables: negative GDP (real GDP, not negative log values), polity scores 
+> out of range, etc. I haven't even tried higher-order polynomials or 
+> interactions with cross-sectional units, although I would prefer to given 
+> that FDI exhibits a clear trend. Breaking up the dataset randomly into pieces 
+> by cross-sections doesn't improve speed.
+>
+> It seems that I have to make tradeoffs. What do you think would be the best 
+> thing to do, i.e. what is the most time-consuming issue for the EM algorithm?
+> Constrain/shorten the sample to have a higher proportion of observed values 
+> on lnAid and lnFDI?
+> Accept imputations that are out of range (probably not)?
+> ||Break up the dataset "vertically" into one with Aid and one with the FDI 
+> variable, run two sets of imputations, and merge it again?
+>
+> Many thanks,
+>
+> Mark
+>
+> -- 
+> Mark S. Manger, PhD
+> Assistant Professor
+> Department of Political Science, McGill University
+> mark.manger at mcgill.ca
+>
+> on leave 2007-08:
+> Advanced Research Fellow, Program on US-Japan Relations
+> Weatherhead Center for International Affairs
+> Harvard University
+> 61 Kirkland Street, Room 301
+> Cambridge, MA 02138
+> 617-495-5998
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From king at harvard.edu  Fri Mar 14 22:16:50 2008
+From: king at harvard.edu (Gary King)
+Date: Fri, 14 Mar 2008 22:16:50 -0400 (EDT)
+Subject: [amelia] what slows the imputation down so much?
+In-Reply-To: <Pine.LNX.4.64.0803141224290.1777@ls01.fas.harvard.edu>
+References: <47DA9CE1.7070107@mcgill.ca> <Pine.LNX.4.64.0803141224290.1777@ls01.fas.harvard.edu>
+Message-ID: <Pine.LNX.4.64.0803142213230.8103@w5.hmdc.harvard.edu>
+
+
+a translation: condor distributes jobs to a 200-node research computing 
+cluster we have built at the Harvard-MIT Data Center, which is part of the 
+Institute for Quantitative Social Science at Harvard.  unfortunately, that 
+system isn't open to the public (altho we are working at an open source 
+version of the software we produced to create the cluster).  Anders' point 
+more generally is that Amelia can be used well in parallel environment.
+
+Gary
+
+On Fri, 14 Mar 2008, Anders Schwartz Corr wrote:
+
+> Mark, Are you running Amelia on hmdc condor? I found running 50 separate 
+> Amelia programs simultaneously on hmdc relatively quick and easy -- the first 
+> 5 imputed datasets were returned within two or three weeks, and then after 
+> that I got about 1 more condor egg ;) per day. I could start my data analysis 
+> with the first five datasets and then additional datasets were added as they 
+> came in. Anders
+>
+> Note to the powers that be: it would be useful to set condor to give 
+> streaming output. It is a little difficult to know what is going on with 
+> Amelia (can't take advantage of the verbose function) when this standard 
+> condor function isn't set. Thank you for such a great service hmdc!
+>
+> On Fri, 14 Mar 2008, Mark Manger wrote:
+>
+>>  Hi,
+>>
+>>  I apologize in advance for the lengthy question, but it's representative
+>>  of many issues I face when working with large panels of economic data, so
+>>  I would be extremely grateful for your suggestions, best practices,
+>>  experiences etc.
+>>
+>>  I'm wondering what I could do to speed up the imputation of my rather
+>>  large dataset (a panel of N 2120 x T 80 = 169600 obs). At this pace, my
+>>  imputations would run months. Memory is not the issue, rather I think that
+>>  I have too many priors and/or too many missings on certain variables. See
+>>  below, especially lnAid and lnFDI. Note that the missings are concentrated
+>>  on certain T points (in early time points) rather than specific
+>>  cross-sectional units.
+>> |
+>>  Variable    ||    ||  |       Obs        Mean    Std. Dev.       Min Max
+>>  Polity    ||      ||  |    168160    .8924833    6.955011        -10 10
+>>  Corruptlvl||   ||     |    157820    5.441431    1.799652          0 10
+>>  RuleofLaw  ||   ||    |    157820    5.247434    2.204846          0 10
+>>  GovStab     ||      |||    157820    5.935454    2.064963          0 10
+>>  log of bilat. Aid |     76079    1.919392    2.338255  -2.302585
+>>  9.692112
+>>  log of FDI in host|     32080    3.918487    2.928901  -2.372018
+>>  10.98025
+>>  Capital openness||||  |    155200   -.2888318    1.379179  -1.766966
+>>  2.602508
+>>  Polcon V  ||     ||   |    154320    .3490876    .3158385          0 .89
+>>  log of GDPcap_host|    154560     7.95649    1.053043   4.933741
+>>  10.48464
+>> | | log of ||GDP_host   |    166480    29.62135     3.04193   22.97718
+>>  43.12974
+>> | | log of ||GDP_home   |    147381     31.1144    2.128313   26.15253
+>>  37.36032
+>> 
+>> | If I don't set range priors, I get nonsensical values for most of the
+>>  variables: negative GDP (real GDP, not negative log values), polity scores
+>>  out of range, etc. I haven't even tried higher-order polynomials or
+>>  interactions with cross-sectional units, although I would prefer to given
+>>  that FDI exhibits a clear trend. Breaking up the dataset randomly into
+>>  pieces by cross-sections doesn't improve speed.
+>>
+>>  It seems that I have to make tradeoffs. What do you think would be the
+>>  best thing to do, i.e. what is the most time-consuming issue for the EM
+>>  algorithm?
+>>  Constrain/shorten the sample to have a higher proportion of observed
+>>  values on lnAid and lnFDI?
+>>  Accept imputations that are out of range (probably not)?
+>> | | Break up the dataset "vertically" into one with Aid and one with the 
+>> | | FDI
+>>  variable, run two sets of imputations, and merge it again?
+>>
+>>  Many thanks,
+>>
+>>  Mark
+>>
+>>  --
+>>  Mark S. Manger, PhD
+>>  Assistant Professor
+>>  Department of Political Science, McGill University
+>>  mark.manger at mcgill.ca
+>>
+>>  on leave 2007-08:
+>>  Advanced Research Fellow, Program on US-Japan Relations
+>>  Weatherhead Center for International Affairs
+>>  Harvard University
+>>  61 Kirkland Street, Room 301
+>>  Cambridge, MA 02138
+>>  617-495-5998
+>>  -
+>>  Amelia mailing list served by Harvard-MIT Data Center
+>>  [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>> 
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From corr at fas.harvard.edu  Sat Mar 15 03:50:10 2008
+From: corr at fas.harvard.edu (Anders Schwartz Corr)
+Date: Sat, 15 Mar 2008 03:50:10 -0400 (EDT)
+Subject: [amelia] what slows the imputation down so much?
+In-Reply-To: <Pine.LNX.4.64.0803142213230.8103@w5.hmdc.harvard.edu>
+References: <47DA9CE1.7070107@mcgill.ca> <Pine.LNX.4.64.0803141224290.1777@ls01.fas.harvard.edu> <Pine.LNX.4.64.0803142213230.8103@w5.hmdc.harvard.edu>
+Message-ID: <Pine.LNX.4.64.0803150317150.21107@ls03.fas.harvard.edu>
+
+
+Hi,
+
+Thanks for the translation. When a parallel environment is running say 10 
+runs (the condor_submit default) of Amelia simultaneously, Amelia saves 
+the datasets as outdata1.csv, outdata2.csv, etc., to a single file from 
+which the condor (the computing cluster program) job was submitted. Is it 
+possible that Amelia is overwriting other imputed datasets that one of the 
+other 10 Amelia runs has already created? If so, maybe condor could create 
+a separate directory for each of the 10 Amelia runs, and/or Amelia could 
+check the directory it is saving into to make sure it isn't overwriting 
+any already-existing files.
+
+Also, if I set Amelia to create 5 imputed datasets, and set a random-number 
+generating seed so I can replicate the results exactly, and then set 
+condor to run my single Amelia file 10 times, does that mean that condor 
+will create 10 identical sets of 5 imputed datasets? But then only one of 
+the 10 sets would be useful.
+
+Alternatively, I suppose Amelia programmers may have intended users to 
+simply create as many directories and different Amelia.R files (in my case 
+50) as needed, and rerun the condor submit program 50 times for each of 50 
+random seeds the user sets in each of the 50 files. Fifty simultaneous 
+Amelia runs may sound excessive, but for a relatively large dataset (mine 
+is 17,000x100) it is almost necessary in order to get 10 or 20 imputed 
+datasets back within the first month of the run.
+
+Again, thanks for all the excellent work by the people at HMDC.
+
+Anders
+
+
+
+On Fri, 14 Mar 2008, Gary King wrote:
+
+>
+> a translation: condor distributes jobs to a 200-node research computing 
+> cluster we have built at the Harvard-MIT Data Center, which is part of the 
+> Institute for Quantitative Social Science at Harvard.  unfortunately, that 
+> system isn't open to the public (altho we are working at an open source 
+> version of the software we produced to create the cluster).  Anders' point 
+> more generally is that Amelia can be used well in parallel environment.
+>
+> Gary
+>
+> On Fri, 14 Mar 2008, Anders Schwartz Corr wrote:
+>
+>> Mark, Are you running Amelia on hmdc condor? I found running 50 separate 
+>> Amelia programs simultaneously on hmdc relatively quick and easy -- the 
+>> first 5 imputed datasets were returned within two or three weeks, and then 
+>> after that I got about 1 more condor egg ;) per day. I could start my data 
+>> analysis with the first five datasets and then additional datasets were 
+>> added as they came in. Anders
+>> 
+>> Note to the powers that be: it would be useful to set condor to give 
+>> streaming output. It is a little difficult to know what is going on with 
+>> Amelia (can't take advantage of the verbose function) when this standard 
+>> condor function isn't set. Thank you for such a great service hmdc!
+>> 
+>> On Fri, 14 Mar 2008, Mark Manger wrote:
+>>
+>>>  Hi,
+>>>
+>>>  I apologize in advance for the lengthy question, but it's representative
+>>>  of many issues I face when working with large panels of economic data, so
+>>>  I would be extremely grateful for your suggestions, best practices,
+>>>  experiences etc.
+>>>
+>>>  I'm wondering what I could do to speed up the imputation of my rather
+>>>  large dataset (a panel of N 2120 x T 80 = 169600 obs). At this pace, my
+>>>  imputations would run months. Memory is not the issue, rather I think 
+>>> that
+>>>  I have too many priors and/or too many missings on certain variables. See
+>>>  below, especially lnAid and lnFDI. Note that the missings are 
+>>> concentrated
+>>>  on certain T points (in early time points) rather than specific
+>>>  cross-sectional units.
+>>> |
+>>>  Variable    ||    ||  |       Obs        Mean    Std. Dev.       Min Max
+>>>  Polity    ||      ||  |    168160    .8924833    6.955011        -10 10
+>>>  Corruptlvl||   ||     |    157820    5.441431    1.799652          0 10
+>>>  RuleofLaw  ||   ||    |    157820    5.247434    2.204846          0 10
+>>>  GovStab     ||      |||    157820    5.935454    2.064963          0 10
+>>>  log of bilat. Aid |     76079    1.919392    2.338255  -2.302585
+>>>  9.692112
+>>>  log of FDI in host|     32080    3.918487    2.928901  -2.372018
+>>>  10.98025
+>>>  Capital openness||||  |    155200   -.2888318    1.379179  -1.766966
+>>>  2.602508
+>>>  Polcon V  ||     ||   |    154320    .3490876    .3158385          0 .89
+>>>  log of GDPcap_host|    154560     7.95649    1.053043   4.933741
+>>>  10.48464
+>>> | | log of ||GDP_host   |    166480    29.62135     3.04193   22.97718
+>>>  43.12974
+>>> | | log of ||GDP_home   |    147381     31.1144    2.128313   26.15253
+>>>  37.36032
+>>> 
+>>> | If I don't set range priors, I get nonsensical values for most of the
+>>>  variables: negative GDP (real GDP, not negative log values), polity 
+>>> scores
+>>>  out of range, etc. I haven't even tried higher-order polynomials or
+>>>  interactions with cross-sectional units, although I would prefer to given
+>>>  that FDI exhibits a clear trend. Breaking up the dataset randomly into
+>>>  pieces by cross-sections doesn't improve speed.
+>>>
+>>>  It seems that I have to make tradeoffs. What do you think would be the
+>>>  best thing to do, i.e. what is the most time-consuming issue for the EM
+>>>  algorithm?
+>>>  Constrain/shorten the sample to have a higher proportion of observed
+>>>  values on lnAid and lnFDI?
+>>>  Accept imputations that are out of range (probably not)?
+>>> | | Break up the dataset "vertically" into one with Aid and one with the | 
+>>> | FDI
+>>>  variable, run two sets of imputations, and merge it again?
+>>>
+>>>  Many thanks,
+>>>
+>>>  Mark
+>>>
+>>>  --
+>>>  Mark S. Manger, PhD
+>>>  Assistant Professor
+>>>  Department of Political Science, McGill University
+>>>  mark.manger at mcgill.ca
+>>>
+>>>  on leave 2007-08:
+>>>  Advanced Research Fellow, Program on US-Japan Relations
+>>>  Weatherhead Center for International Affairs
+>>>  Harvard University
+>>>  61 Kirkland Street, Room 301
+>>>  Cambridge, MA 02138
+>>>  617-495-5998
+>>>  -
+>>>  Amelia mailing list served by Harvard-MIT Data Center
+>>>  [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>>> 
+>> -
+>> Amelia mailing list served by Harvard-MIT Data Center
+>> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>> 
+>> 
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From king at harvard.edu  Sat Mar 15 07:41:41 2008
+From: king at harvard.edu (Gary King)
+Date: Sat, 15 Mar 2008 07:41:41 -0400 (EDT)
+Subject: [amelia] what slows the imputation down so much?
+In-Reply-To: <Pine.LNX.4.64.0803150317150.21107@ls03.fas.harvard.edu>
+References: <47DA9CE1.7070107@mcgill.ca> <Pine.LNX.4.64.0803141224290.1777@ls01.fas.harvard.edu> <Pine.LNX.4.64.0803142213230.8103@w5.hmdc.harvard.edu> <Pine.LNX.4.64.0803150317150.21107@ls03.fas.harvard.edu>
+Message-ID: <Pine.LNX.4.64.0803150739040.8103@w5.hmdc.harvard.edu>
+
+
+R and therefore Amelia doesn't have parallel processing built in.
+But the way it works, if you want m imputations, you can run Amelia m 
+times in separate jobs and it will run m*100% faster.  But you do need to 
+tell your parallelization software (condor in this case) to run them each 
+completely separately so they don't overwrite different imputations with 
+the same file names. 
+Best,
+Gary
+
+
+On Sat, 15 Mar 2008, Anders Schwartz Corr wrote:
+
+>
+> Hi,
+>
+> Thanks for the translation. When a parallel environment is running say 10 
+> runs (the condor_submit default) of Amelia simultaneously, Amelia saves the 
+> datasets as outdata1.csv, outdata2.csv, etc., to a single file from which the 
+> condor (the computing cluster program) job was submitted. Is it possible that 
+> Amelia is overwriting other imputed datasets that one of the other 10 Amelia 
+> runs has already created? If so, maybe condor could create a separate 
+> directory for each of the 10 Amelia runs, and/or Amelia could check the 
+> directory it is saving into to make sure it isn't overwriting any 
+> already-existing files.
+>
+> Also, if I set Amelia to create 5 imputed datasets, and set a random-number 
+> generating seed so I can replicate the results exactly, and then set condor 
+> to run my single Amelia file 10 times, does that mean that condor will create 
+> 10 identical sets of 5 imputed datasets? But then only one of the 10 sets 
+> would be useful.
+>
+> Alternatively, I suppose Amelia programmers may have intended users to simply 
+> create as many directories and different Amelia.R files (in my case 50) as 
+> needed, and rerun the condor submit program 50 times for each of 50 random 
+> seeds the user sets in each of the 50 files. Fifty simultaneous Amelia runs 
+> may sound excessive, but for a relatively large dataset (mine is 17,000x100) 
+> it is almost necessary in order to get 10 or 20 imputed datasets back within 
+> the first month of the run.
+>
+> Again, thanks for all the excellent work by the people at HMDC.
+>
+> Anders
+>
+>
+>
+> On Fri, 14 Mar 2008, Gary King wrote:
+>
+>>
+>>  a translation: condor distributes jobs to a 200-node research computing
+>>  cluster we have built at the Harvard-MIT Data Center, which is part of the
+>>  Institute for Quantitative Social Science at Harvard.  unfortunately, that
+>>  system isn't open to the public (altho we are working at an open source
+>>  version of the software we produced to create the cluster).  Anders' point
+>>  more generally is that Amelia can be used well in parallel environment.
+>>
+>>  Gary
+>>
+>>  On Fri, 14 Mar 2008, Anders Schwartz Corr wrote:
+>> 
+>> >  Mark, Are you running Amelia on hmdc condor? I found running 50 separate 
+>> >  Amelia programs simultaneously on hmdc relatively quick and easy -- the 
+>> >  first 5 imputed datasets were returned within two or three weeks, and 
+>> >  then after that I got about 1 more condor egg ;) per day. I could start 
+>> >  my data analysis with the first five datasets and then additional 
+>> >  datasets were added as they came in. Anders
+>> > 
+>> >  Note to the powers that be: it would be useful to set condor to give 
+>> >  streaming output. It is a little difficult to know what is going on with 
+>> >  Amelia (can't take advantage of the verbose function) when this standard 
+>> >  condor function isn't set. Thank you for such a great service hmdc!
+>> > 
+>> >  On Fri, 14 Mar 2008, Mark Manger wrote:
+>> > 
+>> > >   Hi,
+>> > > 
+>> > >   I apologize in advance for the lengthy question, but it's 
+>> > >   representative
+>> > >   of many issues I face when working with large panels of economic 
+>> > >   data, so
+>> > >   I would be extremely grateful for your suggestions, best practices,
+>> > >   experiences etc.
+>> > > 
+>> > >   I'm wondering what I could do to speed up the imputation of my rather
+>> > >   large dataset (a panel of N 2120 x T 80 = 169600 obs). At this pace, 
+>> > >   my
+>> > >   imputations would run months. Memory is not the issue, rather I think 
+>> > >  that
+>> > >   I have too many priors and/or too many missings on certain variables. 
+>> > >   See
+>> > >   below, especially lnAid and lnFDI. Note that the missings are 
+>> > >  concentrated
+>> > >   on certain T points (in early time points) rather than specific
+>> > >   cross-sectional units.
+>> > > | 
+>> > >   Variable    ||    ||  |       Obs        Mean    Std. Dev.       Min 
+>> > >   Max
+>> > >   Polity    ||      ||  |    168160    .8924833    6.955011        -10 
+>> > >   10
+>> > >   Corruptlvl||   ||     |    157820    5.441431    1.799652          0 
+>> > >   10
+>> > >   RuleofLaw  ||   ||    |    157820    5.247434    2.204846          0 
+>> > >   10
+>> > >   GovStab     ||      |||    157820    5.935454    2.064963          0 
+>> > >   10
+>> > >   log of bilat. Aid |     76079    1.919392    2.338255  -2.302585
+>> > >   9.692112
+>> > >   log of FDI in host|     32080    3.918487    2.928901  -2.372018
+>> > >   10.98025
+>> > >   Capital openness||||  |    155200   -.2888318    1.379179  -1.766966
+>> > >   2.602508
+>> > >   Polcon V  ||     ||   |    154320    .3490876    .3158385          0 
+>> > >   .89
+>> > >   log of GDPcap_host|    154560     7.95649    1.053043   4.933741
+>> > >   10.48464
+>> > > | |  log of ||GDP_host   |    166480    29.62135     3.04193   22.97718
+>> > >   43.12974
+>> > > | |  log of ||GDP_home   |    147381     31.1144    2.128313   26.15253
+>> > >   37.36032
+>> > > 
+>> > > |  If I don't set range priors, I get nonsensical values for most of 
+>> > > |  the
+>> > >  variables: negative GDP (real GDP, not negative log values), polity 
+>> > >  scores
+>> > >   out of range, etc. I haven't even tried higher-order polynomials or
+>> > >   interactions with cross-sectional units, although I would prefer to 
+>> > >   given
+>> > >   that FDI exhibits a clear trend. Breaking up the dataset randomly 
+>> > >   into
+>> > >   pieces by cross-sections doesn't improve speed.
+>> > > 
+>> > >   It seems that I have to make tradeoffs. What do you think would be 
+>> > >   the
+>> > >   best thing to do, i.e. what is the most time-consuming issue for the 
+>> > >   EM
+>> > >   algorithm?
+>> > >   Constrain/shorten the sample to have a higher proportion of observed
+>> > >   values on lnAid and lnFDI?
+>> > >   Accept imputations that are out of range (probably not)?
+>> > > | |  Break up the dataset "vertically" into one with Aid and one with 
+>> > > | |  the | 
+>> > > |  FDI
+>> > >   variable, run two sets of imputations, and merge it again?
+>> > > 
+>> > >   Many thanks,
+>> > > 
+>> > >   Mark
+>> > > 
+>> > >   --
+>> > >   Mark S. Manger, PhD
+>> > >   Assistant Professor
+>> > >   Department of Political Science, McGill University
+>> > >   mark.manger at mcgill.ca
+>> > > 
+>> > >   on leave 2007-08:
+>> > >   Advanced Research Fellow, Program on US-Japan Relations
+>> > >   Weatherhead Center for International Affairs
+>> > >   Harvard University
+>> > >   61 Kirkland Street, Room 301
+>> > >   Cambridge, MA 02138
+>> > >   617-495-5998
+>> > >   -
+>> > >   Amelia mailing list served by Harvard-MIT Data Center
+>> > >   [Un]Subscribe/View Archive: 
+>> > >   http://lists.gking.harvard.edu/?info=amelia
+>> > > 
+>> >  -
+>> >  Amelia mailing list served by Harvard-MIT Data Center
+>> >  [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>> > 
+>> >
+>>  -
+>>  Amelia mailing list served by Harvard-MIT Data Center
+>>  [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>> 
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From mark.manger at mcgill.ca  Sat Mar 15 11:57:22 2008
+From: mark.manger at mcgill.ca (Mark Manger)
+Date: Sat, 15 Mar 2008 11:57:22 -0400
+Subject: [amelia] what slows the imputation down so much?
+In-Reply-To: <Pine.LNX.4.64.0803150739040.8103@w5.hmdc.harvard.edu>
+References: <47DA9CE1.7070107@mcgill.ca> <Pine.LNX.4.64.0803141224290.1777@ls01.fas.harvard.edu> <Pine.LNX.4.64.0803142213230.8103@w5.hmdc.harvard.edu> <Pine.LNX.4.64.0803150317150.21107@ls03.fas.harvard.edu> <Pine.LNX.4.64.0803150739040.8103@w5.hmdc.harvard.edu>
+Message-ID: <47DBF1E2.3060707@mcgill.ca>
+
+Hi,
+
+I'm intrigued by an off-list comment Anders made. I'm setting priors 
+because I know that certain variables are constrained in a particular 
+way, e.g. I treat a variable coded as 0-10 as continuous, so if Amelia 
+draws an 11.3 that doesn't seem to be a reasonable value.
+
+But are these values --mathematically speaking-- better to use if that's 
+what the imputation spits out? My understanding is that whether I set a 
+range or distribution prior, internally Amelia just draws from a normal 
+distribution with specific s.d. and mean anyway rather than from a 
+closed interval. Please correct me if I'm wrong about this. I would 
+rather set distribution priors because I seem to be getting the
+
+Error in chol(copy.theta[c(FALSE, m[ss, ]), c(FALSE, m[ss, ])]) :
+	the leading minor of order 5 is not positive definite
+
+
+every once in a while with range priors, but not with distribution priors.
+
+Cheers,
+
+Mark
+
+Mark S. Manger, PhD
+Assistant Professor
+Department of Political Science, McGill University
+mark.manger at mcgill.ca
+
+on leave 2007-08:
+Advanced Research Fellow, Program on US-Japan Relations
+Weatherhead Center for International Affairs
+Harvard University
+61 Kirkland Street, Room 301
+Cambridge, MA 02138
+617-495-5998
+
+
+
+Gary King wrote:
+>
+> R and therefore Amelia doesn't have parallel processing built in.
+> But the way it works, if you want m imputations, you can run Amelia m 
+> times in separate jobs and it will run m*100% faster.  But you do need 
+> to tell your parallelization software (condor in this case) to run 
+> them each completely separately so they don't overwrite different 
+> imputations with the same file names. Best,
+> Gary
+>
+>
+> On Sat, 15 Mar 2008, Anders Schwartz Corr wrote:
+>
+>>
+>> Hi,
+>>
+>> Thanks for the translation. When a parallel environment is running 
+>> say 10 runs (the condor_submit default) of Amelia simultaneously, 
+>> Amelia saves the datasets as outdata1.csv, outdata2.csv, etc., to a 
+>> single file from which the condor (the computing cluster program) job 
+>> was submitted. Is it possible that Amelia is overwriting other 
+>> imputed datasets that one of the other 10 Amelia runs has already 
+>> created? If so, maybe condor could create a separate directory for 
+>> each of the 10 Amelia runs, and/or Amelia could check the directory 
+>> it is saving into to make sure it isn't overwriting any 
+>> already-existing files.
+>>
+>> Also, if I set Amelia to create 5 imputed datasets, and set a 
+>> random-number generating seed so I can replicate the results exactly, 
+>> and then set condor to run my single Amelia file 10 times, does that 
+>> mean that condor will create 10 identical sets of 5 imputed datasets? 
+>> But then only one of the 10 sets would be useful.
+>>
+>> Alternatively, I suppose Amelia programmers may have intended users 
+>> to simply create as many directories and different Amelia.R files (in 
+>> my case 50) as needed, and rerun the condor submit program 50 times 
+>> for each of 50 random seeds the user sets in each of the 50 files. 
+>> Fifty simultaneous Amelia runs may sound excessive, but for a 
+>> relatively large dataset (mine is 17,000x100) it is almost necessary 
+>> in order to get 10 or 20 imputed datasets back within the first month 
+>> of the run.
+>>
+>> Again, thanks for all the excellent work by the people at HMDC.
+>>
+>> Anders
+>>
+>>
+>>
+>> On Fri, 14 Mar 2008, Gary King wrote:
+>>
+>>>
+>>>  a translation: condor distributes jobs to a 200-node research 
+>>> computing
+>>>  cluster we have built at the Harvard-MIT Data Center, which is part 
+>>> of the
+>>>  Institute for Quantitative Social Science at Harvard.  
+>>> unfortunately, that
+>>>  system isn't open to the public (altho we are working at an open 
+>>> source
+>>>  version of the software we produced to create the cluster).  
+>>> Anders' point
+>>>  more generally is that Amelia can be used well in parallel 
+>>> environment.
+>>>
+>>>  Gary
+>>>
+>>>  On Fri, 14 Mar 2008, Anders Schwartz Corr wrote:
+>>>
+>>> >  Mark, Are you running Amelia on hmdc condor? I found running 50 
+>>> separate >  Amelia programs simultaneously on hmdc relatively quick 
+>>> and easy -- the >  first 5 imputed datasets were returned within two 
+>>> or three weeks, and >  then after that I got about 1 more condor egg 
+>>> ;) per day. I could start >  my data analysis with the first five 
+>>> datasets and then additional >  datasets were added as they came in. 
+>>> Anders
+>>> > >  Note to the powers that be: it would be useful to set condor to 
+>>> give >  streaming output. It is a little difficult to know what is 
+>>> going on with >  Amelia (can't take advantage of the verbose 
+>>> function) when this standard >  condor function isn't set. Thank you 
+>>> for such a great service hmdc!
+>>> > >  On Fri, 14 Mar 2008, Mark Manger wrote:
+>>> > > >   Hi,
+>>> > > > >   I apologize in advance for the lengthy question, but it's 
+>>> > >   representative
+>>> > >   of many issues I face when working with large panels of 
+>>> economic > >   data, so
+>>> > >   I would be extremely grateful for your suggestions, best 
+>>> practices,
+>>> > >   experiences etc.
+>>> > > > >   I'm wondering what I could do to speed up the imputation 
+>>> of my rather
+>>> > >   large dataset (a panel of N 2120 x T 80 = 169600 obs). At this 
+>>> pace, > >   my
+>>> > >   imputations would run months. Memory is not the issue, rather 
+>>> I think > >  that
+>>> > >   I have too many priors and/or too many missings on certain 
+>>> variables. > >   See
+>>> > >   below, especially lnAid and lnFDI. Note that the missings are 
+>>> > >  concentrated
+>>> > >   on certain T points (in early time points) rather than specific
+>>> > >   cross-sectional units.
+>>> > > | > >   Variable    ||    ||  |       Obs        Mean    Std. 
+>>> Dev.       Min > >   Max
+>>> > >   Polity    ||      ||  |    168160    .8924833    
+>>> 6.955011        -10 > >   10
+>>> > >   Corruptlvl||   ||     |    157820    5.441431    
+>>> 1.799652          0 > >   10
+>>> > >   RuleofLaw  ||   ||    |    157820    5.247434    
+>>> 2.204846          0 > >   10
+>>> > >   GovStab     ||      |||    157820    5.935454    
+>>> 2.064963          0 > >   10
+>>> > >   log of bilat. Aid |     76079    1.919392    2.338255  -2.302585
+>>> > >   9.692112
+>>> > >   log of FDI in host|     32080    3.918487    2.928901  -2.372018
+>>> > >   10.98025
+>>> > >   Capital openness||||  |    155200   -.2888318    1.379179  
+>>> -1.766966
+>>> > >   2.602508
+>>> > >   Polcon V  ||     ||   |    154320    .3490876    
+>>> .3158385          0 > >   .89
+>>> > >   log of GDPcap_host|    154560     7.95649    1.053043   4.933741
+>>> > >   10.48464
+>>> > > | |  log of ||GDP_host   |    166480    29.62135     3.04193   
+>>> 22.97718
+>>> > >   43.12974
+>>> > > | |  log of ||GDP_home   |    147381     31.1144    2.128313   
+>>> 26.15253
+>>> > >   37.36032
+>>> > > > > |  If I don't set range priors, I get nonsensical values for 
+>>> most of > > |  the
+>>> > >  variables: negative GDP (real GDP, not negative log values), 
+>>> polity > >  scores
+>>> > >   out of range, etc. I haven't even tried higher-order 
+>>> polynomials or
+>>> > >   interactions with cross-sectional units, although I would 
+>>> prefer to > >   given
+>>> > >   that FDI exhibits a clear trend. Breaking up the dataset 
+>>> randomly > >   into
+>>> > >   pieces by cross-sections doesn't improve speed.
+>>> > > > >   It seems that I have to make tradeoffs. What do you think 
+>>> would be > >   the
+>>> > >   best thing to do, i.e. what is the most time-consuming issue 
+>>> for the > >   EM
+>>> > >   algorithm?
+>>> > >   Constrain/shorten the sample to have a higher proportion of 
+>>> observed
+>>> > >   values on lnAid and lnFDI?
+>>> > >   Accept imputations that are out of range (probably not)?
+>>> > > | |  Break up the dataset "vertically" into one with Aid and one 
+>>> with > > | |  the | > > |  FDI
+>>> > >   variable, run two sets of imputations, and merge it again?
+>>> > > > >   Many thanks,
+>>> > > > >   Mark
+>>> > > > >   --
+>>> > >   Mark S. Manger, PhD
+>>> > >   Assistant Professor
+>>> > >   Department of Political Science, McGill University
+>>> > >   mark.manger at mcgill.ca
+>>> > > > >   on leave 2007-08:
+>>> > >   Advanced Research Fellow, Program on US-Japan Relations
+>>> > >   Weatherhead Center for International Affairs
+>>> > >   Harvard University
+>>> > >   61 Kirkland Street, Room 301
+>>> > >   Cambridge, MA 02138
+>>> > >   617-495-5998
+>>> > >   -
+>>> > >   Amelia mailing list served by Harvard-MIT Data Center
+>>> > >   [Un]Subscribe/View Archive: > >   
+>>> http://lists.gking.harvard.edu/?info=amelia
+>>> > > >  -
+>>> >  Amelia mailing list served by Harvard-MIT Data Center
+>>> >  [Un]Subscribe/View Archive: 
+>>> http://lists.gking.harvard.edu/?info=amelia
+>>> > >
+>>>  -
+>>>  Amelia mailing list served by Harvard-MIT Data Center
+>>>  [Un]Subscribe/View Archive: 
+>>> http://lists.gking.harvard.edu/?info=amelia
+>>>
+>>
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From king at harvard.edu  Sat Mar 15 12:15:20 2008
+From: king at harvard.edu (Gary King)
+Date: Sat, 15 Mar 2008 12:15:20 -0400 (EDT)
+Subject: [amelia] what slows the imputation down so much?
+In-Reply-To: <47DBF1E2.3060707@mcgill.ca>
+References: <47DA9CE1.7070107@mcgill.ca> <Pine.LNX.4.64.0803141224290.1777@ls01.fas.harvard.edu> <Pine.LNX.4.64.0803142213230.8103@w5.hmdc.harvard.edu> <Pine.LNX.4.64.0803150317150.21107@ls03.fas.harvard.edu> <Pine.LNX.4.64.0803150739040.8103@w5.hmdc.harvard.edu> <47DBF1E2.3060707@mcgill.ca>
+Message-ID: <Pine.LNX.4.64.0803151200080.8103@w5.hmdc.harvard.edu>
+
+
+Matt or James might have a better guess about the error message, but 
+you're probably asking it to do something that's impossible.
+
+on the stats question, if you're using the imputations for something 
+linear, like a variable in a regression or an explanatory variable in a 
+logit or probit or something like that, then its best to just use the 
+imputation as is.  the only time you need to do more is if your analysis 
+model requires it, such as for a binary dependent variable in a logit 
+model or ordered variable for an ordered logit, etc.  then you can round, 
+or Amelia can do this or things like it for you by telling it what type of 
+variable you have.
+
+Gary
+
+On Sat, 15 Mar 2008, Mark Manger wrote:
+
+> Hi,
+>
+> I'm intrigued by an off-list comment Anders made. I'm setting priors because 
+> I know that certain variables are constrained in a particular way, e.g. I 
+> treat a variable coded as 0-10 as continuous, so if Amelia draws an 11.3 that 
+> doesn't seem to be a reasonable value.
+>
+> But are these values --mathematically speaking-- better to use if that's what 
+> the imputation spits out? My understanding is that whether I set a range or 
+> distribution prior, internally Amelia just draws from a normal distribution 
+> with specific s.d. and mean anyway rather than from a closed interval. Please 
+> correct me if I'm wrong about this. I would rather set distribution priors 
+> because I seem to be getting the
+>
+> Error in chol(copy.theta[c(FALSE, m[ss, ]), c(FALSE, m[ss, ])]) :
+> 	 the leading minor of order 5 is not positive definite
+>
+>
+> every once in a while with range priors, but not with distribution priors.
+>
+> Cheers,
+>
+> Mark
+>
+> Mark S. Manger, PhD
+> Assistant Professor
+> Department of Political Science, McGill University
+> mark.manger at mcgill.ca
+>
+> on leave 2007-08:
+> Advanced Research Fellow, Program on US-Japan Relations
+> Weatherhead Center for International Affairs
+> Harvard University
+> 61 Kirkland Street, Room 301
+> Cambridge, MA 02138
+> 617-495-5998
+>
+>
+>
+> Gary King wrote:
+>>
+>>  R and therefore Amelia doesn't have parallel processing built in.
+>>  But the way it works, if you want m imputations, you can run Amelia m
+>>  times in separate jobs and it will run m*100% faster.  But you do need to
+>>  tell your parallelization software (condor in this case) to run them each
+>>  completely separately so they don't overwrite different imputations with
+>>  the same file names. Best,
+>>  Gary
+>> 
+>>
+>>  On Sat, 15 Mar 2008, Anders Schwartz Corr wrote:
+>> 
+>> > 
+>> >  Hi,
+>> > 
+>> >  Thanks for the translation. When a parallel environment is running say 
+>> >  10 runs (the condor_submit default) of Amelia simultaneously, Amelia 
+>> >  saves the datasets as outdata1.csv, outdata2.csv, etc., to a single file 
+>> >  from which the condor (the computing cluster program) job was submitted. 
+>> >  Is it possible that Amelia is overwriting other imputed datasets that 
+>> >  one of the other 10 Amelia runs has already created? If so, maybe condor 
+>> >  could create a separate directory for each of the 10 Amelia runs, and/or 
+>> >  Amelia could check the directory it is saving into to make sure it isn't 
+>> >  overwriting any already-existing files.
+>> > 
+>> >  Also, if I set Amelia to create 5 imputed datasets, and set a 
+>> >  random-number generating seed so I can replicate the results exactly, 
+>> >  and then set condor to run my single Amelia file 10 times, does that 
+>> >  mean that condor will create 10 identical sets of 5 imputed datasets? 
+>> >  But then only one of the 10 sets would be useful.
+>> > 
+>> >  Alternatively, I suppose Amelia programmers may have intended users to 
+>> >  simply create as many directories and different Amelia.R files (in my 
+>> >  case 50) as needed, and rerun the condor submit program 50 times for 
+>> >  each of 50 random seeds the user sets in each of the 50 files. Fifty 
+>> >  simultaneous Amelia runs may sound excessive, but for a relatively large 
+>> >  dataset (mine is 17,000x100) it is almost necessary in order to get 10 
+>> >  or 20 imputed datasets back within the first month of the run.
+>> > 
+>> >  Again, thanks for all the excellent work by the people at HMDC.
+>> > 
+>> >  Anders
+>> > 
+>> > 
+>> > 
+>> >  On Fri, 14 Mar 2008, Gary King wrote:
+>> > 
+>> > > 
+>> > >  a translation: condor distributes jobs to a 200-node research 
+>> > >  computing
+>> > >  cluster we have built at the Harvard-MIT Data Center, which is part of 
+>> > >  the
+>> > >  Institute for Quantitative Social Science at Harvard.  unfortunately, 
+>> > >  that
+>> > >  system isn't open to the public (altho we are working at an open 
+>> > >  source
+>> > >  version of the software we produced to create the cluster).  Anders' 
+>> > >  point
+>> > >  more generally is that Amelia can be used well in parallel 
+>> > >  environment.
+>> > > 
+>> > >   Gary
+>> > > 
+>> > >   On Fri, 14 Mar 2008, Anders Schwartz Corr wrote:
+>> > > 
+>> > > >   Mark, Are you running Amelia on hmdc condor? I found running 50 
+>> > >  separate >  Amelia programs simultaneously on hmdc relatively quick 
+>> > >  and easy -- the >  first 5 imputed datasets were returned within two 
+>> > >  or three weeks, and >  then after that I got about 1 more condor egg 
+>> > > ;)  per day. I could start >  my data analysis with the first five 
+>> > >  datasets and then additional >  datasets were added as they came in. 
+>> > >  Anders
+>> > > > >   Note to the powers that be: it would be useful to set condor to 
+>> > >  give >  streaming output. It is a little difficult to know what is 
+>> > >  going on with >  Amelia (can't take advantage of the verbose function) 
+>> > >  when this standard >  condor function isn't set. Thank you for such a 
+>> > >  great service hmdc!
+>> > > > >   On Fri, 14 Mar 2008, Mark Manger wrote:
+>> > > > > >    Hi,
+>> > > > > > >    I apologize in advance for the lengthy question, but it's 
+>> > > > >    representative
+>> > > > >    of many issues I face when working with large panels of 
+>> > > economic > >    data, so
+>> > > > >    I would be extremely grateful for your suggestions, best 
+>> > >  practices,
+>> > > > >    experiences etc.
+>> > > > > > >    I'm wondering what I could do to speed up the imputation 
+>> > >  of my rather
+>> > > > >    large dataset (a panel of N 2120 x T 80 = 169600 obs). At this 
+>> > >  pace, > >   my
+>> > > > >    imputations would run months. Memory is not the issue, rather 
+>> > >  I think > >  that
+>> > > > >    I have too many priors and/or too many missings on certain 
+>> > >  variables. > >   See
+>> > > > >   below, especially lnAid and lnFDI. Note that the missings are 
+>> > > > >   concentrated
+>> > > > >    on certain T points (in early time points) rather than specific
+>> > > > >    cross-sectional units.
+>> > > > > | > >    Variable    ||    ||  |       Obs        Mean    Std. 
+>> > >  Dev.       Min > >   Max
+>> > > > >    Polity    ||      ||  |    168160    .8924833 
+>> > >  6.955011        -10 > >   10
+>> > > > >    Corruptlvl||   ||     |    157820    5.441431 
+>> > >  1.799652          0 > >   10
+>> > > > >    RuleofLaw  ||   ||    |    157820    5.247434 
+>> > >  2.204846          0 > >   10
+>> > > > >    GovStab     ||      |||    157820    5.935454 
+>> > >  2.064963          0 > >   10
+>> > > > >    log of bilat. Aid |     76079    1.919392    2.338255  -2.302585
+>> > > > >    9.692112
+>> > > > >    log of FDI in host|     32080    3.918487    2.928901  -2.372018
+>> > > > >    10.98025
+>> > > > >    Capital openness||||  |    155200   -.2888318    1.379179 
+>> > >  -1.766966
+>> > > > >    2.602508
+>> > > > >    Polcon V  ||     ||   |    154320    .3490876 
+>> > >  .3158385          0 > >   .89
+>> > > > >    log of GDPcap_host|    154560     7.95649    1.053043   4.933741
+>> > > > >    10.48464
+>> > > > > | |   log of ||GDP_host   |    166480    29.62135     3.04193 
+>> > >  22.97718
+>> > > > >    43.12974
+>> > > > > | |   log of ||GDP_home   |    147381     31.1144    2.128313 
+>> > >  26.15253
+>> > > > >    37.36032
+>> > > > > > > |   If I don't set range priors, I get nonsensical values for 
+>> > >  most of > > |  the
+>> > > > >   variables: negative GDP (real GDP, not negative log values), 
+>> > > polity > >   scores
+>> > > > >    out of range, etc. I haven't even tried higher-order 
+>> > >  polynomials or
+>> > > > >    interactions with cross-sectional units, although I would 
+>> > >  prefer to > >   given
+>> > > > >    that FDI exhibits a clear trend. Breaking up the dataset 
+>> > > randomly > >    into
+>> > > > >    pieces by cross-sections doesn't improve speed.
+>> > > > > > >    It seems that I have to make tradeoffs. What do you think 
+>> > >  would be > >   the
+>> > > > >    best thing to do, i.e. what is the most time-consuming issue 
+>> > >  for the > >   EM
+>> > > > >    algorithm?
+>> > > > >    Constrain/shorten the sample to have a higher proportion of 
+>> > >  observed
+>> > > > >    values on lnAid and lnFDI?
+>> > > > >    Accept imputations that are out of range (probably not)?
+>> > > > > | |   Break up the dataset "vertically" into one with Aid and one 
+>> > > with > > | |   the | > > |  FDI
+>> > > > >    variable, run two sets of imputations, and merge it again?
+>> > > > > > >    Many thanks,
+>> > > > > > >    Mark
+>> > > > > > >    --
+>> > > > >    Mark S. Manger, PhD
+>> > > > >    Assistant Professor
+>> > > > >    Department of Political Science, McGill University
+>> > > > >    mark.manger at mcgill.ca
+>> > > > > > >    on leave 2007-08:
+>> > > > >    Advanced Research Fellow, Program on US-Japan Relations
+>> > > > >    Weatherhead Center for International Affairs
+>> > > > >    Harvard University
+>> > > > >    61 Kirkland Street, Room 301
+>> > > > >    Cambridge, MA 02138
+>> > > > >    617-495-5998
+>> > > > >    -
+>> > > > >    Amelia mailing list served by Harvard-MIT Data Center
+>> > > > >    [Un]Subscribe/View Archive: > > 
+>> > >  http://lists.gking.harvard.edu/?info=amelia
+>> > > > > >   -
+>> > > >   Amelia mailing list served by Harvard-MIT Data Center
+>> > > >   [Un]Subscribe/View Archive: 
+>> > >  http://lists.gking.harvard.edu/?info=amelia
+>> > > > > 
+>> > >   -
+>> > >   Amelia mailing list served by Harvard-MIT Data Center
+>> > >   [Un]Subscribe/View Archive: 
+>> > >  http://lists.gking.harvard.edu/?info=amelia
+>> > > 
+>> >
+>>  -
+>>  Amelia mailing list served by Harvard-MIT Data Center
+>>  [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From mark.manger at mcgill.ca  Sun Mar 16 18:51:16 2008
+From: mark.manger at mcgill.ca (Mark Manger)
+Date: Sun, 16 Mar 2008 18:51:16 -0400
+Subject: [amelia] error when setting priors in AmeliaView (the leading minor issue again)
+Message-ID: <47DDA464.2050907@mcgill.ca>
+
+Hi (and especially, Hi Matt!)
+
+I'm getting the (known) error
+
+Error in chol.default(copy.theta[c(FALSE, m[ss, ]), c(FALSE, m[ss, ])]) :
+  the leading minor of order 6 is not positive definite
+
+whenever I try to set a distribution or range prior for a whole variable 
+in AmeliaView. I know this has been discussed before, but no solution 
+was sent to the list... what's the problem here? I'm using Amelia II 
+version 1.1-27 and the latest version of R.
+
+Here's my session file:
+
+`amelia.list` <-
+structure(list(amelia.args = structure(list(outname = "blimputationbig",
+    m = 5, empri = 0, ts = 2, cs = 1, am.filename = 
+"H:/mmanger/Data/blsmallv3.dta",
+    file.type = 2, lags = c(8L, 9L, 10L, 13L), leads = 8:10,
+    polytime = 2, intercs = 0, output.select = 4, priors = structure(c(0,
+    0, 3, 6, 0.97, 5.9, 6.9, 2.05), .Dim = c(2L, 4L), .Dimnames = list(
+        c("newPrior", "newPrior"), c("", "polity", "", "")))), .Names = 
+c("outname",
+"m", "empri", "ts", "cs", "am.filename", "file.type", "lags",
+"leads", "polytime", "intercs", "output.select", "priors"))), .Names = 
+"amelia.args")
+
+Any help would be greatly appreciated.
+
+--Mark
+
+
+-- 
+Mark S. Manger, PhD
+Assistant Professor
+Department of Political Science, McGill University
+mark.manger at mcgill.ca
+
+on leave 2007-08:
+Advanced Research Fellow, Program on US-Japan Relations
+Weatherhead Center for International Affairs
+Harvard University
+61 Kirkland Street, Room 301
+Cambridge, MA 02138
+617-495-5998
+
+-- 
+Mark S. Manger, PhD
+Assistant Professor
+Department of Political Science, McGill University
+mark.manger at mcgill.ca
+
+on leave 2007-08:
+Advanced Research Fellow, Program on US-Japan Relations
+Weatherhead Center for International Affairs
+Harvard University
+61 Kirkland Street, Room 301
+Cambridge, MA 02138
+617-495-5998
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From blackwel at fas.harvard.edu  Mon Mar 17 12:16:38 2008
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Mon, 17 Mar 2008 12:16:38 -0400
+Subject: [amelia] error when setting priors in AmeliaView (the leading minor issue again)
+In-Reply-To: <47DDA464.2050907@mcgill.ca>
+References: <47DDA464.2050907@mcgill.ca>
+Message-ID: <839691710803170916j66c8c7b9te77ba4f4843fe44c@mail.gmail.com>
+
+Hi Mark,
+
+The problem you're having is that the estimated covariance matrix of
+your data is singular, or non-invertible. Thus, when Amelia tries to
+invert the matrix to obtain imputations, things fall apart. This can
+happen for a number of reasons, but it is usually due to some sort of
+(nearly) linear dependence in the columns of the data. This can happen
+if there are linear functions of other variables (a common problem
+here is accidentally leaving all of the dummies for a categorical
+variable in the model).
+
+One way to track down the problem variables is the following:
+
+svd(data)$d < .0005
+
+The values that are TRUE from this output correspond to the variables
+in the dataset that are causing problems (0.0005 is ad hoc, you're
+just looking for really small values).
+
+If this isn't the problem, it is possible that there is too little
+data to estimate the covariance matrix. You can always add what we
+call the empirical or ridge prior that makes estimation easier when
+the covariance matrix is nearly singular. The argument for this is
+"empri" and a good value to start with is 1% of the rows of the data.
+
+One more issue is that it is possible that your choice of prior could
+be leading the algorithm into parts of the parameter space with
+singular covariance matrices, especially if you are putting strong
+priors on the variables. This is especially possible if you are
+putting variable-wide priors (as you are doing). If you are trying to
+impose logical constraints on the data, it might be preferable to to
+transform the variable onto an unbounded scale, impute and then
+retransform. This allows the constraints to bind without necessarily
+putting heavy prior beliefs on the model. (I sent an email to the list
+a few weeks ago detailing how this might be done for more complex
+cases).
+
+Lastly, we're trying to put together some more informative error
+messages for this problem. Sorry for the crypticism.
+
+Hope that helps,
+matt.
+
+On Sun, Mar 16, 2008 at 6:51 PM, Mark Manger <mark.manger at mcgill.ca> wrote:
+> Hi (and especially, Hi Matt!)
+>
+>  I'm getting the (known) error
+>
+>  Error in chol.default(copy.theta[c(FALSE, m[ss, ]), c(FALSE, m[ss, ])]) :
+>   the leading minor of order 6 is not positive definite
+>
+>  whenever I try to set a distribution or range prior for a whole variable
+>  in AmeliaView. I know this has been discussed before, but no solution
+>  was sent to the list... what's the problem here? I'm using Amelia II
+>  version 1.1-27 and the latest version of R.
+>
+>  Here's my session file:
+>
+>  `amelia.list` <-
+>  structure(list(amelia.args = structure(list(outname = "blimputationbig",
+>     m = 5, empri = 0, ts = 2, cs = 1, am.filename =
+>  "H:/mmanger/Data/blsmallv3.dta",
+>     file.type = 2, lags = c(8L, 9L, 10L, 13L), leads = 8:10,
+>     polytime = 2, intercs = 0, output.select = 4, priors = structure(c(0,
+>     0, 3, 6, 0.97, 5.9, 6.9, 2.05), .Dim = c(2L, 4L), .Dimnames = list(
+>         c("newPrior", "newPrior"), c("", "polity", "", "")))), .Names =
+>  c("outname",
+>  "m", "empri", "ts", "cs", "am.filename", "file.type", "lags",
+>  "leads", "polytime", "intercs", "output.select", "priors"))), .Names =
+>  "amelia.args")
+>
+>  Any help would be greatly appreciated.
+>
+>  --Mark
+>
+>
+>  --
+>  Mark S. Manger, PhD
+>  Assistant Professor
+>  Department of Political Science, McGill University
+>  mark.manger at mcgill.ca
+>
+>  on leave 2007-08:
+>  Advanced Research Fellow, Program on US-Japan Relations
+>  Weatherhead Center for International Affairs
+>  Harvard University
+>  61 Kirkland Street, Room 301
+>  Cambridge, MA 02138
+>  617-495-5998
+>
+>  --
+>  Mark S. Manger, PhD
+>  Assistant Professor
+>  Department of Political Science, McGill University
+>  mark.manger at mcgill.ca
+>
+>  on leave 2007-08:
+>  Advanced Research Fellow, Program on US-Japan Relations
+>  Weatherhead Center for International Affairs
+>  Harvard University
+>  61 Kirkland Street, Room 301
+>  Cambridge, MA 02138
+>  617-495-5998
+>  -
+>  Amelia mailing list served by Harvard-MIT Data Center
+>  [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From levi at bigred.unl.edu  Fri Mar 28 09:06:52 2008
+From: levi at bigred.unl.edu (LevI Littvay (UNL))
+Date: Fri, 28 Mar 2008 14:06:52 +0100
+Subject: [amelia] Feature Request
+Message-ID: <59029208-47A0-4F91-A2FC-A682EC7CB55A@bigred.unl.edu>
+
+Dear Developers
+
+I have been a strong advocate of Amelia II.  To date I have taught  
+four missing data workshops in both the US and Europe demoing Amelia  
+II.  Two my workshops had a hands on component where I made the  
+participants do their own imputations.  My experience teaching Amelia  
+II has pointed out one feature that is badly missing from the GUI.  A  
+random generator seed setter.  It would be really nice if we could set  
+a seed in the GUI if we wanted to so we could get the same imputations  
+on every computer in the classroom.  It would also be very nice in  
+terms of logging replication information of which I am a very strong  
+proponents of (mainly due to the efforts of Gary King himself).  But  
+right now (as far as I know) appropriate logging facilities through  
+the use of random number generator seeds are only available to command  
+line users of Amelia II.  Additionally, some easy to use logging  
+function that logs the R syntax of every step taken in the GUI would  
+also be beneficial.
+
+Please include these feature in a future release of Amelia II.
+
+Thanks.
+
+Levi Littvay
+Central European University
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+

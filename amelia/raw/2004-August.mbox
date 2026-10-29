@@ -1,0 +1,208 @@
+From mvile at uno.edu  Tue Aug  3 14:34:44 2004
+From: mvile at uno.edu (Matthew Allan Vile)
+Date: Tue, 3 Aug 2004 13:34:44 -0500
+Subject: [amelia] stratification of sampel after imputation
+Message-ID: <1063B14EFDF1AB4CBF207A16D303FC2C0CC780@mail5.uno.edu>
+
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20040803/061503e7/attachment.html>
+
+From king at harvard.edu  Tue Aug  3 23:13:43 2004
+From: king at harvard.edu (Gary King)
+Date: Tue, 3 Aug 2004 23:13:43 -0400 (EDT)
+Subject: [amelia] stratification of sampel after imputation
+In-Reply-To: <1063B14EFDF1AB4CBF207A16D303FC2C0CC780@mail5.uno.edu>
+References: <1063B14EFDF1AB4CBF207A16D303FC2C0CC780@mail5.uno.edu>
+Message-ID: <Pine.LNX.4.58.0408032311260.30374@w3.hmdc.harvard.edu>
+
+
+your intuition is right.  to be fully consistent, you'd need to impute for
+each strata separately.  But imputation doesn't need to nail every
+obervation exactly, since you're only affecting the missing values and not
+the observed values.  probably you'll be ok if your quantity of interest
+doesn't vary as a function of the missing data over strata, and in
+practice this will matter if the relationship is strong.  you could try
+running amelia within each strata and combining them to see, if you have
+enough observations within each.
+
+Gary
+
+On Tue, 3 Aug 2004, Matthew Allan Vile wrote:
+
+> I know that multiple imputation requires you to include at least every
+> variable in your final estimation model (including interactions) and
+> variables not included but later added to the dataset will have their
+> "relationship with other variables in the dataset biased (normally
+> towards zero)."
+>
+> However, what happens when you include a variable in the dataset during
+> imputation and then use that variable to stratify the regressions (as
+> with the "by variname:" option in Stata)?  Effectively, this
+> stratification mimics an interaction by allowing coefficient values to
+> vary across regressions within the sample; are the results of this kind
+> of procedure still BLUE (providing other regression presumptions are
+> met).
+>
+> Matthew Vile
+> Senior Data Analyst, GII
+>
+>
+
+
+From jhpark at artsci.wustl.edu  Wed Aug 18 13:22:51 2004
+From: jhpark at artsci.wustl.edu (Jong Hee Park)
+Date: Wed, 18 Aug 2004 12:22:51 -0500 (CDT)
+Subject: [amelia] A question about amelia for gauss to impute multiparty data
+Message-ID: <23976828.1092849771745.JavaMail.root@ascc>
+
+Dear Amelia users,
+
+I use Amelia for Gauss to input missing obs in multiparty votes. 
+I have problem in putting data in Gauss. Since I'm not a Gauss user and use 
+Gauss this time first, I may make dumb mistakes.  
+
+My data(vote) look like these;
+-----------------------------------------------------------------------------
+ party1   party2  party3      party1(t-1) party2a(t-1) party2b(t-1) party3(t-1)
+  0.52    0.43    0.04         0.41       0.33        0.17          0.06 
+  0.46    0.51    0.00(missing)0.53       0.43        0.03          0.00
+----------------------------------------------------------------------------
+
+Party1 is the reference party and party 2 and 3 have missing values.
+So I use following command;
+
+new;
+library amelia;
+load X[ ] = c:\data\newelecg.txt; # call data  
+vote = reshape(X, 225, 7);        # make data as matrix
+vote = vote[2:225,.];             # delete vnames
+_AMempri=3;                       # use ridge prior
+_AMkknp=3;                        # number of parties
+_AMkkpfo= 1;                      # position of the reference party
+_AMemt = 1;                       # use t-distributed ECME algorithm
+dbuf = amelia(vote);             
+
+And I got the next error message.
+----------------------------------------------
+Invalid input, program ended due to input error: 
+
+Variable in dataset is either a constant or completely unobserved.
+Delete this variable and rerun Amelia.
+
+
+Math coprocessor exceptions:
+  Invalid Operation
+Missing values may have been encountered
+----------------------------------------------
+
+Could somebody tell me what's wrong with my command and how can I fix it?
+Thank you in advance.
+
+Jong Hee Park
+Department of Political Science
+Washington University in St.Louis
+Campus Box 1063
+One Brookings Drive
+St. Louis, MO 63130
+Office Phone: (314) 935-6764
+
+
+From tercer at ucla.edu  Wed Aug 18 17:26:25 2004
+From: tercer at ucla.edu (James Honaker)
+Date: Wed, 18 Aug 2004 14:26:25 -0700 (PDT)
+Subject: [amelia] A question about amelia for gauss to impute multiparty
+ data
+In-Reply-To: <23976828.1092849771745.JavaMail.root@ascc>
+References: <23976828.1092849771745.JavaMail.root@ascc>
+Message-ID: <Pine.GSO.4.60.0408181400400.13995@weber.sscnet.ucla.edu>
+
+
+Dear Jong Hee,
+
+Do you have any covariates, other than votes and lagged votes?  I note 
+that in your reshape command you have a "7" meaning that you are telling 
+GAUSS there are 7 variables.  However you only list six.  Reshape may be 
+creating a 7th variable that is completely missing (However, that is not 
+the way reshape generally works--if it runs out of observations to put in 
+the new matrix it just starts reading from the beginning again--see 
+guesses below).
+
+The error message you mention from Amelia states that Amelia is concerned 
+that a variable in the imputation dataset is either completely missing 
+(and you wouldn't ever want to impute a variable that is completely 
+missing) or constant (thus not a "variable" and not something to be added 
+to a multivariate Normal model).
+
+So, take a look at the data you are getting after the reshape command. 
+Insert a line like:  print vote[1:10,.] and see if it looks right.  Is 
+there a 7th variable that doesn't belong?
+
+My bold leap of intuition, is that you've done something similar already, 
+and had to change Reshape to have seven columns to make the matrix "look 
+right".  This might be because your "load" command was reading the endline 
+character in your original ".txt" file as an observation of a variable.
+If this pure guess work is near the mark, then the easiest fix is just to 
+change your fifth line to:  vote=vote[2:225,1:6] so as to trim that 
+column also.
+
+let me know if this works, or trouble continues,
+
+James Honaker
+(tercer at ucla.edu)
+
+
+On Wed, 18 Aug 2004, Jong Hee Park wrote:
+
+> Dear Amelia users,
+>
+> I use Amelia for Gauss to input missing obs in multiparty votes.
+> I have problem in putting data in Gauss. Since I'm not a Gauss user and use
+> Gauss this time first, I may make dumb mistakes.
+>
+> My data(vote) look like these;
+> -----------------------------------------------------------------------------
+> party1   party2  party3      party1(t-1) party2a(t-1) party2b(t-1) party3(t-1)
+>  0.52    0.43    0.04         0.41       0.33        0.17          0.06
+>  0.46    0.51    0.00(missing)0.53       0.43        0.03          0.00
+> ----------------------------------------------------------------------------
+>
+> Party1 is the reference party and party 2 and 3 have missing values.
+> So I use following command;
+>
+> new;
+> library amelia;
+> load X[ ] = c:\data\newelecg.txt; # call data
+> vote = reshape(X, 225, 7);        # make data as matrix
+> vote = vote[2:225,.];             # delete vnames
+> _AMempri=3;                       # use ridge prior
+> _AMkknp=3;                        # number of parties
+> _AMkkpfo= 1;                      # position of the reference party
+> _AMemt = 1;                       # use t-distributed ECME algorithm
+> dbuf = amelia(vote);
+>
+> And I got the next error message.
+> ----------------------------------------------
+> Invalid input, program ended due to input error:
+>
+> Variable in dataset is either a constant or completely unobserved.
+> Delete this variable and rerun Amelia.
+>
+>
+> Math coprocessor exceptions:
+>  Invalid Operation
+> Missing values may have been encountered
+> ----------------------------------------------
+>
+> Could somebody tell me what's wrong with my command and how can I fix it?
+> Thank you in advance.
+>
+> Jong Hee Park
+> Department of Political Science
+> Washington University in St.Louis
+> Campus Box 1063
+> One Brookings Drive
+> St. Louis, MO 63130
+> Office Phone: (314) 935-6764
+>
+
+

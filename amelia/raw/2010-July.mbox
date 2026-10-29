@@ -1,0 +1,570 @@
+From kurt.smith at archimedesmodel.com  Wed Jul  7 22:01:08 2010
+From: kurt.smith at archimedesmodel.com (Kurt Smith)
+Date: Wed, 7 Jul 2010 19:01:08 -0700
+Subject: [amelia] imputation time growing exponentially?
+Message-ID: <1278554468.32515.67.camel@kurt-desktop>
+
+Hi,
+
+I've just started working with Amelia II to do multiple imputation for
+large data sets. It works great but I have some questions about how well
+it scales.
+
+In the Honaker & King "What to do about Missing Values..." paper the
+authors mention imputing for data sets with 240 variables and 32,000
+observations, which I would love to do, but I estimate this would take
+~10^6 hours to do one imputation.
+
+I did some test runs and it seems like computing time grows
+exponentially with the number of variables. I timed several runs in R
+2.10.1 (on an Intel Xeon desktop) and fit a regression that gave me the
+roughly the following:
+
+time [seconds] = 10^-4 * (# of imputations) * (# of subjects)^0.92 *
+1.118^(# of variables)
+
+In these runs I used up to 25,000 subjects and 24 variables. Missing
+rates were ~7-12% for most variables.
+
+Based on this it looks like using ~200 variables would take O(10^6)
+hours while 120 variables could be done in about a week. As
+parallelization only reduces # of imputations/processor, not # of
+variables it doesn't look like that would help.
+
+Can anyone comment on run times for large sets? It's possible I've
+missed something or the exponential relation doesn't hold for more
+variables.
+
+Thanks!
+Kurt
+
+
+-- 
+Kurt Smith, PhD
+Scientist II
+Archimedes Inc
+201 Mission Street, 29th Floor
+San Francisco, CA  94105
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From blackwel at fas.harvard.edu  Wed Jul  7 23:10:45 2010
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Wed, 7 Jul 2010 23:10:45 -0400
+Subject: [amelia] imputation time growing exponentially?
+In-Reply-To: <1278554468.32515.67.camel@kurt-desktop>
+References: <1278554468.32515.67.camel@kurt-desktop>
+Message-ID: <AANLkTimj-m6GC502wh8AqvpaArC-Qp2IfJBU8h5AoxLt@mail.gmail.com>
+
+Hi Kurt,
+
+The computing time depends heavily on the number of parameters in the
+model, but this is a quadratic function of the number of variables.
+
+Another key component of the computation time, though, is the number
+of distinct patterns of missingness in the data. That is, how many
+different ways can a unit be missing in the data. Each step of the EM
+algorithm must loop over each of these patterns and do a bit of math.
+Thus, fewer patterns means fewer computations. If missingness is
+generated randomly, then as you add variables, there might be a
+tendency for each of the possible missingness patterns to appear in
+the data. Since the number of possible patterns is exponential, this
+would likely increase the computing time exponentially. In real data,
+however, missingness tends to be "chunky"--groups of variables are
+missing together for systematic reasons (harder to collect all data on
+certain subgroups, for example). Thus, it is likely that a 200
+variable dataset would not contain all the possible patterns. This is
+something that you could check in your data:
+
+nrow(unique(is.na(myData)))
+
+Another relevant issue that might crop up is the so-called fraction of
+missing information. The more complete-data information that is in the
+missing part of the data, the longer the EM algorithm will take to
+converge.
+
+These issues imply that it would be hard to estimate the length of
+time until convergence based on the size of the data matrix. That
+being said, adding an additional covariate has the potential to
+increase each of these problems, perhaps markedly.
+
+Hope that helps.
+
+Cheers,
+matt.
+
+On Wed, Jul 7, 2010 at 10:01 PM, Kurt Smith
+<kurt.smith at archimedesmodel.com> wrote:
+> Hi,
+>
+> I've just started working with Amelia II to do multiple imputation for
+> large data sets. It works great but I have some questions about how well
+> it scales.
+>
+> In the Honaker & King "What to do about Missing Values..." paper the
+> authors mention imputing for data sets with 240 variables and 32,000
+> observations, which I would love to do, but I estimate this would take
+> ~10^6 hours to do one imputation.
+>
+> I did some test runs and it seems like computing time grows
+> exponentially with the number of variables. I timed several runs in R
+> 2.10.1 (on an Intel Xeon desktop) and fit a regression that gave me the
+> roughly the following:
+>
+> time [seconds] = 10^-4 * (# of imputations) * (# of subjects)^0.92 *
+> 1.118^(# of variables)
+>
+> In these runs I used up to 25,000 subjects and 24 variables. Missing
+> rates were ~7-12% for most variables.
+>
+> Based on this it looks like using ~200 variables would take O(10^6)
+> hours while 120 variables could be done in about a week. As
+> parallelization only reduces # of imputations/processor, not # of
+> variables it doesn't look like that would help.
+>
+> Can anyone comment on run times for large sets? It's possible I've
+> missed something or the exponential relation doesn't hold for more
+> variables.
+>
+> Thanks!
+> Kurt
+>
+>
+> --
+> Kurt Smith, PhD
+> Scientist II
+> Archimedes Inc
+> 201 Mission Street, 29th Floor
+> San Francisco, CA ?94105
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From kurt.smith at archimedesmodel.com  Thu Jul  8 17:33:51 2010
+From: kurt.smith at archimedesmodel.com (Kurt Smith)
+Date: Thu, 8 Jul 2010 14:33:51 -0700
+Subject: [amelia] imputation time growing exponentially?
+In-Reply-To: <AANLkTimj-m6GC502wh8AqvpaArC-Qp2IfJBU8h5AoxLt@mail.gmail.com>
+References: <1278554468.32515.67.camel@kurt-desktop> <AANLkTimj-m6GC502wh8AqvpaArC-Qp2IfJBU8h5AoxLt@mail.gmail.com>
+Message-ID: <1278624831.7814.141.camel@kurt-desktop>
+
+Thanks Matt, that was a pretty informative answer. I took a look at the
+# of missing data patterns and it grows much faster than linearly with #
+of variables, so that may have a strong effect on the performance.
+
+I'm wondering if there are other ways of approaching this. Here's what
+I'm interested in- I'm working with a data set with hundreds of
+variables but only about 30-40 are of interest to me. I'd hoped to feed
+in as many of the extra variables as possible to Amelia only in order to
+make the imputation more accurate on the ones I care about. Ultimately I
+don't care about the imputed variables for the extra variables (or even
+building a "realistic" multivariate model over them).  
+
+If I could treat the extra variables as completely observed I guess that
+would speed things up a lot. For categorical variables I could easily
+treat "missing" as another category. I'm not sure how best to handle
+continuous variables. Assigning an arbitrary value far outside the range
+of observed values would probably skew the multivariate normal fits. I
+could assign an average value to each missing value, or even assign a
+value from a simple regression model (basically a "pre-imputation
+imputation").
+
+Any ideas for good approaches here? Again, all I am really interested in
+is getting the most accurate imputation in a manageable amount of time
+for the 30-40 variables of interest. Thanks!
+
+Kurt
+
+On Wed, 2010-07-07 at 23:10 -0400, Matt Blackwell wrote: 
+> Hi Kurt,
+> 
+> The computing time depends heavily on the number of parameters in the
+> model, but this is a quadratic function of the number of variables.
+> 
+> Another key component of the computation time, though, is the number
+> of distinct patterns of missingness in the data. That is, how many
+> different ways can a unit be missing in the data. Each step of the EM
+> algorithm must loop over each of these patterns and do a bit of math.
+> Thus, fewer patterns means fewer computations. If missingness is
+> generated randomly, then as you add variables, there might be a
+> tendency for each of the possible missingness patterns to appear in
+> the data. Since the number of possible patterns is exponential, this
+> would likely increase the computing time exponentially. In real data,
+> however, missingness tends to be "chunky"--groups of variables are
+> missing together for systematic reasons (harder to collect all data on
+> certain subgroups, for example). Thus, it is likely that a 200
+> variable dataset would not contain all the possible patterns. This is
+> something that you could check in your data:
+> 
+> nrow(unique(is.na(myData)))
+> 
+> Another relevant issue that might crop up is the so-called fraction of
+> missing information. The more complete-data information that is in the
+> missing part of the data, the longer the EM algorithm will take to
+> converge.
+> 
+> These issues imply that it would be hard to estimate the length of
+> time until convergence based on the size of the data matrix. That
+> being said, adding an additional covariate has the potential to
+> increase each of these problems, perhaps markedly.
+> 
+> Hope that helps.
+> 
+> Cheers,
+> matt.
+> 
+> On Wed, Jul 7, 2010 at 10:01 PM, Kurt Smith
+> <kurt.smith at archimedesmodel.com> wrote:
+> > Hi,
+> >
+> > I've just started working with Amelia II to do multiple imputation for
+> > large data sets. It works great but I have some questions about how well
+> > it scales.
+> >
+> > In the Honaker & King "What to do about Missing Values..." paper the
+> > authors mention imputing for data sets with 240 variables and 32,000
+> > observations, which I would love to do, but I estimate this would take
+> > ~10^6 hours to do one imputation.
+> >
+> > I did some test runs and it seems like computing time grows
+> > exponentially with the number of variables. I timed several runs in R
+> > 2.10.1 (on an Intel Xeon desktop) and fit a regression that gave me the
+> > roughly the following:
+> >
+> > time [seconds] = 10^-4 * (# of imputations) * (# of subjects)^0.92 *
+> > 1.118^(# of variables)
+> >
+> > In these runs I used up to 25,000 subjects and 24 variables. Missing
+> > rates were ~7-12% for most variables.
+> >
+> > Based on this it looks like using ~200 variables would take O(10^6)
+> > hours while 120 variables could be done in about a week. As
+> > parallelization only reduces # of imputations/processor, not # of
+> > variables it doesn't look like that would help.
+> >
+> > Can anyone comment on run times for large sets? It's possible I've
+> > missed something or the exponential relation doesn't hold for more
+> > variables.
+> >
+> > Thanks!
+> > Kurt
+> >
+> >
+> > --
+> > Kurt Smith, PhD
+> > Scientist II
+> > Archimedes Inc
+> > 201 Mission Street, 29th Floor
+> > San Francisco, CA  94105
+> > -
+> > Amelia mailing list served by Harvard-MIT Data Center
+> > [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> > More info about Amelia: http://gking.harvard.edu/amelia
+> >
+> >
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From donald.braman at gmail.com  Tue Jul 27 12:14:20 2010
+From: donald.braman at gmail.com (Donald Braman)
+Date: Tue, 27 Jul 2010 12:14:20 -0400
+Subject: [amelia] imputation across experimental conditions
+Message-ID: <E9DBDE16-B98A-4336-81C8-1E9C3489181A@gmail.com>
+
+I have a question for the MI experts about imputations and experiments: 
+
+We often run experiments in which we hypothesize that responses will vary across conditions.  We expose subjects to a condition -- CONDa, CONDb, or CONDc, say -- and then measure responses to a dependent variables across all conditions, say DV1, DV2, etc.  We also collect data on various independent variables, say IV1, IV2, etc.  
+
+But because we anticipate the relationship between the IVs and DVs to vary across the conditions it seems like we ought to do one of two things when imputing missing data:  
+
+(1) interact every IV with the conditions so that we have, in effect DV1a, DV1_CONDb, DV1_CONDc, DV2_CONDa, etc.   But quite often, the result of that equation will just result in a zero when the dummy for that condition is zero rather than one.  This seems wasteful of information to me.  Which leads me to my alternative... 
+
+(2)  Rather than computing DV_CONDa as equalling zero when CONDa is also zero, I'm tempted to treat every alternative DV (DV1_CONDa, DV1_CONDb, DV1_CONDc ...) as missing for each case and impute it.  Missingness will be high, of course (only 1/conditions of DVs will be present), but at least I won't be throwing away lots of valuable data.   I hesitate to do so because I can't find anyone else who has done this and that makes me think I am probably misguided.   
+
+ps. I realize that this is a question about imputation generally, but I thought I'd post it here since I use Amelia for my imputation needs -- let me know if I should not post something like this here & I'll look elsewhere
+
+
+Donald Braman 
+phone: 413-628-1221 
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From king at harvard.edu  Tue Jul 27 14:55:00 2010
+From: king at harvard.edu (Gary King)
+Date: Tue, 27 Jul 2010 14:55:00 -0400
+Subject: [amelia] imputation across experimental conditions
+In-Reply-To: <E9DBDE16-B98A-4336-81C8-1E9C3489181A@gmail.com>
+References: <E9DBDE16-B98A-4336-81C8-1E9C3489181A@gmail.com>
+Message-ID: <AANLkTikJ3JGS=t1UqQMVCVJT9T1Q6y3QBq4w10zmUCES@mail.gmail.com>
+
+both of these would 'work', and both have been done before lots of times I
+think.  The only issue is that Amelia isn't 'aware' of the structural zeros
+in the second case or the interactions in the first.  e.g., for the
+interactions, if you include A, B, and A*B as variables, it doesn't know
+that the product of the first 2 variables is the 3rd and so the imputations
+won't necessarily respect that known equality.  The way we usually deal with
+that is to do the imputation unconstrained with all 3 variables and then fix
+it after the fact, such as by discarding A*B and multiplying the first two
+columns together.  This will usually give pretty reasonable results,
+although there may be a new method someone could devise (and program!) that
+could improve on this approach.
+Gary
+---
+http://gking.harvard.edu
+
+
+
+On Tue, Jul 27, 2010 at 12:14 PM, Donald Braman <donald.braman at gmail.com>wrote:
+
+> I have a question for the MI experts about imputations and experiments:
+>
+> We often run experiments in which we hypothesize that responses will vary
+> across conditions.  We expose subjects to a condition -- CONDa, CONDb, or
+> CONDc, say -- and then measure responses to a dependent variables across all
+> conditions, say DV1, DV2, etc.  We also collect data on various independent
+> variables, say IV1, IV2, etc.
+>
+> But because we anticipate the relationship between the IVs and DVs to vary
+> across the conditions it seems like we ought to do one of two things when
+> imputing missing data:
+>
+> (1) interact every IV with the conditions so that we have, in effect DV1a,
+> DV1_CONDb, DV1_CONDc, DV2_CONDa, etc.   But quite often, the result of that
+> equation will just result in a zero when the dummy for that condition is
+> zero rather than one.  This seems wasteful of information to me.  Which
+> leads me to my alternative...
+>
+> (2)  Rather than computing DV_CONDa as equalling zero when CONDa is also
+> zero, I'm tempted to treat every alternative DV (DV1_CONDa, DV1_CONDb,
+> DV1_CONDc ...) as missing for each case and impute it.  Missingness will be
+> high, of course (only 1/conditions of DVs will be present), but at least I
+> won't be throwing away lots of valuable data.   I hesitate to do so because
+> I can't find anyone else who has done this and that makes me think I am
+> probably misguided.
+>
+> ps. I realize that this is a question about imputation generally, but I
+> thought I'd post it here since I use Amelia for my imputation needs -- let
+> me know if I should not post something like this here & I'll look elsewhere
+>
+>
+> Donald Braman
+> phone: 413-628-1221
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20100727/a76d2a72/attachment.html>
+
+From dbraman at law.gwu.edu  Wed Jul 28 18:32:27 2010
+From: dbraman at law.gwu.edu (Donald Braman)
+Date: Wed, 28 Jul 2010 18:32:27 -0400
+Subject: [amelia] imputation across experimental conditions
+In-Reply-To: <AANLkTikJ3JGS=t1UqQMVCVJT9T1Q6y3QBq4w10zmUCES@mail.gmail.com>
+References: <E9DBDE16-B98A-4336-81C8-1E9C3489181A@gmail.com> <AANLkTikJ3JGS=t1UqQMVCVJT9T1Q6y3QBq4w10zmUCES@mail.gmail.com>
+Message-ID: <AANLkTinkHt+JdvOomrC11dciNL1qvLrnpEiHsaB0KUDQ@mail.gmail.com>
+
+Thanks!  Just to make sure: I'm talking about imputing all the dependent
+variables for conditions to which that subject was *not* assigned, so if
+there are 2, 3 or 4 conditions in all, respectively, 50%, 66% or 75% of the
+data will be missing and imputed.  It would almost be as if a
+between-subjects experiment were turned into a within-subjects experiment as
+we'd then have responses for every subject for every condition.  Does that
+make sense?  -Don
+
+On Tue, Jul 27, 2010 at 2:55 PM, Gary King <king at harvard.edu> wrote:
+
+> both of these would 'work', and both have been done before lots of times I
+> think.  The only issue is that Amelia isn't 'aware' of the structural zeros
+> in the second case or the interactions in the first.  e.g., for the
+> interactions, if you include A, B, and A*B as variables, it doesn't know
+> that the product of the first 2 variables is the 3rd and so the imputations
+> won't necessarily respect that known equality.  The way we usually deal with
+> that is to do the imputation unconstrained with all 3 variables and then fix
+> it after the fact, such as by discarding A*B and multiplying the first two
+> columns together.  This will usually give pretty reasonable results,
+> although there may be a new method someone could devise (and program!) that
+> could improve on this approach.
+> Gary
+> ---
+> http://gking.harvard.edu
+>
+>
+>
+> On Tue, Jul 27, 2010 at 12:14 PM, Donald Braman <donald.braman at gmail.com>wrote:
+>
+>> I have a question for the MI experts about imputations and experiments:
+>>
+>> We often run experiments in which we hypothesize that responses will vary
+>> across conditions.  We expose subjects to a condition -- CONDa, CONDb, or
+>> CONDc, say -- and then measure responses to a dependent variables across all
+>> conditions, say DV1, DV2, etc.  We also collect data on various independent
+>> variables, say IV1, IV2, etc.
+>>
+>> But because we anticipate the relationship between the IVs and DVs to vary
+>> across the conditions it seems like we ought to do one of two things when
+>> imputing missing data:
+>>
+>> (1) interact every IV with the conditions so that we have, in effect DV1a,
+>> DV1_CONDb, DV1_CONDc, DV2_CONDa, etc.   But quite often, the result of that
+>> equation will just result in a zero when the dummy for that condition is
+>> zero rather than one.  This seems wasteful of information to me.  Which
+>> leads me to my alternative...
+>>
+>> (2)  Rather than computing DV_CONDa as equalling zero when CONDa is also
+>> zero, I'm tempted to treat every alternative DV (DV1_CONDa, DV1_CONDb,
+>> DV1_CONDc ...) as missing for each case and impute it.  Missingness will be
+>> high, of course (only 1/conditions of DVs will be present), but at least I
+>> won't be throwing away lots of valuable data.   I hesitate to do so because
+>> I can't find anyone else who has done this and that makes me think I am
+>> probably misguided.
+>>
+>> ps. I realize that this is a question about imputation generally, but I
+>> thought I'd post it here since I use Amelia for my imputation needs -- let
+>> me know if I should not post something like this here & I'll look elsewhere
+>>
+>>
+>> Donald Braman
+>> phone: 413-628-1221
+>> -
+>> Amelia mailing list served by Harvard-MIT Data Center
+>> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>> More info about Amelia: http://gking.harvard.edu/amelia
+>>
+>
+>
+
+
+-- 
+Donald Braman
+phone: 971-645-0607
+http://www.culturalcognition.net/braman/
+http://ssrn.com/author=286206
+http://www.law.gwu.edu/Faculty/profile.aspx?id=10123
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20100728/69a3db67/attachment.html>
+
+From king at harvard.edu  Wed Jul 28 21:28:25 2010
+From: king at harvard.edu (Gary King)
+Date: Wed, 28 Jul 2010 21:28:25 -0400
+Subject: [amelia] imputation across experimental conditions
+In-Reply-To: <AANLkTinkHt+JdvOomrC11dciNL1qvLrnpEiHsaB0KUDQ@mail.gmail.com>
+References: <E9DBDE16-B98A-4336-81C8-1E9C3489181A@gmail.com> <AANLkTikJ3JGS=t1UqQMVCVJT9T1Q6y3QBq4w10zmUCES@mail.gmail.com> <AANLkTinkHt+JdvOomrC11dciNL1qvLrnpEiHsaB0KUDQ@mail.gmail.com>
+Message-ID: <AANLkTikyPOucVYTS0EsqtttCZ41XAgMW+7CJdampriL-@mail.gmail.com>
+
+yes, that makes sense.  The results would normally be more model-dependent
+because you're imputing a lot, but if you were running an experiment and
+apply the conditions randomly the assumptions of the model are known to be
+correct.
+Gary
+---
+http://gking.harvard.edu
+
+
+
+On Wed, Jul 28, 2010 at 6:32 PM, Donald Braman <dbraman at law.gwu.edu> wrote:
+
+> Thanks!  Just to make sure: I'm talking about imputing all the dependent
+> variables for conditions to which that subject was *not* assigned, so if
+> there are 2, 3 or 4 conditions in all, respectively, 50%, 66% or 75% of the
+> data will be missing and imputed.  It would almost be as if a
+> between-subjects experiment were turned into a within-subjects experiment as
+> we'd then have responses for every subject for every condition.  Does that
+> make sense?  -Don
+>
+> On Tue, Jul 27, 2010 at 2:55 PM, Gary King <king at harvard.edu> wrote:
+>
+>> both of these would 'work', and both have been done before lots of times I
+>> think.  The only issue is that Amelia isn't 'aware' of the structural zeros
+>> in the second case or the interactions in the first.  e.g., for the
+>> interactions, if you include A, B, and A*B as variables, it doesn't know
+>> that the product of the first 2 variables is the 3rd and so the imputations
+>> won't necessarily respect that known equality.  The way we usually deal with
+>> that is to do the imputation unconstrained with all 3 variables and then fix
+>> it after the fact, such as by discarding A*B and multiplying the first two
+>> columns together.  This will usually give pretty reasonable results,
+>> although there may be a new method someone could devise (and program!) that
+>> could improve on this approach.
+>> Gary
+>> ---
+>> http://gking.harvard.edu
+>>
+>>
+>>
+>> On Tue, Jul 27, 2010 at 12:14 PM, Donald Braman <donald.braman at gmail.com>wrote:
+>>
+>>> I have a question for the MI experts about imputations and experiments:
+>>>
+>>> We often run experiments in which we hypothesize that responses will vary
+>>> across conditions.  We expose subjects to a condition -- CONDa, CONDb, or
+>>> CONDc, say -- and then measure responses to a dependent variables across all
+>>> conditions, say DV1, DV2, etc.  We also collect data on various independent
+>>> variables, say IV1, IV2, etc.
+>>>
+>>> But because we anticipate the relationship between the IVs and DVs to
+>>> vary across the conditions it seems like we ought to do one of two things
+>>> when imputing missing data:
+>>>
+>>> (1) interact every IV with the conditions so that we have, in effect
+>>> DV1a, DV1_CONDb, DV1_CONDc, DV2_CONDa, etc.   But quite often, the result of
+>>> that equation will just result in a zero when the dummy for that condition
+>>> is zero rather than one.  This seems wasteful of information to me.  Which
+>>> leads me to my alternative...
+>>>
+>>> (2)  Rather than computing DV_CONDa as equalling zero when CONDa is also
+>>> zero, I'm tempted to treat every alternative DV (DV1_CONDa, DV1_CONDb,
+>>> DV1_CONDc ...) as missing for each case and impute it.  Missingness will be
+>>> high, of course (only 1/conditions of DVs will be present), but at least I
+>>> won't be throwing away lots of valuable data.   I hesitate to do so because
+>>> I can't find anyone else who has done this and that makes me think I am
+>>> probably misguided.
+>>>
+>>> ps. I realize that this is a question about imputation generally, but I
+>>> thought I'd post it here since I use Amelia for my imputation needs -- let
+>>> me know if I should not post something like this here & I'll look elsewhere
+>>>
+>>>
+>>> Donald Braman
+>>> phone: 413-628-1221
+>>> -
+>>> Amelia mailing list served by Harvard-MIT Data Center
+>>> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>>> More info about Amelia: http://gking.harvard.edu/amelia
+>>>
+>>
+>>
+>
+>
+> --
+> Donald Braman
+> phone: 971-645-0607
+> http://www.culturalcognition.net/braman/
+> http://ssrn.com/author=286206
+> http://www.law.gwu.edu/Faculty/profile.aspx?id=10123
+>
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20100728/529f9ffa/attachment.html>
+

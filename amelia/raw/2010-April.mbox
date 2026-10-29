@@ -1,0 +1,1397 @@
+From cds81 at columbia.edu  Thu Apr  1 11:12:48 2010
+From: cds81 at columbia.edu (Cyrus Samii)
+Date: Thu, 1 Apr 2010 11:12:48 -0400
+Subject: [amelia] integrating imputed and un-imputed variables?
+In-Reply-To: <z2t839691711003311452nfbcb2722o53970527cc209834@mail.gmail.com>
+References: <8a0a8c3c1003171730m9ff2787y43d1fe2b17e760ce@mail.gmail.com> <839691711003171759mf429a48r3d9f91c773f7abb4@mail.gmail.com> <8a0a8c3c1003171808h26c9c5f8oee6a01f8edba89e8@mail.gmail.com> <839691711003171819ne986227ib821d35625a75517@mail.gmail.com> <D10F470F-804A-48F9-9754-4016E9AB0A14@calpoly.edu> <z2t839691711003311452nfbcb2722o53970527cc209834@mail.gmail.com>
+Message-ID: <i2wc1f03def1004010812o99ea229aq8ede7508c42761ad@mail.gmail.com>
+
+On this, Matt, correct me if I am wrong, but Amelia won't overwrite
+existing data with imputed values, even though it will fully
+incorporate variables with no missingness into the model (to get the
+covariances, etc).  So if I follow what you are saying, Shanruo, what
+you are proposing is what is pretty much always done.  Or maybe I am
+misunderstanding...
+
+Cyrus
+
+On Wed, Mar 31, 2010 at 5:52 PM, Matt Blackwell
+<blackwel at fas.harvard.edu> wrote:
+> Hi Shanruo,
+>
+> I'm not exactly sure what you mean. If there are certain variables in
+> your data that you do not want to impute, you can always set them to
+> an ID variable in the Amelia options. But you should only do this for
+> variables that you do not want to include in the analysis or
+> imputation, such as unit-specific identifiers. In most cases you do
+> not want to re-introduce missingness into your data by removing
+> imputed values.
+>
+> In any event, you can always use the combination rules for getting
+> your estimates.
+>
+> Cheers,
+> matt.
+>
+> On Tue, Mar 30, 2010 at 12:00 PM, Shanruo Ning Zhang
+> <nizhang at calpoly.edu> wrote:
+>> Dear Amelia authors,
+>> As an effort to reduce the amount of imputed values used in our analysis, my
+>> co-author and I are contemplating merging some imputed variables back into
+>> the original (un-imputed) data set and use imputed and un-imputed variables
+>> together. ?Is this a feasible plan? ?If so, can I still use the functions on
+>> page 5-6 on the the Amelia User's Guide (Amelia II: A Program for Missing
+>> Data) to combine the results?
+>> Thanks very much.
+>> Best,
+>> Shanruo Ning Zhang
+>> Assistant Professor
+>> California Polytechnic State University
+>> San Luis Obispo, CA 93401
+>>
+>> On Mar 17, 2010, at 6:19 PM, Matt Blackwell wrote:
+>>
+>>> Hi Sivan,
+>>>
+>>> Typically, the length of the chain indicated how much information is
+>>> in the missing part of your data. So, lower chain lengths are
+>>> generally better and 4-6 are fairly short chains. Chains in large,
+>>> complicated datasets can easily reach into the hundreds or thousands.
+>>>
+>>> Cheers,
+>>> matt.
+>>>
+>>> On Wed, Mar 17, 2010 at 9:08 PM, Sivan Rotenberg
+>>> <sivanrotenberg at gmail.com> wrote:
+>>>>
+>>>> Hi Matt,
+>>>>
+>>>> ?Thank you very much! I have another question. Is there an optimum number
+>>>> of
+>>>> chains per imputation? I run about 20 sets and when I did it for my data
+>>>> I
+>>>> got chain lengths between 4-6, is that ok? Does the chain length provide
+>>>> any
+>>>> additional information?
+>>>>
+>>>> Thank you,
+>>>> Sivan
+>>>>
+>>>> On Wed, Mar 17, 2010 at 8:59 PM, Matt Blackwell
+>>>> <blackwel at fas.harvard.edu>
+>>>> wrote:
+>>>>>
+>>>>> Hi Sivan,
+>>>>>
+>>>>> I think they problem is that you may have most likely set the the
+>>>>> polynomials of time to intersect with the cross-section. Unfortunately
+>>>>> this adds many parameters to the model (2 for each cross-section
+>>>>> unit). If you uncheck this box (in the TSCS menu), then it should run.
+>>>>>
+>>>>> Cheers,
+>>>>> matt.
+>>>>>
+>>>>> On Wed, Mar 17, 2010 at 8:30 PM, Sivan Rotenberg
+>>>>> <sivanrotenberg at gmail.com> wrote:
+>>>>>>
+>>>>>> Hi,
+>>>>>>
+>>>>>> ?I am trying to impute my data file that has participants over three
+>>>>>> days of
+>>>>>> sampling and two predictors. I set up my data in SPSS with like this:
+>>>>>>
+>>>>>> ID ? ? ? ?Time ?predictor1 predictor2 measure 1 measure 2 measure 3
+>>>>>> measure
+>>>>>> 4
+>>>>>> 101.0 ? ?1.0 ? ? ?10.0 ? ? ? ? 8:58 ? ? ? ?1.097 ? ? ? -0.492
+>>>>>> 9.680 ? ? ? -0.095
+>>>>>> 101.0 ? ?2.0 ? ? ?10.0 ? ? ? ? 9:00 ? ? ? ?2.399 ? ? ? ?0.299
+>>>>>> 13.202 ? ? ?-0.801
+>>>>>> 101.0 ? ?3.0 ? ? ?10.0 ? ? ? ? 8:15 ? ? ? ?1.636 ? ? ? -0.316
+>>>>>> 20.445 ? ? ?-0.931
+>>>>>> 102.0 ? ?1.0 ? ? ?27.0 ? ? ? ? 7:07 ? ? ? ?3.903 ? ? ? ?0.473
+>>>>>> 31.106 ? ? ?-0.916
+>>>>>> 102.0 ? ?2.0 ? ? ?27.0 ? ? ? ? 7:21 ? ? ? ?3.797 ? ? ? ?0.473
+>>>>>> 31.994 ? ? ?-0.966
+>>>>>> 102.0 ? ?3.0 ? ? ?27.0 ? ? ? ? 7:34 ? ? ? ?2.829 ? ? ? ?0.227
+>>>>>> 29.497 ? ? ?-0.958
+>>>>>>
+>>>>>> I tried using the time series cross sectional option using time as ts
+>>>>>> and ID
+>>>>>> as cs. I put the polynomials time as 1 (although I'm really not sure
+>>>>>> about
+>>>>>> that) and used an EM prior of 4. At the bottom of my AmeliaView it says
+>>>>>> I
+>>>>>> have 381 ?observations and 9 variables, which does not exceed the
+>>>>>> p(p+3)/2
+>>>>>> formula yet I am still getting error code 34:
+>>>>>>
+>>>>>> Amelia Error Code: 34
+>>>>>> ?The number of observations in too low to estimate the number of
+>>>>>> ?parameters. ?You can either remove some variables, reduce
+>>>>>> ?the order of the time polynomial, or increase the empirical prior.
+>>>>>>
+>>>>>> You have recieved an error. ?You can close this window and reset
+>>>>>> ?various options to correct the error.
+>>>>>>
+>>>>>> I'm not sure what I'm doing wrong! Any help would be greatly
+>>>>>> appreciated!
+>>>>>>
+>>>>>> Thank you,
+>>>>>> Sivan
+>>>>>>
+>>>>
+>>>>
+>>> -
+>>> Amelia mailing list served by Harvard-MIT Data Center
+>>> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>>> More info about Amelia: http://gking.harvard.edu/amelia
+>>
+>> -
+>> Amelia mailing list served by Harvard-MIT Data Center
+>> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>> More info about Amelia: http://gking.harvard.edu/amelia
+>>
+>>
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+>
+
+
+
+-- 
+Cyrus Samii
+Political Science
+Columbia University
+cds81 at columbia.edu
+
+Burundi Survey: www.columbia.edu/~cds81/burundisurvey/
+ISERP Statistical Consulting: iserp.columbia.edu/statistical-consulting
+Evidence in peacebuilding initiative: peacebuildingsurveys.org
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From blackwel at fas.harvard.edu  Thu Apr  1 11:18:32 2010
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Thu, 1 Apr 2010 11:18:32 -0400
+Subject: [amelia] integrating imputed and un-imputed variables?
+In-Reply-To: <i2wc1f03def1004010812o99ea229aq8ede7508c42761ad@mail.gmail.com>
+References: <8a0a8c3c1003171730m9ff2787y43d1fe2b17e760ce@mail.gmail.com> <839691711003171759mf429a48r3d9f91c773f7abb4@mail.gmail.com> <8a0a8c3c1003171808h26c9c5f8oee6a01f8edba89e8@mail.gmail.com> <839691711003171819ne986227ib821d35625a75517@mail.gmail.com> <D10F470F-804A-48F9-9754-4016E9AB0A14@calpoly.edu> <z2t839691711003311452nfbcb2722o53970527cc209834@mail.gmail.com> <i2wc1f03def1004010812o99ea229aq8ede7508c42761ad@mail.gmail.com>
+Message-ID: <r2l839691711004010818q3be4f741w62c906004d7d1f5@mail.gmail.com>
+
+This is correct. Amelia will only fill in missing cells with imputed
+values. Your observed data is always preserved in the imputed
+datasets, even when it is used in the imputation.
+
+Cheers,
+matt.
+
+On Thu, Apr 1, 2010 at 11:12 AM, Cyrus Samii <cds81 at columbia.edu> wrote:
+> On this, Matt, correct me if I am wrong, but Amelia won't overwrite
+> existing data with imputed values, even though it will fully
+> incorporate variables with no missingness into the model (to get the
+> covariances, etc). ?So if I follow what you are saying, Shanruo, what
+> you are proposing is what is pretty much always done. ?Or maybe I am
+> misunderstanding...
+>
+> Cyrus
+>
+> On Wed, Mar 31, 2010 at 5:52 PM, Matt Blackwell
+> <blackwel at fas.harvard.edu> wrote:
+>> Hi Shanruo,
+>>
+>> I'm not exactly sure what you mean. If there are certain variables in
+>> your data that you do not want to impute, you can always set them to
+>> an ID variable in the Amelia options. But you should only do this for
+>> variables that you do not want to include in the analysis or
+>> imputation, such as unit-specific identifiers. In most cases you do
+>> not want to re-introduce missingness into your data by removing
+>> imputed values.
+>>
+>> In any event, you can always use the combination rules for getting
+>> your estimates.
+>>
+>> Cheers,
+>> matt.
+>>
+>> On Tue, Mar 30, 2010 at 12:00 PM, Shanruo Ning Zhang
+>> <nizhang at calpoly.edu> wrote:
+>>> Dear Amelia authors,
+>>> As an effort to reduce the amount of imputed values used in our analysis, my
+>>> co-author and I are contemplating merging some imputed variables back into
+>>> the original (un-imputed) data set and use imputed and un-imputed variables
+>>> together. ?Is this a feasible plan? ?If so, can I still use the functions on
+>>> page 5-6 on the the Amelia User's Guide (Amelia II: A Program for Missing
+>>> Data) to combine the results?
+>>> Thanks very much.
+>>> Best,
+>>> Shanruo Ning Zhang
+>>> Assistant Professor
+>>> California Polytechnic State University
+>>> San Luis Obispo, CA 93401
+>>>
+>>> On Mar 17, 2010, at 6:19 PM, Matt Blackwell wrote:
+>>>
+>>>> Hi Sivan,
+>>>>
+>>>> Typically, the length of the chain indicated how much information is
+>>>> in the missing part of your data. So, lower chain lengths are
+>>>> generally better and 4-6 are fairly short chains. Chains in large,
+>>>> complicated datasets can easily reach into the hundreds or thousands.
+>>>>
+>>>> Cheers,
+>>>> matt.
+>>>>
+>>>> On Wed, Mar 17, 2010 at 9:08 PM, Sivan Rotenberg
+>>>> <sivanrotenberg at gmail.com> wrote:
+>>>>>
+>>>>> Hi Matt,
+>>>>>
+>>>>> ?Thank you very much! I have another question. Is there an optimum number
+>>>>> of
+>>>>> chains per imputation? I run about 20 sets and when I did it for my data
+>>>>> I
+>>>>> got chain lengths between 4-6, is that ok? Does the chain length provide
+>>>>> any
+>>>>> additional information?
+>>>>>
+>>>>> Thank you,
+>>>>> Sivan
+>>>>>
+>>>>> On Wed, Mar 17, 2010 at 8:59 PM, Matt Blackwell
+>>>>> <blackwel at fas.harvard.edu>
+>>>>> wrote:
+>>>>>>
+>>>>>> Hi Sivan,
+>>>>>>
+>>>>>> I think they problem is that you may have most likely set the the
+>>>>>> polynomials of time to intersect with the cross-section. Unfortunately
+>>>>>> this adds many parameters to the model (2 for each cross-section
+>>>>>> unit). If you uncheck this box (in the TSCS menu), then it should run.
+>>>>>>
+>>>>>> Cheers,
+>>>>>> matt.
+>>>>>>
+>>>>>> On Wed, Mar 17, 2010 at 8:30 PM, Sivan Rotenberg
+>>>>>> <sivanrotenberg at gmail.com> wrote:
+>>>>>>>
+>>>>>>> Hi,
+>>>>>>>
+>>>>>>> ?I am trying to impute my data file that has participants over three
+>>>>>>> days of
+>>>>>>> sampling and two predictors. I set up my data in SPSS with like this:
+>>>>>>>
+>>>>>>> ID ? ? ? ?Time ?predictor1 predictor2 measure 1 measure 2 measure 3
+>>>>>>> measure
+>>>>>>> 4
+>>>>>>> 101.0 ? ?1.0 ? ? ?10.0 ? ? ? ? 8:58 ? ? ? ?1.097 ? ? ? -0.492
+>>>>>>> 9.680 ? ? ? -0.095
+>>>>>>> 101.0 ? ?2.0 ? ? ?10.0 ? ? ? ? 9:00 ? ? ? ?2.399 ? ? ? ?0.299
+>>>>>>> 13.202 ? ? ?-0.801
+>>>>>>> 101.0 ? ?3.0 ? ? ?10.0 ? ? ? ? 8:15 ? ? ? ?1.636 ? ? ? -0.316
+>>>>>>> 20.445 ? ? ?-0.931
+>>>>>>> 102.0 ? ?1.0 ? ? ?27.0 ? ? ? ? 7:07 ? ? ? ?3.903 ? ? ? ?0.473
+>>>>>>> 31.106 ? ? ?-0.916
+>>>>>>> 102.0 ? ?2.0 ? ? ?27.0 ? ? ? ? 7:21 ? ? ? ?3.797 ? ? ? ?0.473
+>>>>>>> 31.994 ? ? ?-0.966
+>>>>>>> 102.0 ? ?3.0 ? ? ?27.0 ? ? ? ? 7:34 ? ? ? ?2.829 ? ? ? ?0.227
+>>>>>>> 29.497 ? ? ?-0.958
+>>>>>>>
+>>>>>>> I tried using the time series cross sectional option using time as ts
+>>>>>>> and ID
+>>>>>>> as cs. I put the polynomials time as 1 (although I'm really not sure
+>>>>>>> about
+>>>>>>> that) and used an EM prior of 4. At the bottom of my AmeliaView it says
+>>>>>>> I
+>>>>>>> have 381 ?observations and 9 variables, which does not exceed the
+>>>>>>> p(p+3)/2
+>>>>>>> formula yet I am still getting error code 34:
+>>>>>>>
+>>>>>>> Amelia Error Code: 34
+>>>>>>> ?The number of observations in too low to estimate the number of
+>>>>>>> ?parameters. ?You can either remove some variables, reduce
+>>>>>>> ?the order of the time polynomial, or increase the empirical prior.
+>>>>>>>
+>>>>>>> You have recieved an error. ?You can close this window and reset
+>>>>>>> ?various options to correct the error.
+>>>>>>>
+>>>>>>> I'm not sure what I'm doing wrong! Any help would be greatly
+>>>>>>> appreciated!
+>>>>>>>
+>>>>>>> Thank you,
+>>>>>>> Sivan
+>>>>>>>
+>>>>>
+>>>>>
+>>>> -
+>>>> Amelia mailing list served by Harvard-MIT Data Center
+>>>> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>>>> More info about Amelia: http://gking.harvard.edu/amelia
+>>>
+>>> -
+>>> Amelia mailing list served by Harvard-MIT Data Center
+>>> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>>> More info about Amelia: http://gking.harvard.edu/amelia
+>>>
+>>>
+>> -
+>> Amelia mailing list served by Harvard-MIT Data Center
+>> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>> More info about Amelia: http://gking.harvard.edu/amelia
+>>
+>
+>
+>
+> --
+> Cyrus Samii
+> Political Science
+> Columbia University
+> cds81 at columbia.edu
+>
+> Burundi Survey: www.columbia.edu/~cds81/burundisurvey/
+> ISERP Statistical Consulting: iserp.columbia.edu/statistical-consulting
+> Evidence in peacebuilding initiative: peacebuildingsurveys.org
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From nizhang at calpoly.edu  Thu Apr  1 12:53:33 2010
+From: nizhang at calpoly.edu (Shanruo Ning Zhang)
+Date: Thu, 1 Apr 2010 09:53:33 -0700
+Subject: [amelia] integrating imputed and un-imputed variables?
+In-Reply-To: <r2l839691711004010818q3be4f741w62c906004d7d1f5@mail.gmail.com>
+References: <8a0a8c3c1003171730m9ff2787y43d1fe2b17e760ce@mail.gmail.com>  <839691711003171759mf429a48r3d9f91c773f7abb4@mail.gmail.com>  <8a0a8c3c1003171808h26c9c5f8oee6a01f8edba89e8@mail.gmail.com>  <839691711003171819ne986227ib821d35625a75517@mail.gmail.com>  <D10F470F-804A-48F9-9754-4016E9AB0A14@calpoly.edu> <z2t839691711003311452nfbcb2722o53970527cc209834@mail.gmail.com>  <i2wc1f03def1004010812o99ea229aq8ede7508c42761ad@mail.gmail.com> <r2l839691711004010818q3be4f741w62c906004d7d1f5@mail.gmail.com>
+Message-ID: <D24636A5-45EE-457A-9359-5E6856ED082C@calpoly.edu>
+
+Thanks for your responses, Matt and Cyrus.  I guess I didn't express  
+my thoughts clearly.  Say we have variables A and B and C, missing  
+40%, 40%, and 10% of the cases respectively.  All three variables are  
+to be included in the regression model.  Our objective is to keep  
+original (unimputed) data as much as we can, and only impute when we  
+have to.  We think 10% is tolerable, but want to impute on A and B.   
+So there are three things we are considering doing:
+
+1) impute on A and B, then merge imputed A and B back into the  
+original data set.  My question: can we now include the imputed A and  
+B and unimputed C together in a regression model and use the rules to  
+combine the results (since there will be five or ten sets of A's and  
+B's)?
+
+2) Another way to achieve this objective is to include C in the Amelia  
+model as an ID variable so that C won't be imputed.  But as I  
+understand, C then SHOULD NOT be included in the regression model  
+either.  Is this right, Matt?  Is so, this route won't work for us.
+
+3) Suppose X is an additive index with A and B.  Now with imputed A  
+and B, we have all cases of X with valid values.  But if we feel  
+uncomfortable with imputing values to cases where BOTH A and B are  
+missing (say 15% of the cases), can we then convert these cases back  
+to missing and use them along with other imputed cases?  Matt  
+cautioned against introducing missingness back into imputed data.   
+Could you briefly explain why, Matt?
+
+Sorry about the lengthy email.  I am new to Amelia.  Many thanks to  
+both of you for answering our questions.  Your efforts are deeply  
+appreciated.
+
+Best,
+
+Shanruo
+
+On Apr 1, 2010, at 8:18 AM, Matt Blackwell wrote:
+
+> This is correct. Amelia will only fill in missing cells with imputed
+> values. Your observed data is always preserved in the imputed
+> datasets, even when it is used in the imputation.
+>
+> Cheers,
+> matt.
+>
+> On Thu, Apr 1, 2010 at 11:12 AM, Cyrus Samii <cds81 at columbia.edu>  
+> wrote:
+>> On this, Matt, correct me if I am wrong, but Amelia won't overwrite
+>> existing data with imputed values, even though it will fully
+>> incorporate variables with no missingness into the model (to get the
+>> covariances, etc).  So if I follow what you are saying, Shanruo, what
+>> you are proposing is what is pretty much always done.  Or maybe I am
+>> misunderstanding...
+>>
+>> Cyrus
+>>
+>> On Wed, Mar 31, 2010 at 5:52 PM, Matt Blackwell
+>> <blackwel at fas.harvard.edu> wrote:
+>>> Hi Shanruo,
+>>>
+>>> I'm not exactly sure what you mean. If there are certain variables  
+>>> in
+>>> your data that you do not want to impute, you can always set them to
+>>> an ID variable in the Amelia options. But you should only do this  
+>>> for
+>>> variables that you do not want to include in the analysis or
+>>> imputation, such as unit-specific identifiers. In most cases you do
+>>> not want to re-introduce missingness into your data by removing
+>>> imputed values.
+>>>
+>>> In any event, you can always use the combination rules for getting
+>>> your estimates.
+>>>
+>>> Cheers,
+>>> matt.
+>>>
+>>> On Tue, Mar 30, 2010 at 12:00 PM, Shanruo Ning Zhang
+>>> <nizhang at calpoly.edu> wrote:
+>>>> Dear Amelia authors,
+>>>> As an effort to reduce the amount of imputed values used in our  
+>>>> analysis, my
+>>>> co-author and I are contemplating merging some imputed variables  
+>>>> back into
+>>>> the original (un-imputed) data set and use imputed and un-imputed  
+>>>> variables
+>>>> together.  Is this a feasible plan?  If so, can I still use the  
+>>>> functions on
+>>>> page 5-6 on the the Amelia User's Guide (Amelia II: A Program for  
+>>>> Missing
+>>>> Data) to combine the results?
+>>>> Thanks very much.
+>>>> Best,
+>>>> Shanruo Ning Zhang
+>>>> Assistant Professor
+>>>> California Polytechnic State University
+>>>> San Luis Obispo, CA 93401
+>>>>
+>>>> On Mar 17, 2010, at 6:19 PM, Matt Blackwell wrote:
+>>>>
+>>>>> Hi Sivan,
+>>>>>
+>>>>> Typically, the length of the chain indicated how much  
+>>>>> information is
+>>>>> in the missing part of your data. So, lower chain lengths are
+>>>>> generally better and 4-6 are fairly short chains. Chains in large,
+>>>>> complicated datasets can easily reach into the hundreds or  
+>>>>> thousands.
+>>>>>
+>>>>> Cheers,
+>>>>> matt.
+>>>>>
+>>>>> On Wed, Mar 17, 2010 at 9:08 PM, Sivan Rotenberg
+>>>>> <sivanrotenberg at gmail.com> wrote:
+>>>>>>
+>>>>>> Hi Matt,
+>>>>>>
+>>>>>>  Thank you very much! I have another question. Is there an  
+>>>>>> optimum number
+>>>>>> of
+>>>>>> chains per imputation? I run about 20 sets and when I did it  
+>>>>>> for my data
+>>>>>> I
+>>>>>> got chain lengths between 4-6, is that ok? Does the chain  
+>>>>>> length provide
+>>>>>> any
+>>>>>> additional information?
+>>>>>>
+>>>>>> Thank you,
+>>>>>> Sivan
+>>>>>>
+>>>>>> On Wed, Mar 17, 2010 at 8:59 PM, Matt Blackwell
+>>>>>> <blackwel at fas.harvard.edu>
+>>>>>> wrote:
+>>>>>>>
+>>>>>>> Hi Sivan,
+>>>>>>>
+>>>>>>> I think they problem is that you may have most likely set the  
+>>>>>>> the
+>>>>>>> polynomials of time to intersect with the cross-section.  
+>>>>>>> Unfortunately
+>>>>>>> this adds many parameters to the model (2 for each cross-section
+>>>>>>> unit). If you uncheck this box (in the TSCS menu), then it  
+>>>>>>> should run.
+>>>>>>>
+>>>>>>> Cheers,
+>>>>>>> matt.
+>>>>>>>
+>>>>>>> On Wed, Mar 17, 2010 at 8:30 PM, Sivan Rotenberg
+>>>>>>> <sivanrotenberg at gmail.com> wrote:
+>>>>>>>>
+>>>>>>>> Hi,
+>>>>>>>>
+>>>>>>>>  I am trying to impute my data file that has participants  
+>>>>>>>> over three
+>>>>>>>> days of
+>>>>>>>> sampling and two predictors. I set up my data in SPSS with  
+>>>>>>>> like this:
+>>>>>>>>
+>>>>>>>> ID        Time  predictor1 predictor2 measure 1 measure 2  
+>>>>>>>> measure 3
+>>>>>>>> measure
+>>>>>>>> 4
+>>>>>>>> 101.0    1.0      10.0         8:58        1.097       -0.492
+>>>>>>>> 9.680       -0.095
+>>>>>>>> 101.0    2.0      10.0         9:00        2.399        0.299
+>>>>>>>> 13.202      -0.801
+>>>>>>>> 101.0    3.0      10.0         8:15        1.636       -0.316
+>>>>>>>> 20.445      -0.931
+>>>>>>>> 102.0    1.0      27.0         7:07        3.903        0.473
+>>>>>>>> 31.106      -0.916
+>>>>>>>> 102.0    2.0      27.0         7:21        3.797        0.473
+>>>>>>>> 31.994      -0.966
+>>>>>>>> 102.0    3.0      27.0         7:34        2.829        0.227
+>>>>>>>> 29.497      -0.958
+>>>>>>>>
+>>>>>>>> I tried using the time series cross sectional option using  
+>>>>>>>> time as ts
+>>>>>>>> and ID
+>>>>>>>> as cs. I put the polynomials time as 1 (although I'm really  
+>>>>>>>> not sure
+>>>>>>>> about
+>>>>>>>> that) and used an EM prior of 4. At the bottom of my  
+>>>>>>>> AmeliaView it says
+>>>>>>>> I
+>>>>>>>> have 381  observations and 9 variables, which does not exceed  
+>>>>>>>> the
+>>>>>>>> p(p+3)/2
+>>>>>>>> formula yet I am still getting error code 34:
+>>>>>>>>
+>>>>>>>> Amelia Error Code: 34
+>>>>>>>>  The number of observations in too low to estimate the number  
+>>>>>>>> of
+>>>>>>>>  parameters.  You can either remove some variables, reduce
+>>>>>>>>  the order of the time polynomial, or increase the empirical  
+>>>>>>>> prior.
+>>>>>>>>
+>>>>>>>> You have recieved an error.  You can close this window and  
+>>>>>>>> reset
+>>>>>>>>  various options to correct the error.
+>>>>>>>>
+>>>>>>>> I'm not sure what I'm doing wrong! Any help would be greatly
+>>>>>>>> appreciated!
+>>>>>>>>
+>>>>>>>> Thank you,
+>>>>>>>> Sivan
+>>>>>>>>
+>>>>>>
+>>>>>>
+>>>>> -
+>>>>> Amelia mailing list served by Harvard-MIT Data Center
+>>>>> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>>>>> More info about Amelia: http://gking.harvard.edu/amelia
+>>>>
+>>>> -
+>>>> Amelia mailing list served by Harvard-MIT Data Center
+>>>> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>>>> More info about Amelia: http://gking.harvard.edu/amelia
+>>>>
+>>>>
+>>> -
+>>> Amelia mailing list served by Harvard-MIT Data Center
+>>> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>>> More info about Amelia: http://gking.harvard.edu/amelia
+>>>
+>>
+>>
+>>
+>> --
+>> Cyrus Samii
+>> Political Science
+>> Columbia University
+>> cds81 at columbia.edu
+>>
+>> Burundi Survey: www.columbia.edu/~cds81/burundisurvey/
+>> ISERP Statistical Consulting: iserp.columbia.edu/statistical- 
+>> consulting
+>> Evidence in peacebuilding initiative: peacebuildingsurveys.org
+>>
+>>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From blackwel at fas.harvard.edu  Thu Apr  1 13:31:40 2010
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Thu, 1 Apr 2010 13:31:40 -0400
+Subject: [amelia] integrating imputed and un-imputed variables?
+In-Reply-To: <D24636A5-45EE-457A-9359-5E6856ED082C@calpoly.edu>
+References: <8a0a8c3c1003171730m9ff2787y43d1fe2b17e760ce@mail.gmail.com> <839691711003171759mf429a48r3d9f91c773f7abb4@mail.gmail.com> <8a0a8c3c1003171808h26c9c5f8oee6a01f8edba89e8@mail.gmail.com> <839691711003171819ne986227ib821d35625a75517@mail.gmail.com> <D10F470F-804A-48F9-9754-4016E9AB0A14@calpoly.edu> <z2t839691711003311452nfbcb2722o53970527cc209834@mail.gmail.com> <i2wc1f03def1004010812o99ea229aq8ede7508c42761ad@mail.gmail.com> <r2l839691711004010818q3be4f741w62c906004d7d1f5@mail.gmail.com> <D24636A5-45EE-457A-9359-5E6856ED082C@calpoly.edu>
+Message-ID: <n2z839691711004011031seefe594xd6893701de0d01ac@mail.gmail.com>
+
+Hi Shanruo,
+
+Ah, I understand now. My first reaction would be that there is no real
+need to remove the imputed values of C. Only in fairly rare
+circumstances is it better to eliminate those cases that are missing
+on C than to use the imputed values. In fact, dropping them could
+produce a large amount of bias, even at only 10% of your data. Having
+said that, you can use the combination rules if you did use the
+original C instead of the imputed C.
+
+You are correct on point (2).
+
+For point (3), as long as you have covariates, you should definitely
+use the imputations when A and B are missing. The scenario under which
+you would not use the imputations would be when you think that those
+missing observations are very different than the observed values, in
+ways that cannot be predicted with the covariates. But if this is true
+(we call this non-ignorable missing data), then you will have bias and
+inefficiency whether or not you use the imputed values. For more on
+this point, you may want to look at the King, et al (2001) paper.
+
+Hope that helps.
+
+Cheers,
+matt.
+
+On Thu, Apr 1, 2010 at 12:53 PM, Shanruo Ning Zhang <nizhang at calpoly.edu> wrote:
+> Thanks for your responses, Matt and Cyrus. ?I guess I didn't express my
+> thoughts clearly. ?Say we have variables A and B and C, missing 40%, 40%,
+> and 10% of the cases respectively. ?All three variables are to be included
+> in the regression model. ?Our objective is to keep original (unimputed) data
+> as much as we can, and only impute when we have to. ?We think 10% is
+> tolerable, but want to impute on A and B. ?So there are three things we are
+> considering doing:
+>
+> 1) impute on A and B, then merge imputed A and B back into the original data
+> set. ?My question: can we now include the imputed A and B and unimputed C
+> together in a regression model and use the rules to combine the results
+> (since there will be five or ten sets of A's and B's)?
+>
+> 2) Another way to achieve this objective is to include C in the Amelia model
+> as an ID variable so that C won't be imputed. ?But as I understand, C then
+> SHOULD NOT be included in the regression model either. ?Is this right, Matt?
+> ?Is so, this route won't work for us.
+>
+> 3) Suppose X is an additive index with A and B. ?Now with imputed A and B,
+> we have all cases of X with valid values. ?But if we feel uncomfortable with
+> imputing values to cases where BOTH A and B are missing (say 15% of the
+> cases), can we then convert these cases back to missing and use them along
+> with other imputed cases? ?Matt cautioned against introducing missingness
+> back into imputed data. ?Could you briefly explain why, Matt?
+>
+> Sorry about the lengthy email. ?I am new to Amelia. ?Many thanks to both of
+> you for answering our questions. ?Your efforts are deeply appreciated.
+>
+> Best,
+>
+> Shanruo
+>
+> On Apr 1, 2010, at 8:18 AM, Matt Blackwell wrote:
+>
+>> This is correct. Amelia will only fill in missing cells with imputed
+>> values. Your observed data is always preserved in the imputed
+>> datasets, even when it is used in the imputation.
+>>
+>> Cheers,
+>> matt.
+>>
+>> On Thu, Apr 1, 2010 at 11:12 AM, Cyrus Samii <cds81 at columbia.edu> wrote:
+>>>
+>>> On this, Matt, correct me if I am wrong, but Amelia won't overwrite
+>>> existing data with imputed values, even though it will fully
+>>> incorporate variables with no missingness into the model (to get the
+>>> covariances, etc). ?So if I follow what you are saying, Shanruo, what
+>>> you are proposing is what is pretty much always done. ?Or maybe I am
+>>> misunderstanding...
+>>>
+>>> Cyrus
+>>>
+>>> On Wed, Mar 31, 2010 at 5:52 PM, Matt Blackwell
+>>> <blackwel at fas.harvard.edu> wrote:
+>>>>
+>>>> Hi Shanruo,
+>>>>
+>>>> I'm not exactly sure what you mean. If there are certain variables in
+>>>> your data that you do not want to impute, you can always set them to
+>>>> an ID variable in the Amelia options. But you should only do this for
+>>>> variables that you do not want to include in the analysis or
+>>>> imputation, such as unit-specific identifiers. In most cases you do
+>>>> not want to re-introduce missingness into your data by removing
+>>>> imputed values.
+>>>>
+>>>> In any event, you can always use the combination rules for getting
+>>>> your estimates.
+>>>>
+>>>> Cheers,
+>>>> matt.
+>>>>
+>>>> On Tue, Mar 30, 2010 at 12:00 PM, Shanruo Ning Zhang
+>>>> <nizhang at calpoly.edu> wrote:
+>>>>>
+>>>>> Dear Amelia authors,
+>>>>> As an effort to reduce the amount of imputed values used in our
+>>>>> analysis, my
+>>>>> co-author and I are contemplating merging some imputed variables back
+>>>>> into
+>>>>> the original (un-imputed) data set and use imputed and un-imputed
+>>>>> variables
+>>>>> together. ?Is this a feasible plan? ?If so, can I still use the
+>>>>> functions on
+>>>>> page 5-6 on the the Amelia User's Guide (Amelia II: A Program for
+>>>>> Missing
+>>>>> Data) to combine the results?
+>>>>> Thanks very much.
+>>>>> Best,
+>>>>> Shanruo Ning Zhang
+>>>>> Assistant Professor
+>>>>> California Polytechnic State University
+>>>>> San Luis Obispo, CA 93401
+>>>>>
+>>>>> On Mar 17, 2010, at 6:19 PM, Matt Blackwell wrote:
+>>>>>
+>>>>>> Hi Sivan,
+>>>>>>
+>>>>>> Typically, the length of the chain indicated how much information is
+>>>>>> in the missing part of your data. So, lower chain lengths are
+>>>>>> generally better and 4-6 are fairly short chains. Chains in large,
+>>>>>> complicated datasets can easily reach into the hundreds or thousands.
+>>>>>>
+>>>>>> Cheers,
+>>>>>> matt.
+>>>>>>
+>>>>>> On Wed, Mar 17, 2010 at 9:08 PM, Sivan Rotenberg
+>>>>>> <sivanrotenberg at gmail.com> wrote:
+>>>>>>>
+>>>>>>> Hi Matt,
+>>>>>>>
+>>>>>>> ?Thank you very much! I have another question. Is there an optimum
+>>>>>>> number
+>>>>>>> of
+>>>>>>> chains per imputation? I run about 20 sets and when I did it for my
+>>>>>>> data
+>>>>>>> I
+>>>>>>> got chain lengths between 4-6, is that ok? Does the chain length
+>>>>>>> provide
+>>>>>>> any
+>>>>>>> additional information?
+>>>>>>>
+>>>>>>> Thank you,
+>>>>>>> Sivan
+>>>>>>>
+>>>>>>> On Wed, Mar 17, 2010 at 8:59 PM, Matt Blackwell
+>>>>>>> <blackwel at fas.harvard.edu>
+>>>>>>> wrote:
+>>>>>>>>
+>>>>>>>> Hi Sivan,
+>>>>>>>>
+>>>>>>>> I think they problem is that you may have most likely set the the
+>>>>>>>> polynomials of time to intersect with the cross-section.
+>>>>>>>> Unfortunately
+>>>>>>>> this adds many parameters to the model (2 for each cross-section
+>>>>>>>> unit). If you uncheck this box (in the TSCS menu), then it should
+>>>>>>>> run.
+>>>>>>>>
+>>>>>>>> Cheers,
+>>>>>>>> matt.
+>>>>>>>>
+>>>>>>>> On Wed, Mar 17, 2010 at 8:30 PM, Sivan Rotenberg
+>>>>>>>> <sivanrotenberg at gmail.com> wrote:
+>>>>>>>>>
+>>>>>>>>> Hi,
+>>>>>>>>>
+>>>>>>>>> ?I am trying to impute my data file that has participants over
+>>>>>>>>> three
+>>>>>>>>> days of
+>>>>>>>>> sampling and two predictors. I set up my data in SPSS with like
+>>>>>>>>> this:
+>>>>>>>>>
+>>>>>>>>> ID ? ? ? ?Time ?predictor1 predictor2 measure 1 measure 2 measure 3
+>>>>>>>>> measure
+>>>>>>>>> 4
+>>>>>>>>> 101.0 ? ?1.0 ? ? ?10.0 ? ? ? ? 8:58 ? ? ? ?1.097 ? ? ? -0.492
+>>>>>>>>> 9.680 ? ? ? -0.095
+>>>>>>>>> 101.0 ? ?2.0 ? ? ?10.0 ? ? ? ? 9:00 ? ? ? ?2.399 ? ? ? ?0.299
+>>>>>>>>> 13.202 ? ? ?-0.801
+>>>>>>>>> 101.0 ? ?3.0 ? ? ?10.0 ? ? ? ? 8:15 ? ? ? ?1.636 ? ? ? -0.316
+>>>>>>>>> 20.445 ? ? ?-0.931
+>>>>>>>>> 102.0 ? ?1.0 ? ? ?27.0 ? ? ? ? 7:07 ? ? ? ?3.903 ? ? ? ?0.473
+>>>>>>>>> 31.106 ? ? ?-0.916
+>>>>>>>>> 102.0 ? ?2.0 ? ? ?27.0 ? ? ? ? 7:21 ? ? ? ?3.797 ? ? ? ?0.473
+>>>>>>>>> 31.994 ? ? ?-0.966
+>>>>>>>>> 102.0 ? ?3.0 ? ? ?27.0 ? ? ? ? 7:34 ? ? ? ?2.829 ? ? ? ?0.227
+>>>>>>>>> 29.497 ? ? ?-0.958
+>>>>>>>>>
+>>>>>>>>> I tried using the time series cross sectional option using time as
+>>>>>>>>> ts
+>>>>>>>>> and ID
+>>>>>>>>> as cs. I put the polynomials time as 1 (although I'm really not
+>>>>>>>>> sure
+>>>>>>>>> about
+>>>>>>>>> that) and used an EM prior of 4. At the bottom of my AmeliaView it
+>>>>>>>>> says
+>>>>>>>>> I
+>>>>>>>>> have 381 ?observations and 9 variables, which does not exceed the
+>>>>>>>>> p(p+3)/2
+>>>>>>>>> formula yet I am still getting error code 34:
+>>>>>>>>>
+>>>>>>>>> Amelia Error Code: 34
+>>>>>>>>> ?The number of observations in too low to estimate the number of
+>>>>>>>>> ?parameters. ?You can either remove some variables, reduce
+>>>>>>>>> ?the order of the time polynomial, or increase the empirical prior.
+>>>>>>>>>
+>>>>>>>>> You have recieved an error. ?You can close this window and reset
+>>>>>>>>> ?various options to correct the error.
+>>>>>>>>>
+>>>>>>>>> I'm not sure what I'm doing wrong! Any help would be greatly
+>>>>>>>>> appreciated!
+>>>>>>>>>
+>>>>>>>>> Thank you,
+>>>>>>>>> Sivan
+>>>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>> -
+>>>>>> Amelia mailing list served by Harvard-MIT Data Center
+>>>>>> [Un]Subscribe/View Archive:
+>>>>>> http://lists.gking.harvard.edu/?info=amelia
+>>>>>> More info about Amelia: http://gking.harvard.edu/amelia
+>>>>>
+>>>>> -
+>>>>> Amelia mailing list served by Harvard-MIT Data Center
+>>>>> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>>>>> More info about Amelia: http://gking.harvard.edu/amelia
+>>>>>
+>>>>>
+>>>> -
+>>>> Amelia mailing list served by Harvard-MIT Data Center
+>>>> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>>>> More info about Amelia: http://gking.harvard.edu/amelia
+>>>>
+>>>
+>>>
+>>>
+>>> --
+>>> Cyrus Samii
+>>> Political Science
+>>> Columbia University
+>>> cds81 at columbia.edu
+>>>
+>>> Burundi Survey: www.columbia.edu/~cds81/burundisurvey/
+>>> ISERP Statistical Consulting: iserp.columbia.edu/statistical-consulting
+>>> Evidence in peacebuilding initiative: peacebuildingsurveys.org
+>>>
+>>>
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From jmarca at translab.its.uci.edu  Thu Apr  1 16:54:39 2010
+From: jmarca at translab.its.uci.edu (James Marca)
+Date: Thu, 1 Apr 2010 13:54:39 -0700
+Subject: [amelia] proximity matrix?
+Message-ID: <20100401205439.GC15266@translab.its.uci.edu>
+
+In the Honaker and King 2010 article linked from the Amelia home page
+there is a reference to using spatial proximity in an analysis:
+
+     We use the same technology for putting priors on individual
+  missing cell values to borrow strength from information in the data
+  of neighboring or similar countries via user-specified proximity
+  matrices.
+
+I can't find any details in the appendix of the paper, nor can I find
+any mention of how to do such a thing in the Amelia docs.  Is this an
+undocumented feature, or is it something that must be done outside of
+Amelia when developing multiple priors.  If it is the latter case,
+I've got no clue how to do that and so would appreciate some pointers.
+
+Regards,
+James Marca
+
+-- 
+This message has been scanned for viruses and
+dangerous content by MailScanner, and is
+believed to be clean.
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From jmarca at translab.its.uci.edu  Wed Apr 21 14:33:50 2010
+From: jmarca at translab.its.uci.edu (James Marca)
+Date: Wed, 21 Apr 2010 11:33:50 -0700
+Subject: [amelia] plot bug, ask=FALSE doesn't work
+Message-ID: <20100421183350.GR24613@translab.its.uci.edu>
+
+Hi, perhaps I'm doing something wrong, but ask=FALSE doesn't seem to
+stop the ask in plot.amelia.  Example call:
+
+  png(file =
+      paste("/home/james/repos/bdp/doc/images/",fname,"_a_withbounds_%03d.png",sep=""),
+      width=1200, height=850, bg="transparent")
+  plot(df.amelia,ask=FALSE)
+  dev.off()
+
+I always see:
+Hit <Return> to see next plot:
+
+Regards,
+James Marca
+
+-- 
+This message has been scanned for viruses and
+dangerous content by MailScanner, and is
+believed to be clean.
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From nmenzies at fas.harvard.edu  Sun Apr 25 09:31:20 2010
+From: nmenzies at fas.harvard.edu (Nick Menzies)
+Date: Sun, 25 Apr 2010 09:31:20 -0400
+Subject: [amelia] Error in if (sum(non.vary == 0)) (again)
+In-Reply-To: <o2qe3d6f7591004250628x7a790dfehabb77f75fca9e65d@mail.gmail.com>
+References: <o2qe3d6f7591004250628x7a790dfehabb77f75fca9e65d@mail.gmail.com>
+Message-ID: <z2ne3d6f7591004250631h9f0dbdev43907e9add3e542b@mail.gmail.com>
+
+Hi Matt, I am having trouble implementing Amelia in a dataset of 50,000
+observations and ~200 variables.
+
+After running the code:
+
+*a.out1 <- amelia(dataHIV, m = 5, noms = c("v000", "v001", "v003", "v004",
+"v006",*
+* ** **"v014", "v016", "v101", "v102", "v116", "v113", "v119", "v120",*
+* ** **"v121", "v122", "v123", "v124", "v125", "v127", "v128", "v129", *
+* **"religion", "currentmaritalshort", "morethanoneunion", "region", *
+* **"cluster", "v103", "ethny", "radioteleall", "transportall", "country"),
+*
+* **ords = c("v013", "v106", "v105"), idvars = c("caseid", "idnumber",
+"hivid",*
+* ** "hcaseid", "acaseid"))*
+
+I get the output:
+
+*Error in if (sum(non.vary == 0)) { : *
+*  argument is not interpretable as logical*
+*In addition: Warning message:*
+*In FUN(X[[4L]], ...) : NAs introduced by coercion*
+
+I implemented the suggestion made in post below -- I have downloaded and am
+using the most recent Amelia II version -- but am still unable to run the
+program, even when I trim the dataset down to a small number of variables,
+and delete out invariant variables. I also get warnings that some nominal
+variables have many categories, but assume this is unrelated
+
+http://lists.gking.harvard.edu/lists/amelia_at_lists_gking_harvard_edu/2010_02/msg00004.html
+
+Do you have any suggestions?
+
+Thanks for your help - Nick
+
+-- 
+
+Nick Menzies
+nick.menzies at gmail.com
+404 217 1076
+
+
+
+-- 
+
+Nick Menzies
+nick.menzies at gmail.com
+404 217 1076
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20100425/d4e06bfe/attachment.html>
+
+From king at harvard.edu  Sun Apr 25 10:05:28 2010
+From: king at harvard.edu (Gary King)
+Date: Sun, 25 Apr 2010 10:05:28 -0400
+Subject: [amelia] Error in if (sum(non.vary == 0)) (again)
+In-Reply-To: <z2ne3d6f7591004250631h9f0dbdev43907e9add3e542b@mail.gmail.com>
+References: <o2qe3d6f7591004250628x7a790dfehabb77f75fca9e65d@mail.gmail.com> <z2ne3d6f7591004250631h9f0dbdev43907e9add3e542b@mail.gmail.com>
+Message-ID: <w2mb1009dda1004250705w5258573la286bfc38c050efd@mail.gmail.com>
+
+Nick, 200 variables involves a model with 20,300 parameters.  Even if
+you have 50,000 observations, that's a lot.  Do you really need them
+all in your analysis model?  Perhaps you could use a smaller subset.
+Gary
+---
+http://gking.harvard.edu
+
+
+
+
+On Sun, Apr 25, 2010 at 9:31 AM, Nick Menzies <nmenzies at fas.harvard.edu> wrote:
+> Hi Matt, I am having trouble implementing Amelia in a dataset of 50,000
+> observations and ~200 variables.
+> After running the code:
+> a.out1 <- amelia(dataHIV, m = 5, noms = c("v000", "v001", "v003", "v004",
+> "v006",
+> ? "v014", "v016", "v101", "v102", "v116", "v113", "v119", "v120",
+> ? "v121", "v122", "v123", "v124", "v125", "v127", "v128", "v129",
+> "religion", "currentmaritalshort", "morethanoneunion", "region",
+> "cluster", "v103", "ethny", "radioteleall", "transportall", "country"),
+> ords = c("v013", "v106", "v105"), idvars = c("caseid", "idnumber", "hivid",
+> "hcaseid", "acaseid"))
+> I get the output:
+> Error in if (sum(non.vary == 0)) { :
+> ??argument is not interpretable as logical
+> In addition: Warning message:
+> In FUN(X[[4L]], ...) : NAs introduced by coercion
+> I implemented the suggestion made in post below -- I have downloaded and am
+> using the most recent Amelia II version -- but am still unable to run the
+> program, even when I trim the dataset down to a small number of variables,
+> and delete out invariant variables. I also get warnings that some nominal
+> variables have many categories, but assume this is unrelated
+> http://lists.gking.harvard.edu/lists/amelia_at_lists_gking_harvard_edu/2010_02/msg00004.html
+> Do you have any suggestions?
+> Thanks for your help - Nick
+> --
+>
+> Nick Menzies
+> nick.menzies at gmail.com
+> 404 217 1076
+>
+>
+>
+> --
+>
+> Nick Menzies
+> nick.menzies at gmail.com
+> 404 217 1076
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From blackwel at fas.harvard.edu  Mon Apr 26 11:52:13 2010
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Mon, 26 Apr 2010 11:52:13 -0400
+Subject: [amelia] Error in if (sum(non.vary == 0)) (again)
+In-Reply-To: <z2ne3d6f7591004250631h9f0dbdev43907e9add3e542b@mail.gmail.com>
+References: <o2qe3d6f7591004250628x7a790dfehabb77f75fca9e65d@mail.gmail.com> <z2ne3d6f7591004250631h9f0dbdev43907e9add3e542b@mail.gmail.com>
+Message-ID: <s2z839691711004260852z4a7e75afkfb8f9e8a4026ed67@mail.gmail.com>
+
+Hi Nick,
+
+We need just a bit more information to figure what is going on. Which
+version of R and Amelia are you using?
+
+Amelia seems to be having a problem checking to see if your data has
+any variables that do not vary. It crashing on this is usually not a
+good thing. I would make the following observations. First, Gary is
+right that you may have too many variables. Second, it seems that you
+are marking a lot of these variables as nominal. Note that this add a
+dummy variable for each category of the nominal variable. Thus, if you
+had 10 variables, all with 4 categories, that would put an additional
+20 covariates into the imputation model. With the number of nominal
+variables you have, that could get problematic.
+
+It might also be helpful if you could post the output to the following R code:
+
+tmp <- sapply(dataHIV, var, na.rm = TRUE)
+sum(tmp == 0)
+sum(is.na(tmp))
+
+This will give us a sense for what the invariance of the data looks like.
+
+Cheers,
+matt.
+
+On Sun, Apr 25, 2010 at 9:31 AM, Nick Menzies <nmenzies at fas.harvard.edu> wrote:
+> Hi Matt, I am having trouble implementing Amelia in a dataset of 50,000
+> observations and ~200 variables.
+> After running the code:
+> a.out1 <- amelia(dataHIV, m = 5, noms = c("v000", "v001", "v003", "v004",
+> "v006",
+> ? "v014", "v016", "v101", "v102", "v116", "v113", "v119", "v120",
+> ? "v121", "v122", "v123", "v124", "v125", "v127", "v128", "v129",
+> "religion", "currentmaritalshort", "morethanoneunion", "region",
+> "cluster", "v103", "ethny", "radioteleall", "transportall", "country"),
+> ords = c("v013", "v106", "v105"), idvars = c("caseid", "idnumber", "hivid",
+> "hcaseid", "acaseid"))
+> I get the output:
+> Error in if (sum(non.vary == 0)) { :
+> ??argument is not interpretable as logical
+> In addition: Warning message:
+> In FUN(X[[4L]], ...) : NAs introduced by coercion
+> I implemented the suggestion made in post below -- I have downloaded and am
+> using the most recent Amelia II version -- but am still unable to run the
+> program, even when I trim the dataset down to a small number of variables,
+> and delete out invariant variables. I also get warnings that some nominal
+> variables have many categories, but assume this is unrelated
+> http://lists.gking.harvard.edu/lists/amelia_at_lists_gking_harvard_edu/2010_02/msg00004.html
+> Do you have any suggestions?
+> Thanks for your help - Nick
+> --
+>
+> Nick Menzies
+> nick.menzies at gmail.com
+> 404 217 1076
+>
+>
+>
+> --
+>
+> Nick Menzies
+> nick.menzies at gmail.com
+> 404 217 1076
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From nmenzies at fas.harvard.edu  Mon Apr 26 12:05:33 2010
+From: nmenzies at fas.harvard.edu (Nick Menzies)
+Date: Mon, 26 Apr 2010 12:05:33 -0400
+Subject: [amelia] Error in if (sum(non.vary == 0)) (again)
+In-Reply-To: <s2z839691711004260852z4a7e75afkfb8f9e8a4026ed67@mail.gmail.com>
+References: <o2qe3d6f7591004250628x7a790dfehabb77f75fca9e65d@mail.gmail.com> <z2ne3d6f7591004250631h9f0dbdev43907e9add3e542b@mail.gmail.com> <s2z839691711004260852z4a7e75afkfb8f9e8a4026ed67@mail.gmail.com>
+Message-ID: <z2je3d6f7591004260905la588a139v9213c5226e7f2960@mail.gmail.com>
+
+Hi Matt - I think you are right, some of the variables I was marking as
+nominal had a large number of categories.  When I reclassified these
+variables I could get Amelia to run. My problem now seems to be that the
+resulting matrices are non-invertible, though I assume that is a problem
+with my starting dataset rather than anything to do with Amelia (let me know
+if it might be otherwise).  I ran and pasted the results of your code below,
+and am using R version 2.10.1 and Amelia 1.2-16.
+
+> tmp <- sapply(dataHIV, var, na.rm = TRUE)
+> sum(tmp == 0)
+[1] 0
+> sum(is.na(tmp))
+[1] 0
+>
+
+Thanks - Nick
+
+On Mon, Apr 26, 2010 at 11:52 AM, Matt Blackwell
+<blackwel at fas.harvard.edu>wrote:
+
+> Hi Nick,
+>
+> We need just a bit more information to figure what is going on. Which
+> version of R and Amelia are you using?
+>
+> Amelia seems to be having a problem checking to see if your data has
+> any variables that do not vary. It crashing on this is usually not a
+> good thing. I would make the following observations. First, Gary is
+> right that you may have too many variables. Second, it seems that you
+> are marking a lot of these variables as nominal. Note that this add a
+> dummy variable for each category of the nominal variable. Thus, if you
+> had 10 variables, all with 4 categories, that would put an additional
+> 20 covariates into the imputation model. With the number of nominal
+> variables you have, that could get problematic.
+>
+> It might also be helpful if you could post the output to the following R
+> code:
+>
+> tmp <- sapply(dataHIV, var, na.rm = TRUE)
+> sum(tmp == 0)
+> sum(is.na(tmp))
+>
+> This will give us a sense for what the invariance of the data looks like.
+>
+> Cheers,
+> matt.
+>
+> On Sun, Apr 25, 2010 at 9:31 AM, Nick Menzies <nmenzies at fas.harvard.edu>
+> wrote:
+> > Hi Matt, I am having trouble implementing Amelia in a dataset of 50,000
+> > observations and ~200 variables.
+> > After running the code:
+> > a.out1 <- amelia(dataHIV, m = 5, noms = c("v000", "v001", "v003", "v004",
+> > "v006",
+> >   "v014", "v016", "v101", "v102", "v116", "v113", "v119", "v120",
+> >   "v121", "v122", "v123", "v124", "v125", "v127", "v128", "v129",
+> > "religion", "currentmaritalshort", "morethanoneunion", "region",
+> > "cluster", "v103", "ethny", "radioteleall", "transportall", "country"),
+> > ords = c("v013", "v106", "v105"), idvars = c("caseid", "idnumber",
+> "hivid",
+> > "hcaseid", "acaseid"))
+> > I get the output:
+> > Error in if (sum(non.vary == 0)) { :
+> >   argument is not interpretable as logical
+> > In addition: Warning message:
+> > In FUN(X[[4L]], ...) : NAs introduced by coercion
+> > I implemented the suggestion made in post below -- I have downloaded and
+> am
+> > using the most recent Amelia II version -- but am still unable to run the
+> > program, even when I trim the dataset down to a small number of
+> variables,
+> > and delete out invariant variables. I also get warnings that some nominal
+> > variables have many categories, but assume this is unrelated
+> >
+> http://lists.gking.harvard.edu/lists/amelia_at_lists_gking_harvard_edu/2010_02/msg00004.html
+> > Do you have any suggestions?
+> > Thanks for your help - Nick
+> > --
+> >
+> > Nick Menzies
+> > nick.menzies at gmail.com
+> > 404 217 1076
+> >
+> >
+> >
+> > --
+> >
+> > Nick Menzies
+> > nick.menzies at gmail.com
+> > 404 217 1076
+> >
+>
+>
+
+
+-- 
+
+Nick Menzies
+nick.menzies at gmail.com
+404 217 1076
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20100426/c9940ff1/attachment.html>
+
+From blackwel at fas.harvard.edu  Mon Apr 26 12:40:54 2010
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Mon, 26 Apr 2010 12:40:54 -0400
+Subject: [amelia] Error in if (sum(non.vary == 0)) (again)
+In-Reply-To: <z2je3d6f7591004260905la588a139v9213c5226e7f2960@mail.gmail.com>
+References: <o2qe3d6f7591004250628x7a790dfehabb77f75fca9e65d@mail.gmail.com> <z2ne3d6f7591004250631h9f0dbdev43907e9add3e542b@mail.gmail.com> <s2z839691711004260852z4a7e75afkfb8f9e8a4026ed67@mail.gmail.com> <z2je3d6f7591004260905la588a139v9213c5226e7f2960@mail.gmail.com>
+Message-ID: <k2u839691711004260940v6ceeb15i5b5d0523c6f0065f@mail.gmail.com>
+
+Hi Nick,
+
+Yeah, a non-invertible matrix usually means that there is a linear
+combination of variables in the data. Sometimes this is as simple as
+having the same variable twice, but more likely it is having a set of
+dummy variables without leaving one category out. Other times, it is
+including a linear scale and all the components of the scale. You
+might want to poke around your data to see if there is anything like
+that.
+
+Cheers,
+matt.
+
+
+
+On Mon, Apr 26, 2010 at 12:05 PM, Nick Menzies <nmenzies at fas.harvard.edu> wrote:
+> Hi Matt - I think you are right, some of the variables I was marking as
+> nominal had a large number of categories. ?When I reclassified these
+> variables I could get Amelia to run. My problem now seems to be that the
+> resulting matrices are non-invertible, though I assume that is a problem
+> with my starting dataset rather than anything to do with Amelia (let me know
+> if it might be otherwise). ?I ran and pasted the results of your code below,
+> and am using R version 2.10.1 and Amelia?1.2-16.
+>> tmp <- sapply(dataHIV, var, na.rm = TRUE)
+>> sum(tmp == 0)
+> [1] 0
+>> sum(is.na(tmp))
+> [1] 0
+>>
+> Thanks - Nick
+> On Mon, Apr 26, 2010 at 11:52 AM, Matt Blackwell <blackwel at fas.harvard.edu>
+> wrote:
+>>
+>> Hi Nick,
+>>
+>> We need just a bit more information to figure what is going on. Which
+>> version of R and Amelia are you using?
+>>
+>> Amelia seems to be having a problem checking to see if your data has
+>> any variables that do not vary. It crashing on this is usually not a
+>> good thing. I would make the following observations. First, Gary is
+>> right that you may have too many variables. Second, it seems that you
+>> are marking a lot of these variables as nominal. Note that this add a
+>> dummy variable for each category of the nominal variable. Thus, if you
+>> had 10 variables, all with 4 categories, that would put an additional
+>> 20 covariates into the imputation model. With the number of nominal
+>> variables you have, that could get problematic.
+>>
+>> It might also be helpful if you could post the output to the following R
+>> code:
+>>
+>> tmp <- sapply(dataHIV, var, na.rm = TRUE)
+>> sum(tmp == 0)
+>> sum(is.na(tmp))
+>>
+>> This will give us a sense for what the invariance of the data looks like.
+>>
+>> Cheers,
+>> matt.
+>>
+>> On Sun, Apr 25, 2010 at 9:31 AM, Nick Menzies <nmenzies at fas.harvard.edu>
+>> wrote:
+>> > Hi Matt, I am having trouble implementing Amelia in a dataset of 50,000
+>> > observations and ~200 variables.
+>> > After running the code:
+>> > a.out1 <- amelia(dataHIV, m = 5, noms = c("v000", "v001", "v003",
+>> > "v004",
+>> > "v006",
+>> > ? "v014", "v016", "v101", "v102", "v116", "v113", "v119", "v120",
+>> > ? "v121", "v122", "v123", "v124", "v125", "v127", "v128", "v129",
+>> > "religion", "currentmaritalshort", "morethanoneunion", "region",
+>> > "cluster", "v103", "ethny", "radioteleall", "transportall", "country"),
+>> > ords = c("v013", "v106", "v105"), idvars = c("caseid", "idnumber",
+>> > "hivid",
+>> > "hcaseid", "acaseid"))
+>> > I get the output:
+>> > Error in if (sum(non.vary == 0)) { :
+>> > ??argument is not interpretable as logical
+>> > In addition: Warning message:
+>> > In FUN(X[[4L]], ...) : NAs introduced by coercion
+>> > I implemented the suggestion made in post below -- I have downloaded and
+>> > am
+>> > using the most recent Amelia II version -- but am still unable to run
+>> > the
+>> > program, even when I trim the dataset down to a small number of
+>> > variables,
+>> > and delete out invariant variables. I also get warnings that some
+>> > nominal
+>> > variables have many categories, but assume this is unrelated
+>> >
+>> > http://lists.gking.harvard.edu/lists/amelia_at_lists_gking_harvard_edu/2010_02/msg00004.html
+>> > Do you have any suggestions?
+>> > Thanks for your help - Nick
+>> > --
+>> >
+>> > Nick Menzies
+>> > nick.menzies at gmail.com
+>> > 404 217 1076
+>> >
+>> >
+>> >
+>> > --
+>> >
+>> > Nick Menzies
+>> > nick.menzies at gmail.com
+>> > 404 217 1076
+>> >
+>>
+>
+>
+>
+> --
+>
+> Nick Menzies
+> nick.menzies at gmail.com
+> 404 217 1076
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+

@@ -1,0 +1,101 @@
+{
+  "list": "amelia",
+  "description": "",
+  "month": "2010-08",
+  "messages": [
+    {
+      "id": "msg-6ab693d657fc",
+      "message_id": "<4C6C3EB1.5030901@fas.harvard.edu>",
+      "from_name": "Amanda Pinkston",
+      "from_email_hash": "fc5b0ac9ddadaaf54f915325ca985b59a830f7835881c3cb545dcf0888e63891",
+      "date": "2010-08-18T20:12:33Z",
+      "subject": "[amelia] amelia error: Error in if (diff > iter.hist[count, 1] && count > 2)",
+      "subject_clean": "[amelia] amelia error: Error in if (diff > iter.hist[count, 1] && count > 2)",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "I receive the following error when running amelia on a dataset with high \nmissingness:\n\nError in if (diff > iter.hist[count, 1] && count > 2) { :\n  missing value where TRUE/FALSE needed\n\nThis error has popped up several times, in different imputations (I'm \ntrying for five) and at different points of the EM chain.  I can't get \nthrough five imputations without this crash.  What does the error mean?\n\nHere is my code:\n\noutput <- amelia(data_1, cs = \"country\", ts = \"year\", intercs = TRUE, \npolytime = 2, p2s = 2, logs = c(\"gdpPPP2005\", \"gdppcppp\", \"pop\", \n\"gnipc\"), ords = c(\"inc_group\", \"polxcons\", \"bnkv137\", \"bnkv114\", \n\"iaeexbgt\"), noms = c(\"region\", \"legor\"), empri = 0.01*nrow(data_1))\n\nthanks,\n\nAmanda Pinkston\n-\nAmelia mailing list served by Harvard-MIT Data Center\n[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia\nMore info about Amelia: http://gking.harvard.edu/amelia",
+      "body_snippet": "I receive the following error when running amelia on a dataset with high \nmissingness:\n\nError in if (diff > iter.hist[count, 1] && count > 2) { :\n  missing value where TRUE/FALSE needed\n\nThis error ha",
+      "thread_id": "thread-6ab693d657fc",
+      "thread_depth": 0,
+      "month": "2010-08"
+    },
+    {
+      "id": "msg-611364ac223e",
+      "message_id": "<AANLkTikwjKDGvSh6YjaPbkQqW3qwAkxHSo3iquHV-cX_@mail.gmail.com>",
+      "from_name": "Donald Braman",
+      "from_email_hash": "0f278ce71a25f291e40f53f9b5b472fde570e8ee50a23f04fa6bd6d6dc60ac50",
+      "date": "2010-08-18T20:44:33Z",
+      "subject": "[amelia] imputation error",
+      "subject_clean": "[amelia] imputation error",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "I get the following error when attempting to impute missing data in the\nattached dataset:\n\n 1 Error in eigen(thetanew[2:nrow(thetanew), 2:ncol(thetanew)], only.values\n> = TRUE,  :\n\n  infinite or missing values in 'x'\n\n\nA summary of the data set reveals no column with entirely missing or\nconstant values, and if I reduce the tolerance greatly, the problem goes\naway.\n-------------- next part --------------\nAn HTML attachment was scrubbed...\nURL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20100818/e4bc3296/attachment.html>\n-------------- next part --------------\nA non-text attachment was scrubbed...\nName: imputation.problem.R\nType: application/octet-stream\nSize: 1812 bytes\nDesc: not available\nURL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20100818/e4bc3296/attachment.obj>\n-------------- next part --------------\nA non-text attachment was scrubbed...\nName: to.impute.csv\nType: application/octet-stream\nSize: 395769 bytes\nDesc: not available\nURL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20100818/e4bc3296/attachment-0001.obj>",
+      "body_snippet": "I get the following error when attempting to impute missing data in the\nattached dataset:\n\n 1 Error in eigen(thetanew[2:nrow(thetanew), 2:ncol(thetanew)], only.values\n> = TRUE,  :\n\n  infinite or missi",
+      "thread_id": "thread-611364ac223e",
+      "thread_depth": 0,
+      "month": "2010-08"
+    },
+    {
+      "id": "msg-c52e7bdacc43",
+      "message_id": "<AANLkTikd7VMs4GQm=PpQXHRZymFMBuQezEjpOd5TOebA@mail.gmail.com>",
+      "from_name": "Matt Blackwell",
+      "from_email_hash": "70686df7f9a157792209573107c169fd8eb7e803e5b7d994905307b826806e57",
+      "date": "2010-08-22T19:54:34Z",
+      "subject": "[amelia] amelia error: Error in if (diff > iter.hist[count, 1] && count > 2)",
+      "subject_clean": "[amelia] amelia error: Error in if (diff > iter.hist[count, 1] && count > 2)",
+      "in_reply_to": "<4C6C3EB1.5030901@fas.harvard.edu>",
+      "references": [
+        "<4C6C3EB1.5030901@fas.harvard.edu>"
+      ],
+      "body_plain": "Hi Amanda,\n\nMost likely there is an issue in the data that is causing the\nnumerical instability. First, I would try to run Amelia without the\ntime-trends, to see how it performs. In situations with many units and\nfew time periods, adding a time trend for each unit can vastly\nincrease the number of parameters to be estimated.\n\nSecond, you may have variables that are linear combinations of others\nin your data. If I am interpreting your input correctly, this might be\nthe problem since\n\nlog(GDP per capita) = log(GDP) - log(population),\n\nand each of those appear to be in the imputation model. You might want\nto exclude one of the GDP measures to see if that improves the\nsituation.\n\nIf neither of those things helps your situation, you may found a bug.\nIn that case, please contact me off-list and we can troubleshoot the\nerror. Hope that helps.\n\nCheers,\nmatt.\n\nOn Wed, Aug 18, 2010 at 4:12 PM, Amanda Pinkston\n<pinkston at fas.harvard.edu> wrote:\n> I receive the following error when running amelia on a dataset with high\n> missingness:\n>\n> Error in if (diff > iter.hist[count, 1] && count > 2) { :\n> ?missing value where TRUE/FALSE needed\n>\n> This error has popped up several times, in different imputations (I'm trying\n> for five) and at different points of the EM chain. ?I can't get through five\n> imputations without this crash. ?What does the error mean?\n>\n> Here is my code:\n>\n> output <- amelia(data_1, cs = \"country\", ts = \"year\", intercs = TRUE,\n> polytime = 2, p2s = 2, logs = c(\"gdpPPP2005\", \"gdppcppp\", \"pop\", \"gnipc\"),\n> ords = c(\"inc_group\", \"polxcons\", \"bnkv137\", \"bnkv114\", \"iaeexbgt\"), noms =\n> c(\"region\", \"legor\"), empri = 0.01*nrow(data_1))\n>\n> thanks,\n>\n> Amanda Pinkston\n> -\n> Amelia mailing list served by Harvard-MIT Data Center\n> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia\n> More info about Amelia: http://gking.harvard.edu/amelia\n>\n>\n-\nAmelia mailing list served by Harvard-MIT Data Center\n[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia\nMore info about Amelia: http://gking.harvard.edu/amelia",
+      "body_snippet": "Hi Amanda,\n\nMost likely there is an issue in the data that is causing the\nnumerical instability. First, I would try to run Amelia without the\ntime-trends, to see how it performs. In situations with ma",
+      "thread_id": "thread-6ab693d657fc",
+      "thread_depth": 1,
+      "month": "2010-08"
+    },
+    {
+      "id": "msg-941de886223d",
+      "message_id": "<AANLkTi=9HjvJy2t1T_YVdOghwL-rbAE=wGYFen8tzid_@mail.gmail.com>",
+      "from_name": "Matt Blackwell",
+      "from_email_hash": "70686df7f9a157792209573107c169fd8eb7e803e5b7d994905307b826806e57",
+      "date": "2010-08-22T20:19:00Z",
+      "subject": "[amelia] imputation error",
+      "subject_clean": "[amelia] imputation error",
+      "in_reply_to": "<AANLkTikwjKDGvSh6YjaPbkQqW3qwAkxHSo3iquHV-cX_@mail.gmail.com>",
+      "references": [
+        "<AANLkTikwjKDGvSh6YjaPbkQqW3qwAkxHSo3iquHV-cX_@mail.gmail.com>"
+      ],
+      "body_plain": "Hi Donald,\n\nI think there are a few things going on. First, you have some very\nhighly correlated variables in your dataset. It's very possible that\none bootstrapped dataset could have two of the \"policy\" variables\nidentical, which would lead to the kind of problems you are seeing.\nSecond, you have roughly 100 variables, which leads to roughly 9000\nparameters for Amelia to estimate. With only 1500 observations, this\ncould be problematic. If there are repetitive variables in the data,\nyou may want to try and omit them (especially if you are not going to\nuse them in any analysis model).\n\nCheers,\nmatt.\n\nOn Wed, Aug 18, 2010 at 4:44 PM, Donald Braman <dbraman at law.gwu.edu> wrote:\n> I get the following error when attempting to impute missing data in the\n> attached dataset:\n>>\n>> ?1 Error in eigen(thetanew[2:nrow(thetanew), 2:ncol(thetanew)],\n>> only.values = TRUE, ?:\n>>\n>> ??infinite or missing values in 'x'\n>\n> A summary of the data set reveals no column with entirely missing or\n> constant values, and if I reduce the tolerance greatly, the problem goes\n> away.\n-\nAmelia mailing list served by Harvard-MIT Data Center\n[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia\nMore info about Amelia: http://gking.harvard.edu/amelia",
+      "body_snippet": "Hi Donald,\n\nI think there are a few things going on. First, you have some very\nhighly correlated variables in your dataset. It's very possible that\none bootstrapped dataset could have two of the \"poli",
+      "thread_id": "thread-611364ac223e",
+      "thread_depth": 1,
+      "month": "2010-08"
+    }
+  ],
+  "threads": [
+    {
+      "id": "thread-6ab693d657fc",
+      "subject": "[amelia] amelia error: Error in if (diff > iter.hist[count, 1] && count > 2)",
+      "message_count": 2,
+      "participants": [
+        "Amanda Pinkston",
+        "Matt Blackwell"
+      ],
+      "started": "2010-08-18T20:12:33Z",
+      "last_reply": "2010-08-22T19:54:34Z",
+      "root_message_id": "msg-6ab693d657fc"
+    },
+    {
+      "id": "thread-611364ac223e",
+      "subject": "[amelia] imputation error",
+      "message_count": 2,
+      "participants": [
+        "Donald Braman",
+        "Matt Blackwell"
+      ],
+      "started": "2010-08-18T20:44:33Z",
+      "last_reply": "2010-08-22T20:19:00Z",
+      "root_message_id": "msg-611364ac223e"
+    }
+  ]
+}

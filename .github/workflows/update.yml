@@ -1,0 +1,64 @@
+name: Update Archive
+
+on:
+  schedule:
+    # Daily, ahead of the data build at 04:47 UTC. Nothing is fetched: the run
+    # re-parses raw/ so the archive follows rmail-parser's releases.
+    - cron: '59 1 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-archive
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Download rmail-parser
+        run: |
+          curl -sL -o rmail-parser \
+            "https://github.com/r-mailing-lists/rmail-parser/releases/latest/download/rmail-parser-linux-x86_64"
+          chmod +x rmail-parser
+
+      - name: Download aliases
+        run: |
+          curl -sL -o aliases.json \
+            "https://raw.githubusercontent.com/r-mailing-lists/rmail-parser/main/aliases.json" \
+            2>/dev/null || echo '{"aliases":[]}' > aliases.json
+
+      - name: Test the scripts
+        run: python3 -I tools/wayback_test.py
+
+      - name: Parse all lists
+        run: tools/update.sh
+        env:
+          ALIASES: aliases.json
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: update archive $(date +%Y-%m-%d)"
+            git push
+          fi
+          # GitHub switches off the schedule of a public repository after 60 days
+          # without activity. When the newest commit is more than 30 days old, a
+          # one-line .heartbeat file with today's date (UTC) is committed.
+          LAST_COMMIT=$(git log -1 --format=%ct)
+          if [ $(( $(date -u +%s) - LAST_COMMIT )) -gt $(( 30 * 86400 )) ]; then
+            date -u +%F > .heartbeat
+            git add .heartbeat
+            git commit -m "chore: heartbeat $(date -u +%F)"
+            git push
+          fi

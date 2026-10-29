@@ -1,0 +1,370 @@
+From scott.gaynor at wmich.edu  Sat Jan  3 01:44:37 2009
+From: scott.gaynor at wmich.edu (Scott T Gaynor)
+Date: Sat, 03 Jan 2009 01:44:37 -0500
+Subject: [amelia] AmeliaView database format
+Message-ID: <4b021c727e2c.495ec305@wmich.edu>
+
+I could use some assistance in using AmeliaView. I have data from a clinical trial where 57 participants were randomized to one of two treatments. I am currently looking at data from measurements taken at three time points ? pretreatment, midtreatment, and posttreatment and would like to impute missing values from those who dropped out or failed to complete assessments (i.e., non-random, non-ignorable missing data). The input data format is SPSS. I have been getting a range of error messages, but I think they stem from not organizing the data file correctly. Below is a partial illustration of the current organization in SPSS (Dep=score on a depression measure, Neg=score on a measure of negative thinking), which does not work:
+
+Participant   Treatment   Dep-pre   Dep-mid   Dep-post   Neg-pre   Neg-mid   Neg-post
+1                         1              28             20	      15		80             65             50
+2                         2              25             23              20              85             80             80
+3                         1              30 	    25	                        80             70
+4                         2              20                                                 70
+.
+.
+.
+
+Any thoughts on creating a data frame the corresponds to the elements in Amelia View?s _Variables Dialog_ and _Time Series Cross Sectional Dialog_ options would be much appreciated.
+
+Sincerely,
+
+Scott
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From mblackwell at gmail.com  Sat Jan  3 12:15:58 2009
+From: mblackwell at gmail.com (Matt Blackwell)
+Date: Sat, 3 Jan 2009 12:15:58 -0500
+Subject: [amelia] AmeliaView database format
+In-Reply-To: <4b021c727e2c.495ec305@wmich.edu>
+References: <4b021c727e2c.495ec305@wmich.edu>
+Message-ID: <839691710901030915j6022e888t7bf6c02ced3c97be@mail.gmail.com>
+
+Hi Scott,
+
+It would help to know which error messages you find when using
+AmeliaView, but without knowing that, a few observation.
+
+First, you should be aware that the Amelia algorithm hinges on
+assumptions about the missingness mechanism. If your data has
+non-ignorable missingness (in the Rubin sense), then Amelia can be
+problematic. Amelia is optimal when the missingness is predictable
+given observed covariates, but does not depend on the missing values
+themselves. This is called missing at random (MAR) by Rubin and
+others. You can take a look at King, Honaker, Joseph and Scheve (2001)
+for more details:
+
+http://gking.harvard.edu/files/evil.pdf
+
+For the organization of your data, note that Amelia is designed for
+time-series cross-sectional data structures where there are quite a
+few time periods for each unit. In this case the data is usually
+arranged by unit-time. So your data would look like the following:
+
+Unit   Time   Dep    Neg
+1        1        28       50
+1        2        20       43
+1        3        80       32
+2        1        30       83
+2        2        NA      NA
+2        3        NA      NA
+
+You could then set the cross-sectional variable to "Unit" and the time
+variable to "Time."
+
+Your data structure, though, should work with Amelia as well, as long
+as you do not have that many variables. With either the TSCS format or
+yours, with only 57 observations, you will quickly run up against a
+boundary of 5-10 variables.
+
+I hope that helps.
+
+regards,
+matt.
+On Sat, Jan 3, 2009 at 1:44 AM, Scott T Gaynor <scott.gaynor at wmich.edu> wrote:
+> I could use some assistance in using AmeliaView. I have data from a clinical trial where 57 participants were randomized to one of two treatments. I am currently looking at data from measurements taken at three time points ? pretreatment, midtreatment, and posttreatment and would like to impute missing values from those who dropped out or failed to complete assessments (i.e., non-random, non-ignorable missing data). The input data format is SPSS. I have been getting a range of error messages, but I think they stem from not organizing the data file correctly. Below is a partial illustration of the current organization in SPSS (Dep=score on a depression measure, Neg=score on a measure of negative thinking), which does not work:
+>
+> Participant   Treatment   Dep-pre   Dep-mid   Dep-post   Neg-pre   Neg-mid   Neg-post
+> 1                         1              28             20            15                80             65             50
+> 2                         2              25             23              20              85             80             80
+> 3                         1              30         25                          80             70
+> 4                         2              20                                                 70
+> .
+> .
+> .
+>
+> Any thoughts on creating a data frame the corresponds to the elements in Amelia View's _Variables Dialog_ and _Time Series Cross Sectional Dialog_ options would be much appreciated.
+>
+> Sincerely,
+>
+> Scott
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From steven.shewfelt at yale.edu  Thu Jan 15 07:01:02 2009
+From: steven.shewfelt at yale.edu (Steve Shewfelt)
+Date: Thu, 15 Jan 2009 07:01:02 -0500
+Subject: [amelia] Running Diagnostics
+Message-ID: <496F257E.4040809@yale.edu>
+
+Hello,
+
+How does one run diagnostics based on saved output from an imputation 
+process (if indeed it is possible)? If the imputation takes a long time 
+and it is not possible to do the diagnostics immediately, can one shut 
+down R and return to the diagnostics later?
+
+For example, if one does an imputation of the following sort:
+ >output=amelia(data=data,m=5,archive=TRUE,outname="imputed",write.out=TRUE,keep.data=TRUE)
+
+And then saves the output as follows:
+ >save(output,file="out.rData")
+
+And then shuts down R to return at a later date to the diagnostics, how 
+would you go about completing the following command line:
+ >overimpute(data=data,output=????,var=5)
+
+I guess this is in some sense a question about how to read in an 
+".rData" data frame properly.
+
+Thank you in advance,
+
+Steve Shewfelt
+PhD Candidate
+Department of Political Science
+Yale University
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From steven.shewfelt at yale.edu  Thu Jan 15 07:03:57 2009
+From: steven.shewfelt at yale.edu (Steve Shewfelt)
+Date: Thu, 15 Jan 2009 07:03:57 -0500
+Subject: [amelia] One more diagnostics question
+Message-ID: <496F262D.1060607@yale.edu>
+
+Apologies - one additional question:
+
+Is it possible to ensure the label of the variable being overimputed is 
+included in the graph produced by "overimpute"? When I run 
+"compare.density", each graph produced is labeled, but the same is not 
+the case for overimpute. Is there a way to make this happen?
+
+Thanks again,
+
+Steve Shewfelt
+PhD Candidate
+Department of Political Science
+Yale University
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From rahsaan at polsci.umass.edu  Thu Jan 15 23:05:51 2009
+From: rahsaan at polsci.umass.edu (Rahsaan Maxwell)
+Date: Thu, 15 Jan 2009 23:05:51 -0500
+Subject: [amelia] Every observation is coded as missing
+Message-ID: <1232078751.4970079f1a0cf@mail-www.oit.umass.edu>
+
+I am trying to load SPSS datasets into AmeliaView.  I started with small
+datasets that include just a handful of variables (5-7) to see how the program
+works.  But everytime I load the datasets and 'Summarize Data', AmeliaView
+tells me that all the observations are missing for the variables, which is
+definitely not true in the original dataset.
+
+What am I doing wrong?
+
+Thank you,
+
+-Rahsaan
+
+Rahsaan Maxwell, Ph.D.
+Assistant Professor
+Department of Political Science
+University of Massachusetts, Amherst
+
+Postdoctoral Fellow
+Transatlantic Academy
+German Marshall Fund of the United States
+http://rahsaanmaxwell.googlepages.com
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From mblackwell at gmail.com  Wed Jan 21 15:57:55 2009
+From: mblackwell at gmail.com (Matt Blackwell)
+Date: Wed, 21 Jan 2009 15:57:55 -0500
+Subject: [amelia] One more diagnostics question
+In-Reply-To: <496F262D.1060607@yale.edu>
+References: <496F262D.1060607@yale.edu>
+Message-ID: <839691710901211257o17c2ad0fu38bf36c015fef520@mail.gmail.com>
+
+Hi Steve,
+
+Overimpute does not currently have that feature, but we will look into
+including it in the next update.
+
+Thanks for the suggestion,
+matt.
+
+On Thu, Jan 15, 2009 at 7:03 AM, Steve Shewfelt
+<steven.shewfelt at yale.edu> wrote:
+> Apologies - one additional question:
+>
+> Is it possible to ensure the label of the variable being overimputed is
+> included in the graph produced by "overimpute"? When I run
+> "compare.density", each graph produced is labeled, but the same is not the
+> case for overimpute. Is there a way to make this happen?
+>
+> Thanks again,
+>
+> Steve Shewfelt
+> PhD Candidate
+> Department of Political Science
+> Yale University
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From mblackwell at gmail.com  Wed Jan 21 15:58:11 2009
+From: mblackwell at gmail.com (Matt Blackwell)
+Date: Wed, 21 Jan 2009 15:58:11 -0500
+Subject: [amelia] Running Diagnostics
+In-Reply-To: <496F257E.4040809@yale.edu>
+References: <496F257E.4040809@yale.edu>
+Message-ID: <839691710901211258m1bd139c2hb4a48c41caa11039@mail.gmail.com>
+
+Hi Steve,
+
+When you load the .RData file it will put objects from the file back
+into your R session. You can think of it like a moving box that
+contains data frame, matrices, regression outputs, etc.
+
+For your specific problem, once you load the RData file, you should
+find "output" in your R sessions (you can see this by running ls()).
+Thus, you can run the diagnostics as follows:
+
+overimpute(data=data,output=output,var=5)
+
+Hope that helps!
+matt.
+
+On Thu, Jan 15, 2009 at 7:01 AM, Steve Shewfelt
+<steven.shewfelt at yale.edu> wrote:
+> Hello,
+>
+> How does one run diagnostics based on saved output from an imputation
+> process (if indeed it is possible)? If the imputation takes a long time and
+> it is not possible to do the diagnostics immediately, can one shut down R
+> and return to the diagnostics later?
+>
+> For example, if one does an imputation of the following sort:
+>>output=amelia(data=data,m=5,archive=TRUE,outname="imputed",write.out=TRUE,keep.data=TRUE)
+>
+> And then saves the output as follows:
+>>save(output,file="out.rData")
+>
+> And then shuts down R to return at a later date to the diagnostics, how
+> would you go about completing the following command line:
+>>overimpute(data=data,output=????,var=5)
+>
+> I guess this is in some sense a question about how to read in an ".rData"
+> data frame properly.
+>
+> Thank you in advance,
+>
+> Steve Shewfelt
+> PhD Candidate
+> Department of Political Science
+> Yale University
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From mblackwell at gmail.com  Wed Jan 21 16:06:41 2009
+From: mblackwell at gmail.com (Matt Blackwell)
+Date: Wed, 21 Jan 2009 16:06:41 -0500
+Subject: [amelia] Every observation is coded as missing
+In-Reply-To: <1232078751.4970079f1a0cf@mail-www.oit.umass.edu>
+References: <1232078751.4970079f1a0cf@mail-www.oit.umass.edu>
+Message-ID: <839691710901211306o48069248jb7052090535a32e0@mail.gmail.com>
+
+Hi Rahsaan,
+
+There are often quite a few formatting errors when attempting to move
+between software packages. You can see what is going in R with your
+file if you run the following line of code in R:
+
+library(foreign)
+x <- read.spss("filename", use.value.labels=FALSE, to.data.frame=TRUE)
+
+(you should replace "filename" with your SPSS file's name in quotes).
+This is the code that Amelia runs when importing the data. If there is
+a problem with the x matrix, something might be wrong with your
+datafile.
+
+Perhaps you can convert it to a CSV file and then try to run Amelia on that.
+
+cheers,
+matt.
+
+On Thu, Jan 15, 2009 at 11:05 PM, Rahsaan Maxwell
+<rahsaan at polsci.umass.edu> wrote:
+> I am trying to load SPSS datasets into AmeliaView.  I started with small
+> datasets that include just a handful of variables (5-7) to see how the program
+> works.  But everytime I load the datasets and 'Summarize Data', AmeliaView
+> tells me that all the observations are missing for the variables, which is
+> definitely not true in the original dataset.
+>
+> What am I doing wrong?
+>
+> Thank you,
+>
+> -Rahsaan
+>
+> Rahsaan Maxwell, Ph.D.
+> Assistant Professor
+> Department of Political Science
+> University of Massachusetts, Amherst
+>
+> Postdoctoral Fellow
+> Transatlantic Academy
+> German Marshall Fund of the United States
+> http://rahsaanmaxwell.googlepages.com
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+

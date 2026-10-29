@@ -1,0 +1,279 @@
+From Albrecht.Gradmann at ecologic.eu  Thu Jul 21 05:29:52 2011
+From: Albrecht.Gradmann at ecologic.eu (Albrecht Gradmann)
+Date: Thu, 21 Jul 2011 11:29:52 +0200
+Subject: [amelia] Problems with amelia
+Message-ID: <4E27F190.60402@ecologic.eu>
+
+Hello,
+
+I am just starting to work with Amelia. The examples from the vignette 
+work all fine, but when I use my own dataset which is being imported 
+from a *.csv, I get the error message "WError in matrix(1, AMn, 1) : 
+non-numeric matrix extent", which is a mystery to me.
+
+Since I am working on computer with a German locale (WinXP) it might 
+have something to do with the imported dataframe. However, from the 
+error message I cannot spot the problem. Attached you find a minimal 
+script and *.csv that should reproduce the error. Any hint how to handle 
+this problem would be greatly appreciated.
+
+With best regards from Berlin,
+Albrecht Gradmann
+
+P.S.: This is my first post to an R-related helplist. Please let me know 
+if essential information is missing or improperly posted.
+
+
+
+
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: minimal.csv
+Type: application/vnd.ms-excel
+Size: 2226 bytes
+Desc: not available
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110721/089c824f/attachment.xlb>
+-------------- next part --------------
+## Minimal script to reproduce error
+##
+## startup-stuff
+library(reshape)
+library(Amelia)
+
+
+
+## read.csv that
+##  - considers ":" as NA
+##  - skips the first 10 rows that are used to supply metainfo
+##  - does not alter the column names by adding Xes (Stata-convention)
+## 
+name.dates <- read.csv2("minimal.csv",na.strings = ":",skip=10,check.names=FALSE)
+# drop superfluous las column
+name.dates <- name.dates[,1:13]
+
+
+## melt and reshape so that the year information is put in colums
+melt.dates <- melt(name.dates, id = c("Indicator","Group","Country"))
+head(melt.dates)
+
+# Change modes to make summary look like summary(freetrade) from
+# Amelia tutorial
+melt.dates$value<-as.numeric(melt.dates$value)
+
+melt.dates$variable <- as.character(melt.dates$variable)
+melt.dates$variable <- as.integer(melt.dates$variable)
+
+melt.dates$Country <- as.character(melt.dates$Country)
+
+summary(melt.dates)
+head(melt.dates)
+
+
+## Start using Amelia ##
+
+amelia(melt.dates,m=1,ts="variable",cs="Country",idvars=c("Indicator","Group"))
+# --> WError in matrix(1, AMn, 1) : non-numeric matrix extent
+
+amelia(melt.dates[,c("Country","variable","value")],m=1,ts="variable",cs="Country")
+# --> WError in matrix(1, AMn, 1) : non-numeric matrix extent
+
+
+
+
+From blackwel at fas.harvard.edu  Thu Jul 21 08:02:47 2011
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Thu, 21 Jul 2011 08:02:47 -0400
+Subject: [amelia] Problems with amelia
+In-Reply-To: <4E27F190.60402@ecologic.eu>
+References: <4E27F190.60402@ecologic.eu>
+Message-ID: <CAK1YySHn=emJtO=YPd72K6ZpJbuYRRToexJTvT0ck2Uvfc8tvA@mail.gmail.com>
+
+Hi Albrecht,
+
+It turns out that the way you have called Amelia attempts to impute your
+missing value with no other covariates. I believe you intend for time to
+help you impute, but you must specify the "splinetime" argument for that to
+work, which adds functions of time to your imputation. Here is an example:
+
+amelia(melt.dates,m=1,ts="variable",cs="Country",idvars=c("Indicator","Group"),
+splinetime = 3)
+
+Hope that helps!
+
+Cheers,
+matt.
+
+On Thu, Jul 21, 2011 at 5:29 AM, Albrecht Gradmann <
+Albrecht.Gradmann at ecologic.eu> wrote:
+
+> Hello,
+>
+> I am just starting to work with Amelia. The examples from the vignette work
+> all fine, but when I use my own dataset which is being imported from a
+> *.csv, I get the error message "WError in matrix(1, AMn, 1) : non-numeric
+> matrix extent", which is a mystery to me.
+>
+> Since I am working on computer with a German locale (WinXP) it might have
+> something to do with the imported dataframe. However, from the error message
+> I cannot spot the problem. Attached you find a minimal script and *.csv that
+> should reproduce the error. Any hint how to handle this problem would be
+> greatly appreciated.
+>
+> With best regards from Berlin,
+> Albrecht Gradmann
+>
+> P.S.: This is my first post to an R-related helplist. Please let me know if
+> essential information is missing or improperly posted.
+>
+>
+>
+>
+>
+>
+> ## Minimal script to reproduce error
+> ##
+> ## startup-stuff
+> library(reshape)
+> library(Amelia)
+>
+>
+>
+> ## read.csv that
+> ##  - considers ":" as NA
+> ##  - skips the first 10 rows that are used to supply metainfo
+> ##  - does not alter the column names by adding Xes (Stata-convention)
+> ##
+> name.dates <- read.csv2("minimal.csv",na.strings =
+> ":",skip=10,check.names=FALSE)
+> # drop superfluous las column
+> name.dates <- name.dates[,1:13]
+>
+>
+> ## melt and reshape so that the year information is put in colums
+> melt.dates <- melt(name.dates, id = c("Indicator","Group","Country"))
+> head(melt.dates)
+>
+> # Change modes to make summary look like summary(freetrade) from
+> # Amelia tutorial
+> melt.dates$value<-as.numeric(melt.dates$value)
+>
+> melt.dates$variable <- as.character(melt.dates$variable)
+> melt.dates$variable <- as.integer(melt.dates$variable)
+>
+> melt.dates$Country <- as.character(melt.dates$Country)
+>
+> summary(melt.dates)
+> head(melt.dates)
+>
+>
+> ## Start using Amelia ##
+>
+>
+> amelia(melt.dates,m=1,ts="variable",cs="Country",idvars=c("Indicator","Group"))
+> # --> WError in matrix(1, AMn, 1) : non-numeric matrix extent
+>
+>
+> amelia(melt.dates[,c("Country","variable","value")],m=1,ts="variable",cs="Country")
+> # --> WError in matrix(1, AMn, 1) : non-numeric matrix extent
+>
+>
+>
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110721/468a2dbd/attachment.html>
+
+From jaemook-lee at uiowa.edu  Tue Jul 26 18:04:48 2011
+From: jaemook-lee at uiowa.edu (Lee, Jae Mook)
+Date: Tue, 26 Jul 2011 22:04:48 +0000
+Subject: [amelia] Exceptionally high degrees of freedom
+Message-ID: <62D66E2F1561564D955E00F5C6EDA9D90A0042E6@ITSNT438.iowa.uiowa.edu>
+
+Hello,
+
+
+I applied Amelia II to multiply impute missings in our survey data. I used AmeliaView and the imputation was successful, so Amelia generated five sets of multiply imputed data in Stata (dta) format (that I had chosen).
+
+After the multiple imputation I conducted a few sets of regression analyses using "Clarify" to combine the results across the five multiply imputed data. The analyses also worked well,the coefficients all make sense (they correspond with the other analyses we have done using "observed" data) but a problem is some of the analyses sometimes yielded exceptionally high degrees of freedom for some variables.  I don't know why I got this inflated degrees of freedom because all procedures went well without any error messages (not every variables but some of the variables included yielded high degrees of freedom). For your information, I didn't have any other problems other than this.
+
+With regard to this, I emailed to Matt and was advised to use Zelig for data analysis (and I will try to do that) but still wonder about these generally high degrees of freedom issue.
+I attached the some of the results from our analysis below (sorry about very-long variable name, it tracks our record of changes), so if any of you can give us any reasons for this, it will be greatly appreciated !!!
+Thanks a lot!
+
+
+
+
+*Model 4
+estsimp ologit Academic_Rank female_excludes_missing Minority_excludes_missing MarriedPartnered childrennumber_excluding_missng  ///
+Partner_employed_fulltime ProgramRankReversed YearsToDegree_b Q18Specified_1a Overalladvise ///
+Q24a_1 Joint_appt_exclude_missing Private_Instit_excluding_missng PHD_program_excluding_missing MA_program_excluding_missing  ///
+CurrentDepartmentRank Overallresource Released_from_teaching Age,  ///
+mi(Amelia_07081 Amelia_07082 Amelia_07083 Amelia_07084 Amelia_07085)
+
+
+
+Ologit estimates (via multiple imputation)          Nobs = 1274
+
+---------------------------------------------------------------
+Academic_Rank |      Coef.   Std. Err.       t         d.f.    P>|t|
+---------+-----------------------------------------------------
+female~g |  -.3274721    .166179     -1.971         46    0.055
+Minori~g |  -.2167513   .2327173     -0.931         21    0.362
+Marrie~d |   .1626777   .2992682      0.544         13    0.596
+childr~g |  -.0014547   .0611694     -0.024       1369    0.981
+Partne~e |   .1729933   .1713316      1.010         66    0.316
+Progra~d |   .0937531   .0533029      1.759        737    0.079
+YearsT~b |  -.1231956   .0332016     -3.711        326    0.000
+Q18Sp~1a |   -.031667   .0363591     -0.871        140    0.385
+Overa~se |    .255504   .1046298      2.442        391    0.015
+  Q24a_1 |   .3497809   .0661697      5.286        107    0.000
+Joint_~g |    .240031   .2157427      1.113        884    0.266
+Privat~g |   .1729383   .1528752      1.131       1393    0.258
+PHD_pr~g |  -.4210008   .2339427     -1.800        450    0.073
+MA_pro~g |  -.5302672   .1984522     -2.672        228    0.008
+Curren~k |   .0081537   .0687515      0.119        962    0.906
+Overa~ce |   .0831138   .0275379      3.018        227    0.003
+Releas~g |   .1378443   .0192077      7.177       8560    0.000
+     Age |   .1728987   .0092188     18.755        107    0.000
+   _cut1 |   7.459078   .5828492     12.798        175    0.000
+   _cut2 |   9.781068   .6282563     15.569        175    0.000
+---------------------------------------------------------------
+
+Number of simulations  : 1000
+Names of new variables : b1 b2 b3 b4 b5 b6 b7 b8 b9 b10 b11 b12 b13 b14 b15 b16 b17 b18 b19 b20
+Datasets used for MI   : Amelia_07081 Amelia_07082 Amelia_07083 Amelia_07084 Amelia_07085
+
+
+
+
+Lee, Jaemook
+The University of Iowa
+Ph.D Candidate
+Department of Political Science
+Iowa City, Iowa,
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110726/3f3eb912/attachment.html>
+
+From felipe.parra at quantil.com.co  Thu Jul 28 13:03:26 2011
+From: felipe.parra at quantil.com.co (Luis Felipe Parra)
+Date: Thu, 28 Jul 2011 12:03:26 -0500
+Subject: [amelia] Re: Missing Data in amelia output
+In-Reply-To: <CACNozQfKHJNRX2PK0n3mOpgd9Cf0smhjnKCiHonRQBWLXiJqHw@mail.gmail.com>
+References: <CACNozQfKHJNRX2PK0n3mOpgd9Cf0smhjnKCiHonRQBWLXiJqHw@mail.gmail.com>
+Message-ID: <CACNozQe9+fwn1PSTKdm8eqW_4403cCfBDAFhUzVHm3aM+STh9Q@mail.gmail.com>
+
+Hello, I've just discovered amelia today and I am trying to use to to fill
+some missing values in the attached dataset. I am using amelia in R, when I
+call amelia(y) I am getting my output with still some missing values.
+
+Does somebody know what might be I doing wrong, or what might be going on.
+Thank you
+
+Felipe Parra
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110728/23a7236b/attachment.html>
+

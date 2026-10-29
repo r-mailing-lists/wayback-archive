@@ -1,0 +1,574 @@
+From sivanrotenberg at gmail.com  Wed Mar 17 20:30:33 2010
+From: sivanrotenberg at gmail.com (Sivan Rotenberg)
+Date: Wed, 17 Mar 2010 20:30:33 -0400
+Subject: [amelia] Times series cross sectional imputation
+Message-ID: <8a0a8c3c1003171730m9ff2787y43d1fe2b17e760ce@mail.gmail.com>
+
+Hi,
+
+ I am trying to impute my data file that has participants over three days of
+sampling and two predictors. I set up my data in SPSS with like this:
+
+ID        Time  predictor1 predictor2 measure 1 measure 2 measure 3 measure
+4
+101.0    1.0      10.0         8:58        1.097       -0.492
+9.680       -0.095
+101.0    2.0      10.0         9:00        2.399        0.299
+13.202      -0.801
+101.0    3.0      10.0         8:15        1.636       -0.316
+20.445      -0.931
+102.0    1.0      27.0         7:07        3.903        0.473
+31.106      -0.916
+102.0    2.0      27.0         7:21        3.797        0.473
+31.994      -0.966
+102.0    3.0      27.0         7:34        2.829        0.227
+29.497      -0.958
+
+I tried using the time series cross sectional option using time as ts and ID
+as cs. I put the polynomials time as 1 (although I'm really not sure about
+that) and used an EM prior of 4. At the bottom of my AmeliaView it says I
+have 381  observations and 9 variables, which does not exceed the p(p+3)/2
+formula yet I am still getting error code 34:
+
+Amelia Error Code: 34
+ The number of observations in too low to estimate the number of
+ parameters.  You can either remove some variables, reduce
+ the order of the time polynomial, or increase the empirical prior.
+
+You have recieved an error.  You can close this window and reset
+ various options to correct the error.
+
+I'm not sure what I'm doing wrong! Any help would be greatly appreciated!
+
+Thank you,
+Sivan
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20100317/34e8e88d/attachment.html>
+
+From blackwel at fas.harvard.edu  Wed Mar 17 20:59:55 2010
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Wed, 17 Mar 2010 20:59:55 -0400
+Subject: [amelia] Times series cross sectional imputation
+In-Reply-To: <8a0a8c3c1003171730m9ff2787y43d1fe2b17e760ce@mail.gmail.com>
+References: <8a0a8c3c1003171730m9ff2787y43d1fe2b17e760ce@mail.gmail.com>
+Message-ID: <839691711003171759mf429a48r3d9f91c773f7abb4@mail.gmail.com>
+
+Hi Sivan,
+
+I think they problem is that you may have most likely set the the
+polynomials of time to intersect with the cross-section. Unfortunately
+this adds many parameters to the model (2 for each cross-section
+unit). If you uncheck this box (in the TSCS menu), then it should run.
+
+Cheers,
+matt.
+
+On Wed, Mar 17, 2010 at 8:30 PM, Sivan Rotenberg
+<sivanrotenberg at gmail.com> wrote:
+> Hi,
+>
+> ?I am trying to impute my data file that has participants over three days of
+> sampling and two predictors. I set up my data in SPSS with like this:
+>
+> ID??????? Time? predictor1 predictor2 measure 1 measure 2 measure 3 measure
+> 4
+> 101.0??? 1.0????? 10.0???????? 8:58??????? 1.097?????? -0.492
+> 9.680? ? ?? -0.095
+> 101.0??? 2.0????? 10.0???????? 9:00??????? 2.399??????? 0.299
+> 13.202????? -0.801
+> 101.0??? 3.0?? ?? 10.0???????? 8:15??????? 1.636?????? -0.316
+> 20.445????? -0.931
+> 102.0??? 1.0????? 27.0???????? 7:07??????? 3.903??????? 0.473
+> 31.106????? -0.916
+> 102.0??? 2.0????? 27.0???????? 7:21??????? 3.797??????? 0.473
+> 31.994????? -0.966
+> 102.0??? 3.0????? 27.0???????? 7:34??????? 2.829??????? 0.227
+> 29.497????? -0.958
+>
+> I tried using the time series cross sectional option using time as ts and ID
+> as cs. I put the polynomials time as 1 (although I'm really not sure about
+> that) and used an EM prior of 4. At the bottom of my AmeliaView it says I
+> have 381? observations and 9 variables, which does not exceed the p(p+3)/2
+> formula yet I am still getting error code 34:
+>
+> Amelia Error Code: 34
+> ?The number of observations in too low to estimate the number of
+> ?parameters.? You can either remove some variables, reduce
+> ?the order of the time polynomial, or increase the empirical prior.
+>
+> You have recieved an error.? You can close this window and reset
+> ?various options to correct the error.
+>
+> I'm not sure what I'm doing wrong! Any help would be greatly appreciated!
+>
+> Thank you,
+> Sivan
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From sivanrotenberg at gmail.com  Wed Mar 17 21:08:27 2010
+From: sivanrotenberg at gmail.com (Sivan Rotenberg)
+Date: Wed, 17 Mar 2010 21:08:27 -0400
+Subject: [amelia] Times series cross sectional imputation
+In-Reply-To: <839691711003171759mf429a48r3d9f91c773f7abb4@mail.gmail.com>
+References: <8a0a8c3c1003171730m9ff2787y43d1fe2b17e760ce@mail.gmail.com> <839691711003171759mf429a48r3d9f91c773f7abb4@mail.gmail.com>
+Message-ID: <8a0a8c3c1003171808h26c9c5f8oee6a01f8edba89e8@mail.gmail.com>
+
+Hi Matt,
+
+ Thank you very much! I have another question. Is there an optimum number of
+chains per imputation? I run about 20 sets and when I did it for my data I
+got chain lengths between 4-6, is that ok? Does the chain length provide any
+additional information?
+
+Thank you,
+Sivan
+
+On Wed, Mar 17, 2010 at 8:59 PM, Matt Blackwell <blackwel at fas.harvard.edu>wrote:
+
+> Hi Sivan,
+>
+> I think they problem is that you may have most likely set the the
+> polynomials of time to intersect with the cross-section. Unfortunately
+> this adds many parameters to the model (2 for each cross-section
+> unit). If you uncheck this box (in the TSCS menu), then it should run.
+>
+> Cheers,
+> matt.
+>
+> On Wed, Mar 17, 2010 at 8:30 PM, Sivan Rotenberg
+> <sivanrotenberg at gmail.com> wrote:
+> > Hi,
+> >
+> >  I am trying to impute my data file that has participants over three days
+> of
+> > sampling and two predictors. I set up my data in SPSS with like this:
+> >
+> > ID        Time  predictor1 predictor2 measure 1 measure 2 measure 3
+> measure
+> > 4
+> > 101.0    1.0      10.0         8:58        1.097       -0.492
+> > 9.680       -0.095
+> > 101.0    2.0      10.0         9:00        2.399        0.299
+> > 13.202      -0.801
+> > 101.0    3.0      10.0         8:15        1.636       -0.316
+> > 20.445      -0.931
+> > 102.0    1.0      27.0         7:07        3.903        0.473
+> > 31.106      -0.916
+> > 102.0    2.0      27.0         7:21        3.797        0.473
+> > 31.994      -0.966
+> > 102.0    3.0      27.0         7:34        2.829        0.227
+> > 29.497      -0.958
+> >
+> > I tried using the time series cross sectional option using time as ts and
+> ID
+> > as cs. I put the polynomials time as 1 (although I'm really not sure
+> about
+> > that) and used an EM prior of 4. At the bottom of my AmeliaView it says I
+> > have 381  observations and 9 variables, which does not exceed the
+> p(p+3)/2
+> > formula yet I am still getting error code 34:
+> >
+> > Amelia Error Code: 34
+> >  The number of observations in too low to estimate the number of
+> >  parameters.  You can either remove some variables, reduce
+> >  the order of the time polynomial, or increase the empirical prior.
+> >
+> > You have recieved an error.  You can close this window and reset
+> >  various options to correct the error.
+> >
+> > I'm not sure what I'm doing wrong! Any help would be greatly appreciated!
+> >
+> > Thank you,
+> > Sivan
+> >
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20100317/e2fee68c/attachment.html>
+
+From blackwel at fas.harvard.edu  Wed Mar 17 21:19:33 2010
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Wed, 17 Mar 2010 21:19:33 -0400
+Subject: [amelia] Times series cross sectional imputation
+In-Reply-To: <8a0a8c3c1003171808h26c9c5f8oee6a01f8edba89e8@mail.gmail.com>
+References: <8a0a8c3c1003171730m9ff2787y43d1fe2b17e760ce@mail.gmail.com> <839691711003171759mf429a48r3d9f91c773f7abb4@mail.gmail.com> <8a0a8c3c1003171808h26c9c5f8oee6a01f8edba89e8@mail.gmail.com>
+Message-ID: <839691711003171819ne986227ib821d35625a75517@mail.gmail.com>
+
+Hi Sivan,
+
+Typically, the length of the chain indicated how much information is
+in the missing part of your data. So, lower chain lengths are
+generally better and 4-6 are fairly short chains. Chains in large,
+complicated datasets can easily reach into the hundreds or thousands.
+
+Cheers,
+matt.
+
+On Wed, Mar 17, 2010 at 9:08 PM, Sivan Rotenberg
+<sivanrotenberg at gmail.com> wrote:
+> Hi Matt,
+>
+> ?Thank you very much! I have another question. Is there an optimum number of
+> chains per imputation? I run about 20 sets and when I did it for my data I
+> got chain lengths between 4-6, is that ok? Does the chain length provide any
+> additional information?
+>
+> Thank you,
+> Sivan
+>
+> On Wed, Mar 17, 2010 at 8:59 PM, Matt Blackwell <blackwel at fas.harvard.edu>
+> wrote:
+>>
+>> Hi Sivan,
+>>
+>> I think they problem is that you may have most likely set the the
+>> polynomials of time to intersect with the cross-section. Unfortunately
+>> this adds many parameters to the model (2 for each cross-section
+>> unit). If you uncheck this box (in the TSCS menu), then it should run.
+>>
+>> Cheers,
+>> matt.
+>>
+>> On Wed, Mar 17, 2010 at 8:30 PM, Sivan Rotenberg
+>> <sivanrotenberg at gmail.com> wrote:
+>> > Hi,
+>> >
+>> > ?I am trying to impute my data file that has participants over three
+>> > days of
+>> > sampling and two predictors. I set up my data in SPSS with like this:
+>> >
+>> > ID??????? Time? predictor1 predictor2 measure 1 measure 2 measure 3
+>> > measure
+>> > 4
+>> > 101.0??? 1.0????? 10.0???????? 8:58??????? 1.097?????? -0.492
+>> > 9.680? ? ?? -0.095
+>> > 101.0??? 2.0????? 10.0???????? 9:00??????? 2.399??????? 0.299
+>> > 13.202????? -0.801
+>> > 101.0??? 3.0?? ?? 10.0???????? 8:15??????? 1.636?????? -0.316
+>> > 20.445????? -0.931
+>> > 102.0??? 1.0????? 27.0???????? 7:07??????? 3.903??????? 0.473
+>> > 31.106????? -0.916
+>> > 102.0??? 2.0????? 27.0???????? 7:21??????? 3.797??????? 0.473
+>> > 31.994????? -0.966
+>> > 102.0??? 3.0????? 27.0???????? 7:34??????? 2.829??????? 0.227
+>> > 29.497????? -0.958
+>> >
+>> > I tried using the time series cross sectional option using time as ts
+>> > and ID
+>> > as cs. I put the polynomials time as 1 (although I'm really not sure
+>> > about
+>> > that) and used an EM prior of 4. At the bottom of my AmeliaView it says
+>> > I
+>> > have 381? observations and 9 variables, which does not exceed the
+>> > p(p+3)/2
+>> > formula yet I am still getting error code 34:
+>> >
+>> > Amelia Error Code: 34
+>> > ?The number of observations in too low to estimate the number of
+>> > ?parameters.? You can either remove some variables, reduce
+>> > ?the order of the time polynomial, or increase the empirical prior.
+>> >
+>> > You have recieved an error.? You can close this window and reset
+>> > ?various options to correct the error.
+>> >
+>> > I'm not sure what I'm doing wrong! Any help would be greatly
+>> > appreciated!
+>> >
+>> > Thank you,
+>> > Sivan
+>> >
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From nizhang at calpoly.edu  Tue Mar 30 12:00:25 2010
+From: nizhang at calpoly.edu (Shanruo Ning Zhang)
+Date: Tue, 30 Mar 2010 09:00:25 -0700
+Subject: [amelia] integrating imputed and un-imputed variables?
+In-Reply-To: <839691711003171819ne986227ib821d35625a75517@mail.gmail.com>
+References: <8a0a8c3c1003171730m9ff2787y43d1fe2b17e760ce@mail.gmail.com> <839691711003171759mf429a48r3d9f91c773f7abb4@mail.gmail.com> <8a0a8c3c1003171808h26c9c5f8oee6a01f8edba89e8@mail.gmail.com> <839691711003171819ne986227ib821d35625a75517@mail.gmail.com>
+Message-ID: <D10F470F-804A-48F9-9754-4016E9AB0A14@calpoly.edu>
+
+Dear Amelia authors,
+As an effort to reduce the amount of imputed values used in our  
+analysis, my co-author and I are contemplating merging some imputed  
+variables back into the original (un-imputed) data set and use imputed  
+and un-imputed variables together.  Is this a feasible plan?  If so,  
+can I still use the functions on page 5-6 on the the Amelia User's  
+Guide (Amelia II: A Program for Missing Data) to combine the results?
+Thanks very much.
+Best,
+Shanruo Ning Zhang
+Assistant Professor
+California Polytechnic State University
+San Luis Obispo, CA 93401
+
+On Mar 17, 2010, at 6:19 PM, Matt Blackwell wrote:
+
+> Hi Sivan,
+>
+> Typically, the length of the chain indicated how much information is
+> in the missing part of your data. So, lower chain lengths are
+> generally better and 4-6 are fairly short chains. Chains in large,
+> complicated datasets can easily reach into the hundreds or thousands.
+>
+> Cheers,
+> matt.
+>
+> On Wed, Mar 17, 2010 at 9:08 PM, Sivan Rotenberg
+> <sivanrotenberg at gmail.com> wrote:
+>> Hi Matt,
+>>
+>>  Thank you very much! I have another question. Is there an optimum  
+>> number of
+>> chains per imputation? I run about 20 sets and when I did it for my  
+>> data I
+>> got chain lengths between 4-6, is that ok? Does the chain length  
+>> provide any
+>> additional information?
+>>
+>> Thank you,
+>> Sivan
+>>
+>> On Wed, Mar 17, 2010 at 8:59 PM, Matt Blackwell <blackwel at fas.harvard.edu 
+>> >
+>> wrote:
+>>>
+>>> Hi Sivan,
+>>>
+>>> I think they problem is that you may have most likely set the the
+>>> polynomials of time to intersect with the cross-section.  
+>>> Unfortunately
+>>> this adds many parameters to the model (2 for each cross-section
+>>> unit). If you uncheck this box (in the TSCS menu), then it should  
+>>> run.
+>>>
+>>> Cheers,
+>>> matt.
+>>>
+>>> On Wed, Mar 17, 2010 at 8:30 PM, Sivan Rotenberg
+>>> <sivanrotenberg at gmail.com> wrote:
+>>>> Hi,
+>>>>
+>>>>  I am trying to impute my data file that has participants over  
+>>>> three
+>>>> days of
+>>>> sampling and two predictors. I set up my data in SPSS with like  
+>>>> this:
+>>>>
+>>>> ID        Time  predictor1 predictor2 measure 1 measure 2 measure 3
+>>>> measure
+>>>> 4
+>>>> 101.0    1.0      10.0         8:58        1.097       -0.492
+>>>> 9.680       -0.095
+>>>> 101.0    2.0      10.0         9:00        2.399        0.299
+>>>> 13.202      -0.801
+>>>> 101.0    3.0      10.0         8:15        1.636       -0.316
+>>>> 20.445      -0.931
+>>>> 102.0    1.0      27.0         7:07        3.903        0.473
+>>>> 31.106      -0.916
+>>>> 102.0    2.0      27.0         7:21        3.797        0.473
+>>>> 31.994      -0.966
+>>>> 102.0    3.0      27.0         7:34        2.829        0.227
+>>>> 29.497      -0.958
+>>>>
+>>>> I tried using the time series cross sectional option using time  
+>>>> as ts
+>>>> and ID
+>>>> as cs. I put the polynomials time as 1 (although I'm really not  
+>>>> sure
+>>>> about
+>>>> that) and used an EM prior of 4. At the bottom of my AmeliaView  
+>>>> it says
+>>>> I
+>>>> have 381  observations and 9 variables, which does not exceed the
+>>>> p(p+3)/2
+>>>> formula yet I am still getting error code 34:
+>>>>
+>>>> Amelia Error Code: 34
+>>>>  The number of observations in too low to estimate the number of
+>>>>  parameters.  You can either remove some variables, reduce
+>>>>  the order of the time polynomial, or increase the empirical prior.
+>>>>
+>>>> You have recieved an error.  You can close this window and reset
+>>>>  various options to correct the error.
+>>>>
+>>>> I'm not sure what I'm doing wrong! Any help would be greatly
+>>>> appreciated!
+>>>>
+>>>> Thank you,
+>>>> Sivan
+>>>>
+>>
+>>
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/? 
+> info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From blackwel at fas.harvard.edu  Wed Mar 31 17:52:56 2010
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Wed, 31 Mar 2010 17:52:56 -0400
+Subject: [amelia] integrating imputed and un-imputed variables?
+In-Reply-To: <D10F470F-804A-48F9-9754-4016E9AB0A14@calpoly.edu>
+References: <8a0a8c3c1003171730m9ff2787y43d1fe2b17e760ce@mail.gmail.com> <839691711003171759mf429a48r3d9f91c773f7abb4@mail.gmail.com> <8a0a8c3c1003171808h26c9c5f8oee6a01f8edba89e8@mail.gmail.com> <839691711003171819ne986227ib821d35625a75517@mail.gmail.com> <D10F470F-804A-48F9-9754-4016E9AB0A14@calpoly.edu>
+Message-ID: <z2t839691711003311452nfbcb2722o53970527cc209834@mail.gmail.com>
+
+Hi Shanruo,
+
+I'm not exactly sure what you mean. If there are certain variables in
+your data that you do not want to impute, you can always set them to
+an ID variable in the Amelia options. But you should only do this for
+variables that you do not want to include in the analysis or
+imputation, such as unit-specific identifiers. In most cases you do
+not want to re-introduce missingness into your data by removing
+imputed values.
+
+In any event, you can always use the combination rules for getting
+your estimates.
+
+Cheers,
+matt.
+
+On Tue, Mar 30, 2010 at 12:00 PM, Shanruo Ning Zhang
+<nizhang at calpoly.edu> wrote:
+> Dear Amelia authors,
+> As an effort to reduce the amount of imputed values used in our analysis, my
+> co-author and I are contemplating merging some imputed variables back into
+> the original (un-imputed) data set and use imputed and un-imputed variables
+> together. ?Is this a feasible plan? ?If so, can I still use the functions on
+> page 5-6 on the the Amelia User's Guide (Amelia II: A Program for Missing
+> Data) to combine the results?
+> Thanks very much.
+> Best,
+> Shanruo Ning Zhang
+> Assistant Professor
+> California Polytechnic State University
+> San Luis Obispo, CA 93401
+>
+> On Mar 17, 2010, at 6:19 PM, Matt Blackwell wrote:
+>
+>> Hi Sivan,
+>>
+>> Typically, the length of the chain indicated how much information is
+>> in the missing part of your data. So, lower chain lengths are
+>> generally better and 4-6 are fairly short chains. Chains in large,
+>> complicated datasets can easily reach into the hundreds or thousands.
+>>
+>> Cheers,
+>> matt.
+>>
+>> On Wed, Mar 17, 2010 at 9:08 PM, Sivan Rotenberg
+>> <sivanrotenberg at gmail.com> wrote:
+>>>
+>>> Hi Matt,
+>>>
+>>> ?Thank you very much! I have another question. Is there an optimum number
+>>> of
+>>> chains per imputation? I run about 20 sets and when I did it for my data
+>>> I
+>>> got chain lengths between 4-6, is that ok? Does the chain length provide
+>>> any
+>>> additional information?
+>>>
+>>> Thank you,
+>>> Sivan
+>>>
+>>> On Wed, Mar 17, 2010 at 8:59 PM, Matt Blackwell
+>>> <blackwel at fas.harvard.edu>
+>>> wrote:
+>>>>
+>>>> Hi Sivan,
+>>>>
+>>>> I think they problem is that you may have most likely set the the
+>>>> polynomials of time to intersect with the cross-section. Unfortunately
+>>>> this adds many parameters to the model (2 for each cross-section
+>>>> unit). If you uncheck this box (in the TSCS menu), then it should run.
+>>>>
+>>>> Cheers,
+>>>> matt.
+>>>>
+>>>> On Wed, Mar 17, 2010 at 8:30 PM, Sivan Rotenberg
+>>>> <sivanrotenberg at gmail.com> wrote:
+>>>>>
+>>>>> Hi,
+>>>>>
+>>>>> ?I am trying to impute my data file that has participants over three
+>>>>> days of
+>>>>> sampling and two predictors. I set up my data in SPSS with like this:
+>>>>>
+>>>>> ID ? ? ? ?Time ?predictor1 predictor2 measure 1 measure 2 measure 3
+>>>>> measure
+>>>>> 4
+>>>>> 101.0 ? ?1.0 ? ? ?10.0 ? ? ? ? 8:58 ? ? ? ?1.097 ? ? ? -0.492
+>>>>> 9.680 ? ? ? -0.095
+>>>>> 101.0 ? ?2.0 ? ? ?10.0 ? ? ? ? 9:00 ? ? ? ?2.399 ? ? ? ?0.299
+>>>>> 13.202 ? ? ?-0.801
+>>>>> 101.0 ? ?3.0 ? ? ?10.0 ? ? ? ? 8:15 ? ? ? ?1.636 ? ? ? -0.316
+>>>>> 20.445 ? ? ?-0.931
+>>>>> 102.0 ? ?1.0 ? ? ?27.0 ? ? ? ? 7:07 ? ? ? ?3.903 ? ? ? ?0.473
+>>>>> 31.106 ? ? ?-0.916
+>>>>> 102.0 ? ?2.0 ? ? ?27.0 ? ? ? ? 7:21 ? ? ? ?3.797 ? ? ? ?0.473
+>>>>> 31.994 ? ? ?-0.966
+>>>>> 102.0 ? ?3.0 ? ? ?27.0 ? ? ? ? 7:34 ? ? ? ?2.829 ? ? ? ?0.227
+>>>>> 29.497 ? ? ?-0.958
+>>>>>
+>>>>> I tried using the time series cross sectional option using time as ts
+>>>>> and ID
+>>>>> as cs. I put the polynomials time as 1 (although I'm really not sure
+>>>>> about
+>>>>> that) and used an EM prior of 4. At the bottom of my AmeliaView it says
+>>>>> I
+>>>>> have 381 ?observations and 9 variables, which does not exceed the
+>>>>> p(p+3)/2
+>>>>> formula yet I am still getting error code 34:
+>>>>>
+>>>>> Amelia Error Code: 34
+>>>>> ?The number of observations in too low to estimate the number of
+>>>>> ?parameters. ?You can either remove some variables, reduce
+>>>>> ?the order of the time polynomial, or increase the empirical prior.
+>>>>>
+>>>>> You have recieved an error. ?You can close this window and reset
+>>>>> ?various options to correct the error.
+>>>>>
+>>>>> I'm not sure what I'm doing wrong! Any help would be greatly
+>>>>> appreciated!
+>>>>>
+>>>>> Thank you,
+>>>>> Sivan
+>>>>>
+>>>
+>>>
+>> -
+>> Amelia mailing list served by Harvard-MIT Data Center
+>> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>> More info about Amelia: http://gking.harvard.edu/amelia
+>
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+

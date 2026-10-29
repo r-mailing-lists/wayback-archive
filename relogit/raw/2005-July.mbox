@@ -1,0 +1,192 @@
+From king at harvard.edu  Wed Jul 13 17:37:04 2005
+From: king at harvard.edu (Gary King)
+Date: Wed, 13 Jul 2005 17:37:04 -0400 (EDT)
+Subject: [relogit] Re: FW: Logit
+In-Reply-To: <142177B7CB694B4183C4A43C0D6BDA9A5489F5@mbexchange-ms.mbnet.ad>
+References: <142177B7CB694B4183C4A43C0D6BDA9A5489F5@mbexchange-ms.mbnet.ad>
+Message-ID: <Pine.LNX.4.63.0507131158450.12012@w3.hmdc.harvard.edu>
+
+
+
+On Wed, 13 Jul 2005, Barbaresco Gabriele wrote:
+
+>> Dear Prof. King,
+>>
+>> I have read with great interest the following your papers on logit and 
+>> rare events:
+>>
+>> Logistic regression in rare events Explaining rare events in 
+>> international relations
+>>
+>> I really appreciated them, also due to the lack of academic literature 
+>> on this important topics. I am currently working on a model to forecast 
+>> companies failure and so I am dealing with logit and rare events.
+>>
+>> Referring to the second paper, the less technical one, I'd like to be 
+>> advised on the following points:
+>>
+>> 1) Pag. 697, I see that the standard errors of betas depend on the
+>>    estimated probability, that in rare events is usually very far from
+>>    0.5 , but greater (if the model works well) for Y=1 than for Y=0.
+>>    So, you argue, the ones have more informative power. To reduce these
+>>    errors, can I balance the sample (50% of ones and 50% of zeros) or
+>>    better use the original sample balancing observations that they are
+>>    equally weighted? It seems from my simulation that rebalancing the
+>>    sample lead to better Wald test and also to better pseudo Rsquared
+>>    measures of fitting. In doing so the estimated probability range
+>>    from 0 to 1, and 0.5 could be used as cutoff.
+
+if you can 'balance' the sample by collecting additional data (the 1s), 
+then that's great.  but if you're talking about discarding 0s, that's not 
+generally a good idea (although there are possible exceptions unrelated to 
+your point). in statistics, more data are better.
+
+>> 2) Page 704, here again it seems to me that the bias coefficient on the
+>>    costant is smaller the bigger is the sample (n stand at denominator)
+>>    and the closer the probability to 0.5. I work with a sample of
+>>    around 180.000 items, if I rebalance the sample as above, can I
+>>    reduce this source of bias too?
+
+probably not.
+
+>>
+>> In a nutshell, it seems to me that rebalancing the sample can reduce 
+>> some of the problems you highlight, but it seem also that you never 
+>> suggest such a solution, so I wonder if I have misunderstood the 
+>> meaning of your paper.
+
+we thought about it and tried it when writing the paper, and there is 
+probably still something going on that might be useful from a theoreetical 
+perspective, but from you perspective, I wouldn't discard any data if you 
+don't have to.
+
+Gary King
+
+---
+Gary King 
+Institute for Quantitative Social Science
+Harvard University, 34 Kirkland St, Cambridge, MA 02138
+http://GKing.Harvard.Edu, King at Harvard.Edu
+Direct 617-495-2027, Assistant 495-9271, eFax 812-8581
+
+>>
+>> Sorry for my boring questions, and thank you very much for your kind 
+>> assistance.
+>>
+>> Best regards,
+>>
+>> Mr. Gabriele Barbaresco
+>> Research Dept. - Mediobanca
+>> Milan  - Italy
+>>
+>> www.mediobanca.it
+>> www.mbres.it
+>
+
+-
+relogit mailing list served by Harvard-MIT Data Center
+List Address: relogit at latte.harvard.edu
+Subscribe/Unsubscribe: http://lists.hmdc.harvard.edu/?info=relogit
+
+
+From king at harvard.edu  Wed Jul 27 11:28:02 2005
+From: king at harvard.edu (Gary King)
+Date: Wed, 27 Jul 2005 11:28:02 -0400 (EDT)
+Subject: [relogit] Re: Rare Event Logistic Regression
+In-Reply-To: <BAY108-F4C1D0C86F6C93C423EA77B2CC0@phx.gbl>
+References: <BAY108-F4C1D0C86F6C93C423EA77B2CC0@phx.gbl>
+Message-ID: <Pine.LNX.4.63.0507271118210.20226@w3.hmdc.harvard.edu>
+
+
+thanks for your note.  pls see below...
+
+On Wed, 27 Jul 2005, Parry Clarke wrote:
+
+> Dear Professor King,
+>
+>
+> My name is Parry Clarke and I am currently writing up my PhD on baboon 
+> intersexual conflict. I?m sorry to bother you but I was wondering if you 
+> could answer some questions regarding Logistic Regression of Rare events.
+>
+> I am currently attempting to model the occurrence of male aggression 
+> directed at oestrous females. The behaviour itself is fairly rare and so 
+> I have binary coded its occurrence. In total I have 1745 sampling units, 
+> or rows of data, with only 21 of these coded ?1? and 1724 coded ?0?. 
+> Initially I carried out standard logistic regression, but found that 
+> when it came to diagnosis all my influential points were my ?1s?. So 
+> that, if deletion diagnostics were performed I was left with no variance 
+> In addition, my intercepts did not seem very convincing.
+>
+> However, having now discovered your work on the subject and the package you 
+> have written for R things are looking up!, but I just have a couple of 
+> questions:
+>
+> 1)Are there diagnostics unique to the rare event analysis?
+> 2)Is influential point examination redundant in rare event logistic 
+> regression?
+> 3)How do I get deviance estimates of the final model?
+
+relogit estimates the same coefficients as logit from the same model. 
+they do differ tho in order to get better properties.  so just as using 
+weighted least squares will give different answers -- and will fit the 
+data less well than least squares -- we generally prefer wls to ls when 
+there are weights available.  so in both relogit and wls, you have the 
+same issue of how to deal with diagnostics.  there are no special 
+diagnostics, but in both (and lots of other methods) the issue is that you 
+can't really treat all the observations equally and an outlier for one 
+observation isn't the same as another.  so in relogit for example, an 
+extra 1 inadvertently included in the dataset will be much more 
+consequential than an extra 0.
+
+> 4)Part of my analysis has to been trying to relate other forms of male 
+> aggression to oestrous female-directed aggression. However, these other forms 
+> are also rare and so when I enter them into the analysis as a dichotomous 
+> explanatory variable I get answers that are not really supported by the 
+> observed data: For example: overlap between the ?1s? in the response and 
+> explanatory variables may only be 2 or 3 data points but the final model 
+> suggests that a large amount of the deviance is explained and the 
+> coefficients are highly significant: Is this simply an artifact of the rarity 
+> of both the dependent and independent variable and am I, therefore, better 
+> off excluding them from the multivariate analysis and doing separate 
+> contingency table analysis with them?
+
+rare events in explanatory variables is a different issue involving the 
+sensitivity of the estimates to the coding of X.  since almost all 
+relevant models are conditional on X, you have little choice but to run 
+the analysis as is unless you reconceptualize the project (such as having 
+both variables being dependent variables).
+
+> 5)In a number of your articles (e.g. ?Explaining Rare Events In
+>  International Relations?) your talk at length about sampling strategies
+>  and database trimming to create favourable ratio of 0s to 1s and to cut
+>  down on costs. In a situation such as mine where the data is collected
+>  and the database fixed is there any need to trim and subset. If so how
+>  do you suggest I go about that and is there a command in R for randomly
+>  selecting subsets of data?
+
+if you have the data, you should use it.  no reason to subsample at that 
+point.  we do it to demonstrate what would happen if you couldn't afford 
+to collect all the data, as is the case in many fields.  but more data are 
+better generally and here too.
+
+>
+> Once again I am sorry to bother you with such a lengthy email and I hope it 
+> is not too much of an imposition.
+
+best of luck with your research,
+
+Gary King
+
+>
+>
+> Yours sincerely,
+>
+> Parry Clarke.
+>
+> _________________________________________________________________
+> Winks & nudges are here - download MSN Messenger 7.0 today! 
+> http://messenger.msn.co.uk
+>
+>
+

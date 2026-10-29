@@ -1,0 +1,193 @@
+{
+  "list": "amelia",
+  "description": "",
+  "month": "2009-01",
+  "messages": [
+    {
+      "id": "msg-fdca67a8b3af",
+      "message_id": "<4b021c727e2c.495ec305@wmich.edu>",
+      "from_name": "Scott T Gaynor",
+      "from_email_hash": "9abf2ab9015019a1d564d636f7abe2fefb95cf4d2afc445376075e67eb87c41f",
+      "date": "2009-01-03T06:44:37Z",
+      "subject": "[amelia] AmeliaView database format",
+      "subject_clean": "[amelia] AmeliaView database format",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "I could use some assistance in using AmeliaView. I have data from a clinical trial where 57 participants were randomized to one of two treatments. I am currently looking at data from measurements taken at three time points ? pretreatment, midtreatment, and posttreatment and would like to impute missing values from those who dropped out or failed to complete assessments (i.e., non-random, non-ignorable missing data). The input data format is SPSS. I have been getting a range of error messages, but I think they stem from not organizing the data file correctly. Below is a partial illustration of the current organization in SPSS (Dep=score on a depression measure, Neg=score on a measure of negative thinking), which does not work:\n\nParticipant   Treatment   Dep-pre   Dep-mid   Dep-post   Neg-pre   Neg-mid   Neg-post\n1                         1              28             20\t      15\t\t80             65             50\n2                         2              25             23              20              85             80             80\n3                         1              30 \t    25\t                        80             70\n4                         2              20                                                 70\n.\n.\n.\n\nAny thoughts on creating a data frame the corresponds to the elements in Amelia View?s _Variables Dialog_ and _Time Series Cross Sectional Dialog_ options would be much appreciated.\n\nSincerely,\n\nScott\n-\nAmelia mailing list served by Harvard-MIT Data Center\n[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia\nMore info about Amelia: http://gking.harvard.edu/amelia",
+      "body_snippet": "I could use some assistance in using AmeliaView. I have data from a clinical trial where 57 participants were randomized to one of two treatments. I am currently looking at data from measurements take",
+      "thread_id": "thread-fdca67a8b3af",
+      "thread_depth": 0,
+      "month": "2009-01"
+    },
+    {
+      "id": "msg-a51aaa35396d",
+      "message_id": "<839691710901030915j6022e888t7bf6c02ced3c97be@mail.gmail.com>",
+      "from_name": "Matt Blackwell",
+      "from_email_hash": "a0912ebdd95a634d9867f6e08b88b5cbb2f932aca9c4fe326c5bc0ec3e77ef90",
+      "date": "2009-01-03T17:15:58Z",
+      "subject": "[amelia] AmeliaView database format",
+      "subject_clean": "[amelia] AmeliaView database format",
+      "in_reply_to": "<4b021c727e2c.495ec305@wmich.edu>",
+      "references": [
+        "<4b021c727e2c.495ec305@wmich.edu>"
+      ],
+      "body_plain": "Hi Scott,\n\nIt would help to know which error messages you find when using\nAmeliaView, but without knowing that, a few observation.\n\nFirst, you should be aware that the Amelia algorithm hinges on\nassumptions about the missingness mechanism. If your data has\nnon-ignorable missingness (in the Rubin sense), then Amelia can be\nproblematic. Amelia is optimal when the missingness is predictable\ngiven observed covariates, but does not depend on the missing values\nthemselves. This is called missing at random (MAR) by Rubin and\nothers. You can take a look at King, Honaker, Joseph and Scheve (2001)\nfor more details:\n\nhttp://gking.harvard.edu/files/evil.pdf\n\nFor the organization of your data, note that Amelia is designed for\ntime-series cross-sectional data structures where there are quite a\nfew time periods for each unit. In this case the data is usually\narranged by unit-time. So your data would look like the following:\n\nUnit   Time   Dep    Neg\n1        1        28       50\n1        2        20       43\n1        3        80       32\n2        1        30       83\n2        2        NA      NA\n2        3        NA      NA\n\nYou could then set the cross-sectional variable to \"Unit\" and the time\nvariable to \"Time.\"\n\nYour data structure, though, should work with Amelia as well, as long\nas you do not have that many variables. With either the TSCS format or\nyours, with only 57 observations, you will quickly run up against a\nboundary of 5-10 variables.\n\nI hope that helps.\n\nregards,\nmatt.\nOn Sat, Jan 3, 2009 at 1:44 AM, Scott T Gaynor <scott.gaynor at wmich.edu> wrote:\n> I could use some assistance in using AmeliaView. I have data from a clinical trial where 57 participants were randomized to one of two treatments. I am currently looking at data from measurements taken at three time points ? pretreatment, midtreatment, and posttreatment and would like to impute missing values from those who dropped out or failed to complete assessments (i.e., non-random, non-ignorable missing data). The input data format is SPSS. I have been getting a range of error messages, but I think they stem from not organizing the data file correctly. Below is a partial illustration of the current organization in SPSS (Dep=score on a depression measure, Neg=score on a measure of negative thinking), which does not work:\n>\n> Participant   Treatment   Dep-pre   Dep-mid   Dep-post   Neg-pre   Neg-mid   Neg-post\n> 1                         1              28             20            15                80             65             50\n> 2                         2              25             23              20              85             80             80\n> 3                         1              30         25                          80             70\n> 4                         2              20                                                 70\n> .\n> .\n> .\n>\n> Any thoughts on creating a data frame the corresponds to the elements in Amelia View's _Variables Dialog_ and _Time Series Cross Sectional Dialog_ options would be much appreciated.\n>\n> Sincerely,\n>\n> Scott\n> -\n> Amelia mailing list served by Harvard-MIT Data Center\n> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia\n> More info about Amelia: http://gking.harvard.edu/amelia\n>\n>\n-\nAmelia mailing list served by Harvard-MIT Data Center\n[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia\nMore info about Amelia: http://gking.harvard.edu/amelia",
+      "body_snippet": "Hi Scott,\n\nIt would help to know which error messages you find when using\nAmeliaView, but without knowing that, a few observation.\n\nFirst, you should be aware that the Amelia algorithm hinges on\nassum",
+      "thread_id": "thread-fdca67a8b3af",
+      "thread_depth": 1,
+      "month": "2009-01"
+    },
+    {
+      "id": "msg-18df508e0c90",
+      "message_id": "<496F257E.4040809@yale.edu>",
+      "from_name": "Steve Shewfelt",
+      "from_email_hash": "cc3b023e6433b7fbd5ace64d43622e3da688852eeb5cbfbea9a3dc3ef54655f8",
+      "date": "2009-01-15T12:01:02Z",
+      "subject": "[amelia] Running Diagnostics",
+      "subject_clean": "[amelia] Running Diagnostics",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hello,\n\nHow does one run diagnostics based on saved output from an imputation \nprocess (if indeed it is possible)? If the imputation takes a long time \nand it is not possible to do the diagnostics immediately, can one shut \ndown R and return to the diagnostics later?\n\nFor example, if one does an imputation of the following sort:\n >output=amelia(data=data,m=5,archive=TRUE,outname=\"imputed\",write.out=TRUE,keep.data=TRUE)\n\nAnd then saves the output as follows:\n >save(output,file=\"out.rData\")\n\nAnd then shuts down R to return at a later date to the diagnostics, how \nwould you go about completing the following command line:\n >overimpute(data=data,output=????,var=5)\n\nI guess this is in some sense a question about how to read in an \n\".rData\" data frame properly.\n\nThank you in advance,\n\nSteve Shewfelt\nPhD Candidate\nDepartment of Political Science\nYale University\n-\nAmelia mailing list served by Harvard-MIT Data Center\n[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia\nMore info about Amelia: http://gking.harvard.edu/amelia",
+      "body_snippet": "Hello,\n\nHow does one run diagnostics based on saved output from an imputation \nprocess (if indeed it is possible)? If the imputation takes a long time \nand it is not possible to do the diagnostics imm",
+      "thread_id": "thread-18df508e0c90",
+      "thread_depth": 0,
+      "month": "2009-01"
+    },
+    {
+      "id": "msg-8fff6713e907",
+      "message_id": "<496F262D.1060607@yale.edu>",
+      "from_name": "Steve Shewfelt",
+      "from_email_hash": "cc3b023e6433b7fbd5ace64d43622e3da688852eeb5cbfbea9a3dc3ef54655f8",
+      "date": "2009-01-15T12:03:57Z",
+      "subject": "[amelia] One more diagnostics question",
+      "subject_clean": "[amelia] One more diagnostics question",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Apologies - one additional question:\n\nIs it possible to ensure the label of the variable being overimputed is \nincluded in the graph produced by \"overimpute\"? When I run \n\"compare.density\", each graph produced is labeled, but the same is not \nthe case for overimpute. Is there a way to make this happen?\n\nThanks again,\n\nSteve Shewfelt\nPhD Candidate\nDepartment of Political Science\nYale University\n-\nAmelia mailing list served by Harvard-MIT Data Center\n[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia\nMore info about Amelia: http://gking.harvard.edu/amelia",
+      "body_snippet": "Apologies - one additional question:\n\nIs it possible to ensure the label of the variable being overimputed is \nincluded in the graph produced by \"overimpute\"? When I run \n\"compare.density\", each graph",
+      "thread_id": "thread-8fff6713e907",
+      "thread_depth": 0,
+      "month": "2009-01"
+    },
+    {
+      "id": "msg-929111112e7c",
+      "message_id": "<1232078751.4970079f1a0cf@mail-www.oit.umass.edu>",
+      "from_name": "Rahsaan Maxwell",
+      "from_email_hash": "2990b08ceb034ebe8516115dd06660553678577e329cd42919419cd7499cdf46",
+      "date": "2009-01-16T04:05:51Z",
+      "subject": "[amelia] Every observation is coded as missing",
+      "subject_clean": "[amelia] Every observation is coded as missing",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "I am trying to load SPSS datasets into AmeliaView.  I started with small\ndatasets that include just a handful of variables (5-7) to see how the program\nworks.  But everytime I load the datasets and 'Summarize Data', AmeliaView\ntells me that all the observations are missing for the variables, which is\ndefinitely not true in the original dataset.\n\nWhat am I doing wrong?\n\nThank you,\n\n-Rahsaan\n\nRahsaan Maxwell, Ph.D.\nAssistant Professor\nDepartment of Political Science\nUniversity of Massachusetts, Amherst\n\nPostdoctoral Fellow\nTransatlantic Academy\nGerman Marshall Fund of the United States\nhttp://rahsaanmaxwell.googlepages.com\n-\nAmelia mailing list served by Harvard-MIT Data Center\n[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia\nMore info about Amelia: http://gking.harvard.edu/amelia",
+      "body_snippet": "I am trying to load SPSS datasets into AmeliaView.  I started with small\ndatasets that include just a handful of variables (5-7) to see how the program\nworks.  But everytime I load the datasets and 'S",
+      "thread_id": "thread-929111112e7c",
+      "thread_depth": 0,
+      "month": "2009-01"
+    },
+    {
+      "id": "msg-1475e9133370",
+      "message_id": "<839691710901211257o17c2ad0fu38bf36c015fef520@mail.gmail.com>",
+      "from_name": "Matt Blackwell",
+      "from_email_hash": "a0912ebdd95a634d9867f6e08b88b5cbb2f932aca9c4fe326c5bc0ec3e77ef90",
+      "date": "2009-01-21T20:57:55Z",
+      "subject": "[amelia] One more diagnostics question",
+      "subject_clean": "[amelia] One more diagnostics question",
+      "in_reply_to": "<496F262D.1060607@yale.edu>",
+      "references": [
+        "<496F262D.1060607@yale.edu>"
+      ],
+      "body_plain": "Hi Steve,\n\nOverimpute does not currently have that feature, but we will look into\nincluding it in the next update.\n\nThanks for the suggestion,\nmatt.\n\nOn Thu, Jan 15, 2009 at 7:03 AM, Steve Shewfelt\n<steven.shewfelt at yale.edu> wrote:\n> Apologies - one additional question:\n>\n> Is it possible to ensure the label of the variable being overimputed is\n> included in the graph produced by \"overimpute\"? When I run\n> \"compare.density\", each graph produced is labeled, but the same is not the\n> case for overimpute. Is there a way to make this happen?\n>\n> Thanks again,\n>\n> Steve Shewfelt\n> PhD Candidate\n> Department of Political Science\n> Yale University\n> -\n> Amelia mailing list served by Harvard-MIT Data Center\n> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia\n> More info about Amelia: http://gking.harvard.edu/amelia\n>\n>\n-\nAmelia mailing list served by Harvard-MIT Data Center\n[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia\nMore info about Amelia: http://gking.harvard.edu/amelia",
+      "body_snippet": "Hi Steve,\n\nOverimpute does not currently have that feature, but we will look into\nincluding it in the next update.\n\nThanks for the suggestion,\nmatt.\n\nOn Thu, Jan 15, 2009 at 7:03 AM, Steve Shewfelt\n<s",
+      "thread_id": "thread-8fff6713e907",
+      "thread_depth": 1,
+      "month": "2009-01"
+    },
+    {
+      "id": "msg-4b7fb802636b",
+      "message_id": "<839691710901211258m1bd139c2hb4a48c41caa11039@mail.gmail.com>",
+      "from_name": "Matt Blackwell",
+      "from_email_hash": "a0912ebdd95a634d9867f6e08b88b5cbb2f932aca9c4fe326c5bc0ec3e77ef90",
+      "date": "2009-01-21T20:58:11Z",
+      "subject": "[amelia] Running Diagnostics",
+      "subject_clean": "[amelia] Running Diagnostics",
+      "in_reply_to": "<496F257E.4040809@yale.edu>",
+      "references": [
+        "<496F257E.4040809@yale.edu>"
+      ],
+      "body_plain": "Hi Steve,\n\nWhen you load the .RData file it will put objects from the file back\ninto your R session. You can think of it like a moving box that\ncontains data frame, matrices, regression outputs, etc.\n\nFor your specific problem, once you load the RData file, you should\nfind \"output\" in your R sessions (you can see this by running ls()).\nThus, you can run the diagnostics as follows:\n\noverimpute(data=data,output=output,var=5)\n\nHope that helps!\nmatt.\n\nOn Thu, Jan 15, 2009 at 7:01 AM, Steve Shewfelt\n<steven.shewfelt at yale.edu> wrote:\n> Hello,\n>\n> How does one run diagnostics based on saved output from an imputation\n> process (if indeed it is possible)? If the imputation takes a long time and\n> it is not possible to do the diagnostics immediately, can one shut down R\n> and return to the diagnostics later?\n>\n> For example, if one does an imputation of the following sort:\n>>output=amelia(data=data,m=5,archive=TRUE,outname=\"imputed\",write.out=TRUE,keep.data=TRUE)\n>\n> And then saves the output as follows:\n>>save(output,file=\"out.rData\")\n>\n> And then shuts down R to return at a later date to the diagnostics, how\n> would you go about completing the following command line:\n>>overimpute(data=data,output=????,var=5)\n>\n> I guess this is in some sense a question about how to read in an \".rData\"\n> data frame properly.\n>\n> Thank you in advance,\n>\n> Steve Shewfelt\n> PhD Candidate\n> Department of Political Science\n> Yale University\n> -\n> Amelia mailing list served by Harvard-MIT Data Center\n> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia\n> More info about Amelia: http://gking.harvard.edu/amelia\n>\n>\n-\nAmelia mailing list served by Harvard-MIT Data Center\n[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia\nMore info about Amelia: http://gking.harvard.edu/amelia",
+      "body_snippet": "Hi Steve,\n\nWhen you load the .RData file it will put objects from the file back\ninto your R session. You can think of it like a moving box that\ncontains data frame, matrices, regression outputs, etc.\n",
+      "thread_id": "thread-18df508e0c90",
+      "thread_depth": 1,
+      "month": "2009-01"
+    },
+    {
+      "id": "msg-b7736e6b1dce",
+      "message_id": "<839691710901211306o48069248jb7052090535a32e0@mail.gmail.com>",
+      "from_name": "Matt Blackwell",
+      "from_email_hash": "a0912ebdd95a634d9867f6e08b88b5cbb2f932aca9c4fe326c5bc0ec3e77ef90",
+      "date": "2009-01-21T21:06:41Z",
+      "subject": "[amelia] Every observation is coded as missing",
+      "subject_clean": "[amelia] Every observation is coded as missing",
+      "in_reply_to": "<1232078751.4970079f1a0cf@mail-www.oit.umass.edu>",
+      "references": [
+        "<1232078751.4970079f1a0cf@mail-www.oit.umass.edu>"
+      ],
+      "body_plain": "Hi Rahsaan,\n\nThere are often quite a few formatting errors when attempting to move\nbetween software packages. You can see what is going in R with your\nfile if you run the following line of code in R:\n\nlibrary(foreign)\nx <- read.spss(\"filename\", use.value.labels=FALSE, to.data.frame=TRUE)\n\n(you should replace \"filename\" with your SPSS file's name in quotes).\nThis is the code that Amelia runs when importing the data. If there is\na problem with the x matrix, something might be wrong with your\ndatafile.\n\nPerhaps you can convert it to a CSV file and then try to run Amelia on that.\n\ncheers,\nmatt.\n\nOn Thu, Jan 15, 2009 at 11:05 PM, Rahsaan Maxwell\n<rahsaan at polsci.umass.edu> wrote:\n> I am trying to load SPSS datasets into AmeliaView.  I started with small\n> datasets that include just a handful of variables (5-7) to see how the program\n> works.  But everytime I load the datasets and 'Summarize Data', AmeliaView\n> tells me that all the observations are missing for the variables, which is\n> definitely not true in the original dataset.\n>\n> What am I doing wrong?\n>\n> Thank you,\n>\n> -Rahsaan\n>\n> Rahsaan Maxwell, Ph.D.\n> Assistant Professor\n> Department of Political Science\n> University of Massachusetts, Amherst\n>\n> Postdoctoral Fellow\n> Transatlantic Academy\n> German Marshall Fund of the United States\n> http://rahsaanmaxwell.googlepages.com\n> -\n> Amelia mailing list served by Harvard-MIT Data Center\n> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia\n> More info about Amelia: http://gking.harvard.edu/amelia\n>\n>\n-\nAmelia mailing list served by Harvard-MIT Data Center\n[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia\nMore info about Amelia: http://gking.harvard.edu/amelia",
+      "body_snippet": "Hi Rahsaan,\n\nThere are often quite a few formatting errors when attempting to move\nbetween software packages. You can see what is going in R with your\nfile if you run the following line of code in R:\n",
+      "thread_id": "thread-929111112e7c",
+      "thread_depth": 1,
+      "month": "2009-01"
+    }
+  ],
+  "threads": [
+    {
+      "id": "thread-fdca67a8b3af",
+      "subject": "[amelia] AmeliaView database format",
+      "message_count": 2,
+      "participants": [
+        "Matt Blackwell",
+        "Scott T Gaynor"
+      ],
+      "started": "2009-01-03T06:44:37Z",
+      "last_reply": "2009-01-03T17:15:58Z",
+      "root_message_id": "msg-fdca67a8b3af"
+    },
+    {
+      "id": "thread-18df508e0c90",
+      "subject": "[amelia] Running Diagnostics",
+      "message_count": 2,
+      "participants": [
+        "Matt Blackwell",
+        "Steve Shewfelt"
+      ],
+      "started": "2009-01-15T12:01:02Z",
+      "last_reply": "2009-01-21T20:58:11Z",
+      "root_message_id": "msg-18df508e0c90"
+    },
+    {
+      "id": "thread-8fff6713e907",
+      "subject": "[amelia] One more diagnostics question",
+      "message_count": 2,
+      "participants": [
+        "Matt Blackwell",
+        "Steve Shewfelt"
+      ],
+      "started": "2009-01-15T12:03:57Z",
+      "last_reply": "2009-01-21T20:57:55Z",
+      "root_message_id": "msg-8fff6713e907"
+    },
+    {
+      "id": "thread-929111112e7c",
+      "subject": "[amelia] Every observation is coded as missing",
+      "message_count": 2,
+      "participants": [
+        "Matt Blackwell",
+        "Rahsaan Maxwell"
+      ],
+      "started": "2009-01-16T04:05:51Z",
+      "last_reply": "2009-01-21T21:06:41Z",
+      "root_message_id": "msg-929111112e7c"
+    }
+  ]
+}

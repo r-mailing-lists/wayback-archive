@@ -1,0 +1,507 @@
+From levi at littvay.com  Mon Dec  7 11:42:30 2009
+From: levi at littvay.com (Levente Littvay)
+Date: Mon, 7 Dec 2009 17:42:30 +0100
+Subject: [amelia] Exploratory Factor Analaysis
+Message-ID: <12DCB677-ED9E-46FA-837A-796C1E4C14E2@littvay.com>
+
+Dear Amelia List
+
+Does anyone know of a good and accessible way to analyze multiply  
+imputed data using exploratory factor analysis?  (Possibly, would  
+Zelig know how to do this?)  Anything else?  SPSS won't do it.  Mplus  
+won't do it (as far as I can see).  I found very little by way of  
+published work on the topic.  I could use a bit of guidance.
+
+Thanks
+
+Cheers
+
+Levente Littvay
+Assistant Professor
+Department of Political Science
+Central European University
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From levi at littvay.com  Mon Dec  7 12:10:42 2009
+From: levi at littvay.com (Levente Littvay)
+Date: Mon, 7 Dec 2009 18:10:42 +0100
+Subject: [amelia] Exploratory Factor Analaysis
+In-Reply-To: <d0dcf1e90912070858j329db565u613a6b804829554f@mail.gmail.com>
+References: <12DCB677-ED9E-46FA-837A-796C1E4C14E2@littvay.com> <d0dcf1e90912070858j329db565u613a6b804829554f@mail.gmail.com>
+Message-ID: <C371B962-608C-4369-8677-01DA383F15A2@littvay.com>
+
+Tomas
+
+Thanks for the response.  The first method you propose for exploration  
+could be very useful.  I guess I didn't think of it in thee terms and  
+I probably should have.
+
+The second approach is very similar to what I was thinking of doing if  
+all else fails.  I would have imputed the expected values and just use  
+that for EFA.  (I would do this either through imputing a large number  
+of times and averaging the imputed values, or just use the EM  
+algorithm probably through SPSS MVA.)  I guess this does the same  
+thing that you approach proposes.
+
+The problem with this approach is that it underestimates the  
+uncertainty of the unknown values.  For most analysis rubin's rules  
+can be used to combine all point estimates as long as they have a  
+standard error.  Mplus will now give you standard errors for the  
+loadings so that is very useful.  But the decision on the number of  
+factors to extract is problematic.  (Even without any missing data it  
+is problematic.)  Lets say I establish a rule on the number of factors  
+to extract.  I impute m times.  Analyze the m datasets and I get 3  
+factors for a 1/3*m datasets, 4 for 1/3*m and 5 for 1/3*m.  How many  
+to extract then?  Go with the median?  Why?  Why not?
+
+Of course, one solution is not to bother.  Just do it and consider the  
+problem when (if) it arises.  I can totally imagine that all  
+imputations would give me the same results.  Problem solved then.
+
+There also might be something else I am missing.  It is not entirely  
+clear what the advantage of any of the above is to listwise deletion.   
+etc.
+
+Thanks for your quick input.
+
+L
+
+
+On Dec 7, 2009, at 5:58 PM, Tom?? Kubi? wrote:
+
+> Hi Levente,
+> if I understood your issue right, you have MI data and want to  
+> conduct fa on this data. I faced the same problem and came up with  
+> two ways how to conduct such an analysis.
+>
+> First, you can use imputations separately, conduct the fa on each  
+> one of them and observe if there are significant differences in the  
+> loadings of factors in comparisson to an unimputed dataset. Moreover  
+> you can observe if imputaions differ among themselves. For pure  
+> exploration, this will help you to identify dimensions and you can  
+> generalize the result in that you build an average of loadings for  
+> each factor and thus get one set of factors.
+>
+> Second, you can take the covariance or correlation matrices of the  
+> imputed datasets and build an average of them. Then you can conduct  
+> the fa on this average cor or cov matrix. You have one matrix and  
+> thus get again one set of factors.
+>
+> As you said, it is difficult to find literature and I didn't find  
+> support for any of these two methods. I would be inclined to use the  
+> second one and make an average of cor matrices because it is the  
+> input into the factor analysis.
+>
+> Good luck with your analysis and I hope that you will get some more  
+> scientific help.
+>
+> Regards,
+>
+> Tomas
+>
+> 2009/12/7 Levente Littvay <levi at littvay.com>
+> Dear Amelia List
+>
+> Does anyone know of a good and accessible way to analyze multiply  
+> imputed data using exploratory factor analysis?  (Possibly, would  
+> Zelig know how to do this?)  Anything else?  SPSS won't do it.   
+> Mplus won't do it (as far as I can see).  I found very little by way  
+> of published work on the topic.  I could use a bit of guidance.
+>
+> Thanks
+>
+> Cheers
+>
+> Levente Littvay
+> Assistant Professor
+> Department of Political Science
+> Central European University
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/? 
+> info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+>
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20091207/29f29471/attachment.html>
+
+From m.dezwaan at gmail.com  Wed Dec  9 16:40:29 2009
+From: m.dezwaan at gmail.com (Matthijs De Zwaan)
+Date: Wed, 9 Dec 2009 22:40:29 +0100
+Subject: [amelia] collecting imputed data sets into an Amelia object
+Message-ID: <32c37ac00912091340g4916d6c6nec227bc1e7740702@mail.gmail.com>
+
+Dear Amelia Listers,
+
+I am new to R, Zelig and Amelia. I think my question is rather straight
+forward, but couldn't find an answer on the Amelia list. Please excuse me if
+I missed something?
+
+I am using Amelia to create ten new data sets for my missing data. I need to
+change the variables in the newly imputed data (I need to create an
+interaction variable with my variable with missing values). I do this by
+manipulating in turn each of the  imputed data sets after having saved those
+sets using write.amelia(). Now, how do I again collect those data sets into
+an object that Amelia/Zelig can work with?
+
+Thanks for your time,
+Matthijs
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20091209/5cdd58c7/attachment.html>
+
+From blackwel at fas.harvard.edu  Wed Dec  9 17:02:52 2009
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Wed, 9 Dec 2009 17:02:52 -0500
+Subject: [amelia] collecting imputed data sets into an Amelia object
+In-Reply-To: <32c37ac00912091340g4916d6c6nec227bc1e7740702@mail.gmail.com>
+References: <32c37ac00912091340g4916d6c6nec227bc1e7740702@mail.gmail.com>
+Message-ID: <839691710912091402i474dcedbvb8239514d6169673@mail.gmail.com>
+
+Hi Matthijs,
+
+With Zelig, you can specify interaction terms in the "formula"
+argument to create these terms on the fly:
+
+depvar ~ indvar1*indvar2
+
+Another possible approach would be to create the interaction term within
+each dataset while it is in the Amelia class. Here is an example
+creating an interaction between columns 1 and 2:
+
+a.out <- amelia(x, m= 5)
+
+for (i in 1:5) {
+ inter <- a.out$imputations[[i]][,1] * a.out$imputations[[i]][,2]
+ a.out$imputations[[i]] <- cbind(a.out$imputations[[i]], inter)
+}
+
+This would add the interaction for each imputed dataset.
+
+I hope this helps.
+
+cheers,
+matt.
+
+On Wed, Dec 9, 2009 at 4:40 PM, Matthijs De Zwaan <m.dezwaan at gmail.com> wrote:
+> Dear Amelia Listers,
+>
+> I am new to R, Zelig and Amelia. I think my question is rather straight
+> forward, but couldn't find an answer on the Amelia list. Please excuse me if
+> I missed something?
+>
+> I am using Amelia to create ten new data sets for my missing data. I need to
+> change the variables in the newly imputed data (I need to create an
+> interaction variable with my variable with missing values). I do this by
+> manipulating in turn each of the? imputed data sets after having saved those
+> sets using write.amelia(). Now, how do I again collect those data sets into
+> an object that Amelia/Zelig can work with?
+>
+> Thanks for your time,
+> Matthijs
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From m.dezwaan at gmail.com  Tue Dec 15 12:00:09 2009
+From: m.dezwaan at gmail.com (Matthijs de Zwaan)
+Date: Tue, 15 Dec 2009 18:00:09 +0100
+Subject: [amelia] error for manipulated data sets?
+Message-ID: <D3630695-F10A-495B-AA05-E2BF11DAA8F9@gmail.com>
+
+Dear Amelia Listers
+I have a data set which gives me the counts of a number of religious groups, in 3 cities for 60 years. I use these counts to generate an index for religious diversity in each available year.
+
+I had missing data, which I imputed using AmeliaII in R. I included both the counts and the index to generate the imputed values, and then used the "new" counts to generate the index again (overwriting the imputed index). I also generated a number of other variables using the index (squared, interactions etc). I gather the originally imputed data and my new variables using:
+##### 	begin code	#####
+	a.out.final <- a.out
+	for(i in 1:10){
+		<create new variables>
+		a.out.final$imputatations[[i]] <- cbind(a.out$imputations[[i]], <new variables>)
+	}
+#####	end code	#####
+where a.out is the original Amelia output. This works fine, as far as I can see. however, when I now ask for a summary(a.out.final), I get an error message. The first past of the message is the same as for summary(a.out), but then I get:
+
+
+Fraction Missing for individual variables: 
+-----------------------------------------
+
+Error in `row.names<-.data.frame`(`*tmp*`, value = c("cityid", "year",  : 
+  invalid 'row.names' length
+
+("cityid" and "year" are obviously my panel/time indicators )
+Does this mean that I have made a mistake, or am trying to do something that cannot be done? Or is it simply due to the fact that Zelig can no longer recognise what was originally missing and what not? I am new to R and Zelig, and such (unintelligible) error messages scare me!
+
+Thanks again for your time,
+Matthijs de Zwaan
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From blackwel at fas.harvard.edu  Wed Dec 16 13:09:51 2009
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Wed, 16 Dec 2009 13:09:51 -0500
+Subject: [amelia] error for manipulated data sets?
+In-Reply-To: <D3630695-F10A-495B-AA05-E2BF11DAA8F9@gmail.com>
+References: <D3630695-F10A-495B-AA05-E2BF11DAA8F9@gmail.com>
+Message-ID: <839691710912161009h6b03e817tf22e96711de6ad8f@mail.gmail.com>
+
+Hi Matthijs,
+
+One thing you may want to check is the length of the new variable you
+created against the number of rows in the dataset. In addition, cbind
+might be creating problems. Perhaps you could try this alternative
+method of adding a variable:
+
+#####   begin code      #####
+       a.out.final <- a.out
+       for(i in 1:10){
+               <create new variables>
+               a.out.final$imputatations[[i]][,"newvarname"] <- <new variables>
+       }
+#####   end code        #####
+
+Where you can replace newvarname with a more substantive name.
+
+I hope this helps,
+matt.
+
+On Tue, Dec 15, 2009 at 12:00 PM, Matthijs de Zwaan <m.dezwaan at gmail.com> wrote:
+> Dear Amelia Listers
+> I have a data set which gives me the counts of a number of religious groups, in 3 cities for 60 years. I use these counts to generate an index for religious diversity in each available year.
+>
+> I had missing data, which I imputed using AmeliaII in R. I included both the counts and the index to generate the imputed values, and then used the "new" counts to generate the index again (overwriting the imputed index). I also generated a number of other variables using the index (squared, interactions etc). I gather the originally imputed data and my new variables using:
+> ##### ? begin code ? ? ?#####
+> ? ? ? ?a.out.final <- a.out
+> ? ? ? ?for(i in 1:10){
+> ? ? ? ? ? ? ? ?<create new variables>
+> ? ? ? ? ? ? ? ?a.out.final$imputatations[[i]] <- cbind(a.out$imputations[[i]], <new variables>)
+> ? ? ? ?}
+> ##### ? end code ? ? ? ?#####
+> where a.out is the original Amelia output. This works fine, as far as I can see. however, when I now ask for a summary(a.out.final), I get an error message. The first past of the message is the same as for summary(a.out), but then I get:
+>
+>
+> Fraction Missing for individual variables:
+> -----------------------------------------
+>
+> Error in `row.names<-.data.frame`(`*tmp*`, value = c("cityid", "year", ?:
+> ?invalid 'row.names' length
+>
+> ("cityid" and "year" are obviously my panel/time indicators )
+> Does this mean that I have made a mistake, or am trying to do something that cannot be done? Or is it simply due to the fact that Zelig can no longer recognise what was originally missing and what not? I am new to R and Zelig, and such (unintelligible) error messages scare me!
+>
+> Thanks again for your time,
+> Matthijs de Zwaan
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From m.dezwaan at gmail.com  Thu Dec 17 16:41:08 2009
+From: m.dezwaan at gmail.com (Matthijs de Zwaan)
+Date: Thu, 17 Dec 2009 22:41:08 +0100
+Subject: [amelia] error for manipulated data sets?
+In-Reply-To: <courier.000000004B29C8F2.00004960@mail-2.hmdc.harvard.edu>
+References: <courier.000000004B29C8F2.00004960@mail-2.hmdc.harvard.edu>
+Message-ID: <236417DE-4B74-4665-A496-8330C11020CB@gmail.com>
+
+Hi,
+Thanks for your advice. The problem indeed seems to be -cbind()-.
+
+Matthijs
+
+On 17 dec 2009, at 07:00, amelia_at_lists_gking_harvard_edu wrote:
+
+> amelia_at_lists_gking_harvard_edu Thursday, December 17 2009 Volume 01 : Number 067
+> 
+> 
+> 
+> 
+> ----------------------------------------------------------------------
+> 
+> Date: Wed, 16 Dec 2009 13:09:51 -0500
+> From: Matt Blackwell <blackwel at fas.harvard.edu>
+> Subject: Re: [amelia] error for manipulated data sets?
+> 
+> Hi Matthijs,
+> 
+> One thing you may want to check is the length of the new variable you
+> created against the number of rows in the dataset. In addition, cbind
+> might be creating problems. Perhaps you could try this alternative
+> method of adding a variable:
+> 
+> #####   begin code      #####
+>       a.out.final <- a.out
+>       for(i in 1:10){
+>               <create new variables>
+>               a.out.final$imputatations[[i]][,"newvarname"] <- <new variables>
+>       }
+> #####   end code        #####
+> 
+> Where you can replace newvarname with a more substantive name.
+> 
+> I hope this helps,
+> matt.
+> 
+> On Tue, Dec 15, 2009 at 12:00 PM, Matthijs de Zwaan <m.dezwaan at gmail.com> wrote:
+>> Dear Amelia Listers
+>> I have a data set which gives me the counts of a number of religious groups, in 3 cities for 60 years. I use these counts to generate an index for religious diversity in each available year.
+>> 
+>> I had missing data, which I imputed using AmeliaII in R. I included both the counts and the index to generate the imputed values, and then used the "new" counts to generate the index again (overwriting the imputed index). I also generated a number of other variables using the index (squared, interactions etc). I gather the originally imputed data and my new variables using:
+>> #####   begin code      #####
+>>        a.out.final <- a.out
+>>        for(i in 1:10){
+>>                <create new variables>
+>>                a.out.final$imputatations[[i]] <- cbind(a.out$imputations[[i]], <new variables>)
+>>        }
+>> #####   end code        #####
+>> where a.out is the original Amelia output. This works fine, as far as I can see. however, when I now ask for a summary(a.out.final), I get an error message. The first past of the message is the same as for summary(a.out), but then I get:
+>> 
+>> 
+>> Fraction Missing for individual variables:
+>> -----------------------------------------
+>> 
+>> Error in `row.names<-.data.frame`(`*tmp*`, value = c("cityid", "year",  :
+>>  invalid 'row.names' length
+>> 
+>> ("cityid" and "year" are obviously my panel/time indicators )
+>> Does this mean that I have made a mistake, or am trying to do something that cannot be done? Or is it simply due to the fact that Zelig can no longer recognise what was originally missing and what not? I am new to R and Zelig, and such (unintelligible) error messages scare me!
+>> 
+>> Thanks again for your time,
+>> Matthijs de Zwaan
+>> -
+>> Amelia mailing list served by Harvard-MIT Data Center
+>> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>> More info about Amelia: http://gking.harvard.edu/amelia
+>> 
+>> 
+> 
+> ------------------------------
+> 
+> End of amelia_at_lists_gking_harvard_edu V1 #67
+> ***********************************************
+> 
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From MNdiaye at publichealthmdc.com  Tue Dec 22 17:28:34 2009
+From: MNdiaye at publichealthmdc.com (Ndiaye, Mamadou)
+Date: Tue, 22 Dec 2009 16:28:34 -0600
+Subject: [amelia] Error in if (sum(non.vary == 0)) 
+Message-ID: <25527CD71D38B246BB974F169E7D998D0149494F2E3B@EXMBX.cityofmadison.com>
+
+After the following R commands:
+a.out<-amelia(bd2,m=5 ,idvars =c("bd_id","cty"),noms=c("race4","outc")) ,
+I received this error message:
+"Error in if (sum(non.vary == 0)) { :
+  argument is not interpretable as logical"
+What that means?
+I used the current versions of R and Amelia on Windows
+The data contains more than 100,000 records, with 6 variables. They are all factors except bwt3, a continuous variable.
+See below the first rows of the data frame bd2:
+
+> head(bd2)
+
+bd_id
+
+race4
+
+outc
+
+cty
+
+bwt3
+
+1989-35129
+
+1
+
+1
+
+0
+
+2665
+
+1989-43790
+
+2
+
+1
+
+0
+
+3685
+
+1989-44528
+
+1
+
+1
+
+0
+
+3402
+
+1989-48485
+
+1
+
+1
+
+0
+
+3175
+
+1989-49402
+
+1
+
+1
+
+0
+
+3742
+
+1989-55241
+
+4
+
+1
+
+0
+
+3941
+
+
+Thanks you for any help.
+
+Ndiaye
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20091222/80cc6903/attachment.html>
+

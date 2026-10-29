@@ -1,0 +1,133 @@
+From PKimball at ache.org  Wed Jan  5 17:47:15 2005
+From: PKimball at ache.org (Peter Kimball)
+Date: Wed, 05 Jan 2005 16:47:15 -0600
+Subject: [amelia] Averaged stats don't quite mesh - is this normal?
+Message-ID: <s1dc1a30.064@ache.org>
+
+Dear Dr. King and other list members,
+
+We are testing some models on survey data that look sort of like this:
+
+Model A: Y = a + (ba1*xa1 + ba2*xa2 .... ban*xan) + e
+
+Model B: Y = a + (ba1......xan) + ( bb1*xb1 + ...... bbn*xbn) +e 
+
+(and so on for Model C and Model D)
+
+This is to say that we are starting by regressing Y on a block A of predictors (xa1 through xan), adding block B of predictors (xb1 through xbn), block C, and block D.  The test statistics of primary interest are the p values for the F tests for the change in R-squared between models A and B, B and C, and C and D.  Of lesser interest are the F values for the change in R-squared themselves, the values of R-squared for the models, and the regression coefficients at each stage and the F values and p values associated with each coefficient.
+
+If we were doing this with one data set with no missing values, all of this would be straightforward and we would have a table of regression coefficients, F values, R-squareds, and p values.  Well, we are using Amelia to impute missing values, and the presentation of the results in the article we are trying to write is posing some questions which are new to us.  Basically, if we run the models on the five sets created by Amelia and average all the numbers over the five sets, we get a set of numbers which don't really mesh.  
+
+For example, suppose that Block B has only one new predictor in it.  In that case, on any single data set, the F value for the change in R-squared from model A to model B will be the same as the F value for the regression coefficient for that predictor in model B.  But the average of those F values is NOT exactly the same as the F value that we get if you start with the averaged R-squareds for model A and for model B and compute the test based on that difference with the appropriate degrees of freedom. 
+
+(I should say that we have not actually averaged the p values - we have averaged the F statistics and computed the p values from the F distribution.  Is that wrong?)
+
+So, what should we really be doing here?
+
+Can I assume that this kind of phenomenon is normal for Amelia, or is it a sign that we are doing something very wrong?
+
+If it is normal, is it a mistake to try to present the whole table of numbers that we would normally present if we were using a data set with no missing values?  Should we somehow say, "in using this method, we are concentrating on a small number of test statistics which are important; presenting all the other data would be useless and misleading"?
+
+Or is it ok to present them, with a note to the reader that "these numbers are averages and therefore it is normal that they don't mesh together the way they would if they had been computed from a single data set with no missing values"?
+
+Should we be actually averaging the p values, or is it ok to average the F values and compute the p values based on the averages?
+
+Any other advice?
+
+Sincerely,
+
+
+
+
+
+
+Peter A. Kimball
+Data Analyst/Statistician
+American College of Healthcare Executives
+(312) 424-9442
+pkimball at ache.org
+
+
+Register for ACHE's Congress on Healthcare Management, March 14-17, 2005, in Chicago. Online registration is now available!
+For more information, visit the Education area of www.ache.org.
+
+
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.hmdc.harvard.edu/?info=amelia
+
+
+From king at harvard.edu  Tue Jan 11 20:34:43 2005
+From: king at harvard.edu (Gary King)
+Date: Tue, 11 Jan 2005 20:34:43 -0500 (EST)
+Subject: [amelia] Averaged stats don't quite mesh - is this normal?
+In-Reply-To: <s1dc1a30.064@ache.org>
+References: <s1dc1a30.064@ache.org>
+Message-ID: <Pine.LNX.4.58.0501092050200.21009@w3.hmdc.harvard.edu>
+
+
+the combining rules -- either by averaging or by taking 1/m simulations
+from each of the m imputed samples -- are intended for quantities of
+interest.  I know you want to do F tests and R^2 and stuff, but these are
+not really quantitites of interest in the sense that if you know them
+perfectly you don't really learn much about the world; instead, they're
+test statistics.  following the combining rules will work for these
+things, but you won't get exactly the kinds of consistency you want
+or even the exactly correct distributions in small samples.  you're not
+going to be very mislead by your approach, but if you can switch to
+quantities of interest you'll make more progress I think.
+
+Gary
+
+     : Gary King, King at Harvard.Edu    http://GKing.Harvard.Edu :
+     : Center for Basic Research      Direct    (617) 495-2027 :
+     :   in the Social Sciences       Assistant (617) 495-9271 :
+     : 34 Kirkland Street, Rm. 2      HU-MIT DC (617) 495-4734 :
+     : Harvard U, Cambridge, MA 02138    eFax   (617) 812-8581 :
+
+On Wed, 5 Jan 2005, Peter Kimball wrote:
+
+> Dear Dr. King and other list members,
+>
+> We are testing some models on survey data that look sort of like this:
+>
+> Model A: Y = a + (ba1*xa1 + ba2*xa2 .... ban*xan) + e
+>
+> Model B: Y = a + (ba1......xan) + ( bb1*xb1 + ...... bbn*xbn) +e
+>
+> (and so on for Model C and Model D)
+>
+> This is to say that we are starting by regressing Y on a block A of predictors (xa1 through xan), adding block B of predictors (xb1 through xbn), block C, and block D.  The test statistics of primary interest are the p values for the F tests for the change in R-squared between models A and B, B and C, and C and D.  Of lesser interest are the F values for the change in R-squared themselves, the values of R-squared for the models, and the regression coefficients at each stage and the F values and p values associated with each coefficient.
+>
+> If we were doing this with one data set with no missing values, all of this would be straightforward and we would have a table of regression coefficients, F values, R-squareds, and p values.  Well, we are using Amelia to impute missing values, and the presentation of the results in the article we are trying to write is posing some questions which are new to us.  Basically, if we run the models on the five sets created by Amelia and average all the numbers over the five sets, we get a set of numbers which don't really mesh.
+>
+> For example, suppose that Block B has only one new predictor in it.  In that case, on any single data set, the F value for the change in R-squared from model A to model B will be the same as the F value for the regression coefficient for that predictor in model B.  But the average of those F values is NOT exactly the same as the F value that we get if you start with the averaged R-squareds for model A and for model B and compute the test based on that difference with the appropriate degrees of freedom.
+>
+> (I should say that we have not actually averaged the p values - we have averaged the F statistics and computed the p values from the F distribution.  Is that wrong?)
+>
+> So, what should we really be doing here?
+>
+> Can I assume that this kind of phenomenon is normal for Amelia, or is it a sign that we are doing something very wrong?
+>
+> If it is normal, is it a mistake to try to present the whole table of numbers that we would normally present if we were using a data set with no missing values?  Should we somehow say, "in using this method, we are concentrating on a small number of test statistics which are important; presenting all the other data would be useless and misleading"?
+>
+> Or is it ok to present them, with a note to the reader that "these numbers are averages and therefore it is normal that they don't mesh together the way they would if they had been computed from a single data set with no missing values"?
+>
+> Should we be actually averaging the p values, or is it ok to average the F values and compute the p values based on the averages?
+>
+> Any other advice?
+>
+> Sincerely,
+>
+>
+>
+>
+>
+>
+> Peter A. Kimball
+> Data Analyst/Statisti
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.hmdc.harvard.edu/?info=amelia
+
+

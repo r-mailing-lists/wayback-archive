@@ -1,0 +1,212 @@
+From xlu at bushschool.tamu.edu  Thu Sep  8 13:59:55 2011
+From: xlu at bushschool.tamu.edu (Xiaobo Lu)
+Date: Thu, 8 Sep 2011 12:59:55 -0500
+Subject: [amelia] Errors in "overimpute" and "compare.density"
+Message-ID: <4E69029B.50509@bushschool.tamu.edu>
+
+Dear all,
+
+I am running into some problems with the newest version of Amelia II and 
+I cannot figure out exactly why, and I hope you can shed some lights on 
+these issues that I am running into.
+
+I have successfully imputed 10 dataset by using Amelia II in R. The 
+imputed datasets look good, so is the overdispersed graph. However, when 
+I try to run "overimpute" and "compare.density" to conduct more 
+diagnostics for some specific variables, I am getting the following 
+error messages:
+
+> compare.density(a.out, var =13)
+Error in density.default(vars[!is.na(vars)], na.rm = TRUE) :
+   argument 'x' must be numeric
+
+> overimpute(a.out, var =13)
+Error in segments(xplot[ci.order], lowers[ci.order], xplot[ci.order],  : 
+   invalid first argument
+
+I double-check and make sure variable 13 is indeed numeric, but they 
+have non-English labels.
+
+I have used an older version of Amelia II and imputed a similar dataset 
+a couple years before, and I have no problem using these diagnostics 
+commands in R. Now that I have the most up-to-date version of Amelia II 
+on a new computer, I am running into these problems.
+
+Any suggestions will be greatly appreciated. Thanks a lot in advance.
+
+
+Best,
+X
+
+-- 
+Xiaobo L?
+Assistant Professor
+Bush School of Government and Public Service
+Texas A&M University
+Tel: (979) 845-6510
+Fax: (979) 845-4155
+Email: xlu at bushschool.tamu.edu
+Website: http://www.xiaobolu.com
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From dieleman at u.washington.edu  Thu Sep  8 15:04:50 2011
+From: dieleman at u.washington.edu (J. Dieleman)
+Date: Thu, 8 Sep 2011 19:04:50 +0000
+Subject: [amelia] observation-level priors and log transformations
+Message-ID: <4C9FA51CB843EC44B99194310A8C0DF015619B@UWIT-MBX08.exchange.washington.edu>
+
+Hello,
+I'm wondering if someone could provide a little bit of information about how observation-level priors work for a variable that is also being transformed?
+
+I'll apply my question to the running example found in the AMELIA documentation (Honaker, King, and Blackwell, 2011).  Here, using the option logs="tariff" seems appropriate as discussed on pages 18 and 19.  Imagine now that I also want to include observational-level priors about tariff, as discussed on pages 24-26.   Will my prior also be converted into log-space?  I assume without the transformation option, my prior is assumed to be normally distributed, based on the confidence interval supplied by my five column priors matrix.  What is the distribution now that I've also specified the log transformation on the tariff?  To avoid this, should I simply not transform tariff?
+
+
+
+Thanks for any help that anybody can offer.
+
+
+
+Joe Dieleman
+
+University of Washington
+
+Institute for Health Metrics and Evaluation
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110908/791da048/attachment.html>
+
+From blackwel at fas.harvard.edu  Wed Sep 21 17:58:01 2011
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Wed, 21 Sep 2011 17:58:01 -0400
+Subject: [amelia] observation-level priors and log transformations
+In-Reply-To: <4C9FA51CB843EC44B99194310A8C0DF015619B@UWIT-MBX08.exchange.washington.edu>
+References: <4C9FA51CB843EC44B99194310A8C0DF015619B@UWIT-MBX08.exchange.washington.edu>
+Message-ID: <EC297E52A0F44041968AB5564DB61876@gmail.com>
+
+Hi Joe,  
+
+The priors are not transformed, so they refer to the transformed variable (that is, log(tariff), rather than tariff). This is because the normal priors on the observation make more sense when the distribution is itself normal, which is usually after the log transformation. Hope that helps.  
+
+Cheers,
+matt.
+
+~~~~~~~~~~~
+Matthew Blackwell
+PhD Candidate
+Institute for Quantitative Social Science
+Department of Government
+Harvard University
+url: http://www.mattblackwell.org
+
+
+
+On Thursday, September 8, 2011 at 3:04 PM, J. Dieleman wrote:
+
+> Hello,
+> I?m wondering if someone could provide a little bit of information about how observation-level priors work for a variable that is also being transformed?  
+> I?ll apply my question to the running example found in the AMELIA documentation (Honaker, King, and Blackwell, 2011).  Here, using the option logs=?tariff? seems appropriate as discussed on pages 18 and 19.  Imagine now that I also want to include observational-level priors about tariff, as discussed on pages 24-26.  Will my prior also be converted into log-space?  I assume without the transformation option, my prior is assumed to be normally distributed, based on the confidence interval supplied by my five column priors matrix.  What is the distribution now that I?ve also specified the log transformation on the tariff?  To avoid this, should I simply not transform tariff?
+>  
+> Thanks for any help that anybody can offer.
+>  
+> Joe Dieleman
+> University of Washington
+> Institute for Health Metrics and Evaluation
+>  
+>  
+>  
+>  
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110921/318bd715/attachment.html>
+
+From blackwel at fas.harvard.edu  Wed Sep 21 18:25:56 2011
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Wed, 21 Sep 2011 18:25:56 -0400
+Subject: [amelia] Errors in "overimpute" and "compare.density"
+In-Reply-To: <4E69029B.50509@bushschool.tamu.edu>
+References: <4E69029B.50509@bushschool.tamu.edu>
+Message-ID: <3ABA1251F76C473B9EDCCBDCF219A6EC@gmail.com>
+
+ Hi Xiaobo,  
+
+It's hard to know what is going on without seeing the original call to amelia, but I would definitely check that the variable is indeed numeric by using the following:
+
+is.numeric(mydata[,13])
+
+and check that amelia is also producing numerics:
+
+is.numeric(a.out$imputation[[1]][,13])
+
+What concerns me is that you say that the variable has character labels, which sounds more like a factor than a numeric.  
+
+The error messages point to the variable having no non-missing observations. You can check how many observations are observed and missing using the following:
+
+sum(!is.na(mydata[,13]))
+
+If this is greater than zero, then there may be a problem with these functions. If so, please get in touch.  
+
+Cheers,
+matt.
+
+
+On Thursday, September 8, 2011 at 1:59 PM, Xiaobo Lu wrote:
+
+> Dear all,
+>  
+> I am running into some problems with the newest version of Amelia II and  
+> I cannot figure out exactly why, and I hope you can shed some lights on  
+> these issues that I am running into.
+>  
+> I have successfully imputed 10 dataset by using Amelia II in R. The  
+> imputed datasets look good, so is the overdispersed graph. However, when  
+> I try to run "overimpute" and "compare.density" to conduct more  
+> diagnostics for some specific variables, I am getting the following  
+> error messages:
+>  
+> > compare.density(a.out, var =13)
+> Error in density.default(vars[!is.na(vars)], na.rm = TRUE) :
+>  argument 'x' must be numeric
+>  
+> > overimpute(a.out, var =13)
+> Error in segments(xplot[ci.order], lowers[ci.order], xplot[ci.order], :  
+>  invalid first argument
+>  
+> I double-check and make sure variable 13 is indeed numeric, but they  
+> have non-English labels.
+>  
+> I have used an older version of Amelia II and imputed a similar dataset  
+> a couple years before, and I have no problem using these diagnostics  
+> commands in R. Now that I have the most up-to-date version of Amelia II  
+> on a new computer, I am running into these problems.
+>  
+> Any suggestions will be greatly appreciated. Thanks a lot in advance.
+>  
+>  
+> Best,
+> X
+>  
+> --  
+> Xiaobo L?
+> Assistant Professor
+> Bush School of Government and Public Service
+> Texas A&M University
+> Tel: (979) 845-6510
+> Fax: (979) 845-4155
+> Email: xlu at bushschool.tamu.edu (mailto:xlu at bushschool.tamu.edu)
+> Website: http://www.xiaobolu.com
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110921/a1bcb5b3/attachment.html>
+

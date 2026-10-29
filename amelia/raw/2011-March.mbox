@@ -1,0 +1,875 @@
+From dbraman at law.gwu.edu  Wed Mar  2 23:13:08 2011
+From: dbraman at law.gwu.edu (Donald Braman)
+Date: Wed, 2 Mar 2011 23:13:08 -0500
+Subject: [amelia] request for advice on imputing data from an experiment
+Message-ID: <AANLkTi=XxYTkMTqQekqH4LDXgezeKFS6KqNVZDZFuTvq@mail.gmail.com>
+
+I have data from an experiment with a control and four treatments.  There
+are several independent and dependent variables, and all have missing data
+(which, for the sake of argument, assume occurs randomly).  The independent
+variables can each be imputed from other independent data *across* the
+entire experiment.  But the dependent variables, I take it, should be
+imputed only from other data *within* each condition. Is that right?  Is
+there some way to specify this within Amelia?  If not, do you recommend
+imputing all the independent variables across conditions, then merging them
+with dependent variables imputed from within each condition?
+
+-- 
+Donald Braman
+http://ssrn.com/author=286206
+http://www.culturalcognition.net/braman/
+http://www.law.gwu.edu/Faculty/profile.aspx?id=10123
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110302/651f68ce/attachment.html>
+
+From blackwel at fas.harvard.edu  Wed Mar  2 23:49:07 2011
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Wed, 2 Mar 2011 23:49:07 -0500
+Subject: [amelia] request for advice on imputing data from an experiment
+In-Reply-To: <AANLkTi=XxYTkMTqQekqH4LDXgezeKFS6KqNVZDZFuTvq@mail.gmail.com>
+References: <AANLkTi=XxYTkMTqQekqH4LDXgezeKFS6KqNVZDZFuTvq@mail.gmail.com>
+Message-ID: <AANLkTinT78uxSrBb44vqkM5HNHoNFzCX1PMbzBxuFWAd@mail.gmail.com>
+
+Hi Donald,
+
+There's no real way to combine imputations from separate imputation
+models, since they would have completely different underlying
+parameter value draws. I'm not sure what separate imputations would
+accomplish, though. It would still estimate separate mean values of
+the outcome for each treatment group, but would also "interact" the
+treatment with the all the independent variables. That is, it allows
+the relationships between the independent variables and the dependent
+variables to vary across the treatment groups. You can accomplish the
+same effect by interacting the treatment group binary variables with
+each of the independent variable. With this, you can impute everything
+all together.
+
+Cheers,
+matt.
+
+On Wed, Mar 2, 2011 at 11:13 PM, Donald Braman <dbraman at law.gwu.edu> wrote:
+> I have data from an experiment with a control and four treatments. ?There
+> are several independent and dependent variables, and all have missing data
+> (which, for the sake of argument, assume occurs randomly). ?The independent
+> variables can each be imputed from other independent data *across* the
+> entire experiment. ?But the dependent variables, I take it, should be
+> imputed only from other data *within* each condition. Is that right? ?Is
+> there some way to specify this within Amelia? ?If not, do you recommend
+> imputing all the independent variables across conditions, then merging them
+> with?dependent?variables?imputed from within each condition?
+>
+> --
+> Donald Braman
+> http://ssrn.com/author=286206
+> http://www.culturalcognition.net/braman/
+> http://www.law.gwu.edu/Faculty/profile.aspx?id=10123
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From dbraman at law.gwu.edu  Thu Mar  3 00:12:24 2011
+From: dbraman at law.gwu.edu (Donald Braman)
+Date: Thu, 3 Mar 2011 00:12:24 -0500
+Subject: [amelia] request for advice on imputing data from an experiment
+In-Reply-To: <AANLkTinT78uxSrBb44vqkM5HNHoNFzCX1PMbzBxuFWAd@mail.gmail.com>
+References: <AANLkTi=XxYTkMTqQekqH4LDXgezeKFS6KqNVZDZFuTvq@mail.gmail.com> <AANLkTinT78uxSrBb44vqkM5HNHoNFzCX1PMbzBxuFWAd@mail.gmail.com>
+Message-ID: <AANLkTik4NX4MRy5Rm1jQ-v4Fzsi5KQo9DVGS55qu6yzP@mail.gmail.com>
+
+OK, here's a further question, then: if I interact my term for each
+treatment (a 0 or 1, effectively), when the treatment value is zero, should
+I force a zero in the product of the treatment and varX when the interaction
+term is missing (since 0 * varX always =) and only impute where the
+interaction is 1 * varX (since I don't know what varX is in that instance)?
+ Or should I impute both interaction terms?
+
+
+On Wed, Mar 2, 2011 at 11:49 PM, Matt Blackwell <blackwel at fas.harvard.edu>wrote:
+
+> Hi Donald,
+>
+> There's no real way to combine imputations from separate imputation
+> models, since they would have completely different underlying
+> parameter value draws. I'm not sure what separate imputations would
+> accomplish, though. It would still estimate separate mean values of
+> the outcome for each treatment group, but would also "interact" the
+> treatment with the all the independent variables. That is, it allows
+> the relationships between the independent variables and the dependent
+> variables to vary across the treatment groups. You can accomplish the
+> same effect by interacting the treatment group binary variables with
+> each of the independent variable. With this, you can impute everything
+> all together.
+>
+> Cheers,
+> matt.
+>
+> On Wed, Mar 2, 2011 at 11:13 PM, Donald Braman <dbraman at law.gwu.edu>
+> wrote:
+> > I have data from an experiment with a control and four treatments.  There
+> > are several independent and dependent variables, and all have missing
+> data
+> > (which, for the sake of argument, assume occurs randomly).  The
+> independent
+> > variables can each be imputed from other independent data *across* the
+> > entire experiment.  But the dependent variables, I take it, should be
+> > imputed only from other data *within* each condition. Is that right?  Is
+> > there some way to specify this within Amelia?  If not, do you recommend
+> > imputing all the independent variables across conditions, then merging
+> them
+> > with dependent variables imputed from within each condition?
+> >
+> > --
+> > Donald Braman
+> > http://ssrn.com/author=286206
+> > http://www.culturalcognition.net/braman/
+> > http://www.law.gwu.edu/Faculty/profile.aspx?id=10123
+> >
+> >
+>
+
+
+
+-- 
+Donald Braman
+phone: 413-628-1221
+http://ssrn.com/author=286206
+http://www.culturalcognition.net/braman/
+http://www.law.gwu.edu/Faculty/profile.aspx?id=10123
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110303/2c355596/attachment.html>
+
+From blackwel at fas.harvard.edu  Mon Mar  7 00:02:30 2011
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Mon, 7 Mar 2011 00:02:30 -0500
+Subject: [amelia] request for advice on imputing data from an experiment
+In-Reply-To: <AANLkTik4NX4MRy5Rm1jQ-v4Fzsi5KQo9DVGS55qu6yzP@mail.gmail.com>
+References: <AANLkTi=XxYTkMTqQekqH4LDXgezeKFS6KqNVZDZFuTvq@mail.gmail.com> <AANLkTinT78uxSrBb44vqkM5HNHoNFzCX1PMbzBxuFWAd@mail.gmail.com> <AANLkTik4NX4MRy5Rm1jQ-v4Fzsi5KQo9DVGS55qu6yzP@mail.gmail.com>
+Message-ID: <AANLkTik5VX1hHYj2VddzFGEqyc_vQABVJNuUGHBuKt9=@mail.gmail.com>
+
+Hi Donald,
+
+You should impute all of the variables and their interactions being
+careful not to include linear combinations of the variables (that is,
+indicators for every category of a nominal variable, always omit one).
+Then, after the fact, you should manually edit the imputed
+interactions to be the interaction of the individual imputations.
+Thus, if varX_k is imputation k for varX, and (1*varX)_k is the kth
+imputation of the interaction, you should replace (1*varX)_k with
+1*(varX_k). Hope that helps.
+
+Cheers,
+matt.
+
+On Thu, Mar 3, 2011 at 12:12 AM, Donald Braman <dbraman at law.gwu.edu> wrote:
+> OK, here's a further question, then: if I interact my term for each
+> treatment (a 0 or 1, effectively), when the treatment value is zero, should
+> I force a zero in the product of the treatment and varX when the interaction
+> term is missing (since 0 * varX always =) and only impute where the
+> interaction is 1 * varX (since I don't know what varX is in that instance)?
+> ?Or should I impute both interaction terms?
+>
+> On Wed, Mar 2, 2011 at 11:49 PM, Matt Blackwell <blackwel at fas.harvard.edu>
+> wrote:
+>>
+>> Hi Donald,
+>>
+>> There's no real way to combine imputations from separate imputation
+>> models, since they would have completely different underlying
+>> parameter value draws. I'm not sure what separate imputations would
+>> accomplish, though. It would still estimate separate mean values of
+>> the outcome for each treatment group, but would also "interact" the
+>> treatment with the all the independent variables. That is, it allows
+>> the relationships between the independent variables and the dependent
+>> variables to vary across the treatment groups. You can accomplish the
+>> same effect by interacting the treatment group binary variables with
+>> each of the independent variable. With this, you can impute everything
+>> all together.
+>>
+>> Cheers,
+>> matt.
+>>
+>> On Wed, Mar 2, 2011 at 11:13 PM, Donald Braman <dbraman at law.gwu.edu>
+>> wrote:
+>> > I have data from an experiment with a control and four treatments.
+>> > ?There
+>> > are several independent and dependent variables, and all have missing
+>> > data
+>> > (which, for the sake of argument, assume occurs randomly). ?The
+>> > independent
+>> > variables can each be imputed from other independent data *across* the
+>> > entire experiment. ?But the dependent variables, I take it, should be
+>> > imputed only from other data *within* each condition. Is that right? ?Is
+>> > there some way to specify this within Amelia? ?If not, do you recommend
+>> > imputing all the independent variables across conditions, then merging
+>> > them
+>> > with?dependent?variables?imputed from within each condition?
+>> >
+>> > --
+>> > Donald Braman
+>> > http://ssrn.com/author=286206
+>> > http://www.culturalcognition.net/braman/
+>> > http://www.law.gwu.edu/Faculty/profile.aspx?id=10123
+>> >
+>> >
+>
+>
+>
+> --
+> Donald Braman
+> phone: 413-628-1221
+> http://ssrn.com/author=286206
+> http://www.culturalcognition.net/braman/
+> http://www.law.gwu.edu/Faculty/profile.aspx?id=10123
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From SEVIGNY at mailbox.sc.edu  Wed Mar 16 14:03:56 2011
+From: SEVIGNY at mailbox.sc.edu (SEVIGNY, ERIC)
+Date: Wed, 16 Mar 2011 14:03:56 -0400
+Subject: [amelia] Interact with cross section
+Message-ID: <EF7A5782326A934B961E3FD205181DEF7E3842@CAE145EVSP08.ds.sc.edu>
+
+Hello, 
+
+ 
+
+I  am currently using the most recent version of AmeliaView, and I seem
+to be encountering a problem with setting the data with trends specific
+to each cross-sectional unit. I experience this issue with my datasets
+as well as the demo datasets. For example, with freetrade dataset, I set
+splines to 3 and checked the drop list for 'Interact Spline with Cross
+Section?' However, the log file below shows that, while splinetime=3,
+intercs=FALSE. My understanding with this setting is that the setting
+should read intercs=TRUE. Please advise.
+
+ 
+
+amelia(x = getAmelia("amelia.data"), m = 5, idvars = NULL, ts = "year", 
+
+       cs = "country", priors = NULL, lags = NULL, empri = 0, intercs =
+FALSE, 
+
+       leads = NULL, splinetime = 3, logs = NULL, sqrts = NULL, 
+
+       lgstc = NULL, ords = NULL, noms = NULL, bounds = NULL,
+max.resample = 1000, 
+
+       tolerance = 1e-04)
+
+ 
+
+Eric L. Sevigny, Ph.D.
+
+Assistant Professor
+Department of Criminology and Criminal Justice
+University of South Carolina
+1305 Greene St
+Columbia, SC 29208
+(803) 777-7043 (office)
+sevigny at mailbox.sc.edu <mailto:sevigny at mailbox.sc.edu> 
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110316/2a401249/attachment.html>
+
+From kurt.smith at archimedesmodel.com  Wed Mar 16 20:39:28 2011
+From: kurt.smith at archimedesmodel.com (Kurt Smith)
+Date: Wed, 16 Mar 2011 17:39:28 -0700
+Subject: [amelia] imputation with sampling weights
+Message-ID: <1300322368.3829.40.camel@kurt-desktop>
+
+I am interested in performing multiple imputation for a data set that
+contains sampling weights. (In other words, each subject in the data has
+a sampling weight that must be taken into account when fitting
+regressions, etc) I did not find any information on this in the Amelia
+documentation. Is it possible to do this with Amelia?
+
+-Kurt Smith
+
+-- 
+Kurt Smith, PhD
+Scientist II
+Archimedes Inc
+201 Mission Street, 29th Floor
+San Francisco, CA  94105
+415.490.0591
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From king at harvard.edu  Wed Mar 16 20:43:33 2011
+From: king at harvard.edu (Gary King)
+Date: Wed, 16 Mar 2011 20:43:33 -0400
+Subject: [amelia] imputation with sampling weights
+In-Reply-To: <1300322368.3829.40.camel@kurt-desktop>
+References: <1300322368.3829.40.camel@kurt-desktop>
+Message-ID: <AANLkTi=Qch51QQq=9YTQH=LHM8XwF1bdD3YT+R2=CHeC@mail.gmail.com>
+
+just impute as if there were no weights (probably including the weights
+themselves as one of the variables used in the imputation algorithm).  then
+use the weights as part of your analysis model as usual.
+Gary
+--
+*Gary King* - Albert J. Weatherhead III University Professor - Director,
+IQSS - Harvard University
+GKing.Harvard.edu <http://gking.harvard.edu/> - King at Harvard.edu -
+@kinggary<http://twitter.com/kinggary>- 617-500-7570 - Asst 495-9271 -
+Fax 812-8581
+
+
+
+On Wed, Mar 16, 2011 at 8:39 PM, Kurt Smith
+<kurt.smith at archimedesmodel.com>wrote:
+
+> I am interested in performing multiple imputation for a data set that
+> contains sampling weights. (In other words, each subject in the data has
+> a sampling weight that must be taken into account when fitting
+> regressions, etc) I did not find any information on this in the Amelia
+> documentation. Is it possible to do this with Amelia?
+>
+> -Kurt Smith
+>
+> --
+> Kurt Smith, PhD
+> Scientist II
+> Archimedes Inc
+> 201 Mission Street, 29th Floor
+> San Francisco, CA  94105
+> 415.490.0591
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110316/2036d19c/attachment.html>
+
+From kurt.smith at archimedesmodel.com  Wed Mar 16 20:54:02 2011
+From: kurt.smith at archimedesmodel.com (Kurt Smith)
+Date: Wed, 16 Mar 2011 17:54:02 -0700
+Subject: [amelia] imputation with sampling weights
+In-Reply-To: <AANLkTi=Qch51QQq=9YTQH=LHM8XwF1bdD3YT+R2=CHeC@mail.gmail.com>
+References: <1300322368.3829.40.camel@kurt-desktop> <AANLkTi=Qch51QQq=9YTQH=LHM8XwF1bdD3YT+R2=CHeC@mail.gmail.com>
+Message-ID: <1300323242.3829.45.camel@kurt-desktop>
+
+Thank you for the quick response Gary.
+
+My concern was that omitting the weights could bias the model that is
+fit to the data and subsequently used to impute missing values. For
+instance Amelia fits a multivariate normal distribution over all
+variables. Wouldn't a different distribution result if the sampling
+weights were considered when it was determined?
+
+Kurt
+
+
+
+On Wed, 2011-03-16 at 20:43 -0400, Gary King wrote:
+> just impute as if there were no weights (probably including the
+> weights themselves as one of the variables used in the imputation
+> algorithm).  then use the weights as part of your analysis model as
+> usual.  
+> Gary
+> --
+> Gary King - Albert J. Weatherhead III University Professor - Director,
+> IQSS - Harvard University
+> GKing.Harvard.edu - King at Harvard.edu - @kinggary - 617-500-7570 - Asst
+> 495-9271 - Fax 812-8581
+> 
+> 
+> 
+> On Wed, Mar 16, 2011 at 8:39 PM, Kurt Smith
+> <kurt.smith at archimedesmodel.com> wrote:
+>         I am interested in performing multiple imputation for a data
+>         set that
+>         contains sampling weights. (In other words, each subject in
+>         the data has
+>         a sampling weight that must be taken into account when fitting
+>         regressions, etc) I did not find any information on this in
+>         the Amelia
+>         documentation. Is it possible to do this with Amelia?
+>         
+>         -Kurt Smith
+>         
+>         --
+>         Kurt Smith, PhD
+>         Scientist II
+>         Archimedes Inc
+>         201 Mission Street, 29th Floor
+>         San Francisco, CA  94105
+>         415.490.0591
+>         -
+>         Amelia mailing list served by Harvard-MIT Data Center
+>         [Un]Subscribe/View Archive:
+>         http://lists.gking.harvard.edu/?info=amelia
+>         More info about Amelia: http://gking.harvard.edu/amelia
+> 
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From king at harvard.edu  Wed Mar 16 21:04:48 2011
+From: king at harvard.edu (Gary King)
+Date: Wed, 16 Mar 2011 21:04:48 -0400
+Subject: [amelia] imputation with sampling weights
+In-Reply-To: <1300323242.3829.45.camel@kurt-desktop>
+References: <1300322368.3829.40.camel@kurt-desktop> <AANLkTi=Qch51QQq=9YTQH=LHM8XwF1bdD3YT+R2=CHeC@mail.gmail.com> <1300323242.3829.45.camel@kurt-desktop>
+Message-ID: <AANLkTinB1kU-Yq-BWUt4ggbLGM6a3PXaxSbEJP_tcXRb@mail.gmail.com>
+
+possibly, but the imputation stage just requires a good predictive model.
+ if the weights help you with prediction, great.
+when you go to combine the resulting data+imputations into a small number of
+quantities of interest, that's when the weights will be of more use.
+Gary
+--
+*Gary King* - Albert J. Weatherhead III University Professor - Director,
+IQSS - Harvard University
+GKing.Harvard.edu <http://gking.harvard.edu/> - King at Harvard.edu -
+@kinggary<http://twitter.com/kinggary>- 617-500-7570 - Asst 495-9271 -
+Fax 812-8581
+
+
+
+On Wed, Mar 16, 2011 at 8:54 PM, Kurt Smith
+<kurt.smith at archimedesmodel.com>wrote:
+
+> Thank you for the quick response Gary.
+>
+> My concern was that omitting the weights could bias the model that is
+> fit to the data and subsequently used to impute missing values. For
+> instance Amelia fits a multivariate normal distribution over all
+> variables. Wouldn't a different distribution result if the sampling
+> weights were considered when it was determined?
+>
+> Kurt
+>
+>
+>
+> On Wed, 2011-03-16 at 20:43 -0400, Gary King wrote:
+> > just impute as if there were no weights (probably including the
+> > weights themselves as one of the variables used in the imputation
+> > algorithm).  then use the weights as part of your analysis model as
+> > usual.
+> > Gary
+> > --
+> > Gary King - Albert J. Weatherhead III University Professor - Director,
+> > IQSS - Harvard University
+> > GKing.Harvard.edu - King at Harvard.edu - @kinggary - 617-500-7570 - Asst
+> > 495-9271 - Fax 812-8581
+> >
+> >
+> >
+> > On Wed, Mar 16, 2011 at 8:39 PM, Kurt Smith
+> > <kurt.smith at archimedesmodel.com> wrote:
+> >         I am interested in performing multiple imputation for a data
+> >         set that
+> >         contains sampling weights. (In other words, each subject in
+> >         the data has
+> >         a sampling weight that must be taken into account when fitting
+> >         regressions, etc) I did not find any information on this in
+> >         the Amelia
+> >         documentation. Is it possible to do this with Amelia?
+> >
+> >         -Kurt Smith
+> >
+> >         --
+> >         Kurt Smith, PhD
+> >         Scientist II
+> >         Archimedes Inc
+> >         201 Mission Street, 29th Floor
+> >         San Francisco, CA  94105
+> >         415.490.0591
+> >         -
+> >         Amelia mailing list served by Harvard-MIT Data Center
+> >         [Un]Subscribe/View Archive:
+> >         http://lists.gking.harvard.edu/?info=amelia
+> >         More info about Amelia: http://gking.harvard.edu/amelia
+> >
+>
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110316/9af45060/attachment.html>
+
+From F.Reiche at sheffield.ac.uk  Thu Mar 17 05:44:49 2011
+From: F.Reiche at sheffield.ac.uk (Florian Reiche)
+Date: Thu, 17 Mar 2011 09:44:49 +0000
+Subject: [amelia] No convergence with intercs=TRUE
+Message-ID: <1300355089.4d81d8116de70@webmail.shef.ac.uk>
+
+Hi
+
+I am struggling with imputations that are allowed to vary between cross sections
+(intercs=TRUE). Introducing polynomials works fine, and the algorithm
+converges, but as soon as I impose the additional restriction of different
+trends between cross sections, this is no longer the case.
+
+The problem with my data set is that for certain variables there are no
+observations in particular cross sections. I assume that Amelia thus has
+nothing to model the trend in this particular cross section on and therefore
+the algorithm can no longer reach convergence.
+
+Is there any way round this problem in Amelia? I fear that imposing the same
+trends for all cross-sections would be a bit unrealistic.
+
+Thank you very much for your help!
+
+Best wishes
+Florian Reiche
+
+______________________________
+Florian Reiche
+PhD Researcher and Associate Tutor
+
+Department of Politics
+University of Sheffield
+Elmfield, Northumberland Road
+Sheffield S10 2TU
+
+Homepage: http://www.shef.ac.uk/politics/research/phd/florianreiche.html
+
+** Contact and Feedback Hours: Monday, 11h-12h, Elmfield, room 1.41 **
+______________________________
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From blackwel at fas.harvard.edu  Thu Mar 17 09:52:42 2011
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Thu, 17 Mar 2011 09:52:42 -0400
+Subject: [amelia] No convergence with intercs=TRUE
+In-Reply-To: <1300355089.4d81d8116de70@webmail.shef.ac.uk>
+References: <1300355089.4d81d8116de70@webmail.shef.ac.uk>
+Message-ID: <AANLkTik2C1X3WfN19N7rTbTNk5s+ORHOfF5fQpmrcjvh@mail.gmail.com>
+
+Hi Florian,
+
+Unfortunately, the imputation model is not identified when you include
+both the fixed effects (cross-section interaction) and the variable
+that is completely missing within cross-sections. This is likely
+because the fixed effects can perfectly predict the missingness in
+that variables. This means that certain covariances are unidentified
+(we could impute anything in those missing cells and just change the
+covariance to be consistent with the observed data). Intuitively, you
+can't allow for separate trend lines and expect Amelia to be able to
+impute a completely missing trend line--it needs to borrow information
+from other trends.
+
+Cheers,
+matt.
+
+
+On Thu, Mar 17, 2011 at 5:44 AM, Florian Reiche
+<F.Reiche at sheffield.ac.uk> wrote:
+> Hi
+>
+> I am struggling with imputations that are allowed to vary between cross sections
+> (intercs=TRUE). Introducing polynomials works fine, and the algorithm
+> converges, but as soon as I impose the additional restriction of different
+> trends between cross sections, this is no longer the case.
+>
+> The problem with my data set is that for certain variables there are no
+> observations in particular cross sections. I assume that Amelia thus has
+> nothing to model the trend in this particular cross section on and therefore
+> the algorithm can no longer reach convergence.
+>
+> Is there any way round this problem in Amelia? I fear that imposing the same
+> trends for all cross-sections would be a bit unrealistic.
+>
+> Thank you very much for your help!
+>
+> Best wishes
+> Florian Reiche
+>
+> ______________________________
+> Florian Reiche
+> PhD Researcher and Associate Tutor
+>
+> Department of Politics
+> University of Sheffield
+> Elmfield, Northumberland Road
+> Sheffield S10 2TU
+>
+> Homepage: http://www.shef.ac.uk/politics/research/phd/florianreiche.html
+>
+> ** Contact and Feedback Hours: Monday, 11h-12h, Elmfield, room 1.41 **
+> ______________________________
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From blackwel at fas.harvard.edu  Fri Mar 25 11:06:11 2011
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Fri, 25 Mar 2011 11:06:11 -0400
+Subject: [amelia] Interact with cross section
+In-Reply-To: <EF7A5782326A934B961E3FD205181DEF7E3842@CAE145EVSP08.ds.sc.edu>
+References: <EF7A5782326A934B961E3FD205181DEF7E3842@CAE145EVSP08.ds.sc.edu>
+Message-ID: <AANLkTi=GJTHEy6MA_JCeToXXZMSK69D=ORuc7fsosd7P@mail.gmail.com>
+
+Hi Eric,
+
+We posted a fix to this bug in the development version of Amelia. You
+can get the development version of Amelia by opening R and running the
+following command:
+
+install.packages("Amelia", repos = "http://r.iq.harvard.edu", type = "source")
+
+Now you can fire up AmeliaView just like before and the "intercs" bug
+should be fixed.
+
+Cheers,
+matt.
+
+~~~~~~~~~~~
+Matthew Blackwell
+PhD Candidate
+Institute for Quantitative Social Science
+Department of Government
+Harvard University
+url: http://people.fas.harvard.edu/~blackwel/
+
+
+On Wed, Mar 16, 2011 at 2:03 PM, SEVIGNY, ERIC <SEVIGNY at mailbox.sc.edu> wrote:
+> Hello,
+>
+>
+>
+> I? am currently using the most recent version of AmeliaView, and I seem to
+> be encountering a problem with setting the data with trends specific to each
+> cross-sectional unit. I experience this issue with my datasets as well as
+> the demo datasets. For example, with freetrade dataset, I set splines to 3
+> and checked the drop list for 'Interact Spline with Cross Section?' However,
+> the log file below shows that, while splinetime=3, intercs=FALSE. My
+> understanding with this setting is that the setting should read
+> intercs=TRUE. Please advise.
+>
+>
+>
+> amelia(x = getAmelia("amelia.data"), m = 5, idvars = NULL, ts = "year",
+>
+> ???&nbs p;???cs = "country", priors = NULL, lags = NULL, empri = 0, intercs
+> = FALSE,
+>
+> ???????leads = NULL, splinetime = 3, logs = NULL, sqrts = NULL,
+>
+> ???????lgstc = NULL, ords = NULL, noms = NULL, bounds = NULL, max.resample =
+> 1000,
+>
+> ???????tolerance = 1e-04)
+>
+>
+>
+> Eric L. Sevigny, Ph.D.
+>
+> Assistant Professor
+> Department of Criminology and Criminal Justice
+> University of South Carolina
+> 1305 Greene St
+> Columbia, SC 29208
+> (803) 777-7043 (office)
+> sevigny at mailbox.sc.edu
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From matthew-c.johnson at ubs.com  Sun Mar 27 17:01:57 2011
+From: matthew-c.johnson at ubs.com (matthew-c.johnson at ubs.com)
+Date: Mon, 28 Mar 2011 08:01:57 +1100
+Subject: [amelia] tscs + PCA
+In-Reply-To: <AANLkTi=GJTHEy6MA_JCeToXXZMSK69D=ORuc7fsosd7P@mail.gmail.com>
+References: <EF7A5782326A934B961E3FD205181DEF7E3842@CAE145EVSP08.ds.sc.edu> <AANLkTi=GJTHEy6MA_JCeToXXZMSK69D=ORuc7fsosd7P@mail.gmail.com>
+Message-ID: <0B3D04B9A3E43D49807BE67A26D55CF81648AC06@NSYDC101PEX1.ubsw.net>
+
+Dear All, 
+ 
+I am using Amelia to fill in some gaps in national accounts data (and similar panels of data); as a result of the structure of my panel, there is no 'cs' parameter -- just 'ts'. 
+ 
+I intend to use the EM algorithim to complete my panel, and then to extract factors via PCA -- as a reuslt i have two related questions. 
+ 
+1/ I would like to use the tscsPlot command (or similar) to plot the observed values and the imputations (mean + 95% confidence bands) -- is this possible?
+ 
+2/ What's the best way to use the output from the imputations to generate the factors in the PCA? I have considered two methods, but am unsure which is best (most valid) --
+ 
+1/ fill the gaps in the panel with the the mean of the imputations and use the single data set to extract the eigenvales and eigenvectors of the assocaited covariance matrix - and then use these weights and the 'mean-filled in' data set to generate the factors. 
+ 
+2/ stack the imputation panels and use the stacked panel to generate the eigenvalues and eigenvectors of the associated covariance matrix - and then use the mean values from the imputation runs to fill the gaps in my original panel, and the weights from the stacked panel? 
+ 
+thanks and best regards
+ 
+Matt Johnson 
+
+-----Original Message-----
+From: owner-amelia_at_lists_gking_harvard_edu at mail.hmdc.harvard.edu [mailto:owner-amelia_at_lists_gking_harvard_edu at mail.hmdc.harvard.edu] On Behalf Of Matt Blackwell
+Sent: 26 March 2011 02:06
+To: SEVIGNY, ERIC
+Cc: amelia at lists.gking.harvard.edu
+Subject: Re: [amelia] Interact with cross section
+
+Hi Eric,
+
+We posted a fix to this bug in the development version of Amelia. You can get the development version of Amelia by opening R and running the following command:
+
+install.packages("Amelia", repos = "http://r.iq.harvard.edu", type = "source")
+
+Now you can fire up AmeliaView just like before and the "intercs" bug should be fixed.
+
+Cheers,
+matt.
+
+~~~~~~~~~~~
+Matthew Blackwell
+PhD Candidate
+Institute for Quantitative Social Science Department of Government Harvard University
+url: http://people.fas.harvard.edu/~blackwel/
+
+
+On Wed, Mar 16, 2011 at 2:03 PM, SEVIGNY, ERIC <SEVIGNY at mailbox.sc.edu> wrote:
+> Hello,
+>
+>
+>
+> I? am currently using the most recent version of AmeliaView, and I 
+> seem to be encountering a problem with setting the data with trends 
+> specific to each cross-sectional unit. I experience this issue with my 
+> datasets as well as the demo datasets. For example, with freetrade 
+> dataset, I set splines to 3 and checked the drop list for 'Interact 
+> Spline with Cross Section?' However, the log file below shows that, 
+> while splinetime=3, intercs=FALSE. My understanding with this setting 
+> is that the setting should read intercs=TRUE. Please advise.
+>
+>
+>
+> amelia(x = getAmelia("amelia.data"), m = 5, idvars = NULL, ts = 
+> "year",
+>
+> ???&nbs p;???cs = "country", priors = NULL, lags = NULL, empri = 0, 
+> intercs = FALSE,
+>
+> ???????leads = NULL, splinetime = 3, logs = NULL, sqrts = NULL,
+>
+> ???????lgstc = NULL, ords = NULL, noms = NULL, bounds = NULL, 
+> max.resample = 1000,
+>
+> ???????tolerance = 1e-04)
+>
+>
+>
+> Eric L. Sevigny, Ph.D.
+>
+> Assistant Professor
+> Department of Criminology and Criminal Justice University of South 
+> Carolina
+> 1305 Greene St
+> Columbia, SC 29208
+> (803) 777-7043 (office)
+> sevigny at mailbox.sc.edu
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+Visit our website at http://www.ubs.com
+
+This message contains confidential information and is intended only 
+for the individual named.  If you are not the named addressee you 
+should not disseminate, distribute or copy this e-mail.  Please 
+notify the sender immediately by e-mail if you have received this 
+e-mail by mistake and delete this e-mail from your system.
+	
+E-mails are not encrypted and cannot be guaranteed to be secure or 
+error-free as information could be intercepted, corrupted, lost, 
+destroyed, arrive late or incomplete, or contain viruses.  The sender 
+therefore does not accept liability for any errors or omissions in the 
+contents of this message which arise as a result of e-mail transmission.  
+If verification is required please request a hard-copy version.  This 
+message is provided for informational purposes and should not be 
+construed as a solicitation or offer to buy or sell any securities 
+or related financial instruments.
+
+ 
+UBS reserves the right to retain all messages. Messages are protected
+and accessed only in legally justified cases.
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From ramos.grad.student at gmail.com  Thu Mar 31 22:43:33 2011
+From: ramos.grad.student at gmail.com (Antonio P. Ramos)
+Date: Thu, 31 Mar 2011 19:43:33 -0700
+Subject: [amelia] Amelia not running
+Message-ID: <AANLkTikMRjZtJKrqvG0k4EBfUOTpcqdD1TMOQ+FTQm7D@mail.gmail.com>
+
+Hi all,
+
+I am wondering what is happening here: the program does not run but no error
+message is provided. Maybe I am making a very basic mistake but so far I
+have not clue.
+
+Help and advice really appreciated,
+
+Antonio.
+
+> out <-amelia(imp.data,noms=c("poor.pooled","president","adm"),
++            m=1,ts="year",cs="party",polytime=2,intercs=TRUE,p2s=2)
+
+amelia starting
+beginning prep functions
+Variables used:  toelec switch coord1D with.exec.x rel1D pure.pres pure.auth
+pure.emp pure.liq pure.paid legisl eleant other.legis executive age success
+m.with.exec m.rel1D m.relideo inv other invoth cabshare maxp.pure p.pure N
+with.exec.y Npres totsn incab party.ideo pork noms.poor.pooled.2
+noms.president.2 noms.adm.2 noms.adm.3 time.1 time.2 time.3 time.4 time.5
+time.6 time.7 time.8 time.9 time.10 time.11 time.12 time.13 time.14 time.15
+time.16 time.17 time.18 time.19 time.20 time.21 time.22 time.23 time.24
+time.25 time.26 time.27 time.28 time.29 time.30 time.31 time.32 time.33
+time.34 time.35 time.36 time.37 time.38 time.39 time.40 time.41 time.42
+time.43 time.44 time.45 time.46 time.47 time.48 time.49 time.50 time.51
+time.52 time.53 time.54 time.55 time.56 time.57 time.58 time.59 time.60
+time.61 time.62 time.63 time.64 time.65 time.66 time.67 time.68 time.69
+time.70 time.71 time.72 time.73 time.74 time.75 time.76 time.77
+running bootstrap
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110331/44ea1d08/attachment.html>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: imp.data.csv
+Type: text/csv
+Size: 864568 bytes
+Desc: not available
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20110331/44ea1d08/attachment.csv>
+

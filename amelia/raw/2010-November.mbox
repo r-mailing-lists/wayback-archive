@@ -1,0 +1,484 @@
+From lselkirk at uvm.edu  Sun Nov  7 14:17:14 2010
+From: lselkirk at uvm.edu (Laura Selkirk)
+Date: Sun, 07 Nov 2010 14:17:14 -0500
+Subject: [amelia] convergence issue
+Message-ID: <4CD6FB3A.7030709@uvm.edu>
+
+I am getting the following error when trying to run Amelia:
+
+
+
+1 Error in eigen(thetanew[2:nrow(thetanew), 2:ncol(thetanew)],
+
+only.values = TRUE,  :infinite or missing values in 'x'
+
+
+I've read through the list and have tried the fixes that have been 
+suggested.  I removed about 15 cases when participants had less than 10% 
+available data.  I've also tried lowering the tolerance.  I am assuming 
+that at this point I should think about variables to remove.  My data 
+consists of 89 questions for an epistemological beliefs scale I am 
+trying to create.  Are there any suggestions as to how I should go about 
+choosing questions to remove?  I've checked the correlations and there 
+seems to be no multicollinearity. 
+
+Any help would be greatly appreciated!
+
+
+
+
+Laura
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From ramos.grad.student at gmail.com  Sun Nov 14 08:49:35 2010
+From: ramos.grad.student at gmail.com (Antonio P. Ramos)
+Date: Sun, 14 Nov 2010 05:49:35 -0800
+Subject: [amelia] problem with missmaps
+Message-ID: <AANLkTikP4tM4oZrAR6cmAzoKr6oxN5gHKKbYfiKhCfk6@mail.gmail.com>
+
+Hi all,
+
+Basically I'm getting an error message that I don't really understand. It
+says that the  subscript out of bounds but I can't see how.
+
+Thank you for your help,
+
+Best,
+
+Antonio.
+
+
+> # missing date matrix
+>
+> k1 <-cbind(data1$INFMORT,data1$YEAR,data1$COUNTRY)
+> k1 <-as.matrix(k1)
+> k1 <-as.matrix(k1)
+> str(k1)
+ num [1:4126, 1:3] 160 NA NA NA NA ...
+> dim(k1)
+[1] 4126    3
+> head(k1)
+     [,1] [,2] [,3]
+[1,]  160 1962    1
+[2,]   NA 1963    1
+[3,]   NA 1964    1
+[4,]   NA 1965    1
+[5,]   NA 1966    1
+[6,]  150 1967    1
+> quartz()
+> missmap(k1,csvar=k1[,3],tsvar=k1[,2])
+Error in missmap(k1, csvar = k1[, 3], tsvar = k1[, 2]) :
+  subscript out of bounds
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20101114/3a6caced/attachment.html>
+
+From tercer at psu.edu  Mon Nov 15 04:46:06 2010
+From: tercer at psu.edu (JAMES HONAKER)
+Date: Mon, 15 Nov 2010 04:46:06 -0500
+Subject: [amelia] problem with missmaps
+In-Reply-To: AANLkTikP4tM4oZrAR6cmAzoKr6oxN5gHKKbYfiKhCfk6@mail.gmail.com
+References: <AANLkTikP4tM4oZrAR6cmAzoKr6oxN5gHKKbYfiKhCfk6@mail.gmail.com>
+Message-ID: <1289814366l.573678l.0l@psu.edu>
+
+Antonio,
+Instead of:
+> missmap(k1,csvar=k1[,3],tsvar=k1[,2])
+See if:
+> missmap(k1,csvar=3,tsvar=2)
+works in your dataset.  That is, the arguments are the column positions, not
+the actual extracted columns from the matrix.  Or if this were a data frame you
+could use variable names, such as:
+> missmap(k1,csvar="countryname",tsvar="year")
+if those names were appropriate (that is, contained in "names(k1)")
+
+Hope all is well with you,
+James
+
+
+On Sun, Nov 14, 2010 08:49 AM "Antonio P. Ramos" <ramos.grad.student at gmail.com>
+wrote:
+>
+>Hi all,
+>
+>Basically I'm getting an error message that I don't really understand. It
+>says that the  subscript out of bounds but I can't see how.
+>
+>Thank you for your help,
+>
+>Best,
+>
+>Antonio.
+>
+>
+>> # missing date matrix
+>>
+>> k1 <-cbind(data1$INFMORT,data1$YEAR,data1$COUNTRY)
+>> k1 <-as.matrix(k1)
+>> k1 <-as.matrix(k1)
+>> str(k1)
+> num [1:4126, 1:3] 160 NA NA NA NA ...
+>> dim(k1)
+>[1] 4126    3
+>> head(k1)
+>     [,1] [,2] [,3]
+>[1,]  160 1962    1
+>[2,]   NA 1963    1
+>[3,]   NA 1964    1
+>[4,]   NA 1965    1
+>[5,]   NA 1966    1
+>[6,]  150 1967    1
+>> quartz()
+>> missmap(k1,csvar=k1[,3],tsvar=k1[,2])
+>Error in missmap(k1, csvar = k1[, 3], tsvar = k1[, 2]) :
+>  subscript out of bounds
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From ramos.grad.student at gmail.com  Mon Nov 15 05:39:02 2010
+From: ramos.grad.student at gmail.com (Antonio P. Ramos)
+Date: Mon, 15 Nov 2010 02:39:02 -0800
+Subject: [amelia] problem with missmaps
+In-Reply-To: <1289814366l.573678l.0l@psu.edu>
+References: <AANLkTikP4tM4oZrAR6cmAzoKr6oxN5gHKKbYfiKhCfk6@mail.gmail.com> <1289814366l.573678l.0l@psu.edu>
+Message-ID: <AANLkTimjyNeBUggem+qJ=caMKkpeza-mNJmgdP+1sYvV@mail.gmail.com>
+
+Hey James! How are you? Such a long time. We miss you!
+
+Thank for your reply: basically using your tip everything run but the map is
+kind of weird: I think it is plotting the 3 variables of the my date set,
+when I actually care just about the first one. Thus I dunno how to select
+the variable I really one see. If try this I get an error message:
+
+> quartz()
+> missmap(k1[,1],csvar=3,tsvar=2)
+Error in colMeans(is.na(obj)) :
+  'x' must be an array of at least two dimensions
+
+If I do the following code I get the attached graph, which is really the
+thing I wanna plot:
+
+ k1 <-cbind(data1$INFMORT,data1$YEAR,data1$COUNTRY)
+> k1 <-as.data.frame(k1)
+> k1 <- as.matrix(k1)
+> str(k1)
+ num [1:4126, 1:3] 160 NA NA NA NA ...
+ - attr(*, "dimnames")=List of 2
+  ..$ : NULL
+  ..$ : chr [1:3] "V1" "V2" "V3"
+> dim(k1)
+[1] 4126    3
+> head(k1)
+      V1   V2 V3
+[1,] 160 1962  1
+[2,]  NA 1963  1
+[3,]  NA 1964  1
+[4,]  NA 1965  1
+[5,]  NA 1966  1
+[6,] 150 1967  1
+> quartz()
+> missmap(k1,csvar=3,tsvar=2)
+
+Thank your for your time!
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20101115/74d12cf6/attachment.html>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: Rplot001.jpg
+Type: image/jpeg
+Size: 36595 bytes
+Desc: not available
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20101115/74d12cf6/attachment.jpg>
+
+From blackwel at fas.harvard.edu  Mon Nov 15 09:29:18 2010
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Mon, 15 Nov 2010 09:29:18 -0500
+Subject: [amelia] problem with missmaps
+In-Reply-To: <AANLkTimjyNeBUggem+qJ=caMKkpeza-mNJmgdP+1sYvV@mail.gmail.com>
+References: <AANLkTikP4tM4oZrAR6cmAzoKr6oxN5gHKKbYfiKhCfk6@mail.gmail.com> <1289814366l.573678l.0l@psu.edu> <AANLkTimjyNeBUggem+qJ=caMKkpeza-mNJmgdP+1sYvV@mail.gmail.com>
+Message-ID: <AANLkTi=LHq5jMNPLUO-OoF0q17JM-w9h_BgazjKGTAN0@mail.gmail.com>
+
+Hi Antonio,
+
+Unfortunately, you need to include the time and cross-sectional
+variables in the data passed to missmap and they will be mapped along
+with any other variables. The missmap function relies on the image()
+function at its core, so you could try to look at the source and hack
+together a map that suits your needs.
+
+If you want to draw the map without any time/cross-section
+information, you can force R to treat the column as a one-column
+matrix:
+
+missmap(k1[ ,1, drop = FALSE])
+
+Hope that helps,
+matt.
+
+On Mon, Nov 15, 2010 at 5:39 AM, Antonio P. Ramos
+<ramos.grad.student at gmail.com> wrote:
+> Hey James! How are you? Such a long time. We miss you!
+>
+> Thank for your reply: basically using your tip everything run but the map is
+> kind of weird: I think it is plotting the 3 variables of the my date set,
+> when I actually care just about the first one. Thus I dunno how to select
+> the variable I really one see. If try this I get an error message:
+>
+>> quartz()
+>> missmap(k1[,1],csvar=3,tsvar=2)
+> Error in colMeans(is.na(obj)) :
+> ? 'x' must be an array of at least two dimensions
+>
+> If I do the following code I get the attached graph, which is really the
+> thing I wanna plot:
+>
+> ?k1 <-cbind(data1$INFMORT,data1$YEAR,data1$COUNTRY)
+>> k1 <-as.data.frame(k1)
+>> k1 <- as.matrix(k1)
+>> str(k1)
+> ?num [1:4126, 1:3] 160 NA NA NA NA ...
+> ?- attr(*, "dimnames")=List of 2
+> ? ..$ : NULL
+> ? ..$ : chr [1:3] "V1" "V2" "V3"
+>> dim(k1)
+> [1] 4126??? 3
+>> head(k1)
+> ????? V1?? V2 V3
+> [1,] 160 1962? 1
+> [2,]? NA 1963? 1
+> [3,]? NA 1964? 1
+> [4,]? NA 1965? 1
+> [5,]? NA 1966? 1
+> [6,] 150 1967? 1
+>> quartz()
+>> missmap(k1,csvar=3,tsvar=2)
+>
+> Thank your for your time!
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From ramos.grad.student at gmail.com  Mon Nov 15 18:00:37 2010
+From: ramos.grad.student at gmail.com (Antonio P. Ramos)
+Date: Mon, 15 Nov 2010 15:00:37 -0800
+Subject: [amelia] problem with missmaps
+In-Reply-To: <AANLkTi=LHq5jMNPLUO-OoF0q17JM-w9h_BgazjKGTAN0@mail.gmail.com>
+References: <AANLkTikP4tM4oZrAR6cmAzoKr6oxN5gHKKbYfiKhCfk6@mail.gmail.com> <1289814366l.573678l.0l@psu.edu> <AANLkTimjyNeBUggem+qJ=caMKkpeza-mNJmgdP+1sYvV@mail.gmail.com> <AANLkTi=LHq5jMNPLUO-OoF0q17JM-w9h_BgazjKGTAN0@mail.gmail.com>
+Message-ID: <AANLkTinBqFq6H8EEquDiTpvooMo6VZKaL9ebcpkfhqUT@mail.gmail.com>
+
+Thanks for your reply. I got it now.
+
+I was just wondering about some of the common "problems" with these maps:
+often in time-serious cross-sectional data we have so many counties that we
+can't really plot all their names; and if we wanna arrange country in terms
+of, say, income per capita income, to see the correlation of missing data
+and this indicator, than is even more difficult. I saw that you did some
+tricks in this post,like plotting over country names over both sides of the
+y-axis  but I can't see the code. Perhaps you and others might wanna share
+some of this tricks.
+
+http://www.iq.harvard.edu/blog/sss/archives/2009/02/missingness_map.shtml
+
+
+Congratulation for your software!
+
+Best,
+
+Antonio.
+
+
+
+
+On Mon, Nov 15, 2010 at 6:29 AM, Matt Blackwell <blackwel at fas.harvard.edu>wrote:
+
+> Hi Antonio,
+>
+> Unfortunately, you need to include the time and cross-sectional
+> variables in the data passed to missmap and they will be mapped along
+> with any other variables. The missmap function relies on the image()
+> function at its core, so you could try to look at the source and hack
+> together a map that suits your needs.
+>
+> If you want to draw the map without any time/cross-section
+> information, you can force R to treat the column as a one-column
+> matrix:
+>
+> missmap(k1[ ,1, drop = FALSE])
+>
+> Hope that helps,
+> matt.
+>
+> On Mon, Nov 15, 2010 at 5:39 AM, Antonio P. Ramos
+> <ramos.grad.student at gmail.com> wrote:
+> > Hey James! How are you? Such a long time. We miss you!
+> >
+> > Thank for your reply: basically using your tip everything run but the map
+> is
+> > kind of weird: I think it is plotting the 3 variables of the my date set,
+> > when I actually care just about the first one. Thus I dunno how to select
+> > the variable I really one see. If try this I get an error message:
+> >
+> >> quartz()
+> >> missmap(k1[,1],csvar=3,tsvar=2)
+> > Error in colMeans(is.na(obj)) :
+> >   'x' must be an array of at least two dimensions
+> >
+> > If I do the following code I get the attached graph, which is really the
+> > thing I wanna plot:
+> >
+> >  k1 <-cbind(data1$INFMORT,data1$YEAR,data1$COUNTRY)
+> >> k1 <-as.data.frame(k1)
+> >> k1 <- as.matrix(k1)
+> >> str(k1)
+> >  num [1:4126, 1:3] 160 NA NA NA NA ...
+> >  - attr(*, "dimnames")=List of 2
+> >   ..$ : NULL
+> >   ..$ : chr [1:3] "V1" "V2" "V3"
+> >> dim(k1)
+> > [1] 4126    3
+> >> head(k1)
+> >       V1   V2 V3
+> > [1,] 160 1962  1
+> > [2,]  NA 1963  1
+> > [3,]  NA 1964  1
+> > [4,]  NA 1965  1
+> > [5,]  NA 1966  1
+> > [6,] 150 1967  1
+> >> quartz()
+> >> missmap(k1,csvar=3,tsvar=2)
+> >
+> > Thank your for your time!
+> >
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20101115/95f25092/attachment.html>
+
+From blackwel at fas.harvard.edu  Tue Nov 16 09:56:27 2010
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Tue, 16 Nov 2010 09:56:27 -0500
+Subject: [amelia] problem with missmaps
+In-Reply-To: <AANLkTinBqFq6H8EEquDiTpvooMo6VZKaL9ebcpkfhqUT@mail.gmail.com>
+References: <AANLkTikP4tM4oZrAR6cmAzoKr6oxN5gHKKbYfiKhCfk6@mail.gmail.com> <1289814366l.573678l.0l@psu.edu> <AANLkTimjyNeBUggem+qJ=caMKkpeza-mNJmgdP+1sYvV@mail.gmail.com> <AANLkTi=LHq5jMNPLUO-OoF0q17JM-w9h_BgazjKGTAN0@mail.gmail.com> <AANLkTinBqFq6H8EEquDiTpvooMo6VZKaL9ebcpkfhqUT@mail.gmail.com>
+Message-ID: <AANLkTi=H_DcVTwWUuvSTsS9xPbRk5HUTz2Mo6P0ocpZr@mail.gmail.com>
+
+Hi Antonio,
+
+Thanks for these suggestions. The next time we update the missmap
+function, we will definitely keep these in mind. You can reorder the
+map currently by reordering the matrix or data frame you pass to it.
+So, for income you could do:
+
+missmap(data[order(data$income),])
+
+Cheers,
+matt.
+
+
+On Mon, Nov 15, 2010 at 6:00 PM, Antonio P. Ramos
+<ramos.grad.student at gmail.com> wrote:
+> Thanks for your reply. I got it now.
+>
+> I was just wondering about some of the common "problems" with these maps:
+> often in time-serious cross-sectional data we have so many counties that we
+> can't really plot all their names; and if we wanna arrange country in terms
+> of, say, income per capita income, to see the correlation of missing data
+> and this indicator, than is even more difficult. I saw that you did some
+> tricks in this post,like plotting over country names over both sides of the
+> y-axis? but I can't see the code. Perhaps you and others might wanna share
+> some of this tricks.
+>
+> http://www.iq.harvard.edu/blog/sss/archives/2009/02/missingness_map.shtml
+>
+>
+> Congratulation for your software!
+>
+> Best,
+>
+> Antonio.
+>
+>
+>
+>
+> On Mon, Nov 15, 2010 at 6:29 AM, Matt Blackwell <blackwel at fas.harvard.edu>
+> wrote:
+>>
+>> Hi Antonio,
+>>
+>> Unfortunately, you need to include the time and cross-sectional
+>> variables in the data passed to missmap and they will be mapped along
+>> with any other variables. The missmap function relies on the image()
+>> function at its core, so you could try to look at the source and hack
+>> together a map that suits your needs.
+>>
+>> If you want to draw the map without any time/cross-section
+>> information, you can force R to treat the column as a one-column
+>> matrix:
+>>
+>> missmap(k1[ ,1, drop = FALSE])
+>>
+>> Hope that helps,
+>> matt.
+>>
+>> On Mon, Nov 15, 2010 at 5:39 AM, Antonio P. Ramos
+>> <ramos.grad.student at gmail.com> wrote:
+>> > Hey James! How are you? Such a long time. We miss you!
+>> >
+>> > Thank for your reply: basically using your tip everything run but the
+>> > map is
+>> > kind of weird: I think it is plotting the 3 variables of the my date
+>> > set,
+>> > when I actually care just about the first one. Thus I dunno how to
+>> > select
+>> > the variable I really one see. If try this I get an error message:
+>> >
+>> >> quartz()
+>> >> missmap(k1[,1],csvar=3,tsvar=2)
+>> > Error in colMeans(is.na(obj)) :
+>> > ? 'x' must be an array of at least two dimensions
+>> >
+>> > If I do the following code I get the attached graph, which is really the
+>> > thing I wanna plot:
+>> >
+>> > ?k1 <-cbind(data1$INFMORT,data1$YEAR,data1$COUNTRY)
+>> >> k1 <-as.data.frame(k1)
+>> >> k1 <- as.matrix(k1)
+>> >> str(k1)
+>> > ?num [1:4126, 1:3] 160 NA NA NA NA ...
+>> > ?- attr(*, "dimnames")=List of 2
+>> > ? ..$ : NULL
+>> > ? ..$ : chr [1:3] "V1" "V2" "V3"
+>> >> dim(k1)
+>> > [1] 4126??? 3
+>> >> head(k1)
+>> > ????? V1?? V2 V3
+>> > [1,] 160 1962? 1
+>> > [2,]? NA 1963? 1
+>> > [3,]? NA 1964? 1
+>> > [4,]? NA 1965? 1
+>> > [5,]? NA 1966? 1
+>> > [6,] 150 1967? 1
+>> >> quartz()
+>> >> missmap(k1,csvar=3,tsvar=2)
+>> >
+>> > Thank your for your time!
+>> >
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+

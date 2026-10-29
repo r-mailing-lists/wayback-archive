@@ -1,0 +1,289 @@
+From bhighton at ucdavis.edu  Wed Jan 25 14:30:53 2012
+From: bhighton at ucdavis.edu (Ben Highton)
+Date: Wed, 25 Jan 2012 11:30:53 -0800
+Subject: [amelia] What to do when (the number of variables) > (the number of
+	observations)
+Message-ID: <CALRuTNHAGNkBmJwx0jtfJYNjXOft2YTiunR1XN28p1oDHEm9xQ@mail.gmail.com>
+
+Hi fellow Amelia users,
+I have a dataset with 51 observations (one for each American state +
+the District of Columbia) and nearly 150 variables.  Is there a way to
+do imputations when variables>observations?  (One of my analysis goals
+is to factor analyze the variables to attempt and identify what I
+believe to be the 2-4 dimensions in the data.)
+
+Because I primarily use Stata, I am using AmeliaView.  An initial
+attempt to impute missing values produced the following error:
+"Amelia Error Code: 34  The number of observations in too low to
+estimate the number of parameters.  You can either remove some
+variables, reduce the order of the time polynomial, or increase the
+empirical prior."
+
+If anyone has advice for me, I'd appreciate it.  Thanks.
+Sincerely,
+Ben Highton
+
+
+From bhighton at ucdavis.edu  Thu Jan 26 11:26:34 2012
+From: bhighton at ucdavis.edu (Ben Highton)
+Date: Thu, 26 Jan 2012 08:26:34 -0800
+Subject: [amelia] What to do when (the number of variables) > (the
+ number of observations)
+In-Reply-To: <63735ACA-9921-44D4-A632-DC26CB904855@umail.iu.edu>
+References: <CALRuTNHAGNkBmJwx0jtfJYNjXOft2YTiunR1XN28p1oDHEm9xQ@mail.gmail.com>
+	<63735ACA-9921-44D4-A632-DC26CB904855@umail.iu.edu>
+Message-ID: <CALRuTNEnbMamReDVZ1B_Xyjo7hmJ_UPQ1WfYY5SzF23RvtUEpQ@mail.gmail.com>
+
+Hi Dan,
+Thanks for your response.  In this case, though, I don't think the
+solution will work because the I don't have repeated measurements on
+the same variables through time.  The data is fundamentally
+cross-sectional, not time-series cross-sectional.
+Best,
+Ben
+
+On Wed, Jan 25, 2012 at 11:51 AM, Dan Matisoff <dmatisof at umail.iu.edu> wrote:
+> You can longitudinalize the data... so for each year, you'll get 51 more observations (which will also help generate improved imputations)
+>
+>
+> On Jan 25, 2012, at 2:30 PM, Ben Highton wrote:
+>
+> Hi fellow Amelia users,
+> I have a dataset with 51 observations (one for each American state +
+> the District of Columbia) and nearly 150 variables. ?Is there a way to
+> do imputations when variables>observations? ?(One of my analysis goals
+> is to factor analyze the variables to attempt and identify what I
+> believe to be the 2-4 dimensions in the data.)
+>
+> Because I primarily use Stata, I am using AmeliaView. ?An initial
+> attempt to impute missing values produced the following error:
+> "Amelia Error Code: 34 ?The number of observations in too low to
+> estimate the number of parameters. ?You can either remove some
+> variables, reduce the order of the time polynomial, or increase the
+> empirical prior."
+>
+> If anyone has advice for me, I'd appreciate it. ?Thanks.
+> Sincerely,
+> Ben Highton
+> --
+> Amelia mailing list served by HUIT
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+> Amelia mailing list
+> Amelia at lists.gking.harvard.edu
+> https://lists.gking.harvard.edu/mailman/listinfo/amelia
+>
+
+
+From blackwel at fas.harvard.edu  Thu Jan 26 11:39:11 2012
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Thu, 26 Jan 2012 11:39:11 -0500
+Subject: [amelia] What to do when (the number of variables) > (the
+ number of observations)
+In-Reply-To: <CALRuTNEnbMamReDVZ1B_Xyjo7hmJ_UPQ1WfYY5SzF23RvtUEpQ@mail.gmail.com>
+References: <CALRuTNHAGNkBmJwx0jtfJYNjXOft2YTiunR1XN28p1oDHEm9xQ@mail.gmail.com>
+	<63735ACA-9921-44D4-A632-DC26CB904855@umail.iu.edu>
+	<CALRuTNEnbMamReDVZ1B_Xyjo7hmJ_UPQ1WfYY5SzF23RvtUEpQ@mail.gmail.com>
+Message-ID: <F3841DBB24214BE9B2D28E7BFBE40F4A@gmail.com>
+
+Hi Ben,  
+
+Generally, the model is not identified if there are more variables than observations, which means imputations will be poorly behaved. You could run this data through Amelia with a ridge prior (that is, setting the "empri" option to a relatively high number). This would help identify the model by shrinking the covariances toward zero. 
+
+Another option would be to run a preliminary factor analysis on the listwise deleted data and find the subset of important variables (that is, those with high factor loadings) and then use those variables in the imputation. 
+
+Last, you could eschew Amelia completely and implement a Bayesian analysis with relatively strong priors to identify the model. In this option, you could handle the factor analysis and the missing data together. 
+
+Hope that helps.
+
+Cheers,
+matt.
+
+
+~~~~~~~~~~~
+Matthew Blackwell
+PhD Candidate
+Institute for Quantitative Social Science
+Department of Government
+Harvard University
+url: http://www.mattblackwell.org
+
+
+
+On Thursday, January 26, 2012 at 11:26 AM, Ben Highton wrote:
+
+> Hi Dan,
+> Thanks for your response. In this case, though, I don't think the
+> solution will work because the I don't have repeated measurements on
+> the same variables through time. The data is fundamentally
+> cross-sectional, not time-series cross-sectional.
+> Best,
+> Ben
+> 
+> On Wed, Jan 25, 2012 at 11:51 AM, Dan Matisoff <dmatisof at umail.iu.edu (mailto:dmatisof at umail.iu.edu)> wrote:
+> > You can longitudinalize the data... so for each year, you'll get 51 more observations (which will also help generate improved imputations)
+> > 
+> > 
+> > On Jan 25, 2012, at 2:30 PM, Ben Highton wrote:
+> > 
+> > Hi fellow Amelia users,
+> > I have a dataset with 51 observations (one for each American state +
+> > the District of Columbia) and nearly 150 variables.  Is there a way to
+> > do imputations when variables>observations?  (One of my analysis goals
+> > is to factor analyze the variables to attempt and identify what I
+> > believe to be the 2-4 dimensions in the data.)
+> > 
+> > Because I primarily use Stata, I am using AmeliaView.  An initial
+> > attempt to impute missing values produced the following error:
+> > "Amelia Error Code: 34  The number of observations in too low to
+> > estimate the number of parameters.  You can either remove some
+> > variables, reduce the order of the time polynomial, or increase the
+> > empirical prior."
+> > 
+> > If anyone has advice for me, I'd appreciate it.  Thanks.
+> > Sincerely,
+> > Ben Highton
+> > --
+> > Amelia mailing list served by HUIT
+> > [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> > More info about Amelia: http://gking.harvard.edu/amelia
+> > Amelia mailing list
+> > Amelia at lists.gking.harvard.edu (mailto:Amelia at lists.gking.harvard.edu)
+> > https://lists.gking.harvard.edu/mailman/listinfo/amelia
+> > 
+> 
+> --
+> Amelia mailing list served by HUIT
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+> Amelia mailing list
+> Amelia at lists.gking.harvard.edu (mailto:Amelia at lists.gking.harvard.edu)
+> https://lists.gking.harvard.edu/mailman/listinfo/amelia
+> 
+> 
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20120126/00489971/attachment.html>
+
+From bhighton at ucdavis.edu  Thu Jan 26 23:33:30 2012
+From: bhighton at ucdavis.edu (Ben Highton)
+Date: Thu, 26 Jan 2012 20:33:30 -0800
+Subject: [amelia] What to do when (the number of variables) > (the
+ number of observations)
+In-Reply-To: <F3841DBB24214BE9B2D28E7BFBE40F4A@gmail.com>
+References: <CALRuTNHAGNkBmJwx0jtfJYNjXOft2YTiunR1XN28p1oDHEm9xQ@mail.gmail.com>
+	<63735ACA-9921-44D4-A632-DC26CB904855@umail.iu.edu>
+	<CALRuTNEnbMamReDVZ1B_Xyjo7hmJ_UPQ1WfYY5SzF23RvtUEpQ@mail.gmail.com>
+	<F3841DBB24214BE9B2D28E7BFBE40F4A@gmail.com>
+Message-ID: <CALRuTNFFRCgf_Zth7nbMx+7gw9WXMALG5ePLsWrUxmrSLQVE3A@mail.gmail.com>
+
+Matt,
+Thanks for the useful ideas.  By increasing the ridge prior I was able
+to get Amelia to produce imputations (though I haven't analyzed them
+sufficiently, yet, to decide if I believe them.)  The preliminary
+listwise deletion approach is probably not viable in my case because
+there are only a small handful of states for which there is no missing
+data.  Ultimately, the Bayesian approach may prove the best choice,
+but it'll take me some time to figure it all out.
+
+Thanks again for the quick and helpful response.
+Sincerely,
+Ben
+
+
+On Thu, Jan 26, 2012 at 8:39 AM, Matt Blackwell
+<blackwel at fas.harvard.edu> wrote:
+> Hi Ben,
+>
+> Generally, the model is not identified if there are more variables than
+> observations, which means imputations will be poorly behaved. You could run
+> this data through Amelia with a ridge prior (that is, setting the "empri"
+> option to a relatively high number). This would help identify the model by
+> shrinking the covariances toward zero.
+>
+> Another option would be to run a preliminary factor analysis on the listwise
+> deleted data and find the subset of important variables (that is, those with
+> high factor loadings) and then use those variables in the imputation.
+>
+> Last, you could eschew Amelia completely and implement a Bayesian analysis
+> with relatively strong priors to identify the model. In this option, you
+> could handle the factor analysis and the missing data together.
+>
+> Hope that helps.
+>
+> Cheers,
+> matt.
+>
+> ~~~~~~~~~~~
+> Matthew Blackwell
+> PhD Candidate
+> Institute for Quantitative Social Science
+> Department of Government
+> Harvard University
+> url: http://www.mattblackwell.org
+>
+> On Thursday, January 26, 2012 at 11:26 AM, Ben Highton wrote:
+>
+> Hi Dan,
+> Thanks for your response. In this case, though, I don't think the
+> solution will work because the I don't have repeated measurements on
+> the same variables through time. The data is fundamentally
+> cross-sectional, not time-series cross-sectional.
+> Best,
+> Ben
+>
+> On Wed, Jan 25, 2012 at 11:51 AM, Dan Matisoff <dmatisof at umail.iu.edu>
+> wrote:
+>
+> You can longitudinalize the data... so for each year, you'll get 51 more
+> observations (which will also help generate improved imputations)
+>
+>
+> On Jan 25, 2012, at 2:30 PM, Ben Highton wrote:
+>
+> Hi fellow Amelia users,
+> I have a dataset with 51 observations (one for each American state +
+> the District of Columbia) and nearly 150 variables. ?Is there a way to
+> do imputations when variables>observations? ?(One of my analysis goals
+> is to factor analyze the variables to attempt and identify what I
+> believe to be the 2-4 dimensions in the data.)
+>
+> Because I primarily use Stata, I am using AmeliaView. ?An initial
+> attempt to impute missing values produced the following error:
+> "Amelia Error Code: 34 ?The number of observations in too low to
+> estimate the number of parameters. ?You can either remove some
+> variables, reduce the order of the time polynomial, or increase the
+> empirical prior."
+>
+> If anyone has advice for me, I'd appreciate it. ?Thanks.
+> Sincerely,
+> Ben Highton
+> --
+> Amelia mailing list served by HUIT
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+> Amelia mailing list
+> Amelia at lists.gking.harvard.edu
+> https://lists.gking.harvard.edu/mailman/listinfo/amelia
+>
+> --
+> Amelia mailing list served by HUIT
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+> Amelia mailing list
+> Amelia at lists.gking.harvard.edu
+> https://lists.gking.harvard.edu/mailman/listinfo/amelia
+>
+>
+>
+> --
+> Amelia mailing list served by HUIT
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+> Amelia mailing list
+> Amelia at lists.gking.harvard.edu
+> https://lists.gking.harvard.edu/mailman/listinfo/amelia
+
+

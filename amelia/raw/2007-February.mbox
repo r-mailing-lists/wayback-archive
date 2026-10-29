@@ -1,0 +1,1081 @@
+From corr at fas.harvard.edu  Thu Feb  1 14:55:37 2007
+From: corr at fas.harvard.edu (Anders Schwartz Corr)
+Date: Thu, 1 Feb 2007 14:55:37 -0500 (EST)
+Subject: [amelia] Logistic variable error 11
+Message-ID: <Pine.LNX.4.64.0702011438310.14195@ls02.fas.harvard.edu>
+
+
+Hi, I set the lgstc to two proportional variables in the range 0-1 
+(columns 59 and 60 in the data), yet it gave me an error code. Please see 
+below. Any explanation would be useful. Thanks, Anders
+
+> ameliaoutput<-amelia(merge6, p2s=2, idvars=c(3,24,29,37,39,42,54), 
+noms=c(23, 41), lgstc=c(59,60), ts=1, cs=2)
+
+amelia starting
+Amelia Error Code:  11
+  The logistic transformation cannot be used on
+  variables with values out of the 0-1 range.
+> summary(merge6[,59:60])
+  a_norm_total2        p_norm_total
+  Min.   :   0.0000   Min.   :   0.0000
+  1st Qu.:   0.0000   1st Qu.:   0.0000
+  Median :   0.2000   Median :   0.0000
+  Mean   :   0.2480   Mean   :   0.2392
+  3rd Qu.:   0.4000   3rd Qu.:   0.4000
+  Max.   :   1.0000   Max.   :   0.8300
+  NA's   :3431.0000   NA's   :3431.0000
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From king at harvard.edu  Thu Feb  1 14:58:07 2007
+From: king at harvard.edu (Gary King)
+Date: Thu, 1 Feb 2007 14:58:07 -0500 (EST)
+Subject: [amelia] Logistic variable error 11
+In-Reply-To: <Pine.LNX.4.64.0702011438310.14195@ls02.fas.harvard.edu>
+References: <Pine.LNX.4.64.0702011438310.14195@ls02.fas.harvard.edu>
+Message-ID: <Pine.LNX.4.64.0702011457290.323@w5.hmdc.harvard.edu>
+
+
+they have to be in the (0,1) range, not the [0,1] range (i.e., the values 
+must not include 0 or 1).  i'd check the data, fix those values, and try 
+again.
+Gary
+
+On Thu, 1 Feb 2007, Anders Schwartz Corr wrote:
+
+>
+> Hi, I set the lgstc to two proportional variables in the range 0-1 (columns 
+> 59 and 60 in the data), yet it gave me an error code. Please see below. Any 
+> explanation would be useful. Thanks, Anders
+>
+>>  ameliaoutput<-amelia(merge6, p2s=2, idvars=c(3,24,29,37,39,42,54), 
+> noms=c(23, 41), lgstc=c(59,60), ts=1, cs=2)
+>
+> amelia starting
+> Amelia Error Code:  11
+>  The logistic transformation cannot be used on
+>  variables with values out of the 0-1 range.
+>>  summary(merge6[,59:60])
+>  a_norm_total2        p_norm_total
+>  Min.   :   0.0000   Min.   :   0.0000
+>  1st Qu.:   0.0000   1st Qu.:   0.0000
+>  Median :   0.2000   Median :   0.0000
+>  Mean   :   0.2480   Mean   :   0.2392
+>  3rd Qu.:   0.4000   3rd Qu.:   0.4000
+>  Max.   :   1.0000   Max.   :   0.8300
+>  NA's   :3431.0000   NA's   :3431.0000
+>> 
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From corr at fas.harvard.edu  Thu Feb  1 15:39:16 2007
+From: corr at fas.harvard.edu (Anders Schwartz Corr)
+Date: Thu, 1 Feb 2007 15:39:16 -0500 (EST)
+Subject: [amelia] Logistic lgstc missing value report
+Message-ID: <Pine.LNX.4.64.0702011534200.5790@ls02.fas.harvard.edu>
+
+
+Hi, Amelia is reporting a missing value where TRUE/FALSE needed. Any 
+suggestion welcome. The only two proportional variables in my data are 59 
+and 60. Thanks, Anders
+
+>
+> summary(merge6[,59:60]
++ )
+  a_norm_total2        p_norm_total
+  Min.   :   0.0010   Min.   :   0.0010
+  1st Qu.:   0.0010   1st Qu.:   0.0010
+  Median :   0.2000   Median :   0.0010
+  Mean   :   0.2483   Mean   :   0.2398
+  3rd Qu.:   0.4000   3rd Qu.:   0.4000
+  Max.   :   0.9990   Max.   :   0.8300
+  NA's   :3431.0000   NA's   :3431.0000
+> ameliaoutput<-amelia(merge6, p2s=2, idvars=c(3,24,29,37,39,42,54), 
+noms=c(23, 41), lgstc=c(59,60), ts=1, cs=2)
+
+amelia starting
+Error in if (any(data[, lgstc] <= 0, data[, lgstc] >= 1)) { :
+         missing value where TRUE/FALSE needed
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From corr at fas.harvard.edu  Thu Feb  1 20:08:37 2007
+From: corr at fas.harvard.edu (Anders Schwartz Corr)
+Date: Thu, 1 Feb 2007 20:08:37 -0500 (EST)
+Subject: [amelia] Error in yy %*% unique(na.omit(x.orig)[, i]) : non-conformable arguments
+Message-ID: <Pine.LNX.4.64.0702012000230.5790@ls02.fas.harvard.edu>
+
+
+Hi, Here's another error from the first imputation using the command. I 
+left the lgstc specification out:
+
+> ameliaoutput<-amelia(merge6, p2s=2, idvars=c(3,24,29,37,39,42,54), noms=c(23, 41), ts=1, cs=2) #lgstc=c(59,60),
+amelia starting
+beginning prep functions
+running bootstrap
+-- Imputation 1 --
+setting up EM chain indicies
+
+  1(2189) 2(2222) 3(2222) 4(2196) 5(2148) 6(2088) 7(2025) 8(1969) 
+9(1950)10(1953)
+11(1945)12(1942)13(1934)14(1928)15(1912)16(1902)17(1905)18(1905)19(1896)20(1889)
+21(1882)22(1885)23(1872)24(1865)25(1865)26(1858)27(1841)28(1825)29(1808)30(1805)
+31(1793)32(1791)33(1783)34(1778)35(1771)36(1763)37(1753)38(1750)39(1736)40(1740)
+41(1737)42(1733)43(1722)44(1711)45(1711)46(1709)47(1706)48(1700)49(1696)50(1695)
+51(1684)52(1683)53(1683)
+
+...
+
+2741(3)2742(3)2743(3)2744(3)2745(3)2746(3)2747(3)2748(3)2749(3)2750(2)
+2751(2)2752(2)2753(2)2754(2)2755(2)2756(2)2757(2)2758(2)2759(2)2760(2)
+2761(2)2762(2)2763(2)2764(2)2765(2)2766(2)2767(2)2768(2)2769(2)2770(2)
+2771(2)2772(2)2773(2)2774(1)2775(1)2776(0)
+Error in yy %*% unique(na.omit(x.orig)[, i]) :
+         non-conformable arguments
+
+Thanks,
+
+Anders
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From king at harvard.edu  Thu Feb  1 20:47:30 2007
+From: king at harvard.edu (Gary King)
+Date: Thu, 1 Feb 2007 20:47:30 -0500 (EST)
+Subject: [amelia] Error in yy %*% unique(na.omit(x.orig)[, i]) : non-conformable arguments
+In-Reply-To: <Pine.LNX.4.64.0702012000230.5790@ls02.fas.harvard.edu>
+References: <Pine.LNX.4.64.0702012000230.5790@ls02.fas.harvard.edu>
+Message-ID: <Pine.LNX.4.64.0702012046370.323@w5.hmdc.harvard.edu>
+
+
+pls check that you have the current version (just reinstall to be sure) 
+and if you get the same error, send us the data and code and we'll have a 
+look.
+Gary
+
+
+On Thu, 1 Feb 2007, Anders Schwartz Corr wrote:
+
+>
+> Hi, Here's another error from the first imputation using the command. I left 
+> the lgstc specification out:
+>
+>>  ameliaoutput<-amelia(merge6, p2s=2, idvars=c(3,24,29,37,39,42,54),
+>>  noms=c(23, 41), ts=1, cs=2) #lgstc=c(59,60),
+> amelia starting
+> beginning prep functions
+> running bootstrap
+> -- Imputation 1 --
+> setting up EM chain indicies
+>
+> 1(2189) 2(2222) 3(2222) 4(2196) 5(2148) 6(2088) 7(2025) 8(1969) 
+> 9(1950)10(1953)
+> 11(1945)12(1942)13(1934)14(1928)15(1912)16(1902)17(1905)18(1905)19(1896)20(1889)
+> 21(1882)22(1885)23(1872)24(1865)25(1865)26(1858)27(1841)28(1825)29(1808)30(1805)
+> 31(1793)32(1791)33(1783)34(1778)35(1771)36(1763)37(1753)38(1750)39(1736)40(1740)
+> 41(1737)42(1733)43(1722)44(1711)45(1711)46(1709)47(1706)48(1700)49(1696)50(1695)
+> 51(1684)52(1683)53(1683)
+>
+> ...
+>
+> 2741(3)2742(3)2743(3)2744(3)2745(3)2746(3)2747(3)2748(3)2749(3)2750(2)
+> 2751(2)2752(2)2753(2)2754(2)2755(2)2756(2)2757(2)2758(2)2759(2)2760(2)
+> 2761(2)2762(2)2763(2)2764(2)2765(2)2766(2)2767(2)2768(2)2769(2)2770(2)
+> 2771(2)2772(2)2773(2)2774(1)2775(1)2776(0)
+> Error in yy %*% unique(na.omit(x.orig)[, i]) :
+>         non-conformable arguments
+>
+> Thanks,
+>
+> Anders
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From blackwel at fas.harvard.edu  Fri Feb  2 18:36:50 2007
+From: blackwel at fas.harvard.edu (Matthew Blackwell)
+Date: Fri, 2 Feb 2007 18:36:50 -0500 (EST)
+Subject: [amelia] Recent Bugfixes
+Message-ID: <Pine.LNX.4.64.0702021827290.15333@ls01.fas.harvard.edu>
+
+Hello,
+
+I just wanted to update the list to say that we've recently cleared up 
+some bugfixes, many of which were related to nominal variables. If you've 
+had problems with nominal variables in the past, you may want to grab the 
+latest version of Amelia (1.1-18) by running the following line of code at 
+the R command line:
+
+install.packages("Amelia", repos="http://gking.harvard.edu")
+
+You can also download the Windows executable setup file from the Amelia 
+website (http://gking.harvard.edu/amelia/), which will install the latest 
+version.
+
+Thanks for using Amelia and please let us know if you have any problems.
+
+cheers,
+matt.
+
+============
+   Matt Blackwell
+   blackwel at fas.harvard.edu
+
+   Department of Government
+   Harvard University
+   Cambridge, MA 02138
+============
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From Jan.Teorell at svet.lu.se  Fri Feb  9 06:49:44 2007
+From: Jan.Teorell at svet.lu.se (Jan Teorell)
+Date: Fri, 9 Feb 2007 12:49:44 +0100
+Subject: [amelia] output data
+Message-ID: <002e01c74c40$6778b3d0$1546eb82@JTEO>
+
+Hi, I'm grand new at using AMELIA, so this question is possibly stupid.
+
+ 
+
+I cannot locate the new imputed datasets made by AMELIA II (I run the Amelia
+View version). I run the session and get no error mesages, I can diagnose
+the results but nowhere on my computer do I find any files with the name I
+put in the "Name Output Dataset" field, nor any new datafile (I want them in
+Stata 7/8 format).
+
+ 
+
+Any clues?
+
+ 
+
+A related question is whether I can determine myself in what directory the
+new datasets will be stored?
+
+ 
+
+All the best,
+
+ 
+
+Jan Teorell
+
+ 
+
+Docent, Associate Professor of Political Science
+
+Department of Political Science, Lund University
+
+Box 52, SE-221 00 Lund, SWEDEN
+
+Ph: +46 46 222 8093 Email: jan.teorell at svet.lu.se
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20070209/302337b9/attachment.html>
+
+From corr at fas.harvard.edu  Fri Feb  9 07:10:44 2007
+From: corr at fas.harvard.edu (Anders Schwartz Corr)
+Date: Fri, 9 Feb 2007 07:10:44 -0500 (EST)
+Subject: [amelia] output data
+In-Reply-To: <002e01c74c40$6778b3d0$1546eb82@JTEO>
+References: <002e01c74c40$6778b3d0$1546eb82@JTEO>
+Message-ID: <Pine.LNX.4.64.0702090658100.30383@ls02.fas.harvard.edu>
+
+
+Jan,
+
+Have you tried looking where your original data was, or in or near this 
+directory:
+
+C:/Program Files/R/R-2.4.0
+
+or:
+
+C:/Program Files/R/R-2.4.0/bin
+
+Anders
+
+On Fri, 9 Feb 2007, Jan Teorell wrote:
+
+> Hi, I'm grand new at using AMELIA, so this question is possibly stupid.
+>
+>
+>
+> I cannot locate the new imputed datasets made by AMELIA II (I run the Amelia
+> View version). I run the session and get no error mesages, I can diagnose
+> the results but nowhere on my computer do I find any files with the name I
+> put in the "Name Output Dataset" field, nor any new datafile (I want them in
+> Stata 7/8 format).
+>
+>
+>
+> Any clues?
+>
+>
+>
+> A related question is whether I can determine myself in what directory the
+> new datasets will be stored?
+>
+>
+>
+> All the best,
+>
+>
+>
+> Jan Teorell
+>
+>
+>
+> Docent, Associate Professor of Political Science
+>
+> Department of Political Science, Lund University
+>
+> Box 52, SE-221 00 Lund, SWEDEN
+>
+> Ph: +46 46 222 8093 Email: jan.teorell at svet.lu.se
+>
+>
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From dlussier at berkeley.edu  Fri Feb  9 10:58:51 2007
+From: dlussier at berkeley.edu (dlussier at berkeley.edu)
+Date: Fri, 9 Feb 2007 07:58:51 -0800 (PST)
+Subject: [amelia] output data
+In-Reply-To: <Pine.LNX.4.64.0702090658100.30383@ls02.fas.harvard.edu>
+References: <002e01c74c40$6778b3d0$1546eb82@JTEO> <Pine.LNX.4.64.0702090658100.30383@ls02.fas.harvard.edu>
+Message-ID: <1232.67.101.150.171.1171036731.squirrel@calmail.berkeley.edu>
+
+Jan,
+
+I encountered this same problem recently when I was trying to save my
+output as a Stata 7/8 file. The problem seemed particular to this output
+form and when I tried saving the file in a different form it did appear in
+the correct file on the C drive.
+
+Gary King gave me the following suggestion, which I have not tried:
+
+i'd try putting everything in a subdirectory, program, data, startup, etc.
+ Then try
+it and I think you will find the files.  If not, send details with exactly
+what
+commands you ran to the list and we will figure it out.
+
+Danielle
+
+>
+> Jan,
+>
+> Have you tried looking where your original data was, or in or near this
+> directory:
+>
+> C:/Program Files/R/R-2.4.0
+>
+> or:
+>
+> C:/Program Files/R/R-2.4.0/bin
+>
+> Anders
+>
+> On Fri, 9 Feb 2007, Jan Teorell wrote:
+>
+>> Hi, I'm grand new at using AMELIA, so this question is possibly stupid.
+>>
+>>
+>>
+>> I cannot locate the new imputed datasets made by AMELIA II (I run the
+>> Amelia
+>> View version). I run the session and get no error mesages, I can
+>> diagnose
+>> the results but nowhere on my computer do I find any files with the name
+>> I
+>> put in the "Name Output Dataset" field, nor any new datafile (I want
+>> them in
+>> Stata 7/8 format).
+>>
+>>
+>>
+>> Any clues?
+>>
+>>
+>>
+>> A related question is whether I can determine myself in what directory
+>> the
+>> new datasets will be stored?
+>>
+>>
+>>
+>> All the best,
+>>
+>>
+>>
+>> Jan Teorell
+>>
+>>
+>>
+>> Docent, Associate Professor of Political Science
+>>
+>> Department of Political Science, Lund University
+>>
+>> Box 52, SE-221 00 Lund, SWEDEN
+>>
+>> Ph: +46 46 222 8093 Email: jan.teorell at svet.lu.se
+>>
+>>
+>>
+>>
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From parker at berkeley.edu  Fri Feb  9 16:48:09 2007
+From: parker at berkeley.edu (Christopher Parker)
+Date: Fri, 9 Feb 2007 13:48:09 -0800 (PST)
+Subject: [amelia] 
+Message-ID: <4116.72.205.193.142.1171057689.squirrel@calmail.berkeley.edu>
+
+auth e9a2b8314b1a8b61 subscribe amelia_at_lists_gking_harvard_edu
+parker at berkeley.edu
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From king at harvard.edu  Fri Feb  9 17:00:40 2007
+From: king at harvard.edu (Gary King)
+Date: Fri, 9 Feb 2007 17:00:40 -0500 (EST)
+Subject: [amelia] Re: MI question
+In-Reply-To: <4203.72.205.193.142.1171058168.squirrel@calmail.berkeley.edu>
+References: <4203.72.205.193.142.1171058168.squirrel@calmail.berkeley.edu>
+Message-ID: <Pine.LNX.4.64.0702091658190.11632@w5.hmdc.harvard.edu>
+
+
+If your covariates don't predict well, the key is that the imputations 
+have enough variability to represent that fact.  Amelia will normally do 
+this right.  It may be in your application that you wind up with very 
+large standard errors and confidence intervals, but they would in that 
+case be accurate.  If that's the case, you could try finding better 
+variables (perhaps coded as a function of the existing ones) or finding 
+better data.  Not much else you can do...
+
+Gary
+
+p.s. the list address is Amelia Listserv <amelia at lists.gking.harvard.edu>
+not owner-amelia_at_lists_gking_harvard_edu at mail.hmdc.harvard.edu
+
+On Fri, 9 Feb 2007, Christopher Parker wrote:
+
+> To whom it may concern,
+>
+> I wrote a while back to ask about using MI, much in the same way that
+> Scheve (2006) did in recent SAPD paper in which he imputed data for a
+> variable that was not observed in the dataset of interest.
+>
+> Here's the question. I'm attempting to expmine the effects of mental
+> health on politics. It's a revisitation of some of Lasswell's work. As you
+> know, there's nothing in the way of data on this. So, I'm trying to use MI
+> as a temporary solution. I plan to use data from a national survey on
+> mental health, the National Comorbidity Study, to fill in the
+> "missingness" within the NES for depression, anxiety, and PTSD.
+>
+> The problem is that there are only 30 variables, all of which are
+> demographic in some way, that overlap between the two datasets and can be
+> used as information. Moreover, when I tried to predict depression,
+> anxiety, and PTSD in the NCS, the r-squares average .05. Perhaps this has
+> something to do with the fact that the NCS has 9K observations and over 1K
+> variables. That said, I'm concerned that once imputed into the NES the
+> mental health items will be too noisy to predict anything. Is this
+> something about which I need to be concerned, i.e., the low explained
+> variances?
+>
+> Any advice is welcomed.
+>
+> Best,
+> Christopher
+>
+>
+>
+>
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From Jan.Teorell at svet.lu.se  Sat Feb 10 03:45:46 2007
+From: Jan.Teorell at svet.lu.se (Jan Teorell)
+Date: Sat, 10 Feb 2007 09:45:46 +0100
+Subject: SV: [amelia] output data
+In-Reply-To: <1232.67.101.150.171.1171036731.squirrel@calmail.berkeley.edu>
+References: <002e01c74c40$6778b3d0$1546eb82@JTEO> <Pine.LNX.4.64.0702090658100.30383@ls02.fas.harvard.edu> <1232.67.101.150.171.1171036731.squirrel@calmail.berkeley.edu>
+Message-ID: <001201c74cef$dec2edc0$1546eb82@JTEO>
+
+Danielle
+
+I used the Stata 6 format instead, and then it worked. Thanks a lot, you
+made my day!
+
+/Jan
+
+-----Ursprungligt meddelande-----
+Fr?n: owner-amelia_at_lists_gking_harvard_edu at mail.hmdc.harvard.edu
+[mailto:owner-amelia_at_lists_gking_harvard_edu at mail.hmdc.harvard.edu] F?r
+dlussier at berkeley.edu
+Skickat: den 9 februari 2007 16:59
+Till: Anders Schwartz Corr
+Kopia: amelia at lists.gking.harvard.edu
+?mne: Re: [amelia] output data
+
+Jan,
+
+I encountered this same problem recently when I was trying to save my
+output as a Stata 7/8 file. The problem seemed particular to this output
+form and when I tried saving the file in a different form it did appear in
+the correct file on the C drive.
+
+Gary King gave me the following suggestion, which I have not tried:
+
+i'd try putting everything in a subdirectory, program, data, startup, etc.
+ Then try
+it and I think you will find the files.  If not, send details with exactly
+what
+commands you ran to the list and we will figure it out.
+
+Danielle
+
+>
+> Jan,
+>
+> Have you tried looking where your original data was, or in or near this
+> directory:
+>
+> C:/Program Files/R/R-2.4.0
+>
+> or:
+>
+> C:/Program Files/R/R-2.4.0/bin
+>
+> Anders
+>
+> On Fri, 9 Feb 2007, Jan Teorell wrote:
+>
+>> Hi, I'm grand new at using AMELIA, so this question is possibly stupid.
+>>
+>>
+>>
+>> I cannot locate the new imputed datasets made by AMELIA II (I run the
+>> Amelia
+>> View version). I run the session and get no error mesages, I can
+>> diagnose
+>> the results but nowhere on my computer do I find any files with the name
+>> I
+>> put in the "Name Output Dataset" field, nor any new datafile (I want
+>> them in
+>> Stata 7/8 format).
+>>
+>>
+>>
+>> Any clues?
+>>
+>>
+>>
+>> A related question is whether I can determine myself in what directory
+>> the
+>> new datasets will be stored?
+>>
+>>
+>>
+>> All the best,
+>>
+>>
+>>
+>> Jan Teorell
+>>
+>>
+>>
+>> Docent, Associate Professor of Political Science
+>>
+>> Department of Political Science, Lund University
+>>
+>> Box 52, SE-221 00 Lund, SWEDEN
+>>
+>> Ph: +46 46 222 8093 Email: jan.teorell at svet.lu.se
+>>
+>>
+>>
+>>
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From Jan.Teorell at svet.lu.se  Thu Feb 15 08:46:22 2007
+From: Jan.Teorell at svet.lu.se (Jan Teorell)
+Date: Thu, 15 Feb 2007 14:46:22 +0100
+Subject: [amelia] variable transformations
+Message-ID: <004b01c75107$b0fd7510$1546eb82@JTEO>
+
+Hi Amelia-folks, I have a few questions regarding variable transformations
+in the imputation models:
+
+ 
+
+1. Do you I need to use the same variable transformations in my analysis
+model as in the imputation model? If, for example, I use the quadratic root
+transformation to normalize a couple of event count variables, do I have to
+use the same root transformed variables in my analysis model or could I use
+the "raw" variables?
+
+ 
+
+2. I have a couple of variables (e.g., oil exports as percentage of GDP)
+that are highly positively skewed, containing many zeros but with a long
+tail. What kind of transformation would be advisable in that case (I gather
+the natural log might not be a good idea since there are so many zeros;
+moreover, the results look weird if I log these variables)?
+
+ 
+
+3. I have a variable (a democracy index) which ranges from 0-10 and is
+pretty severely bimodal, that is, with most of the cases falling at either
+low or high values. What kind of transformation could help normalize this
+variable?
+
+ 
+
+4. Relatedly, my dependent variable is the annual change (first difference)
+of this democracy index. The imputation model does an extremely poor job at
+predicting this variable (judging from the overimputation plot), however,
+which makes substantively sense in light of my analytical results. Would a
+better idea then be to impute the level and lagged level of this variable,
+then compute the annual change variable from these imputed variables, and
+run the analysis?
+
+ 
+
+All the best,
+
+
+Jan Teorell
+
+ 
+
+Docent, Associate Professor of Political Science
+
+Department of Political Science, Lund University
+
+Box 52, SE-221 00 Lund, SWEDEN
+
+Ph: +46 46 222 8093 Email: jan.teorell at svet.lu.se
+
+ 
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20070215/8ef08904/attachment.html>
+
+From king at harvard.edu  Fri Feb 16 14:39:26 2007
+From: king at harvard.edu (Gary King)
+Date: Fri, 16 Feb 2007 14:39:26 -0500 (EST)
+Subject: [amelia] variable transformations
+In-Reply-To: <004b01c75107$b0fd7510$1546eb82@JTEO>
+References: <004b01c75107$b0fd7510$1546eb82@JTEO>
+Message-ID: <Pine.LNX.4.64.0702161436410.18583@w5.hmdc.harvard.edu>
+
+On Thu, 15 Feb 2007, Jan Teorell wrote:
+
+> Hi Amelia-folks, I have a few questions regarding variable transformations
+> in the imputation models:
+>
+>
+>
+> 1. Do you I need to use the same variable transformations in my analysis
+>    model as in the imputation model? If, for example, I use the
+>    quadratic root transformation to normalize a couple of event count
+>    variables, do I have to use the same root transformed variables in my
+>    analysis model or could I use the "raw" variables?
+
+in theory yes.  you want at least as much info in the imputation model as 
+the analysis model.  in practice, a linear approximation may be good 
+enough for the imputation model, at least sometimes.
+
+>
+>
+>
+> 2. I have a couple of variables (e.g., oil exports as percentage of GDP)
+>    that are highly positively skewed, containing many zeros but with a
+>    long tail. What kind of transformation would be advisable in that
+>    case (I gather the natural log might not be a good idea since there
+>    are so many zeros;  moreover, the results look weird if I log these
+>    variables)?
+
+you could try the square root.  (you can't log zero of course)
+
+>
+>
+>
+> 3. I have a variable (a democracy index) which ranges from 0-10 and is
+>    pretty severely bimodal, that is, with most of the cases falling at
+>    either low or high values. What kind of transformation could help
+>    normalize this variable?
+
+i'd probably leave it as is, or dichotomize it.
+
+>
+>
+>
+> 4. Relatedly, my dependent variable is the annual change (first
+>    difference)  of this democracy index. The imputation model does an
+>    extremely poor job at predicting this variable (judging from the
+>    overimputation plot), however, which makes substantively sense in
+>    light of my analytical results. Would a better idea then be to impute
+>    the level and lagged level of this variable, then compute the annual
+>    change variable from these imputed variables, and run the analysis?
+
+often imputing the components of an index is better, yes.  levels are more 
+predictable than differences often.  not sure it will help with the 
+confidence intervals on your quantities of interest, but it might.
+
+Best of luck with your research.
+
+Gary
+
+>
+>
+>
+> All the best,
+>
+>
+> Jan Teorell
+>
+>
+>
+> Docent, Associate Professor of Political Science
+>
+> Department of Political Science, Lund University
+>
+> Box 52, SE-221 00 Lund, SWEDEN
+>
+> Ph: +46 46 222 8093 Email: jan.teorell at svet.lu.se
+>
+>
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From saeid_shahraz at harvard.edu  Sun Feb 18 15:52:56 2007
+From: saeid_shahraz at harvard.edu (saeid_shahraz)
+Date: Sun, 18 Feb 2007 15:52:56 -0500
+Subject: [amelia] multiple imputations with two predictor variables
+Message-ID: <000101c7539e$c4539a60$f1106780@ca.harvard.edu>
+
+Hi,
+I would like to know why Amelia keeps giving me error when I try to impute
+missingness in a variable (set to nominal) in a dataset consisting of three
+variables (sex set to nominal and age to numerical both without missing
+values). I also tried sex and age groups as nominal but it didn't help. I
+appreciate your replay to my email.
+Thanks
+Saeid
+Harvard Initiative for Global Health
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From tercer at ucla.edu  Mon Feb 19 05:32:44 2007
+From: tercer at ucla.edu (James Honaker)
+Date: Mon, 19 Feb 2007 02:32:44 -0800 (PST)
+Subject: [amelia] multiple imputations with two predictor variables
+In-Reply-To: <000101c7539e$c4539a60$f1106780@ca.harvard.edu>
+References: <000101c7539e$c4539a60$f1106780@ca.harvard.edu>
+Message-ID: <Pine.GSO.4.60.0702190208460.13996@weber.sscnet.ucla.edu>
+
+
+Dear Saeid,
+
+Don't take my message in the wrong spirit, but I'll need a little more 
+information to fully resolve your problem.
+
+Here is a quick simulation of the details you specify (three variables, 
+two fully observed, one of which is Nominal).  You might cut and paste 
+this code and see if it is giving you the same problems.  It runs fine on 
+my machine:
+
+library(Amelia)
+vcv<-matrix(0.1,nrow=3,ncol=3)
+vcv[row(vcv)==col(vcv)]<-1
+a<-rmvnorm(n=100,mu=c(1,2,3),vcv=vcv)   # Simulated Complete Dataset
+
+a[runif(n)>0.9,1]<-NA                   # MCAR missingness in 1st Column
+a[,2]<-round(a[,2])                     # Nominal variable in 2nd Column
+a[a[,2]>3,2]<-3                # Censor bounds to the Nominal variable
+a[a[,2]<0,2]<-0
+output<-amelia(a,noms=2)       # Run amelia declaring Nominal variable
+
+This runs fine on my machine.  Occasionally (1 in 20 imputations maybe) 
+I'll get the error message:
+
+"The resulting variance matrix was not invertible.  Please check your data 
+for highly collinear variables."
+
+Which occurs when one of the bootstraps of the dataset contains only one 
+instance of a particular category.  If this is the error message you are 
+getting, this suggests that one of the categories of your Nominal variable 
+is quite rare, and in some bootstraps, a dummy variable identifying this 
+category is not identified.  Without knowing anything about your dataset, 
+this might suggest either this rare category needs to be combined with 
+another category, or an accidental miscoding of the data.
+
+Let me know if you are getting a different error message (in which case, 
+tell me what error you are getting) or if this sample code does not run on 
+your system (if your specific application requires a number of libraries, 
+other than Amelia, load those too before running this simulation, on the 
+rare chance libraries have shared function names).
+
+This all assumes you are using R directly.  If you are using AmeliaView, 
+either try to give me more specifics about the variables you are using and 
+the error message you get, or, if you feel comfortable, send me your 
+dataset and I'll run it from here.  (My boilerplate assurance is that I 
+will not use your dataset for anything other than resolving this problem, 
+will not distribute or publish from your dataset, and will delete it as 
+soon as your problem is resolved.  However, I know that for some 
+confidential or proprietary datasets, this is not an option.)
+
+regards,
+James Honaker.
+
+
+On Sun, 18 Feb 2007, saeid_shahraz wrote:
+
+> Hi,
+> I would like to know why Amelia keeps giving me error when I try to impute
+> missingness in a variable (set to nominal) in a dataset consisting of three
+> variables (sex set to nominal and age to numerical both without missing
+> values). I also tried sex and age groups as nominal but it didn't help. I
+> appreciate your replay to my email.
+> Thanks
+> Saeid
+> Harvard Initiative for Global Health
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From write2erin at gmail.com  Tue Feb 20 16:24:00 2007
+From: write2erin at gmail.com (erin)
+Date: Tue, 20 Feb 2007 13:24:00 -0800
+Subject: [amelia] convergence and missing ouput data
+Message-ID: <288190f60702201324o667f87b3qe1a9266d5167381@mail.gmail.com>
+
+Hello,
+
+I am new to using Amelia.  I have two questions.  First, when I run
+the overdispersed start values diagnostic, it converges to two
+different modes.  Adding priors didn't resolve the problem, so I
+deleted some variables that were highly correlated and it converged to
+a single mode.  I was hesitant to remove the variables since I want to
+include as many variables in the imputation model as possible.  Is
+there another way of managing this kind of situation?  Unfortunately,
+I have a high rate of missingness for many variables and a small
+sample size of 208 countries.  Originally, I had 31 variables, but
+after deleting 6 highly correlated variables, I now have 25 variables,
+3 of which are completely observed.  I realize that this means I have
+more parameters than observations, but I don't know what else to do
+when I can't add any more countries to the sample.  With a ridge prior
+of 1, the imputations seemed to run well, however.
+
+Second, with my smaller data set that appears to run well, as soon as
+I begin running the overdispersed starting values diagnostic, the
+first imputed data set (outdata1.csv) disappears from the folder
+leaving only data sets 2-10.  Is this an error or should it be deleted
+for purposes of a burn-in?  If this is not an error, should I run 11
+imputations to get 10, not using the first data set?  Alternatively,
+should I make a copy of the data sets before running the diagnostics
+and use the first imputed data set?  This has not happened in previous
+imputation models that I have run, so I have re-run the same model
+three times and the first dataset appears after running the
+imputations, but is disappears once I begin running diagnostics.  The
+overdipersed start values diagnostic graph shows that the values do
+not converge until around 1,000 imputations.  I increased the ridge
+prior to 2 and the same thing happened.
+
+I appreciate your response.
+
+Erin Saunders
+Portland State University
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From saeid_shahraz at harvard.edu  Wed Feb 21 15:10:09 2007
+From: saeid_shahraz at harvard.edu (saeid_shahraz)
+Date: Wed, 21 Feb 2007 15:10:09 -0500
+Subject: [amelia] overimputation problem
+Message-ID: <001401c755f4$496845a0$f1106780@ca.harvard.edu>
+
+Hi,
+I wonder why I get error message when I select a polytomous nominal variable
+to be overimputed. 
+The error message is: "The variable you selected doesn't exist in the Amelia
+output because it wasn't imputed".
+The selected variable had already missing values and was imputed for sure!
+I appreciate your response.
+saeid
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From blackwel at fas.harvard.edu  Sun Feb 25 15:05:09 2007
+From: blackwel at fas.harvard.edu (Matthew Blackwell)
+Date: Sun, 25 Feb 2007 15:05:09 -0500 (EST)
+Subject: [amelia] Stata 7/8 saving fixed.
+Message-ID: <Pine.LNX.4.64.0702251457580.22260@ls02.fas.harvard.edu>
+
+Hello,
+
+I just wanted to let the list know that we've recently updated Amelia to 
+correctly handle saving to the Stata 7/8 format. In previous releases, if 
+AmeliaView was set to save as Stata 7/8, it would finish its run without 
+saving or giving an error message. Sorry for any inconvenience and please 
+let us know if you're having any more problems.
+
+You can get Amelia v1.1-20 from http://gking.harvard.edu/amelia or by 
+running the following line of code in R:
+
+install.packages("Amelia", repos="http://gking.harvard.edu")
+
+Thanks,
+matt blackwell.
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From L.Stirton at uea.ac.uk  Wed Feb 28 16:17:17 2007
+From: L.Stirton at uea.ac.uk (L.Stirton at uea.ac.uk)
+Date: Wed, 28 Feb 2007 21:17:17 -0000 (GMT)
+Subject: [amelia] Can't install Amelia
+Message-ID: <53370.84.64.169.101.1172697437.squirrel@ueawebmail.uea.ac.uk>
+
+I am trying to install Amelia. When I try to intsall I get the following
+error message:
+
+> install.packages("Amelia",repos="http://gking.harvard.edu")
+Warning: unable to access index for repository
+http://gking.harvard.edu/bin/macosx/universal/contrib/2.4
+Warning in download.packages(pkgs, destdir = tmpd, available = available,  :
+	 no package 'Amelia' at the repositories
+
+Any help greatly appreciated.
+
+Lindsay
+
+Dr Lindsay Stirton
+The Norwich Law School and ESRC Centre for Competition Policy,
+University of East Anglia,
+Norwich, Norfolk, NR4 7TJ
+United Kingdom
+
+l.stirton at uea.ac.uk
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+
+From corr at fas.harvard.edu  Wed Feb 28 16:35:15 2007
+From: corr at fas.harvard.edu (Anders Schwartz Corr)
+Date: Wed, 28 Feb 2007 16:35:15 -0500 (EST)
+Subject: [amelia] Can't install Amelia
+In-Reply-To: <53370.84.64.169.101.1172697437.squirrel@ueawebmail.uea.ac.uk>
+References: <53370.84.64.169.101.1172697437.squirrel@ueawebmail.uea.ac.uk>
+Message-ID: <Pine.LNX.4.64.0702281634030.14746@ls02.fas.harvard.edu>
+
+
+Do you have the latest version of R? Downloading that should help.
+
+Anders
+
+On Wed, 28 Feb 2007, L.Stirton at uea.ac.uk wrote:
+
+> I am trying to install Amelia. When I try to intsall I get the following
+> error message:
+>
+>> install.packages("Amelia",repos="http://gking.harvard.edu")
+> Warning: unable to access index for repository
+> http://gking.harvard.edu/bin/macosx/universal/contrib/2.4
+> Warning in download.packages(pkgs, destdir = tmpd, available = available,  :
+> 	 no package 'Amelia' at the repositories
+>
+> Any help greatly appreciated.
+>
+> Lindsay
+>
+> Dr Lindsay Stirton
+> The Norwich Law School and ESRC Centre for Competition Policy,
+> University of East Anglia,
+> Norwich, Norfolk, NR4 7TJ
+> United Kingdom
+>
+> l.stirton at uea.ac.uk
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+
+

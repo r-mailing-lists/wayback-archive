@@ -1,0 +1,809 @@
+From peterflomconsulting at mindspring.com  Wed Jan 13 11:58:10 2010
+From: peterflomconsulting at mindspring.com (Peter Flom)
+Date: Wed, 13 Jan 2010 11:58:10 -0500 (EST)
+Subject: [amelia] Introducing myself and two questions
+Message-ID: <23338565.1263401890258.JavaMail.root@elwamui-rustique.atl.sa.earthlink.net>
+
+Hello,
+
+I just downloaded Amelia (and Zelig a little while ago).  They look great!
+
+I'm a statistician/data analyst, mostly working for psychologists, social scientists, doctors, etc.
+
+My question:
+I have a data set with 4 time points.  The DV is a count, very overdispersed and right skew ... it's a number of unprotected sexual acts.  IV's are marital status, age, income, and highest grade of school.  Various patterns of missingness. 
+
+My questions:
+1) Age clearly increases in a known pattern.  It doesn't really need to be imputed.  Can I make this happen in Amelia, or should I do it separately, before running Amelia?
+
+2) I tried running
+susanMI.out <- amelia(susan, m = 5, ts = "time", noms = "married",  cs = 'id', intercs = T, polytime = 1)
+
+and got an error 
+ The number of observations is too low to estimate the number of 
+ parameters.  You can either remove some variables, reduce 
+ the order of the time polynomial, or increase the empirical prior. 
+
+which is clear, but I am not sure what to do here.  
+
+Thanks for any advice, and thanks to Gary King for writing the software!
+
+Peter
+
+
+
+Peter L. Flom, PhD
+Statistical Consultant
+Website: http://www DOT statisticalanalysisconsulting DOT com/
+Writing; http://www.associatedcontent.com/user/582880/peter_flom.html
+Twitter:   @peterflom
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From king at harvard.edu  Wed Jan 13 14:55:54 2010
+From: king at harvard.edu (Gary King)
+Date: Wed, 13 Jan 2010 14:55:54 -0500
+Subject: [amelia] Introducing myself and two questions
+In-Reply-To: <23338565.1263401890258.JavaMail.root@elwamui-rustique.atl.sa.earthlink.net>
+References: <23338565.1263401890258.JavaMail.root@elwamui-rustique.atl.sa.earthlink.net>
+Message-ID: <b1009dda1001131155od4715deyb0dbd86665abc86d@mail.gmail.com>
+
+If you know the values of Age, then sure I'd fill them in before Amelia.  if
+you are imputing based on smoothness or something like that, you might want
+to consider some of the time series (or time series, cross-section)
+features.
+
+on the error message: imputation algorithms like Amelia require lots more
+observations than variables, and if you do, then the issue is only how you
+have the data organized perhaps; i'd run some descriptive stats just to be
+sure.
+
+Pls don't forget my coauthors, James Honaker and Matt Blackwell too!
+Gary
+---
+http://gking.harvard.edu
+
+
+
+On Wed, Jan 13, 2010 at 11:58 AM, Peter Flom <
+peterflomconsulting at mindspring.com> wrote:
+
+> Hello,
+>
+> I just downloaded Amelia (and Zelig a little while ago).  They look great!
+>
+> I'm a statistician/data analyst, mostly working for psychologists, social
+> scientists, doctors, etc.
+>
+> My question:
+> I have a data set with 4 time points.  The DV is a count, very
+> overdispersed and right skew ... it's a number of unprotected sexual acts.
+>  IV's are marital status, age, income, and highest grade of school.  Various
+> patterns of missingness.
+>
+> My questions:
+> 1) Age clearly increases in a known pattern.  It doesn't really need to be
+> imputed.  Can I make this happen in Amelia, or should I do it separately,
+> before running Amelia?
+>
+> 2) I tried running
+> susanMI.out <- amelia(susan, m = 5, ts = "time", noms = "married",  cs =
+> 'id', intercs = T, polytime = 1)
+>
+> and got an error
+>  The number of observations is too low to estimate the number of
+>  parameters.  You can either remove some variables, reduce
+>  the order of the time polynomial, or increase the empirical prior.
+>
+> which is clear, but I am not sure what to do here.
+>
+> Thanks for any advice, and thanks to Gary King for writing the software!
+>
+> Peter
+>
+>
+>
+> Peter L. Flom, PhD
+> Statistical Consultant
+> Website: http://www DOT statisticalanalysisconsulting DOT com/
+> Writing; http://www.associatedcontent.com/user/582880/peter_flom.html
+> Twitter:   @peterflom
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20100113/9dc7b0e0/attachment.html>
+
+From peterflomconsulting at mindspring.com  Wed Jan 13 16:20:31 2010
+From: peterflomconsulting at mindspring.com (Peter Flom)
+Date: Wed, 13 Jan 2010 16:20:31 -0500 (EST)
+Subject: [amelia] More problems
+Message-ID: <21304110.1263417631578.JavaMail.root@elwamui-rustique.atl.sa.earthlink.net>
+
+Hi again
+
+I am making some progress.... but...
+
+My data set has data on 164 women, each measured at 4 time points.
+
+The DV is number of unprotected sexual acts in last 3 months.  Since this is a data set of commercial sex workers, this variable is highly skewed.
+
+The IVs are age, marital status, highest grade of school, and income.
+
+Marital status is (naturally) nominal.  The others are numeric.
+
+When I run
+susanMI.out <- amelia(susan2, m = 5, ts = "time", noms = "married",   cs = 'id',
+                     intercs = T, 
+                     sqrts = "unprot_vag_sex",
+                     polytime = 0)
+
+I get warnings about noninvertible matrices and highly colinear variables - but none are that highly colinear.
+
+If I run without the polytime option, I get no errors, and the overall distribution of the variables is pretty good, but the distribution within people is not good at all.  That is, running 
+
+tscsPlot(susanMI.out, cs =2, var = "unprot_vag_sex")
+
+shows that where the DV is missing, the imputed values aren't even close to the (admittedly high) value where it is present.  In this case, only one value was present.
+
+
+But for woman number 8, three values were present, all were 0, but the imputed value for the missing time was about 35, and the range was 0 to over 100.
+
+Add lags = "unprot_vag_sex" and leads = "unprot_vag_sex", made the range much smaller, but the values were still very far off.
+
+I had thought that polytime = 0 would set constant values ... but it led to the errors above.
+
+
+Thanks in advance for any help and sorry to be so long winded, but I thought all these details would matter
+
+Peter
+
+
+
+
+Peter L. Flom, PhD
+Statistical Consultant
+Website: http://www DOT statisticalanalysisconsulting DOT com/
+Writing; http://www.associatedcontent.com/user/582880/peter_flom.html
+Twitter:   @peterflom
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From king at harvard.edu  Wed Jan 13 18:40:34 2010
+From: king at harvard.edu (Gary King)
+Date: Wed, 13 Jan 2010 18:40:34 -0500
+Subject: [amelia] More problems
+In-Reply-To: <21304110.1263417631578.JavaMail.root@elwamui-rustique.atl.sa.earthlink.net>
+References: <21304110.1263417631578.JavaMail.root@elwamui-rustique.atl.sa.earthlink.net>
+Message-ID: <b1009dda1001131540oaf0cd4ep95ddbe7a4fbbd73f@mail.gmail.com>
+
+so you have n=164 and 4 time points.  that's TSCS data, but you don't have
+many time points.  a polynomial fit to 4 time points won't help much; you
+could probably include a linear term (that's n=4 with a slope and intercept
+estimated, so much much degrees of freedom left), but that's certainly all.
+probably better to consider the 4 time points as separate variables without
+the time component, at least at first.
+Gary
+---
+http://gking.harvard.edu
+
+
+
+On Wed, Jan 13, 2010 at 4:20 PM, Peter Flom <
+peterflomconsulting at mindspring.com> wrote:
+
+> Hi again
+>
+> I am making some progress.... but...
+>
+> My data set has data on 164 women, each measured at 4 time points.
+>
+> The DV is number of unprotected sexual acts in last 3 months.  Since this
+> is a data set of commercial sex workers, this variable is highly skewed.
+>
+> The IVs are age, marital status, highest grade of school, and income.
+>
+> Marital status is (naturally) nominal.  The others are numeric.
+>
+> When I run
+> susanMI.out <- amelia(susan2, m = 5, ts = "time", noms = "married",   cs =
+> 'id',
+>                     intercs = T,
+>                     sqrts = "unprot_vag_sex",
+>                     polytime = 0)
+>
+> I get warnings about noninvertible matrices and highly colinear variables -
+> but none are that highly colinear.
+>
+> If I run without the polytime option, I get no errors, and the overall
+> distribution of the variables is pretty good, but the distribution within
+> people is not good at all.  That is, running
+>
+> tscsPlot(susanMI.out, cs =2, var = "unprot_vag_sex")
+>
+> shows that where the DV is missing, the imputed values aren't even close to
+> the (admittedly high) value where it is present.  In this case, only one
+> value was present.
+>
+>
+> But for woman number 8, three values were present, all were 0, but the
+> imputed value for the missing time was about 35, and the range was 0 to over
+> 100.
+>
+> Add lags = "unprot_vag_sex" and leads = "unprot_vag_sex", made the range
+> much smaller, but the values were still very far off.
+>
+> I had thought that polytime = 0 would set constant values ... but it led to
+> the errors above.
+>
+>
+> Thanks in advance for any help and sorry to be so long winded, but I
+> thought all these details would matter
+>
+> Peter
+>
+>
+>
+>
+> Peter L. Flom, PhD
+> Statistical Consultant
+> Website: http://www DOT statisticalanalysisconsulting DOT com/
+> Writing; http://www.associatedcontent.com/user/582880/peter_flom.html
+> Twitter:   @peterflom
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20100113/1923f386/attachment.html>
+
+From peterflomconsulting at mindspring.com  Wed Jan 13 20:07:54 2010
+From: peterflomconsulting at mindspring.com (Peter Flom)
+Date: Wed, 13 Jan 2010 20:07:54 -0500 (EST)
+Subject: [amelia] More problems
+Message-ID: <24984984.1263431274778.JavaMail.root@elwamui-mouette.atl.sa.earthlink.net>
+
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20100113/fba94882/attachment.html>
+
+From peterflomconsulting at mindspring.com  Fri Jan 15 08:55:23 2010
+From: peterflomconsulting at mindspring.com (Peter Flom)
+Date: Fri, 15 Jan 2010 08:55:23 -0500 (GMT-05:00)
+Subject: [amelia] tscsPlot error
+Message-ID: <4952457.1263563723748.JavaMail.root@mswamui-valley.atl.sa.earthlink.net>
+
+Good morning, 
+
+I am still working with the data set described in my previous e-mails.  Definitely making progress by adding more info.  But I now get an error that I do not understand
+
+
+If I run:
+<<<
+
+susanMI.out <- amelia(susan2, m = 5,  noms = "married", ts = 'time',  cs = 'id',
+                     intercs = T, 
+                     sqrts = "unprot_vag_sex")
+>>>
+and then (e.g.)
+<<
+tscsPlot(susanMI.out, cs = 11, var = "unprot_vag_sex")
+>>>
+
+I get an error
+
+Error in identical(m, vector(mode = "logical", length = length(m))) : 
+  subscript out of bounds
+
+This occurs with some values of cs but not others.  I checked that those id numbers do, in fact, exist in the data.
+
+Any help appreciated.
+
+thanks
+
+Peter
+
+Peter L. Flom, PhD
+Statistical Consultant
+Website: http://www DOT statisticalanalysisconsulting DOT com/
+Writing; http://www.associatedcontent.com/user/582880/peter_flom.html
+Twitter:   @peterflom
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From blackwel at fas.harvard.edu  Mon Jan 18 19:02:05 2010
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Mon, 18 Jan 2010 19:02:05 -0500
+Subject: [amelia] tscsPlot error
+In-Reply-To: <4952457.1263563723748.JavaMail.root@mswamui-valley.atl.sa.earthlink.net>
+References: <4952457.1263563723748.JavaMail.root@mswamui-valley.atl.sa.earthlink.net>
+Message-ID: <839691711001181602w57255affxebe494f0210b44a5@mail.gmail.com>
+
+Hi Peter,
+
+Quick question. Do any of these cross sections contain completely
+missing data on a variable? Or do they only have one observation?
+These situations can lead to problems when you use the "intercs"
+option.
+
+Cheers,
+matt.
+
+On Fri, Jan 15, 2010 at 8:55 AM, Peter Flom
+<peterflomconsulting at mindspring.com> wrote:
+> Good morning,
+>
+> I am still working with the data set described in my previous e-mails. ?Definitely making progress by adding more info. ?But I now get an error that I do not understand
+>
+>
+> If I run:
+> <<<
+>
+> susanMI.out <- amelia(susan2, m = 5, ?noms = "married", ts = 'time', ?cs = 'id',
+> ? ? ? ? ? ? ? ? ? ? intercs = T,
+> ? ? ? ? ? ? ? ? ? ? sqrts = "unprot_vag_sex")
+>>>>
+> and then (e.g.)
+> <<
+> tscsPlot(susanMI.out, cs = 11, var = "unprot_vag_sex")
+>>>>
+>
+> I get an error
+>
+> Error in identical(m, vector(mode = "logical", length = length(m))) :
+> ?subscript out of bounds
+>
+> This occurs with some values of cs but not others. ?I checked that those id numbers do, in fact, exist in the data.
+>
+> Any help appreciated.
+>
+> thanks
+>
+> Peter
+>
+> Peter L. Flom, PhD
+> Statistical Consultant
+> Website: http://www DOT statisticalanalysisconsulting DOT com/
+> Writing; http://www.associatedcontent.com/user/582880/peter_flom.html
+> Twitter: ? @peterflom
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From peterflomconsulting at mindspring.com  Tue Jan 19 06:12:36 2010
+From: peterflomconsulting at mindspring.com (Peter Flom)
+Date: Tue, 19 Jan 2010 06:12:36 -0500 (GMT-05:00)
+Subject: [amelia] tscsPlot error
+Message-ID: <31256822.1263899556385.JavaMail.root@elwamui-royal.atl.sa.earthlink.net>
+
+Hi Matt
+
+Yes, that was it.
+
+Thanks
+
+Peter
+
+
+
+-----Original Message-----
+>From: Matt Blackwell <blackwel at fas.harvard.edu>
+>Sent: Jan 18, 2010 7:02 PM
+>To: Peter Flom <peterflomconsulting at mindspring.com>
+>Cc: "amelia at lists.gking.harvard.edu" <amelia at lists.gking.harvard.edu>
+>Subject: Re: [amelia] tscsPlot error
+>
+>Hi Peter,
+>
+>Quick question. Do any of these cross sections contain completely
+>missing data on a variable? Or do they only have one observation?
+>These situations can lead to problems when you use the "intercs"
+>option.
+>
+>Cheers,
+>matt.
+>
+>On Fri, Jan 15, 2010 at 8:55 AM, Peter Flom
+><peterflomconsulting at mindspring.com> wrote:
+>> Good morning,
+>>
+>> I am still working with the data set described in my previous e-mails. ?Definitely making progress by adding more info. ?But I now get an error that I do not understand
+>>
+>>
+>> If I run:
+>> <<<
+>>
+>> susanMI.out <- amelia(susan2, m = 5, ?noms = "married", ts = 'time', ?cs = 'id',
+>> ? ? ? ? ? ? ? ? ? ? intercs = T,
+>> ? ? ? ? ? ? ? ? ? ? sqrts = "unprot_vag_sex")
+>>>>>
+>> and then (e.g.)
+>> <<
+>> tscsPlot(susanMI.out, cs = 11, var = "unprot_vag_sex")
+>>>>>
+>>
+>> I get an error
+>>
+>> Error in identical(m, vector(mode = "logical", length = length(m))) :
+>> ?subscript out of bounds
+>>
+>> This occurs with some values of cs but not others. ?I checked that those id numbers do, in fact, exist in the data.
+>>
+>> Any help appreciated.
+>>
+>> thanks
+>>
+>> Peter
+>>
+>> Peter L. Flom, PhD
+>> Statistical Consultant
+>> Website: http://www DOT statisticalanalysisconsulting DOT com/
+>> Writing; http://www.associatedcontent.com/user/582880/peter_flom.html
+>> Twitter: ? @peterflom
+>> -
+>> Amelia mailing list served by Harvard-MIT Data Center
+>> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>> More info about Amelia: http://gking.harvard.edu/amelia
+>>
+>>
+>-
+>Amelia mailing list served by Harvard-MIT Data Center
+>[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>More info about Amelia: http://gking.harvard.edu/amelia
+
+
+Peter L. Flom, PhD
+Statistical Consultant
+Website: http://www DOT statisticalanalysisconsulting DOT com/
+Writing; http://www.associatedcontent.com/user/582880/peter_flom.html
+Twitter:   @peterflom
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From nizhang at calpoly.edu  Fri Jan 22 18:33:17 2010
+From: nizhang at calpoly.edu (Shanruo Ning Zhang)
+Date: Fri, 22 Jan 2010 15:33:17 -0800
+Subject: [amelia] separating NAs and DKs in Amelia analysis?
+Message-ID: <3142359A-055A-4CAE-9BD7-EF9CE7653839@calpoly.edu>
+
+Hello, Amelia authors and users,
+My co-author and I wonder whether we could separate different types of  
+missing data when using Amelia, namely the Don't Knows and the Non- 
+applicable's.  We wonder whether it is possible that we could impute  
+values for the DKs and not impute for NAs.
+Thank you very much. we have been really enjoying Amelia!
+Best,
+Shanruo Ning Zhang
+Assistant Professor
+Political Science, California Polytechnic State University, San Luis  
+Obispo
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From blackwel at fas.harvard.edu  Mon Jan 25 17:07:41 2010
+From: blackwel at fas.harvard.edu (Matt Blackwell)
+Date: Mon, 25 Jan 2010 17:07:41 -0500
+Subject: [amelia] separating NAs and DKs in Amelia analysis?
+In-Reply-To: <3142359A-055A-4CAE-9BD7-EF9CE7653839@calpoly.edu>
+References: <3142359A-055A-4CAE-9BD7-EF9CE7653839@calpoly.edu>
+Message-ID: <839691711001251407k42d5452ap7f91469cbf6c6893@mail.gmail.com>
+
+Hi Shanruo,
+
+If you don't want to include the NAs in the analysis at all, you can
+remove them from the data and then run the imputation model. You could
+also leave them in the imputation, but then change their imputations
+back NA manually.
+
+Note that any cell that needs to be imputed must be coded as "NA" (the
+missing value code for R). An alternative method would be to code all
+NAs as another category of the variable which is observed. Only DKs
+would then be missing.
+
+Hope that helps,
+matt.
+
+On Fri, Jan 22, 2010 at 6:33 PM, Shanruo Ning Zhang <nizhang at calpoly.edu> wrote:
+> Hello, Amelia authors and users,
+> My co-author and I wonder whether we could separate different types of
+> missing data when using Amelia, namely the Don't Knows and the
+> Non-applicable's. ?We wonder whether it is possible that we could impute
+> values for the DKs and not impute for NAs.
+> Thank you very much. we have been really enjoying Amelia!
+> Best,
+> Shanruo Ning Zhang
+> Assistant Professor
+> Political Science, California Polytechnic State University, San Luis Obispo
+> -
+> Amelia mailing list served by Harvard-MIT Data Center
+> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+> More info about Amelia: http://gking.harvard.edu/amelia
+>
+>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From nizhang at calpoly.edu  Mon Jan 25 19:49:33 2010
+From: nizhang at calpoly.edu (Shanruo Ning Zhang)
+Date: Mon, 25 Jan 2010 16:49:33 -0800
+Subject: [amelia] separating NAs and DKs in Amelia analysis?
+In-Reply-To: <839691711001251407k42d5452ap7f91469cbf6c6893@mail.gmail.com>
+References: <3142359A-055A-4CAE-9BD7-EF9CE7653839@calpoly.edu> <839691711001251407k42d5452ap7f91469cbf6c6893@mail.gmail.com>
+Message-ID: <16B469CB-7C2F-4061-9A1F-C4E8333ED068@calpoly.edu>
+
+Hello, Matt,
+Thanks for your response.  In our case, removing the cases with NA is  
+not really an option because we are imputing for a large number of  
+variables.  For the same reason, the second option of manually coding  
+back to NA would be quite cumbersome.
+Thanks a lot?
+Best,
+Shanruo
+On Jan 25, 2010, at 2:07 PM, Matt Blackwell wrote:
+
+> Hi Shanruo,
+>
+> If you don't want to include the NAs in the analysis at all, you can
+> remove them from the data and then run the imputation model. You could
+> also leave them in the imputation, but then change their imputations
+> back NA manually.
+>
+> Note that any cell that needs to be imputed must be coded as "NA" (the
+> missing value code for R). An alternative method would be to code all
+> NAs as another category of the variable which is observed. Only DKs
+> would then be missing.
+>
+> Hope that helps,
+> matt.
+>
+> On Fri, Jan 22, 2010 at 6:33 PM, Shanruo Ning Zhang <nizhang at calpoly.edu 
+> > wrote:
+>> Hello, Amelia authors and users,
+>> My co-author and I wonder whether we could separate different types  
+>> of
+>> missing data when using Amelia, namely the Don't Knows and the
+>> Non-applicable's.  We wonder whether it is possible that we could  
+>> impute
+>> values for the DKs and not impute for NAs.
+>> Thank you very much. we have been really enjoying Amelia!
+>> Best,
+>> Shanruo Ning Zhang
+>> Assistant Professor
+>> Political Science, California Polytechnic State University, San  
+>> Luis Obispo
+>> -
+>> Amelia mailing list served by Harvard-MIT Data Center
+>> [Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+>> More info about Amelia: http://gking.harvard.edu/amelia
+>>
+>>
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
+From dbraman at law.gwu.edu  Thu Jan 28 22:51:54 2010
+From: dbraman at law.gwu.edu (Donald Braman)
+Date: Thu, 28 Jan 2010 22:51:54 -0500
+Subject: [amelia] imputation problems
+Message-ID: <a6f585d21001281951g6cfcb3f3u6caa574d83a683e5@mail.gmail.com>
+
+Hi folks!
+
+I'm having trouble with an imputation.  When I run the following on the
+attached data, I get the subsequent error.  Any thoughts on how to fix?
+
+a.out <- amelia(
+vars.to.impute,
+m=5,
+outname="miset",
+idvars=c("caseid", "weight", "inputstate", "race", "religion", "as_likely",
+"less_likely"),
+noms=c("gender", "bornagain", "cbsatype"),
+ords=c(
+"haidt_compassion", "haidt_animal", "haidt_fairly", "haidt_justice",
+"haidt_history",  "haidt_family", "haidt_kidrespect", "haidt_sexroles",
+"haidt_harmlessdg", "haidt_unnatural",
+"instr_less", "instr_het_relate", "instr_same_relate", "instr_confusion",
+"instr_bigoted", "instr_bio", "instr_single", "instr_teach",
+"policy_favor_hets", "policy_adoptsingle", "policy_adopt", "policy_partner",
+"policy_foster",
+"policy_custody", "policy_sperm", "policy_fertility", "policy_gay_marriage",
+"policy_housing",
+"policy_employment", "policy_unions1", "expressive_motives1",
+"expressive_motives2",
+"expressive_family", "expressive_society", "expressive_slip_slope",
+"expressive_bio_ideal",
+"expressive_equal1", "experessive_race",
+"policy_gun", "policy_cappun", "policy_pot", "policy_prostitute",
+"policy_healthcare",
+"policy_taxcut", "policy_affect", "policy_nuke", "policy_warming",
+"policy_draft",
+"Rank_adopt_welfare", "Rank_adopt_religion", "Rank_adopt_rights",
+"Rank_adopt_moral", "Rank_adopt_traditions", "Bother_kiss",
+"Bother_hands", "Bother_swing", "Bother_married",
+"risk_confusion", "risk_experiment", "risk_homosexual", "risk_teasing",
+"risk_abnormal", "risk_depression", "risk_addiction", "risk_molested",
+"risk_badkid",
+"risk_sexualize", "info_friends", "info_church",  "info_news",
+"info_studies", "info_sense",
+"exposure_immediate", "exposure_extended", "exposure_friends",
+"exposure_other",
+"crack.rank", "pot.rank", "belt.rank", "slap.rank", "income", "ideo5",
+"pid6","churatd", "age", "educ"
+))
+
+-- Imputation 1 --
+
+ 1 Error in eigen(thetanew[2:nrow(thetanew), 2:ncol(thetanew)], only.values
+= TRUE,  :
+  infinite or missing values in 'x'
+
+
+
+Thanks in advance for any help!  Cheers, Don
+
+-- 
+Donald Braman
+phone: 413-628-1221
+http://www.culturalcognition.net/braman/
+http://ssrn.com/author=286206
+http://www.law.gwu.edu/Faculty/profile.aspx?id=10123
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20100128/a54ef338/attachment.html>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: to.impute.csv
+Type: application/octet-stream
+Size: 396306 bytes
+Desc: not available
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20100128/a54ef338/attachment.obj>
+
+From dbraman at law.gwu.edu  Fri Jan 29 00:39:43 2010
+From: dbraman at law.gwu.edu (Donald Braman)
+Date: Fri, 29 Jan 2010 00:39:43 -0500
+Subject: [amelia] Re: imputation problems
+In-Reply-To: <a6f585d21001281951g6cfcb3f3u6caa574d83a683e5@mail.gmail.com>
+References: <a6f585d21001281951g6cfcb3f3u6caa574d83a683e5@mail.gmail.com>
+Message-ID: <a6f585d21001282139t32c6c808lafcc684f9d90df2a@mail.gmail.com>
+
+sorry -- updating Amelia & restarting R fixed the problem.  please ignore
+post.
+
+
+On Thu, Jan 28, 2010 at 10:51 PM, Donald Braman <dbraman at law.gwu.edu> wrote:
+
+> Hi folks!
+>
+> I'm having trouble with an imputation.  When I run the following on the
+> attached data, I get the subsequent error.  Any thoughts on how to fix?
+>
+> a.out <- amelia(
+>  vars.to.impute,
+> m=5,
+> outname="miset",
+>  idvars=c("caseid", "weight", "inputstate", "race", "religion",
+> "as_likely", "less_likely"),
+>  noms=c("gender", "bornagain", "cbsatype"),
+> ords=c(
+>  "haidt_compassion", "haidt_animal", "haidt_fairly", "haidt_justice",
+> "haidt_history",  "haidt_family", "haidt_kidrespect", "haidt_sexroles",
+>  "haidt_harmlessdg", "haidt_unnatural",
+> "instr_less", "instr_het_relate", "instr_same_relate", "instr_confusion",
+>  "instr_bigoted", "instr_bio", "instr_single", "instr_teach",
+> "policy_favor_hets", "policy_adoptsingle", "policy_adopt",
+> "policy_partner", "policy_foster",
+>  "policy_custody", "policy_sperm", "policy_fertility",
+> "policy_gay_marriage", "policy_housing",
+>  "policy_employment", "policy_unions1", "expressive_motives1",
+> "expressive_motives2",
+> "expressive_family", "expressive_society", "expressive_slip_slope",
+> "expressive_bio_ideal",
+>  "expressive_equal1", "experessive_race",
+> "policy_gun", "policy_cappun", "policy_pot", "policy_prostitute",
+> "policy_healthcare",
+>  "policy_taxcut", "policy_affect", "policy_nuke", "policy_warming",
+> "policy_draft",
+> "Rank_adopt_welfare", "Rank_adopt_religion", "Rank_adopt_rights",
+>  "Rank_adopt_moral", "Rank_adopt_traditions", "Bother_kiss",
+> "Bother_hands", "Bother_swing", "Bother_married",
+>  "risk_confusion", "risk_experiment", "risk_homosexual", "risk_teasing",
+> "risk_abnormal", "risk_depression", "risk_addiction", "risk_molested",
+> "risk_badkid",
+>  "risk_sexualize", "info_friends", "info_church",  "info_news",
+> "info_studies", "info_sense",
+>  "exposure_immediate", "exposure_extended", "exposure_friends",
+> "exposure_other",
+> "crack.rank", "pot.rank", "belt.rank", "slap.rank", "income", "ideo5",
+> "pid6","churatd", "age", "educ"
+>  ))
+>
+> -- Imputation 1 --
+>
+>  1 Error in eigen(thetanew[2:nrow(thetanew), 2:ncol(thetanew)], only.values
+> = TRUE,  :
+>   infinite or missing values in 'x'
+>
+>
+>
+> Thanks in advance for any help!  Cheers, Don
+>
+> --
+> Donald Braman
+> phone: 413-628-1221
+> http://www.culturalcognition.net/braman/
+> http://ssrn.com/author=286206
+> http://www.law.gwu.edu/Faculty/profile.aspx?id=10123
+>
+>
+>
+
+
+-- 
+Donald Braman
+phone: 413-628-1221
+http://www.culturalcognition.net/braman/
+http://ssrn.com/author=286206
+http://www.law.gwu.edu/Faculty/profile.aspx?id=10123
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <http://lists.gking.harvard.edu/pipermail/amelia/attachments/20100129/cd14ce11/attachment.html>
+
+From bruemmer at dipf.de  Fri Jan 29 12:38:25 2010
+From: bruemmer at dipf.de (Bruemmer, Felix)
+Date: Fri, 29 Jan 2010 18:38:25 +0100
+Subject: [amelia] Time series with time-invariant variables ...
+Message-ID: <B56FEB1467768E4DB0A6E78C60B283ED0355BB1C93@domexc03>
+
+... and variables measured just on one occasion.
+
+Hello, Amelia authors and users,
+I'm doing a longitudinal study on the motivational development after transition to secondary school. Some constructs, e.g. learning goal orientation, were measured at each of our three waves. Other characteristics were just measured on one occasion, some because they ought to be time-invariant (e.g. socioeconomic status), others because new questions and hypotheses developed after the first results (e.g. about the influence of parental support). 
+
+For using the time series-option, I rearranged my data in SPSS so that I got one cell per variable and time point, and added a time index-variable. The values of the time-invariant variables were kept constant over the measurement occasions, e.g. each case got one and the same value for each time point. Also, I did the same for the other variables that were just measured on one occasion.
+
+Here is my problem:
+The imputations of missings in the time-invariant variables (respectively the one-time measurements) result in different estimations per time point. How should I deal with this information? Should I just take the first value or calculate the mean of the values? Or do I have to deal differently with the problem right from the beginning? Is it adequate to do with time-invariant variables the same as with time-variant variables just measured on one occasion? 
+
+I would be grateful for some help,
+greetings from Germany,
+
+Felix Br?mmer
+-
+Amelia mailing list served by Harvard-MIT Data Center
+[Un]Subscribe/View Archive: http://lists.gking.harvard.edu/?info=amelia
+More info about Amelia: http://gking.harvard.edu/amelia
+
+
