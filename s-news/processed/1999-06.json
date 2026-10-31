@@ -4,24 +4,6 @@
   "month": "1999-06",
   "messages": [
     {
-      "id": "msg-1050e742fb80",
-      "message_id": "<199906302127.JAA06106@atlas.marc.cri.nz>",
-      "from_name": "Patrick Connolly",
-      "from_email_hash": "f6ebd85f64208db54447658cf1fd166eb30d6e17dbcd31e76277b9c687645725",
-      "date": "1999-06-01T00:00:00Z",
-      "subject": "Re: [S] Does the new version of S-Plus fix num acc. and RNG problems?",
-      "subject_clean": "[S] Does the new version of S-Plus fix num acc. and RNG problems?",
-      "in_reply_to": "<Pine.GSO.4.05.9906302043560.14-100000@auk.stats>",
-      "references": [
-        "<Pine.GSO.4.05.9906302043560.14-100000@auk.stats>"
-      ],
-      "body_plain": "According to Prof Brian D Ripley:\n|> \n|> \n|> On Wed, 30 Jun 1999, H. D. Vinod wrote:\n \n|> > For an academic user like me, too many new versions are not good.\n|> > We wish they will simply fix the older versions.\n|> \n|> Who is the `we' that you are speaking for here? Isn't it a bit arrogant to\n|> assume to speak for all academic users?  Some of use in world-class\n|> universities try to keep up with the latest statistical methods, even to\n\nLet's be fair.  It was \"... an academic user like me ...\" which I took\nto be referring to a small group that makes no claim to be universal.\n\nAnd to be fair, all other points regarding PRNGs are well made.\n\nA very good topic to bring up.  Thank you all.\n\nbest\n\nPatrick\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
-      "body_snippet": "According to Prof Brian D Ripley:\n|> \n|> \n|> On Wed, 30 Jun 1999, H. D. Vinod wrote:\n \n|> > For an academic user like me, too many new versions are not good.\n|> > We wish they will simply fix the olde",
-      "thread_id": "thread-18eed393d8d6",
-      "thread_depth": 2,
-      "month": "1999-06"
-    },
-    {
       "id": "msg-936fc2a603f9",
       "message_id": "<D16979FB73F3D11195510000F8030FB90E2AAB@roper.qld.cmis.csiro.au>",
       "from_name": "Ellis, Nick (Marine, Cleveland)",
@@ -29,7 +11,7 @@
       "date": "1999-06-01T02:06:53Z",
       "subject": "RE: [S] Vectorizing recursive codes",
       "subject_clean": "[S] Vectorizing recursive codes",
-      "in_reply_to": null,
+      "in_reply_to": "<78E833D774B4D21190A30008C78C717E43320A@exch1-ma.alkermes.com>",
       "references": [],
       "body_plain": "Kin,\n\nYou can solve for rhat independently of xhat by noticing that the recurrence\nrelation for \ny=1/(rhat-c) is y[n+1] = 1 + c*y[n] so that y[n]=1+c+c^2+...+c^(n-1). It's\nnot too difficult to get an explicit expression for xhat in terms of x, rhat\nand its cumulative products, i.e.\nxhat[n+1] = (R[1] x[1] / rhat[1] + R[2] x[2] /rhat[2] + ... + R[n] x[n]\n/rhat[n])/R[n]\nwith R[n] = rhat[1] * rhat[2] * ... * rhat[n]. Below is one way to implement\nit.\n\nfun.recursive <- \nfunction()\n{\n        c <- 0.3\n        xhat <- NULL\n        rhat <- NULL\n        set.seed(10)\n        x <- rnorm(10, 0, 1)\n        for(i in 1:10) {\n                if(i == 1)\n                        xhat[i] <- 0\n                if(i == 1)\n                        rhat[i] <- 1 + c\n                else rhat[i] <- 1 + c - c/rhat[i - 1]\n                if(i == 1)\n                        xhat[i + 1] <- (x[i] - xhat[i])/rhat[i]\n                else xhat[i + 1] <- (x[i] - xhat[i])/rhat[i - 1] \n# is the previous line correct? you are reusing rhat[1].\n        }\n        rbind(xhat,rhat)\n}\nfun.nonrecursive <- \nfunction()\n{\n        c <- 0.3\n        set.seed(10)\n        n <- 10\n        x <- rnorm(n, 0, 1)\n        y <- cumsum(cumprod(rep(c, n))/c)\n        rhat <- c + 1/y\n        rhat1 <- c(rhat[1], rhat)[1:n] # see comment in fun.recursive\n        R <- cumprod( - rhat1)\n        xhat <- c(0, cumsum((R * x)/rhat1)/R)\n        rbind(xhat, rhat)\n}\nres1<-fun.recursive()\nres2<-fun.nonrecursive()\nrange(res1-res2)\n[1] -4.440892e-016  4.440892e-016\n> unix.time(fun.recursive(10000))\n[1] 10.5\n> unix.time(fun.nonrecursive(10000))\n[1] 0.0625\n\nNick Ellis\nCSIRO Marine Research   mailto:Nick.Ellis at marine.csiro.au\nPO Box 120                      ph    +61 (07) 3826 7260\nCleveland QLD 4163      fax   +61 (07) 3826 7222\nAustralia                       http://www.marine.csiro.au\n\n> -----Original Message-----\n> From: Kin Cheung [mailto:kin_cheung at alkermes.com]\n> Sent: Saturday, 29 May 1999 6:49\n> To: 's-news at wubios.wustl.edu'\n> Subject: [S] Vectorizing recursive codes\n> Importance: Low\n> \n> \n> \n> Hi S+ users,\n> \n>       Is there a way to vectorized the recursive code below so that\n> it can avoid the loop or more efficient code ?\n> \n> thanks\n> \n> ---Kin \n> \n> \n> c_0.3\n> xhat_NULL\n> rhat_NULL\n> \n> x_rnorm(10,0,1)\n> for ( i in 1:10){\n>       if (i==1) xhat[i]_0\n>       if (i==1) rhat[i]<- 1 + c\n>       else rhat[i]_1 + c - c / rhat[i-1]\n> \n>    if (i==1) xhat[i+1] <- (x[i] - xhat[i]) / rhat[i]\n>    else xhat[i+1] <- (x[i] - xhat[i]) / rhat[i-1]\n> }\n> \n> \n> \n> --------------------------------------------------------------\n> ---------\n> This message was distributed by s-news at wubios.wustl.edu.  To \n> unsubscribe\n> send e-mail to s-news-request at wubios.wustl.edu with the BODY of the\n> message:  unsubscribe s-news\n> \n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Kin,\n\nYou can solve for rhat independently of xhat by noticing that the recurrence\nrelation for \ny=1/(rhat-c) is y[n+1] = 1 + c*y[n] so that y[n]=1+c+c^2+...+c^(n-1). It's\nnot too difficult to get an ",
@@ -177,12 +159,12 @@
       "date": "1999-06-01T19:43:28Z",
       "subject": "RE: [S] Unique values with time",
       "subject_clean": "[S] Unique values with time",
-      "in_reply_to": null,
+      "in_reply_to": "<199906011726.MAA25393@uhdux2.dt.uh.edu>",
       "references": [],
       "body_plain": "Much better answer:\n\nxd[!duplicated(xd[,2]), ]\n\nIn general:\n(1) Make use of built in functionality to avoid rewriting solutions in poor\ncode;\n(2) Avoid loops when reasonable to do so;\n(3) Treat whole objects as whole objects.\n\n(Compare with Erin's:\n\nxe <- numeric(length=length(xd1))\n> for(i in 1:length(xd1)) {\n+ xe[i] <- order(xd[,2] != xd1[i])[1]\n+ }\n> xe\n\n)\n\nBert Gunter\nBiometrics Research RY 70-38\nMerck & Company\nP.O. Box 2000\nRahway, NJ 07065-0900\nPhone: (732) 594-7765   Fax: (732) 594-1565\n\n\"The business of the statistician is to catalyze the scientific learning\nprocess.\"      -- George E.P. Box\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Much better answer:\n\nxd[!duplicated(xd[,2]), ]\n\nIn general:\n(1) Make use of built in functionality to avoid rewriting solutions in poor\ncode;\n(2) Avoid loops when reasonable to do so;\n(3) Treat whole ",
-      "thread_id": "thread-db75a0ccc9d4",
-      "thread_depth": 0,
+      "thread_id": "thread-988bd6719c8f",
+      "thread_depth": 1,
       "month": "1999-06"
     },
     {
@@ -291,12 +273,12 @@
       "date": "1999-06-02T14:55:58Z",
       "subject": "RE: [S] Type III",
       "subject_clean": "[S] Type III",
-      "in_reply_to": null,
+      "in_reply_to": "<D16979FB73F3D11195510000F8030FB90D0A69@roper.qld.cmis.csiro.au>",
       "references": [],
       "body_plain": "Let X=1,2,3, or 4.\nOne can easily get the F-statistic and p-value associated with the type X sums\nof squares from SAS and now S-Plus.\nThe hypothesis test associated with the type X sums of squares F-statistic is\nnot always very interesting, and Terry and Bill\nhave illustrated why this is so in a very nice way.\nOne should always write out (or at least be aware of) the corresponding\nhypothesis test for each F-statistic (X=1,2,3, and 4)\nfor your particular experiment/data, and if it makes sense, then you should feel\nfree to use it in good health.\nThis \"you should absolutely never do ______\" dogma is not very productive.\n\nThe FDA will only take issue with you if you are using an F-statistic which\ncorresponds to a\nhypothesis that is strange or has no relevance to your given experiement, data,\nor drug.\nThe only way you can know this is to write out the hypotheses for each\nF-statistic, and see for yourself.\nAs for the \"FDA always wants ______\" , this is not true (no matter how many\ntimes people continue to say it).\nYou can freely use whatever F-statistic (X=1,2,3, and 4) you wish, provided that\nthe corresponding hypothesis test for that F-statistic is answers a relevant\nscientific question.\n\nUnfortunately, the documentation in the software packages is lacking, and some\nusers will invariably be led astray.\nFortunately we have folks like Venables and Ripley, Harrell, Therneau, and\nothers to fill the gap quite nicely.\n\nIn closing, how about some references from the literature?  Other than the\nstandard texts on linear models, I don't know\nof any really good articles in the statistical literature on the pro's and con's\nof the 4 different types of sums of squares ?\nSurely there must be many.\n\nEric Gibson\nNovartis Pharmaceuticals\n{The opinions herein in no way represent those of Novartis Pharmaceuticals}\n\n\"Venables, Bill (CMIS, Cleveland)\" <Bill.Venables at cmis.CSIRO.AU> on 06/02/99\n08:44:09 AM\n\nTo:   \"'Therneau, Terry M., Ph.D. '\" <therneau at mayo.edu>, \"Venables, Bill (CMIS,\n      Cleveland)\" <Bill.Venables at cmis.CSIRO.AU>\ncc:   \"'s-news at wubios.wustl.edu '\" <s-news at wubios.wustl.edu> (bcc: Eric\n      Gibson/PH/Novartis)\nSubject:  RE: [S] Type III\n\n(My comments on Terry's thoughtful piece below will be prefixed\nby ***.)\n\n-----Original Message-----\nFrom: Therneau, Terry M., Ph.D.\nTo: Bill.Venables at cmis.csiro.au\nCc: s-news at wubios.wustl.edu; Therneau, Terry M., Ph.D.\nSent: 6/1/99 12:40 PM\nSubject: [S] Type III\n\nThe BMDP manual of many years ago had a nice explanation.  Lacking\nsubscripts, let's assume a 2 way table of the following structure:\n\n     A1   A2   A3   A4\n     B1   B2   B3   B4\n     C1   C2   C3   C4\n\nAssume no empty cells, then there are 12 estimable parameters.  The\ntype III (Yates weighted means) hypothesis is\n\nrows: .25(a1+a2+a3+a4) = .25(b1+b2+b3+b4) = .25(c1+c2+c3+c4)\n\nThat is, the average row effects are identical.  I think this hypothesis\nmakes sense even without perfect additivity.  (After all, perfect\nadditivity only exists in simulations: I have real data).  If I know\nsomething about the population of interest, as opposed to the data set, I\nmight argue for different column weights: public health questions are\nrational ones.\n\n *** Exactly.  If one of he column classes is persistently going to be\n *** 97% of the population and the other three 1% each, then there is\n *** every chance that these equally weighted row effects are not at all\n *** interesting and testing any hypothesis on them ultimately misleading.\n\n *** If you retain non-additivity then you have essentially a single\n *** classification and no one would argue that testing any set of contrasts\n *** is letitimate and under some circumstances informative, but which\n *** hypothesis is being tested should always be clear and upfront to the\n *** user, not masked by the curious language of \"Type III\" sums of squares.\n\nI also see a lot of similarity between an argument for Yates' test and\nfor \"intention to treat\" analyses: some people take their drug, some not,\nwe know there is differntial treatment effect ('interaction') but still\nreport the averaged coefficient.\n\n *** There is no doubt that under some circumstances estimates of marginal\n *** means and hypothesis tests on them are sensible things to do, but the\n *** user always has a duty to understand what hypothesis, precisely, is\n *** being tested.  Providing \"Type III\" sums of squares, with their vague\n *** promise of \"testing an hypothesis on the main effects not dependent on\n *** the sample sizes and appropriate even when interactions are present\" is\n *** just plain misleading and irresponsible.\n\n *** There is, of course, a good argument for providing better assistance to\n *** the user to test non-standard hypotheses on the mean vector, but that\nis\n *** a separate issue.\n\n   Now:\n    1. Writing this hypothesis in terms of \"main effects + interaction\"\ncoefficients is only a recipe for confusion.  It reveals nothing and\nobscures much.\n\n *** Having studied Analysis of Variance from Scheff\\'e's book many years\nago\n *** I agree with your.  The means of the observations should always be the\n *** starting point, in my view.\n\n     a. First problem: it leads to an algorithm that can be applied\nwhen there are missing cells.  When there are missing cells the contrast\nabove isn't estimable, and the one the algorithm computes is hogwash.\n(A rule of thumb for SAS-- if type III and type IV are different, both are\nmisguided).\n\n     b. Second problem:  Apostles of the marginality creed think that\nI'm doing something odd with iteractions:  several of the S-news responses\nare in that camp.\n\n *** The essence of the \"marginality creed\" is really that testing\nhypotheses\n *** founded on arbitrary choices or concealed assumptions is likely to lead\n *** to trouble.  If there are interactions present, the weights used to\ndefine\n *** main effects are likely to be crucial to any interpretation.  Selecting\n\n *** equal weights for want of something better *is* arbitrary and dressing\nit\n *** up in this silly language of \"Type III\" sums of squares is doing a\ngreat\n *** job of occluding that fact.\n\n   2. I have yet to see someone write the hypothesis in the rational\nway, i.e., like above, and then argue that the test makes no sense.  You\ncan argue that other tests may be better, and they may well be.\n\n *** As an old, ex-educator, I'm always keen to further people's\nexperiences,\n *** Terry.  :-)  More seriously, I would not argue that it makes no sense.\nI\n *** would definitely argue, though, that more often than not it does, and\nmost\n *** users are unaware of that fact.  Making \"Type III\" the default would be\n *** definitely sub-optimal.\n\n(I most\noften use sequential sums of squares myself).  Arguments that ___ is the\n\"only\" or \"best\" test are of course misguided, and like others I cringe at\nthe enthronment of type III SS.)\n\n *** yes, indeed.\n\n    3. To the extent that Splus has copied an algorithm rather than an\nidea, we are in for a confusing future.  SAS has lots of good documentation,\nbut \"The four types of estimable functions\" is solidly on the negative\nside of the ledger.\n\n *** Amen to all of that.  All sums of squares I have ever seen used are\n *** of the same type, sequential, but what is not usually made clear is\n *** what are the two nested hypotheses involved.  Moreover dressing sums\n *** of squares up this way only encourages users to remain ignorant.\n\n--\nBill Venables.\n(currently in the USA and forced to use a dog of a Microsoft mailer...)\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Let X=1,2,3, or 4.\nOne can easily get the F-statistic and p-value associated with the type X sums\nof squares from SAS and now S-Plus.\nThe hypothesis test associated with the type X sums of squares F-s",
-      "thread_id": "thread-4a4da61dbc42",
-      "thread_depth": 0,
+      "thread_id": "thread-926564d23c70",
+      "thread_depth": 1,
       "month": "1999-06"
     },
     {
@@ -323,12 +305,12 @@
       "date": "1999-06-02T15:14:23Z",
       "subject": "Re: [S] kohonen SOM",
       "subject_clean": "[S] kohonen SOM",
-      "in_reply_to": null,
+      "in_reply_to": "<B9D73E159B01D311A4950090273B1925028124@exchange01.hmsa.com>",
       "references": [],
       "body_plain": "you can fin SOM code on my web page.  Let me know if you have any questions\nregarding the code.\n\nNiels\n\n********************************************************************\nNiels Waller, Ph.D.\nAssociate Professor\n\nAddress: One Shields Avenue      Phone: (530) 752-4459\nDepartment of Psychology\nUniversity of California\nDavis, CA 95616\n\nInternet:\n http://psychology.ucdavis.edu/waller/default.html\n\n********************************************************************\n\n(3)",
       "body_snippet": "you can fin SOM code on my web page.  Let me know if you have any questions\nregarding the code.\n\nNiels\n\n********************************************************************\nNiels Waller, Ph.D.\nAssocia",
-      "thread_id": "thread-f60589cf25fc",
-      "thread_depth": 0,
+      "thread_id": "thread-58c93dada980",
+      "thread_depth": 1,
       "month": "1999-06"
     },
     {
@@ -547,12 +529,12 @@
       "date": "1999-06-03T21:34:36Z",
       "subject": "Re: [S] Fitting nonlinear with GLM",
       "subject_clean": "[S] Fitting nonlinear with GLM",
-      "in_reply_to": null,
+      "in_reply_to": "<KCLCDKJAKAHLCAAA@shared1-mail.whowhere.com>",
       "references": [],
       "body_plain": "From: Max Kuhn@BDX on 06/03/99 05:34 PM\n\nKeith,\n\nThis maybe a difficult model to fit using the glm, ms or nlminb functions since\nthe model itself is not constrained to yield predicted values on the unit\ninterval. However, one way to accomplish this is to maximize the log-likelihood\nusing a nonlinear programming routine, such as the Nelder-Mead simplex search\nprocedure for function minimization. The Splus function containing the objective\nfunction may look something like the following pseudo code:\n\nprogramming statements....\n\nP <- B0 + B1 * exp (- days/B3)\nlog.likelihood<- r*log(P)+(n-r)log(1-P)\n\n# to maximize the likelihood, minimize the negative\n# make the objective function value large when P>1 or P<0\n\nif 0<= P <=1 then obj <- -log.likelihood\n     else obj <- 10^38\n\nobj\n}\nwhere there are r \"successes\" in n trials. Here, a constraint has been imposed\nthat the predicted probability is between 0 and 1. The function nlminb could\nconstrain B0 and B1 to be within 0 and 1, but that wouldn't guarantee that P\nwould fall within these limits.\n\nHow do you do this in Splus? On 1/28/99, Paul Gilbert wrote:\n\nThere is a version of the Nelder-Mead algorithm (essentially S from C from Press\net al \"Numerical Recipes in C\") included with my time series library \"DSE\"\navailable at <http://www.bank-banque-canada.ca/pgilbert>\n\nHope this helps.\n\nMax\n\n Dear S+ users,\n\nI would like to fit the following nonlinear exponential decay model to binomial\nerror since \"p\" is as a grouped Bernoulli outcome with different sample sizes\n\nP = B0 + B1 exp (- days/B3).\n\nI have not been able to figure out how to do this. Any suggestions or references\nwould be helpful.\n\nI use S+ 4.5 on Windows 95.\n\nThanks, Keith\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "From: Max Kuhn@BDX on 06/03/99 05:34 PM\n\nKeith,\n\nThis maybe a difficult model to fit using the glm, ms or nlminb functions since\nthe model itself is not constrained to yield predicted values on the un",
-      "thread_id": "thread-f82d35a756aa",
-      "thread_depth": 0,
+      "thread_id": "thread-faa9fc7c05ef",
+      "thread_depth": 1,
       "month": "1999-06"
     },
     {
@@ -645,12 +627,12 @@
       "date": "1999-06-04T18:39:36Z",
       "subject": "[S] Too many open files",
       "subject_clean": "[S] Too many open files",
-      "in_reply_to": null,
+      "in_reply_to": "<ulgiu953t4s.fsf@phz.com>",
       "references": [],
       "body_plain": "I sent out a message yesterday with the following question:\n\n> Under Splus5 Release 3 on Solaris I have been getting an error message\n> complaining about \"too many open files,\" even though I am not\n> explicitly opening any files at all.  Has anyone else seen this\n> problem and know what's going on or whether there is a workaround?\n> \n> I'm sorry to be so vague but I haven't been able to narrow the problem\n> down to a specific function or to write a simple piece of code that\n> reproduces the error.  The problem appears to happen when I iterate\n> over a large number of Splus objects, \"getting\" each one in turn.\n> (But this is not a sufficient condition.)\n> \n\nThanks to Douglas Bates, Phil Spector, Martin, and Bill Dunlap of\nMathSoft for responding.  Bill Dunlap's suggestion was to call\n\n  mmap.control(.Machine$integer.max)\n\nand this works.\n\nApparently Splus automatically memory-maps objects over a certain\nthreshold---50KB by default---and this call increases that threshold.\nThe mmap.control function is documented in the Release Notes under\n\"Backward Compatibility Issues.\"\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "I sent out a message yesterday with the following question:\n\n> Under Splus5 Release 3 on Solaris I have been getting an error message\n> complaining about \"too many open files,\" even though I am not\n> ",
-      "thread_id": "thread-85fa9853251c",
-      "thread_depth": 0,
+      "thread_id": "thread-2ca3919b424e",
+      "thread_depth": 1,
       "month": "1999-06"
     },
     {
@@ -763,12 +745,12 @@
       "date": "1999-06-05T13:15:08Z",
       "subject": "[S] Linear Interpolation",
       "subject_clean": "[S] Linear Interpolation",
-      "in_reply_to": null,
+      "in_reply_to": "<19990602204726.19907.rocketmail@attach1.rocketmail.com>",
       "references": [],
       "body_plain": "Hi!\n\nCould anybody explain me how linear interpolation is\nused to fill in missing values in spatial and\ntemporal data (rows=latitudes, columns=Months)? How\nis linear interpolation used on both raws and columns\nto estimate a small percentage of missing values?\n\n_________________________________________________________\nDO YOU YAHOO!?\nGet your free @yahoo.com address at http://mail.yahoo.com\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Hi!\n\nCould anybody explain me how linear interpolation is\nused to fill in missing values in spatial and\ntemporal data (rows=latitudes, columns=Months)? How\nis linear interpolation used on both raws an",
-      "thread_id": "thread-0bc2ed0a4724",
-      "thread_depth": 0,
+      "thread_id": "thread-3f39f12e4d0a",
+      "thread_depth": 1,
       "month": "1999-06"
     },
     {
@@ -1005,12 +987,12 @@
       "date": "1999-06-07T21:07:07Z",
       "subject": "[S] Splus dataset to SAS dataset",
       "subject_clean": "[S] Splus dataset to SAS dataset",
-      "in_reply_to": null,
+      "in_reply_to": "<199906072054.QAA24158@navigator.math.uwaterloo.ca>",
       "references": [],
       "body_plain": "> Hi Splus users,\n> \n> Does anyone know of a way to export an Splus data frame into a\n> SAS dataset?  I know that Splus can read in SAS datasets, but I\n> don't see any documentation on doing the reverse.  Any\n> suggestions on the best way to do this?\n\nI forgot to mention that I'm using Splus 3.4 for UNIX.\n\nThanks,\n \nMelanie Wigg\nUniversity of Waterloo\nmbwigg at navigator.math.uwaterloo.ca\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "> Hi Splus users,\n> \n> Does anyone know of a way to export an Splus data frame into a\n> SAS dataset?  I know that Splus can read in SAS datasets, but I\n> don't see any documentation on doing the rever",
-      "thread_id": "thread-df1a2f5f540c",
-      "thread_depth": 0,
+      "thread_id": "thread-2ac22ca239c3",
+      "thread_depth": 1,
       "month": "1999-06"
     },
     {
@@ -1119,12 +1101,12 @@
       "date": "1999-06-08T20:31:49Z",
       "subject": "Re: [S] how to identify result of max() ?",
       "subject_clean": "[S] how to identify result of max() ?",
-      "in_reply_to": null,
+      "in_reply_to": "<s75d3fa4.039@fcc.gov>",
       "references": [],
       "body_plain": "Many thanks for all the quick solutions.  I tested\nthem all, and they all do what I want.  I can\nnow continue with my efforts to count\nthe number of angels on the head of a pin.\nSummary below.\n\nBruce McCullough\nsenior economist, FCC\n\n-------------- solutions ---------------------\n\nAlan Zaslavsky suggested a quick\n \nsort(-wilma)[1] \n\nwhil Rod Tjoelker offered\n\n names(wilma)[wilma==max(wilma,na.rm=T)]\n\nwhich was similar to Peter Perkins' solution\n\nx[x==max(x)]\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Many thanks for all the quick solutions.  I tested\nthem all, and they all do what I want.  I can\nnow continue with my efforts to count\nthe number of angels on the head of a pin.\nSummary below.\n\nBruce ",
-      "thread_id": "thread-cfd74f8bf140",
-      "thread_depth": 0,
+      "thread_id": "thread-e61857764af8",
+      "thread_depth": 1,
       "month": "1999-06"
     },
     {
@@ -1377,12 +1359,12 @@
       "date": "1999-06-10T05:14:28Z",
       "subject": "[S] Linear Interpolation",
       "subject_clean": "[S] Linear Interpolation",
-      "in_reply_to": null,
+      "in_reply_to": "<19990602204726.19907.rocketmail@attach1.rocketmail.com>",
       "references": [],
       "body_plain": "Dear S-Plus users,\n\nI have a problem in writing the S-Plus code in estimating some missing\nvalues in my data.\nThe data is Ozone data. The first column indicates the latitude. The\nfollowing columns indicate the Ozone data for 12 months (Jan to Dec).\nThere are missing values at the beginning of March, April, May, and\nJune.\n\nExample:\n\nlattitude jan feb mar apr mai jun jul aug sep.....\n-80        234 320 NA  NA  NA   201 322 122....\n-70        235 323 NA  NA  NA   205 325 130....\n.\n.\n. \n0          345 450 435 421 389  390 448 458.....\n\nHow to code a function that estimates the missing values using linear\ninterpolation horizontally and vertically(using both rows and coulmns)?\n\nThank you for your help.\n\nFouad Abbassi\n_________________________________________________________\nDo You Yahoo!?\nGet your free @yahoo.com address at http://mail.yahoo.com\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Dear S-Plus users,\n\nI have a problem in writing the S-Plus code in estimating some missing\nvalues in my data.\nThe data is Ozone data. The first column indicates the latitude. The\nfollowing columns ind",
-      "thread_id": "thread-9c12e131b9a7",
-      "thread_depth": 0,
+      "thread_id": "thread-3f39f12e4d0a",
+      "thread_depth": 1,
       "month": "1999-06"
     },
     {
@@ -1537,12 +1519,12 @@
       "date": "1999-06-10T19:06:16Z",
       "subject": "Re: [S] Pooled Adjacent Violator Algorithm",
       "subject_clean": "[S] Pooled Adjacent Violator Algorithm",
-      "in_reply_to": null,
+      "in_reply_to": "<059526454901D211B07F00A0C9B3BC751A4188@mail2.pica.army.mil>",
       "references": [],
       "body_plain": "From: Max Kuhn@BDX on 06/10/99 03:06 PM\n\nJohn,\n\nHere is code I lifted from someone else's (non S-plus) program:\n\n abers<-function(events, trials)\n{\n     k <- length(events)\n     p <- matrix(0, k, 1)\n     pp <- matrix(0, k, k)\n     for(i in 1:k) {\n          sum1 <- 0\n          sum2 <- 0\n          for(j in i:k) {\n               sum1 <- sum1 + events[j]\n               sum2 <- sum2 + trials[j]\n               pp[i, j] <- sum1/sum2\n          }\n          temp <- as.matrix(pp[(1:i), (i:k)])\n          p[i] <- ifelse(i > 1, max(apply(temp, 1, min)), min(temp))\n     }\n     cbind(events/trials, p)\n}\n\np is the abers estimate of the sample proportion under order restrictions. It\nassumes the data are in sequential order. I'm sure it can be programmed more\nefficiently. There are k*(k+1)/2 executions of the loop, where k is the number\nof groups. It runs pretty quick on my machine (v4.5) for the example below.\n\nHere are some data from Morgan (1992, pg. 305):\n\n> n<-rep(6,9)\n> r<-c(0,0,1,0,2,4,4,6,5)\n> abers(r,n)\n          [,1]       [,2]\n[1,] 0.0000000 0.00000000\n[2,] 0.0000000 0.00000000\n[3,] 0.1666667 0.08333333\n[4,] 0.0000000 0.08333333\n[5,] 0.3333333 0.33333333\n[6,] 0.6666667 0.66666667\n[7,] 0.6666667 0.66666667\n[8,] 1.0000000 0.91666667\n[9,] 0.8333333 0.91666667\n>\n\nEnjoy-\n\nMax\n\nTo:   \"'s-news at wubios.wustl.edu'\" <s-news at wubios.wustl.edu>\ncc:    (bcc: Max Kuhn/USAMD/BDX)\nSubject:  [S] Pooled Adjacent Violator Algorithm\n\nHas anyone programmed the subject algorithm in Splus?\n\nJohn G. Mardo\ne-mail:  mardo at pica.army.mil <mailto:mardo at pica.army.mil>\nQuality Evaluation & Safety Team                                    phone:\n(973) 724-4207\nQuality Engineering Directorate                                        fax:\n(973) 724-4026\nUS Army TACOM/ARDEC, Picatinny Arsenal, NJ\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "From: Max Kuhn@BDX on 06/10/99 03:06 PM\n\nJohn,\n\nHere is code I lifted from someone else's (non S-plus) program:\n\n abers<-function(events, trials)\n{\n     k <- length(events)\n     p <- matrix(0, k, 1)\n ",
-      "thread_id": "thread-63520d7b2a5b",
-      "thread_depth": 0,
+      "thread_id": "thread-9e658b2560f8",
+      "thread_depth": 1,
       "month": "1999-06"
     },
     {
@@ -1785,12 +1767,12 @@
       "date": "1999-06-12T02:10:41Z",
       "subject": "Re: [S] Kendall's tau modified for censored data",
       "subject_clean": "[S] Kendall's tau modified for censored data",
-      "in_reply_to": null,
+      "in_reply_to": "<B9E51B9719BDD111AB640000F80197CDBEB586@rplmsem2.pal.roche.com>",
       "references": [],
       "body_plain": "It wouldn't be terrible to modify the rcorr.cens function\nand the Ratfor (structured Fortran) code it calls to do this.\nrcorr.cens is in the Hmisc library and it allows one of the\ntwo variables to be right censored.  It computes Somers\nand Goodman-Kruskal gamma rank correlations.\n\n-----Original Message-----\nFrom: Barker, Chris {PHAR~Palo Alto} <CHRIS.BARKER at roche.com>\nTo: 's-news at wubios.wustl.edu' <s-news at wubios.wustl.edu>\nDate: Thursday, June 10, 1999 7:23 PM\nSubject: [S] Kendall's tau modified for censored data\n\n>\n>I've posted a related question before, my apologies for any waste of\n>bandwidth. \n>\n>I have bivariate survival data, and have located several concordance\n>statistics for bivariate censored data based on adapting (or similar to)\n>Kendall's tau.\n>Before I start programming, are the any SPLUS functions available that\n>implement Kendall's tau specifically modified for censored data?\n>\n>Papers, e.g. \"Weier, & Basu, \"An investigation of Kendalls tau Modified for\n>Censored Data with Applications, Journal of Statistical Planning and\n>Inference, 1980, p 381-390\"\n>or more recently\n>\"Oakes, \"A concordance Test for Independence in the Presence of Censoring,\n>Biometrics, 1982, p 451-455\".\n>\n>(Thanks to those who replied to my earlier email and suggested I use a\n>multivariate Cox model,).\n>\n>\n>\n>Chris Barker, Ph.D.\n>Principal Pharmacoeconomic Statistician\n>Roche Pharma Business - Palo Alto\n>(650)-852-3152\n>\n>-----------------------------------------------------------------------\n>This message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\n>send e-mail to s-news-request at wubios.wustl.edu with the BODY of the\n>message:  unsubscribe s-news\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "It wouldn't be terrible to modify the rcorr.cens function\nand the Ratfor (structured Fortran) code it calls to do this.\nrcorr.cens is in the Hmisc library and it allows one of the\ntwo variables to be ",
-      "thread_id": "thread-f70a47cf696b",
-      "thread_depth": 0,
+      "thread_id": "thread-5382518747af",
+      "thread_depth": 1,
       "month": "1999-06"
     },
     {
@@ -1997,12 +1979,12 @@
       "date": "1999-06-14T17:23:48Z",
       "subject": "Re: [S] S-PLUS 2000 Announcement",
       "subject_clean": "[S] S-PLUS 2000 Announcement",
-      "in_reply_to": null,
+      "in_reply_to": "<001401beb688$84e41460$acce3fce@felix.statsci.com>",
       "references": [],
       "body_plain": "I guess we should all be grateful that MathSoft was able to make it through\nthe decade with a reasonably consistent version numbering system before\npremature opening of a case of millennial champagne catapulted them from\n5.1 to 2000.  :-(\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "I guess we should all be grateful that MathSoft was able to make it through\nthe decade with a reasonably consistent version numbering system before\npremature opening of a case of millennial champagne ",
-      "thread_id": "thread-648f287dddb8",
-      "thread_depth": 0,
+      "thread_id": "thread-2cf82caf429b",
+      "thread_depth": 1,
       "month": "1999-06"
     },
     {
@@ -2061,12 +2043,12 @@
       "date": "1999-06-14T22:18:43Z",
       "subject": "[S] Tobit Analysis",
       "subject_clean": "[S] Tobit Analysis",
-      "in_reply_to": null,
+      "in_reply_to": "<37652319.35BCF510@imap.pitt.edu>",
       "references": [],
       "body_plain": "survreg() + left censored data + gaussian distribution + identity link\n                 = Tobit regression\n\nHere is an example pulled from the test suite for survival5:\n\n#  Data is from J. Tobin, Estimation of relationships for limited dependent\n#   variables, Econometrica, v26, 24-36, 1958.\n#\n#  Durable Goods Purchase, Age in Years, Liquidity Ratio * 1000\n#\n#  The data set is copied from the SAS manual.  The answers below are not\n#    exactly the ones printed in the SAS manual, but they are the ones that\n#    you get using SAS and this data.  (Typo in the data set?)\n \ntobin <- read.table('data.tobin', col.names=c('durable', 'age', 'quant'))\n \ntfit <- survreg(Surv(durable, durable>0, type='left') ~age + quant,\n                data=tobin, dist='gaussian', link='identity')\n\n               Value Std. Error      z        p \n(Intercept)  15.1458    16.0792  0.942 3.46e-01\n        age  -0.1291     0.2186 -0.590 5.55e-01\n      quant  -0.0455     0.0583 -0.782 4.34e-01\n Log(scale)   1.7178     0.3103  5.536 3.10e-08\n \nScale= 5.57 \n \nGaussian distribution\nLoglik(model)= -28.9   Loglik(intercept only)= -29.5\n        Chisq= 1.1 on 2 degrees of freedom, p= 0.58 \nNumber of Newton-Raphson Iterations: 2 \nn= 20 \n\n---------------------------\n\n0       57.7     236\n0.7     50.9    283\n0       48.5    207\n0       41.7    220\n0       47.7    238\n0       59.8    216\n0       44.3    284\n3.7     45.1    221\n0       51.7    275\n3.0     50      269\n10.4    46.8    207\n0       58      249\n0       58.9    246\n0       40      277\n1.5     34.1    231\n0       39.9    219\n0       33.4    240\n3.5     48.1    266\n6.1     46.6    214\n0       53.1    251\n\n-----------------------------------------------\n\n Terry M. Therneau, Ph.D.                        (507) 284-3694 \n Head, Section of Biostatistics                  (507) 284-9542  FAX\n Mayo Clinic                                     therneau.terry at mayo.edu\n Rochester, Minn 55905\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "survreg() + left censored data + gaussian distribution + identity link\n                 = Tobit regression\n\nHere is an example pulled from the test suite for survival5:\n\n#  Data is from J. Tobin, Esti",
-      "thread_id": "thread-7b5d7e042dda",
-      "thread_depth": 0,
+      "thread_id": "thread-a2d4236b95b9",
+      "thread_depth": 1,
       "month": "1999-06"
     },
     {
@@ -2109,12 +2091,12 @@
       "date": "1999-06-15T05:52:30Z",
       "subject": "Re: [S] lme, nlme and repeated measures ANOVA",
       "subject_clean": "[S] lme, nlme and repeated measures ANOVA",
-      "in_reply_to": null,
+      "in_reply_to": "<000701beb6d8$4d78b4e0$71e66081@bio.flinders.edu.au>",
       "references": [],
       "body_plain": "Dear Duncan\n\nYou asked for references concerning the use of ANOVA or mixed effects\nmodels. Littel et al. give an interesting overview for different methods to\nanalyse repeated measurements. Although the paper is based on the SAS\nprogram language it is understandable for S-Plus users, too. \n\nHere's the reference:\n\nLittell, R.C., Henry, P.R. and Ammermann, C.B. 1998. Statistical analysis\nof repeated measures data using SAS procedures. Journal of Animal Science\n76: 1216-1231.\n\nBest regards\nRegula\n\nAt 12:09 15.06.99 +0930, you wrote:\n>\n>Hi Splussers,\n>would someone please point me at some references (or to their own opinions!)\n>as to the circumstances, kinds of data etc,  under which one would likely\n>prefer to run a linear mixed-effects model (as in lme) as opposed to a\n>traditional univariate or multivariate repeated-measures ANOVA. And vice\n>versa - under what cirumstances would you likely prefer a traditional\n>repeated-measures ANOVA to running lme??\n>\n>Many thanks,\n>Duncan\n\n_____________________________________\n\nRegula Schwager-Suter\nSwiss Federal Institute of Technology\nInstitute of Animal Science\nAnimal Breeding\nClausiusstrasse 50\nCH-8092 Zürich\nphone: +41 (0)1 632 39 56\nfax: +41 (0)1 632 12 60\ne-mail: suter at inw.agrl.ethz.ch\nhttp://www.tz.inw.agrl.ethz.ch/~suter\n_____________________________________\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Dear Duncan\n\nYou asked for references concerning the use of ANOVA or mixed effects\nmodels. Littel et al. give an interesting overview for different methods to\nanalyse repeated measurements. Although t",
-      "thread_id": "thread-b006a72930bc",
-      "thread_depth": 0,
+      "thread_id": "thread-1bc586d65a67",
+      "thread_depth": 1,
       "month": "1999-06"
     },
     {
@@ -2385,12 +2367,12 @@
       "date": "1999-06-16T17:22:58Z",
       "subject": "Re: [S] A NNET Question",
       "subject_clean": "[S] A NNET Question",
-      "in_reply_to": null,
+      "in_reply_to": "<11291426AAC2D21188DB0000C0757EF3EE1051@njb320po01.ems.att.com>",
       "references": [],
       "body_plain": "> From: \"Bhattacharyya, Arunava, BRGM\" <arunb at att.com>\n> To: S-news at wubios.wustl.edu\n> Subject: [S] A NNET Question\n> Date: Tue, 15 Jun 1999 08:58:42 -0400\n> X-loop: s-news\n> \n> \n>       I am trying to use the NNet program. I like to control the\n> hidden-layer variables. Is it possible to provide a selected list of\n> variables (a sub-set of original inputs) for the hidden layers using the\n> SIZE option, or otherwise. \n\nIs that my nnet?  If so, please send Qs to the library author first\n(as the list intro asks).\n\nThe short answer is no, but by using the pieces (such as add.net)\nyou can wire up the network any way you want, and by using mask you\ncan set any of the weights not to be optimized over.\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "> From: \"Bhattacharyya, Arunava, BRGM\" <arunb at att.com>\n> To: S-news at wubios.wustl.edu\n> Subject: [S] A NNET Question\n> Date: Tue, 15 Jun 1999 08:58:42 -0400\n> X-loop: s-news\n> \n> \n>       I am tr",
-      "thread_id": "thread-3140f20a8753",
-      "thread_depth": 0,
+      "thread_id": "thread-364c474a5b8f",
+      "thread_depth": 1,
       "month": "1999-06"
     },
     {
@@ -2531,12 +2513,12 @@
       "date": "1999-06-18T13:55:35Z",
       "subject": "[S] Greek Letters",
       "subject_clean": "[S] Greek Letters",
-      "in_reply_to": null,
+      "in_reply_to": "<78E833D774B4D21190A30008C78C717E43325A@exch1-ma.alkermes.com>",
       "references": [],
       "body_plain": "Kin Cheung <kin_cheung at alkermes.com> asked:\n\n>> Any ways to put greek letters in a graph using script files in  splus4.5\nwindows environment ? <<\n\nLet me add:  Is it possible to use superscripts and subscripts in graph\nlabels (\"xlab=\"...) created with scripts under SPLUS 4.5 under Windows NT?\n\nIn my case, they are traditional graphics, later exported to EPS with\n\"export.graph\".\n\n(If a better source exists for knowledge of this sort, please advise.  I\nhave no desire to take up bandwidth with trivial questions.  I've looked in\nseveral books, fruitlessly.)\n\n-- \nMichael Prager                     <Mike.Prager at noaa.gov>\nNOAA Center for Coastal Fisheries and Habitat Research\nBeaufort, North Carolina  28516\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Kin Cheung <kin_cheung at alkermes.com> asked:\n\n>> Any ways to put greek letters in a graph using script files in  splus4.5\nwindows environment ? <<\n\nLet me add:  Is it possible to use superscripts an",
-      "thread_id": "thread-ec09c116da50",
-      "thread_depth": 0,
+      "thread_id": "thread-36140790da15",
+      "thread_depth": 1,
       "month": "1999-06"
     },
     {
@@ -2741,12 +2723,12 @@
       "date": "1999-06-21T13:42:00Z",
       "subject": "[S] email address change",
       "subject_clean": "[S] email address change",
-      "in_reply_to": null,
+      "in_reply_to": "<199906211251.HAA00445@wubios.wustl.edu>",
       "references": [],
       "body_plain": "please make the following email address change:\n\n      from:       bliese at wrair-emh1.army.mil\n\n      to:         maj_paul_bliese at wrsmtp-ccmail.army.mil\n\n                  thanks, joe scutt\n                  (walter reed army vax sys mgr)\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "please make the following email address change:\n\n      from:       bliese at wrair-emh1.army.mil\n\n      to:         maj_paul_bliese at wrsmtp-ccmail.army.mil\n\n                  thanks, joe scutt\n     ",
-      "thread_id": "thread-8cec00171c63",
-      "thread_depth": 0,
+      "thread_id": "thread-e4906b03a126",
+      "thread_depth": 1,
       "month": "1999-06"
     },
     {
@@ -3115,12 +3097,12 @@
       "date": "1999-06-24T02:59:57Z",
       "subject": "RE: [S] Generating correlated binary random variables",
       "subject_clean": "[S] Generating correlated binary random variables",
-      "in_reply_to": null,
+      "in_reply_to": "<199906231808.NAA02262@wubios.wustl.edu>",
       "references": [],
       "body_plain": "> -----Original Message-----\n> From: Davidov, Ori [mailto:ori_davidov at merck.com]\n> Sent: Thursday, 24 June 1999 4:10\n> To: 's-news at wubios.wustl.edu'\n> Subject: [S] Generating correlated binary random variables\n> \n> \n> \n> Hi,\n> \n> Does anyone out there have or knows of a S-Plus function that \n> generates\n> correlated binary rv's. Obviously there are many dependence \n> structures and\n> therefore many possible functions.\n> \n> Any information will be helpful to me at this point, thanks,\n> \n> Ori\n\nHere's one idea.\n\nTake X ~ Bernoulli(p), Y ~ Bernoulli(q), W ~ Bernoulli(r) and define\nZ = (X|Y)&Z\nThen Z ~ Bernoulli((p+(1-p)q)r) and\nCov(X,Z) = p(1-p)(1-q)r so that\nCor(X,Z) = sqrt(p(1-p)r) (1-q) / srqt[(p+(1-p)q) (1-pr-(1-p)qr)]\n\nYou can tune q and r to give desired values of E(Z) and Cor(X,Z). For\nnegative correlations use\nZ = ((!X)|Y)&Z. The reason I used two auxiliary random variables Y and W was\nto get a truth table for X and Z with all cells having non-zero probability\n(see tables in example below).\n\nExamples follow:\n\n> p<-q<-r<-.5\n> x<-rbinom(1000,1,p)\n> y<-rbinom(1000,1,q)\n> w<-rbinom(1000,1,r)\n> z<-(x|y)&w\n> apply(cbind(x,y,w,z),2,mean)\n     x     y    w     z \n 0.511 0.473 0.48 0.356\n> (p+(1-p)*q)*r # E(z)\n[1] 0.375\n> round(var(cbind(x,y,w,z)),2)\n      x     y     w    z \nx  0.25 -0.01  0.00 0.06\ny -0.01  0.25 -0.01 0.05\nw  0.00 -0.01  0.25 0.19\nz  0.06  0.05  0.19 0.23\n> p*(1-p)*(1-q)*r # Cov(x,z)\n[1] 0.0625\n> round(cor(cbind(x,y,w,z)),2)\n      x     y     w    z \nx  1.00 -0.03 -0.01 0.26\ny -0.03  1.00 -0.04 0.20\nw -0.01 -0.04  1.00 0.77\nz  0.26  0.20  0.77 1.00\n> sqrt(p*(1-p)*r)* (1-q) / sqrt((p+(1-p)*q)* (1-p*r-(1-p)*q*r)) # Cor(x,z)\n[1] 0.2581989\n> table(x,x|y)\n  FALSE TRUE \n0   250  239\n1     0  511\n> table(x,x&y)\n  FALSE TRUE \n0   489    0\n1   277  234\n> table(x,z)\n  FALSE TRUE \n0   376  113\n1   268  243\n\nNick Ellis\nCSIRO Marine Research   mailto:Nick.Ellis at marine.csiro.au\nPO Box 120                      ph    +61 (07) 3826 7260\nCleveland QLD 4163      fax   +61 (07) 3826 7222\nAustralia                       http://www.marine.csiro.au\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "> -----Original Message-----\n> From: Davidov, Ori [mailto:ori_davidov at merck.com]\n> Sent: Thursday, 24 June 1999 4:10\n> To: 's-news at wubios.wustl.edu'\n> Subject: [S] Generating correlated binary r",
-      "thread_id": "thread-1efe3085763e",
-      "thread_depth": 0,
+      "thread_id": "thread-28a4b777a9b2",
+      "thread_depth": 1,
       "month": "1999-06"
     },
     {
@@ -3489,12 +3471,12 @@
       "date": "1999-06-28T02:38:37Z",
       "subject": "[S] How do you create a formula for a model with a large number of variables?",
       "subject_clean": "[S] How do you create a formula for a model with a large number of variables?",
-      "in_reply_to": null,
+      "in_reply_to": "<004d01bebdbc$6c58c1d0$b5c8e780@fed-radmachm.cit.nih.gov>",
       "references": [],
       "body_plain": "> How do you create a formula for a model \n        > with a large number of variables?\n\nnames <- paste(\"x\", 1:25, sep=\"\")\nrhs <- paste(names, collapse=\" + \")\nfmla <- as.formula(paste(\"y ~ \", rhs))\n\nfmla\n\ny ~ x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8 + x9 + x10 + x11 + x12 + x13 + x14 + \n        x15 + x16 + x17 + x18 + x19 + x20 + x21 + x22 + x23 + x24 + x25\n\n----\nProf Adrian Baddeley, Mathematics & Statistics, University of Western Australia\n                <http://maths.uwa.edu.au/~adrian/>\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "> How do you create a formula for a model \n        > with a large number of variables?\n\nnames <- paste(\"x\", 1:25, sep=\"\")\nrhs <- paste(names, collapse=\" + \")\nfmla <- as.formula(paste(\"y ~ \", rhs))\n\nfm",
-      "thread_id": "thread-617ba2d86a71",
-      "thread_depth": 0,
+      "thread_id": "thread-fa4ece7823bf",
+      "thread_depth": 1,
       "month": "1999-06"
     },
     {
@@ -3555,12 +3537,12 @@
       "date": "1999-06-28T09:52:49Z",
       "subject": "Re: [S] spin on Solaris-Xceed-NT",
       "subject_clean": "[S] spin on Solaris-Xceed-NT",
-      "in_reply_to": null,
+      "in_reply_to": "<3.0.5.32.19990628100902.009ff7c0@mail.wsl.ch>",
       "references": [],
       "body_plain": "> Date: Mon, 28 Jun 1999 10:21:43 +0200\n> From: Martin Maechler <maechler at stat.math.ethz.ch>\n> \n> >>>>> On Mon, 28 Jun 1999, Christian Hoffmann <christian.hoffmann at wsl.ch> \nsaid:\n> \n>     ChHo> Can anybody comment on the fact that\n> \n>     ChHo> \"spin\"\n> \n>     ChHo> - leaves traces of points on the screen, making it difficult to \n> use, \n>     ChHo> - does not react instantaneously to pressing/relieving mouse clicks \n>     ChHo> - cannot be stopped without quitting\n> \n> I think all these are genuine for spin()/brush();  not Xceed specific.\n\nUm: No problem here with Exceed 6 on NT with a Matrox Productriva G100\ndisplaying spin from S-PLUS 3.4 on Solaris 2.6.  I suspect either\nExceed (what version?) or the graphics adapter is the problem.  I don't\nsee any problems on a Sun X server either.\n\n>     ChHo> I am using S-Plus Version 3.4 Release 1 for Sun SPARC, SunOS 5.3\n>     ChHo> : 1996 and Xceed to interface with Windows NT 4.0.\n> \n> ``Everyone I know'' uses  Xgobi instead of  spin() or brush().\n> \n> It's multiple times better and it's freely available, \n> unfortunately not free in the sense of Open Source Software (OSS) / GNU sense.\n> \n>           -> http://www.research.att.com/~andreas/xgobi/\n\nThe official URL is now\n\nhttp://www.research.att.com/areas/stat/xgobi/\n\nalthough the old one still works.\n\n> Brian Ripley might comment on how Xgobi can be made to run under Win9x.\n\nJust get http://www.stats.ox.ac.uk/pub/SWin/xgobi.zip. This gives me the\nopportunity to say that this was updated a few days ago to the June 1999\nversion of XGobi.\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "> Date: Mon, 28 Jun 1999 10:21:43 +0200\n> From: Martin Maechler <maechler at stat.math.ethz.ch>\n> \n> >>>>> On Mon, 28 Jun 1999, Christian Hoffmann <christian.hoffmann at wsl.ch> \nsaid:\n> \n>     ChHo> ",
-      "thread_id": "thread-28344dcccfca",
-      "thread_depth": 0,
+      "thread_id": "thread-d83a26ffb2fc",
+      "thread_depth": 1,
       "month": "1999-06"
     },
     {
@@ -3603,12 +3585,12 @@
       "date": "1999-06-28T12:45:14Z",
       "subject": "Re: [S] default Trellis settings",
       "subject_clean": "[S] default Trellis settings",
-      "in_reply_to": null,
+      "in_reply_to": "<8525679E.00443C1A.00@7crmta_md.ms.bd.com>",
       "references": [],
       "body_plain": "> From: Max Kuhn@BDX on 06/28/99 08:23 AM\n> \n> Can anyone tell me how to change the default point and line colors for\n> command-line Trellis graphics, such as xyplot and dotplot? The default on my\n> machine (NT with V 4.5 R1) is to make points and lines a cornea-damaging cyan.\n\nIt depends on the device: I guess you mean on a colour graphsheet. If cyan \ndamages your cornea, how do you cope with the white background on a commands\nwindow or an ordinary graphsheet (white = cyan+red, so had the cyan effect)?\n(Takes tongue out of cheek.)\n\n> I have seen the code in the Trellis user's manual, such as\n> \n> > trellis.device(postscript, color = T)\n> > plot.symbol <- trellis.par.get(\"plot.symbol\")\n> > plot.symbol\n> \n> and the change can be made using  trellis.par.set(\"plot.symbol\").\n> \n> This works fine for each individual graphsheet or trellis.device. However, I\n> would like to change the *default* traits so that when I start a graphics\n> device, the colors are already changed so that I don't have to alter anything.\n> \n> I realize that I could just write another function that calls the graphics\n> device and makes the change, but I would rather directly call xyplot(...).\n> \n> I hope I haven't missed anything obvious. Thanks in advance.\n\nYou want to alter the trellis default settings for a colour graphsheet.\nMake a copy of trellis.settings.colorgrphsht, alter it as you like it,\nand make sure it is high up your search path.\n\nThe manuals do not tell you how to do this as it is not generally\na good idea.  A better idea might be to alter the colour scheme settings\non the graphsheet device, as I suspect the problem with cyan is a lack of\nperceived contrast with the grey background: I notice this particularly\non LCD displays, which (often) have a quite different gamma from CRTs.\nI find I have to adjust the colour scheme for just about every computer\nprojector I get to use.\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "> From: Max Kuhn@BDX on 06/28/99 08:23 AM\n> \n> Can anyone tell me how to change the default point and line colors for\n> command-line Trellis graphics, such as xyplot and dotplot? The default on my\n> m",
-      "thread_id": "thread-e622499ac723",
-      "thread_depth": 0,
+      "thread_id": "thread-2ed53f6241a0",
+      "thread_depth": 1,
       "month": "1999-06"
     },
     {
@@ -3635,12 +3617,12 @@
       "date": "1999-06-28T14:23:52Z",
       "subject": "Re: [S] Generalized additive models for matched case-control data?",
       "subject_clean": "[S] Generalized additive models for matched case-control data?",
-      "in_reply_to": null,
+      "in_reply_to": "<Pine.A41.4.10.9906251614080.95880-100000@homer09.u.washington.edu>",
       "references": [],
       "body_plain": "1. Case-control logistic can be done with coxph:\n        status: 1=case, 0=control\n        time:  dummy value, any positive number, I usually set it to 1.\n        group: case-control group\n\n        coxph(Surv(time, status) ~ x1 + x2 + ... + strata(group), \n                data=mydata, method='exact')\n\n This uses the \"exact partial likelihood\", which is numerically identical\nto the likelihood for a matched case-control logistic.\n\n  2. If you have the latest survival routines (\"survival5\"), then you can\nuse 'pspline(age, df=3)\" to fit a smoothing spline on age.\n\n        Terry Therneau\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "1. Case-control logistic can be done with coxph:\n        status: 1=case, 0=control\n        time:  dummy value, any positive number, I usually set it to 1.\n        group: case-control group\n\n        co",
-      "thread_id": "thread-4285927795e8",
-      "thread_depth": 0,
+      "thread_id": "thread-a9993b99de3c",
+      "thread_depth": 1,
       "month": "1999-06"
     },
     {
@@ -3799,12 +3781,12 @@
       "date": "1999-06-29T09:23:20Z",
       "subject": "Re: [S] pdf.graph()",
       "subject_clean": "[S] pdf.graph()",
-      "in_reply_to": null,
+      "in_reply_to": "<19990628172231.9436D3B44@gwen.stat.unipd.it>",
       "references": [],
       "body_plain": "Thanks to Bill Dunlap,  Stephen Smith, Brian Ripley, Andreas Krause\nfor their kind replies to my (rather silly) question:\n\n> \n> from pdf.graph() I get a file (attached) which Acrobat Reader \n> declares to contain no pages. I have tried several variants\n> of the command, but the outcome is the same. Probably this is\n> a well-known question, I suspect.\n> \n\nThe error was to use pdf.graph() similarly to printgraph(),\ni.e using it _after_ producing the plot.\n\nHaving hit this point, I wonder if it would have been \nbetter (simpler) that they have added another option to \"method\" \nof printgraph(), in addition to laserjet and postscript, \ninstead of adding another command.\n\nBest wishes\nAdelchi Azzalini\n----\nAdelchi Azzalini  <azzalini at stat.unipd.it>\nDept Statistical Sciences, University of Padua, Italy\nhttp://www.stat.unipd.it/dip/homes/azzalini\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Thanks to Bill Dunlap,  Stephen Smith, Brian Ripley, Andreas Krause\nfor their kind replies to my (rather silly) question:\n\n> \n> from pdf.graph() I get a file (attached) which Acrobat Reader \n> declare",
-      "thread_id": "thread-1f132f5886a6",
-      "thread_depth": 0,
+      "thread_id": "thread-1700746eca18",
+      "thread_depth": 1,
       "month": "1999-06"
     },
     {
@@ -3895,12 +3877,12 @@
       "date": "1999-06-29T18:01:09Z",
       "subject": "RE: [S] Zero origin.",
       "subject_clean": "[S] Zero origin.",
-      "in_reply_to": null,
+      "in_reply_to": "<199906291755.OAA06853@tanner.math.unb.ca>",
       "references": [],
       "body_plain": "As a former APLer I agree that having ability to set zero origin for\nindexing has its advantages in some cases and I would like to support Rolf's\nrequest for this to be built into SPLUS.\n\nStephen Smith\n\n> -----Original Message-----\n> From: Rolf Turner [SMTP:rolf at math.unb.ca]\n> Sent: Tuesday, June 29, 1999 2:55 PM\n> To:   s-news at wubios.wustl.edu\n> Subject:      [S] Zero origin.\n> \n> \n> \n> Many mathematical structures/sequences start ``naturally'' from 0\n> rather than from 1, making it convenient to index vectors and array\n> dimensions by sequences starting from 0.\n> \n> In APL (anybody else remember that language?  I once saw it compared\n> to a car which drives only in reverse gear and is instrumented in\n> Greek) there was a simple way of selecting 0-origin rather than 1-origin\n> for sequence indexing.  This seems not to be possible in S(plus).\n> \n> Question 1:  Might the designers of S(plus) consider adding, in some\n> future release, a 0-origin switch, say to the options() function?  I\n> have in mind something like being able to say:\n> \n>       > options(origin=0)\n> \n> after which\n> \n>       > x[0:3,]\n> \n> would give me the first, second, third, and fourth rows of the matrix x.\n> \n> Later I would like to be able to restore normalcy by saying\n> \n>       > options(origin=1)\n> \n> Would this be feasible/easy/difficult/impossible given S(plus)'s\n> internal structure?\n> \n> It is pretty clear that if you invoked\n> \n>         > options(origin=0)\n> \n> and then called upon a function which was written assuming 1-origin,\n> then the sky would almost surely fall.  As far as I'm concerned, that's\n> quite alright and it's the user's responsibility to make sure that\n> such invocations do not occur.\n> \n> Question 1a:  What about R?  Would such a feature be any easier\n> (or harder?) to incorporate into R?\n> \n> Question 2:  Am I absolutely correct in asserting that 0-origin is\n> not currently available in S(plus)?  I.e. is there any sort of\n> work-around that would enable one to fake 0-origin in a moderately\n> convenient way?\n> \n>                                       cheers,\n> \n>                                               Rolf Turner\n>                                               rolf at math.unb.ca\n> -----------------------------------------------------------------------\n> This message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\n> send e-mail to s-news-request at wubios.wustl.edu with the BODY of the\n> message:  unsubscribe s-news\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "As a former APLer I agree that having ability to set zero origin for\nindexing has its advantages in some cases and I would like to support Rolf's\nrequest for this to be built into SPLUS.\n\nStephen Smit",
-      "thread_id": "thread-9a897f3f4197",
-      "thread_depth": 0,
+      "thread_id": "thread-4f1ab8d300a5",
+      "thread_depth": 1,
       "month": "1999-06"
     },
     {
@@ -4070,6 +4052,24 @@
       "month": "1999-06"
     },
     {
+      "id": "msg-1050e742fb80",
+      "message_id": "<199906302127.JAA06106@atlas.marc.cri.nz>",
+      "from_name": "Patrick Connolly",
+      "from_email_hash": "f6ebd85f64208db54447658cf1fd166eb30d6e17dbcd31e76277b9c687645725",
+      "date": "1999-06-30T21:03:48Z",
+      "subject": "Re: [S] Does the new version of S-Plus fix num acc. and RNG problems?",
+      "subject_clean": "[S] Does the new version of S-Plus fix num acc. and RNG problems?",
+      "in_reply_to": "<Pine.GSO.4.05.9906302043560.14-100000@auk.stats>",
+      "references": [
+        "<Pine.GSO.4.05.9906302043560.14-100000@auk.stats>"
+      ],
+      "body_plain": "According to Prof Brian D Ripley:\n|> \n|> \n|> On Wed, 30 Jun 1999, H. D. Vinod wrote:\n \n|> > For an academic user like me, too many new versions are not good.\n|> > We wish they will simply fix the older versions.\n|> \n|> Who is the `we' that you are speaking for here? Isn't it a bit arrogant to\n|> assume to speak for all academic users?  Some of use in world-class\n|> universities try to keep up with the latest statistical methods, even to\n\nLet's be fair.  It was \"... an academic user like me ...\" which I took\nto be referring to a small group that makes no claim to be universal.\n\nAnd to be fair, all other points regarding PRNGs are well made.\n\nA very good topic to bring up.  Thank you all.\n\nbest\n\nPatrick\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
+      "body_snippet": "According to Prof Brian D Ripley:\n|> \n|> \n|> On Wed, 30 Jun 1999, H. D. Vinod wrote:\n \n|> > For an academic user like me, too many new versions are not good.\n|> > We wish they will simply fix the olde",
+      "thread_id": "thread-18eed393d8d6",
+      "thread_depth": 2,
+      "month": "1999-06"
+    },
+    {
       "id": "msg-c4871349517f",
       "message_id": "<6rn1xhjt8r.fsf@verdi.stat.wisc.edu>",
       "from_name": "Douglas Bates",
@@ -4180,13 +4180,14 @@
     {
       "id": "thread-988bd6719c8f",
       "subject": "[S] Unique values with time",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Erin Hodgess",
+        "Gunter, Bert",
         "Jim Burgess"
       ],
       "started": "1999-06-01T17:26:38Z",
-      "last_reply": "1999-06-01T18:05:37Z",
+      "last_reply": "1999-06-01T19:43:28Z",
       "root_message_id": "msg-988bd6719c8f"
     },
     {
@@ -4199,17 +4200,6 @@
       "started": "1999-06-01T18:44:21Z",
       "last_reply": "1999-06-01T18:44:21Z",
       "root_message_id": "msg-35cab5d9cd68"
-    },
-    {
-      "id": "thread-db75a0ccc9d4",
-      "subject": "[S] Unique values with time",
-      "message_count": 1,
-      "participants": [
-        "Gunter, Bert"
-      ],
-      "started": "1999-06-01T19:43:28Z",
-      "last_reply": "1999-06-01T19:43:28Z",
-      "root_message_id": "msg-db75a0ccc9d4"
     },
     {
       "id": "thread-ab4236427492",
@@ -4258,12 +4248,13 @@
     {
       "id": "thread-926564d23c70",
       "subject": "[S] Type III",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Venables, Bill (CMIS, Cleveland)"
+        "Venables, Bill (CMIS, Cleveland)",
+        "eric.gibson at pharma.Novartis.com"
       ],
       "started": "1999-06-02T12:44:09Z",
-      "last_reply": "1999-06-02T12:44:09Z",
+      "last_reply": "1999-06-02T14:55:58Z",
       "root_message_id": "msg-926564d23c70"
     },
     {
@@ -4278,17 +4269,6 @@
       "root_message_id": "msg-21f1bbd9c92e"
     },
     {
-      "id": "thread-4a4da61dbc42",
-      "subject": "[S] Type III",
-      "message_count": 1,
-      "participants": [
-        "eric.gibson at pharma.Novartis.com"
-      ],
-      "started": "1999-06-02T14:55:58Z",
-      "last_reply": "1999-06-02T14:55:58Z",
-      "root_message_id": "msg-4a4da61dbc42"
-    },
-    {
       "id": "thread-0a9daa079965",
       "subject": "[S] Fw: Printing",
       "message_count": 1,
@@ -4298,17 +4278,6 @@
       "started": "1999-06-02T14:59:55Z",
       "last_reply": "1999-06-02T14:59:55Z",
       "root_message_id": "msg-0a9daa079965"
-    },
-    {
-      "id": "thread-f60589cf25fc",
-      "subject": "[S] kohonen SOM",
-      "message_count": 1,
-      "participants": [
-        "Niels Waller"
-      ],
-      "started": "1999-06-02T15:14:23Z",
-      "last_reply": "1999-06-02T15:14:23Z",
-      "root_message_id": "msg-f60589cf25fc"
     },
     {
       "id": "thread-3527bdcd653b",
@@ -4335,9 +4304,10 @@
     {
       "id": "thread-58c93dada980",
       "subject": "[S] kohonen SOM",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Andy White"
+        "Andy White",
+        "Niels Waller"
       ],
       "started": "1999-06-02T18:21:48Z",
       "last_reply": "1999-06-02T18:21:48Z",
@@ -4357,12 +4327,13 @@
     {
       "id": "thread-3f39f12e4d0a",
       "subject": "[S] Linear Interpolation",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
+        "Fouad Abbassi",
         "Mourad Touzani"
       ],
       "started": "1999-06-02T20:47:26Z",
-      "last_reply": "1999-06-02T20:47:26Z",
+      "last_reply": "1999-06-10T05:14:28Z",
       "root_message_id": "msg-3f39f12e4d0a"
     },
     {
@@ -4426,12 +4397,13 @@
     {
       "id": "thread-faa9fc7c05ef",
       "subject": "[S] Fitting nonlinear with GLM",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Keith Parker"
+        "Keith Parker",
+        "Max_Kuhn at ms.bd.com"
       ],
       "started": "1999-06-03T18:52:01Z",
-      "last_reply": "1999-06-03T18:52:01Z",
+      "last_reply": "1999-06-03T21:34:36Z",
       "root_message_id": "msg-faa9fc7c05ef"
     },
     {
@@ -4449,24 +4421,13 @@
     {
       "id": "thread-2ca3919b424e",
       "subject": "[S] Too many open files",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Ed Kademan"
       ],
       "started": "1999-06-03T20:51:15Z",
-      "last_reply": "1999-06-03T20:51:15Z",
+      "last_reply": "1999-06-04T18:39:36Z",
       "root_message_id": "msg-2ca3919b424e"
-    },
-    {
-      "id": "thread-f82d35a756aa",
-      "subject": "[S] Fitting nonlinear with GLM",
-      "message_count": 1,
-      "participants": [
-        "Max_Kuhn at ms.bd.com"
-      ],
-      "started": "1999-06-03T21:34:36Z",
-      "last_reply": "1999-06-03T21:34:36Z",
-      "root_message_id": "msg-f82d35a756aa"
     },
     {
       "id": "thread-8fa2d2112b34",
@@ -4513,17 +4474,6 @@
       "root_message_id": "msg-6a4ca0489016"
     },
     {
-      "id": "thread-85fa9853251c",
-      "subject": "[S] Too many open files",
-      "message_count": 1,
-      "participants": [
-        "Ed Kademan"
-      ],
-      "started": "1999-06-04T18:39:36Z",
-      "last_reply": "1999-06-04T18:39:36Z",
-      "root_message_id": "msg-85fa9853251c"
-    },
-    {
       "id": "thread-53cd899f12c7",
       "subject": "[S] How to create a new family object?",
       "message_count": 1,
@@ -4555,17 +4505,6 @@
       "started": "1999-06-05T03:07:26Z",
       "last_reply": "1999-06-05T03:07:26Z",
       "root_message_id": "msg-f5aa8a4412f1"
-    },
-    {
-      "id": "thread-0bc2ed0a4724",
-      "subject": "[S] Linear Interpolation",
-      "message_count": 1,
-      "participants": [
-        "Mourad Touzani"
-      ],
-      "started": "1999-06-05T13:15:08Z",
-      "last_reply": "1999-06-05T13:15:08Z",
-      "root_message_id": "msg-0bc2ed0a4724"
     },
     {
       "id": "thread-a48997749c29",
@@ -4703,24 +4642,13 @@
     {
       "id": "thread-2ac22ca239c3",
       "subject": "[S] Splus dataset to SAS dataset",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Melanie Wigg"
       ],
       "started": "1999-06-07T20:54:23Z",
-      "last_reply": "1999-06-07T20:54:23Z",
-      "root_message_id": "msg-2ac22ca239c3"
-    },
-    {
-      "id": "thread-df1a2f5f540c",
-      "subject": "[S] Splus dataset to SAS dataset",
-      "message_count": 1,
-      "participants": [
-        "Melanie Wigg"
-      ],
-      "started": "1999-06-07T21:07:07Z",
       "last_reply": "1999-06-07T21:07:07Z",
-      "root_message_id": "msg-df1a2f5f540c"
+      "root_message_id": "msg-2ac22ca239c3"
     },
     {
       "id": "thread-f09b0763c2ca",
@@ -4769,25 +4697,14 @@
     {
       "id": "thread-e61857764af8",
       "subject": "[S] how to identify result of max() ?",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Bruce McCullough",
         "Matthew R. Nelson"
       ],
       "started": "1999-06-08T20:06:07Z",
-      "last_reply": "1999-06-08T20:14:41Z",
-      "root_message_id": "msg-e61857764af8"
-    },
-    {
-      "id": "thread-cfd74f8bf140",
-      "subject": "[S] how to identify result of max() ?",
-      "message_count": 1,
-      "participants": [
-        "Bruce McCullough"
-      ],
-      "started": "1999-06-08T20:31:49Z",
       "last_reply": "1999-06-08T20:31:49Z",
-      "root_message_id": "msg-cfd74f8bf140"
+      "root_message_id": "msg-e61857764af8"
     },
     {
       "id": "thread-eacab1194f79",
@@ -4945,17 +4862,6 @@
       "root_message_id": "msg-47dcad324afd"
     },
     {
-      "id": "thread-9c12e131b9a7",
-      "subject": "[S] Linear Interpolation",
-      "message_count": 1,
-      "participants": [
-        "Fouad Abbassi"
-      ],
-      "started": "1999-06-10T05:14:28Z",
-      "last_reply": "1999-06-10T05:14:28Z",
-      "root_message_id": "msg-9c12e131b9a7"
-    },
-    {
       "id": "thread-d3698c40e4a2",
       "subject": "[S] exponentail distribution",
       "message_count": 1,
@@ -5036,12 +4942,13 @@
     {
       "id": "thread-9e658b2560f8",
       "subject": "[S] Pooled Adjacent Violator Algorithm",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Mardo, John G [AMSTA-AR-QAW-P]"
+        "Mardo, John G [AMSTA-AR-QAW-P]",
+        "Max_Kuhn at ms.bd.com"
       ],
       "started": "1999-06-10T16:17:07Z",
-      "last_reply": "1999-06-10T16:17:07Z",
+      "last_reply": "1999-06-10T19:06:16Z",
       "root_message_id": "msg-9e658b2560f8"
     },
     {
@@ -5056,25 +4963,15 @@
       "root_message_id": "msg-5a2f57a09b53"
     },
     {
-      "id": "thread-63520d7b2a5b",
-      "subject": "[S] Pooled Adjacent Violator Algorithm",
-      "message_count": 1,
-      "participants": [
-        "Max_Kuhn at ms.bd.com"
-      ],
-      "started": "1999-06-10T19:06:16Z",
-      "last_reply": "1999-06-10T19:06:16Z",
-      "root_message_id": "msg-63520d7b2a5b"
-    },
-    {
       "id": "thread-5382518747af",
       "subject": "[S] Kendall's tau modified for censored data",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Barker, Chris {PHAR~Palo Alto}"
+        "Barker, Chris {PHAR~Palo Alto}",
+        "Frank E Harrell Jr"
       ],
       "started": "1999-06-10T23:04:19Z",
-      "last_reply": "1999-06-10T23:04:19Z",
+      "last_reply": "1999-06-12T02:10:41Z",
       "root_message_id": "msg-5382518747af"
     },
     {
@@ -5180,17 +5077,6 @@
       "root_message_id": "msg-4c0cb309e7ff"
     },
     {
-      "id": "thread-f70a47cf696b",
-      "subject": "[S] Kendall's tau modified for censored data",
-      "message_count": 1,
-      "participants": [
-        "Frank E Harrell Jr"
-      ],
-      "started": "1999-06-12T02:10:41Z",
-      "last_reply": "1999-06-12T02:10:41Z",
-      "root_message_id": "msg-f70a47cf696b"
-    },
-    {
       "id": "thread-c42d9aec9143",
       "subject": "[S] Duplicate observations",
       "message_count": 1,
@@ -5270,13 +5156,14 @@
     {
       "id": "thread-a2d4236b95b9",
       "subject": "[S] Tobit Analysis",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Joseph F Lucke",
+        "Therneau, Terry M., Ph.D.",
         "Timothy J. Wade"
       ],
       "started": "1999-06-14T15:43:21Z",
-      "last_reply": "1999-06-14T15:43:21Z",
+      "last_reply": "1999-06-14T22:18:43Z",
       "root_message_id": "msg-a2d4236b95b9"
     },
     {
@@ -5304,24 +5191,14 @@
     {
       "id": "thread-2cf82caf429b",
       "subject": "[S] S-PLUS 2000 Announcement",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Alan Zaslavsky",
         "Cheryl Mauer"
       ],
       "started": "1999-06-14T17:08:26Z",
-      "last_reply": "1999-06-14T17:08:26Z",
-      "root_message_id": "msg-2cf82caf429b"
-    },
-    {
-      "id": "thread-648f287dddb8",
-      "subject": "[S] S-PLUS 2000 Announcement",
-      "message_count": 1,
-      "participants": [
-        "Alan Zaslavsky"
-      ],
-      "started": "1999-06-14T17:23:48Z",
       "last_reply": "1999-06-14T17:23:48Z",
-      "root_message_id": "msg-648f287dddb8"
+      "root_message_id": "msg-2cf82caf429b"
     },
     {
       "id": "thread-63c39a8f97fc",
@@ -5357,17 +5234,6 @@
       "root_message_id": "msg-13eabd866159"
     },
     {
-      "id": "thread-7b5d7e042dda",
-      "subject": "[S] Tobit Analysis",
-      "message_count": 1,
-      "participants": [
-        "Therneau, Terry M., Ph.D."
-      ],
-      "started": "1999-06-14T22:18:43Z",
-      "last_reply": "1999-06-14T22:18:43Z",
-      "root_message_id": "msg-7b5d7e042dda"
-    },
-    {
       "id": "thread-67a1aef416d4",
       "subject": "[S] Homeworkers Needed !",
       "message_count": 1,
@@ -5381,24 +5247,14 @@
     {
       "id": "thread-1bc586d65a67",
       "subject": "[S] lme, nlme and repeated measures ANOVA",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Duncan Mackay"
-      ],
-      "started": "1999-06-15T02:39:34Z",
-      "last_reply": "1999-06-15T02:39:34Z",
-      "root_message_id": "msg-1bc586d65a67"
-    },
-    {
-      "id": "thread-b006a72930bc",
-      "subject": "[S] lme, nlme and repeated measures ANOVA",
-      "message_count": 1,
-      "participants": [
+        "Duncan Mackay",
         "Regula Schwager-Suter"
       ],
-      "started": "1999-06-15T05:52:30Z",
+      "started": "1999-06-15T02:39:34Z",
       "last_reply": "1999-06-15T05:52:30Z",
-      "root_message_id": "msg-b006a72930bc"
+      "root_message_id": "msg-1bc586d65a67"
     },
     {
       "id": "thread-23242b29defd",
@@ -5436,12 +5292,13 @@
     {
       "id": "thread-364c474a5b8f",
       "subject": "[S] A NNET Question",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Bhattacharyya, Arunava, BRGM"
+        "Bhattacharyya, Arunava, BRGM",
+        "Prof Brian Ripley"
       ],
       "started": "1999-06-15T12:58:42Z",
-      "last_reply": "1999-06-15T12:58:42Z",
+      "last_reply": "1999-06-16T17:22:58Z",
       "root_message_id": "msg-364c474a5b8f"
     },
     {
@@ -5567,17 +5424,6 @@
       "root_message_id": "msg-ed92a793b8b6"
     },
     {
-      "id": "thread-3140f20a8753",
-      "subject": "[S] A NNET Question",
-      "message_count": 1,
-      "participants": [
-        "Prof Brian Ripley"
-      ],
-      "started": "1999-06-16T17:22:58Z",
-      "last_reply": "1999-06-16T17:22:58Z",
-      "root_message_id": "msg-3140f20a8753"
-    },
-    {
       "id": "thread-8b42c8e488c3",
       "subject": "[S] Re: your mail",
       "message_count": 1,
@@ -5613,12 +5459,13 @@
     {
       "id": "thread-36140790da15",
       "subject": "[S] Greek Letters",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Kin Cheung"
+        "Kin Cheung",
+        "Michael Prager"
       ],
       "started": "1999-06-17T18:25:33Z",
-      "last_reply": "1999-06-17T18:25:33Z",
+      "last_reply": "1999-06-18T13:55:35Z",
       "root_message_id": "msg-36140790da15"
     },
     {
@@ -5653,17 +5500,6 @@
       "started": "1999-06-18T10:57:39Z",
       "last_reply": "1999-06-18T10:57:39Z",
       "root_message_id": "msg-ee935974b9cd"
-    },
-    {
-      "id": "thread-ec09c116da50",
-      "subject": "[S] Greek Letters",
-      "message_count": 1,
-      "participants": [
-        "Michael Prager"
-      ],
-      "started": "1999-06-18T13:55:35Z",
-      "last_reply": "1999-06-18T13:55:35Z",
-      "root_message_id": "msg-ec09c116da50"
     },
     {
       "id": "thread-014f07e94129",
@@ -5779,24 +5615,13 @@
     {
       "id": "thread-e4906b03a126",
       "subject": "[S] email address change",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "mailman at wrair-emh1.army.mil"
       ],
       "started": "1999-06-21T13:21:00Z",
-      "last_reply": "1999-06-21T13:21:00Z",
-      "root_message_id": "msg-e4906b03a126"
-    },
-    {
-      "id": "thread-8cec00171c63",
-      "subject": "[S] email address change",
-      "message_count": 1,
-      "participants": [
-        "mailman at wrair-emh1.army.mil"
-      ],
-      "started": "1999-06-21T13:42:00Z",
       "last_reply": "1999-06-21T13:42:00Z",
-      "root_message_id": "msg-8cec00171c63"
+      "root_message_id": "msg-e4906b03a126"
     },
     {
       "id": "thread-c8e4a8f72520",
@@ -5999,24 +5824,26 @@
     {
       "id": "thread-28a4b777a9b2",
       "subject": "[S] Generating correlated binary random variables",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Davidov, Ori"
+        "Davidov, Ori",
+        "Ellis, Nick (Marine, Cleveland)"
       ],
       "started": "1999-06-23T18:09:38Z",
-      "last_reply": "1999-06-23T18:09:38Z",
+      "last_reply": "1999-06-24T02:59:57Z",
       "root_message_id": "msg-28a4b777a9b2"
     },
     {
       "id": "thread-fa4ece7823bf",
       "subject": "[S] How do you create a formula for a model with a large number of variables?",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
+        "Adrian Baddeley",
         "Edward Malthouse",
         "Michael Radmacher"
       ],
       "started": "1999-06-23T21:07:37Z",
-      "last_reply": "1999-06-23T21:55:19Z",
+      "last_reply": "1999-06-28T02:38:37Z",
       "root_message_id": "msg-fa4ece7823bf"
     },
     {
@@ -6029,17 +5856,6 @@
       "started": "1999-06-24T02:04:27Z",
       "last_reply": "1999-06-24T02:04:27Z",
       "root_message_id": "msg-8e9dbb2b2fdd"
-    },
-    {
-      "id": "thread-1efe3085763e",
-      "subject": "[S] Generating correlated binary random variables",
-      "message_count": 1,
-      "participants": [
-        "Ellis, Nick (Marine, Cleveland)"
-      ],
-      "started": "1999-06-24T02:59:57Z",
-      "last_reply": "1999-06-24T02:59:57Z",
-      "root_message_id": "msg-1efe3085763e"
     },
     {
       "id": "thread-db1215a9f623",
@@ -6255,35 +6071,26 @@
     {
       "id": "thread-a9993b99de3c",
       "subject": "[S] Generalized additive models for matched case-control data?",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Peter Cummings"
+        "Peter Cummings",
+        "Therneau, Terry M., Ph.D."
       ],
       "started": "1999-06-25T23:18:52Z",
-      "last_reply": "1999-06-25T23:18:52Z",
+      "last_reply": "1999-06-28T14:23:52Z",
       "root_message_id": "msg-a9993b99de3c"
-    },
-    {
-      "id": "thread-617ba2d86a71",
-      "subject": "[S] How do you create a formula for a model with a large number of variables?",
-      "message_count": 1,
-      "participants": [
-        "Adrian Baddeley"
-      ],
-      "started": "1999-06-28T02:38:37Z",
-      "last_reply": "1999-06-28T02:38:37Z",
-      "root_message_id": "msg-617ba2d86a71"
     },
     {
       "id": "thread-d83a26ffb2fc",
       "subject": "[S] spin on Solaris-Xceed-NT",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Christian Hoffmann",
-        "Martin Maechler"
+        "Martin Maechler",
+        "Prof Brian Ripley"
       ],
       "started": "1999-06-28T08:09:02Z",
-      "last_reply": "1999-06-28T08:39:17Z",
+      "last_reply": "1999-06-28T09:52:49Z",
       "root_message_id": "msg-d83a26ffb2fc"
     },
     {
@@ -6298,25 +6105,15 @@
       "root_message_id": "msg-f2cdc398da17"
     },
     {
-      "id": "thread-28344dcccfca",
-      "subject": "[S] spin on Solaris-Xceed-NT",
-      "message_count": 1,
-      "participants": [
-        "Prof Brian Ripley"
-      ],
-      "started": "1999-06-28T09:52:49Z",
-      "last_reply": "1999-06-28T09:52:49Z",
-      "root_message_id": "msg-28344dcccfca"
-    },
-    {
       "id": "thread-2ed53f6241a0",
       "subject": "[S] default Trellis settings",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Max_Kuhn at ms.bd.com"
+        "Max_Kuhn at ms.bd.com",
+        "Prof Brian Ripley"
       ],
       "started": "1999-06-28T12:23:39Z",
-      "last_reply": "1999-06-28T12:23:39Z",
+      "last_reply": "1999-06-28T12:45:14Z",
       "root_message_id": "msg-2ed53f6241a0"
     },
     {
@@ -6331,17 +6128,6 @@
       "root_message_id": "msg-03d66d3a5edd"
     },
     {
-      "id": "thread-e622499ac723",
-      "subject": "[S] default Trellis settings",
-      "message_count": 1,
-      "participants": [
-        "Prof Brian Ripley"
-      ],
-      "started": "1999-06-28T12:45:14Z",
-      "last_reply": "1999-06-28T12:45:14Z",
-      "root_message_id": "msg-e622499ac723"
-    },
-    {
       "id": "thread-cbd7c33301a5",
       "subject": "[S] write.table() and factors",
       "message_count": 2,
@@ -6351,17 +6137,6 @@
       "started": "1999-06-28T13:14:22Z",
       "last_reply": "1999-06-28T18:17:30Z",
       "root_message_id": "msg-cbd7c33301a5"
-    },
-    {
-      "id": "thread-4285927795e8",
-      "subject": "[S] Generalized additive models for matched case-control data?",
-      "message_count": 1,
-      "participants": [
-        "Therneau, Terry M., Ph.D."
-      ],
-      "started": "1999-06-28T14:23:52Z",
-      "last_reply": "1999-06-28T14:23:52Z",
-      "root_message_id": "msg-4285927795e8"
     },
     {
       "id": "thread-7a2d57452edd",
@@ -6377,12 +6152,12 @@
     {
       "id": "thread-1700746eca18",
       "subject": "[S] pdf.graph()",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Adelchi Azzalini"
       ],
       "started": "1999-06-28T17:22:31Z",
-      "last_reply": "1999-06-28T17:22:31Z",
+      "last_reply": "1999-06-29T09:23:20Z",
       "root_message_id": "msg-1700746eca18"
     },
     {
@@ -6442,17 +6217,6 @@
       "root_message_id": "msg-2aac4300cc45"
     },
     {
-      "id": "thread-1f132f5886a6",
-      "subject": "[S] pdf.graph()",
-      "message_count": 1,
-      "participants": [
-        "Adelchi Azzalini"
-      ],
-      "started": "1999-06-29T09:23:20Z",
-      "last_reply": "1999-06-29T09:23:20Z",
-      "root_message_id": "msg-1f132f5886a6"
-    },
-    {
       "id": "thread-95eff9bd0cf6",
       "subject": "[S] simulating contingency tables",
       "message_count": 1,
@@ -6499,25 +6263,15 @@
     {
       "id": "thread-4f1ab8d300a5",
       "subject": "[S] Zero origin.",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Prof Brian D Ripley",
-        "Rolf Turner"
+        "Rolf Turner",
+        "Smith, Stephen"
       ],
       "started": "1999-06-29T17:55:16Z",
       "last_reply": "1999-06-29T18:31:52Z",
       "root_message_id": "msg-4f1ab8d300a5"
-    },
-    {
-      "id": "thread-9a897f3f4197",
-      "subject": "[S] Zero origin.",
-      "message_count": 1,
-      "participants": [
-        "Smith, Stephen"
-      ],
-      "started": "1999-06-29T18:01:09Z",
-      "last_reply": "1999-06-29T18:01:09Z",
-      "root_message_id": "msg-9a897f3f4197"
     },
     {
       "id": "thread-b5327ddf76f8",

@@ -489,12 +489,12 @@
       "date": "2008-12-28T00:43:45Z",
       "subject": "Re: Writing a function taking a data.frame column name as a parameter",
       "subject_clean": "Writing a function taking a data.frame column name as a parameter",
-      "in_reply_to": null,
+      "in_reply_to": "<2B80F69A8A189D48B0E668B0BBC6BA4201E01111@HC-MAIL13.healthcare.uiowa.edu>",
       "references": [],
       "body_plain": "Thanks, all of those that responded above.  I learned a lot from this exercise – about [[x]] to get the contents of a list rather than the list itself (which I knew but had forgotten), about “as.formula” which is the magic that turns a pasted piece of text into something that looks to S-plus like a formula, and finally, that a parameter name has to be standing alone to have the passed value substituted into it.  My basic problem is that I was trying to get the passed parameter substituted for the x in something like “my.data.frame$x.”  \n\nWhile there are probably several of the suggestions that I could probably have gotten to work, I return the following two:\n\n>From Alan Hockberg:\n\ntestanyCVD1 <- function(x) {\n\ntemp <- working7[!is.na(working7[[x]]),]\n\nany.glmm<-glmmPQL(fixed = as.formula(paste(\"anyCVD ~ \",names(temp)[x],sep=''))\n\n        , random = ~1|Region/Pays/Center, family = binomial(link=logit),data=\"\" = F, niter=15)\n\nlist(names(temp)[x], anova(any.glmm), any.glmm$coefficients$fixed)\n\n}\n\nHere it was the delisting operator in line 2, and the “as.formula” function in line 3 that got the function working.  \n\n>From Andreas Kraus, maybe not quite as elegant but really simple and convenient:\n\ntestanyCVD <- function(x) {\n\ntemp <- working7[!is.na(working7[[x]]),]\n\ntemp$x <- temp[[x]]\n\nany.glmm<-glmmPQL(fixed = anyCVD ~ x\n\n        , random = ~1|Region/Pays/Center, family = binomial(link=logit),data=\"\" = F, niter=15)\n\nlist(names(temp)[x], anova(any.glmm), any.glmm$coefficients$fixed)\n\n}\n\nHe suggested creating a new column in “temp” named x, as in line 3 above, again using the delisting operator.  Now the function works right because temp$x exists, and in fact is identical to the column originally indexed by x.\n\nThanks to all of you.  This got me a function that works correctly.  But as you will note in my next message, I still don’t have the scope stuff understood properly.  I can’t get the sapply function to do what I am trying to do.\n\nLarry Hunsicker",
       "body_snippet": "Thanks, all of those that responded above.  I learned a lot from this exercise – about [[x]] to get the contents of a list rather than the list itself (which I knew but had forgotten), about “as.formu",
-      "thread_id": "thread-b10ec70a5eca",
-      "thread_depth": 0,
+      "thread_id": "thread-22220f23327b",
+      "thread_depth": 1,
       "month": "2008-12"
     },
     {
@@ -527,8 +527,8 @@
       ],
       "body_plain": "Probably a lot easier just to do:\n\n# Fuel example\n\nlm.function<-function(x){\n\nfuel.frame<-select.cols(fuel.frame,x)\n\nreturn(summary(lm(Fuel ~ . , data=\"\">\n\n# Model Fuel with Weight and Disp\n\nlm.function(c(\"Weight\",\"Disp\",\"Fuel\"))\n\n# Model Fuel with Weight only\n\nlm.function(c(\"Weight\",\"Fuel\"))\n\nSteve\n\n-----Original Message-----\n\nFrom: s-news-owner at lists.biostat.wustl.edu on behalf of Hunsicker, Lawrence\n\nSent: Sun 28/12/2008 11:43\n\nTo: s-news at lists.biostat.wustl.edu\n\nSubject: Re: [S]  Writing a function taking a data.frame column name as a parameter\n\nThanks, all of those that responded above.  I learned a lot from this\n\nexercise - about [[x]] to get the contents of a list rather than the\n\nlist itself (which I knew but had forgotten), about \"as.formula\" which\n\nis the magic that turns a pasted piece of text into something that looks\n\nto S-plus like a formula, and finally, that a parameter name has to be\n\nstanding alone to have the passed value substituted into it.  My basic\n\nproblem is that I was trying to get the passed parameter substituted for\n\nthe x in something like \"my.data.frame$x.\" \n\nWhile there are probably several of the suggestions that I could\n\nprobably have gotten to work, I return the following two:\n\n>From Alan Hockberg:\n\ntestanyCVD1 <- function(x) {\n\ntemp <- working7[!is.na(working7[[x]]),]\n\nany.glmm<-glmmPQL(fixed = as.formula(paste(\"anyCVD ~\n\n\",names(temp)[x],sep=''))\n\n        , random = ~1|Region/Pays/Center, family =\n\nbinomial(link=logit),data=\"\" = F, niter=15)\n\nlist(names(temp)[x], anova(any.glmm), any.glmm$coefficients$fixed)\n\n}\n\nHere it was the delisting operator in line 2, and the \"as.formula\"\n\nfunction in line 3 that got the function working. \n\n>From Andreas Kraus, maybe not quite as elegant but really simple and\n\nconvenient:\n\ntestanyCVD <- function(x) {\n\ntemp <- working7[!is.na(working7[[x]]),]\n\ntemp$x <- temp[[x]]\n\nany.glmm<-glmmPQL(fixed = anyCVD ~ x\n\n        , random = ~1|Region/Pays/Center, family =\n\nbinomial(link=logit),data=\"\" = F, niter=15)\n\nlist(names(temp)[x], anova(any.glmm), any.glmm$coefficients$fixed)\n\n}\n\nHe suggested creating a new column in \"temp\" named x, as in line 3\n\nabove, again using the delisting operator.  Now the function works right\n\nbecause temp$x exists, and in fact is identical to the column originally\n\nindexed by x.\n\nThanks to all of you.  This got me a function that works correctly.  But\n\nas you will note in my next message, I still don't have the scope stuff\n\nunderstood properly.  I can't get the sapply function to do what I am\n\ntrying to do.\n\nLarry Hunsicker",
       "body_snippet": "Probably a lot easier just to do:\n\n# Fuel example\n\nlm.function<-function(x){\n\nfuel.frame<-select.cols(fuel.frame,x)\n\nreturn(summary(lm(Fuel ~ . , data=\"\">\n\n# Model Fuel with Weight and Disp\n\nlm.functi",
-      "thread_id": "thread-b10ec70a5eca",
-      "thread_depth": 1,
+      "thread_id": "thread-22220f23327b",
+      "thread_depth": 2,
       "month": "2008-12"
     },
     {
@@ -833,26 +833,15 @@
     {
       "id": "thread-22220f23327b",
       "subject": "Writing a function taking a data.frame column name as a parameter",
-      "message_count": 2,
+      "message_count": 4,
       "participants": [
         "Hunsicker, Lawrence",
+        "Steve Su",
         "Tim Hesterberg"
       ],
       "started": "2008-12-26T20:57:45Z",
-      "last_reply": "2008-12-27T05:56:14Z",
-      "root_message_id": "msg-22220f23327b"
-    },
-    {
-      "id": "thread-b10ec70a5eca",
-      "subject": "Writing a function taking a data.frame column name as a parameter",
-      "message_count": 2,
-      "participants": [
-        "Hunsicker, Lawrence",
-        "Steve Su"
-      ],
-      "started": "2008-12-28T00:43:45Z",
       "last_reply": "2008-12-28T03:30:13Z",
-      "root_message_id": "msg-b10ec70a5eca"
+      "root_message_id": "msg-22220f23327b"
     },
     {
       "id": "thread-66d349a8594f",

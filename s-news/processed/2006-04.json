@@ -158,12 +158,12 @@
       "date": "2006-04-05T14:35:19Z",
       "subject": "Re: Quit Apologizing!",
       "subject_clean": "Quit Apologizing!",
-      "in_reply_to": null,
+      "in_reply_to": "<8004DF6675E9824B8CF4990D905F054F43F769@MN65EV803.global.ds.honeywell.com>",
       "references": [],
       "body_plain": "Much \nKudos to you Jason!!\n\n \n\n-Sohail\n\n>\n>   -----Original Message-----\n> From:\n>   s-news-owner at lists.biostat.wustl.edu\n>   [mailto:s-news-owner at lists.biostat.wustl.edu]On Behalf Of Overstreet,\n>   Jason (FL51)\n> Sent: Wednesday, April 05, 2006 9:31 AM\n> To:\n>   s-news at lists.biostat.wustl.edu\n> Subject: [S] Quit\n>   Apologizing!\n>\n>\n>\n>   I am tired of people\n>   (including myself) apologizing for not knowing how to do something simple in\n>   the S language.  I think that that the basics are what gets all of us killed\n>   when writing a little bit of code.  Perhaps if more people asked\n>   these “basic questions”, then (1) it would answer some questions that\n>   some people have but are too afraid to ask (2) it would let the\n>   developers such as Insightful know where some of the basic misunderstandings lie (3) it gives the people that are\n>   explaining/mentoring an opportunity to come back down to the level that they\n>   themselves were at\n>   before they became gurus.  It is not an\n>   easy learning curve to understand well the ins and outs of S.  If it were, the\n>   entire world would know how to do it and all of us smart statistical minded folks would be out of work.  So\n>   please no more apologizes – there is no reason to apologize for something\n>   that makes the S community better!\n>\n>   Jason Overstreet\n>\n>   Statistician /\n>   Systems Analyst\n>\n>   ASQ Certified\n>   Reliability Engineer\n>\n>   Space Applications –\n>   Inertial Systems\n>\n>   Electronic Systems\n>   Engineering and Applications\n>\n>   Honeywell International\n>\n>   (727) 539-3964\n>\n>\n>   jason.overstreet at honeywell.com\n>\n>",
       "body_snippet": "Much \nKudos to you Jason!!\n\n \n\n-Sohail\n\n>\n>   -----Original Message-----\n> From:\n>   s-news-owner at lists.biostat.wustl.edu\n>   [mailto:s-news-owner at lists.biostat.wustl.edu]On Behalf Of Overstreet",
-      "thread_id": "thread-8c44d52a092c",
-      "thread_depth": 0,
+      "thread_id": "thread-85bc01622ff1",
+      "thread_depth": 1,
       "month": "2006-04"
     },
     {
@@ -224,12 +224,12 @@
       "date": "2006-04-05T21:06:38Z",
       "subject": "Re: setMethod error",
       "subject_clean": "setMethod error",
-      "in_reply_to": null,
+      "in_reply_to": "<DEC3A9EEFB2768459EF926446352F7CD0CC687@EXNJMB61.nam.nsroot.net>",
       "references": [],
       "body_plain": "> get(\"[\")\nfunction(x, ..., drop = T)\n.Call(\"S_c_use_method\", \"[\")\n> \n\nTherefore you need to use the same argument list as the generic.  This works:\n\n> setMethod(\"[\", \"history\", function(x, ..., drop) {History(d=x@dates[...], \n> v=x@values[...])}) \n> tmp <- History(1:5, 6:10)\n> tmp\nAn object of class \"history\"\n\nSlot \"dates\":\n[1] 1 2 3 4 5\n\nSlot \"values\":\n[1]  6  7  8  9 10\n\n> tmp[1:3]\nAn object of class \"history\"\n\nSlot \"dates\":\n[1] 1 2 3\n\nSlot \"values\":\n[1] 6 7 8",
       "body_snippet": "> get(\"[\")\nfunction(x, ..., drop = T)\n.Call(\"S_c_use_method\", \"[\")\n> \n\nTherefore you need to use the same argument list as the generic.  This works:\n\n> setMethod(\"[\", \"history\", function(x, ..., drop)",
-      "thread_id": "thread-78fe78ab8eff",
-      "thread_depth": 0,
+      "thread_id": "thread-1270f1023fb6",
+      "thread_depth": 1,
       "month": "2006-04"
     },
     {
@@ -240,12 +240,12 @@
       "date": "2006-04-05T21:43:10Z",
       "subject": "Re: setMethod error",
       "subject_clean": "setMethod error",
-      "in_reply_to": null,
+      "in_reply_to": "<DEC3A9EEFB2768459EF926446352F7CD0CC687@EXNJMB61.nam.nsroot.net>",
       "references": [],
       "body_plain": "Andrew,\n\nThe following is an admittedly long response to your question, but I\nthought it was worth trying to explain why the error was occurring to\nhelp you avoid similar problems in the future. I hope this helps:\n\nThe generic signature for \"[\" is function(x, ..., drop=TRUE). Note that\nthe generic signature uses \"...\" to allow for a flexible number of\narguments to be passed.\n\nThe first warning message you get is because the signature you are\ndefining in your setMethod is function(x, ind) which is not exactly the\nsame as the generic signature (this isn't necessarily a problem in and\nof itself, and S-Plus tries to add a second layer {local function} to\naccommodate, but it is best to keep your signature consistent with the\ngeneric).\n\nThe error you are experiencing arises from the fact that your signature\nis being interpreted as follows:\n\nfunction(x, ind)   **your signature\nfunction(h,1,2)    **once your inputs are passed by calling \"h[1:2]\".\n(Note that the series 1:2 expands to c(1,2) )\n\nNote that \"h\" corresponds to \"x\", \"1\" corresponds to \"ind\", and \"2\" is\nnot matched to any parameter in your signature. This is what is causing\nthe error you are experiencing.\n\nIf you use the generic signature you get the following:\n\nfunction(x, ..., drop=FALSE)     **generic signature\nfunction(h, 1, 2, drop=FALSE)    **once your inputs are passed by\ncalling \"h[1:2]\"\n\nIn this case, \"h\" corresponds to \"x\", and the series 1:2 is captured in\n\"...\" as the expansion c(1,2).\n\n(Note: the \"drop\" parameter allows you to simplify the class, if\npossible. TRUE simplifies and is the default, FALSE keeps the original\nclass, regardless, and is probably what you want in this case.)\n\nYou now have to handle the \"...\", which can be confusing if you haven't\nused it before, to allow for a variable number of parameters to be\npassed to your function.\n\nFor what you are trying to accomplish here, you can just pass it\ndirectly as an index to your main code, like this:\n\nhistory(d=x@dates[...], v=x@values[...])\n\nWhich would be interpreted as:\n\nhistory(d=x@dates[c(1,2)], v=x@values[c(1,2)])   **based on your example\n\nIf you were trying to do something more complex, you may need to\nidentify and handle individual elements of \"...\"\n\nA couple of useful functions for dealing with \"...\" are:\n\nmy.dots <- list(...)     **my.dots would be a list with each list\nelement corresponding to an element of \"...\"\n\nnum.dots <- nDotArgs(...)  **num.dots would be the number of elements\npassed through \"...\"\n\n..1 would be the first element of \"...\", ..2 would be the second element\nof \"...\", etc. Be careful to check the number of elements passed,\nhowever, as if you use ..2 and it doesn't exist (that is, only 1 or 0\nelements were passed to \"...\") you will get an error.\n\n>-------------------------------------\n>William A. Stewart\nSenior Manager, Operational Risk\n>RBC Financial Group\n>william.stewart at rbc.com\n>phone: 416-974-3019\n\n-----Original Message-----\nFrom: s-news-owner at lists.biostat.wustl.edu\n[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Zege, Andrew\n[EQTY]\nSent: 2006, April, 05 11:41 AM\nTo: s-news at lists.biostat.wustl.edu\nSubject: [S] setMethod error \n\nNewbie question here (apology skipped due to new list rules :)). \nI have defined a simple class with dates and values\n=================\n# definition\nsetClass(\"history\", representation(dates=\"numeric\", values=\"numeric\"))\n#constructor\nHistory<-function(d, v){\n  h<-new(\"history\", dates=d, values=v)\n  h\n}\n====================\nSo far, so good. I'd like to define selection operator, so when i try\nthis\n\nsetMethod(\"[\", \"history\", function(x, ind) {History(d=x@dates[ind],\nv=x@values[ind])})\n\nI get\n=========================\nWarning messages:\n  the arguments of the method differ from those of the function; a local\n        function was created in the method in: setMethod(\"[\", \"history\",\n        function(x, ind) ....\n======================\nIf i try to use it, like h[1:2], where h is a legitimate history object.\ni get a message like\n\n==================================\nProblem in actualMethod: argument number 3 in call not matched:\nactualMethod(x, 1, drop, .Generic = .Generic, .Signature = .Signature) \n=================\n\nI am obviously missing something very basic in operator definition,\ncould someone help me out? I am running \nversion 6 on Linux.\n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news\n_______________________________________________________________________\n\nThis e-mail may be privileged and/or confidential, and the sender does not \nwaive any related rights and obligations.\nAny distribution, use or copying of this e-mail or the information it contains \nby other than an intended recipient is unauthorized.\nIf you received this e-mail in error, please advise me (by return e-mail or \notherwise) immediately.  \n\nCe courrier électronique est confidentiel et protégé. L'expéditeur ne renonce \npas aux droits et obligations qui s'y rapportent.\nToute diffusion, utilisation ou copie de ce message ou des renseignements qu'il \ncontient par une personne autre que le (les) destinataire(s) désigné(s) est \ninterdite.\nSi vous recevez ce courrier électronique par erreur, veuillez m'en aviser \nimmédiatement, par retour de courrier électronique ou par un autre moyen.",
       "body_snippet": "Andrew,\n\nThe following is an admittedly long response to your question, but I\nthought it was worth trying to explain why the error was occurring to\nhelp you avoid similar problems in the future. I hop",
-      "thread_id": "thread-f591533cc6c2",
-      "thread_depth": 0,
+      "thread_id": "thread-1270f1023fb6",
+      "thread_depth": 1,
       "month": "2006-04"
     },
     {
@@ -272,12 +272,12 @@
       "date": "2006-04-06T10:29:08Z",
       "subject": "Re: simple arithmetic",
       "subject_clean": "simple arithmetic",
-      "in_reply_to": null,
+      "in_reply_to": "<20060406093430.3766.qmail@web35312.mail.mud.yahoo.com>",
       "references": [],
       "body_plain": "Karl,\n\nThere is an easy solution to your problem if you already have a function that \ngenerates all combinations of n things taken 2 at a time.\nI use the 'combn2' function from the Combinatorics package by Scott D. Chasalow \n(as was posted in StatLib). I am attaching the script for this function at the \nend of this message.\nFollowing this, a solution to your problem is as follows:\n\n> mat\n  group     values \n1     1 -0.9082901\n2     1 -0.3202220\n3     1 -0.4415473\n4     1 -1.8012052\n5     2 -0.3013117\n6     2  0.9849585\n7     2 -0.1791473\n8     2 -0.3638630\n\n> as.vector(sapply(lapply(split(mat[,2],mat[,1]),FUN=combn2),function(x) \n> apply(x,1,diff)))\n\n[1]  0.58806818  0.46674286 -0.89291502 -0.12132531 -1.48098320 -1.35965788  \n1.28627016  0.12216438 -0.06255135 -1.16410578 -1.34882152 -0.18471574\n \nHTH\n\nDimitrios Chalvatzis \nRisk Analyst \nEnergy Wholesale/Risk Policies & Methods \nT +44 (0)24 7642 5429 \nF +44 (0)24 7642 5479 \nDimitrios.Chalvatzis at eon-uk.com \n\n######################################\n#### Script for 'combn2' function ####\n\ncombn2<-function(x, n)\n{\n        #   DATE WRITTEN:  14 April 1994           LAST REVISED:  14 April 1994\n        #   AUTHOR:  Scott D. Chasalow\n        #\n        #   DESCRIPTION:\n        #         Generate all combinations of the elements of x taken two at a \ntime. \n        #         If x is missing,  generate all combinations of 1:n taken two\n        #         at a time (that is,  the indices of x that would give all \n        #         combinations of the elements of x if x with length n had been \ngiven).\n        #         Exactly one of arguments \"x\" and \"n\" should be given.\n        #\n        if(!missing(x)) {\n                n <- length(x)\n                if(!missing(n))\n                        warning(paste(\"Only one of arguments x and n allowed;\", \n\"argument n was ignored\"))\n        }\n        else if(missing(n))\n                stop(\"Arguments \\\"x\\\" and \\\"n\\\" both missing\")\n        if(length(n) > 1) {\n                warning(paste(\"Argument n has\", length(n), \"elements: only the \nfirst used\"))\n                n <- n[1]\n        }\n        if(n == 0)\n                return(NULL)\n        rmat <- array(seq(length = n), c(n, n))\n        # row(matrix(0,n,n))\n        cmat <- t(rmat)\n        # col(matrix(0,n,n))\n        lower.t <- rmat > cmat\n        # lower.tri(matrix(0,n,n))\n        i1 <- cmat[lower.t]\n        i2 <- rmat[lower.t]\n        if(missing(x))\n                cbind(i1, i2)\n        else cbind(x[i1], x[i2])\n}\n___________________________ Disclaimer Notice ____________________\nThis message and any attachments are confidential and should only\nbe read by those to whom they are addressed. If you are not the\nintended recipient, please contact us, delete the message from your\ncomputer and destroy any copies. Any distribution or copying without\nour prior permission is prohibited.\n\nInternet communications are not always secure and therefore the\nE.ON Group does not accept legal responsibility for this message.\nThe recipient is responsible for verifying its authenticity before\nacting on the contents. Any views or opinions presented are solely\nthose of the author and do not necessarily\nrepresent those of the E.ON Group.\n\nE.ON UK plc, Westwood Way, Westwood Business Park,\nCoventry, CV4 8LG.\nRegistered in England & Wales No. 2366970\n\nE.ON UK Trading Ltd, Westwood Way, Westwood Business Park,\nCoventry, CV4 8LG\nRegistered in England & Wales No. 4178314\n\nE.ON UK Trading Ltd is regulated by the Financial Services\nAuthority to carry out investment activities.\n\nTelephone +44 (0) 2476 42 4000\nFax +44 (0) 2476 42 5432",
       "body_snippet": "Karl,\n\nThere is an easy solution to your problem if you already have a function that \ngenerates all combinations of n things taken 2 at a time.\nI use the 'combn2' function from the Combinatorics packa",
-      "thread_id": "thread-a0ba398a3a03",
-      "thread_depth": 0,
+      "thread_id": "thread-96ef034b6e27",
+      "thread_depth": 1,
       "month": "2006-04"
     },
     {
@@ -288,12 +288,12 @@
       "date": "2006-04-06T10:34:42Z",
       "subject": "Re: simple arithmetic",
       "subject_clean": "simple arithmetic",
-      "in_reply_to": null,
+      "in_reply_to": "<20060406093430.3766.qmail@web35312.mail.mud.yahoo.com>",
       "references": [],
       "body_plain": "Just to clarify that the whole script [as.vector...] should be in one line!\nI just realised that Outlook presented the script in two lines and preceeded \nthe second line with an invalid '>' character.\n\nDimitrios Chalvatzis \nRisk Analyst \nEnergy Wholesale/Risk Policies & Methods \nT +44 (0)24 7642 5429 \nF +44 (0)24 7642 5479 \nDimitrios.Chalvatzis at eon-uk.com \n\n-----Original Message-----\nFrom: s-news-owner at lists.biostat.wustl.edu \n[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Chalvatzis, \nDimitrios (Energy Wholesale)\nSent: Thursday, April 06, 2006 11:29 AM\nTo: Karl \"Hülber; s-news at lists.biostat.wustl.edu\nSubject: Re: [S] simple arithmetic\n\nKarl,\n\nThere is an easy solution to your problem if you already have a function that \ngenerates all combinations of n things taken 2 at a time.\nI use the 'combn2' function from the Combinatorics package by Scott D. Chasalow \n(as was posted in StatLib). I am attaching the script for this function at the \nend of this message.\nFollowing this, a solution to your problem is as follows:\n\n> mat\n  group     values \n1     1 -0.9082901\n2     1 -0.3202220\n3     1 -0.4415473\n4     1 -1.8012052\n5     2 -0.3013117\n6     2  0.9849585\n7     2 -0.1791473\n8     2 -0.3638630\n\n> as.vector(sapply(lapply(split(mat[,2],mat[,1]),FUN=combn2),function(x) \n> apply(x,1,diff)))\n\n[1]  0.58806818  0.46674286 -0.89291502 -0.12132531 -1.48098320 -1.35965788  \n1.28627016  0.12216438 -0.06255135 -1.16410578 -1.34882152 -0.18471574\n \nHTH\n\nDimitrios Chalvatzis \nRisk Analyst \nEnergy Wholesale/Risk Policies & Methods \nT +44 (0)24 7642 5429 \nF +44 (0)24 7642 5479 \nDimitrios.Chalvatzis at eon-uk.com \n\n######################################\n#### Script for 'combn2' function ####\n\ncombn2<-function(x, n)\n{\n        #   DATE WRITTEN:  14 April 1994           LAST REVISED:  14 April 1994\n        #   AUTHOR:  Scott D. Chasalow\n        #\n        #   DESCRIPTION:\n        #         Generate all combinations of the elements of x taken two at a \ntime. \n        #         If x is missing,  generate all combinations of 1:n taken two\n        #         at a time (that is,  the indices of x that would give all \n        #         combinations of the elements of x if x with length n had been \ngiven).\n        #         Exactly one of arguments \"x\" and \"n\" should be given.\n        #\n        if(!missing(x)) {\n                n <- length(x)\n                if(!missing(n))\n                        warning(paste(\"Only one of arguments x and n allowed;\", \n\"argument n was ignored\"))\n        }\n        else if(missing(n))\n                stop(\"Arguments \\\"x\\\" and \\\"n\\\" both missing\")\n        if(length(n) > 1) {\n                warning(paste(\"Argument n has\", length(n), \"elements: only the \nfirst used\"))\n                n <- n[1]\n        }\n        if(n == 0)\n                return(NULL)\n        rmat <- array(seq(length = n), c(n, n))\n        # row(matrix(0,n,n))\n        cmat <- t(rmat)\n        # col(matrix(0,n,n))\n        lower.t <- rmat > cmat\n        # lower.tri(matrix(0,n,n))\n        i1 <- cmat[lower.t]\n        i2 <- rmat[lower.t]\n        if(missing(x))\n                cbind(i1, i2)\n        else cbind(x[i1], x[i2])\n}\n___________________________ Disclaimer Notice ____________________\nThis message and any attachments are confidential and should only\nbe read by those to whom they are addressed. If you are not the\nintended recipient, please contact us, delete the message from your\ncomputer and destroy any copies. Any distribution or copying without\nour prior permission is prohibited.\n\nInternet communications are not always secure and therefore the\nE.ON Group does not accept legal responsibility for this message.\nThe recipient is responsible for verifying its authenticity before\nacting on the contents. Any views or opinions presented are solely\nthose of the author and do not necessarily\nrepresent those of the E.ON Group.\n\nE.ON UK plc, Westwood Way, Westwood Business Park,\nCoventry, CV4 8LG.\nRegistered in England & Wales No. 2366970\n\nE.ON UK Trading Ltd, Westwood Way, Westwood Business Park,\nCoventry, CV4 8LG\nRegistered in England & Wales No. 4178314\n\nE.ON UK Trading Ltd is regulated by the Financial Services\nAuthority to carry out investment activities.\n\nTelephone +44 (0) 2476 42 4000\nFax +44 (0) 2476 42 5432\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Just to clarify that the whole script [as.vector...] should be in one line!\nI just realised that Outlook presented the script in two lines and preceeded \nthe second line with an invalid '>' character.",
-      "thread_id": "thread-a04bc6861f57",
-      "thread_depth": 0,
+      "thread_id": "thread-96ef034b6e27",
+      "thread_depth": 1,
       "month": "2006-04"
     },
     {
@@ -320,12 +320,12 @@
       "date": "2006-04-06T11:59:21Z",
       "subject": "Re: Roll nlme",
       "subject_clean": "Roll nlme",
-      "in_reply_to": null,
+      "in_reply_to": "<125A7D9CB9E1934FB1F6EA7F358E9BF201F86AEE@BBAMSGP2.corp.bba.com.br>",
       "references": [],
       "body_plain": "Please specify whether you have the Finmetrics\nmodule.\n\nIf that is the case you simply need to\npopulate the ‘roll’ function arguments according to the\ninstructions of the help file.\n\n \n\nDimitrios\n\n \n\n \n\nDimitrios Chalvatzis \n\nRisk Analyst \n\nEnergy Wholesale/Risk Policies & Methods \n\nT +44 (0)24 7642 5429 \n\nF +44 (0)24 7642 5479 \n\nDimitrios.Chalvatzis at eon-uk.com \n\n \n\nFrom:\ns-news-owner at lists.biostat.wustl.edu\n[mailto:s-news-owner at lists.biostat.wustl.edu] On\nBehalf Of Juan Carlos Ruilova Teran\n\nSent: Thursday, April 06, 2006\n12:43 PM\n\nTo: s-news at wubios.wustl.edu\n\nSubject: [S] Roll nlme\n\n \n\nHello people,\n\nI have to do a logistic regression in time\nseries. But I need to do a Backtesting, so I need to do a roll regression,\nsimilar to roll OLS in finmetrics, but I need a methos very fast because I have\nbig time series.\n\nSomebody can help me please...\n\nThanks\n\nJuan Carlos\n\n_______________________________________________________\n\n\"Esta mensagem e enderecada exclusivamente a(s) pessoa(s) e/ou\ninstituicoes acima indicadas e pode conter informacoes confidenciais,\nparticulares ou privilegiadas, as quais nao podem, sob qualquer forma ou\npretexto, serem utilizadas, divulgadas, alteradas, impressas ou copiadas, total\nou parcialmente, por pessoas nao autorizadas. No caso desta mensagem ser\nrecebida por erro, por favor, providencie sua exclusao de qualquer sistema e/ou\ndestrua quaisquer copias reprograficas, notificando o remetente imediatamente.\nEventual erro de transmissao desta mensagem em nenhuma hipotese constituira\nrenuncia a confidencialidade ou a qualquer direito ou prerrogativa decorrente da\nmesma. Esta instituicao nao se responsabiliza pela realizacao de negocios,\nopinioes ou declaracoes veiculadas atraves de mensagens eletronicas.\"\n\n**\n\n\"This message is intended only for the named person's and/or entity's use\nand may contain confidential, proprietary or legally privileged information,\nwhich shall not be used, disclosed, changed, printed or copied, in whole or in\npart, by not intended recipients. If this message is received by error, please\ndelete it from your system and/or destroy any hard copies of it and notify the\nsender, immediately. No confidentiality or privilege is waived by any\nmistransmission. This institution is not responsible for any business\ntransaction, opinions or declarations transmitted through electronic\nmail.\"\n\n_______________________________________________________\n\n___________________________ Disclaimer Notice ____________________\nThis message and any attachments are confidential and should only\nbe read by those to whom they are addressed. If you are not the\nintended recipient, please contact us, delete the message from your\ncomputer and destroy any copies. Any distribution or copying without\nour prior permission is prohibited.\n\nInternet communications are not always secure and therefore the\nE.ON Group does not accept legal responsibility for this message.\nThe recipient is responsible for verifying its authenticity before\nacting on the contents. Any views or opinions presented are solely\nthose of the author and do not necessarily\nrepresent those of the E.ON Group.\n\nE.ON UK plc, Westwood Way, Westwood Business Park,\nCoventry, CV4 8LG.\nRegistered in England & Wales No. 2366970\n\nE.ON UK Trading Ltd, Westwood Way, Westwood Business Park,\nCoventry, CV4 8LG\nRegistered in England & Wales No. 4178314\n\nE.ON UK Trading Ltd is regulated by the Financial Services\nAuthority to carry out investment activities.\n\nTelephone +44 (0) 2476 42 4000\nFax +44 (0) 2476 42 5432",
       "body_snippet": "Please specify whether you have the Finmetrics\nmodule.\n\nIf that is the case you simply need to\npopulate the ‘roll’ function arguments according to the\ninstructions of the help file.\n\n \n\nDimitrios\n\n \n\n",
-      "thread_id": "thread-bbeb637493c1",
-      "thread_depth": 0,
+      "thread_id": "thread-24cc2dac4c10",
+      "thread_depth": 1,
       "month": "2006-04"
     },
     {
@@ -336,12 +336,12 @@
       "date": "2006-04-06T12:28:52Z",
       "subject": "Re: Roll nlme",
       "subject_clean": "Roll nlme",
-      "in_reply_to": null,
+      "in_reply_to": "<125A7D9CB9E1934FB1F6EA7F358E9BF201F86AEE@BBAMSGP2.corp.bba.com.br>",
       "references": [],
       "body_plain": "Yes i have finmetrics module....\n\nIs this the faster way??\n\nFrom: Chalvatzis, Dimitrios (Energy Wholesale) \n[mailto:Dimitrios.Chalvatzis at eon-uk.com] \nSent: Thursday, April 06, \n2006 8:59 AM\nTo: Juan Carlos Ruilova Teran; \ns-news at wubios.wustl.edu\nSubject: RE: [S] Roll \nnlme\n\nPlease specify whether \nyou have the Finmetrics module.\n\nIf that is the case you \nsimply need to populate the ‘roll’ function arguments according to the \ninstructions of the help file.\n\n \n\nDimitrios\n\n \n\n \n\nDimitrios \nChalvatzis \n\nRisk \nAnalyst \n\nEnergy Wholesale/Risk \nPolicies & Methods \n\nT +44 (0)24 7642 \n5429 \n\nF +44 (0)24 7642 \n5479 \n\nDimitrios.Chalvatzis at eon-uk.com \n\n \n\nFrom: \ns-news-owner at lists.biostat.wustl.edu \n[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Juan Carlos Ruilova \nTeran\nSent: Thursday, April 06, \n2006 12:43 PM\nTo: \ns-news at wubios.wustl.edu\nSubject: [S] Roll nlme\n\n \n\nHello \npeople,\n\nI have to do a logistic \nregression in time series. But I need to do a Backtesting, so I need to do \na roll regression, similar to roll OLS in finmetrics, but I need a methos very \nfast because I have big time series.\n\nSomebody can help me \nplease...\n\nThanks\n\nJuan \nCarlos\n\n_______________________________________________________\n\"Esta \nmensagem e enderecada exclusivamente a(s) pessoa(s) e/ou instituicoes acima \nindicadas e pode conter informacoes confidenciais, particulares ou \nprivilegiadas, as quais nao podem, sob qualquer forma ou pretexto, serem \nutilizadas, divulgadas, alteradas, impressas ou copiadas, total ou parcialmente, \npor pessoas nao autorizadas. No caso desta mensagem ser recebida por erro, por \nfavor, providencie sua exclusao de qualquer sistema e/ou destrua quaisquer \ncopias reprograficas, notificando o remetente imediatamente. Eventual erro de \ntransmissao desta mensagem em nenhuma hipotese constituira renuncia a \nconfidencialidade ou a qualquer direito ou prerrogativa decorrente da mesma. \nEsta instituicao nao se responsabiliza pela realizacao de negocios, opinioes ou \ndeclaracoes veiculadas atraves de mensagens eletronicas.\"\n**\n\"This message \nis intended only for the named person's and/or entity's use and may contain \nconfidential, proprietary or legally privileged information, which shall not be \nused, disclosed, changed, printed or copied, in whole or in part, by not \nintended recipients. If this message is received by error, please delete it from \nyour system and/or destroy any hard copies of it and notify the sender, \nimmediately. No confidentiality or privilege is waived by any mistransmission. \nThis institution is not responsible for any business transaction, opinions or \ndeclarations transmitted through electronic \nmail.\"\n_______________________________________________________\n\n___________________________ Disclaimer Notice ____________________\nThis message and any attachments are confidential and should only\nbe read by those to whom they are addressed. If you are not the\nintended recipient, please contact us, delete the message from your\ncomputer and destroy any copies. Any distribution or copying without\nour prior permission is prohibited.\n\nInternet communications are not always secure and therefore the\nE.ON Group does not accept legal responsibility for this message.\nThe recipient is responsible for verifying its authenticity before\nacting on the contents. Any views or opinions presented are solely\nthose of the author and do not necessarily\nrepresent those of the E.ON Group.\n\nE.ON UK plc, Westwood Way, Westwood Business Park,\nCoventry, CV4 8LG.\nRegistered in England & Wales No. 2366970\n\nE.ON UK Trading Ltd, Westwood Way, Westwood Business Park,\nCoventry, CV4 8LG\nRegistered in England & Wales No. 4178314\n\nE.ON UK Trading Ltd is regulated by the Financial Services\nAuthority to carry out investment activities.\n\nTelephone +44 (0) 2476 42 4000\nFax +44 (0) 2476 42 5432",
       "body_snippet": "Yes i have finmetrics module....\n\nIs this the faster way??\n\nFrom: Chalvatzis, Dimitrios (Energy Wholesale) \n[mailto:Dimitrios.Chalvatzis at eon-uk.com] \nSent: Thursday, April 06, \n2006 8:59 AM\nTo: Jua",
-      "thread_id": "thread-b4a88415ceda",
-      "thread_depth": 0,
+      "thread_id": "thread-24cc2dac4c10",
+      "thread_depth": 1,
       "month": "2006-04"
     },
     {
@@ -352,12 +352,12 @@
       "date": "2006-04-06T13:30:55Z",
       "subject": "Re: Roll nlme",
       "subject_clean": "Roll nlme",
-      "in_reply_to": null,
+      "in_reply_to": "<125A7D9CB9E1934FB1F6EA7F358E9BF201F86AEE@BBAMSGP2.corp.bba.com.br>",
       "references": [],
       "body_plain": "Speed of ‘roll’ is highly\ndependent on the complexity of the function itself.\n\nA 500-step backtesting of a multivariate garch\n(which is computationally intensive) can take up to 10min on my humble 2.4GHz, 1GB\nRam desktop.\n\nBut I feel this to be an acceptable speed\nfor the wealth of the returned statistics.\n\nI guess the main virtue of the function is\nin its flexibility rather than its speed.\n\nI am pretty sure you could roll faster if\nyou called your GLMs with C, but that is an entirely different story…\n\n \n\n \n\nDimitrios Chalvatzis \n\nRisk Analyst \n\nEnergy Wholesale/Risk Policies & Methods \n\nT +44 (0)24 7642 5429 \n\nF +44 (0)24 7642 5479 \n\nDimitrios.Chalvatzis at eon-uk.com \n\n \n\nFrom:\nJuan Carlos Ruilova Teran [mailto:JRTeran at itaubba.com.br] \n\nSent: Thursday, April 06, 2006\n1:29 PM\n\nTo: Chalvatzis,\n Dimitrios (Energy Wholesale); s-news at wubios.wustl.edu\n\nSubject: RE: [S] Roll nlme\n\n \n\nYes i have finmetrics module....\n\nIs this the faster way??\n\n \n\nFrom:\nChalvatzis, Dimitrios (Energy\nWholesale) [mailto:Dimitrios.Chalvatzis at eon-uk.com] \n\nSent: Thursday, April 06, 2006\n8:59 AM\n\nTo: Juan Carlos Ruilova Teran;\ns-news at wubios.wustl.edu\n\nSubject: RE: [S] Roll nlme\n\nPlease specify whether you have the\nFinmetrics module.\n\nIf that is the case you simply need to\npopulate the ‘roll’ function arguments according to the\ninstructions of the help file.\n\n \n\nDimitrios\n\n \n\n \n\nDimitrios Chalvatzis \n\nRisk Analyst \n\nEnergy Wholesale/Risk Policies & Methods \n\nT +44 (0)24 7642 5429 \n\nF +44 (0)24 7642 5479 \n\nDimitrios.Chalvatzis at eon-uk.com \n\n \n\nFrom:\ns-news-owner at lists.biostat.wustl.edu\n[mailto:s-news-owner at lists.biostat.wustl.edu] On\nBehalf Of Juan Carlos Ruilova Teran\n\nSent: Thursday, April 06, 2006\n12:43 PM\n\nTo: s-news at wubios.wustl.edu\n\nSubject: [S] Roll nlme\n\n \n\nHello people,\n\nI have to do a logistic regression in time\nseries. But I need to do a Backtesting, so I need to do a roll regression,\nsimilar to roll OLS in finmetrics, but I need a methos very fast because I have\nbig time series.\n\nSomebody can help me please...\n\nThanks\n\nJuan Carlos\n\n_______________________________________________________\n\n\"Esta mensagem e enderecada exclusivamente a(s) pessoa(s) e/ou\ninstituicoes acima indicadas e pode conter informacoes confidenciais,\nparticulares ou privilegiadas, as quais nao podem, sob qualquer forma ou\npretexto, serem utilizadas, divulgadas, alteradas, impressas ou copiadas, total\nou parcialmente, por pessoas nao autorizadas. No caso desta mensagem ser\nrecebida por erro, por favor, providencie sua exclusao de qualquer sistema e/ou\ndestrua quaisquer copias reprograficas, notificando o remetente imediatamente.\nEventual erro de transmissao desta mensagem em nenhuma hipotese constituira\nrenuncia a confidencialidade ou a qualquer direito ou prerrogativa decorrente\nda mesma. Esta instituicao nao se responsabiliza pela realizacao de negocios,\nopinioes ou declaracoes veiculadas atraves de mensagens eletronicas.\"\n\n**\n\n\"This message is intended only for the named person's and/or entity's use\nand may contain confidential, proprietary or legally privileged information,\nwhich shall not be used, disclosed, changed, printed or copied, in whole or in\npart, by not intended recipients. If this message is received by error, please\ndelete it from your system and/or destroy any hard copies of it and notify the\nsender, immediately. No confidentiality or privilege is waived by any\nmistransmission. This institution is not responsible for any business\ntransaction, opinions or declarations transmitted through electronic\nmail.\"\n\n_______________________________________________________\n\n___________________________ Disclaimer Notice ____________________This message and any attachments are confidential and should onlybe read by those to whom they are addressed. If you are not theintended recipient, please contact us, delete the message from yourcomputer and destroy any copies. Any distribution or copying withoutour prior permission is prohibited. Internet communications are not always secure and therefore theE.ON Group does not accept legal responsibility for this message.The recipient is responsible for verifying its authenticity beforeacting on the contents. Any views or opinions presented are solelythose of the author and do not necessarilyrepresent those of the E.ON Group. E.ON UK plc, Westwood Way, Westwood Business Park,Coventry, CV4 8LG.Registered in England & Wales No. 2366970 E.ON UK Trading Ltd, Westwood Way, Westwood Business Park,Coventry, CV4 8LGRegistered in England & Wales No. 4178314 E.ON UK Trading Ltd is regulated by the Financial ServicesAuthority to carry out investment activities. Telephone +44 (0) 2476 42 4000Fax +44 (0) 2476 42 5432",
       "body_snippet": "Speed of ‘roll’ is highly\ndependent on the complexity of the function itself.\n\nA 500-step backtesting of a multivariate garch\n(which is computationally intensive) can take up to 10min on my humble 2.4",
-      "thread_id": "thread-225cecd61075",
-      "thread_depth": 0,
+      "thread_id": "thread-24cc2dac4c10",
+      "thread_depth": 1,
       "month": "2006-04"
     },
     {
@@ -386,12 +386,12 @@
       "date": "2006-04-06T14:20:56Z",
       "subject": "Re: simple arithmetic",
       "subject_clean": "simple arithmetic",
-      "in_reply_to": null,
+      "in_reply_to": "<20060406093430.3766.qmail@web35312.mail.mud.yahoo.com>",
       "references": [],
       "body_plain": "Elegant piece of code, Marcus\n\n \n\nDimitrios Chalvatzis \n\nRisk Analyst \n\nEnergy Wholesale/Risk Policies & Methods \n\nT +44 (0)24 7642 5429 \n\nF +44 (0)24 7642 5479 \n\nDimitrios.Chalvatzis at eon-uk.com \n\n \n\nFrom:\ns-news-owner at lists.biostat.wustl.edu\n[mailto:s-news-owner at lists.biostat.wustl.edu] On\nBehalf Of Marcus Hudec\n\nSent: Thursday, April 06, 2006\n3:11 PM\n\nTo: 'Karl Hülber';\ns-news at lists.biostat.wustl.edu\n\nSubject: Re: [S] simple arithmetic\n\n \n\nMaybe the following very simple and aesthetic\ncode\nis what you are looking for:\n\n____________________________________________________________________\n\nmy.diff <- function(x)  \n\n# Computes all pairwise differences of elements of\na\nvector\nx\n\n{outer(x,x,\"-\")}\n\nmy.sub <- function(X)\n\n# Extracts lower triangle from matrix X\n\n{X[row(X) > col(X)]}\n\n# This command does the job\n\n-unlist(lapply(tapply(A[,2], A[,1], my.diff), my.sub))\n\n____________________________________________________________________\n\nAn Example Run:\n\n> # Generate some Test Data\nwith unequal number of elements per group\n\n> A <-\ncbind(rep(1:2,c(3,5)), sample(1:8))\n\n> colnames(A) <-\nc(\"Group\", \"Values\")\n\n> A\n\n     Group Values\n\n[1,]     1      6\n\n[2,]     1      7\n\n[3,]     1      5\n\n[4,]     2      1\n\n[5,]     2      4\n\n[6,]     2      3\n\n[7,]     2      2\n\n[8,]     2      8\n\n \n\n> -unlist(lapply(tapply(A[,2], A[,1], my.diff), my.sub))\n\n 11  12  13  21  22  23 \n24  25  26  27  28  29 210 \n\n -1   1   2  -3  -2 \n-1  -7   1   2  -4   1  -5 \n-6\n\nPlease note that the names give\nyou an indication of the semantic of the elements of the resulting vector. The\nfirst digit indicates the group, while the remaining digits serve\nas an index which allows determination of the\nspecific\ndifference\nrepresented.\n\nOf course a more compact notation is possible but due to reasons\nof readability I prefer the explicit definition of\nthe\ntwo functions involved.\n\nWith best regards\n\nMarcus Hudec\n\n___________________________________\n\naO.Univ.Prof.Dr. Marcus Hudec\n\nInstitut für Scientific Computing\n\nUniversität Wien \n\nUniversitätsstr. 5\n\nA - 1010 Wien\n\nTel: +43 1 - 42 77  394 62\n\nFax: +43 1 - 42 77 394 59\n\nhttp://mailbox.univie.ac.at/Marcus.Hudec/\n\nmailto:marcus.hudec at univie.ac.at\n\n-----Ursprüngliche Nachricht-----\n\nVon: s-news-owner at lists.biostat.wustl.edu [mailto:s-news-owner at lists.biostat.wustl.edu]\nIm Auftrag von Karl Hülber\n\nGesendet: Donnerstag, 06. April 2006 11:35\n\nAn: s-news at lists.biostat.wustl.edu\n\nBetreff: [S] simple arithmetic\n\nHi!\n\nGiven is a data.frame like that:\n\ngroup   case    value\n\n1      \na       x1\n\n1      \nb       x2\n\n1      \nc       x3\n\n1      \nd       x4\n\n2      \na       x5\n\n2      \nb       x6\n\n2      \nc       x7\n\n2      \nd       x8\n\nI want to compute a vector by applying a function\n\n(e.g. subtraction) to every possible combination of\n\ncases within a group.\n\nResult:\n\nVector(x1-x2, x1-x3, x1-x4, x2-x3, x2-x4, x3-x4,\n\nx5-x6, x5-x7, x5-x8, x6-x7, x6-x8, x7-x8)\n\nIs there any function providing this?\n\nMany thanks for help!\n\nKarl Huelber\n\n \n\n__________________________________________________\n\nDo You Yahoo!?\n\nTired of spam?  Yahoo! Mail has the best spam\nprotection around \n\nhttp://mail.yahoo.com\n\n--------------------------------------------------------------------\n\nThis message was distributed by\ns-news at lists.biostat.wustl.edu.  To\n\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu\nwith\n\nthe BODY of the message:  unsubscribe s-news\n\n___________________________ Disclaimer Notice ____________________\nThis message and any attachments are confidential and should only\nbe read by those to whom they are addressed. If you are not the\nintended recipient, please contact us, delete the message from your\ncomputer and destroy any copies. Any distribution or copying without\nour prior permission is prohibited.\n\nInternet communications are not always secure and therefore the\nE.ON Group does not accept legal responsibility for this message.\nThe recipient is responsible for verifying its authenticity before\nacting on the contents. Any views or opinions presented are solely\nthose of the author and do not necessarily\nrepresent those of the E.ON Group.\n\nE.ON UK plc, Westwood Way, Westwood Business Park,\nCoventry, CV4 8LG.\nRegistered in England & Wales No. 2366970\n\nE.ON UK Trading Ltd, Westwood Way, Westwood Business Park,\nCoventry, CV4 8LG\nRegistered in England & Wales No. 4178314\n\nE.ON UK Trading Ltd is regulated by the Financial Services\nAuthority to carry out investment activities.\n\nTelephone +44 (0) 2476 42 4000\nFax +44 (0) 2476 42 5432",
       "body_snippet": "Elegant piece of code, Marcus\n\n \n\nDimitrios Chalvatzis \n\nRisk Analyst \n\nEnergy Wholesale/Risk Policies & Methods \n\nT +44 (0)24 7642 5429 \n\nF +44 (0)24 7642 5479 \n\nDimitrios.Chalvatzis at eon-uk.com \n\n",
-      "thread_id": "thread-397bd623a5f4",
-      "thread_depth": 0,
+      "thread_id": "thread-96ef034b6e27",
+      "thread_depth": 1,
       "month": "2006-04"
     },
     {
@@ -436,12 +436,12 @@
       "date": "2006-04-06T15:05:03Z",
       "subject": "Re: non_linear",
       "subject_clean": "non_linear",
-      "in_reply_to": null,
+      "in_reply_to": "<20060406144323.10351.qmail@web53912.mail.yahoo.com>",
       "references": [],
       "body_plain": "I'm not sure I got the question, but I followed Crawley, Statistical \nComputing page 413-415 for a similar problem last week. Hope it helps\n\nY~a-b*exp(-c*x)\nplot your data \"plot(Y,x)\" and add some approx starting values.\na=asymptote of Y\nb=a-intercept\nc=curvature\n\n#model:\nexp.curve<- nls(Y~a-b*exp(-c*x), start=list(a=170,b=30,c=0.2))\n\n#to plot and get trend line\nplot(Y,x)\nxaxis<-seq(0.7,7,0.01) \"frm 0.7 to 7 in steps of 0.1\nlines(xaxis,predict(exp.curve,list(x=xaxis)))\n\n/Andreas\n--------------------------\nDear Subscribers,\nI tried to form a nonlinear model for :y~a+b*exp(x) where a & b are \nspecified.this expression is stated in the model field, but the message \nI received was set_up nonlinear.How can this expression be stated with \ns-plus 7?\n\nthanks\nlanre",
       "body_snippet": "I'm not sure I got the question, but I followed Crawley, Statistical \nComputing page 413-415 for a similar problem last week. Hope it helps\n\nY~a-b*exp(-c*x)\nplot your data \"plot(Y,x)\" and add some app",
-      "thread_id": "thread-2eaa575161d1",
-      "thread_depth": 0,
+      "thread_id": "thread-d8662b0c2938",
+      "thread_depth": 1,
       "month": "2006-04"
     },
     {
@@ -452,12 +452,12 @@
       "date": "2006-04-06T15:53:44Z",
       "subject": "Re: Roll nlme",
       "subject_clean": "Roll nlme",
-      "in_reply_to": null,
+      "in_reply_to": "<125A7D9CB9E1934FB1F6EA7F358E9BF201F86AEE@BBAMSGP2.corp.bba.com.br>",
       "references": [],
       "body_plain": "Dear All\n\nThis roll question reminds of previous problem. I have two matrix A (5000*60) and B (5000*60). What I need to do is to run the regression between the rows of A and B. out = A[1,]~B[1,]…, A[2,]~B[2,]…. A[5000,]~B[5000,]. Previously I used a loop to do 5,000 times of regression which cost about one hour. Since FinMetrics has the function like roll, do you know whether it has a function to solve this kind of problem faster?\n\nAnother question bothered me for a long time is that the function like GARCH, glm etc, the outputs don’t have t-stats, they only reports coefficients. I have to use function summary and find the t-stats. It works if I use loop to save my results of t-stats but it does not works if I use roll because only the coefficients are save.\n\nMany thanks,\n\nBest,\n\nSichong Chen\n\nSPlus 7.0 & FinMetrics 2.0 User\n\nWindows XP",
       "body_snippet": "Dear All\n\nThis roll question reminds of previous problem. I have two matrix A (5000*60) and B (5000*60). What I need to do is to run the regression between the rows of A and B. out = A[1,]~B[1,]…, A[2",
-      "thread_id": "thread-971c701950dc",
-      "thread_depth": 0,
+      "thread_id": "thread-24cc2dac4c10",
+      "thread_depth": 1,
       "month": "2006-04"
     },
     {
@@ -522,8 +522,8 @@
       ],
       "body_plain": "Chen,\n\n \n\nFirstly to use the ‘roll’ you will need to align\nyour matrices in the form of a dataframe or a time series. \n\nIn effect your two 5000x60 matrices need to form a frame of 300000x2.\n\nAssuming you perform this simple data manipulation and your\nobservations are saved as matrix A you have:\n\n \n\n#### Some random data ####\n\nA<-matrix(rnorm(600000),ncol=2)\n\n \n\n \n\n#### This is the function call\n####\n\n \n\nglm.func<-function(data){\n\n   a<-glm(data[,1]~data[,2])\n\n   glm.coef<-summary(a)$coef\n\n   return(list(glm.coef=glm.coef))\n\n}\n\n \n\nResults<-roll(glm.func,data=\"\">\n\n \n\n#### These are\nthe results ####\n\n \n\n>\nnames(Results)\n\n[1]\n\"glm.coef\"  \"call\"     \n\"positions\"\n\n>\nResults$glm.coef[1:3,]\n\n           \n[,1]       \n[,2]      [,3]     \n[,4]        [,5]     \n[,6] \n\n 60 \n0.364897629  0.17356008 0.1352286 0.1229694  2.69837604 \n1.411409\n\n120 -0.019862930\n-0.18667690 0.1323861 0.1263117 -0.15003788 -1.477906\n\n180 \n0.006771196  0.04408364 0.1379626 0.1365119  0.04907994 \n0.322929\n\n \n\nOn each row the\nfirst two values refer to the glm coefficients, the middle two values are your\nstd.errors, and the last two your t-values.\n\nThe overall\nbacktest took 7.05 min to run on a 2.4GHz, 1GB Ram, WinXP.\n\n \n\nI hope this\nhelps,\n\n \n\nDimitrios\n\n \n\n \n\n \n\nFrom:\ns-news-owner at lists.biostat.wustl.edu\n[mailto:s-news-owner at lists.biostat.wustl.edu] On\nBehalf Of Chen,Sichong\n\nSent: 06 April 2006 16:54\n\nTo: s-news at lists.biostat.wustl.edu\n\nSubject: Re: [S] Roll nlme\n\n \n\nDear\nAll\n\nThis\nroll question reminds of previous problem. I have two matrix A (5000*60) and B\n(5000*60). What I need to do is to run the regression between the rows of A and\nB. out = A[1,]~B[1,]…, A[2,]~B[2,]…. A[5000,]~B[5000,]. Previously\nI used a loop to do 5,000 times of regression which cost about one hour. Since\nFinMetrics has the function like roll,\ndo you know whether it has a function to solve this kind of problem faster?\n\nAnother\nquestion bothered me for a long time is that the function like GARCH, glm etc, the outputs don’t\nhave t-stats, they only reports coefficients. I have to use function summary and find the t-stats. It works if\nI use loop to save my results of t-stats but it does not works if I use roll because only the coefficients are\nsave.\n\nMany\nthanks,\n\nBest,\n\nSichong\nChen\n\nSPlus 7.0 & FinMetrics 2.0 User\n\nWindows XP",
       "body_snippet": "Chen,\n\n \n\nFirstly to use the ‘roll’ you will need to align\nyour matrices in the form of a dataframe or a time series. \n\nIn effect your two 5000x60 matrices need to form a frame of 300000x2.\n\nAssuming ",
-      "thread_id": "thread-971c701950dc",
-      "thread_depth": 1,
+      "thread_id": "thread-24cc2dac4c10",
+      "thread_depth": 2,
       "month": "2006-04"
     },
     {
@@ -571,12 +571,12 @@
       "date": "2006-04-07T02:53:04Z",
       "subject": "Re: Specialized trellis plot",
       "subject_clean": "Specialized trellis plot",
-      "in_reply_to": null,
+      "in_reply_to": "<443567AB.6000702@imap.iu.edu>",
       "references": [],
       "body_plain": "I believe this does exactly what you requested.  I use the xysplom\nfunction from my recent book for control of the rows and columns of the\ntrellis.  The panel function uses two calls to the standard trellis\nfunction panel.densityplot, one for each level of the y variables.\n\n## xysplom is a function in the HH online files\n## \n##                 Statistical Analysis and Data Display\n##                 Richard M. Heiberger and Burt Holland\n## \n##    http://springeronline.com/0-387-40270-5\n\ntmp <- data.frame(matrix(rnorm(125),25,5),\n                  matrix(rbinom(100,1,.5),25,4))\nnames(tmp) <- c(\"x1\",\"x2\",\"x3\",\"x4\",\"x5\",\"y1\",\"y2\",\"y3\",\"y4\")\nround(tmp,2)\n\nxysplom(y1+y2+y3+y4 ~ x1+x2+x3+x4+x5, data=tmp,\n        scales=list(relation=\"same\"),\n        ylim=c(0, 3.5), between=list(x=1,y=1),\n        par.strip.text=list(cex=1),\n        panel=function(x,y,...) {\n          panel.densityplot(x[y==1], width=.1, from=0, to=3, col=2)\n          panel.densityplot(x[y==0], width=.1, from=0, to=3, col=3)\n        })",
       "body_snippet": "I believe this does exactly what you requested.  I use the xysplom\nfunction from my recent book for control of the rows and columns of the\ntrellis.  The panel function uses two calls to the standard t",
-      "thread_id": "thread-120d7242eb61",
-      "thread_depth": 0,
+      "thread_id": "thread-8ef70ebf6b3c",
+      "thread_depth": 1,
       "month": "2006-04"
     },
     {
@@ -931,12 +931,12 @@
       "date": "2006-04-13T02:58:10Z",
       "subject": "Re: - Multiple Plots using By",
       "subject_clean": "- Multiple Plots using By",
-      "in_reply_to": null,
+      "in_reply_to": "<17ECC4735C623B419672DD87E7539D2B699C8C@icfmail1.icfrith.com.au>",
       "references": [],
       "body_plain": "by ( \ndata.df, data.df$category, function(x) \nplot (x$var1, x$var2) )\n\n \n\n \n\nShould \nwork, but this is the kind of plotting for which Trellis is \ndesigned.\n\n \n\nxyplot( var2 ~ var1|category, \ndata=\"\">\n\n \n\nMatt Austin\nStatistician\nAmgen, Inc\n800 \n9AMGEN9 x77431\n805-447-7431 \n\"The \npurpose of computing is insight, not numbers\" --Richard Hamming \n\n-----Original Message-----\nFrom: \ns-news-owner at lists.biostat.wustl.edu \n[mailto:s-news-owner at lists.biostat.wustl.edu]On Behalf Of Andrew \nScott\nSent: Wednesday, April 12, 2006 7:17 PM\nTo: \ns-news at lists.biostat.wustl.edu\nSubject: [S] - Multiple Plots using \nBy\n\nDear S-News Readers,\n\n \n\nIs there a simple way to obtain \nmultiple plots of 2 variables from a single dataframe according to a category \nvariable. For example,\n\n \n\nby ( \ndata.df, data.df$category, summary)\n\n \n\ngives a summary for each category \nbut\n\n \n\nby ( data.df, \ndata.df$category, plot (data.df$var1, data.df$var2) \n)\n\n \n\njust produces a single plot for all \ncategories.\n\n \n\nAny help would be \nappreciated.\n\nAndrew Scott\n\nThe information \ncontained in this email and any attached files is strictly confidential and may \ncontain legally privileged information. This email should be read by the \nintended addressee only. If the recipient of this message is not the intended \naddressee, please advise ICF (Australia) Pty Ltd on +61 2 8853 9100 \nor icfteam at icfrith.com.au and promptly delete this email and any attachments. \nThe intended recipient of this email may only use, reproduce, disclose or \ndistribute the information contained in this email and any attached files with \nICF (Australia) Pty Ltd's permission. If \nyou are not the intended addressee, you are strictly prohibited from using, \nreproducing, disclosing or distributing the information contained in this email \nand any attached files. Although ICF (Australia) Pty Ltd believes this e-mail \nand any attachments to be free of any virus or other defect which may effect \nyour computer, it is the responsibility of the recipient to ensure that it is \nvirus free and ICF (Australia) Pty Ltd does not accept any responsibility for \nany loss or damage arising in any way from its use. We maintain a database of \nclients' contact details. If you do not wish to receive electronic messages from \nus in future please email icfteam at icfrith.com.au. Finally, you should be aware \nICF (Australia) Pty Ltd reserves the right \nand intends to intercept and monitor incoming and outgoing e-mail \ncorrespondence, so you should not expect any e-mail communication to be private \nin nature. ICF (Australia) Pty Ltd ABN 75 115 419 853 \nAFSL No:291260",
       "body_snippet": "by ( \ndata.df, data.df$category, function(x) \nplot (x$var1, x$var2) )\n\n \n\n \n\nShould \nwork, but this is the kind of plotting for which Trellis is \ndesigned.\n\n \n\nxyplot( var2 ~ var1|category, \ndata=\"\">\n",
-      "thread_id": "thread-fb1ffe83692b",
-      "thread_depth": 0,
+      "thread_id": "thread-2e26dc622134",
+      "thread_depth": 1,
       "month": "2006-04"
     },
     {
@@ -965,12 +965,12 @@
       "date": "2006-04-13T04:49:21Z",
       "subject": "Re: barplot",
       "subject_clean": "barplot",
-      "in_reply_to": null,
+      "in_reply_to": "<84C86421F5132D409B67D6BDA6A6A9045F3526@sbem35exc1004.efd.intra.admin.ch>",
       "references": [],
       "body_plain": "Thanks to Bill for his answer. With this command everything works fine.\n\nRegards Michel\n\nOn Wed, 12 Apr 2006 michel.piot at bfe.admin.ch wrote:\n\n> I'm using SPLUS 6.2 for Windows.\n>\n> In my barplot I have negative numbers so the y-axis has a range from \n> -20 to 200. Unfortunately the names of the barplot with the \"names\" \n> argument in the barplot command are written in the plot region and not\n\n> below the plot. Can anybody tell me, how to position the names below \n> the barplot?\n\nI think this was fixed by Splus7.0, but a workaround\nfor earlier versions is:\n    bar.centers <- barplot(x)\n    mtext(side=1, at=bar.centers, lab=names)\n\n------------------------------------------------------------------------\n----\nBill Dunlap\nInsightful Corporation\nbill at insightful dot com\n360-428-8146",
       "body_snippet": "Thanks to Bill for his answer. With this command everything works fine.\n\nRegards Michel\n\nOn Wed, 12 Apr 2006 michel.piot at bfe.admin.ch wrote:\n\n> I'm using SPLUS 6.2 for Windows.\n>\n> In my barplot I ",
-      "thread_id": "thread-82bdebe5eed2",
-      "thread_depth": 0,
+      "thread_id": "thread-243d5d37f8b0",
+      "thread_depth": 1,
       "month": "2006-04"
     },
     {
@@ -1031,12 +1031,12 @@
       "date": "2006-04-13T14:47:58Z",
       "subject": "Re: Executing S-Plus scripts",
       "subject_clean": "Executing S-Plus scripts",
-      "in_reply_to": null,
+      "in_reply_to": "<21C540C75778D84B905F7686B126E8A60548B5@nc-exchange.corp.pharsight.com>",
       "references": [],
       "body_plain": "The problem is I don't know how to spawn the instance of S-Plus then at a later \npoint ask it to execute a script. Right now I'm  just spawning the process with \nthe /BATCH flag and passing it a script. It runs, exits then I scan a directory \nfor results.\n\nThanks\n\n-----Original Message-----\nFrom: A.J. Rossini [mailto:blindglobe at gmail.com]\nSent: Thursday, April 13, 2006 10:42 AM\nTo: Brian Richards\nCc: s-news at lists.biostat.wustl.edu\nSubject: Re: [S] Executing S-Plus scripts\n\nWhy not just use a \"thread pool\" of sorts to keep a few running \"in\npreparation\"?   I've seen this done in the past with R, and it should\nbe possible (modulo licenses) to do with S-PLUS.\n\nBoth Java and Python provide some assistance with this approach, I'm\nsure .Net would as well.\n\nOn 4/13/06, Brian Richards <brichards at pharsight.com> wrote:\n>\n> I'm investigating running S-PLUS scripts through a seperate application.\n> Currently we are using command line invocation of splus.exe to accomplish\n> this. But there seems to be alot of overhead with starting the process\n> running it and producing results. I was wondering if anyone had any other\n> ideas on how I could speed the execution time up. We don't need direct\n> access to splus functions via the application. Simply want to run a script\n> and read output from disk. We're using .Net. I looked into sconnect but it\n> seems to maybe be a deeper level of integration than we require at this\n> time.\n>\n> Optionally, if there is a way to start the engine and keep it running and\n> then run scripts contiguously then shutdown the engine afterwards that would\n> probably work too. In the future we'd like to be able to generate and read\n> dataframes, within out .Net framework (managed code not just using the\n> newest compiler to generate unmanaged code). I'm very green with S-Plus, and\n> have looked through the archives but I could only find posts for compiling\n> sconnect with VS .Net.\n>\n> Thanks\n>\n>\n> Brian Richards\n\n--\nbest,\n-tony\n\nblindglobe at gmail.com\nMuttenz, Switzerland.\n\"Commit early,commit often, and commit in a repository from which we can easily\nroll-back your mistakes\" (AJR, 4Jan05).",
       "body_snippet": "The problem is I don't know how to spawn the instance of S-Plus then at a later \npoint ask it to execute a script. Right now I'm  just spawning the process with \nthe /BATCH flag and passing it a scrip",
-      "thread_id": "thread-cc151e72a02f",
-      "thread_depth": 0,
+      "thread_id": "thread-28a5decd1109",
+      "thread_depth": 1,
       "month": "2006-04"
     },
     {
@@ -1047,12 +1047,12 @@
       "date": "2006-04-13T16:05:54Z",
       "subject": "Re: Executing S-Plus scripts",
       "subject_clean": "Executing S-Plus scripts",
-      "in_reply_to": null,
+      "in_reply_to": "<21C540C75778D84B905F7686B126E8A60548B5@nc-exchange.corp.pharsight.com>",
       "references": [],
       "body_plain": "If this is a company-wide service, then you might want to look at\nthe S-Plus statserver product.  Call Insightful and discuss it directly\nwith them 1-800-569-0123",
       "body_snippet": "If this is a company-wide service, then you might want to look at\nthe S-Plus statserver product.  Call Insightful and discuss it directly\nwith them 1-800-569-0123",
-      "thread_id": "thread-62728a91a40c",
-      "thread_depth": 0,
+      "thread_id": "thread-28a5decd1109",
+      "thread_depth": 1,
       "month": "2006-04"
     },
     {
@@ -1069,8 +1069,8 @@
       ],
       "body_plain": "I wasn't thinking about batch, but by leaving file handles around to\nwait and send input, i.e. listening for things like\n\n    source(\"thisFile.ssc\")\n\nNot terribly safe without a bit of security, but definitely feasible.\n\nbest,\n-tony\n\nOn 4/13/06, Brian Richards <brichards at pharsight.com> wrote:\n> The problem is I don't know how to spawn the instance of S-Plus then at a \n> later point ask it to execute a script. Right now I'm  just spawning the \n> process with the /BATCH flag and passing it a script. It runs, exits then I \n> scan a directory for results.\n>\n> Thanks\n>\n> -----Original Message-----\n> From: A.J. Rossini [mailto:blindglobe at gmail.com]\n> Sent: Thursday, April 13, 2006 10:42 AM\n> To: Brian Richards\n> Cc: s-news at lists.biostat.wustl.edu\n> Subject: Re: [S] Executing S-Plus scripts\n>\n>\n> Why not just use a \"thread pool\" of sorts to keep a few running \"in\n> preparation\"?   I've seen this done in the past with R, and it should\n> be possible (modulo licenses) to do with S-PLUS.\n>\n> Both Java and Python provide some assistance with this approach, I'm\n> sure .Net would as well.\n>\n> On 4/13/06, Brian Richards <brichards at pharsight.com> wrote:\n> >\n> > I'm investigating running S-PLUS scripts through a seperate application.\n> > Currently we are using command line invocation of splus.exe to accomplish\n> > this. But there seems to be alot of overhead with starting the process\n> > running it and producing results. I was wondering if anyone had any other\n> > ideas on how I could speed the execution time up. We don't need direct\n> > access to splus functions via the application. Simply want to run a script\n> > and read output from disk. We're using .Net. I looked into sconnect but it\n> > seems to maybe be a deeper level of integration than we require at this\n> > time.\n> >\n> > Optionally, if there is a way to start the engine and keep it running and\n> > then run scripts contiguously then shutdown the engine afterwards that would\n> > probably work too. In the future we'd like to be able to generate and read\n> > dataframes, within out .Net framework (managed code not just using the\n> > newest compiler to generate unmanaged code). I'm very green with S-Plus, and\n> > have looked through the archives but I could only find posts for compiling\n> > sconnect with VS .Net.\n> >\n> > Thanks\n> >\n> >\n> > Brian Richards\n>\n>\n> --\n> best,\n> -tony\n>\n> blindglobe at gmail.com\n> Muttenz, Switzerland.\n> \"Commit early,commit often, and commit in a repository from which we can \n> easily\n> roll-back your mistakes\" (AJR, 4Jan05).\n>\n\n--\nbest,\n-tony\n\nblindglobe at gmail.com\nMuttenz, Switzerland.\n\"Commit early,commit often, and commit in a repository from which we can easily\nroll-back your mistakes\" (AJR, 4Jan05).",
       "body_snippet": "I wasn't thinking about batch, but by leaving file handles around to\nwait and send input, i.e. listening for things like\n\n    source(\"thisFile.ssc\")\n\nNot terribly safe without a bit of security, but d",
-      "thread_id": "thread-cc151e72a02f",
-      "thread_depth": 1,
+      "thread_id": "thread-28a5decd1109",
+      "thread_depth": 2,
       "month": "2006-04"
     },
     {
@@ -1113,12 +1113,12 @@
       "date": "2006-04-14T02:45:06Z",
       "subject": "Re: \"by\" question",
       "subject_clean": "\"by\" question",
-      "in_reply_to": null,
+      "in_reply_to": "<2CBA240716518446AA2D248949F46D0907C8FF@calnte2k041.insidelive.net>",
       "references": [],
       "body_plain": "I'm not sure why the min does not work in the by() function.  I have\nprovided a method that does work.\n\nAlso, please be careful about the way you create the data.  When you mixed\ncharacter and numerics in the vectors, it coerces all to characters.  When\nyou created your dataframe, everything comes out as character.  Check out my\nexample as how to create the dataframe I think you wanted.\n\ntempdata<-as.data.frame(matrix(NA,4,4))\n        names(tempdata)<-c(\"yearmon\",\"h0\",\"h1\",\"name\")\n        tempdata[1,]<-c(200602,1,4,\"abvol\")\n        tempdata[2,]<-c(200603,2,3,\"abvol\")\n        tempdata[3,]<-c(199106,3,2,\"accr\")\n        tempdata[4,]<-c(199107,4,1,\"accr\")\n\nis.numeric(tempdata$yearmon)\n\ntempdata <- data.frame(yearmon= c(200602, 200603, 199106, 199107),\n                       h0     = 1:4,\n                       h1     = 4:1,\n                       name   = c(rep(c('abvol', 'accr'), each = 2)))\nis.numeric(tempdata$yearmon)\n\nby(tempdata[, 1], tempdata$name, mean)\nby(tempdata[, 1], tempdata$name, function(x) min(x))\n\n--Matt\n\nMatt Austin\nStatistician\nAmgen, Inc\n800 9AMGEN9 x77431\n805-447-7431\n\n-----Original Message-----\nFrom: s-news-owner at lists.biostat.wustl.edu\n[mailto:s-news-owner at lists.biostat.wustl.edu]On Behalf Of Kurbat, Matt\nBGI SF\nSent: Thursday, April 13, 2006 7:15 PM\nTo: s-news at lists.biostat.wustl.edu\nSubject: [S] \"by\" question \n\nHello, \n\nI've recently returned to Splus after a long layoff (forced SAS treatments).\n\nI'm trying to apply \"by\" for various input functions and datasets and having\ntrouble getting it right.\n\nFor example, I can create a dataframe as follows: \n        tempdata<-as.data.frame(matrix(NA,4,4))\n        names(tempdata)<-c(\"yearmon\",\"h0\",\"h1\",\"name\")\n        tempdata[1,]<-c(200602,1,4,\"abvol\")\n        tempdata[2,]<-c(200603,2,3,\"abvol\")\n        tempdata[3,]<-c(199106,3,2,\"accr\")\n        tempdata[4,]<-c(199107,4,1,\"accr\")\nWith results that look like this:\n        > tempdata\n          yearmon h0 h1  name \n        1  200602  1  4 abvol\n        2  200603  2  3 abvol\n        3  199106  3  2  accr\n   4  199107  4  1  accr\n\nI want to compute various functions (min, max, mean, stdev, kurtosis, etc.)\nover the groups defined in the \"name\" variable using the \"by\" function.  \nOn some data sets I can get \"mean\" to work fine but not the others.  \n\nOn the example above, I get the following results using \"mean\"\n        by(as.data.frame(tempdata[,1]), tempdata$name, mean)\n                > by(as.data.frame(tempdata[, 1]), tempdata$name, mean)\n                tempdata$name:abvol\n                [1] NA\n                -----------------------------------------------------------\n                tempdata$name:accr\n                [1] NA\n\nOn the example above, I get the following results using \"min\"\n        by(as.data.frame(tempdata[,1]), tempdata$name, mean)\n                > by(as.data.frame(tempdata[, 1]), as.factor(tempdata$name),\nmin)\n                Problem in NextMethod(.Generic): Can't find the generic\nfunction \"FUN\" \n                Use traceback() to see the call stack\n \nWould someone please explain to me how I can make these work?  \nI'm running Splus 7.0 on Windows 2000.  \n\nThanks!\nMatt \n \nThis message and any attachments are confidential, proprietary, and may be\nprivileged.  If this message was misdirected, Barclays Global Investors\n(BGI) does not waive any confidentiality or privilege.  If you are not the\nintended recipient, please notify us immediately and destroy the message\nwithout disclosing its contents to anyone.  Any distribution, use or copying\nof this e-mail or the information it contains by other than an intended\nrecipient is unauthorized.  The views and opinions expressed in this e-mail\nmessage are the author's own and may not reflect the views and opinions of\nBGI, unless the author is authorized by BGI to express such views or\nopinions on its behalf.  All email sent to or from this address is subject\nto electronic storage and review by BGI.  Although BGI operates anti-virus\nprograms, it does not accept responsibility for any damage whatsoever caused\nby viruses being passed.\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "I'm not sure why the min does not work in the by() function.  I have\nprovided a method that does work.\n\nAlso, please be careful about the way you create the data.  When you mixed\ncharacter and numeric",
-      "thread_id": "thread-0c16fd6f7a0c",
-      "thread_depth": 0,
+      "thread_id": "thread-23e5b70dffb4",
+      "thread_depth": 1,
       "month": "2006-04"
     },
     {
@@ -1135,8 +1135,8 @@
       ],
       "body_plain": "Hi there,\n\nAs Matt Austin has mentioned, the way you have created the data frame means\nthat all columns are character.  To illustrate this we can check the class\nof each column in the data frame you created:-\n\n> sapply(tempdata, class)     # Data frame created using original code\n     yearmon          h0          h1        name \n \"character\" \"character\" \"character\" \"character\"\n\nIf we create the data frame as per Matt Austin's instructions we get the\ncorrect structure:-\n\n> sapply(tempdata, class)         # Data frame created using Matt Austin's\ncode\n   yearmon        h0        h1     name \n \"integer\" \"integer\" \"integer\" \"factor\"\n\nThe \"by\" function takes a data frame and a list of factors, and executes the\nsupplied function on the sub \"data frame\" supplied.  To illustrate this,\nhere is the output from the \"class\" function applied to the data set using\n\"by\":-\n\n> by(tempdata[, 1, drop = F], tempdata$name, class)  # Apply class function\ntempdata$name:abvol\n[1] \"data.frame\"\n-----------------------------------------\ntempdata$name:accr\n[1] \"data.frame\"\n\nThat means that any function that won't work on a data frame will complain\nabout the type of data passed in.  To use \"by\", you need to make sure the\nfunction you supply to \"by\" can execute on a given data frame.  \n\nFor this type of analysis, I would recommend the use of the \"aggregate\"\nfunction.  The \"aggregate\" function works in a similar way to \"by\", but\napplies the function provided to the columns of the sub data frame:-\n\n> aggregate(tempdata[, 1:3], tempdata$name, min)\n      tempdata.name yearmon h0 h1 \nabvol         abvol  200602  1  3\n accr          accr  199106  3  1\n\nOf course, if we are applying a function to a single column of a dataset (as\nin your example) we can more easily use tapply:-\n\n> tapply(tempdata$yearmon, tempdata$name, min)\n  abvol   accr \n 200602 199106\n\nHope this helps,\nRich.\n\nS-PLUS and R Consulting and Training\nmangosolutions\nTel    +44 1249 467 467\nFax   +44 1249 467 468\n\n-----Original Message-----\nFrom: s-news-owner at lists.biostat.wustl.edu\n[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Austin, Matt\nSent: 14 April 2006 03:45\nTo: 'Kurbat, Matt BGI SF'; s-news at lists.biostat.wustl.edu\nSubject: Re: [S] \"by\" question \n\nI'm not sure why the min does not work in the by() function.  I have\nprovided a method that does work.\n\nAlso, please be careful about the way you create the data.  When you mixed\ncharacter and numerics in the vectors, it coerces all to characters.  When\nyou created your dataframe, everything comes out as character.  Check out my\nexample as how to create the dataframe I think you wanted.\n\ntempdata<-as.data.frame(matrix(NA,4,4))\n        names(tempdata)<-c(\"yearmon\",\"h0\",\"h1\",\"name\")\n        tempdata[1,]<-c(200602,1,4,\"abvol\")\n        tempdata[2,]<-c(200603,2,3,\"abvol\")\n        tempdata[3,]<-c(199106,3,2,\"accr\")\n        tempdata[4,]<-c(199107,4,1,\"accr\")\n\nis.numeric(tempdata$yearmon)\n\ntempdata <- data.frame(yearmon= c(200602, 200603, 199106, 199107),\n                       h0     = 1:4,\n                       h1     = 4:1,\n                       name   = c(rep(c('abvol', 'accr'), each = 2)))\nis.numeric(tempdata$yearmon)\n\nby(tempdata[, 1], tempdata$name, mean)\nby(tempdata[, 1], tempdata$name, function(x) min(x))\n\n--Matt\n\nMatt Austin\nStatistician\nAmgen, Inc\n800 9AMGEN9 x77431\n805-447-7431\n\n-----Original Message-----\nFrom: s-news-owner at lists.biostat.wustl.edu\n[mailto:s-news-owner at lists.biostat.wustl.edu]On Behalf Of Kurbat, Matt\nBGI SF\nSent: Thursday, April 13, 2006 7:15 PM\nTo: s-news at lists.biostat.wustl.edu\nSubject: [S] \"by\" question \n\nHello, \n\nI've recently returned to Splus after a long layoff (forced SAS treatments).\n\nI'm trying to apply \"by\" for various input functions and datasets and having\ntrouble getting it right.\n\nFor example, I can create a dataframe as follows: \n        tempdata<-as.data.frame(matrix(NA,4,4))\n        names(tempdata)<-c(\"yearmon\",\"h0\",\"h1\",\"name\")\n        tempdata[1,]<-c(200602,1,4,\"abvol\")\n        tempdata[2,]<-c(200603,2,3,\"abvol\")\n        tempdata[3,]<-c(199106,3,2,\"accr\")\n        tempdata[4,]<-c(199107,4,1,\"accr\")\nWith results that look like this:\n        > tempdata\n          yearmon h0 h1  name \n        1  200602  1  4 abvol\n        2  200603  2  3 abvol\n        3  199106  3  2  accr\n   4  199107  4  1  accr\n\nI want to compute various functions (min, max, mean, stdev, kurtosis, etc.)\nover the groups defined in the \"name\" variable using the \"by\" function.  \nOn some data sets I can get \"mean\" to work fine but not the others.  \n\nOn the example above, I get the following results using \"mean\"\n        by(as.data.frame(tempdata[,1]), tempdata$name, mean)\n                > by(as.data.frame(tempdata[, 1]), tempdata$name, mean)\n                tempdata$name:abvol\n                [1] NA\n                -----------------------------------------------------------\n                tempdata$name:accr\n                [1] NA\n\nOn the example above, I get the following results using \"min\"\n        by(as.data.frame(tempdata[,1]), tempdata$name, mean)\n                > by(as.data.frame(tempdata[, 1]), as.factor(tempdata$name),\nmin)\n                Problem in NextMethod(.Generic): Can't find the generic\nfunction \"FUN\" \n                Use traceback() to see the call stack\n \nWould someone please explain to me how I can make these work?  \nI'm running Splus 7.0 on Windows 2000.  \n\nThanks!\nMatt \n \nThis message and any attachments are confidential, proprietary, and may be\nprivileged.  If this message was misdirected, Barclays Global Investors\n(BGI) does not waive any confidentiality or privilege.  If you are not the\nintended recipient, please notify us immediately and destroy the message\nwithout disclosing its contents to anyone.  Any distribution, use or copying\nof this e-mail or the information it contains by other than an intended\nrecipient is unauthorized.  The views and opinions expressed in this e-mail\nmessage are the author's own and may not reflect the views and opinions of\nBGI, unless the author is authorized by BGI to express such views or\nopinions on its behalf.  All email sent to or from this address is subject\nto electronic storage and review by BGI.  Although BGI operates anti-virus\nprograms, it does not accept responsibility for any damage whatsoever caused\nby viruses being passed.\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Hi there,\n\nAs Matt Austin has mentioned, the way you have created the data frame means\nthat all columns are character.  To illustrate this we can check the class\nof each column in the data frame you c",
-      "thread_id": "thread-0c16fd6f7a0c",
-      "thread_depth": 1,
+      "thread_id": "thread-23e5b70dffb4",
+      "thread_depth": 2,
       "month": "2006-04"
     },
     {
@@ -1251,12 +1251,12 @@
       "date": "2006-04-18T11:55:44Z",
       "subject": "help",
       "subject_clean": "help",
-      "in_reply_to": null,
+      "in_reply_to": "<20060406161908.18130.qmail@web51312.mail.yahoo.com>",
       "references": [],
       "body_plain": "Dear subscibers,\n  This is the probllem i encountered in S-PLUS to estimate an ARMA(1,1) model for the demeaned interest rate differential with starting values theta=0 and phil=0.75\n  > mod.list=list(order=c(1,0,1))\n> mod.list=list(order=c(1,0,1),ar=0.75,ma=0)\n> mod.list=list(ar=c(0.75,-0.25),ma=c(0,0))\n> uscn.id.dm= uscn.id- mean(uscn.id)\n> arma11.mod = list(ar=0.75,ma=0)\n> arma11.fit = arima.mle(uscn.id.dm,model=arma11.mod)\nProblem in solve.qr(a): apparently singular matrix \nUse traceback() to see the call stack\n>pls help me so i can go further.\n  Thanks\n  Alli, titilayo\n\n\t\tNew Yahoo! Messenger with Voice. Call regular phones from your PC and save big.",
       "body_snippet": "Dear subscibers,\n  This is the probllem i encountered in S-PLUS to estimate an ARMA(1,1) model for the demeaned interest rate differential with starting values theta=0 and phil=0.75\n  > mod.list=list(",
-      "thread_id": "thread-18c9c71371c5",
-      "thread_depth": 0,
+      "thread_id": "thread-20ded59769ff",
+      "thread_depth": 1,
       "month": "2006-04"
     },
     {
@@ -1315,12 +1315,12 @@
       "date": "2006-04-19T08:00:09Z",
       "subject": "Re: plot",
       "subject_clean": "plot",
-      "in_reply_to": null,
+      "in_reply_to": "<20060419075100.18562.qmail@web53903.mail.yahoo.com>",
       "references": [],
       "body_plain": "You need the par function.\n\npar(mfcol = c(2,1)) or\npar(mfrow = c(2,1) allows you display two graphs on the same graphsheet\n\nIf you want equal axis then set\ntheir boundaries with the xlim and ylim parameters of the plot function\n\n \n\nCheers,\n\n \n\nThierry\n\n \n\n--------------------------------------------------------\n\nir. Thierry Onkelinx\n\nResearch Institute for Nature and Forest\n\nTeam Biometrics, methodology and quality\nassurance\n\nGaverstraat 4\n\nB-9500 Geraardsbergen\n\nBelgium\n\ntel. + 32 54/436 185\n\nThierry.Onkelinx at inbo.be\n\nVan:\ns-news-owner at lists.biostat.wustl.edu [mailto:s-news-owner at lists.biostat.wustl.edu]\nNamens olanrewaju sanni\n\nVerzonden: woensdag 19 april 2006\n9:51\n\nAan: s-news at wubios.wustl.edu\n\nOnderwerp: [S] plot\n\n \n\nhi subscribers,\n\nCan anybody tell me how I can plot two or more graphs on the same graph\nsheet sharing the the axis, using s-plus 7.\n\nthanx.\n\nLanre\n\nYahoo!\nMessenger with Voice. PC-to-Phone calls for ridiculously low rates.",
       "body_snippet": "You need the par function.\n\npar(mfcol = c(2,1)) or\npar(mfrow = c(2,1) allows you display two graphs on the same graphsheet\n\nIf you want equal axis then set\ntheir boundaries with the xlim and ylim para",
-      "thread_id": "thread-71a46a0ae444",
-      "thread_depth": 0,
+      "thread_id": "thread-a288c2c1d39f",
+      "thread_depth": 1,
       "month": "2006-04"
     },
     {
@@ -1337,8 +1337,8 @@
       ],
       "body_plain": "Thanx for your contribution Thierry, this is what I mean; to supperimpose two line graphs into a graph sheet.\n  bye\n  Lanre\n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n  \n\n\"ONKELINX, Thierry\" <Thierry.ONKELINX at inbo.be> wrote:\n  >                   You need the par function.\n>   par(mfcol = c(2,1)) or par(mfrow = c(2,1) allows you display two graphs on the same graphsheet\n>   If you want equal axis then set their boundaries with the xlim and ylim parameters of the plot function\n>\n>   Cheers,\n>\n>   Thierry\n>\n>   --------------------------------------------------------\n> ir. Thierry Onkelinx\n>   Research\n>  Institute for Nature and Forest\n>   Team Biometrics, methodology and quality assurance\n>   Gaverstraat 4\n>   B-9500 Geraardsbergen\n>   Belgium\n>     tel. + 32 54/436 185\n> Thierry.Onkelinx at inbo.be\n>\n>\n>   Van: s-news-owner at lists.biostat.wustl.edu [mailto:s-news-owner at lists.biostat.wustl.edu] Namens olanrewaju sanni\n> Verzonden: woensdag 19 april 2006 9:51\n> Aan: s-news at wubios.wustl.edu\n> Onderwerp: [S] plot\n>\n>\n>     hi subscribers,\n>\n>     Can anybody tell me how I can plot two or more graphs on the same graph sheet sharing the the axis, using s-plus 7.\n>\n>     thanx.\n>\n>     Lanre\n>\n>\n>   Yahoo! Messenger with Voice. PC-to-Phone calls for ridiculously low rates.\n\n\t\tBlab-away for as little as 1¢/min. Make  PC-to-Phone Calls using Yahoo! Messenger with Voice.",
       "body_snippet": "Thanx for your contribution Thierry, this is what I mean; to supperimpose two line graphs into a graph sheet.\n  bye\n  Lanre\n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n",
-      "thread_id": "thread-71a46a0ae444",
-      "thread_depth": 1,
+      "thread_id": "thread-a288c2c1d39f",
+      "thread_depth": 2,
       "month": "2006-04"
     },
     {
@@ -1505,12 +1505,12 @@
       "date": "2006-04-21T15:59:46Z",
       "subject": "Re: Selecting every other line from a data frame",
       "subject_clean": "Selecting every other line from a data frame",
-      "in_reply_to": null,
+      "in_reply_to": "<C8696843AE995F4EA4CDC3E2B83482A901879010@mailbox02.cshl.edu>",
       "references": [],
       "body_plain": "Thanks Tony and Chritos. Its great!!\n\nCould you recommend a good S book to learn this sort of stuff?\n\n-Sohail\n\n-----Original Message-----\nFrom: s-news-owner at lists.biostat.wustl.edu\n[mailto:s-news-owner at lists.biostat.wustl.edu]On Behalf Of Christos\nHatzis\nSent: Friday, April 21, 2006 11:53 AM\nTo: christos at nuverabio.com; Khan, Sohail; s-news at lists.biostat.wustl.edu\nSubject: Re: [S] Selecting every other line from a data frame\n\nSorry it should be: \n\nmy.df[ (1:nrow(my.df)) %% 2 == 0, ]\n\n-----Original Message-----\nFrom: s-news-owner at lists.biostat.wustl.edu\n[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Christos Hatzis\nSent: Friday, April 21, 2006 11:51 AM\nTo: 'Khan, Sohail'; s-news at lists.biostat.wustl.edu\nSubject: Re: [S] Selecting every other line from a data frame\n\nYou can try the following:\n\nmy.df[ nrow(my.df) %% 2 == 0, ]\n\nfor selecting even lines or == 1 for odd lines.\n\n-Christos \n\n-----Original Message-----\nFrom: s-news-owner at lists.biostat.wustl.edu\n[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Khan, Sohail\nSent: Friday, April 21, 2006 11:46 AM\nTo: s-news at lists.biostat.wustl.edu\nSubject: [S] Selecting every other line from a data frame\n\nDear All,\n\nI have a large data frame, from which I want to only select every other line\nor odd lines.\nHow can I do this?  Thanks.\n\nSohail Khan\nScientific Programmer\nCOLD SPRING HARBOR LABORATORY\nGenome Research Center\n500 Sunnyside Boulevard\nWoodbury, NY 11797\n(516)422-4076\n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with the\nBODY of the message:  unsubscribe s-news\n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with the\nBODY of the message:  unsubscribe s-news\n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Thanks Tony and Chritos. Its great!!\n\nCould you recommend a good S book to learn this sort of stuff?\n\n-Sohail\n\n-----Original Message-----\nFrom: s-news-owner at lists.biostat.wustl.edu\n[mailto:s-news-o",
-      "thread_id": "thread-f0bfd351b1f8",
-      "thread_depth": 0,
+      "thread_id": "thread-90785a09f754",
+      "thread_depth": 1,
       "month": "2006-04"
     },
     {
@@ -1561,8 +1561,8 @@
       ],
       "body_plain": "In general, it's wise to avoid the idiom 1:n, because when n is zero, \nthis generates the vector c(1,0), which is rarely (ever?) what you want. \n Instead use seq(len=n).\n\nThe R-faq has some pointers to some good books on S-PLUS & R.  Find it \nat www.r-project.org.\n\n-- Tony Plate\n\nKhan, Sohail wrote:\n> Thanks Tony and Chritos. Its great!!\n>\n> Could you recommend a good S book to learn this sort of stuff?\n>\n> -Sohail\n>\n> -----Original Message-----\n> From: s-news-owner at lists.biostat.wustl.edu\n> [mailto:s-news-owner at lists.biostat.wustl.edu]On Behalf Of Christos\n> Hatzis\n> Sent: Friday, April 21, 2006 11:53 AM\n> To: christos at nuverabio.com; Khan, Sohail; s-news at lists.biostat.wustl.edu\n> Subject: Re: [S] Selecting every other line from a data frame\n>\n>\n> Sorry it should be:\n>\n>\n> my.df[ (1:nrow(my.df)) %% 2 == 0, ]\n>\n> -----Original Message-----\n> From: s-news-owner at lists.biostat.wustl.edu\n> [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Christos Hatzis\n> Sent: Friday, April 21, 2006 11:51 AM\n> To: 'Khan, Sohail'; s-news at lists.biostat.wustl.edu\n> Subject: Re: [S] Selecting every other line from a data frame\n>\n> You can try the following:\n>\n> my.df[ nrow(my.df) %% 2 == 0, ]\n>\n> for selecting even lines or == 1 for odd lines.\n>\n> -Christos\n>\n>\n> -----Original Message-----\n> From: s-news-owner at lists.biostat.wustl.edu\n> [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Khan, Sohail\n> Sent: Friday, April 21, 2006 11:46 AM\n> To: s-news at lists.biostat.wustl.edu\n> Subject: [S] Selecting every other line from a data frame\n>\n> Dear All,\n>\n> I have a large data frame, from which I want to only select every other line\n> or odd lines.\n> How can I do this?  Thanks.\n>\n>\n> Sohail Khan\n> Scientific Programmer\n> COLD SPRING HARBOR LABORATORY\n> Genome Research Center\n> 500 Sunnyside Boulevard\n> Woodbury, NY 11797\n> (516)422-4076\n>\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with the\n> BODY of the message:  unsubscribe s-news\n>\n>\n>\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with the\n> BODY of the message:  unsubscribe s-news\n>\n>\n>\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news",
       "body_snippet": "In general, it's wise to avoid the idiom 1:n, because when n is zero, \nthis generates the vector c(1,0), which is rarely (ever?) what you want. \n Instead use seq(len=n).\n\nThe R-faq has some pointers t",
-      "thread_id": "thread-f0bfd351b1f8",
-      "thread_depth": 1,
+      "thread_id": "thread-90785a09f754",
+      "thread_depth": 2,
       "month": "2006-04"
     },
     {
@@ -1644,12 +1644,12 @@
       "date": "2006-04-21T21:38:46Z",
       "subject": "Re: random samples",
       "subject_clean": "random samples",
-      "in_reply_to": null,
+      "in_reply_to": "<3FC0430478C30B4A9AF0AFF7863418F14D1B40@BCMEVS6.ad.bcm.edu>",
       "references": [],
       "body_plain": "result <- matrix(rnorm(30*30, mean=20,\n                       sd=seq(1, 10, length=30)),\n                 30, 30, byrow=TRUE)\nprint(result, digits=1)\napply(result, 2, var)\nresult2 <- apply(result, 2, sort)\napply(result2, 2, var)\nprint(result2, digits=1)",
       "body_snippet": "result <- matrix(rnorm(30*30, mean=20,\n                       sd=seq(1, 10, length=30)),\n                 30, 30, byrow=TRUE)\nprint(result, digits=1)\napply(result, 2, var)\nresult2 <- apply(result, 2, ",
-      "thread_id": "thread-cc982683b0bb",
-      "thread_depth": 0,
+      "thread_id": "thread-866d1741ba1d",
+      "thread_depth": 1,
       "month": "2006-04"
     },
     {
@@ -1746,12 +1746,12 @@
       "date": "2006-04-22T21:15:49Z",
       "subject": "Re: random samples",
       "subject_clean": "random samples",
-      "in_reply_to": null,
+      "in_reply_to": "<3FC0430478C30B4A9AF0AFF7863418F14D1B40@BCMEVS6.ad.bcm.edu>",
       "references": [],
       "body_plain": "Think matrix!\n\nThis version is the same as I sent yesterday plus I constructed\nresult3 to give two columns, the first is the vector of 900 numbers\nyou requested and the second is the group labels\n\n## construct data\nresult <- matrix(rnorm(30*30, mean=50,\n                       sd=seq(1, 10, length=30)),\n                 30, 30, byrow=TRUE)\n\nprint(result, digits=1)  ## verify standard deviations\napply(result, 2, var)^.5\n\n## sort each of the 30 groups\nresult2 <- apply(result, 2, sort)\n\napply(result2, 2, var)^.5  ## verify standard deviations\nprint(result2, digits=1)\n\n## rearrange into a single vector with a column of group labels\nresult3 <- cbind(y=as.vector(result2), group=as.vector(col(result2)))\n\nresult3\n\nAs an aside, you can start a sequence with a zero-length vector.\nx <- numeric(0)\nx\nx <- append(x, 1:5)\nx\nx <- append(x, 1:5)\nx",
       "body_snippet": "Think matrix!\n\nThis version is the same as I sent yesterday plus I constructed\nresult3 to give two columns, the first is the vector of 900 numbers\nyou requested and the second is the group labels\n\n## ",
-      "thread_id": "thread-7826168fc86d",
-      "thread_depth": 0,
+      "thread_id": "thread-866d1741ba1d",
+      "thread_depth": 1,
       "month": "2006-04"
     },
     {
@@ -2153,34 +2153,26 @@
     {
       "id": "thread-85bc01622ff1",
       "subject": "Quit Apologizing!",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Khan, Sohail",
         "Overstreet, Jason (FL51)"
       ],
       "started": "2006-04-05T13:31:26Z",
-      "last_reply": "2006-04-05T13:31:26Z",
-      "root_message_id": "msg-85bc01622ff1"
-    },
-    {
-      "id": "thread-8c44d52a092c",
-      "subject": "Quit Apologizing!",
-      "message_count": 1,
-      "participants": [
-        "Khan, Sohail"
-      ],
-      "started": "2006-04-05T14:35:19Z",
       "last_reply": "2006-04-05T14:35:19Z",
-      "root_message_id": "msg-8c44d52a092c"
+      "root_message_id": "msg-85bc01622ff1"
     },
     {
       "id": "thread-1270f1023fb6",
       "subject": "setMethod error",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
+        "Richard M. Heiberger",
+        "Stewart, William",
         "Zege, Andrew [EQTY]"
       ],
       "started": "2006-04-05T15:40:38Z",
-      "last_reply": "2006-04-05T15:40:38Z",
+      "last_reply": "2006-04-05T21:43:10Z",
       "root_message_id": "msg-1270f1023fb6"
     },
     {
@@ -2196,32 +2188,11 @@
       "root_message_id": "msg-7b6ba88b1ed1"
     },
     {
-      "id": "thread-78fe78ab8eff",
-      "subject": "setMethod error",
-      "message_count": 1,
-      "participants": [
-        "Richard M. Heiberger"
-      ],
-      "started": "2006-04-05T21:06:38Z",
-      "last_reply": "2006-04-05T21:06:38Z",
-      "root_message_id": "msg-78fe78ab8eff"
-    },
-    {
-      "id": "thread-f591533cc6c2",
-      "subject": "setMethod error",
-      "message_count": 1,
-      "participants": [
-        "Stewart, William"
-      ],
-      "started": "2006-04-05T21:43:10Z",
-      "last_reply": "2006-04-05T21:43:10Z",
-      "root_message_id": "msg-f591533cc6c2"
-    },
-    {
       "id": "thread-96ef034b6e27",
       "subject": "simple arithmetic",
-      "message_count": 3,
+      "message_count": 6,
       "participants": [
+        "Chalvatzis, Dimitrios (Energy Wholesale)",
         "Dimitris Rizopoulos",
         "Karl Hülber",
         "Marcus Hudec"
@@ -2231,136 +2202,52 @@
       "root_message_id": "msg-96ef034b6e27"
     },
     {
-      "id": "thread-a0ba398a3a03",
-      "subject": "simple arithmetic",
-      "message_count": 1,
-      "participants": [
-        "Chalvatzis, Dimitrios (Energy Wholesale)"
-      ],
-      "started": "2006-04-06T10:29:08Z",
-      "last_reply": "2006-04-06T10:29:08Z",
-      "root_message_id": "msg-a0ba398a3a03"
-    },
-    {
-      "id": "thread-a04bc6861f57",
-      "subject": "simple arithmetic",
-      "message_count": 1,
-      "participants": [
-        "Chalvatzis, Dimitrios (Energy Wholesale)"
-      ],
-      "started": "2006-04-06T10:34:42Z",
-      "last_reply": "2006-04-06T10:34:42Z",
-      "root_message_id": "msg-a04bc6861f57"
-    },
-    {
       "id": "thread-24cc2dac4c10",
       "subject": "Roll nlme",
-      "message_count": 1,
+      "message_count": 6,
       "participants": [
+        "Chalvatzis, Dimitrios (Energy Wholesale)",
+        "Chen,Sichong",
+        "Dimitrios Chalvatzis",
         "Juan Carlos Ruilova Teran"
       ],
       "started": "2006-04-06T11:42:54Z",
-      "last_reply": "2006-04-06T11:42:54Z",
+      "last_reply": "2006-04-06T19:36:08Z",
       "root_message_id": "msg-24cc2dac4c10"
-    },
-    {
-      "id": "thread-bbeb637493c1",
-      "subject": "Roll nlme",
-      "message_count": 1,
-      "participants": [
-        "Chalvatzis, Dimitrios (Energy Wholesale)"
-      ],
-      "started": "2006-04-06T11:59:21Z",
-      "last_reply": "2006-04-06T11:59:21Z",
-      "root_message_id": "msg-bbeb637493c1"
-    },
-    {
-      "id": "thread-b4a88415ceda",
-      "subject": "Roll nlme",
-      "message_count": 1,
-      "participants": [
-        "Juan Carlos Ruilova Teran"
-      ],
-      "started": "2006-04-06T12:28:52Z",
-      "last_reply": "2006-04-06T12:28:52Z",
-      "root_message_id": "msg-b4a88415ceda"
-    },
-    {
-      "id": "thread-225cecd61075",
-      "subject": "Roll nlme",
-      "message_count": 1,
-      "participants": [
-        "Chalvatzis, Dimitrios (Energy Wholesale)"
-      ],
-      "started": "2006-04-06T13:30:55Z",
-      "last_reply": "2006-04-06T13:30:55Z",
-      "root_message_id": "msg-225cecd61075"
-    },
-    {
-      "id": "thread-397bd623a5f4",
-      "subject": "simple arithmetic",
-      "message_count": 1,
-      "participants": [
-        "Chalvatzis, Dimitrios (Energy Wholesale)"
-      ],
-      "started": "2006-04-06T14:20:56Z",
-      "last_reply": "2006-04-06T14:20:56Z",
-      "root_message_id": "msg-397bd623a5f4"
     },
     {
       "id": "thread-d8662b0c2938",
       "subject": "non_linear",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Andreas Svensson",
         "olanrewaju sanni"
       ],
       "started": "2006-04-06T14:43:23Z",
-      "last_reply": "2006-04-06T14:43:23Z",
-      "root_message_id": "msg-d8662b0c2938"
-    },
-    {
-      "id": "thread-2eaa575161d1",
-      "subject": "non_linear",
-      "message_count": 1,
-      "participants": [
-        "Andreas Svensson"
-      ],
-      "started": "2006-04-06T15:05:03Z",
       "last_reply": "2006-04-06T15:05:03Z",
-      "root_message_id": "msg-2eaa575161d1"
-    },
-    {
-      "id": "thread-971c701950dc",
-      "subject": "Roll nlme",
-      "message_count": 2,
-      "participants": [
-        "Chen,Sichong",
-        "Dimitrios Chalvatzis"
-      ],
-      "started": "2006-04-06T15:53:44Z",
-      "last_reply": "2006-04-06T19:36:08Z",
-      "root_message_id": "msg-971c701950dc"
+      "root_message_id": "msg-d8662b0c2938"
     },
     {
       "id": "thread-20ded59769ff",
       "subject": "help",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "alli charbes"
       ],
       "started": "2006-04-06T16:19:08Z",
-      "last_reply": "2006-04-06T16:19:08Z",
+      "last_reply": "2006-04-18T11:55:44Z",
       "root_message_id": "msg-20ded59769ff"
     },
     {
       "id": "thread-8ef70ebf6b3c",
       "subject": "Specialized trellis plot",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "David Parkhurst"
+        "David Parkhurst",
+        "Richard M. Heiberger"
       ],
       "started": "2006-04-06T19:10:35Z",
-      "last_reply": "2006-04-06T19:10:35Z",
+      "last_reply": "2006-04-07T02:53:04Z",
       "root_message_id": "msg-8ef70ebf6b3c"
     },
     {
@@ -2373,17 +2260,6 @@
       "started": "2006-04-06T19:20:42Z",
       "last_reply": "2006-04-06T19:20:42Z",
       "root_message_id": "msg-dd10bfe2ab22"
-    },
-    {
-      "id": "thread-120d7242eb61",
-      "subject": "Specialized trellis plot",
-      "message_count": 1,
-      "participants": [
-        "Richard M. Heiberger"
-      ],
-      "started": "2006-04-07T02:53:04Z",
-      "last_reply": "2006-04-07T02:53:04Z",
-      "root_message_id": "msg-120d7242eb61"
     },
     {
       "id": "thread-4ddffdfcdfe2",
@@ -2532,12 +2408,12 @@
     {
       "id": "thread-243d5d37f8b0",
       "subject": "barplot",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "michel.piot at bfe.admin.ch"
       ],
       "started": "2006-04-12T06:52:22Z",
-      "last_reply": "2006-04-12T06:52:22Z",
+      "last_reply": "2006-04-13T04:49:21Z",
       "root_message_id": "msg-243d5d37f8b0"
     },
     {
@@ -2565,36 +2441,15 @@
     {
       "id": "thread-2e26dc622134",
       "subject": "- Multiple Plots using By",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Andrew Scott",
+        "Austin, Matt",
         "Sundar Dorai-Raj"
       ],
       "started": "2006-04-13T02:17:10Z",
       "last_reply": "2006-04-13T03:02:36Z",
       "root_message_id": "msg-2e26dc622134"
-    },
-    {
-      "id": "thread-fb1ffe83692b",
-      "subject": "- Multiple Plots using By",
-      "message_count": 1,
-      "participants": [
-        "Austin, Matt"
-      ],
-      "started": "2006-04-13T02:58:10Z",
-      "last_reply": "2006-04-13T02:58:10Z",
-      "root_message_id": "msg-fb1ffe83692b"
-    },
-    {
-      "id": "thread-82bdebe5eed2",
-      "subject": "barplot",
-      "message_count": 1,
-      "participants": [
-        "michel.piot at bfe.admin.ch"
-      ],
-      "started": "2006-04-13T04:49:21Z",
-      "last_reply": "2006-04-13T04:49:21Z",
-      "root_message_id": "msg-82bdebe5eed2"
     },
     {
       "id": "thread-6f393ee85ca2",
@@ -2610,37 +2465,15 @@
     {
       "id": "thread-28a5decd1109",
       "subject": "Executing S-Plus scripts",
-      "message_count": 2,
+      "message_count": 5,
       "participants": [
         "A.J. Rossini",
-        "Brian Richards"
-      ],
-      "started": "2006-04-13T14:31:54Z",
-      "last_reply": "2006-04-13T14:42:10Z",
-      "root_message_id": "msg-28a5decd1109"
-    },
-    {
-      "id": "thread-cc151e72a02f",
-      "subject": "Executing S-Plus scripts",
-      "message_count": 2,
-      "participants": [
-        "A.J. Rossini",
-        "Brian Richards"
-      ],
-      "started": "2006-04-13T14:47:58Z",
-      "last_reply": "2006-04-13T16:08:45Z",
-      "root_message_id": "msg-cc151e72a02f"
-    },
-    {
-      "id": "thread-62728a91a40c",
-      "subject": "Executing S-Plus scripts",
-      "message_count": 1,
-      "participants": [
+        "Brian Richards",
         "Richard M. Heiberger"
       ],
-      "started": "2006-04-13T16:05:54Z",
-      "last_reply": "2006-04-13T16:05:54Z",
-      "root_message_id": "msg-62728a91a40c"
+      "started": "2006-04-13T14:31:54Z",
+      "last_reply": "2006-04-13T16:08:45Z",
+      "root_message_id": "msg-28a5decd1109"
     },
     {
       "id": "thread-75965dd7a39b",
@@ -2656,25 +2489,15 @@
     {
       "id": "thread-23e5b70dffb4",
       "subject": "\"by\" question",
-      "message_count": 1,
-      "participants": [
-        "Kurbat, Matt BGI SF"
-      ],
-      "started": "2006-04-14T02:15:21Z",
-      "last_reply": "2006-04-14T02:15:21Z",
-      "root_message_id": "msg-23e5b70dffb4"
-    },
-    {
-      "id": "thread-0c16fd6f7a0c",
-      "subject": "\"by\" question",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Austin, Matt",
+        "Kurbat, Matt BGI SF",
         "Rich at Mango-Solutions.com"
       ],
-      "started": "2006-04-14T02:45:06Z",
+      "started": "2006-04-14T02:15:21Z",
       "last_reply": "2006-04-15T13:17:40Z",
-      "root_message_id": "msg-0c16fd6f7a0c"
+      "root_message_id": "msg-23e5b70dffb4"
     },
     {
       "id": "thread-de3501599b81",
@@ -2711,17 +2534,6 @@
       "root_message_id": "msg-1a7ee3365b62"
     },
     {
-      "id": "thread-18c9c71371c5",
-      "subject": "help",
-      "message_count": 1,
-      "participants": [
-        "alli charbes"
-      ],
-      "started": "2006-04-18T11:55:44Z",
-      "last_reply": "2006-04-18T11:55:44Z",
-      "root_message_id": "msg-18c9c71371c5"
-    },
-    {
       "id": "thread-783f0177109a",
       "subject": "Any R/S course coming up this April in the bay area?",
       "message_count": 1,
@@ -2746,25 +2558,14 @@
     {
       "id": "thread-a288c2c1d39f",
       "subject": "plot",
-      "message_count": 1,
-      "participants": [
-        "olanrewaju sanni"
-      ],
-      "started": "2006-04-19T07:51:00Z",
-      "last_reply": "2006-04-19T07:51:00Z",
-      "root_message_id": "msg-a288c2c1d39f"
-    },
-    {
-      "id": "thread-71a46a0ae444",
-      "subject": "plot",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "ONKELINX, Thierry",
         "olanrewaju sanni"
       ],
-      "started": "2006-04-19T08:00:09Z",
+      "started": "2006-04-19T07:51:00Z",
       "last_reply": "2006-04-19T09:08:47Z",
-      "root_message_id": "msg-71a46a0ae444"
+      "root_message_id": "msg-a288c2c1d39f"
     },
     {
       "id": "thread-c40bcae58b02",
@@ -2794,7 +2595,7 @@
     {
       "id": "thread-90785a09f754",
       "subject": "Selecting every other line from a data frame",
-      "message_count": 5,
+      "message_count": 7,
       "participants": [
         "Christos Hatzis",
         "Khan, Sohail",
@@ -2804,18 +2605,6 @@
       "started": "2006-04-21T15:45:40Z",
       "last_reply": "2006-04-21T17:49:57Z",
       "root_message_id": "msg-90785a09f754"
-    },
-    {
-      "id": "thread-f0bfd351b1f8",
-      "subject": "Selecting every other line from a data frame",
-      "message_count": 2,
-      "participants": [
-        "Khan, Sohail",
-        "Tony Plate"
-      ],
-      "started": "2006-04-21T15:59:46Z",
-      "last_reply": "2006-04-21T17:32:29Z",
-      "root_message_id": "msg-f0bfd351b1f8"
     },
     {
       "id": "thread-00419751dfd8",
@@ -2832,12 +2621,13 @@
     {
       "id": "thread-866d1741ba1d",
       "subject": "random samples",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
+        "Richard M. Heiberger",
         "Roberts, J. Kyle"
       ],
       "started": "2006-04-21T20:49:30Z",
-      "last_reply": "2006-04-21T20:49:30Z",
+      "last_reply": "2006-04-22T21:15:49Z",
       "root_message_id": "msg-866d1741ba1d"
     },
     {
@@ -2851,17 +2641,6 @@
       "started": "2006-04-21T21:16:51Z",
       "last_reply": "2006-04-22T10:39:09Z",
       "root_message_id": "msg-8488ffeb982e"
-    },
-    {
-      "id": "thread-cc982683b0bb",
-      "subject": "random samples",
-      "message_count": 1,
-      "participants": [
-        "Richard M. Heiberger"
-      ],
-      "started": "2006-04-21T21:38:46Z",
-      "last_reply": "2006-04-21T21:38:46Z",
-      "root_message_id": "msg-cc982683b0bb"
     },
     {
       "id": "thread-c6c18f3baa77",
@@ -2896,17 +2675,6 @@
       "started": "2006-04-22T20:36:51Z",
       "last_reply": "2006-04-22T20:36:51Z",
       "root_message_id": "msg-fc66e52e78c9"
-    },
-    {
-      "id": "thread-7826168fc86d",
-      "subject": "random samples",
-      "message_count": 1,
-      "participants": [
-        "Richard M. Heiberger"
-      ],
-      "started": "2006-04-22T21:15:49Z",
-      "last_reply": "2006-04-22T21:15:49Z",
-      "root_message_id": "msg-7826168fc86d"
     },
     {
       "id": "thread-142755097bfb",

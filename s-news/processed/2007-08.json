@@ -129,12 +129,12 @@
       "date": "2007-08-03T17:35:10Z",
       "subject": "Re: count occurrences",
       "subject_clean": "count occurrences",
-      "in_reply_to": null,
+      "in_reply_to": "<471600.91331.qm@web51404.mail.re2.yahoo.com>",
       "references": [],
       "body_plain": "Something like this should work:\n\nSuppose dim(x) is c(11000, 2).\n\nd <- dim(x)\nn <- d[1]\np <- d[2]\ndu <- dim(upb)\nx <- x[rep(seq(length = n), rep(du[1], n)), , drop = FALSE] \nupb <- upb[rep(seq(length = du[1]), n), , drop = FALSE]\ncmat <- t(x < upb)\ndim(cmat) <- c(du[2], du[1], n)\nout <- t(rowSums(cmat, na.rm = TRUE, dims = 2))\nout\n\nThe concept: expand x and upb so that an element-by-element comparison of the \ntwo expanded matrices gives you every comparison you wish to make.  Do the \ncomparison.  Then modify the dimensions of the resulting comparison matrix, \n\"cmat\", so that you easily can sum up the comparisons over the desired \ndimensions.  In this case, I transpose, and then transform into a 3D array.  \nThis allows me to use a single call to rowSums to sum up the comparisons for \nevery element of upb.\n\nTo follow this kind of thing, I find it really helps to (a) draw lots of \npictures of the matrices and arrays; and (b) carefully inspect all the \nintermediate objects, with test data for which you easily can see what the \nanswers should be.\n\nCheers,\nScott\n\n==================================\nScott D. Chasalow\nAssociate Director\nStatistical Genetics and Biomarkers\nBristol-Myers Squibb Company\n\nEmail: scott.chasalow <AT> bms.com\n================================== \n\nIta Cirovic wrote:\n> Given two data sets I would like to count the occurrences of one \n> dependent on the other. For example,\n> \n> upb is defined as follows\n> \n>                 P4         P5\n>  [1,] -0.0406703026 0.02952575\n>  [2,]  0.0008282428 0.06102947\n>  [3,]  0.0098109756 0.08774035\n>  [4,]  0.0183787962 0.11517816\n>  [5,]  0.0275845430 0.14899661\n>  [6,]  0.0390078215 0.19359835\n>  [7,]  0.0541145248 0.26253533\n>  [8,]  0.0772375923 0.37398115\n>  [9,]  0.1228048769 0.58875809\n> [10,]  0.9980051666 7.41044290\n> \n> then I have a data set which consists of the original values of the \n> variable sP4 and P5 with the number of observations of around 11000. \n> What I would like to do is to count how many observations of P4 are \n> smaller than opb[1,1] and then for upb[2,1] and so on. Also this I would \n> like to do for the other variable P5. The results would be stored in \n> another matrix say obs with dim(obs) = 10x2.\n> \n> I have been trying to do this using for loops and if statements, but was \n> wondering whether there was an easier way, for example some S-PLUS \n> function that would do count given the condition. Thanks.",
       "body_snippet": "Something like this should work:\n\nSuppose dim(x) is c(11000, 2).\n\nd <- dim(x)\nn <- d[1]\np <- d[2]\ndu <- dim(upb)\nx <- x[rep(seq(length = n), rep(du[1], n)), , drop = FALSE] \nupb <- upb[rep(seq(length ",
-      "thread_id": "thread-0a39a2ee8c4f",
-      "thread_depth": 0,
+      "thread_id": "thread-b5ac217a52aa",
+      "thread_depth": 1,
       "month": "2007-08"
     },
     {
@@ -145,12 +145,12 @@
       "date": "2007-08-03T18:04:59Z",
       "subject": "Re: count occurrences",
       "subject_clean": "count occurrences",
-      "in_reply_to": null,
+      "in_reply_to": "<471600.91331.qm@web51404.mail.re2.yahoo.com>",
       "references": [],
       "body_plain": "Generally this works half way as it adds up the rows , i.e. row+1 is the summation of the previous rows. I will try to remedy this and see if it will work then. Thanks for the input.\n\n> out\n       [,1]  [,2] \n [1,]  1106  1107\n [2,]  2213  2213\n [3,]  3320  3320\n [4,]  4426  4426\n [5,]  5532  5532\n [6,]  6639  6639\n [7,]  7745  7745\n [8,]  8852  8852\n [9,]  9958  9958\n[10,] 11064 11064\n\nand the row summations should be of equal (+/- 1) number of observations, so the first row is ok. The reason for this is the upb matrix is\n structured in that way.Changing the upb matrix will of course change the out matrix but right now I would like to test with this.\n\nIta\n\n----- Original Message ----\nFrom: SD Chasalow <sbackwards at comcast.net>\nTo: S-NEWS <s-news at lists.biostat.wustl.edu>\nSent: Friday, August 3, 2007 7:35:10 PM\nSubject: Re: [S] count occurrences\n\nSomething like this should work:\n\nSuppose dim(x) is c(11000, 2).\n\nd <- dim(x)\nn <- d[1]\np <- d[2]\ndu <- dim(upb)\nx <- x[rep(seq(length = n), rep(du[1], n)), , drop = FALSE] \nupb <- upb[rep(seq(length = du[1]), n), , drop = FALSE]\ncmat <- t(x < upb)\ndim(cmat) <- c(du[2], du[1], n)\nout <- t(rowSums(cmat, na.rm = TRUE, dims = 2))\nout\n\nThe concept: expand x and upb so that an element-by-element comparison of the two expanded matrices\n gives you every comparison you wish to make.  Do the comparison.  Then modify the dimensions of the resulting comparison matrix, \"cmat\", so that you easily can sum up the comparisons over the desired dimensions.  In this case, I transpose, and then transform into a 3D array.  This allows me to use a single call to rowSums to sum up the comparisons for every element of upb.\n\nTo follow this kind of thing, I find it really helps to (a) draw lots of pictures of the matrices and arrays; and (b) carefully inspect all the intermediate objects, with test data for which you easily can see what the answers should be.\n\nCheers,\nScott\n\n==================================\nScott D. Chasalow\nAssociate Director\nStatistical Genetics and Biomarkers\nBristol-Myers Squibb Company\n\nEmail: scott.chasalow <AT> bms.com\n================================== \n\nIta Cirovic wrote:\n> Given\n two data sets I would like to count the occurrences of one \n> dependent on the other. For example,\n> \n> upb is defined as follows\n> \n>                 P4         P5\n>  [1,] -0.0406703026 0.02952575\n>  [2,]  0.0008282428 0.06102947\n>  [3,]  0.0098109756 0.08774035\n>  [4,]  0.0183787962 0.11517816\n>  [5,]  0.0275845430 0.14899661\n>  [6,]  0.0390078215 0.19359835\n>  [7,]  0.0541145248 0.26253533\n>  [8,]  0.0772375923 0.37398115\n>  [9,]  0.1228048769 0.58875809\n> [10,]  0.9980051666 7.41044290\n> \n> then I have a data set which consists of the original values of\n the \n> variable sP4 and P5 with the number of observations of around 11000. \n> What I would like to do is to count how many observations of P4 are \n> smaller than opb[1,1] and then for upb[2,1] and so on. Also this I would \n> like to do for the other variable P5. The results would be stored in \n> another matrix say obs with dim(obs) = 10x2.\n> \n> I have been trying to do this using for loops and if statements, but was \n> wondering whether there was an easier way, for example some S-PLUS \n> function that would do count given the condition. Thanks.\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news\n\n      Fussy? Opinionated? Impossible to please? Perfect.  Join Yahoo!'s user panel and lay it on us.",
       "body_snippet": "Generally this works half way as it adds up the rows , i.e. row+1 is the summation of the previous rows. I will try to remedy this and see if it will work then. Thanks for the input.\n\n> out\n       [,1",
-      "thread_id": "thread-8ee31cd91fcf",
-      "thread_depth": 0,
+      "thread_id": "thread-b5ac217a52aa",
+      "thread_depth": 1,
       "month": "2007-08"
     },
     {
@@ -211,12 +211,12 @@
       "date": "2007-08-06T17:59:51Z",
       "subject": "Re: count occurrences",
       "subject_clean": "count occurrences",
-      "in_reply_to": null,
+      "in_reply_to": "<471600.91331.qm@web51404.mail.re2.yahoo.com>",
       "references": [],
       "body_plain": "I believe \"adding up the rows\", as you say, is exactly what you requested in \nyour original email.  I usually find it easier to solve a problem as described \nthan to solve the problem someone meant to describe but didn't.  Of course, had \nthis been a live consulting session I would have tried to make sure that the \nreal problem and the problem as described were the same thing.\n\nBy the way, in the output below, row + 1 is NOT \"the summation of the previous \nrows\".  Rather, it looks like the value in row i is the value in row i - 1 plus \neither 1106 or 1107.\n\nWith my code, out[i, j] is the number of elements in x[, j] that are less than \nupb[i, j].  I can only guess what it is you really would like.  If, for \nexample, you really want the counts of values in x that fall in bins with \nboundaries given by the elements of upb, that would not require a big change to \nthe code.  You would want to require that the values in each column of upb are \nsorted.  Then, you could do something like this:\n\nd <- dim(x)\nn <- d[1]\ndu <- dim(upb)\nupb.low <- rbind(min(upb) - 1, upb[-du[1], , drop = FALSE])\nx <- x[rep(seq(length = n), rep(du[1], n)), , drop = FALSE]\nupb <- upb[rep(seq(length = du[1]), n), , drop = FALSE]\nupb.low <- upb.low[rep(seq(length = du[1]), n), , drop = FALSE]\ncmat <- t(x < upb & x >= upb.low)\ndim(cmat) <- c(du[2], du[1], n)\nout <- t(rowSums(cmat, na.rm = TRUE, dims = 2))\nout\n\nOf course, if I have not chosen the inequality signs used to create cmat in \nquite the way you would like, that's easy enough to change.  This just affects \nwhat you want to happen when an element of x is on a bin boundary.\n\nCheers,\nScott \n \n -------------- Original message ----------------------\nFrom: Ita Cirovic <zag_cirovic at yahoo.com>\n> Generally this works half way as it adds up the rows , i.e. row+1 is the \n> summation of the previous rows. I will try to remedy this and see if it will \n> work then. Thanks for the input.\n> \n> > out\n>        [,1]  [,2] \n>  [1,]  1106  1107\n>  [2,]  2213  2213\n>  [3,]  3320  3320\n>  [4,]  4426  4426\n>  [5,]  5532  5532\n>  [6,]  6639  6639\n>  [7,]  7745  7745\n>  [8,]  8852  8852\n>  [9,]  9958  9958\n> [10,] 11064 11064\n> \n> and the row summations should be of equal (+/- 1) number of observations, so \n> the \n> first row is ok. The reason for this is the upb matrix is structured in that \n> way.Changing the upb matrix will of course change the out matrix but right \n> now I \n> would like to test with this.\n> \n> Ita\n> \n> ----- Original Message ----\n> From: SD Chasalow <sbackwards at comcast.net>\n> To: S-NEWS <s-news at lists.biostat.wustl.edu>\n> Sent: Friday, August 3, 2007 7:35:10 PM\n> Subject: Re: [S] count occurrences\n> \n> Something like this should work:\n> \n> Suppose dim(x) is c(11000, 2).\n> \n> d <- dim(x)\n> n <- d[1]\n> p <- d[2]\n> du <- dim(upb)\n> x <- x[rep(seq(length = n), rep(du[1], n)), , drop = FALSE] \n> upb <- upb[rep(seq(length = du[1]), n), , drop = FALSE]\n> cmat <- t(x < upb)\n> dim(cmat) <- c(du[2], du[1], n)\n> out <- t(rowSums(cmat, na.rm = TRUE, dims = 2))\n> out\n> \n> The concept: expand x and upb so that an element-by-element comparison of the \n> two expanded matrices gives you every comparison you wish to make.  Do the \n> comparison.  Then modify the dimensions of the resulting comparison matrix, \n> \"cmat\", so that you easily can sum up the comparisons over the desired \n> dimensions.  In this case, I transpose, and then transform into a 3D array.  \n> This allows me to use a single call to rowSums to sum up the comparisons for \n> every element of upb.\n> \n> To follow this kind of thing, I find it really helps to (a) draw lots of \n> pictures of the matrices and arrays; and (b) carefully inspect all the \n> intermediate objects, with test data for which you easily can see what the \n> answers should be.\n> \n> Cheers,\n> Scott\n> \n> ==================================\n> Scott D. Chasalow\n> Associate Director\n> Statistical Genetics and Biomarkers\n> Bristol-Myers Squibb Company\n> \n> Email: scott.chasalow <AT> bms.com\n> ================================== \n> \n> Ita Cirovic wrote:\n> > Given two data sets I would like to count the occurrences of one \n> > dependent on the other. For example,\n> > \n> > upb is defined as follows\n> > \n> >                 P4         P5\n> >  [1,] -0.0406703026 0.02952575\n> >  [2,]  0.0008282428 0.06102947\n> >  [3,]  0.0098109756 0.08774035\n> >  [4,]  0.0183787962 0.11517816\n> >  [5,]  0.0275845430 0.14899661\n> >  [6,]  0.0390078215 0.19359835\n> >  [7,]  0.0541145248 0.26253533\n> >  [8,]  0.0772375923 0.37398115\n> >  [9,]  0.1228048769 0.58875809\n> > [10,]  0.9980051666 7.41044290\n> > \n> > then I have a data set which consists of the original values of the \n> > variable sP4 and P5 with the number of observations of around 11000. \n> > What I would like to do is to count how many observations of P4 are \n> > smaller than opb[1,1] and then for upb[2,1] and so on. Also this I would \n> > like to do for the other variable P5. The results would be stored in \n> > another matrix say obs with dim(obs) = 10x2.\n> > \n> > I have been trying to do this using for loops and if statements, but was \n> > wondering whether there was an easier way, for example some S-PLUS \n> > function that would do count given the condition. Thanks.\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n\n> --- Begin Message ---\n>\n>\n>\n> To:\n>\n> SD Chasalow <sbackwards at comcast.net>, S-NEWS <s-news at lists.biostat.wustl.edu>\n>\n>\n>\n>\n>\n> Subject:\n>\n> Re: [S] count occurrences\n>\n>\n>\n>\n>\n> From:\n>\n> Ita Cirovic <zag_cirovic at yahoo.com>\n>\n>\n>\n>\n>\n> Date:\n>\n> Fri, 3 Aug 2007 18:05:00 +0000\n>\n>\n>\n>\n> Generally this works half way as it adds up the rows , i.e. row+1 is the summation of the previous rows. I will try to remedy this and see if it will work then. Thanks for the input.\n>\n> > out\n>        [,1]  [,2]\n>  [1,]  1106  1107\n>  [2,]  2213  2213\n>  [3,]  3320  3320\n>  [4,]  4426  4426\n>  [5,]  5532  5532\n>  [6,]  6639  6639\n>  [7,]  7745  7745\n>  [8,]  8852  8852\n>  [9,]  9958  9958\n> [10,] 11064 11064\n>\n> and the row summations should be of equal (+/- 1) number of observations, so the first row is ok. The reason for this is the upb matrix is\n>  structured in that way.Changing the upb matrix will of course change the out matrix but right now I would like to test with this.\n>\n> Ita\n>\n> ----- Original Message ----\n> From: SD Chasalow <sbackwards at comcast.net>\n> To: S-NEWS <s-news at lists.biostat.wustl.edu>\n> Sent: Friday, August 3, 2007 7:35:10 PM\n> Subject: Re: [S] count occurrences\n>\n> Something like this should work:\n>\n> Suppose dim(x) is c(11000, 2).\n>\n> d <- dim(x)\n> n <- d[1]\n> p <- d[2]\n> du <- dim(upb)\n> x <- x[rep(seq(length = n), rep(du[1], n)), , drop = FALSE]\n> upb <- upb[rep(seq(length = du[1]), n), , drop = FALSE]\n> cmat <- t(x < upb)\n> dim(cmat) <- c(du[2], du[1], n)\n> out <- t(rowSums(cmat, na.rm = TRUE, dims = 2))\n> out\n>\n> The concept: expand x and upb so that an element-by-element comparison of the two expanded matrices\n>  gives you every comparison you wish to make.  Do the comparison.  Then modify the dimensions of the resulting comparison matrix, \"cmat\", so that you easily can sum up the comparisons over the desired dimensions.  In this case, I transpose, and then transform into a 3D array.  This allows me to use a single call to rowSums to sum up the comparisons for every element of upb.\n>\n> To follow this kind of thing, I find it really helps to (a) draw lots of pictures of the matrices and arrays; and (b) carefully inspect all the intermediate objects, with test data for which you easily can see what the answers should be.\n>\n> Cheers,\n> Scott\n>\n> ==================================\n> Scott D. Chasalow\n> Associate Director\n> Statistical Genetics and Biomarkers\n> Bristol-Myers Squibb Company\n>\n> Email: scott.chasalow <AT> bms.com\n> ==================================\n>\n> Ita Cirovic wrote:\n> > Given\n>  two data sets I would like to count the occurrences of one\n> > dependent on the other. For example,\n> >\n> > upb is defined as follows\n> >\n> >                 P4         P5\n> >  [1,] -0.0406703026 0.02952575\n> >  [2,]  0.0008282428 0.06102947\n> >  [3,]  0.0098109756 0.08774035\n> >  [4,]  0.0183787962 0.11517816\n> >  [5,]  0.0275845430 0.14899661\n> >  [6,]  0.0390078215 0.19359835\n> >  [7,]  0.0541145248 0.26253533\n> >  [8,]  0.0772375923 0.37398115\n> >  [9,]  0.1228048769 0.58875809\n> > [10,]  0.9980051666 7.41044290\n> >\n> > then I have a data set which consists of the original values of\n>  the\n> > variable sP4 and P5 with the number of observations of around 11000.\n> > What I would like to do is to count how many observations of P4 are\n> > smaller than opb[1,1] and then for upb[2,1] and so on. Also this I would\n> > like to do for the other variable P5. The results would be stored in\n> > another matrix say obs with dim(obs) = 10x2.\n> >\n> > I have been trying to do this using for loops and if statements, but was\n> > wondering whether there was an easier way, for example some S-PLUS\n> > function that would do count given the condition. Thanks.\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>\n>\n>\n>\n>\n>\n>\n>       Fussy? Opinionated? Impossible to please? Perfect.  Join Yahoo!'s user panel and lay it on us.\n>\n> --- End Message ---",
       "body_snippet": "I believe \"adding up the rows\", as you say, is exactly what you requested in \nyour original email.  I usually find it easier to solve a problem as described \nthan to solve the problem someone meant to",
-      "thread_id": "thread-66639f513120",
-      "thread_depth": 0,
+      "thread_id": "thread-b5ac217a52aa",
+      "thread_depth": 1,
       "month": "2007-08"
     },
     {
@@ -677,12 +677,13 @@
     {
       "id": "thread-b5ac217a52aa",
       "subject": "count occurrences",
-      "message_count": 1,
+      "message_count": 4,
       "participants": [
-        "Ita Cirovic"
+        "Ita Cirovic",
+        "SD Chasalow"
       ],
       "started": "2007-08-03T10:17:37Z",
-      "last_reply": "2007-08-03T10:17:37Z",
+      "last_reply": "2007-08-06T17:59:51Z",
       "root_message_id": "msg-b5ac217a52aa"
     },
     {
@@ -695,28 +696,6 @@
       "started": "2007-08-03T13:42:47Z",
       "last_reply": "2007-08-03T13:42:47Z",
       "root_message_id": "msg-0d564159f6da"
-    },
-    {
-      "id": "thread-0a39a2ee8c4f",
-      "subject": "count occurrences",
-      "message_count": 1,
-      "participants": [
-        "SD Chasalow"
-      ],
-      "started": "2007-08-03T17:35:10Z",
-      "last_reply": "2007-08-03T17:35:10Z",
-      "root_message_id": "msg-0a39a2ee8c4f"
-    },
-    {
-      "id": "thread-8ee31cd91fcf",
-      "subject": "count occurrences",
-      "message_count": 1,
-      "participants": [
-        "Ita Cirovic"
-      ],
-      "started": "2007-08-03T18:04:59Z",
-      "last_reply": "2007-08-03T18:04:59Z",
-      "root_message_id": "msg-8ee31cd91fcf"
     },
     {
       "id": "thread-8bfad3870ac7",
@@ -741,17 +720,6 @@
       "started": "2007-08-06T15:00:33Z",
       "last_reply": "2007-08-06T17:35:15Z",
       "root_message_id": "msg-6dee686f096b"
-    },
-    {
-      "id": "thread-66639f513120",
-      "subject": "count occurrences",
-      "message_count": 1,
-      "participants": [
-        "SD Chasalow"
-      ],
-      "started": "2007-08-06T17:59:51Z",
-      "last_reply": "2007-08-06T17:59:51Z",
-      "root_message_id": "msg-66639f513120"
     },
     {
       "id": "thread-e0b43e384842",

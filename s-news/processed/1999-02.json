@@ -46,12 +46,12 @@
       "date": "1999-02-01T17:03:59Z",
       "subject": "[S] condensing a dataframe sequentially",
       "subject_clean": "[S] condensing a dataframe sequentially",
-      "in_reply_to": null,
+      "in_reply_to": "<36B575FA.58BE728D@aicos.com>",
       "references": [],
       "body_plain": "Last week I posed the following problem:\n\nMy original dataframe VZ.df looks like:\nV1          V2            V3            V4          V5\na       b       d       g       5\na       b       d       g       5\na        b      d       g       5\na        b      d       g       5\na       c       e       g       5\na       c       e       h       5\na       c       e       g       5\na       c       e       g       5\na       c       e       h       5\na       c       e       h       5\na       c       f       g       5\na       c        f      g       5\n\nI want to aggregate V5 over common rows sequentially as follows:\n\na       b       d       g       20\na       c       e       g       5\na       c       e       h       5\na       c       e       g       10\na       c       e       h       10\na       c       f       g       10\n\nSOLUTION A: by Bill Dunlap (bill at statsci.com) \n\n> seqAggregate.data.frame( VZ.df$V5,by=VZ.df[1:4],sum)\n\nwhere seqAggregate.data.frame is aggregate.data.frame with the following lines \nadded:\n\n*** 12,17 ****\n--- 12,21 ----\n                by <- list(by)\n                names(by) <- nm\n        }\n+ # add sequential group id to by\n+       r <- rle(do.call(\"paste\", c(list(sep = \"\\002\"), lapply(by, function(x)\n+       as.character(x)))))\n+       by$GroupSeqID <- rep(seq(along = r$lengths), r$lengths)\n        if(is.null(names(by)))\n                names(by) <- paste(\"Group\", seq(along = by))\n        val <- lapply(x, tapply, by, FUN, ..., simplify = F)\n\nSOLUTION B: by Christian Keller <ckeller at aicos.com>\n\nii <- codes(interaction(VZ.df[,1:4], drop=T))\nii <- c(ii[1],ii)\njj <- cumsum(diff(ii)!=0)\n\nVZ.df$jj <- jj\naggregate(VZ.df$V5, by=VZ.df[,c(\"V1\",\"V2\",\"V3\",\"V4\",\"jj\")],\nFUN=sum)[,-5]\n\nI tried Solution A and it worked fine when I applied it to a minute-by-minute \ndataframe of 5 columns and 1440 rows.  However, when I applied it to my actual \ndata frame which is 5 columns and 17280 rows (corresponding to a row every 5 \nseconds of a day) I got an error message that the object size was 5.8E6, \nexceeding the default of 5E6.  So, I set options(object.size = 5E7) and ran the \nfunction again.  This hung up my computer (400 MHz 12 GB PC) both times I tried \nit, so I'm wondering how I can free up memory or make the program more \nefficient from a memory standpoint.  Any suggestions?   Also, would Solution B \nbe more memory efficient?\n\nThanks in advance for your suggestions.\n\nValerie\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Last week I posed the following problem:\n\nMy original dataframe VZ.df looks like:\nV1          V2            V3            V4          V5\na       b       d       g       5\na       b       d       g    ",
-      "thread_id": "thread-93d362899bbf",
-      "thread_depth": 0,
+      "thread_id": "thread-a468f0cb29f6",
+      "thread_depth": 1,
       "month": "1999-02"
     },
     {
@@ -68,8 +68,8 @@
       ],
       "body_plain": "\"Valerie Zartarian\" <VZARTARIAN at usgs.gov> writes:\n\n>> Last week I posed the following problem:\n>> \n>> My original dataframe VZ.df looks like:\n>> V1      V2      V3      V4      V5\n>> a       b       d       g       5\n>> a       b       d       g       5\n>> a       b       d       g       5\n>> a       b       d       g       5\n>> a       c       e       g       5\n>> a       c       e       h       5\n>> a       c       e       g       5\n>> a       c       e       g       5\n>> a       c       e       h       5\n>> a       c       e       h       5\n>> a       c       f       g       5\n>> a       c       f       g       5\n>> \n>> I want to aggregate V5 over common rows sequentially\n>> as follows:\n>> \n>> a       b       d       g       20\n>> a       c       e       g       5\n>> a       c       e       h       5\n>> a       c       e       g       10\n>> a       c       e       h       10\n>> a       c       f       g       10\n>> \n>> SOLUTION A: by Bill Dunlap (bill at statsci.com) \n>> \n>> > seqAggregate.data.frame( VZ.df$V5,by=VZ.df[1:4],sum)\n>> \n>> where seqAggregate.data.frame is aggregate.data.frame\n>> with the following lines added:\n>> \n>> *** 12,17 ****\n>> --- 12,21 ----\n>>                 by <- list(by)\n>>                 names(by) <- nm\n>>         }\n>> + # add sequential group id to by\n>> +  r <- rle(do.call(\"paste\", c(list(sep = \"\\002\"), lapply(by,\n>> function(x)\n>> +  as.character(x)))))\n>> +  by$GroupSeqID <- rep(seq(along = r$lengths), r$lengths)\n>>    if(is.null(names(by)))\n>>            names(by) <- paste(\"Group\", seq(along = by))\n>>    val <- lapply(x, tapply, by, FUN, ..., simplify = F)\n>> \n>> \n>> SOLUTION B: by Christian Keller <ckeller at aicos.com>\n>>\n>> ii <- codes(interaction(VZ.df[,1:4], drop=T))\n>> ii <- c(ii[1],ii)\n>> jj <- cumsum(diff(ii)!=0)\n>> \n>> VZ.df$jj <- jj\n>> aggregate(VZ.df$V5, by=VZ.df[,c(\"V1\",\"V2\",\"V3\",\"V4\",\"jj\")],\n>> FUN=sum)[,-5]\n>>\n>> I tried Solution A and it worked fine when I applied it\n>> to a minute-by-minute dataframe of 5 columns and 1440 rows.\n>> However, when I applied it to my actual data frame which is\n>> 5 columns and 17280 rows (corresponding to a row every 5\n>> seconds of a day) I got an error message that the object\n>> size was 5.8E6, exceeding the default of 5E6.  So, I set\n>> options(object.size = 5E7) and ran the function again.\n>> This hung up my computer (400 MHz 12 GB PC) both times I\n>> tried it, so I'm wondering how I can free up memory or make\n>> the program more efficient from a memory standpoint.\n>> Any suggestions?   Also, would Solution B be more memory\n>> efficient?\n\nNo! It's as unefficient as Solution A for large data frames.\n\nThe 'problem' in both solutions is aggregate.data.frame\nor more precisely the call\naggregate(VZ.df$V5, by=VZ.df[,c(\"V1\",\"V2\",\"V3\",\"V4\",\"jj\")], ...)\nwith a large data frame VZ.df[,c(\"V1\",\"V2\",\"V3\",\"V4\",\"jj\")].\n\nActually only the last column in VZ.df is needed to aggregate\nV5 over common rows.\n\nA more efficient solution is therefore:\n\ngroupSeq <- function(by){\n  x <- codes(interaction(by))\n  ends <- c(diff(x)!=0, T)\n  pos <- seq(along=x)[ends]\n  len <- diff(c(0, pos))\n  list(ID=rep(seq(along=len), len), pos=pos)\n}\n\nagg <- function(x, by, FUN=sum, ...){\n  g <- groupSeq(by)\n  x <- tapply(x, g$ID, FUN=FUN, ...)\n  data.frame(by[g$pos,], x)\n}\n\n## Example 1 (small)\nVZ.df <- data.frame(V1=rep(\"a\",12),\n                    V2=c(rep(\"b\",4),rep(\"c\",8)),\n                    V3=c(rep(\"d\",4),rep(\"e\",6),rep(\"f\",2)),\n                    V4=c(rep(\"g\",5),\"h\",\"g\",\"g\",\"h\",\"h\",\"g\",\"g\"),\n                    V5=rep(5,12))\n\nagg(VZ.df$V5, VZ.df[,1:4])\n   V1 V2 V3 V4  x \n 4  a  b  d  g 20\n 5  a  c  e  g  5\n 6  a  c  e  h  5\n 8  a  c  e  g 10\n10  a  c  e  h 10\n12  a  c  f  g 10\n\n## Example 2 (large)\nN <- 20000\nX <- data.frame(matrix(sample(letters[1:8], size=N*4, replace=T),\n                       ncol=4), X5=rep(5,N))\nres <- agg(X$X5, X[,1:4])\n\nOf course, you can also use Bill Dunlap's approach in function\ngroupSeq (i.e. a combination of 'do.call(\"paste\", ...' and 'rle')\nwhich might be more efficient than 'interaction' \n(but probably not that elegant).\n\n-- Christian Keller\n\n---------------------------------------------------------\nChristian Keller                Tel:     +41 61 686 98 81\nAICOS Technologies AG           Fax:     +41 61 686 98 88\nEfringerstrasse 32              E-mail: ckeller at aicos.com\nCH-4057 Basel, Switzerland      Web: http://www.aicos.com\n---------------------------------------------------------\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "\"Valerie Zartarian\" <VZARTARIAN at usgs.gov> writes:\n\n>> Last week I posed the following problem:\n>> \n>> My original dataframe VZ.df looks like:\n>> V1      V2      V3      V4      V5\n>> a       b     ",
-      "thread_id": "thread-93d362899bbf",
-      "thread_depth": 1,
+      "thread_id": "thread-a468f0cb29f6",
+      "thread_depth": 2,
       "month": "1999-02"
     },
     {
@@ -340,12 +340,12 @@
       "date": "1999-02-05T16:09:40Z",
       "subject": "RE: [S] Seeking Seasonal Nonparametric stats",
       "subject_clean": "[S] Seeking Seasonal Nonparametric stats",
-      "in_reply_to": null,
+      "in_reply_to": "<95F3AC97A3DFD111BB8F00104B00E6EB07E2DC@deqx6.DEQ>",
       "references": [],
       "body_plain": "Dear Curtis,\n\nThe S-PLUS module ENVIRONMENTALSTATS for S-PLUS does what you need. \n I'll send you more information in a separate e-mail.  You can also get \nmore information on the web site www.ProbStatInfo.com.\n\nSincerely,\n\n--Steve M.\n\n  _____________\n  |    ***    |  Steven P. Millard, Ph.D.\n  |     *     |\n  | *   *   * |  P robability,      TEL:    206-528-4877\n  |   * * *   |  S tatistics &      FAX:    206-528-4802\n  |     *     |  I nformation       E-mail: SMillard at ProbStatInfo.com\n  |     *     |                     Web:    www.ProbStatInfo.com\n  |    ***    |  7723 44th Avenue NE\n  |___________|  Seattle, WA 98115-5117 USA\n\n-----Original Message-----\nFrom:   CUDE Curtis [SMTP:CUDE.Curtis at deq.state.or.us]\nSent:   Thursday, February 04, 1999 2:21 PM\nTo:     s-news at wubios.wustl.edu\nSubject:        [S] Seeking Seasonal Nonparametric stats\n\nGentle People,\nI am searching for S-Plus code for some rather obscure seasonal\nnonparametric statistics.  My employer (Oregon Department of Environ  \nmental\nQuality) is in need of a statistics program that can perform certain \nwater\nquality statistics.  The package that we are currently using will not\nsurvive into the next millenium.  I was recently introduced to S-Plus \nby Dr.\nSong Qian at Portland State University.  While the program will support \nmany\nstatistical approaches, it doesn't support some specific seasonal\nnonparametric analyses.  Do you have or are you aware of S-Plus \nalgorithms\nfor the Seasonal-Kendall Trend Analysis, Seasonal Sen Slope, Seasonal\nWilcoxon-Mann-Whitney Step Trend Analysis, and Seasonal Hodges-Lehmann\nEstimator?  The availability of these algorithms may clinch approval to\npurchase S-Plus for our use.\n\nThank you.\n\nCurtis Cude\nAmbient Surface Water Monitoring Coord.\nOregon Water Quality Index Coord.\nOregon Dept. of Environmental Quality Lab\n1712 SW 11th Ave.\nPortland, OR  97218\np: (503) 229-5983\nf: (503) 229-6924\ne: cude.curtis at deq.state.or.us\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To \nunsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Dear Curtis,\n\nThe S-PLUS module ENVIRONMENTALSTATS for S-PLUS does what you need. \n I'll send you more information in a separate e-mail.  You can also get \nmore information on the web site www.ProbSta",
-      "thread_id": "thread-cef33c3d8ef1",
-      "thread_depth": 0,
+      "thread_id": "thread-51fc0f97af4c",
+      "thread_depth": 1,
       "month": "1999-02"
     },
     {
@@ -388,12 +388,12 @@
       "date": "1999-02-08T08:07:15Z",
       "subject": "Re: [S] Bivariate frailty survival model",
       "subject_clean": "[S] Bivariate frailty survival model",
-      "in_reply_to": null,
+      "in_reply_to": "<199902041426.PAA15481@alpha.luc.ac.be>",
       "references": [],
       "body_plain": ">If you come up with anything on this, I would also be interested\n>(and probably others).  Are you going to post responses to the\n>group?\n>\n>Susan\n\nHi Susan,\nI got the following email from Andrew Bruce about the frailty models. We\njust have to wait now for the new survival functions. Please read on.\n\nAt 07:36 AM 2/4/99 -0800, you wrote:\n>The new Survival code by Terry Therneau (Survival 5) can estimate\n>frailty models.  This will be available \"any day now\" - it will\n>be posted on S-News and available on the Mayo Clinic web site.\n>I forwarded Terry your query and this is what he said:\n>\n>==========\n>The survival5 package can estimate frailty models.  It can't estimate all\n>the possible variety of random effects models available, but if you are\n>willing\n>to use AIC rather than MLE as your criteria for choosing between models it\n>will handle a good share of them.\n>   I don't have an example of \"Goldstein\" in front of me to be completely\n>sure, but I am fairly certain that Ziv Shkedy's model is\n>\n>       survreg(Surv(time, status) ~ frailty(group), data=xxx, dist='expon')\n>===========\n>\n>I hope this helps,\n>Andrew\n>\n>\n>\n>==================================================================\n>Andrew G. Bruce                         E-mail: andrew at statsci.com\n>Senior Product Marketing Manager        Tel:  (206) 283-8802 x 248\n>MathSoft, Inc.                          Fax:  (206) 283-8691\n>1700 Westlake Ave. N, Suite 500         Cell: (206) 310-9994\n>Seattle, WA 98109.9891\n>==================================================================\n>\n>\n\n=========================================================\nZiv Shkedy\nBiostatistics                   \nCenter for Statistics           \nLimburgs Universitair Centrum\nUniversitaire Campus, department WNI\nB-3590 Diepenbeek, Belgium\nTel: +32-(0)11-26.82.57\ne-mail: ziv.shkedy at luc.ac.be \n=========================================================\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": ">If you come up with anything on this, I would also be interested\n>(and probably others).  Are you going to post responses to the\n>group?\n>\n>Susan\n\nHi Susan,\nI got the following email from Andrew Bruc",
-      "thread_id": "thread-21c1ea5bb68a",
-      "thread_depth": 0,
+      "thread_id": "thread-a266f775f34c",
+      "thread_depth": 1,
       "month": "1999-02"
     },
     {
@@ -404,12 +404,12 @@
       "date": "1999-02-08T13:56:35Z",
       "subject": "Re: [S] Isotonic regression",
       "subject_clean": "[S] Isotonic regression",
-      "in_reply_to": null,
+      "in_reply_to": "<199902060024.SAA19287@wubios.wustl.edu>",
       "references": [],
       "body_plain": "A different approach can be found in Rob Tibshirani's \"Bootstrap Bumping\" \nmethod.\nHere you fit models from say 100 resamples of (X,Y) and select the subset of\nfits that turn out to be monotonic.  This works if you put suitable \nrestrictions on\nthe function (e.g., not too many knots in a regression spline).  You can even \nget\na \"poor person's\" posterior probability of monotonicity from this approach, by\ncomputing the proportion of resamples yielding monotonic fits.  Bootstrap \nbumping\nis very easy to implement in S-Plus.\n\nSee http://www-stat.stanford.edu/~tibs\n\n-Frank Harrell\n\n-----Original Message-----\nFrom: andrey at utstat.toronto.edu <andrey at utstat.toronto.edu>\nTo: andrey at wubios.wustl.edu <andrey at wubios.wustl.edu>; s-news at wubios.wustl.edu \n<s-news at wubios.wustl.edu>\nDate: Monday, February 08, 1999 8:22 AM\nSubject: [S] Isotonic regression\n\n>\n>\n>Hi all!\n>\n>Given a (long) vector  x  I need to determine the vector  y\n>which is closest to it in the least squares sense of minimum\n>sum ( (x-y)^2 )  such that  y  is monotone increasing.\n>this problem comes up in `isotonic' regression, for example,\n>and is solved by convex minorization type methods discussed,\n>for example, in Barlow et. al., Statistical Inference Under\n>Order Restriction...\n>\n>Can anyone point me to S-Plus-friendly software for doing this?\n>\n>Thanks,\n>\n>Andrey Feuerverger / Univ of Toronto\n>\n>-----------------------------------------------------------------------\n>This message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\n>send e-mail to s-news-request at wubios.wustl.edu with the BODY of the\n>message:  unsubscribe s-news\n>\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "A different approach can be found in Rob Tibshirani's \"Bootstrap Bumping\" \nmethod.\nHere you fit models from say 100 resamples of (X,Y) and select the subset of\nfits that turn out to be monotonic.  Thi",
-      "thread_id": "thread-1ed619ac4dda",
-      "thread_depth": 0,
+      "thread_id": "thread-d610e79f19d2",
+      "thread_depth": 1,
       "month": "1999-02"
     },
     {
@@ -470,12 +470,12 @@
       "date": "1999-02-09T09:18:00Z",
       "subject": "Re: [S] Problems with graphsheets..",
       "subject_clean": "[S] Problems with graphsheets..",
-      "in_reply_to": null,
+      "in_reply_to": "<000501be50a9$1a160b60$f70ed88f@pc9838.ssabsa.sa.gov.au>",
       "references": [],
       "body_plain": "This is a known bug for at least one year\nand MathSoft does not give any solution.\n\nI know from others that on their PC\neverything works fine, but on mine it doesn't\n\nSo, please, let me know if you get an useful answer!\n\nArnold Dekkers\n\n  Arnold L.M. Dekkers Ph.D.\n\n  National Institute for Public Health and the Environment\n\n  RIVM\n  P.O. BOX 1\n  NL 3720 BA  BILTHOVEN\n  THE NETHERLANDS\n\n  tel. +31 - 30 - 274 23 66\n  fax. +31 - 30 - 274 44 27\n\n  email : Arnold.Dekkers at rivm.nl\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "This is a known bug for at least one year\nand MathSoft does not give any solution.\n\nI know from others that on their PC\neverything works fine, but on mine it doesn't\n\nSo, please, let me know if you ge",
-      "thread_id": "thread-007a04450bfc",
-      "thread_depth": 0,
+      "thread_id": "thread-53ba04bb774a",
+      "thread_depth": 1,
       "month": "1999-02"
     },
     {
@@ -534,12 +534,12 @@
       "date": "1999-02-09T13:48:06Z",
       "subject": "Re: [S] interpreting p-values from lm() results",
       "subject_clean": "[S] interpreting p-values from lm() results",
-      "in_reply_to": null,
+      "in_reply_to": "<3.0.3.32.19990209083525.007a9e80@pop.cwru.edu>",
       "references": [],
       "body_plain": "> From: Doug Moog <dbm3 at po.cwru.edu>\n> For example, below I show a summary of an lm model.  Note that for the\n> leading term, T.mean, Pr(>|t|) = 0.2042.   Then I call anova() on the same\n> model, and get Pr(F) = 0.0000031457 for the same term.  Why such a\n> difference?  Obviously I don't\n> understand what at least one of these p-values represents.\n\nThe t-test is a test of the hypothesis that a coefficient is 0 in a\nmodel containing all of the other variables.  The anova() results are\nsequential, i.e. the first term is tested against a null model\ncontaining no other terms.  (This is indicated by the phrase in the\nheader, \"Terms added sequentially (first to last)\".)  If T.mean is \ncollinear with some of the other terms, it is likely to contribute much\nless to model fit when other terms (including an interaction involving\nT.mean itself) are already there, than it would as the only term in the\nmodel.\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "> From: Doug Moog <dbm3 at po.cwru.edu>\n> For example, below I show a summary of an lm model.  Note that for the\n> leading term, T.mean, Pr(>|t|) = 0.2042.   Then I call anova() on the same\n> model, a",
-      "thread_id": "thread-f50affd28f00",
-      "thread_depth": 0,
+      "thread_id": "thread-4d4a7709f04d",
+      "thread_depth": 1,
       "month": "1999-02"
     },
     {
@@ -566,12 +566,12 @@
       "date": "1999-02-09T13:59:01Z",
       "subject": "Re: [S] Bivariate frailty survival model",
       "subject_clean": "[S] Bivariate frailty survival model",
-      "in_reply_to": null,
+      "in_reply_to": "<199902041426.PAA15481@alpha.luc.ac.be>",
       "references": [],
       "body_plain": "Hi Ziv,\n\nIt was my understanding that there were still some problems with frailty\nmodels; I guess I am missing something important?  \n\nHowever, while waiting for survival5, there is a set of programs, \"The\nsurvival kit (v. 3.0)\" by Ducrocq & Casella, which is freely available on\nthe Web (http://www.boku.ac.at/nuwi/popgen/softskit.htm).  These programs\nwill fit frailty models [Cox or Weibull], with time dependent variables.\nTwo references are: \nDucrocq, V., Casella, G. (1996) A Bayesian analysis of mixed survival\nmodels. Genet. Sel. Evol., 28 : 505-529.\nDucrocq, V. and Svlkner J. (1998b) +The Survival Kit - V3.0 ;, a package\nfor large analyses of survival data. In : 6th World Cong. on Genet. Appl.\nLivest. Prod., January 11-16, University of New-England, Armidale, Australia.\n(some of the papers are available from the Web site above).\n\nAnother related approach is in Sorensen, Gianola & Korsgaard (Acta Agric.\nScand., '98, 48: 222-229) [they deal with Bayesian mixed-effects models for\ncensored normal data].   \n\nSome other alternatives (in my case for the analysis of repeated cross-over\ndesigns with right-censored data) are the models of Wei & collaborators\n(e.g., JASA, '89, 84: 1065-1073; Stats. in Medicine, '94, 13: 2233-2247;\nStats. in Medicine, '97, 16: 833-839)., which (I believe) can be fitted in\nSPlus using the \"cluster\" option in coxph.  \n\nRamon\n\nIn addtion, if you are intersting in SAS macros to estimate with frailty\nmodels you can look at http://www.biostat.mcw.edu:80/devlop/softmenu.html.\nZiv.\n\nAt 09:07 08-02-99 +0100, you wrote:\n>\n>\n>>If you come up with anything on this, I would also be interested\n>>(and probably others).  Are you going to post responses to the\n>>group?\n>>\n>>Susan\n>\n>Hi Susan,\n>I got the following email from Andrew Bruce about the frailty models. We\n>just have to wait now for the new survival functions. Please read on.\n>\n>\n>\n>At 07:36 AM 2/4/99 -0800, you wrote:\n>>The new Survival code by Terry Therneau (Survival 5) can estimate\n>>frailty models.  This will be available \"any day now\" - it will\n>>be posted on S-News and available on the Mayo Clinic web site.\n>>I forwarded Terry your query and this is what he said:\n>>\n>>==========\n>>The survival5 package can estimate frailty models.  It can't estimate all\n>>the possible variety of random effects models available, but if you are\n>>willing\n>>to use AIC rather than MLE as your criteria for choosing between models it\n>>will handle a good share of them.\n>>   I don't have an example of \"Goldstein\" in front of me to be completely\n>>sure, but I am fairly certain that Ziv Shkedy's model is\n>>\n>>      survreg(Surv(time, status) ~ frailty(group), data=xxx, dist='expon')\n>>===========\n>>\n>>I hope this helps,\n>>Andrew\n>>\n>>\n>>\n>>==================================================================\n>>Andrew G. Bruce                         E-mail: andrew at statsci.com\n>>Senior Product Marketing Manager        Tel:  (206) 283-8802 x 248\n>>MathSoft, Inc.                          Fax:  (206) 283-8691\n>>1700 Westlake Ave. N, Suite 500         Cell: (206) 310-9994\n>>Seattle, WA 98109.9891\n>>==================================================================\n>>\n>>\n>\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Hi Ziv,\n\nIt was my understanding that there were still some problems with frailty\nmodels; I guess I am missing something important?  \n\nHowever, while waiting for survival5, there is a set of programs,",
-      "thread_id": "thread-515c6776543d",
-      "thread_depth": 0,
+      "thread_id": "thread-a266f775f34c",
+      "thread_depth": 1,
       "month": "1999-02"
     },
     {
@@ -646,12 +646,12 @@
       "date": "1999-02-09T19:25:26Z",
       "subject": "Re: [S] interpreting p-values from lm() results",
       "subject_clean": "[S] interpreting p-values from lm() results",
-      "in_reply_to": null,
+      "in_reply_to": "<3.0.3.32.19990209083525.007a9e80@pop.cwru.edu>",
       "references": [],
       "body_plain": "Many thanks to those who answered my query.  The part I hadn't figured out\nwas that the t-test applied to a model containing all the other variables.\nEven I was able to figure out that the F-test was applied sequentially, as\nthe anova() output states.  That does raise an interesting question\nconcerning the model I presented; because the interaction term appears to\nbe much more significant than the main effects, does it make sense to\nremove either main effect and leave the interaction?  I think that depends\non the particular model, so I don't put it to the mailing list unless\nsomeone deems it worth addressing in general.  A starting point could be\nthe Venables & Ripley discussion on \"marginality restrictions\" (V&R2, p.\n217).\n_________________________________________________________________________\nDouglas B. Moog, Ph.D.                               phone: 216-368-1688\nSenior Research Associate                          fax: 216-368-3691\nDept. of Geological Sciences          internet: dbm3 at po.cwru.edu\nCase Western Reserve University\nCleveland, OH  44106-7216\nUSA\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Many thanks to those who answered my query.  The part I hadn't figured out\nwas that the t-test applied to a model containing all the other variables.\nEven I was able to figure out that the F-test was ",
-      "thread_id": "thread-d4633ab33ca9",
-      "thread_depth": 0,
+      "thread_id": "thread-4d4a7709f04d",
+      "thread_depth": 1,
       "month": "1999-02"
     },
     {
@@ -890,12 +890,12 @@
       "date": "1999-02-10T18:47:56Z",
       "subject": "RE: [S] bump hunting",
       "subject_clean": "[S] bump hunting",
-      "in_reply_to": null,
+      "in_reply_to": "<36C1C7C3.7128DDBC@rumac.upr.clu.edu>",
       "references": [],
       "body_plain": "... And to add some fuzzy information -- I.J. Good published a paper I\nbelieve in JASA (but possibly Statistical Science) about 10-15 years ago I\nthink entitled exactly  \"Bump Hunting\" which, of course, was concerned with\nthis. Unfortunately I can remember little else (though I bet a nickel Bayes\nwas in it somewhere). The 50+ year old brain works in strange ways ....\n\nBert Gunter\nBiometrics Research RY 70-38\nMerck & Company\nP.O. Box 2000\nRahway, NJ 07065-0900\nPhone: (732) 594-7765   Fax: (732) 594-1565\n\n\"The business of the statistician is to catalyze the scientific learning\nprocess.\"      -- George E.P. Box\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "... And to add some fuzzy information -- I.J. Good published a paper I\nbelieve in JASA (but possibly Statistical Science) about 10-15 years ago I\nthink entitled exactly  \"Bump Hunting\" which, of cours",
-      "thread_id": "thread-d78d14e4d7f5",
-      "thread_depth": 0,
+      "thread_id": "thread-9514c63ed2c5",
+      "thread_depth": 1,
       "month": "1999-02"
     },
     {
@@ -906,12 +906,12 @@
       "date": "1999-02-10T19:11:11Z",
       "subject": "Re: RE: [S] bump hunting",
       "subject_clean": "[S] bump hunting",
-      "in_reply_to": null,
+      "in_reply_to": "<36C1C7C3.7128DDBC@rumac.upr.clu.edu>",
       "references": [],
       "body_plain": "JASA 75:42-56, 1980 Good & Gaskins \"Densisty estimation and bump-hunting by the \npenalized likelihood method exemplified by scattering and meteorite data\"\n\nComputer Science and Statistics: Proceedings of the 13th Symposium on the \nInterface 13:92-104,1981 Good & Deaton \"Recent advances in bump hunting\"\n\nJerry W. Lewis\nGenetics Institute\n\n>>> \"Gunter, Bert\" <bert_gunter at merck.com> 02/10 1:47 PM >>>\n\n>... And to add some fuzzy information -- I.J. Good published a paper I\n>believe in JASA (but possibly Statistical Science) about 10-15 years ago I\n>think entitled exactly  \"Bump Hunting\" which, of course, was concerned with\n>this. Unfortunately I can remember little else (though I bet a nickel Bayes\n>was in it somewhere). The 50+ year old brain works in strange ways ....\n                                                                                \n                                                                                \n                                                                                \n                                                                                \n                                                                                \n                                                                                \n                                                                                \n                                                                                \n                                                                                \n                                                                                \n                                                                                \n                                                                                \n                             !\n                                   \n                                        \n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "JASA 75:42-56, 1980 Good & Gaskins \"Densisty estimation and bump-hunting by the \npenalized likelihood method exemplified by scattering and meteorite data\"\n\nComputer Science and Statistics: Proceedings",
-      "thread_id": "thread-7b8cc16f844b",
-      "thread_depth": 0,
+      "thread_id": "thread-9514c63ed2c5",
+      "thread_depth": 1,
       "month": "1999-02"
     },
     {
@@ -988,12 +988,12 @@
       "date": "1999-02-11T18:04:33Z",
       "subject": "RE: [S] bump hunting",
       "subject_clean": "[S] bump hunting",
-      "in_reply_to": null,
+      "in_reply_to": "<36C1C7C3.7128DDBC@rumac.upr.clu.edu>",
       "references": [],
       "body_plain": "Wolfgang:\n        If it would be of interest to you, I wrote a thesis on bump hunting\nin regression recently. The copy of it is on the web:\nhttp://hajek.stat.ubc.ca/~nancy/pubs.html\n\nIn brief, my method works in the regression context with one regressor.\nAlso, I can look for bumps in the derivatives of regression functions. My\nidea is based on Silverman's bandwidth test (1981) for kernel density\nestimates, and its extension by Bowman et.al. (1998) to monotonicity testing\nin regression context.\n\nReferences:\nSilverman, B. W. (1981) \"Using Kernel Density Estimates to Investigate\nMultimodality\" JRSS-B, 43, pp. 97-99\nBowman, A.W., Jones, M.C., and Gijbels, I. (1998) \"Testing Monotonicity of\nRegression\", Journal of Computational and Graphical Statistics, 7, pp.\n489-500\n\nI developed the code in Splus for the bump hunting using smoothing splines\nand kernel methods. I was not able to completely document the code yet, but\nI can provide it to you with partial documentation and further explanation,\nif you'd need any.\n\nJarek\n\nJarek Harezlak\nDivision of Biostatistics\nIndiana University School of Medicine\n1001 West Tenth Street, RG 4th\nIndianapolis, IN 46202-2859\nph: (317) 274-2874\nemail: jharezla at iupui.edu\n\n>  -----Original Message-----\n>  From: Wolfgang Rolke [mailto:w_rolke at rumac.upr.clu.edu]\n>  Sent: Wednesday, February 10, 1999 12:54 PM\n>  To: s news\n>  Subject: [S] bump hunting\n>  \n>  \n>  \n>  Hi,\n>      I am looking for some info/software for bump hunting. \n>  Specifically I\n>  am working with some data from High Energy Physics that has some\n>  suspicious bumps that may or may not correspond to a \n>  particle decay and\n>  I would like to investigate this further. The currently used \n>  method in\n>  HEP is to fit a parametric curve to the data (usually via maximum\n>  likelihood) and thereby to get an estimate (and its error) for the\n>  number of events in the bump. If that number is several standard\n>  deviations above 0 (usually somewhat more than 3 sd are \n>  required) than\n>  they start to believe that the bump is real. I am looking for a\n>  nonparametric alternative to this method.\n>  In addition there is often some prior info from the theory \n>  on whether or\n>  not there might be a bump in this area, either because other \n>  experiments\n>  have already seen some evidence for it or maybe because the \n>  theory sort\n>  of predicts a bump there. How can I incorporate this type of \n>  info in the\n>  analysis? I guess this is asking for a Bayesian approach. \n>  Unfortunately\n>  I am not very good at Bayesian analysis, so if somebody can \n>  point me to\n>  a paper that discusses \"Bayesian bump hunting\", I would be very\n>  grateful.\n>  \n>  Wolfgang\n>  \n>  -------------------------------------------------------------\n>  ----------\n>  Dr. Wolfgang Rolke\n>  Associate Professor\n>  University of Puerto Rico - Mayaguez\n>  \n>  \n>  -------------------------------------------------------------\n>  ----------\n>  This message was distributed by s-news at wubios.wustl.edu.  To \n>  unsubscribe\n>  send e-mail to s-news-request at wubios.wustl.edu with the BODY of the\n>  message:  unsubscribe s-news\n>  \n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Wolfgang:\n        If it would be of interest to you, I wrote a thesis on bump hunting\nin regression recently. The copy of it is on the web:\nhttp://hajek.stat.ubc.ca/~nancy/pubs.html\n\nIn brief, my meth",
-      "thread_id": "thread-b14ed9b436e4",
-      "thread_depth": 0,
+      "thread_id": "thread-9514c63ed2c5",
+      "thread_depth": 1,
       "month": "1999-02"
     },
     {
@@ -1187,12 +1187,12 @@
       "date": "1999-02-12T17:41:16Z",
       "subject": "Re: [S] names of functions in a list?",
       "subject_clean": "[S] names of functions in a list?",
-      "in_reply_to": null,
+      "in_reply_to": "<36C45166.1AB04630@whsun1.wh.whoi.edu>",
       "references": [],
       "body_plain": "From: Tim Smith <tsmith at whsun1.wh.whoi.edu>\n\n> What I'd like to be able to do, however, is to automatically \n> construct the names of the functions passed in list(min,mean,max),\n> rather than having to use the syntax min=min.  \n\nThat list does not contain the function names, only the function\nbodies. However,\n\nnlist <- function(...)\n{\n   nm <- unlist(as.list(match.call())[-1])\n   dots <- list(...)\n   names(dots) <- nm\n   dots\n}\ntapply(x, y, FUN=nlist(min,mean,max)[[2]])\n\nwill do what you want.  So will\n\ntapply(x, y, FUN=c(\"min\", \"mean\", \"max\")[2])\n\nsince tapply can be used with function names too.\n\n[Just don't ask why nlist works: demonstrating how to manipulate ... \nis a rite of passage.]\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "From: Tim Smith <tsmith at whsun1.wh.whoi.edu>\n\n> What I'd like to be able to do, however, is to automatically \n> construct the names of the functions passed in list(min,mean,max),\n> rather than havin",
-      "thread_id": "thread-f03d9ec4530e",
-      "thread_depth": 0,
+      "thread_id": "thread-466b97d19811",
+      "thread_depth": 1,
       "month": "1999-02"
     },
     {
@@ -1449,12 +1449,12 @@
       "date": "1999-02-17T10:35:45Z",
       "subject": "Re: [S] Titles on array of figures",
       "subject_clean": "[S] Titles on array of figures",
-      "in_reply_to": null,
+      "in_reply_to": "<3.0.32.19990216095806.00690534@130.92.22.10>",
       "references": [],
       "body_plain": "Thanks to everyone who provided suggestions to the solution of my problem. \n\nThe following did the job on my system. I had to play with the arguments of\ntext() to get proper vertical positioning of the titles.\n\npar(mfrow=c(2,3))\nplot(1:10,1:10)\nplot(1:10,1:10)\nplot(1:10,1:10)\nplot(1:10,1:10)\nplot(1:10,1:10)\nplot(1:10,1:10)\npar(mfrow=c(1,1))\npar (usr=c(0,1,0,1))\ntext (.5, 1.07, \"looooooooooooooooooooooooooooooooooooooooooooooooooong\ntitle\")\ntext (.5, 0.45, \"looooooooooooooooooooooooooooooooooooooooooooooooooong\ntitle\")\n\n/Lars\n\n--------------------------------------------------------\nLars M. Karlsson, Tekn.Dr.     mailto:Lars at ana.unibe.ch\nDepartment of Anatomy          tel: +41 (0)31 631 84 52\nUniversity of Berne            fax: +41 (0)31 631 34 10\nBuelstrasse 26 \nCH-3000 Berne 9, Switzerland\nhttp://www.ana.unibe.ch/ANATOM/staff/karlsson/index.html\n--------------------------------------------------------\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Thanks to everyone who provided suggestions to the solution of my problem. \n\nThe following did the job on my system. I had to play with the arguments of\ntext() to get proper vertical positioning of th",
-      "thread_id": "thread-519e98fdbb1d",
-      "thread_depth": 0,
+      "thread_id": "thread-6b80a8107dc6",
+      "thread_depth": 1,
       "month": "1999-02"
     },
     {
@@ -1615,12 +1615,12 @@
       "date": "1999-02-18T08:28:09Z",
       "subject": "RE: REML in Splus, was: [S] Re: your mail",
       "subject_clean": "REML in Splus, was: [S] Re: your mail",
-      "in_reply_to": null,
+      "in_reply_to": "<4C25671B.0080A0FB.00@mail.fri.cri.nz>",
       "references": [],
       "body_plain": "I understood from the model.tables() function that type=\"adj.means\"\nwould give you the estimated model means and corresponding standard\nerrors (I seem to remember that this works for unbalanced designs). Am I\nwrong?\nSiem Heisterkamp\nDr. S.H. Heisterkamp\nUniversity of Amsterdam\nDepartment of Clinical Epidemiology and Biostatistics\nroom J2-220\nPO Box 22700 1100 DE Amsterdam\ntel: +31-(0)-20-5668520\nfax:+31-(0)-20-6912683\ns.h.heisterkamp at amc.uva.nl\n\n> -----Original Message-----\n> From: ballr at rimu.fri.cri.nz [SMTP:ballr at rimu.fri.cri.nz]\n> Sent: Thursday, February 18, 1999 1:05 AM\n> To:   Prof Brian D Ripley\n> Cc:   Peter So; s-news at wubios.wustl.edu\n> Subject:      REML in Splus, was: [S] Re: your mail\n> \n> \n> On Tue, 16 Feb 1999, Peter So wrote:\n> \n> > Is S-Plus capable to do reml analysis in field and agricultural\n> > experiments such as Genstat does?\n> \n> If all you want is estimates of the variance components the answer\n> here is\n> yes. For some reason some packages seem to think this is enough.\n> \n> If you want tables of mean effects (BLUEs for fixed effects and BLUPs\n> for\n> random effects) and standard errors of differences for these means as\n> Genstat REML (based on the original REML program from the Scottish\n> Agricultural Service) gives automatically, then the answer is no. The\n> Splus\n> aov() and model.tables() functions with give the  required information\n> but\n> only for balanced designs.\n> Genstat is the only package I know of where mean effects and standard\n> errors are readily available for balanced and unbalanced multistratum\n> experimental designs.\n> \n> To quote from Venables and Ripley , Modern applied statistics with\n> Splus\n> p302: \"A better appreciation of the results of the experiment comes\n> from\n> looking at the estimated marginal means. Tables of means are only\n> available\n> for balanced designs and the standard errors calculated are for\n> differences\n> of means\" .\n> \n> Actually tables of 'means' are available from Splus model.tables() for\n> unbalanced designs (but these are not the mean effects, and standard\n> errors\n> of differences require further calculations using se.contrast() ) .\n> The\n> help file for model.tables() does not specify only balanced designs.\n> \n> It is possible with further computation to calculate mean effects and\n> standard errors of differences using the fitted model object from\n> varcomp(). The example below is an unbalanced dataset based on 50\n> randomly\n> chosen points from the 'oats' example shown on page 303 of V&R. Note\n> how\n> the mean effects tables are closer to the results of the analysis of\n> the\n> full balanced data set than the means from model.tables().  eg for\n> Nitrogen\n> 0.4cwt the estimate is 114.2 from the full data set, the mean effect\n> is 114\n> and the value from model.tables() is 105.7 .\n> \n> Provisos: my model.tables function is designed for factors (not\n> covariates)\n> and varcomp() will baulk if the model matrix is singular, which it\n> sometimes is in analysis of variance type models.\n> \n> Rod Ball\n> \n> Dr Roderick D. Ball                                Ph 64-7-3475899\n> Statistician,                 Fx 64-7-3479380\n> New Zealand Forest Research Institute    email: ballr at fri.cri.nz\n> P.B. 3020, Rotorua, New Zealand\n> \n> \n>    EXAMPLE OF SPLUS AOV, VARCOMP AND REML ANALYSIS OF AN UNBALANCED\n> DESIGN\n> \n> ----------------------------------------------------------------------\n> -\n> \n> > library(MASS)\n> > Random.seed <- c(37,52,42,27,2,3,5,56,44,37,45,0)\n> > oats.df1 <- oats[sample(1:72,size=50,replace=F),]\n> > ### ANALYSIS USING Splus aov()\n> > ### Note: means given are _not_ marginal means or BLUEs of\n> > ### the underlying true means\n> > oats.aov2 <- aov(Y ~ Nf*V + Error(B/V), data=oats.df1)\n> > model.tables(oats.aov2,type=\"means\",se=T)\n> Refitting model to allow projection\n> Standard error information not returned as design is unbalanced.\n> Standard errors can be obtained through se.contrast.\n> Tables of means\n> Grand mean\n> \n>  100.2\n> \n>  Nf\n>     0.0cwt 0.2cwt 0.4cwt 0.6cwt\n>      75.41  97.26  105.7  120.2\n> rep  13.00  10.00   13.0   14.0\n> \n>  V\n>     Golden.rain Marvellous Victory\n>           99.44      105.5   95.54\n> rep       19.00       16.0   15.00\n> \n>  Nf:V\n> Dim 1 : Nf\n> Dim 2 : V\n>        Golden.rain Marvellous Victory\n> 0.0cwt  74.5        77.7       74.2\n> rep      6.0         4.0        3.0\n> 0.2cwt 106.3        94.1       89.8\n> rep      4.0         2.0        4.0\n> 0.4cwt 104.4       110.1      103.1\n> rep      4.0         4.0        5.0\n> 0.6cwt 120.2       123.1      114.5\n> rep      5.0         6.0        3.0\n> \n> \n> > ### Analysis using varcomp() and mean.effects.table()\n> > # Note the means effects are closer to the values estimated\n> > # for the full balanced dataset than the results of model.tables()\n> above.\n> > is.random(oats.df1$V)_T\n> > is.random(oats.df1$B)_T\n> > oats.vc2_varcomp(Y ~ Nf*V + B/V, method=\"reml\", data=oats.df1)\n> > oats.vc2\n> oats.vc2\n> Variances:\n>    B V %in% B Residuals\n>  294       55       170\n> Message:  X AND RELATIVE FUNCTION CONVERGENCE\n> Call:\n> varcomp(formula = Y ~ Nf * V + B/V, data = oats.df1, method = \"reml\")\n> > mean.effects.table(oats.vc2,Nf)\n> \n> Table of Nf\n> *** mean effects ***\n>     0.0cwt 0.2cwt 0.4cwt 0.6cwt\n>      81.83  96.42    114  122.7\n> rep  14.00  13.00     11   12.0\n> *** seds ***\n>   min   av  max\n>  5.29 5.64 5.87\n> > mean.effects.table(oats.vc2,V)\n> \n> Table of V\n> *** mean effects ***\n>     Golden.rain Marvellous Victory\n>           103.1      110.9   97.16\n> rep        19.0       16.0   15.00\n> *** seds ***\n>   min   av  max\n>  6.32 6.41 6.55\n> > mean.effects.table(oats.vc2,list(Nf,V))\n> \n> Table of Nf by V\n> *** mean effects ***\n>        Golden.rain Marvellous Victory\n> 0.0cwt       80.00      91.13   74.37\n>    rep        6.00       3.00    5.00\n> 0.2cwt       98.65     103.58   87.03\n>    rep        4.00       5.00    4.00\n> 0.4cwt      117.10     121.53  103.34\n>    rep        5.00       3.00    3.00\n> 0.6cwt      116.68     127.42  123.88\n>    rep        4.00       5.00    3.00\n> *** seds ***\n>   min   av  max\n>  8.01 10.4 12.2\n> \n> \n> ----------------------------------------------------------------------\n> -\n> This message was distributed by s-news at wubios.wustl.edu.  To\n> unsubscribe\n> send e-mail to s-news-request at wubios.wustl.edu with the BODY of the\n> message:  unsubscribe s-news\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "I understood from the model.tables() function that type=\"adj.means\"\nwould give you the estimated model means and corresponding standard\nerrors (I seem to remember that this works for unbalanced design",
-      "thread_id": "thread-499eb56be861",
-      "thread_depth": 0,
+      "thread_id": "thread-625272165d50",
+      "thread_depth": 1,
       "month": "1999-02"
     },
     {
@@ -1823,12 +1823,12 @@
       "date": "1999-02-19T18:25:32Z",
       "subject": "Re: [S] S to latex",
       "subject_clean": "[S] S to latex",
-      "in_reply_to": null,
+      "in_reply_to": "<199902190835.JAA25211@iscar.cpd.uva.es>",
       "references": [],
       "body_plain": "This has already been done.  Follow the link from statlib to our web page to\nget display.s and related files.  Note that I am currently improving display.s\nto easily work with PC versions of LaTeX other than PCTeX.  The default\nversion it will work with in the future will be the excellent public domain\nprogram FPTeX (i.e., the system commands 'latex' and 'dvips' and 'windvi'\nwill be invoked as needed).  The web address is below, but be sure\nto re-download it in about 10 days, assuming you see that the file dates \nhave changed by then.  -Frank\n\n-------------------------------------------------------------------------------------------\nFrank E Harrell Jr\nProfessor of Biostatistics and Statistics\nDivision of Biostatistics and Epidemiology\nDepartment of Health Evaluation Sciences\nUniversity of Virginia School of Medicine\nhesweb1.med.virginia.edu/biostat\n\n-----Original Message-----\nFrom: Eusebio Arenal <slist at eio.uva.es>\nTo: S-news at wubios.wustl.edu <S-news at wubios.wustl.edu>\nDate: Friday, February 19, 1999 3:42 AM\nSubject: [S] S to latex\n\n>\n>I have donwnloaded from Statlib the print.display, s.to.latex and\n>latex.table libraries and I'm not be able to install it in a windows version\n>of S-plus. Is there any posibilty to obtain a windows precompiled version of\n>these libraries, or some similar?\n>Where can I find some in line documentation about how to translate these\n>functions to a windows version of S-plus? Is it only necesary to change the\n>unix() function for dos() or win3()? Can I translate de unix help files to a\n>windows help or more legible text form?\n>\n>A question about latex table, you need a 'translate()' function is the same\n>function of the print.display library?\n>\n>Thanks in advance\n>------------------------------------------------------------------------\n>Eusebio Arenal Gutierrez                Tfo: +34 (9)83 423000 ext. 4258\n>Dpto. Estadistica e I.O.                Fax: +34 (9)83 423013\n>Facultad de Ciencias                    Email: slist at eio.uva.es\n>Universidad de Valladolid                    \n>Avda. Prado de la Magdalena, s/n.\n>     Valladolid (SPAIN)\n>------------------------------------------------------------------------\n>\n>-----------------------------------------------------------------------\n>This message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\n>send e-mail to s-news-request at wubios.wustl.edu with the BODY of the\n>message:  unsubscribe s-news\n>\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "This has already been done.  Follow the link from statlib to our web page to\nget display.s and related files.  Note that I am currently improving display.s\nto easily work with PC versions of LaTeX oth",
-      "thread_id": "thread-c5759b5dce9f",
-      "thread_depth": 0,
+      "thread_id": "thread-e8b4aef44bc0",
+      "thread_depth": 1,
       "month": "1999-02"
     },
     {
@@ -1855,12 +1855,12 @@
       "date": "1999-02-22T08:31:41Z",
       "subject": "[S] multinomial regression",
       "subject_clean": "[S] multinomial regression",
-      "in_reply_to": null,
+      "in_reply_to": "<Pine.GSO.3.96.990219101953.22731A-100000@sunserv>",
       "references": [],
       "body_plain": "Dear all,\n\nthanxs a lot for all the responses to my question! That was very quick and\ninformative!\n\nyours Matthias\n\n*********************************************\nMatthias Richard\nForschungsstelle fuer Psychotherapie\nChristian-Belser-Str. 79a\n\n70597 Stuttgart\n\nTel.: 0711 / 6781-407   Fax:0711 / 6876902 \ne-mail:hann at psyres-stuttgart.de\n*********************************************\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Dear all,\n\nthanxs a lot for all the responses to my question! That was very quick and\ninformative!\n\nyours Matthias\n\n*********************************************\nMatthias Richard\nForschungsstelle fuer",
-      "thread_id": "thread-b2d8fa5c77e1",
-      "thread_depth": 0,
+      "thread_id": "thread-2591b71f98a9",
+      "thread_depth": 1,
       "month": "1999-02"
     },
     {
@@ -2151,12 +2151,12 @@
       "date": "1999-02-24T13:58:34Z",
       "subject": "Re: [S] Hmisc/Design libraries for Splus 5.0 UNIX solaris",
       "subject_clean": "[S] Hmisc/Design libraries for Splus 5.0 UNIX solaris",
-      "in_reply_to": null,
+      "in_reply_to": "<99Feb23.171620est.115763@gateway.healthlink.on.ca>",
       "references": [],
       "body_plain": "It's hard to think that the group could respond faster than the author.\n\nHmisc and Design will be 5.0-compatible as soon as 5.0 settles\ndown somewhat and is available on Win 95/98/NT.  I am starting\nto make changes in Hmisc now based on what users are\nfinding that are not 5.0-compatible.  A usable verion of Hmisc\nwill be available in a month perhaps, for most of the functions.\n\n-Frank Harrell\n\n-----Original Message-----\nFrom: Abdolell, Mohamed <Mohamed_Abdolell at pmh.toronto.on.ca>\nTo: 's-news' <s-news at wubios.wustl.edu>\nDate: Tuesday, February 23, 1999 5:24 PM\nSubject: [S] Hmisc/Design libraries for Splus 5.0 UNIX solaris\n\n>Sorry for posting this question the newsgroup (I should e-mail Prof. Harrell\n>directly), but we're in need of a quick answer to this question and any\n>response would be appreciated.\n>\n>I've checked the archives and cannot find a ref to Hmisc/Design for S+5.0\n>for UNIX.\n>Our UNIX system administrator is just finishing configuration of our new\n>server and I don't know what to tell him w.r.t. installing the Hmisc\n>library.  Has anyone installed the Hmisc/Design libraries from Statlib on\n>S+5.0 for UNIX (solaris)?  Does it work?\n>\n>Mohamed Abdolell\n>___________________________________________\n>Ontario Cancer Institute / Princess Margaret Hospital\n>Biostatistics Dept, 610 University Ave., Rm 15-422\n>Toronto, ON  M5G 2M9,  Tel. (416)946-4501 x4879\n>\n>\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "It's hard to think that the group could respond faster than the author.\n\nHmisc and Design will be 5.0-compatible as soon as 5.0 settles\ndown somewhat and is available on Win 95/98/NT.  I am starting\nt",
-      "thread_id": "thread-959f70772284",
-      "thread_depth": 0,
+      "thread_id": "thread-47cdeb79d1fe",
+      "thread_depth": 1,
       "month": "1999-02"
     },
     {
@@ -2233,12 +2233,12 @@
       "date": "1999-02-24T18:25:33Z",
       "subject": "Re: [S] Summary: Dirichlet-multinomial mixture",
       "subject_clean": "[S] Summary: Dirichlet-multinomial mixture",
-      "in_reply_to": null,
+      "in_reply_to": "<199902241613.LAA26946@navigator.math.uwaterloo.ca>",
       "references": [],
       "body_plain": "HI,\n\nI didn';t get back to you because I thought your problem was solved .\nNow I'm not so sure from what you wrote.  Anyway my software is\nnot a solution to your problem, but it enables one to quickly code such a\nsolution and produce a stand alone estimation procedure or\nif desitred a DLL which can be linked to SPLUS and becomes part of your\nSPLUS package as it were.  If you have a concise mathemtaical\ndescription of your problem I cna code it up for you.\n\n          Dave\n-----Original Message-----\nFrom: Melanie Wigg <mbwigg at navigator.math.uwaterloo.ca>\nTo: s-news at wubios.wustl.edu <s-news at wubios.wustl.edu>\nDate: Wednesday, February 24, 1999 8:17 AM\nSubject: [S] Summary: Dirichlet-multinomial mixture\n\n>\n>Splus users,\n>\n>I recently posted the following question:\n>\n>>I am looking for an Splus function which would estimate the parameters\n>>of a dirichlet-multinomial mixture (the multicategory analogue of\n>>the beta-binomial).  I also need this function to handle \"counts\" that\n>>are not integers.\n>>\n>>Does anyone know of such an S-plus function?\n>\n>\n>\n>I received the following responses from ....\n>\n>Dean Billheimer\n>----------------\n>\n>I don't have an S-plus function that directly estimates the\n>Dirichlet-multinomial parameters.  Several years ago I wrote some Splus\n>code to perform this feat, and I don't think there was too much involved\n>(I'm afraid the code fell by the way-side.)  Mosimann (1962, I think)\n>published a paper in Biometrika that provides expressions for the maximum\n>likelihood estimators for the parameters.  These can be solved numerically\n>with nlmin() or nlminb().  As I recall, the only (relatively) tricky part\n>was to re-parameterize so that the minizer uses only positive values for\n>the parameter estimates (like exp(x)).  (This may have been before\n>nlminb() was available.)\n>\n>\n>Thomas Yee\n>-----------\n>\n>I think my VGAM software (http://www.stat.auckland.ac.nz/yee/vgam)\n>should be able to handle it, provided somebody writes a family function\n>for it.\n>\n>\n>Dave Fournier also replied that he has some software that could do the job.\n>-------------\n>\n>\n>Thanks for these responses!\n>Melanie Wigg\n>-----------------------------------------------------------------------\n>This message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\n>send e-mail to s-news-request at wubios.wustl.edu with the BODY of the\n>message:  unsubscribe s-news\n>\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "HI,\n\nI didn';t get back to you because I thought your problem was solved .\nNow I'm not so sure from what you wrote.  Anyway my software is\nnot a solution to your problem, but it enables one to quickly",
-      "thread_id": "thread-2417bb01dc69",
-      "thread_depth": 0,
+      "thread_id": "thread-13ddc7db2d38",
+      "thread_depth": 1,
       "month": "1999-02"
     },
     {
@@ -2627,12 +2627,12 @@
       "date": "1999-02-26T11:05:24Z",
       "subject": "Re: [S] Multivariate normality-no reply",
       "subject_clean": "[S] Multivariate normality-no reply",
-      "in_reply_to": null,
+      "in_reply_to": "<\"MNXA002022mhall            U*/C=JP/ADMD=ADMD1/PRMD=PRMD1/O=REKIHAKU/OU=MTA1/S=hall/G=mark/\"@MHS>",
       "references": [],
       "body_plain": "> From: mhall at rekihaku.ac.jp\n\n> A week or so ago, I asked if there was any SPlus macros, scripts, etc\n> for calculating multivariate normality.  \n> \n> For all who've asked, I've not received any and will pass them on to\n> the list should I get any.  \n\nCould you please tell us what you mean by `calculating multivariate normality'?\nUsually unclear Qs get few replies.  Do you want a pdf, cdf, a test\nstatistic (and if so which one), ....\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "> From: mhall at rekihaku.ac.jp\n\n> A week or so ago, I asked if there was any SPlus macros, scripts, etc\n> for calculating multivariate normality.  \n> \n> For all who've asked, I've not received any an",
-      "thread_id": "thread-15c8ca99b502",
-      "thread_depth": 0,
+      "thread_id": "thread-29b2f1c7c806",
+      "thread_depth": 1,
       "month": "1999-02"
     },
     {
@@ -2725,12 +2725,12 @@
       "date": "1999-02-26T19:08:47Z",
       "subject": "Re: [S] Tests for multivariate NON-normality?",
       "subject_clean": "[S] Tests for multivariate NON-normality?",
-      "in_reply_to": null,
+      "in_reply_to": "<000401be61aa$1a21a620$29044f0c@parkhurs>",
       "references": [],
       "body_plain": "There is more to the issue than just termiology.  If your car gets across\ntown in the snowstorm, then you know that it *can* travel through snow.  If\nyour car doesn't make it, then you know it *doesn't* do well.  This test has\na yes or no answer.  My point was that normality tests (no matter how you\nrefer to them) tend to be \"one-way\"---they can make you fairly confident of\nnon-normality if you get a \"significant\" result, but (except with very large\nsample size), they shouldn't leave you confident that your data *are*\nnormal.\n\nDave Parkhurst\n\n-----Original Message-----\nFrom: Nicholas Barrowman <barrowma at mscs.dal.ca>\nTo: David F. Parkhurst <parkhurs at indiana.edu>\nDate: Friday, February 26, 1999 12:16 PM\nSubject: Re: [S] Tests for multivariate NON-normality?\n\n>I think the issue is partly one of terminology.\n>I would talk about a test OF multivariate normality (not \"for\"),\n>(and similarly a test OF equality of variances).\n>The sense is that you are putting multivariate normality TO THE TEST,\n>just as you might put your car to the test in a snow storm.\n------------------------\n>Nick Barrowman, Ph.D. Student,\n>Dalhousie University Department of\n>Mathematics, Statistics, & Computing Science\n>barrowma at mscs.dal.ca\n>http://www.mscs.dal.ca/~barrowma\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "There is more to the issue than just termiology.  If your car gets across\ntown in the snowstorm, then you know that it *can* travel through snow.  If\nyour car doesn't make it, then you know it *doesn'",
-      "thread_id": "thread-c946be8d43ee",
-      "thread_depth": 0,
+      "thread_id": "thread-8b2178a3b078",
+      "thread_depth": 1,
       "month": "1999-02"
     },
     {
@@ -2741,12 +2741,12 @@
       "date": "1999-02-26T19:48:00Z",
       "subject": "RE: [S] Tests for multivariate NON-normality?",
       "subject_clean": "[S] Tests for multivariate NON-normality?",
-      "in_reply_to": null,
+      "in_reply_to": "<000401be61aa$1a21a620$29044f0c@parkhurs>",
       "references": [],
       "body_plain": "I hesitate to engage in this discussion, as it is rapidly degenerating into\nthe usual sort of blather when people get sloppy. So briefly:\n\n1. NO data *are* normal. Normality is a mathematical entity, not a property\nof data. One may use a normal distribution as an empirical model that\napproximates data. One may also use any of 562 other distributions that may\ndo equally well. As George Box remarked: \"All models are wrong, but some are\nuseful.\"\n\n2. Given enough real data, any test of normality will reject (a\nmeta-theorem?); this does not necessarily mean that a normal model does not\nusefully characterize the data.\n\n3. Given little enough data, any test of normality will fail to reject; this\ndoes not necessarily mean that a normal model will usefully characterize the\ndata.\n\n4. The above 2 points are why power/sample size (or versions thereof like OC\ncurves) must be considered in applying N-P theory.\n\n5. If the above 3 points bother you, become a Bayesian.\n\nBert Gunter\nBiometrics Research RY 70-38\nMerck & Company\nP.O. Box 2000\nRahway, NJ 07065-0900\nPhone: (732) 594-7765   Fax: (732) 594-1565\n\n\"The business of the statistician is to catalyze the scientific learning\nprocess.\"      -- George E.P. Box\n\n> ----------\n> From:         David F. Parkhurst[SMTP:parkhurs at indiana.edu]\n> Sent:         Friday, February 26, 1999 2:08 PM\n> To:   s-news at wubios.wustl.edu\n> Cc:   Nicholas Barrowman\n> Subject:      Re: [S] Tests for multivariate NON-normality?\n> \n> \n> There is more to the issue than just termiology.  If your car gets across\n> town in the snowstorm, then you know that it *can* travel through snow.\n> If\n> your car doesn't make it, then you know it *doesn't* do well.  This test\n> has\n> a yes or no answer.  My point was that normality tests (no matter how you\n> refer to them) tend to be \"one-way\"---they can make you fairly confident\n> of\n> non-normality if you get a \"significant\" result, but (except with very\n> large\n> sample size), they shouldn't leave you confident that your data *are*\n> normal.\n> \n> Dave Parkhurst\n> \n> -----Original Message-----\n> From: Nicholas Barrowman <barrowma at mscs.dal.ca>\n> To: David F. Parkhurst <parkhurs at indiana.edu>\n> Date: Friday, February 26, 1999 12:16 PM\n> Subject: Re: [S] Tests for multivariate NON-normality?\n> \n> \n> >I think the issue is partly one of terminology.\n> >I would talk about a test OF multivariate normality (not \"for\"),\n> >(and similarly a test OF equality of variances).\n> >The sense is that you are putting multivariate normality TO THE TEST,\n> >just as you might put your car to the test in a snow storm.\n> ------------------------\n> >Nick Barrowman, Ph.D. Student,\n> >Dalhousie University Department of\n> >Mathematics, Statistics, & Computing Science\n> >barrowma at mscs.dal.ca\n> >http://www.mscs.dal.ca/~barrowma\n> \n> \n> \n> -----------------------------------------------------------------------\n> This message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\n> send e-mail to s-news-request at wubios.wustl.edu with the BODY of the\n> message:  unsubscribe s-news\n> \n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "I hesitate to engage in this discussion, as it is rapidly degenerating into\nthe usual sort of blather when people get sloppy. So briefly:\n\n1. NO data *are* normal. Normality is a mathematical entity, ",
-      "thread_id": "thread-6a217efbd330",
-      "thread_depth": 0,
+      "thread_id": "thread-8b2178a3b078",
+      "thread_depth": 1,
       "month": "1999-02"
     },
     {
@@ -2773,28 +2773,12 @@
       "date": "1999-02-26T22:18:34Z",
       "subject": "RE: [S] Tests for multivariate NON-normality?",
       "subject_clean": "[S] Tests for multivariate NON-normality?",
-      "in_reply_to": null,
+      "in_reply_to": "<000401be61aa$1a21a620$29044f0c@parkhurs>",
       "references": [],
       "body_plain": "Allow me to offer a few useful references on test for normality:\n\nLilliefors, H.W.,\n\"On the Kolmogorov-Smirnov Tests for Normality with Mean and Variance\nUnknown\"\nJASA, 62, 399-402, 1967.\n\nShapiro, S.S. and Francia, R.S.,\n\"An Approximate Analysis of Variance Test for Normality\"\nJASA, 67,  215-216, 1972.\n\nShapiro, S.S., and Wilk, M.B.,\n\"An Analysis of Variance Test for Normality\"\nBiometrika, 52, 591-611, 1965.\n\nShapiro, S.S., Wilk, M.B., and Chen, H.J.,\n\"A comparative study of various tests of normality\"\nJASA, 63, 1343-1372, 1968.\n\nStephens, M.A.,\n\"EDF statistics for goodness of fit and some comparisons\"\nJASA, 69, 730-737, 1974.\n\nAndrews, Gnanadesikan, and Warner, (or perhaps just two of them -\nI can't remember) have a book circa 1972  entitled\n\"Multivariate ...\" something or other\nin which they address testing multivariate normality by looking at\nthe normality of the respective marginal distributions.\nTakes 3 minutes to find it at your library.\n\nI hope the original poster finds these helpful, as they are the\nseminal works on this subject (there are, of course, others, but\nthis should give you an excellent start).\n\nI trust we can now return to the normal business of the list.\n\nBest wishes,\nEric Gibson, Ph.D.\nNovartis Pharmaceuticals\n{The opinions expressed herein do not in any way represent Novartis\nPharmaceuticals}\n\n\"Gunter, Bert\" <bert_gunter at merck.com> on 02/26/99 02:48:00 PM\n\nTo:   s-news at wubios.wustl.edu, \"'David F. Parkhurst'\"\n      <parkhurs at indiana.edu>\ncc:   Nicholas Barrowman <barrowma at mscs.dal.ca> (bcc: Eric\n      Gibson/PH/Novartis)\nSubject:  RE: [S] Tests for multivariate NON-normality?\n\nI hesitate to engage in this discussion, as it is rapidly degenerating into\nthe usual sort of blather when people get sloppy. So briefly:\n\n1. NO data *are* normal. Normality is a mathematical entity, not a property\nof data. One may use a normal distribution as an empirical model that\napproximates data. One may also use any of 562 other distributions that may\ndo equally well. As George Box remarked: \"All models are wrong, but some\nare\nuseful.\"\n\n2. Given enough real data, any test of normality will reject (a\nmeta-theorem?); this does not necessarily mean that a normal model does not\nusefully characterize the data.\n\n3. Given little enough data, any test of normality will fail to reject;\nthis\ndoes not necessarily mean that a normal model will usefully characterize\nthe\ndata.\n\n4. The above 2 points are why power/sample size (or versions thereof like\nOC\ncurves) must be considered in applying N-P theory.\n\n5. If the above 3 points bother you, become a Bayesian.\n\nBert Gunter\nBiometrics Research RY 70-38\nMerck & Company\nP.O. Box 2000\nRahway, NJ 07065-0900\nPhone: (732) 594-7765   Fax: (732) 594-1565\n\n\"The business of the statistician is to catalyze the scientific learning\nprocess.\"      -- George E.P. Box\n\n> ----------\n> From:   David F. Parkhurst[SMTP:parkhurs at indiana.edu]\n> Sent:   Friday, February 26, 1999 2:08 PM\n> To:     s-news at wubios.wustl.edu\n> Cc:     Nicholas Barrowman\n> Subject:     Re: [S] Tests for multivariate NON-normality?\n>\n>\n> There is more to the issue than just termiology.  If your car gets across\n> town in the snowstorm, then you know that it *can* travel through snow.\n> If\n> your car doesn't make it, then you know it *doesn't* do well.  This test\n> has\n> a yes or no answer.  My point was that normality tests (no matter how you\n> refer to them) tend to be \"one-way\"---they can make you fairly confident\n> of\n> non-normality if you get a \"significant\" result, but (except with very\n> large\n> sample size), they shouldn't leave you confident that your data *are*\n> normal.\n>\n> Dave Parkhurst\n>\n> -----Original Message-----\n> From: Nicholas Barrowman <barrowma at mscs.dal.ca>\n> To: David F. Parkhurst <parkhurs at indiana.edu>\n> Date: Friday, February 26, 1999 12:16 PM\n> Subject: Re: [S] Tests for multivariate NON-normality?\n>\n>\n> >I think the issue is partly one of terminology.\n> >I would talk about a test OF multivariate normality (not \"for\"),\n> >(and similarly a test OF equality of variances).\n> >The sense is that you are putting multivariate normality TO THE TEST,\n> >just as you might put your car to the test in a snow storm.\n> ------------------------\n> >Nick Barrowman, Ph.D. Student,\n> >Dalhousie University Department of\n> >Mathematics, Statistics, & Computing Science\n> >barrowma at mscs.dal.ca\n> >http://www.mscs.dal.ca/~barrowma\n>\n>\n>\n> -----------------------------------------------------------------------\n> This message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\n> send e-mail to s-news-request at wubios.wustl.edu with the BODY of the\n> message:  unsubscribe s-news\n>\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Allow me to offer a few useful references on test for normality:\n\nLilliefors, H.W.,\n\"On the Kolmogorov-Smirnov Tests for Normality with Mean and Variance\nUnknown\"\nJASA, 62, 399-402, 1967.\n\nShapiro, S.",
-      "thread_id": "thread-13c87ac1f5b6",
-      "thread_depth": 0,
-      "month": "1999-02"
-    },
-    {
-      "id": "msg-037c3e046d6b",
-      "message_id": "<3.0.5.32.19990226172711.00794660@cgocable.ca>",
-      "from_name": "Isabelle Gaboury",
-      "from_email_hash": "60fb17111cf6de98093f1bf4004e71ea1eb56da5d72ea9535b69a41b5aa192c9",
-      "date": "1999-02-26T22:27:11Z",
-      "subject": "Summation problem",
-      "subject_clean": "Summation problem",
-      "in_reply_to": null,
-      "references": [],
-      "body_plain": "Hi,\n\nI wrote this function:\nadd5 <- function(i, epsilon, pi, pij)\n{\nresr <- 0;\nfor (j in 1:(n-1))\n        {denomi <- 0;\n         for (k in 1 :(n-1))\n                denomi <- ((1-epsilon[k])*pi[k]*pij[k,j]) + denomi;\n         resr <<- ((x[n,j]*(1-epsilon[i])*pi[i]*pij[i,j])/denomi) + resr;\n        }\n}\n\nfrom which I would expect to get the value \"resr\", which is in fact a sum\nof j \"resr\" terms. But, if I print the value of \"resr\" at each step j, I\ngot 0 all the time. Outside of the function, if I use the value of \"resr\",\nit gives me the first term of the sum over the j terms... How come???\n\nI tried to put \"resr <- 0;\" outside of the function. But, problem: it works\nonly (i.e. \"resr\" contains the correct sum) only if this function is asked\ndirectly in the commands window. If I put \"resr <- 0;\" plus function add5\n(without resr <- 0;) in another function, I go back to my first problem,\ni.e. the sum is incorrect.\n\nWhat a stange problem... Any help will be really appreciated!\nIsabelle Gaboury",
-      "body_snippet": "Hi,\n\nI wrote this function:\nadd5 <- function(i, epsilon, pi, pij)\n{\nresr <- 0;\nfor (j in 1:(n-1))\n        {denomi <- 0;\n         for (k in 1 :(n-1))\n                denomi <- ((1-epsilon[k])*pi[k]*pij",
-      "thread_id": "thread-037c3e046d6b",
-      "thread_depth": 0,
+      "thread_id": "thread-8b2178a3b078",
+      "thread_depth": 1,
       "month": "1999-02"
     },
     {
@@ -2852,12 +2836,13 @@
     {
       "id": "thread-a468f0cb29f6",
       "subject": "[S] condensing a dataframe sequentially",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
-        "Christian Keller"
+        "Christian Keller",
+        "Valerie Zartarian"
       ],
       "started": "1999-02-01T09:38:02Z",
-      "last_reply": "1999-02-01T09:38:02Z",
+      "last_reply": "1999-02-02T10:46:08Z",
       "root_message_id": "msg-a468f0cb29f6"
     },
     {
@@ -2870,18 +2855,6 @@
       "started": "1999-02-01T14:22:57Z",
       "last_reply": "1999-02-01T14:22:57Z",
       "root_message_id": "msg-d29b5aa3ee04"
-    },
-    {
-      "id": "thread-93d362899bbf",
-      "subject": "[S] condensing a dataframe sequentially",
-      "message_count": 2,
-      "participants": [
-        "Christian Keller",
-        "Valerie Zartarian"
-      ],
-      "started": "1999-02-01T17:03:59Z",
-      "last_reply": "1999-02-02T10:46:08Z",
-      "root_message_id": "msg-93d362899bbf"
     },
     {
       "id": "thread-ea6b53ff4708",
@@ -2942,12 +2915,13 @@
     {
       "id": "thread-a266f775f34c",
       "subject": "[S] Bivariate frailty survival model",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
+        "ramon diaz uriarte",
         "ziv shkedy"
       ],
       "started": "1999-02-04T14:26:03Z",
-      "last_reply": "1999-02-04T14:26:03Z",
+      "last_reply": "1999-02-09T13:59:01Z",
       "root_message_id": "msg-a266f775f34c"
     },
     {
@@ -2975,12 +2949,13 @@
     {
       "id": "thread-51fc0f97af4c",
       "subject": "[S] Seeking Seasonal Nonparametric stats",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "CUDE Curtis"
+        "CUDE Curtis",
+        "Steven P. Millard"
       ],
       "started": "1999-02-04T22:20:49Z",
-      "last_reply": "1999-02-04T22:20:49Z",
+      "last_reply": "1999-02-05T16:09:40Z",
       "root_message_id": "msg-51fc0f97af4c"
     },
     {
@@ -3008,12 +2983,13 @@
     {
       "id": "thread-53ba04bb774a",
       "subject": "[S] Problems with graphsheets..",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Arnold Dekkers",
         "Frank Biedermann"
       ],
       "started": "1999-02-05T01:44:39Z",
-      "last_reply": "1999-02-05T01:44:39Z",
+      "last_reply": "1999-02-09T09:18:00Z",
       "root_message_id": "msg-53ba04bb774a"
     },
     {
@@ -3039,21 +3015,11 @@
       "root_message_id": "msg-596f0adfed56"
     },
     {
-      "id": "thread-cef33c3d8ef1",
-      "subject": "[S] Seeking Seasonal Nonparametric stats",
-      "message_count": 1,
-      "participants": [
-        "Steven P. Millard"
-      ],
-      "started": "1999-02-05T16:09:40Z",
-      "last_reply": "1999-02-05T16:09:40Z",
-      "root_message_id": "msg-cef33c3d8ef1"
-    },
-    {
       "id": "thread-d610e79f19d2",
       "subject": "[S] Isotonic regression",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
+        "Frank E Harrell Jr",
         "Timothy R. Johnson",
         "andrey at utstat.toronto.edu"
       ],
@@ -3071,28 +3037,6 @@
       "started": "1999-02-06T14:58:09Z",
       "last_reply": "1999-02-06T14:58:09Z",
       "root_message_id": "msg-04c12141c5bb"
-    },
-    {
-      "id": "thread-21c1ea5bb68a",
-      "subject": "[S] Bivariate frailty survival model",
-      "message_count": 1,
-      "participants": [
-        "ziv shkedy"
-      ],
-      "started": "1999-02-08T08:07:15Z",
-      "last_reply": "1999-02-08T08:07:15Z",
-      "root_message_id": "msg-21c1ea5bb68a"
-    },
-    {
-      "id": "thread-1ed619ac4dda",
-      "subject": "[S] Isotonic regression",
-      "message_count": 1,
-      "participants": [
-        "Frank E Harrell Jr"
-      ],
-      "started": "1999-02-08T13:56:35Z",
-      "last_reply": "1999-02-08T13:56:35Z",
-      "root_message_id": "msg-1ed619ac4dda"
     },
     {
       "id": "thread-59fd4777f135",
@@ -3115,17 +3059,6 @@
       "started": "1999-02-09T02:29:29Z",
       "last_reply": "1999-02-09T02:29:29Z",
       "root_message_id": "msg-a9d6bb32f781"
-    },
-    {
-      "id": "thread-007a04450bfc",
-      "subject": "[S] Problems with graphsheets..",
-      "message_count": 1,
-      "participants": [
-        "Arnold Dekkers"
-      ],
-      "started": "1999-02-09T09:18:00Z",
-      "last_reply": "1999-02-09T09:18:00Z",
-      "root_message_id": "msg-007a04450bfc"
     },
     {
       "id": "thread-71d37f607119",
@@ -3152,24 +3085,14 @@
     {
       "id": "thread-4d4a7709f04d",
       "subject": "[S] interpreting p-values from lm() results",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
+        "Alan Zaslavsky",
         "Doug Moog"
       ],
       "started": "1999-02-09T13:35:25Z",
-      "last_reply": "1999-02-09T13:35:25Z",
+      "last_reply": "1999-02-09T19:25:26Z",
       "root_message_id": "msg-4d4a7709f04d"
-    },
-    {
-      "id": "thread-f50affd28f00",
-      "subject": "[S] interpreting p-values from lm() results",
-      "message_count": 1,
-      "participants": [
-        "Alan Zaslavsky"
-      ],
-      "started": "1999-02-09T13:48:06Z",
-      "last_reply": "1999-02-09T13:48:06Z",
-      "root_message_id": "msg-f50affd28f00"
     },
     {
       "id": "thread-923873ac4f7f",
@@ -3181,17 +3104,6 @@
       "started": "1999-02-09T13:49:47Z",
       "last_reply": "1999-02-09T13:49:47Z",
       "root_message_id": "msg-923873ac4f7f"
-    },
-    {
-      "id": "thread-515c6776543d",
-      "subject": "[S] Bivariate frailty survival model",
-      "message_count": 1,
-      "participants": [
-        "ramon diaz uriarte"
-      ],
-      "started": "1999-02-09T13:59:01Z",
-      "last_reply": "1999-02-09T13:59:01Z",
-      "root_message_id": "msg-515c6776543d"
     },
     {
       "id": "thread-851f47be9c44",
@@ -3236,17 +3148,6 @@
       "started": "1999-02-09T18:56:55Z",
       "last_reply": "1999-02-09T18:56:55Z",
       "root_message_id": "msg-8fb6d826bd34"
-    },
-    {
-      "id": "thread-d4633ab33ca9",
-      "subject": "[S] interpreting p-values from lm() results",
-      "message_count": 1,
-      "participants": [
-        "Doug Moog"
-      ],
-      "started": "1999-02-09T19:25:26Z",
-      "last_reply": "1999-02-09T19:25:26Z",
-      "root_message_id": "msg-d4633ab33ca9"
     },
     {
       "id": "thread-af1a63dd6a69",
@@ -3361,14 +3262,17 @@
     {
       "id": "thread-9514c63ed2c5",
       "subject": "[S] bump hunting",
-      "message_count": 3,
+      "message_count": 6,
       "participants": [
         "Albyn Jones",
         "Brett Presnell",
+        "Gunter, Bert",
+        "Harezlak, Jarek",
+        "Jerry W. Lewis",
         "Wolfgang Rolke"
       ],
       "started": "1999-02-10T17:54:11Z",
-      "last_reply": "1999-02-10T18:24:26Z",
+      "last_reply": "1999-02-11T18:04:33Z",
       "root_message_id": "msg-9514c63ed2c5"
     },
     {
@@ -3381,28 +3285,6 @@
       "started": "1999-02-10T18:28:57Z",
       "last_reply": "1999-02-10T18:28:57Z",
       "root_message_id": "msg-1bc6b97c9c92"
-    },
-    {
-      "id": "thread-d78d14e4d7f5",
-      "subject": "[S] bump hunting",
-      "message_count": 1,
-      "participants": [
-        "Gunter, Bert"
-      ],
-      "started": "1999-02-10T18:47:56Z",
-      "last_reply": "1999-02-10T18:47:56Z",
-      "root_message_id": "msg-d78d14e4d7f5"
-    },
-    {
-      "id": "thread-7b8cc16f844b",
-      "subject": "[S] bump hunting",
-      "message_count": 1,
-      "participants": [
-        "Jerry W. Lewis"
-      ],
-      "started": "1999-02-10T19:11:11Z",
-      "last_reply": "1999-02-10T19:11:11Z",
-      "root_message_id": "msg-7b8cc16f844b"
     },
     {
       "id": "thread-932b4a6fd26b",
@@ -3437,17 +3319,6 @@
       "started": "1999-02-11T06:05:43Z",
       "last_reply": "1999-02-11T18:21:01Z",
       "root_message_id": "msg-16aa2bf3e56d"
-    },
-    {
-      "id": "thread-b14ed9b436e4",
-      "subject": "[S] bump hunting",
-      "message_count": 1,
-      "participants": [
-        "Harezlak, Jarek"
-      ],
-      "started": "1999-02-11T18:04:33Z",
-      "last_reply": "1999-02-11T18:04:33Z",
-      "root_message_id": "msg-b14ed9b436e4"
     },
     {
       "id": "thread-15eaa238130a",
@@ -3520,12 +3391,13 @@
     {
       "id": "thread-466b97d19811",
       "subject": "[S] names of functions in a list?",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Prof Brian Ripley",
         "Tim Smith"
       ],
       "started": "1999-02-12T16:05:58Z",
-      "last_reply": "1999-02-12T16:05:58Z",
+      "last_reply": "1999-02-12T17:41:16Z",
       "root_message_id": "msg-466b97d19811"
     },
     {
@@ -3538,17 +3410,6 @@
       "started": "1999-02-12T16:31:53Z",
       "last_reply": "1999-02-12T16:31:53Z",
       "root_message_id": "msg-76b80075e4af"
-    },
-    {
-      "id": "thread-f03d9ec4530e",
-      "subject": "[S] names of functions in a list?",
-      "message_count": 1,
-      "participants": [
-        "Prof Brian Ripley"
-      ],
-      "started": "1999-02-12T17:41:16Z",
-      "last_reply": "1999-02-12T17:41:16Z",
-      "root_message_id": "msg-f03d9ec4530e"
     },
     {
       "id": "thread-bc1b7374a036",
@@ -3586,12 +3447,12 @@
     {
       "id": "thread-6b80a8107dc6",
       "subject": "[S] Titles on array of figures",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Lars Karlsson"
       ],
       "started": "1999-02-16T08:58:07Z",
-      "last_reply": "1999-02-16T08:58:07Z",
+      "last_reply": "1999-02-17T10:35:45Z",
       "root_message_id": "msg-6b80a8107dc6"
     },
     {
@@ -3686,17 +3547,6 @@
       "root_message_id": "msg-182b3bb7533b"
     },
     {
-      "id": "thread-519e98fdbb1d",
-      "subject": "[S] Titles on array of figures",
-      "message_count": 1,
-      "participants": [
-        "Lars Karlsson"
-      ],
-      "started": "1999-02-17T10:35:45Z",
-      "last_reply": "1999-02-17T10:35:45Z",
-      "root_message_id": "msg-519e98fdbb1d"
-    },
-    {
       "id": "thread-7db6e7e811c0",
       "subject": "[S] Verbatim displays.",
       "message_count": 2,
@@ -3756,25 +3606,15 @@
     {
       "id": "thread-625272165d50",
       "subject": "REML in Splus, was: [S] Re: your mail",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Prof Brian D Ripley",
+        "Siem Heisterkamp",
         "ballr at rimu.fri.cri.nz"
       ],
       "started": "1999-02-18T00:04:47Z",
-      "last_reply": "1999-02-18T07:51:01Z",
-      "root_message_id": "msg-625272165d50"
-    },
-    {
-      "id": "thread-499eb56be861",
-      "subject": "REML in Splus, was: [S] Re: your mail",
-      "message_count": 1,
-      "participants": [
-        "Siem Heisterkamp"
-      ],
-      "started": "1999-02-18T08:28:09Z",
       "last_reply": "1999-02-18T08:28:09Z",
-      "root_message_id": "msg-499eb56be861"
+      "root_message_id": "msg-625272165d50"
     },
     {
       "id": "thread-18c3628002b7",
@@ -3856,12 +3696,13 @@
     {
       "id": "thread-e8b4aef44bc0",
       "subject": "[S] S to latex",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Eusebio Arenal"
+        "Eusebio Arenal",
+        "Frank E Harrell Jr"
       ],
       "started": "1999-02-19T08:35:56Z",
-      "last_reply": "1999-02-19T08:35:56Z",
+      "last_reply": "1999-02-19T18:25:32Z",
       "root_message_id": "msg-e8b4aef44bc0"
     },
     {
@@ -3878,12 +3719,12 @@
     {
       "id": "thread-2591b71f98a9",
       "subject": "[S] multinomial regression",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Hannoever"
       ],
       "started": "1999-02-19T09:20:44Z",
-      "last_reply": "1999-02-19T09:20:44Z",
+      "last_reply": "1999-02-22T08:31:41Z",
       "root_message_id": "msg-2591b71f98a9"
     },
     {
@@ -3909,17 +3750,6 @@
       "root_message_id": "msg-30f1fd5be12f"
     },
     {
-      "id": "thread-c5759b5dce9f",
-      "subject": "[S] S to latex",
-      "message_count": 1,
-      "participants": [
-        "Frank E Harrell Jr"
-      ],
-      "started": "1999-02-19T18:25:32Z",
-      "last_reply": "1999-02-19T18:25:32Z",
-      "root_message_id": "msg-c5759b5dce9f"
-    },
-    {
       "id": "thread-023e1b05a2d3",
       "subject": "[S] overlaps of polygons",
       "message_count": 1,
@@ -3929,17 +3759,6 @@
       "started": "1999-02-22T01:26:41Z",
       "last_reply": "1999-02-22T01:26:41Z",
       "root_message_id": "msg-023e1b05a2d3"
-    },
-    {
-      "id": "thread-b2d8fa5c77e1",
-      "subject": "[S] multinomial regression",
-      "message_count": 1,
-      "participants": [
-        "Hannoever"
-      ],
-      "started": "1999-02-22T08:31:41Z",
-      "last_reply": "1999-02-22T08:31:41Z",
-      "root_message_id": "msg-b2d8fa5c77e1"
     },
     {
       "id": "thread-b8bd14b6086c",
@@ -4045,12 +3864,13 @@
     {
       "id": "thread-47cdeb79d1fe",
       "subject": "[S] Hmisc/Design libraries for Splus 5.0 UNIX solaris",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Abdolell, Mohamed"
+        "Abdolell, Mohamed",
+        "Frank E Harrell Jr"
       ],
       "started": "1999-02-23T22:12:35Z",
-      "last_reply": "1999-02-23T22:12:35Z",
+      "last_reply": "1999-02-24T13:58:34Z",
       "root_message_id": "msg-47cdeb79d1fe"
     },
     {
@@ -4099,17 +3919,6 @@
       "root_message_id": "msg-2805b01daf0c"
     },
     {
-      "id": "thread-959f70772284",
-      "subject": "[S] Hmisc/Design libraries for Splus 5.0 UNIX solaris",
-      "message_count": 1,
-      "participants": [
-        "Frank E Harrell Jr"
-      ],
-      "started": "1999-02-24T13:58:34Z",
-      "last_reply": "1999-02-24T13:58:34Z",
-      "root_message_id": "msg-959f70772284"
-    },
-    {
       "id": "thread-1223f53689d5",
       "subject": "[S] dll.load problem solved",
       "message_count": 1,
@@ -4134,27 +3943,17 @@
     {
       "id": "thread-13ddc7db2d38",
       "subject": "[S] Summary: Dirichlet-multinomial mixture",
-      "message_count": 5,
+      "message_count": 6,
       "participants": [
         "Haicheng Tang",
         "Lynd Bacon",
         "Melanie Wigg",
-        "Prof Brian D Ripley"
+        "Prof Brian D Ripley",
+        "dave fournier"
       ],
       "started": "1999-02-24T16:13:46Z",
       "last_reply": "1999-02-26T07:26:46Z",
       "root_message_id": "msg-13ddc7db2d38"
-    },
-    {
-      "id": "thread-2417bb01dc69",
-      "subject": "[S] Summary: Dirichlet-multinomial mixture",
-      "message_count": 1,
-      "participants": [
-        "dave fournier"
-      ],
-      "started": "1999-02-24T18:25:33Z",
-      "last_reply": "1999-02-24T18:25:33Z",
-      "root_message_id": "msg-2417bb01dc69"
     },
     {
       "id": "thread-c7a8c729cb8c",
@@ -4359,24 +4158,14 @@
     {
       "id": "thread-29b2f1c7c806",
       "subject": "[S] Multivariate normality-no reply",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Prof Brian Ripley",
         "mhall at rekihaku.ac.jp"
       ],
       "started": "1999-02-26T10:25:34Z",
-      "last_reply": "1999-02-26T10:25:34Z",
-      "root_message_id": "msg-29b2f1c7c806"
-    },
-    {
-      "id": "thread-15c8ca99b502",
-      "subject": "[S] Multivariate normality-no reply",
-      "message_count": 1,
-      "participants": [
-        "Prof Brian Ripley"
-      ],
-      "started": "1999-02-26T11:05:24Z",
       "last_reply": "1999-02-26T11:05:24Z",
-      "root_message_id": "msg-15c8ca99b502"
+      "root_message_id": "msg-29b2f1c7c806"
     },
     {
       "id": "thread-238a3f2aaa4e",
@@ -4403,12 +4192,14 @@
     {
       "id": "thread-8b2178a3b078",
       "subject": "[S] Tests for multivariate NON-normality?",
-      "message_count": 1,
+      "message_count": 4,
       "participants": [
-        "David F. Parkhurst"
+        "David F. Parkhurst",
+        "Gunter, Bert",
+        "eric.gibson at pharma.Novartis.com"
       ],
       "started": "1999-02-26T16:39:11Z",
-      "last_reply": "1999-02-26T16:39:11Z",
+      "last_reply": "1999-02-26T22:18:34Z",
       "root_message_id": "msg-8b2178a3b078"
     },
     {
@@ -4423,28 +4214,6 @@
       "root_message_id": "msg-64d2af97d00f"
     },
     {
-      "id": "thread-c946be8d43ee",
-      "subject": "[S] Tests for multivariate NON-normality?",
-      "message_count": 1,
-      "participants": [
-        "David F. Parkhurst"
-      ],
-      "started": "1999-02-26T19:08:47Z",
-      "last_reply": "1999-02-26T19:08:47Z",
-      "root_message_id": "msg-c946be8d43ee"
-    },
-    {
-      "id": "thread-6a217efbd330",
-      "subject": "[S] Tests for multivariate NON-normality?",
-      "message_count": 1,
-      "participants": [
-        "Gunter, Bert"
-      ],
-      "started": "1999-02-26T19:48:00Z",
-      "last_reply": "1999-02-26T19:48:00Z",
-      "root_message_id": "msg-6a217efbd330"
-    },
-    {
       "id": "thread-710086480c60",
       "subject": "[S] Survival5",
       "message_count": 1,
@@ -4454,28 +4223,6 @@
       "started": "1999-02-26T21:40:52Z",
       "last_reply": "1999-02-26T21:40:52Z",
       "root_message_id": "msg-710086480c60"
-    },
-    {
-      "id": "thread-13c87ac1f5b6",
-      "subject": "[S] Tests for multivariate NON-normality?",
-      "message_count": 1,
-      "participants": [
-        "eric.gibson at pharma.Novartis.com"
-      ],
-      "started": "1999-02-26T22:18:34Z",
-      "last_reply": "1999-02-26T22:18:34Z",
-      "root_message_id": "msg-13c87ac1f5b6"
-    },
-    {
-      "id": "thread-037c3e046d6b",
-      "subject": "Summation problem",
-      "message_count": 1,
-      "participants": [
-        "Isabelle Gaboury"
-      ],
-      "started": "1999-02-26T22:27:11Z",
-      "last_reply": "1999-02-26T22:27:11Z",
-      "root_message_id": "msg-037c3e046d6b"
     },
     {
       "id": "thread-2d150293407b",

@@ -123,12 +123,12 @@
       "date": "2003-12-03T14:09:37Z",
       "subject": "FW: filling holes in its series",
       "subject_clean": "filling holes in its series",
-      "in_reply_to": null,
+      "in_reply_to": "<008e01c3b936$5f2a8320$daeefea9@irma>",
       "references": [],
       "body_plain": "One approach is to \nuse match() and diff(). I'm not exactly sure how time series work in \nS-Plus 4.5 (I use R now), but you should be able to do something like \nthis:\n\n \n\nAssume its1 and its2 are vectors in date increasing order, and that \ndates1 and dates2 are the corresponding dates as character strings. \nThen:\n\n \n\n# create a \"times\" vector for rep \n\nz<- match(dates2,dates1)  ## dates must be in increasing \norder!\n\ntimes<- c(diff(z), \nlength(dates1)-z[length(dates2)]+1)\n\nfilledvec<- rep(its2,times)\n\n \n\nCheers,\n\nBert Gunter \nBiometrics Research RY 33-300 \nMerck & Company \nP.O. Box 2000 \nRahway, NJ 07065-0900 \nPhone: (732) 594-7765 \nmailto: bert_gunter at merck.com \n\n\"The business of the \nstatistician is to catalyze the scientific learning \nprocess.\"      -- George E.P. Box \n\n \n\n-----Original Message-----\nFrom: \ns-news-owner at lists.biostat.wustl.edu \n[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Patrick \nAgin\nSent: Tuesday, December 02, 2003 7:43 PM\nTo: \ns-news at lists.biostat.wustl.edu\nSubject: [S] filling holes in its \nseries\n\nHi,\n\nI have two irregular time series, say its1 and \nits2. The second is a \"time-subset\" of the first in the sense that dates in \nits2 are all present in the first but the converse is not true. I would like to \nfill the \"holes\" in its2 so the two series are the same lenght. Moreover, when \nfilling the hole, the new value in its2 should be the same as the \n\"preceding\" in its2 also. Example:\n\n \n\nits1\n\n1/1/1970    10\n\n1/2/1970    20\n\n1/4/1970    30\n\n1/7/1970    40\n\n \n\nits2\n\n1/1/1970    1\n\n1/4/1970    3\n\n \n\nthe result should be:\n\n \n\nits2\n\n1/1/1970    1\n\n1/2/1970    1\n\n1/4/1970    3\n\n1/7/1970    3\n\n \n\nIs there an elegant and efficient way to do that in \nS-Plus? (I'm using S-Plus 4.5 under Windows 2000).\n\nThank you very much,\n\nPatrick",
       "body_snippet": "One approach is to \nuse match() and diff(). I'm not exactly sure how time series work in \nS-Plus 4.5 (I use R now), but you should be able to do something like \nthis:\n\n \n\nAssume its1 and its2 are vect",
-      "thread_id": "thread-937b318e0c84",
-      "thread_depth": 0,
+      "thread_id": "thread-c0822b793f6b",
+      "thread_depth": 1,
       "month": "2003-12"
     },
     {
@@ -205,12 +205,12 @@
       "date": "2003-12-03T19:10:43Z",
       "subject": "Re: Type III SS",
       "subject_clean": "Type III SS",
-      "in_reply_to": null,
+      "in_reply_to": "<056d01c3b9c2$a3584190$6fae8f80@EricDesk>",
       "references": [],
       "body_plain": "There seems to be something funny going on with your data.  I just checked\nin Splus 6.1 on Linux:\n\n> set.seed(135343)\n> x1 <- rnorm(413)\n> x2 <- x1 + rnorm(413, sd=.5)\n> y <- x1 + x2 + rnorm(413, sd=.4)\n> anova(lm(y ~ x2 + x1))\nAnalysis of Variance Table\n\nResponse: y\n\nTerms added sequentially (first to last)\n           Df Sum of Sq  Mean Sq  F Value Pr(F) \n       x2   1  1663.815 1663.815 11229.65     0\n       x1   1    76.611   76.611   517.07     0\nResiduals 410    60.747    0.148               \n\nSo type 3 SS for x1 here is 76.611.\n\n> anova(lm(y ~ x1 + x2))\nAnalysis of Variance Table\n\nResponse: y\n\nTerms added sequentially (first to last)\n           Df Sum of Sq  Mean Sq  F Value Pr(F) \n       x1   1  1638.312 1638.312 11057.53     0\n       x2   1   102.114  102.114   689.20     0\nResiduals 410    60.747    0.148               \n\nType 3 SS for x2 is 102.114.\n\n> drop1(lm(y ~ x1 + x2))\nSingle term deletions\n\nModel:\ny ~ x1 + x2\n       Df Sum of Sq      RSS       Cp \n<none>               60.7467  61.6357\n    x1  1   76.6107 137.3574 137.9500\n    x2  1  102.1137 162.8604 163.4530\n\nThis agrees with the result above.\n\n> ssType3(lm(y ~ x1 + x2))\nType III Sum of Squares\n           Df Sum of Sq  Mean Sq  F Value Pr(F) \n       x1   1   76.6107  76.6107 517.0717     0\n       x2   1  102.1137 102.1137 689.2000     0\nResiduals 410   60.7467   0.1482               \n\nSo does this.\n\nAndy \n\n> -----Original Message-----\n> From: s-news-owner at lists.biostat.wustl.edu \n> [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of \n> Eric Turkheimer\n> Sent: Wednesday, December 03, 2003 12:27 PM\n> To: s-news at lists.biostat.wustl.edu\n> Subject: [S] Type III SS\n> \n> \n> I don't understand the following behavior of the the ssType3 \n> function in\n> SPlus.  First, I use lm to compute the SSE for models with each of two\n> predictors (SATV and SATM; hypothetical data) alone and jointly:\n> \n>      anova(lm(gpa~satv,data=gpasat))\n> Analysis of Variance Table\n> \n> Response: gpa\n> \n> Terms added sequentially (first to last)\n>            Df Sum of Sq  Mean Sq F Value         Pr(F) \n>      satv   1    9.1117 9.111688 17.6517 0.00003254384\n> Residuals 412  212.6716 0.516193   \n> \n>                    \n>      anova(lm(gpa~satm,data=gpasat))\n> Analysis of Variance Table\n> \n> Response: gpa\n> \n> Terms added sequentially (first to last)\n>            Df Sum of Sq  Mean Sq  F Value         Pr(F) \n>      satm   1   16.3598 16.35977 32.81138 1.961537e-008\n> Residuals 412  205.4235  0.49860  \n> \n>                      \n>      anova(lm(gpa~satv+satm,data=gpasat))\n> Analysis of Variance Table\n> \n> Response: gpa\n> \n> Terms added sequentially (first to last)\n>            Df Sum of Sq  Mean Sq  F Value         Pr(F) \n>      satv   1    9.1117  9.11169 18.52060 0.00002103191\n>      satm   1   10.4695 10.46949 21.28048 0.00000530816\n> Residuals 411  202.2021  0.49198     \n> \n> So it seems to me that the Type III SS for satv should be\n> 205.42-202.20=3.22, and for satm it should be 212.67-202.20=10.47.\n> \n> That is exactly what SAS gets:\n> \n> \n>         Source                      DF     Type III SS     \n> Mean Square    \n>         satv                         1      3.22139861      3.22139861\n> satm                         1     10.46948540     10.46948540  \n> \n> \n> But ssType3 gives me:\n> \n>      ssType3(lm(gpa~satv+satm,data=gpasat))\n> Type III Sum of Squares\n>            Df Sum of Sq  Mean Sq  F Value Pr(F) \n>      satv   1   80.3742 80.37417 163.3701     0\n>      satm   1   79.9869 79.98692 162.5830     0\n> Residuals 411  202.2021  0.49198               \n>      \n> I can't see where those numbers would come from.  Obviously I \n> am missing\n> something.\n> \n> Eric Turkheimer, PhD\n> Department of Psychology\n> University of Virginia\n> PO Box 400400\n> Charlottesville, VA  22904-4400\n> \n> 434-982-4732\n> 434-982-4766 (FAX)\n> \n> \n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>",
       "body_snippet": "There seems to be something funny going on with your data.  I just checked\nin Splus 6.1 on Linux:\n\n> set.seed(135343)\n> x1 <- rnorm(413)\n> x2 <- x1 + rnorm(413, sd=.5)\n> y <- x1 + x2 + rnorm(413, sd=.",
-      "thread_id": "thread-86355dc3e739",
-      "thread_depth": 0,
+      "thread_id": "thread-6a40d7eaf4b7",
+      "thread_depth": 1,
       "month": "2003-12"
     },
     {
@@ -221,12 +221,12 @@
       "date": "2003-12-03T19:20:27Z",
       "subject": "Re: Type III SS",
       "subject_clean": "Type III SS",
-      "in_reply_to": null,
+      "in_reply_to": "<056d01c3b9c2$a3584190$6fae8f80@EricDesk>",
       "references": [],
       "body_plain": "BTW, why would you want to use type III SS for 1df variables?  The t-tests\non the individual coefficients would have given you the same answer:\n\n> summary(lm(y ~ x1 + x2))$coef[c(\"x1\", \"x2\"), \"t value\"]^2\n       x1    x2 \n 517.0717 689.2\n\nNote that these are identical to the F statistics for the type III tests.\n\nBest,\nAndy\n\n> From: Liaw, Andy\n> \n> There seems to be something funny going on with your data.  I \n> just checked\n> in Splus 6.1 on Linux:\n> \n> > set.seed(135343)\n> > x1 <- rnorm(413)\n> > x2 <- x1 + rnorm(413, sd=.5)\n> > y <- x1 + x2 + rnorm(413, sd=.4)\n> > anova(lm(y ~ x2 + x1))\n> Analysis of Variance Table\n> \n> Response: y\n> \n> Terms added sequentially (first to last)\n>            Df Sum of Sq  Mean Sq  F Value Pr(F) \n>        x2   1  1663.815 1663.815 11229.65     0\n>        x1   1    76.611   76.611   517.07     0\n> Residuals 410    60.747    0.148               \n> \n> So type 3 SS for x1 here is 76.611.\n> \n> > anova(lm(y ~ x1 + x2))\n> Analysis of Variance Table\n> \n> Response: y\n> \n> Terms added sequentially (first to last)\n>            Df Sum of Sq  Mean Sq  F Value Pr(F) \n>        x1   1  1638.312 1638.312 11057.53     0\n>        x2   1   102.114  102.114   689.20     0\n> Residuals 410    60.747    0.148               \n> \n> Type 3 SS for x2 is 102.114.\n> \n> > drop1(lm(y ~ x1 + x2))\n> Single term deletions\n> \n> Model:\n> y ~ x1 + x2\n>        Df Sum of Sq      RSS       Cp \n> <none>               60.7467  61.6357\n>     x1  1   76.6107 137.3574 137.9500\n>     x2  1  102.1137 162.8604 163.4530\n> \n> This agrees with the result above.\n> \n> > ssType3(lm(y ~ x1 + x2))\n> Type III Sum of Squares\n>            Df Sum of Sq  Mean Sq  F Value Pr(F) \n>        x1   1   76.6107  76.6107 517.0717     0\n>        x2   1  102.1137 102.1137 689.2000     0\n> Residuals 410   60.7467   0.1482               \n> \n> So does this.\n> \n> Andy \n> \n> \n> > -----Original Message-----\n> > From: s-news-owner at lists.biostat.wustl.edu \n> > [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of \n> > Eric Turkheimer\n> > Sent: Wednesday, December 03, 2003 12:27 PM\n> > To: s-news at lists.biostat.wustl.edu\n> > Subject: [S] Type III SS\n> > \n> > \n> > I don't understand the following behavior of the the ssType3 \n> > function in\n> > SPlus.  First, I use lm to compute the SSE for models with \n> each of two\n> > predictors (SATV and SATM; hypothetical data) alone and jointly:\n> > \n> >      anova(lm(gpa~satv,data=gpasat))\n> > Analysis of Variance Table\n> > \n> > Response: gpa\n> > \n> > Terms added sequentially (first to last)\n> >            Df Sum of Sq  Mean Sq F Value         Pr(F) \n> >      satv   1    9.1117 9.111688 17.6517 0.00003254384\n> > Residuals 412  212.6716 0.516193   \n> > \n> >                    \n> >      anova(lm(gpa~satm,data=gpasat))\n> > Analysis of Variance Table\n> > \n> > Response: gpa\n> > \n> > Terms added sequentially (first to last)\n> >            Df Sum of Sq  Mean Sq  F Value         Pr(F) \n> >      satm   1   16.3598 16.35977 32.81138 1.961537e-008\n> > Residuals 412  205.4235  0.49860  \n> > \n> >                      \n> >      anova(lm(gpa~satv+satm,data=gpasat))\n> > Analysis of Variance Table\n> > \n> > Response: gpa\n> > \n> > Terms added sequentially (first to last)\n> >            Df Sum of Sq  Mean Sq  F Value         Pr(F) \n> >      satv   1    9.1117  9.11169 18.52060 0.00002103191\n> >      satm   1   10.4695 10.46949 21.28048 0.00000530816\n> > Residuals 411  202.2021  0.49198     \n> > \n> > So it seems to me that the Type III SS for satv should be\n> > 205.42-202.20=3.22, and for satm it should be 212.67-202.20=10.47.\n> > \n> > That is exactly what SAS gets:\n> > \n> > \n> >         Source                      DF     Type III SS     \n> > Mean Square    \n> >         satv                         1      3.22139861      \n> 3.22139861\n> > satm                         1     10.46948540     10.46948540  \n> > \n> > \n> > But ssType3 gives me:\n> > \n> >      ssType3(lm(gpa~satv+satm,data=gpasat))\n> > Type III Sum of Squares\n> >            Df Sum of Sq  Mean Sq  F Value Pr(F) \n> >      satv   1   80.3742 80.37417 163.3701     0\n> >      satm   1   79.9869 79.98692 162.5830     0\n> > Residuals 411  202.2021  0.49198               \n> >      \n> > I can't see where those numbers would come from.  Obviously I \n> > am missing\n> > something.\n> > \n> > Eric Turkheimer, PhD\n> > Department of Psychology\n> > University of Virginia\n> > PO Box 400400\n> > Charlottesville, VA  22904-4400\n> > \n> > 434-982-4732\n> > 434-982-4766 (FAX)\n> > \n> > \n> > --------------------------------------------------------------------\n> > This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> > unsubscribe send e-mail to \n> s-news-request at lists.biostat.wustl.edu with\n> > the BODY of the message:  unsubscribe s-news\n> > \n> \n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>",
       "body_snippet": "BTW, why would you want to use type III SS for 1df variables?  The t-tests\non the individual coefficients would have given you the same answer:\n\n> summary(lm(y ~ x1 + x2))$coef[c(\"x1\", \"x2\"), \"t value",
-      "thread_id": "thread-e1b62de66b92",
-      "thread_depth": 0,
+      "thread_id": "thread-6a40d7eaf4b7",
+      "thread_depth": 1,
       "month": "2003-12"
     },
     {
@@ -570,12 +570,12 @@
       "date": "2003-12-08T03:52:49Z",
       "subject": "Re: S-Plus Tree Splitting",
       "subject_clean": "S-Plus Tree Splitting",
-      "in_reply_to": null,
+      "in_reply_to": "<BAY2-F169caY7KJ5n0c000129c2@hotmail.com>",
       "references": [],
       "body_plain": "Hello Prof Ripley,\n\nThank you very much for your feedback. I forgot to mention in my earlier \nmail that the factor, in fact, is an ordered one. But still that ordered \nfactor was split randomly as I mentioned earlier. So, does converting the \nordered factor into numeric solve the problem?\n\nThanks again and appreciate your feedback.\n\nSanjay\n\nP.S: I am using S-Plus 6.0\n\n> From: Prof Brian Ripley <ripley at stats.ox.ac.uk>\n> To: sanjay Munireddy <sunjai123 at hotmail.com>\n> CC: s-news at lists.biostat.wustl.edu\n> Subject: Re: [S] S-Plus Tree Splitting\n> Date: Sun, 7 Dec 2003 22:47:12 +0000 (GMT)\n>\n> Since a factor (as distinct from an ordered factor) has no ordering, how\n> can your `I thought' possibly be correct?\n>\n> Both tree and rpart divide the levels of an unordered factor into two\n> non-empty groups.  As far as I recall rpart splits an ordered factor on\n> its ordering but tree treats it as if unordered  But you can always\n> replace an ordered factor by the codes in tree.\n>\n> On Sun, 7 Dec 2003, sanjay Munireddy wrote:\n>\n>\n>\n> > I am working on my special project for MPH using S-plus tree method. I\n> came\n>\n> > across this problem where the tree splits a categorical variable at a\n>\n> > particular node at 3 different levels. For ex, lets assume a particular\n>\n> > factor had 5 levels like mild, moderate,severe,life threatening and\n> fatal.\n>\n> > Then the tree is splitting this factor at 3 different levels like\n>\n> > mild,severe,fatal. I thought the spliiting is always binary like <this\n> level\n>\n> > or >that level. So, I came across the tree that splits the above factor\n>\n> > sending mild,severe,fatal to the left arm of the node and  moderate,\n> life\n>\n> > threatening to the right arm of the node. Can this be possible? Please\n> let\n>\n> > me know. I would appreicate if someone can please answer my doubt.\n>\n> > Thanks,\n>\n> > Sanjay\n>\n> > MPH student.\n>\n> > College of Public Health, University of South Florida\n>\n> > Tampa, FL.\n>\n>\n>\n> --\n> Brian D. Ripley,                  ripley at stats.ox.ac.uk\n> Professor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\n> University of Oxford,             Tel:  +44 1865 272861 (self)\n> 1 South Parks Road,                     +44 1865 272866 (PA)\n> Oxford OX1 3TG, UK                Fax:  +44 1865 272595\n>\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n\n_________________________________________________________________\n\nDon?t worry if your Inbox will max out while you are enjoying the holidays.  \nGet MSN Extra Storage!  http://join.msn.com/?PAGE=features/es",
       "body_snippet": "Hello Prof Ripley,\n\nThank you very much for your feedback. I forgot to mention in my earlier \nmail that the factor, in fact, is an ordered one. But still that ordered \nfactor was split randomly as I m",
-      "thread_id": "thread-dc0290f6a0ac",
-      "thread_depth": 0,
+      "thread_id": "thread-bef0ad890dab",
+      "thread_depth": 1,
       "month": "2003-12"
     },
     {
@@ -650,12 +650,12 @@
       "date": "2003-12-08T19:50:55Z",
       "subject": "string question",
       "subject_clean": "string question",
-      "in_reply_to": null,
+      "in_reply_to": "<54668D97C0199943A454516A5FF6481E0129C3@EXCHUS001.AD.MLP.COM>",
       "references": [],
       "body_plain": "substring(tickerstring,1,nchar(tickerstring)-3)\n\ndid work. i must \nhave made some  mistake\n\nthe first time i \ntried it. thanks to\n\neveryone for all the \nquick responses.",
       "body_snippet": "substring(tickerstring,1,nchar(tickerstring)-3)\n\ndid work. i must \nhave made some  mistake\n\nthe first time i \ntried it. thanks to\n\neveryone for all the \nquick responses.",
-      "thread_id": "thread-e98d4fedc947",
-      "thread_depth": 0,
+      "thread_id": "thread-b8683bd8f076",
+      "thread_depth": 1,
       "month": "2003-12"
     },
     {
@@ -716,12 +716,12 @@
       "date": "2003-12-09T13:49:25Z",
       "subject": "Re: Help on comparing models",
       "subject_clean": "Help on comparing models",
-      "in_reply_to": null,
+      "in_reply_to": "<000801c3be02$5bc49dd0$b8726f82@spatial.maine.edu>",
       "references": [],
       "body_plain": "No. \nanova() only works for testing nested models. \n\n \n\nSo \nthis turns out to be another one of those innocent, \"simple\" questons beneath \nwhich lies a den of statistical snakes. There is a large literature on this \nissue. Akaike/Bayes Information Criteria (AIC,BIC) obtain measures of fit that \nattempt to account for the number of parameters by a penalization criteria; more \nrecently, so-called Bayesian model choice methodology has received a lot of \nattention, and might be relevant; \"LAR\" (Least Angle Regression) is another new \ntechnique for (implicit) penalization that might be useful.\n\n \n\nNote \nthe structure of the problem: You have 7 variables to choose from: a constant, \nthe 5 terms of the full quadratic in long and lat in fit1, and the exponential \nin fit2. You wish to fit a parsimonious linear model in these variables. \nSome form of cross validation would probably be useful to help you do this and \navoid overfitting, though the novel (to my knowledge) aspect of your question is \nthat you want to restrict the search to a subspace of models rather than \nallowing any possible subset of the variables.\n\n \n\nPerhaps those more expert in this area may be stimulated \nby my inaccuracies and naivites to elaborate more fully on these issues.I \nthink they ultimately impinge on the philosophy of science: There is \nno fully \"objective\" data-driven (statistical) criterion to resolve \nsuch questions. The \"right\" model is ultimately what the high priests of the \nsubject matter area (e.g.the \"scientific experts\") agree on. Obviously, all \nshould feel free to vehemently disagree with this view (but see \nFeyerabend's work for a much more principled and eloquent statement of \nit).\n\n \n\nI need \nto emphasize: My opinions only -- this has nothing to do with my company or poor \ncolleagues, who should not be tarred by my statistical \nbrush.\n\n \n\nCheers,\n\nBert Gunter \nBiometrics Research RY 33-300 \nMerck & Company \nP.O. Box 2000 \nRahway, NJ 07065-0900 \nPhone: (732) 594-7765 \nmailto: bert_gunter at merck.com \n\n\"The business of the \nstatistician is to catalyze the scientific learning \nprocess.\"      -- George E.P. Box \n\n-----Original Message-----\nFrom: \ns-news-owner at lists.biostat.wustl.edu \n[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of rui \nzhang\nSent: Monday, December 08, 2003 10:13 PM\nTo: \ns-news\nSubject: [S] Help on comparing models\n\nHi, all\n\n \n\nI am thinking about using two models to fit the \nobservations, one\n\nis polynomial model\n\nfit1: \ncatch~long+lat+long^2+lat^2+long*lat\n\nthe other is exponential model\n\nfit2: \ncatch~alpha*exp((long-lat)^2)+beta\n\nBut I do not know how to prove the hypothesis that \nfit2 is better than\n\nfit1. \n\nCan I use the function anova(fit2, \nfit1)?\n\n \n\nThanks a lot!\n\n \n\nyours,\nrui\n\n \n\n-----------------------------------------------------------------\nRui \nZhang\nDepartment of Spatial Information Science and Engineering\n5711 \nBoardman Hall, Room 248\nUniversity of Maine\nOrono, ME \n04469-5711\nUSA\nemail:rzhang at spatial.maine.edu\nhome:www.spatial.maine.edu/~rzhang",
       "body_snippet": "No. \nanova() only works for testing nested models. \n\n \n\nSo \nthis turns out to be another one of those innocent, \"simple\" questons beneath \nwhich lies a den of statistical snakes. There is a large lite",
-      "thread_id": "thread-cb6e269208ce",
-      "thread_depth": 0,
+      "thread_id": "thread-04c1fc0508bf",
+      "thread_depth": 1,
       "month": "2003-12"
     },
     {
@@ -738,8 +738,8 @@
       ],
       "body_plain": "Just to add to the Bert's suggestion, few days back we\nhad very good discussions on AIC/BIC... look in the\narchives of splus.\n\nhttp://www.biostat.wustl.edu/archives/html/s-news/2003-07/msg00142.html\n\ncheers,\nJag\n--- \"Gunter, Bert\" <bert_gunter at merck.com> wrote:\n> No. anova() only works for testing nested models. \n>  \n> So this turns out to be another one of those\n> innocent, \"simple\" questons\n> beneath which lies a den of statistical snakes.\n> There is a large literature\n> on this issue. Akaike/Bayes Information Criteria\n> (AIC,BIC) obtain measures\n> of fit that attempt to account for the number of\n> parameters by a\n> penalization criteria; more recently, so-called\n> Bayesian model choice\n> methodology has received a lot of attention, and\n> might be relevant; \"LAR\"\n> (Least Angle Regression) is another new technique\n> for (implicit)\n> penalization that might be useful.\n>  \n> Note the structure of the problem: You have 7\n> variables to choose from: a\n> constant, the 5 terms of the full quadratic in long\n> and lat in fit1, and the\n> exponential in fit2. You wish to fit a parsimonious\n> linear model in these\n> variables. Some form of cross validation would\n> probably be useful to help\n> you do this and avoid overfitting, though the novel\n> (to my knowledge) aspect\n> of your question is that you want to restrict the\n> search to a subspace of\n> models rather than allowing any possible subset of\n> the variables.\n>  \n> Perhaps those more expert in this area may be\n> stimulated by my inaccuracies\n> and naivites to elaborate more fully on these\n> issues.I think they ultimately\n> impinge on the philosophy of science: There is no\n> fully \"objective\"\n> data-driven (statistical) criterion to resolve such\n> questions. The \"right\"\n> model is ultimately what the high priests of the\n> subject matter area\n> (e.g.the \"scientific experts\") agree on. Obviously,\n> all should feel free to\n> vehemently disagree with this view (but see\n> Feyerabend's work for a much\n> more principled and eloquent statement of it).\n>  \n> I need to emphasize: My opinions only -- this has\n> nothing to do with my\n> company or poor colleagues, who should not be tarred\n> by my statistical\n> brush.\n>  \n> Cheers,\n> Bert Gunter \n> Biometrics Research RY 33-300 \n> Merck & Company \n> P.O. Box 2000 \n> Rahway, NJ 07065-0900 \n> Phone: (732) 594-7765 \n> mailto: bert_gunter at merck.com \n> \n> \"The business of the statistician is to catalyze the\n> scientific learning\n> process.\"      -- George E.P. Box \n> \n> -----Original Message-----\n> From: s-news-owner at lists.biostat.wustl.edu\n> [mailto:s-news-owner at lists.biostat.wustl.edu] On\n> Behalf Of rui zhang\n> Sent: Monday, December 08, 2003 10:13 PM\n> To: s-news\n> Subject: [S] Help on comparing models\n> \n> \n> Hi, all\n>  \n> I am thinking about using two models to fit the\n> observations, one\n> is polynomial model\n> fit1: catch~long+lat+long^2+lat^2+long*lat\n> the other is exponential model\n> fit2: catch~alpha*exp((long-lat)^2)+beta\n> But I do not know how to prove the hypothesis that\n> fit2 is better than\n> fit1. \n> Can I use the function anova(fit2, fit1)?\n>  \n> Thanks a lot!\n>  \n> yours,\n> rui\n>  \n>\n-----------------------------------------------------------------\n> Rui Zhang\n> Department of Spatial Information Science and\n> Engineering\n> 5711 Boardman Hall, Room 248\n> University of Maine\n> Orono, ME 04469-5711\n> USA\n> email:rzhang at spatial.maine.edu\n> home:www.spatial.maine.edu/~rzhang\n> \n\n__________________________________\nDo you Yahoo!?\nNew Yahoo! Photos - easier uploading and sharing.\nhttp://photos.yahoo.com/",
       "body_snippet": "Just to add to the Bert's suggestion, few days back we\nhad very good discussions on AIC/BIC... look in the\narchives of splus.\n\nhttp://www.biostat.wustl.edu/archives/html/s-news/2003-07/msg00142.html\n\n",
-      "thread_id": "thread-cb6e269208ce",
-      "thread_depth": 1,
+      "thread_id": "thread-04c1fc0508bf",
+      "thread_depth": 2,
       "month": "2003-12"
     },
     {
@@ -750,12 +750,12 @@
       "date": "2003-12-09T15:09:30Z",
       "subject": "Re: Help on comparing models",
       "subject_clean": "Help on comparing models",
-      "in_reply_to": null,
+      "in_reply_to": "<000801c3be02$5bc49dd0$b8726f82@spatial.maine.edu>",
       "references": [],
       "body_plain": "To \nadd a bit to Bert's comments:\n\n \n\nIMHO \nStatistics is rarely about \"proving some hypothesis\".  The statistical \ntests of hypotheses gives probability statements about a very precise \nmathematical construct, of which \"fit1 is better than fit2\" is as far from as I \ncould imagine, and one does not get \"proof\" from the test, just probability \nstatements.  You need to state precisely what you mean by \"better\" before \nan attempt is even possible.\n\n \n\nLeo \nBreiman in his controversial \"Two Culture\" paper in Statistical Science \nexpressed his view that more accurate models (in terms of prediction on future \ndata) have a better chance of approximating the truth than less accurate \nones.  If you buy that, you can use either CV (as Bert suggested) or \nbootstrap to help you decide between the two models.\n\n \n\nHTH,\n\nAndy\n\n>\n>\n>   -----Original Message-----\n> From:\n>   s-news-owner at lists.biostat.wustl.edu\n>   [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of rui\n>   zhang\n> Sent: Monday, December 08, 2003 10:13 PM\n> To:\n>   s-news\n> Subject: [S] Help on comparing models\n>\n>\n>\n>   Hi, all\n>\n>\n>\n>   I am thinking about using two models to fit the\n>   observations, one\n>\n>   is polynomial model\n>\n>   fit1:\n>   catch~long+lat+long^2+lat^2+long*lat\n>\n>   the other is exponential model\n>\n>   fit2:\n>   catch~alpha*exp((long-lat)^2)+beta\n>\n>   But I do not know how to prove the hypothesis\n>   that fit2 is better than\n>\n>   fit1.\n>\n>   Can I use the function anova(fit2,\n>   fit1)?\n>\n>\n>\n>   Thanks a lot!\n>\n>\n>\n>   yours,\n> rui\n>\n>\n>\n>   -----------------------------------------------------------------\n> Rui\n>   Zhang\n> Department of Spatial Information Science and Engineering\n> 5711\n>   Boardman Hall, Room 248\n> University of Maine\n> Orono, ME\n>   04469-5711\n> USA\n> email:rzhang at spatial.maine.edu\n> home:www.spatial.maine.edu/~rzhang",
       "body_snippet": "To \nadd a bit to Bert's comments:\n\n \n\nIMHO \nStatistics is rarely about \"proving some hypothesis\".  The statistical \ntests of hypotheses gives probability statements about a very precise \nmathematical ",
-      "thread_id": "thread-4d399dbae3d4",
-      "thread_depth": 0,
+      "thread_id": "thread-04c1fc0508bf",
+      "thread_depth": 1,
       "month": "2003-12"
     },
     {
@@ -798,12 +798,12 @@
       "date": "2003-12-09T17:16:24Z",
       "subject": "Re: Help on comparing models",
       "subject_clean": "Help on comparing models",
-      "in_reply_to": null,
+      "in_reply_to": "<000801c3be02$5bc49dd0$b8726f82@spatial.maine.edu>",
       "references": [],
       "body_plain": "Rui\n\nThe \nfollowing contains some of the issues, but their intuitive generalization \nof the AIC is not correct, I read somewhere.\n\nJoe\n\n \n\nBurnham, K. P., & Anderson, D. R. (1998). Model selection and \ninference: A practical information-theoretic approach. New York: Springer. \n\n>\n>\n>   -----Original Message-----\n> From: rui zhang\n>   [mailto:rzhang at spatial.maine.edu]\n> Sent: Monday, December 08, 2003\n>   9:13 PM\n> To: s-news\n> Subject: [S] Help on comparing\n>   models\n>\n>\n>\n>   Hi, all\n>\n>\n>\n>   I am thinking about using two models to fit the\n>   observations, one\n>\n>   is polynomial model\n>\n>   fit1:\n>   catch~long+lat+long^2+lat^2+long*lat\n>\n>   the other is exponential model\n>\n>   fit2:\n>   catch~alpha*exp((long-lat)^2)+beta\n>\n>   But I do not know how to prove the hypothesis\n>   that fit2 is better than\n>\n>   fit1.\n>\n>   Can I use the function anova(fit2,\n>   fit1)?\n>\n>\n>\n>   Thanks a lot!\n>\n>\n>\n>   yours,\n> rui\n>\n>\n>\n>   -----------------------------------------------------------------\n> Rui\n>   Zhang\n> Department of Spatial Information Science and Engineering\n> 5711\n>   Boardman Hall, Room 248\n> University of Maine\n> Orono, ME\n>   04469-5711\n> USA\n> email:rzhang at spatial.maine.edu\n> home:www.spatial.maine.edu/~rzhang",
       "body_snippet": "Rui\n\nThe \nfollowing contains some of the issues, but their intuitive generalization \nof the AIC is not correct, I read somewhere.\n\nJoe\n\n \n\nBurnham, K. P., & Anderson, D. R. (1998). Model selection and",
-      "thread_id": "thread-50a5d3373a3c",
-      "thread_depth": 0,
+      "thread_id": "thread-04c1fc0508bf",
+      "thread_depth": 1,
       "month": "2003-12"
     },
     {
@@ -894,12 +894,12 @@
       "date": "2003-12-10T15:30:39Z",
       "subject": "Re: coxph problem (Cannot coerce mode list to integer: list(eps =...)",
       "subject_clean": "coxph problem (Cannot coerce mode list to integer: list(eps =...)",
-      "in_reply_to": null,
+      "in_reply_to": "<A70782F6AAF8C64BBC26161A356550EB41AC02@icom-mail-01.i-com.com>",
       "references": [],
       "body_plain": "The coxph function is failing because there is no good solution to your\nproblem.  \n\n  As set up, at any death time the observation that dies is that one with the\nsmallest x value.  You can replicate your results with a simpler example:\n        zed <- 1:50\n        coxph(Surv(zed) ~ zed)\n        \n  The actual solution is beta = -infinity and loglik =0.  The Newton-Raphson\niteration path settles down to a pattern of \n          next beta = last beta * c\n          new loglik= old loglik /c\nwhere for your data c is about 1.5.\n\n  Computationally, however, a race condition occurs: will the loglik reach\nit's convergence criteria or will exp(beta) become effectively zero?  When\nthe latter happens the compuations collapse with any one of a number of error\nmessages, depending on what line of code first tries a division by zero.\nFor your data this happens at iter=11 and beta= -853.\n\n        Terry Therneau\n        Mayo Clinic",
       "body_snippet": "The coxph function is failing because there is no good solution to your\nproblem.  \n\n  As set up, at any death time the observation that dies is that one with the\nsmallest x value.  You can replicate y",
-      "thread_id": "thread-4b2ad2b09cb1",
-      "thread_depth": 0,
+      "thread_id": "thread-8e10dd361437",
+      "thread_depth": 1,
       "month": "2003-12"
     },
     {
@@ -1008,12 +1008,12 @@
       "date": "2003-12-11T14:37:57Z",
       "subject": "Re: pvalues from t-distribution",
       "subject_clean": "pvalues from t-distribution",
-      "in_reply_to": null,
+      "in_reply_to": "<EAB694F937D48A4196F6B51208ACFBC720876B@topi.uthscsa.edu>",
       "references": [],
       "body_plain": "Sundar\n\nThe tscore problem is not related to glm not reporting p-values.  There the problem is not knowing what finite-sample distribution is and not knowing how fast the unknown distribution converges to the normal.\n\nIn the tscore problem, the normal distribution would also be inappropriate.  The actual but anonymous distribution for a tscore is given by Chen et al.  It's not a t-distribution.\n\nJoe\n\n-----Original Message-----\n\nFrom: Sundar Dorai-Raj [mailto:sundar.dorai-raj at PDF.COM] \n\nSent: Wednesday, December 10, 2003 3:46 PM\n\nTo: Lucke, Joseph F\n\nSubject: Re: [S] pvalues from t-distribution\n\nJoe,\n\nThanks for the link. In that case, wouldn't the normal distribution (and \n\nthus the corresponding p-values) also be inappropriate? This is the \n\nreason (I believe) that p-values aren't given in the summary table with \n\nglm. However, t-scores are provided.\n\nPersonally, I'm not a big fan of p-values because of all the baggage \n\nthey carry.\n\nSundar\n\nLucke, Joseph F wrote:\n\n> Using the t-distribution to 'standardize' scores to a 't-score\" is a\n\n> common practice in educational and psychological statistics.  However, \n\n> the t-score does not have a t-distribution.  The discrepancy is large \n\n> for large 't-scores' and small samples.\n\n> \n\n> Chen, G., & Adatia, A. (1997). Independence and $t$ distribution. The\n\n> American Statistician, 51(2), 176--177.\n\n> \n\n> JSTOR Stable URL:\n\n> http://links.jstor.org/sici?sici=0003-1305%28199705%2951%3A2%3C176%3AIATD%3E2.0.CO%3B2-X \n\n> \n\n> \n\n> Joe\n\n> \n\n> -----Original Message-----\n\n> From: Sundar Dorai-Raj [mailto:sundar.dorai-raj at PDF.COM]\n\n> Sent: Wednesday, December 10, 2003 2:55 PM\n\n> To: Sliwerska, Ela\n\n> Cc: 's-news at lists.biostat.wustl.edu'\n\n> Subject: Re: [S] pvalues from t-distribution\n\n> \n\n> \n\n> Ela,\n\n> \n\n> Sliwerska, Ela wrote:\n\n> \n\n>  > Hi all!\n\n>  > I am trying to convert my tscore column into pvalues. I use  > \n\n> 2*(1-pnorm(abs(tscore))) command from command window but it works for  \n\n> > particular value. I would like to transfer my column all at once. \n\n> Can  > someone help? Thanks! Ela  >\n\n> \n\n> (Please use an informative subject line.)\n\n> \n\n> If \"tscore\" is part of a data.frame (say, \"DF\") then you should do the\n\n> following:\n\n> \n\n> 2 * (1 - pnorm(abs(DF$tscore)))\n\n> \n\n> But why not use a t-distribution rather than a Z-distribution? What \n\n> are the distributional assumptions of \"tscore\"? If you know the \n\n> degrees of freedom then using the following may be more appropriate:\n\n> \n\n> 2 * (1 - pt(abs(DF$tscore), degrees.of.freedom))\n\n> \n\n> Hope this helps,\n\n> \n\n> Sundar\n\n> \n\n> \n\n> \n\n> --------------------------------------------------------------------\n\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with \n\n> the BODY of the message:  unsubscribe s-news\n\n>",
       "body_snippet": "Sundar\n\nThe tscore problem is not related to glm not reporting p-values.  There the problem is not knowing what finite-sample distribution is and not knowing how fast the unknown distribution converge",
-      "thread_id": "thread-c86d85c4824b",
-      "thread_depth": 0,
+      "thread_id": "thread-cd147bf5624f",
+      "thread_depth": 1,
       "month": "2003-12"
     },
     {
@@ -1080,8 +1080,8 @@
       ],
       "body_plain": "Andy was kind enough to reply to my question about ssType3.  It works for\nhim, and it turns out it works for me too, on another computer, or on the\nsame computer using a different .Data directory.  So evidently I have\nwritten over some internal function necessary to ssType3.  Not a pretty\nthought, who knows what else it is screwing up?  Is there a way to diagnose\nsuch problems to avoid reinstalling entirely?\n\nEric\n\nEric Turkheimer, PhD\nDepartment of Psychology\nUniversity of Virginia\nPO Box 400400\nCharlottesville, VA  22904-4400\n\n434-982-4732\n434-982-4766 (FAX)",
       "body_snippet": "Andy was kind enough to reply to my question about ssType3.  It works for\nhim, and it turns out it works for me too, on another computer, or on the\nsame computer using a different .Data directory.  So",
-      "thread_id": "thread-86355dc3e739",
-      "thread_depth": 1,
+      "thread_id": "thread-6a40d7eaf4b7",
+      "thread_depth": 2,
       "month": "2003-12"
     },
     {
@@ -1513,12 +1513,12 @@
       "date": "2003-12-16T13:34:38Z",
       "subject": "Re: Representation of tree graphs or branching structures.",
       "subject_clean": "Representation of tree graphs or branching structures.",
-      "in_reply_to": null,
+      "in_reply_to": "<20031215195115.26837.qmail@web80707.mail.yahoo.com>",
       "references": [],
       "body_plain": "Lina,\nI've sent you a message privately on this, but forgot to copy the S news list.\nThe best software I've found is Graphviz, available at\n\nhttp://www.research.att.com/sw/tools/graphviz/\n\nIt does directed graphs (including trees and DAG's), and a version of it \n(called neato) does undirected graphs.\nThe documentation is very clear and the scripting language is a marvel of \nsimplicity.\n\nTo use the program, you just need to write a little S-Plus script that takes \nyour data structure and creates text strings that represent\n the Graphviz input code (this is much simpler than it sounds, once you see the \ngraphviz scripting language).  This requires one pass through your dataset.\nFor example, your dataset below can be translated into the following script:\n\ndigraph sample\n{\n1 -> 2;\n2 -> 3;\n2 -> 6;\n6 -> 7;\n7 -> 11;\n11 -> 5;\n}\n\nso the translation of your dataset to graphviz code is straighforward.  By\nrunning the above program in graphviz (the exe program called dot)  you get\nexactly what you need.  With this stripped-down example, the nodes will be\nlabeled 1,2,3, etc., but you can add code to change the labels, colors, node\nshapes, and you can add labels to the edges.  I use the Windows (DOS) version\nbut there are UNIX versions too.\n\n- Kenton\n\nwest at codingstrand.com wrote:\n\n> Dear list members:\n>\n>\n>\n> Does anyone know if it is possible to graphically render a branching\n> tree like structure in SPlus?  i.e. I have a data frame with 3 columns\n> as follows:\n>\n>\n>\n> Index     Node1     Node2\n>\n> 1         1         2\n>\n> 2         2         3\n>\n> 3         2         6\n>\n> 4         6         7\n>\n> 5         7         11\n>\n> 6         11        5\n>\n>\n>\n> I would like a pictorial(line?) representation of the connections\n> between Nodes1 and Nodes2 as I work down the sheet by Index.\n>\n> Is this possible, and if not can someone reccommend a suitable\n> alternative if possible?\n>\n>\n>\n> Thanks for any help or suggestions.\n>\n>\n>\n> Lina\n\nThere are functions in S Poetry (available via a \"shar\" file)\n\nfor mathematical graphs.  This includes a plot method.\n\nI'm a bit dubious that it will satisfy your needs, but it may\n\nbe a starting point.\n\n Patrick Burns\n\n \n\n  Burns Statistics\n\n  patrick at burns-stat.com\n\n  +44 (0)20 8525 0696\n\n  http://www.burns-stat.com\n\n (home of S Poetry and \"A Guide for the Unwilling S User\")\n\nwest at codingstrand.com wrote:\n\n>\n>\n>   Dear list members:\n>\n>\n>\n>\n>\n>   Does anyone know if it is possible to graphically render a branching\n> tree like structure in SPlus?  i.e. I have a data frame\n> with 3 columns as follows:\n>\n>\n>\n>\n>\n>   Index     Node1     Node2\n>\n>\n>   1         1         2\n>\n>\n>   2         2         3\n>\n>\n>   3         2         6\n>\n>\n>   4         6         7\n>\n>\n>   5         7         11\n>\n>\n>   6         11        5\n>\n>\n>\n>\n>\n>   I would like a pictorial(line?) representation of the connections\n> between Nodes1 and Nodes2 as I work down the sheet by Index.\n>\n>\n>   Is this possible, and if not can someone reccommend a suitable\n> alternative if possible?\n>\n>\n>\n>\n>\n>   Thanks for any help or suggestions.\n>\n>\n>\n>\n>   Lina\n>\n>",
       "body_snippet": "Lina,\nI've sent you a message privately on this, but forgot to copy the S news list.\nThe best software I've found is Graphviz, available at\n\nhttp://www.research.att.com/sw/tools/graphviz/\n\nIt does dir",
-      "thread_id": "thread-eb2156e591b0",
-      "thread_depth": 0,
+      "thread_id": "thread-276834aec2d0",
+      "thread_depth": 1,
       "month": "2003-12"
     },
     {
@@ -1551,8 +1551,8 @@
       ],
       "body_plain": "Hi,\nI am trying to plot a stacked bar chart in R but am not able to find the\ndocumentation.\n\nThe input data format is like the following\n\nCAT1 CAT2 Count\nA a  234\nA b  758\nA c  156\nB a  753\nB b  568\nB c  684\nC a  356\nC b  564\nC c  256\nD a  123\nD b 165\nD c  754\n\nplease advice.\n\nthanks,\n\nYun-Fang",
       "body_snippet": "Hi,\nI am trying to plot a stacked bar chart in R but am not able to find the\ndocumentation.\n\nThe input data format is like the following\n\nCAT1 CAT2 Count\nA a  234\nA b  758\nA c  156\nB a  753\nB b  568\nB",
-      "thread_id": "thread-4b2ad2b09cb1",
-      "thread_depth": 1,
+      "thread_id": "thread-8e10dd361437",
+      "thread_depth": 2,
       "month": "2003-12"
     },
     {
@@ -1732,12 +1732,12 @@
       "date": "2003-12-18T18:34:26Z",
       "subject": "Re: Early release?",
       "subject_clean": "Early release?",
-      "in_reply_to": null,
+      "in_reply_to": "<4.3.2.7.2.20031218130254.04525760@env.med.nyu.edu>",
       "references": [],
       "body_plain": "This \nis actually a deterministic logic puzzle. Perhaps your friend has visited the \nIBM web site where a variation was posted in July, 2002, at http://domino.research.ibm.com/Comm/wwwr_ponder.nsf/challenges/July2002.html; \nthe solution is also given there.\n\n \n\nDave \nHomiak\n\ndhomiak at xcaliber.com\n\n>   -----Original Message-----\n> From: Arthur Nadas\n>   [mailto:nadas at env.med.nyu.edu]\n> Sent: Thursday, December 18, 2003\n>   12:10 PM\n> To: s-news at lists.biostat.wustl.edu\n> Subject: [S]\n>   Early release?\n>\n>\n> Dear S-Plus\n>   Colleagues,\n>\n> A very sharp mathematician friend sent me this puzzle from\n>   prison. Although not explicit, it has, in my opinion, fairly deep statistical\n>   and probabilistic content. I thought some of you might enjoy thinking about\n>   it.  Please send me your thoughts at (nadas at env.med.nyu.edu) and I\n>   will transmit them to my friend and summarize putative solutions for this\n>   list.  Here is the\n>   puzzle:\n>\n> ************************************************\n>\n> Early\n>   release?\n>\n> In a cost cutting measure brought on by the budget crisis, the\n>   warden at the prison brought together four lifers and made them the following\n>   offer:\n>\n> “Intermittently and at my whim I will begin picking you, one at\n>   a time, to come to this room and stand before those two unconnected light\n>   switches. You may observe the positions of the switches and then you must\n>   switch one of them. At this point you also have the option of telling me: ‘All\n>   four of us, have by now, visited this room without the others.’ If this claim\n>   is correct then all of you will be immediately released. If the claim is\n>   wrong, you will all be executed.\n>\n> I may pick the same person several\n>   times in a row, but I will eventually pick every one of you. Once I have\n>   picked you, I will eventually pick you again and again, ad infinitum, as long\n>   as no one has made the claim. You each will be kept in total isolation except\n>   for these visits. I will give you time here together to plan your strategy,\n>   and when you have decided and leave here, I may change the way the switches\n>   are now, but after that only you guys will be allowed to touch them. No\n>   tricks.”\n>\n> What should they do?\n>\n> Arthur\n> Nádas",
       "body_snippet": "This \nis actually a deterministic logic puzzle. Perhaps your friend has visited the \nIBM web site where a variation was posted in July, 2002, at http://domino.research.ibm.com/Comm/wwwr_ponder.nsf/cha",
-      "thread_id": "thread-3722d26bc6f6",
-      "thread_depth": 0,
+      "thread_id": "thread-91da53fcf62d",
+      "thread_depth": 1,
       "month": "2003-12"
     },
     {
@@ -1748,12 +1748,12 @@
       "date": "2003-12-18T18:38:09Z",
       "subject": "Re: Early release?",
       "subject_clean": "Early release?",
-      "in_reply_to": null,
+      "in_reply_to": "<4.3.2.7.2.20031218130254.04525760@env.med.nyu.edu>",
       "references": [],
       "body_plain": "Here is the answer:\n\nhttp://cartalk.cars.com/Radio/Puzzler/Transcripts/200307/answer.html\n\n__________________________________________________________\nJames Holtman        \"What is the problem you are trying to solve?\"\nExecutive Consultant  --  Office of Technology, Convergys\njames.holtman at convergys.com\n+1 (513) 723-2929\n\n                                                                                \n                                       \n                      nadas at env.med.nyu.edu                                     \n                                       \n                      (Arthur Nadas)                   To:       \ns-news at lists.biostat.wustl.edu                        \n                      Sent by:                         cc:                      \n                                       \n                      s-news-owner at lists.biosta        Subject:  [S] Early \nrelease?                                    \n                      t.wustl.edu                                               \n                                       \n                                                                                \n                                       \n                                                                                \n                                       \n                      12/18/2003 13:09                                          \n                                       \n                                                                                \n                                       \n                                                                                \n                                       \n\nDear S-Plus Colleagues,\n\nA very sharp mathematician friend sent me this puzzle from prison. Although\nnot explicit, it has, in my opinion, fairly deep statistical and\nprobabilistic content. I thought some of you might enjoy thinking about it.\nPlease send me your thoughts at (nadas at env.med.nyu.edu) and I will transmit\nthem to my friend and summarize putative solutions for this list.  Here is\nthe puzzle:\n\n************************************************\n\nEarly release?\n\nIn a cost cutting measure brought on by the budget crisis, the warden at\nthe prison brought together four lifers and made them the following offer:\n\n\"Intermittently and at my whim I will begin picking you, one at a time, to\ncome to this room and stand before those two unconnected light switches.\nYou may observe the positions of the switches and then you must switch one\nof them. At this point you also have the option of telling me: 'All four of\nus, have by now, visited this room without the others.' If this claim is\ncorrect then all of you will be immediately released. If the claim is\nwrong, you will all be executed.\n\nI may pick the same person several times in a row, but I will eventually\npick every one of you. Once I have picked you, I will eventually pick you\nagain and again, ad infinitum, as long as no one has made the claim. You\neach will be kept in total isolation except for these visits. I will give\nyou time here together to plan your strategy, and when you have decided and\nleave here, I may change the way the switches are now, but after that only\nyou guys will be allowed to touch them. No tricks.\"\n\nWhat should they do?\n\nArthur Nádas\n\n--\n\"NOTICE:  The information contained in this electronic mail transmission is\nintended by Convergys Corporation for the use of the named individual or\nentity to which it is directed and may contain information that is\nprivileged or otherwise confidential.  If you have received this electronic\nmail transmission in error, please delete it from your system without\ncopying or forwarding it, and notify the sender of the error by reply email\nor by telephone (collect), so that the sender's address records can be\ncorrected.\"",
       "body_snippet": "Here is the answer:\n\nhttp://cartalk.cars.com/Radio/Puzzler/Transcripts/200307/answer.html\n\n__________________________________________________________\nJames Holtman        \"What is the problem you are ",
-      "thread_id": "thread-8c4820e1b25e",
-      "thread_depth": 0,
+      "thread_id": "thread-91da53fcf62d",
+      "thread_depth": 1,
       "month": "2003-12"
     },
     {
@@ -1764,12 +1764,12 @@
       "date": "2003-12-18T18:46:34Z",
       "subject": "Re: Early release?",
       "subject_clean": "Early release?",
-      "in_reply_to": null,
+      "in_reply_to": "<4.3.2.7.2.20031218130254.04525760@env.med.nyu.edu>",
       "references": [],
       "body_plain": "Also solved on CAR talk with a different number of prisoners. Note that \nClick and Clack state that a 6th grader can solve the problem without\ndeep math or statistics.\n\nhttp://cartalk.cars.com/Radio/Puzzler/Transcripts/200307/answer.html\n\nRoy Robertson\n\n\"Opinions expressed are mine and not those of Rohm and Haas Company\".\n\n\"David Homiak\" <dhomiak at xcaliber.com>\nSent by: s-news-owner at lists.biostat.wustl.edu\n12/18/2003 01:34 PM\n\n \n        To:     \"Arthur Nadas\" <nadas at env.med.nyu.edu>, \n<s-news at lists.biostat.wustl.edu>\n        cc: \n        bcc: \n        Subject:        Re: [S] Early release?\n\nThis is actually a deterministic logic puzzle. Perhaps your friend has \nvisited the IBM web site where a variation was posted in July, 2002, at \nhttp://domino.research.ibm.com/Comm/wwwr_ponder.nsf/challenges/July2002.html; \nthe solution is also given there.\n \nDave Homiak\ndhomiak at xcaliber.com\n-----Original Message-----\nFrom: Arthur Nadas [mailto:nadas at env.med.nyu.edu]\nSent: Thursday, December 18, 2003 12:10 PM\nTo: s-news at lists.biostat.wustl.edu\nSubject: [S] Early release?\n\nDear S-Plus Colleagues,\n\nA very sharp mathematician friend sent me this puzzle from prison. \nAlthough not explicit, it has, in my opinion, fairly deep statistical and \nprobabilistic content. I thought some of you might enjoy thinking about \nit.  Please send me your thoughts at (nadas at env.med.nyu.edu) and I will \ntransmit them to my friend and summarize putative solutions \nfor this list.  Here is the puzzle:\n\n************************************************\n\nEarly release?\n\nIn a cost cutting measure brought on by the budget crisis, the warden at \nthe prison brought together four lifers and made them the following offer:\n\n\"Intermittently and at my whim I will begin picking you, one at a time, to \ncome to this room and stand before those two unconnected light switches. \nYou may observe the positions of the switches and then you must switch one \nof them. At this point you also have the option of telling me: 'All four \nof us, have by now, visited this room without the others.' If this claim \nis correct then all of you will be immediately released. If the claim is \nwrong, you will all be executed.\n\nI may pick the same person several times in a row, but I will eventually \npick every one of you. Once I have picked you, I will eventually pick you \nagain and again, ad infinitum, as long as no one has made the claim. You \neach will be kept in total isolation except for these visits. I will give \nyou time here together to plan your strategy, and when you have decided \nand leave here, I may change the way the switches are now, but after that \nonly you guys will be allowed to touch them. No tricks.\"\n\nWhat should they do?\n\nArthur Nádas",
       "body_snippet": "Also solved on CAR talk with a different number of prisoners. Note that \nClick and Clack state that a 6th grader can solve the problem without\ndeep math or statistics.\n\nhttp://cartalk.cars.com/Radio/P",
-      "thread_id": "thread-68579ac98b94",
-      "thread_depth": 0,
+      "thread_id": "thread-91da53fcf62d",
+      "thread_depth": 1,
       "month": "2003-12"
     },
     {
@@ -1960,12 +1960,12 @@
       "date": "2003-12-22T11:28:46Z",
       "subject": "Re: symbols in graphs",
       "subject_clean": "symbols in graphs",
-      "in_reply_to": null,
+      "in_reply_to": "<000001c3c7f1$63089b20$0202a8c0@CWSDESKTOP>",
       "references": [],
       "body_plain": "Dear Christof\n\nIt is very simple to include symbols in graphs in R. Simply write\n\nxyplot(...,ylab=expression(alpha),...)\n\nUnfortunately, this does not work in S-PLUS.\n\nBest regards\n\nChristoffer Tornoe\n\nDate: Sun, 21 Dec 2003 13:36:45 -0500\n\nFrom: \"Christof W. Stahel\" <stahel at cob.ohio-state.edu>\n\nTo: <s-news at lists.biostat.wustl.edu>\n\nSubject: symbols in graphs\n\nMessage-ID: <000001c3c7f1$63089b20$0202a8c0@CWSDESKTOP>\n\nHi,\n\nI was trying to follow the Programmer's Guide to get symbols into my graphs but have not been successful. For example, I tried to get an alpha into the y-axis label\n\nxyplot( ...,ylab = \"\\\\\\\"Symbol\\\"a\",...)\n\nbut that did not work. Any suggestions?\n\nThanks\n\nChristof\n\n**********************************************************************\n\nProprietary or confidential information belonging to Ferring Holding SA or to one of its affiliated companies may be contained in the message. If you are not the addressee indicated in this message (or responsible for the delivery of the message to such person), please do not copy or deliver this message to anyone. In such case, please destroy this message and notify the sender by reply e-mail. Please advise the sender immediately if you or your employer do not consent to e-mail for messages of this kind. Opinions, conclusions and other information in this message represent the opinion of the sender and do not necessarily represent or reflect the views and opinions of Ferring.\n\n**********************************************************************",
       "body_snippet": "Dear Christof\n\nIt is very simple to include symbols in graphs in R. Simply write\n\nxyplot(...,ylab=expression(alpha),...)\n\nUnfortunately, this does not work in S-PLUS.\n\nBest regards\n\nChristoffer Tornoe",
-      "thread_id": "thread-c514db4e266a",
-      "thread_depth": 0,
+      "thread_id": "thread-b0bdcfc75b5b",
+      "thread_depth": 1,
       "month": "2003-12"
     },
     {
@@ -2046,12 +2046,12 @@
       "date": "2003-12-22T21:44:24Z",
       "subject": "Re: expected value of a normal variable with integrate()",
       "subject_clean": "expected value of a normal variable with integrate()",
-      "in_reply_to": null,
+      "in_reply_to": "<3B7812F13593D411979200508BE3A75C10A23380@msxcentral2.hydro.qc.ca>",
       "references": [],
       "body_plain": "Thanks to Sam Buttrey, Bill Dunlap, Spencer Graves, Sundar Dorai-Raj, Terry Therneau and Ping Zhang who answered so quickly and were unanimous in identifying my mistake:\n\n****************************************\n\ndnorm(x) on (-Inf,0) integrates to 1/2, not 1, so you need\n\nto divide by that.  E.g., for the interval (1, 2) you would\n\ndo\n\n   integrate(function(x) x*dnorm(x),1,2)$integral / integrate(function(x)dnorm(x),1,2)$integral\n\n   [1] 1.383169\n\n(In this case you can use pnorm() instead integrating dnorm.)\n\n****************************************\n\nAgain thank you and best wishes!\n\nPatrick",
       "body_snippet": "Thanks to Sam Buttrey, Bill Dunlap, Spencer Graves, Sundar Dorai-Raj, Terry Therneau and Ping Zhang who answered so quickly and were unanimous in identifying my mistake:\n\n*****************************",
-      "thread_id": "thread-5bd62cc4c370",
-      "thread_depth": 0,
+      "thread_id": "thread-244904b10fc7",
+      "thread_depth": 1,
       "month": "2003-12"
     },
     {
@@ -2144,12 +2144,12 @@
       "date": "2003-12-24T16:38:10Z",
       "subject": "Color of a Trellis Box Plot",
       "subject_clean": "Color of a Trellis Box Plot",
-      "in_reply_to": null,
+      "in_reply_to": "<410-2200312122231663@earthlink.net>",
       "references": [],
       "body_plain": "Many thanks to Sundar Dorai-Raj, Matt Austin, Naomi Robbins,  and Rick Ditmars who all suggested the following solution concept, which easily can be implemented with a script:\n\n \n\n  (use any number for the col parameter,  I like \"7\" which is yellow.)\n\n \n\n trellis.par.set( \"box.rectangle, list(col=7, lty=1, lwd=1 ) )\n\ntrellis.par.set( \"box.dot\",  list(col=7, cex = 1, font=1, pch=16 ) )     \n\ntrellis.par.set( \"box.umbrella\", list( col=7,lty=1, lwd=1 ) )\n\ntrellis.par.set( \"plot.line\", list( col=7, lty=1, lwd=1))\n\ntrellis.par.set( \"plot.symbol\", list(cex=1, col=7, font=1, pch=1))      \n\n \n\nAs an alternative,  Sundar also suggested changing the color table  for example:\n\n \n\n      \ntrellis.device(graphsheet, color.table = \n\n\"0,0,0|0,0,255|0,255,0|255,0,0|255,255,255\")\n\n \n\n However this solution did not change the colors of the trellis plots but only added different colors to the  \"user\" palette that is accessible from the GUI.  These colors can only be used to change the background of Trellis plots, but not the plot images.  Finer \"shades\" are also available see ?graphsheet  (the color.table paragraph).\n\n \n\n   Insightful --- if you are listening --- on the next release, the SPlus GUI needs to be augmented to allow fine control of Trellis graphics including plot colors, symbol sizes etc. \n\n  \n\n Happy holidays, may all yours be colorful.\n\n \n\nORIGINAL MESSAGE:\n\n \n\n  My Splus 6.1 (running on XP) produces a sickly turquoise colored box plot when I call the trellis function bwplot.  How do I change the color from the awful turquoise ?  Adding a \"col\" parameter [e.g. bwplot( Capitaliztion ~ MoRet, data= \"\" col = 7) ] doesn't do the trick; it   simply changes the color of the central dot in the box  to a nice yellow while leaving the turquoise box and whiskers unchanged.\n\n \n\n   In fact on all trellis plots the graph line is plotted in this awful color.  So how do I change the default ?\n\n \n\n \n\n  \n\n \n\nPaul Lasky\n\nB & P Consultants\n\nphlasky at earthlink.net\n\nTruth is embodied in successful prediction",
       "body_snippet": "Many thanks to Sundar Dorai-Raj, Matt Austin, Naomi Robbins,  and Rick Ditmars who all suggested the following solution concept, which easily can be implemented with a script:\n\n \n\n  (use any number fo",
-      "thread_id": "thread-6baf91e03659",
-      "thread_depth": 0,
+      "thread_id": "thread-0c399044a7fa",
+      "thread_depth": 1,
       "month": "2003-12"
     },
     {
@@ -2278,12 +2278,12 @@
       "date": "2003-12-29T18:50:56Z",
       "subject": "FW: Three questions about cox.zph()",
       "subject_clean": "Three questions about cox.zph()",
-      "in_reply_to": null,
+      "in_reply_to": "<1508FB10AFDBD211854D0090273C41070EB905F9@com83-178.medicine.uiowa.edu>",
       "references": [],
       "body_plain": "Thanks to Terry Therneau for his rapid response, attached below.  I am\nforwarding this on without waiting for any other input, as Terry is the\nultimate authority and arbiter on issues dealing with the S-Plus Cox model\nmaterials.\n\nMy comments:\n\n1.  I use S-Plus 6.1 for Windows.  Users of cox.zph in the Windows version\nshould be aware that this version of S-Plus defaults to using the 'identity'\ntime transform rather than the 'km' transform, as is stated in the S-Plus\nHelp files.  If users intend to use the 'km' transform, they should\nstipulate this explicitly.  I have just today loaded S-Plus for Windows 6.2,\nand it behaves exactly the same as 6.1.  \n\nInterestingly, as I commented before, the definition of the cox.zph function\nin both S-Plus 6.1 and 6.2 for Windows indicates in the function prototype a\ndefault to 'km'.  But lines 13 - 14 of the code set the transform to\n'identity' if the transform parameter is missing in the call.  I am not good\nenough at S-Plus programming to know why, when there is a default to 'km'\nstipulated in the prototype, the program still sees the value of transform\nas missing unless it is expressly stipulated.  The Insightful folks may want\nto review this.\n\n2.  It was my error to refer to \"cumulative\" Schoenfeld residuals.  Terry's\nbook does clearly define the Schoenfeld residuals without the addition of\nbeta-hat.  But what the cox.zph function returns is the sum of the residuals\nplus the relevant beta-hat.  This is actually sort of neat, since it means\nthat the graph that is produced by plot(cox.zph(model)) is actually plotting\nan estimate of the beta as a function of time.  \n\nAgain, Terry, thanks.\n\nLarry Hunsicker\n\n-----Original Message-----\nFrom: Terry Therneau [mailto:therneau at mayo.edu]\nSent: Monday, December 29, 2003 12:12 PM\nTo: lawrence-hunsicker at uiowa.edu\nSubject: Re: [S] Three questions about cox.zph()\n\nHere are my opinions, which I assume you will summarize (along with other\nanswers) to the group.\n\n 1. Default transform.  What release and platform of S-plus?  The local\nsource code defaults to \"KM\" transform, but it takes time to propogate to\ndistributions.\n\n 2. \"scaled Schoenfeld residuals\".  This is my mistake.  I tend to\nuse the term for both the the version with and without \\hat\\beta added \nto them.  The book clearly defines them one way (without the addition), and\nthe manual page the other (with).\n  Note that \"cumulated\" residuals are never used in the code, nor do I\nrecommend using them.\n\n3. As a default value the KM transform is safe.  It tends to produce a plot\nthat does not have a few points far removed from all the others, either to\nthe left end of the plot (as sometimes happens with log(time)) or to the\nright hand side (as sometimes happens with the identity).  \n   In my own work, I ususally look at more than one transform, and present\nthe\none I like best to my physician co-investigators.  \"Like best\" usually means\nthat the data is reasonably spread out, and the axis is interpretable, the\nsame type of artistic considerations I'd use for any plot.\n\n        Terry Therneau",
       "body_snippet": "Thanks to Terry Therneau for his rapid response, attached below.  I am\nforwarding this on without waiting for any other input, as Terry is the\nultimate authority and arbiter on issues dealing with the",
-      "thread_id": "thread-160bbd47beaa",
-      "thread_depth": 0,
+      "thread_id": "thread-8039a0928de8",
+      "thread_depth": 1,
       "month": "2003-12"
     },
     {
@@ -2421,24 +2421,14 @@
     {
       "id": "thread-c0822b793f6b",
       "subject": "filling holes in its series",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Gunter, Bert",
         "Patrick Agin"
       ],
       "started": "2003-12-03T00:42:46Z",
-      "last_reply": "2003-12-03T00:42:46Z",
-      "root_message_id": "msg-c0822b793f6b"
-    },
-    {
-      "id": "thread-937b318e0c84",
-      "subject": "filling holes in its series",
-      "message_count": 1,
-      "participants": [
-        "Gunter, Bert"
-      ],
-      "started": "2003-12-03T14:09:37Z",
       "last_reply": "2003-12-03T14:09:37Z",
-      "root_message_id": "msg-937b318e0c84"
+      "root_message_id": "msg-c0822b793f6b"
     },
     {
       "id": "thread-ef6ab99e3905",
@@ -2466,36 +2456,14 @@
     {
       "id": "thread-6a40d7eaf4b7",
       "subject": "Type III SS",
-      "message_count": 1,
-      "participants": [
-        "Eric Turkheimer"
-      ],
-      "started": "2003-12-03T17:26:51Z",
-      "last_reply": "2003-12-03T17:26:51Z",
-      "root_message_id": "msg-6a40d7eaf4b7"
-    },
-    {
-      "id": "thread-86355dc3e739",
-      "subject": "Type III SS",
-      "message_count": 2,
+      "message_count": 4,
       "participants": [
         "Eric Turkheimer",
         "Liaw, Andy"
       ],
-      "started": "2003-12-03T19:10:43Z",
+      "started": "2003-12-03T17:26:51Z",
       "last_reply": "2003-12-11T18:16:25Z",
-      "root_message_id": "msg-86355dc3e739"
-    },
-    {
-      "id": "thread-e1b62de66b92",
-      "subject": "Type III SS",
-      "message_count": 1,
-      "participants": [
-        "Liaw, Andy"
-      ],
-      "started": "2003-12-03T19:20:27Z",
-      "last_reply": "2003-12-03T19:20:27Z",
-      "root_message_id": "msg-e1b62de66b92"
+      "root_message_id": "msg-6a40d7eaf4b7"
     },
     {
       "id": "thread-5c0a84b8b342",
@@ -2648,25 +2616,14 @@
     {
       "id": "thread-bef0ad890dab",
       "subject": "S-Plus Tree Splitting",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Prof Brian Ripley",
         "sanjay Munireddy"
       ],
       "started": "2003-12-07T22:36:56Z",
-      "last_reply": "2003-12-07T22:47:12Z",
-      "root_message_id": "msg-bef0ad890dab"
-    },
-    {
-      "id": "thread-dc0290f6a0ac",
-      "subject": "S-Plus Tree Splitting",
-      "message_count": 1,
-      "participants": [
-        "sanjay Munireddy"
-      ],
-      "started": "2003-12-08T03:52:49Z",
       "last_reply": "2003-12-08T03:52:49Z",
-      "root_message_id": "msg-dc0290f6a0ac"
+      "root_message_id": "msg-bef0ad890dab"
     },
     {
       "id": "thread-4d5132852203",
@@ -2705,24 +2662,13 @@
     {
       "id": "thread-b8683bd8f076",
       "subject": "string question",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Leeds, Mark"
       ],
       "started": "2003-12-08T19:29:23Z",
-      "last_reply": "2003-12-08T19:29:23Z",
-      "root_message_id": "msg-b8683bd8f076"
-    },
-    {
-      "id": "thread-e98d4fedc947",
-      "subject": "string question",
-      "message_count": 1,
-      "participants": [
-        "Leeds, Mark"
-      ],
-      "started": "2003-12-08T19:50:55Z",
       "last_reply": "2003-12-08T19:50:55Z",
-      "root_message_id": "msg-e98d4fedc947"
+      "root_message_id": "msg-b8683bd8f076"
     },
     {
       "id": "thread-44fc1711a77f",
@@ -2738,36 +2684,17 @@
     {
       "id": "thread-04c1fc0508bf",
       "subject": "Help on comparing models",
-      "message_count": 1,
+      "message_count": 5,
       "participants": [
+        "Gunter, Bert",
+        "Liaw, Andy",
+        "Lucke, Joseph F",
+        "jagadish rangrej",
         "rui zhang"
       ],
       "started": "2003-12-09T03:13:01Z",
-      "last_reply": "2003-12-09T03:13:01Z",
+      "last_reply": "2003-12-09T17:16:24Z",
       "root_message_id": "msg-04c1fc0508bf"
-    },
-    {
-      "id": "thread-cb6e269208ce",
-      "subject": "Help on comparing models",
-      "message_count": 2,
-      "participants": [
-        "Gunter, Bert",
-        "jagadish rangrej"
-      ],
-      "started": "2003-12-09T13:49:25Z",
-      "last_reply": "2003-12-09T14:15:47Z",
-      "root_message_id": "msg-cb6e269208ce"
-    },
-    {
-      "id": "thread-4d399dbae3d4",
-      "subject": "Help on comparing models",
-      "message_count": 1,
-      "participants": [
-        "Liaw, Andy"
-      ],
-      "started": "2003-12-09T15:09:30Z",
-      "last_reply": "2003-12-09T15:09:30Z",
-      "root_message_id": "msg-4d399dbae3d4"
     },
     {
       "id": "thread-0c5b53d53175",
@@ -2792,17 +2719,6 @@
       "root_message_id": "msg-f9a8bd4605f3"
     },
     {
-      "id": "thread-50a5d3373a3c",
-      "subject": "Help on comparing models",
-      "message_count": 1,
-      "participants": [
-        "Lucke, Joseph F"
-      ],
-      "started": "2003-12-09T17:16:24Z",
-      "last_reply": "2003-12-09T17:16:24Z",
-      "root_message_id": "msg-50a5d3373a3c"
-    },
-    {
       "id": "thread-6cb5163f3fa4",
       "subject": "model use and specification",
       "message_count": 1,
@@ -2816,12 +2732,14 @@
     {
       "id": "thread-8e10dd361437",
       "subject": "coxph problem (Cannot coerce mode list to integer: list(eps =...)",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
-        "Latha Raja"
+        "Latha Raja",
+        "Terry Therneau",
+        "Yun-Fang Juan"
       ],
       "started": "2003-12-10T04:38:05Z",
-      "last_reply": "2003-12-10T04:38:05Z",
+      "last_reply": "2003-12-16T22:04:47Z",
       "root_message_id": "msg-8e10dd361437"
     },
     {
@@ -2856,18 +2774,6 @@
       "started": "2003-12-10T14:25:38Z",
       "last_reply": "2003-12-10T14:25:38Z",
       "root_message_id": "msg-befcd98dcaba"
-    },
-    {
-      "id": "thread-4b2ad2b09cb1",
-      "subject": "coxph problem (Cannot coerce mode list to integer: list(eps =...)",
-      "message_count": 2,
-      "participants": [
-        "Terry Therneau",
-        "Yun-Fang Juan"
-      ],
-      "started": "2003-12-10T15:30:39Z",
-      "last_reply": "2003-12-16T22:04:47Z",
-      "root_message_id": "msg-4b2ad2b09cb1"
     },
     {
       "id": "thread-85a29d95493f",
@@ -2906,12 +2812,12 @@
     {
       "id": "thread-cd147bf5624f",
       "subject": "pvalues from t-distribution",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Lucke, Joseph F"
       ],
       "started": "2003-12-10T21:43:10Z",
-      "last_reply": "2003-12-10T21:43:10Z",
+      "last_reply": "2003-12-11T14:37:57Z",
       "root_message_id": "msg-cd147bf5624f"
     },
     {
@@ -2924,17 +2830,6 @@
       "started": "2003-12-11T11:36:17Z",
       "last_reply": "2003-12-11T11:36:17Z",
       "root_message_id": "msg-552f581b394d"
-    },
-    {
-      "id": "thread-c86d85c4824b",
-      "subject": "pvalues from t-distribution",
-      "message_count": 1,
-      "participants": [
-        "Lucke, Joseph F"
-      ],
-      "started": "2003-12-11T14:37:57Z",
-      "last_reply": "2003-12-11T14:37:57Z",
-      "root_message_id": "msg-c86d85c4824b"
     },
     {
       "id": "thread-2bfa6cdaa23b",
@@ -3076,13 +2971,14 @@
     {
       "id": "thread-276834aec2d0",
       "subject": "Representation of tree graphs or branching structures.",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Patrick Burns",
+        "juhlin.kd at pg.com",
         "west at codingstrand.com"
       ],
       "started": "2003-12-15T19:51:15Z",
-      "last_reply": "2003-12-15T20:31:33Z",
+      "last_reply": "2003-12-16T13:34:38Z",
       "root_message_id": "msg-276834aec2d0"
     },
     {
@@ -3164,17 +3060,6 @@
       "root_message_id": "msg-547cb49f910c"
     },
     {
-      "id": "thread-eb2156e591b0",
-      "subject": "Representation of tree graphs or branching structures.",
-      "message_count": 1,
-      "participants": [
-        "juhlin.kd at pg.com"
-      ],
-      "started": "2003-12-16T13:34:38Z",
-      "last_reply": "2003-12-16T13:34:38Z",
-      "root_message_id": "msg-eb2156e591b0"
-    },
-    {
       "id": "thread-9a68d64c5610",
       "subject": "code for Ripley's K in R^3?",
       "message_count": 1,
@@ -3245,46 +3130,16 @@
     {
       "id": "thread-91da53fcf62d",
       "subject": "Early release?",
-      "message_count": 1,
+      "message_count": 4,
       "participants": [
-        "Arthur Nadas"
-      ],
-      "started": "2003-12-18T18:09:51Z",
-      "last_reply": "2003-12-18T18:09:51Z",
-      "root_message_id": "msg-91da53fcf62d"
-    },
-    {
-      "id": "thread-3722d26bc6f6",
-      "subject": "Early release?",
-      "message_count": 1,
-      "participants": [
-        "David Homiak"
-      ],
-      "started": "2003-12-18T18:34:26Z",
-      "last_reply": "2003-12-18T18:34:26Z",
-      "root_message_id": "msg-3722d26bc6f6"
-    },
-    {
-      "id": "thread-8c4820e1b25e",
-      "subject": "Early release?",
-      "message_count": 1,
-      "participants": [
+        "Arthur Nadas",
+        "David Homiak",
+        "J Roy Robertson",
         "james.holtman at convergys.com"
       ],
-      "started": "2003-12-18T18:38:09Z",
-      "last_reply": "2003-12-18T18:38:09Z",
-      "root_message_id": "msg-8c4820e1b25e"
-    },
-    {
-      "id": "thread-68579ac98b94",
-      "subject": "Early release?",
-      "message_count": 1,
-      "participants": [
-        "J Roy Robertson"
-      ],
-      "started": "2003-12-18T18:46:34Z",
+      "started": "2003-12-18T18:09:51Z",
       "last_reply": "2003-12-18T18:46:34Z",
-      "root_message_id": "msg-68579ac98b94"
+      "root_message_id": "msg-91da53fcf62d"
     },
     {
       "id": "thread-40fe29afe075",
@@ -3379,29 +3234,19 @@
     {
       "id": "thread-b0bdcfc75b5b",
       "subject": "symbols in graphs",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Christof W. Stahel"
-      ],
-      "started": "2003-12-21T18:36:45Z",
-      "last_reply": "2003-12-21T18:36:45Z",
-      "root_message_id": "msg-b0bdcfc75b5b"
-    },
-    {
-      "id": "thread-c514db4e266a",
-      "subject": "symbols in graphs",
-      "message_count": 1,
-      "participants": [
+        "Christof W. Stahel",
         "christoffer.tornoe at ferring.com"
       ],
-      "started": "2003-12-22T11:28:46Z",
+      "started": "2003-12-21T18:36:45Z",
       "last_reply": "2003-12-22T11:28:46Z",
-      "root_message_id": "msg-c514db4e266a"
+      "root_message_id": "msg-b0bdcfc75b5b"
     },
     {
       "id": "thread-244904b10fc7",
       "subject": "expected value of a normal variable with integrate()",
-      "message_count": 4,
+      "message_count": 5,
       "participants": [
         "Agin.Patrick at hydro.qc.ca",
         "Ping Zhang",
@@ -3409,30 +3254,19 @@
         "Sundar Dorai-Raj"
       ],
       "started": "2003-12-22T21:10:11Z",
-      "last_reply": "2003-12-22T21:29:25Z",
-      "root_message_id": "msg-244904b10fc7"
-    },
-    {
-      "id": "thread-5bd62cc4c370",
-      "subject": "expected value of a normal variable with integrate()",
-      "message_count": 1,
-      "participants": [
-        "Agin.Patrick at hydro.qc.ca"
-      ],
-      "started": "2003-12-22T21:44:24Z",
       "last_reply": "2003-12-22T21:44:24Z",
-      "root_message_id": "msg-5bd62cc4c370"
+      "root_message_id": "msg-244904b10fc7"
     },
     {
       "id": "thread-0c399044a7fa",
       "subject": "Color of a Trellis Box Plot",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Paul Lasky",
         "Sundar Dorai-Raj"
       ],
       "started": "2003-12-22T23:16:06Z",
-      "last_reply": "2003-12-23T13:02:41Z",
+      "last_reply": "2003-12-24T16:38:10Z",
       "root_message_id": "msg-0c399044a7fa"
     },
     {
@@ -3467,17 +3301,6 @@
       "started": "2003-12-23T22:50:15Z",
       "last_reply": "2003-12-23T22:50:15Z",
       "root_message_id": "msg-777ad2f6884c"
-    },
-    {
-      "id": "thread-6baf91e03659",
-      "subject": "Color of a Trellis Box Plot",
-      "message_count": 1,
-      "participants": [
-        "Paul Lasky"
-      ],
-      "started": "2003-12-24T16:38:10Z",
-      "last_reply": "2003-12-24T16:38:10Z",
-      "root_message_id": "msg-6baf91e03659"
     },
     {
       "id": "thread-82a070efd426",
@@ -3528,24 +3351,13 @@
     {
       "id": "thread-8039a0928de8",
       "subject": "Three questions about cox.zph()",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Hunsicker, Lawrence"
       ],
       "started": "2003-12-29T16:23:41Z",
-      "last_reply": "2003-12-29T16:23:41Z",
-      "root_message_id": "msg-8039a0928de8"
-    },
-    {
-      "id": "thread-160bbd47beaa",
-      "subject": "Three questions about cox.zph()",
-      "message_count": 1,
-      "participants": [
-        "Hunsicker, Lawrence"
-      ],
-      "started": "2003-12-29T18:50:56Z",
       "last_reply": "2003-12-29T18:50:56Z",
-      "root_message_id": "msg-160bbd47beaa"
+      "root_message_id": "msg-8039a0928de8"
     },
     {
       "id": "thread-87d4dc6d21e9",

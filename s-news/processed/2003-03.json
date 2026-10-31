@@ -95,12 +95,12 @@
       "date": "2003-03-03T00:29:07Z",
       "subject": "Re: Operation on array subset",
       "subject_clean": "Operation on array subset",
-      "in_reply_to": null,
+      "in_reply_to": "<BCD8CB6402DED411B45400A0C9D5DFC908C51967@chuma1.cas.usf.edu>",
       "references": [],
       "body_plain": "The immediate solution that occurred to me is to use apply with margin 1:2.\nHowever, the resulting array has reordered dimensions, so you have to\nreorder them using aperm (see #3). The next idea was to do an ordering\nwithin each row/column dimension explicitly using order(), but the result\nhas to be ordered again, so it uses 2 calls to order() (see #2). A third\nidea is to reorder the result on-the-fly and load it back to the array in\nits storage order (see #1). This seems to be the fastest for the tests I\nperformed.\n \n# 1\ntst<-array(300000:1, dim=c(50,60,100))\nstart.time <- proc.time()\nj <- order(slice.index(tst,1),slice.index(tst,2),tst)\ntst[] <- aperm(structure(tst[j],dim=rev(dim(tst))),3:1)\n(elapsed.time <- proc.time()-start.time)\n\n# 2\ntst<-array(300000:1, dim=c(50,60,100))\nstart.time <- proc.time()\nj <- order(slice.index(tst,1),slice.index(tst,2),tst)\ni <- order(slice.index(tst,1),slice.index(tst,2),slice.index(tst,3))\ntst[i] <- tst[j]\n(elapsed.time <- proc.time()-start.time)\n\n# 3\ntst<-array(300000:1, dim=c(50,60,100))\nstart.time <- proc.time()\ntst <- aperm(apply(tst,1:2,sort),c(2,3,1))\n(elapsed.time <- proc.time()-start.time)\n\nOn my machine, method 1 is the fastest\n> tst<-array(720000:1, dim=c(80,90,100))\n> start.time <- proc.time()\n> j <- order(slice.index(tst,1),slice.index(tst,2),tst)\n> tst[] <- aperm(structure(tst[j],dim=rev(dim(tst))),3:1)\n> (elapsed.time <- proc.time()-start.time)\n[1] 3.63 0.25 4.40 0.00 0.00\n> tst<-array(720000:1, dim=c(80,90,100))\n> start.time <- proc.time()\n> j <- order(slice.index(tst,1),slice.index(tst,2),tst)\n> i <- order(slice.index(tst,1),slice.index(tst,2),slice.index(tst,3))\n> tst[i] <- tst[j]\n> (elapsed.time <- proc.time()-start.time)\n[1] 5.357 0.461 6.570 0.000 0.000\n> tst<-array(720000:1, dim=c(80,90,100))\n> start.time <- proc.time()\n> tst <- aperm(apply(tst,1:2,sort),c(2,3,1))\n> (elapsed.time <- proc.time()-start.time)\n[1] 6.560 0.701 7.671 0.000 0.000\n\nNick Ellis\nCSIRO Marine Research   mailto:Nick.Ellis at csiro.au\nPO Box 120                      ph    +61 (07) 3826 7260\nCleveland QLD 4163      fax   +61 (07) 3826 7222\nAustralia                       http://www.marine.csiro.au\n \n\n> -----Original Message-----\n> From: Spencer Graves [mailto:spencer.graves at PDF.COM]\n> Sent: Sunday, March 02, 2003 7:35 AM\n> To: Reader, Steven\n> Cc: s-news at lists.biostat.wustl.edu\n> Subject: Re: [S] Operation on array subset\n> \n> \n> You can try the following, which looks like it will do what \n> you want and \n> time it in the process.  It rearranges the order of the subscripts. \n> There is a way to get around that, but I don't remember it \n> off the top \n> of my head.  I'm pretty sure it's mentioned in Venables and \n> Ripley, MASS.\n> \n> tst<-array(rnorm(24), dim=c(2,3,4))\n> start.time <- proc.time()\n> tst.ranks <- apply(tst, 1:2, rank)\n> elapsed.time <- proc.time()-start.time\n> elapsed.time\n> dim(tst.ranks)\n> tst[1,1,]\n> tst.ranks[,1,1]\n> \n> If you do the time comparison, I'd be interested in hearing \n> the result.\n> Best Wishes,\n> Spencer Graves\n> \n> Reader, Steven wrote:\n> > Dear all,\n> >  \n> > I have a 3-d array with dimensions (262,262,999).\n> >  \n> > What I want to do is produce another 3-d array (262,262,999) that \n> > replaces the 999 original values in the third dimension \n> with their rank \n> > amongst the 999.\n> >  \n> > I have read about applying functions to subsets of an array \n> but the best \n> > I can come up with is this function below instead. It works \n> but it is \n> > awful slow with the looping in there. Do any of the SPlus \n> programming \n> > wizards out there have a better solution for me.\n> >  \n> >  \"rankk\"<-\n> > function(inarray,nx,ny,nsim)\n> > {\n> >  ns <- nsim+1\n> >  narray <- array(0, dim=c(nx, ny, ns))\n> >  for(i in 1:nx)\n> >  for(j in 1:ny)\n> >  tarray[i,j,]<-rank(inarray[i,j,])\n> >  return(narray)\n> > }\n> > Many thanks,\n> > Steven Reader\n> > University of South Florida - Geography\n> >  \n> >  \n> \n> \n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>",
       "body_snippet": "The immediate solution that occurred to me is to use apply with margin 1:2.\nHowever, the resulting array has reordered dimensions, so you have to\nreorder them using aperm (see #3). The next idea was t",
-      "thread_id": "thread-69cfd528e22a",
-      "thread_depth": 0,
+      "thread_id": "thread-c9d498122fac",
+      "thread_depth": 1,
       "month": "2003-03"
     },
     {
@@ -432,12 +432,12 @@
       "date": "2003-03-05T13:48:29Z",
       "subject": "Re: Tobit-regression",
       "subject_clean": "Tobit-regression",
-      "in_reply_to": null,
+      "in_reply_to": "<20030305123915.88037.qmail@web41311.mail.yahoo.com>",
       "references": [],
       "body_plain": "Tobit regression is linear regression with possibly left-censored data, \nfor example data gathered with an instrument that has a lower limit of\ndetection in it's readout.  Below is an example.\n\n#  Data is from J. Tobin, Estimation of relationships for limited dependent\n#   variables, Econometrica, v26, 24-36, 1958.\n#\n#  Durable Goods Purchase, Age in Years, Liquidity Ratio * 1000\n#\n#  The data set is copied from the SAS manual.  The answers below are not\n#    exactly the ones printed in the SAS manual, but they are the ones that\n#    you get using SAS and this data.  (Typo in the data set?)\n\ntobin <- read.table('data.tobin', col.names=c('durable', 'age', 'quant'))\n\ntfit <- survReg(Surv(durable, durable>0, type='left') ~age + quant,\n                data=tobin, dist='gaussian')\ntfit\nCall:\nsurvReg(formula = Surv(durable, durable > 0, type = \"left\") ~ age + quant,\n        data = tobin, dist = \"gaussian\")\n\nCoefficients:\n (Intercept)        age       quant \n    15.14576 -0.1290671 -0.04554367\n\nScale= 5.572449 \n\nLoglik(model)= -28.9   Loglik(intercept only)= -29.5\n        Chisq= 1.1 on 2 degrees of freedom, p= 0.58 \nn= 20 \n \n-------------------------------- \n0       57.7    236\n0.7     50.9    283\n0       48.5    207\n0       41.7    220\n0       47.7    238\n0       59.8    216\n0       44.3    284\n3.7     45.1    221\n0       51.7    275\n3.0     50      269\n10.4    46.8    207\n0       58      249\n0       58.9    246\n0       40      277\n1.5     34.1    231\n0       39.9    219\n0       33.4    240\n3.5     48.1    266\n6.1     46.6    214\n0       53.1    251\n\n  Note that \"survReg(Surv(y) ~ x1 + x2, data=mydata, dist='gaussian')\" is  \nanother way to fit an ordinary linear model (much slower than lm).\n\n        Terry Therneau",
       "body_snippet": "Tobit regression is linear regression with possibly left-censored data, \nfor example data gathered with an instrument that has a lower limit of\ndetection in it's readout.  Below is an example.\n\n#  Dat",
-      "thread_id": "thread-64dedd6998de",
-      "thread_depth": 0,
+      "thread_id": "thread-b8cc6cbfd468",
+      "thread_depth": 1,
       "month": "2003-03"
     },
     {
@@ -681,12 +681,12 @@
       "date": "2003-03-06T13:45:34Z",
       "subject": "Re: Solution to merge problem",
       "subject_clean": "Solution to merge problem",
-      "in_reply_to": null,
+      "in_reply_to": "<se673dde.041@dlwcmail.dlwc.nsw.gov.au>",
       "references": [],
       "body_plain": "All,\n  I found that S-PLUS 6.1 merges timeDate data by converting it to\ncharacter first, merging, and then converting back to timeDate.  In order\nto get an exact match between the two timeDate columns, the format slots\nmust be identical.  That can be done on the command line:\ndata1$datecolumn@format <- data2$datecolumn@format\n  You must also be aware that the data are then sorted by the character\nrepresentation of the data, not the actual date.  The merged may need to be\nby the timeDate column, either in the GUI or by the command line.\nDave\n\n                                                                                \n                                              \n                      \"Hugh Jones\"                                              \n                                              \n                      <hajones at dlwc.nsw.gov.au>        To:       \n<s-news at lists.biostat.wustl.edu>                             \n                      Sent by:                         cc:                      \n                                              \n                      s-news-owner at lists.biosta        Subject:  [S] Solution \nto merge problem                                \n                      t.wustl.edu                                               \n                                              \n                                                                                \n                                              \n                                                                                \n                                              \n                      03/05/2003 19:23                                          \n                                              \n                                                                                \n                                              \n                                                                                \n                                              \n\nThanks to Nick Ellis, Sundar Dorai-Raj, and Sama Low-Choy for their help.\nNick and Sundar had no problems with my data. I am still not sure why. Sama\nsuggested that the problem could be with the timeDate class for sdate, so I\nconverted the class to character:\n\n> options(stringsAsFactors = FALSE)\n> H1 <- read.table(\"c:\\\\temp\\\\H1.csv\", sep = \",\", header = TRUE,\n                   row.names = NULL)\n> H2 <- read.table(\"c:\\\\temp\\\\H2.csv\", sep = \",\", header = TRUE,\n                   row.names = NULL)\n> H1$sdate <- as.character(timeDate(H1$sdate, in.format = \"%d/%m/%y\"))\n> H2$sdate <- as.character(timeDate(H2$sdate, in.format = \"%d/%m/%y\"))\n> H3 <- merge(H1, H2, by = c(\"site\", \"sdate\"), all = TRUE)\nand this fixed the problem.\n\nOriginal message:\n\nI am having difficulties in determining why I cannot merge the two datasets\nshown below. I am inexperienced in using S-Plus' debugging functions and\ncannot relate the information back to the merge code. If someone can give\nme some advice, it would be appreciated. I am using S-Plus 6 on Windows.\n\n> merge(H1,H2, by=c(\"site\", \"sdate\"), all=T)\n\nProblem in data.frameAux.list(x, na.strings = na.strings, stringsAsFactors\n= s..: Object \"n\" not found\nEvaluation frames saved in object \"last.dump\", use debugger() to examine\nthem\n\n> debugger()\nMessage: Problem in data.frameAux.list(x, na.strings = na.strings,\nstringsAsFactors = s..: Object \"n\" not found\nbrowser: Frame 36\nb(:)> up\nBrowsing in frame of (1:n)[nrows < nr & nrows != 1]\nLocal Variables:\nb([)> down\nBrowsing in frame of 1:n\nLocal Variables: e1\n\n> H1\n               site       sdate     EC  wtemp      pH  turbid\n 1      Maison Dieu 03/09/2002   491.0   16.2    8.61    3.03\n 2      Maison Dieu 03/12/2002   186.0   25.3    8.20   13.50\n 3      Maison Dieu 08/08/2002   568.0 -999.0 -999.00 -999.00\n 4      Maison Dieu 09/01/2003   508.0   24.5    8.10   33.50\n 5      Maison Dieu 12/11/2002   428.0   25.6    8.40   11.40\n 6      Maison Dieu 19/12/2002   216.2   24.9    8.23   21.40\n 7      Maison Dieu 28/02/2001   846.0 -999.0 -999.00 -999.00\n 8   Moses Crossing 03/09/2002   643.0   16.5    8.70    7.22\n 9   Moses Crossing 03/12/2002   162.0   26.4    8.30   14.50\n10   Moses Crossing 08/08/2002   754.0 -999.0 -999.00 -999.00\n11   Moses Crossing 09/01/2003   497.0   26.0    8.20   29.70\n12   Moses Crossing 12/11/2002   507.0 -999.0    8.50   18.10\n13   Moses Crossing 19/12/2002   205.0   23.4    8.49   23.70\n14   Moses Crossing 28/02/2001   871.0 -999.0 -999.00 -999.00\n15   Moses Crossing 31/12/1999  -999.0 -999.0    8.12 -999.00\n16 Bowmans Crossing 03/09/2002   574.0   16.2    8.62    4.20\n17 Bowmans Crossing 03/12/2002   175.0   26.9    8.30   12.00\n18 Bowmans Crossing 08/08/2002   726.0 -999.0 -999.00 -999.00\n19 Bowmans Crossing 09/01/2003   474.0   26.2    8.20   29.80\n20 Bowmans Crossing 12/11/2002   470.0 -999.0    8.20   16.10\n> H2\n\n                 site       sdate Reactive.P   NOx     NH3 silica Total.P\nTotal.N\n  31         Aberdeen 26/08/1998       0.015 0.630 -999.00    7.8    -999\n-999\n  38         Aberdeen 02/09/1998       0.000 0.060 -999.00    4.3    -999\n-999\n  52         Aberdeen 16/09/1998       0.020 0.310 -999.00    8.0    -999\n-999\n  59         Aberdeen 23/09/1998       0.015 0.300 -999.00    6.8    -999\n-999\n  66         Aberdeen 30/09/1998       0.030 0.420 -999.00    7.4    -999\n-999\n  74         Aberdeen 08/10/1998       0.020 0.090 -999.00    7.5    -999\n-999\n  80         Aberdeen 14/10/1998       0.010 0.180 -999.00    7.0    -999\n-999\n  87         Aberdeen 21/10/1998       0.065 0.170 -999.00    7.6    -999\n-999\n  94         Aberdeen 28/10/1998       0.015 0.120 -999.00    7.7    -999\n-999\n 100         Aberdeen 03/11/1998       0.015 0.150 -999.00    7.1    -999\n-999\n 626         Aberdeen 12/04/2000       0.020 0.180    0.02    9.3    -999\n-999\n 641         Aberdeen 27/04/2000       0.010 0.080    0.01    4.0    -999\n-999\n 654         Aberdeen 10/05/2000       0.000 0.110    0.00    5.9    -999\n-999\n 669         Aberdeen 25/05/2000       0.005 0.140    0.01    5.4    -999\n-999\n 311 Bowmans Crossing 26/08/1998       0.055 0.550 -999.00    6.6    -999\n-999\n 382 Bowmans Crossing 02/09/1998       0.025 0.580 -999.00    5.8    -999\n-999\n5231 Bowmans Crossing 16/09/1998       0.040 0.370 -999.00    6.9    -999\n-999\n 594 Bowmans Crossing 23/09/1998       0.035 0.510 -999.00    6.5    -999\n-999\n 665 Bowmans Crossing 30/09/1998       0.045 0.440 -999.00    6.7    -999\n-999\n 746 Bowmans Crossing 08/10/1998       0.025 0.170 -999.00    7.2    -999\n-999\n 807 Bowmans Crossing 14/10/1998       0.020 0.243 -999.00    7.1    -999\n-999\nNote: H1 and H2 are subsets of the original data frames\n\nHugh Jones\nSenior Biometrician\nCentre for Natural Resources\nNSW Depart. Land & Water Conservation\nPO Box 3720, Parramatta NSW 2124\n\nTel:    61-2- 9895 7628\nFax:   61-2- 9895 7867\n\nHugh Jones\nSenior Biometrician\nCentre for Natural Resources\nNSW Depart. Land & Water Conservation\nPO Box 3720, Parramatta NSW 2124\n\nTel:    61-2- 9895 7628\nFax:   61-2- 9895 7867",
       "body_snippet": "All,\n  I found that S-PLUS 6.1 merges timeDate data by converting it to\ncharacter first, merging, and then converting back to timeDate.  In order\nto get an exact match between the two timeDate columns",
-      "thread_id": "thread-1751c9a2363a",
-      "thread_depth": 0,
+      "thread_id": "thread-9d8ce93f3f04",
+      "thread_depth": 1,
       "month": "2003-03"
     },
     {
@@ -783,8 +783,8 @@
       ],
       "body_plain": "On Thu, 6 Mar 2003 07:45:34 -0600\nDavid L Lorenz <lorenz at usgs.gov> wrote:\n\n> \n> All,\n>   I found that S-PLUS 6.1 merges timeDate data by converting it to\n> character first, merging, and then converting back to timeDate.  In order\n> to get an exact match between the two timeDate columns, the format slots\n> must be identical.  That can be done on the command line:\n> data1$datecolumn@format <- data2$datecolumn@format\n>   You must also be aware that the data are then sorted by the character\n> representation of the data, not the actual date.  The merged may need to be\n> by the timeDate column, either in the GUI or by the command line.\n> Dave\n> \n> \n\nWhat a kluge.  I hope that is improved soon so that merging is on the original \nnumeric variables.  -Frank Harrell\n\n-- \nFrank E Harrell Jr              Prof. of Biostatistics & Statistics\nDiv. of Biostatistics & Epidem. Dept. of Health Evaluation Sciences\nU. Virginia School of Medicine  http://hesweb1.med.virginia.edu/biostat",
       "body_snippet": "On Thu, 6 Mar 2003 07:45:34 -0600\nDavid L Lorenz <lorenz at usgs.gov> wrote:\n\n> \n> All,\n>   I found that S-PLUS 6.1 merges timeDate data by converting it to\n> character first, merging, and then conver",
-      "thread_id": "thread-1751c9a2363a",
-      "thread_depth": 1,
+      "thread_id": "thread-9d8ce93f3f04",
+      "thread_depth": 2,
       "month": "2003-03"
     },
     {
@@ -1491,12 +1491,12 @@
       "date": "2003-03-12T15:17:39Z",
       "subject": "matrix to data.frame",
       "subject_clean": "matrix to data.frame",
-      "in_reply_to": null,
+      "in_reply_to": "<C89B44E6684BD411A84B0008C7BF17A4013438DA@obelix.kispi.unizh.ch>",
       "references": [],
       "body_plain": "In my previous message I forgot to mention that I am working with S+2000\nunder Windows 2000, sorry.\nThe suggestion to change a General Setting/Data/Defaut Text.Col from factor\nto character does not seem to help in this case.\nBelow the original message.\n---------------------------------\nI have a logical matrix, ww1,  which I need to convert to a data frame.\n------------\nS+>ww1\n  1M 3M \n1  F  F\n2  F  F\n3  T  T\n4  F  F\n6  T  T\nS+>str(as.data.frame(ww1))\n`data.frame':  5 obs. of  2 variables:\n $ 1M: class Factor ; 2 levels: FALSE,TRUE: FALSE FALSE  TRUE FALSE  TRUE\n $ 3M: class Factor ; 2 levels: FALSE,TRUE: FALSE FALSE  TRUE FALSE  TRUE\n----------\nThe same occurs if I use data.frame instead of as.data.frame. The function\ndata.frame converts the logical columns of ww1 to factors. I was not able to\navoid this. \nThe problem is with function data.frameAux.default; it is not difficult to\nmodify this function to avoid the above behaviour, but I  wonder what the\nconsequences may be.\nAny suggestion?\nThanks for helping,\nL. Molinari\n----------------------\nDr. Luciano Molinari\nAbt. EEG und AWE\nKinderspital Zürich\nSteinwiesstr.75\nCH-8032 Zürich\nluciano.molinari at kispi.unizh.ch\nTel. (00411) 266 79 25\nFax (00411) 266 71 71",
       "body_snippet": "In my previous message I forgot to mention that I am working with S+2000\nunder Windows 2000, sorry.\nThe suggestion to change a General Setting/Data/Defaut Text.Col from factor\nto character does not se",
-      "thread_id": "thread-43f2efa7fc7b",
-      "thread_depth": 0,
+      "thread_id": "thread-4a5d88108072",
+      "thread_depth": 1,
       "month": "2003-03"
     },
     {
@@ -2187,182 +2187,6 @@
       "month": "2003-03"
     },
     {
-      "id": "msg-e8cbf6f490b4",
-      "message_id": "<d41d8cd98f00b204e9800998ecf8427e@NO-ID-FOUND.mhonarc.org>",
-      "from_name": "Unknown",
-      "from_email_hash": "b764cdc0eab7137467211272fa539f1260d1bf2e71bcf6ff3bdc960f5c16aa14",
-      "date": "2003-03-20T15:56:20Z",
-      "subject": "",
-      "subject_clean": "",
-      "in_reply_to": null,
-      "references": [],
-      "body_plain": "you could try the following:\n\n# Hotelling's Test\n# x is your data in a two columns matrix\nn <- dim(x)[1]\np <- dim(x)[2]\nx.bar <- as.matrix(colMeans(x))\nm0 <- as.matrix(c(0,0))\nS <- var(x)\ng <-\n(n/(n-1))*((n-p)/p)*t(x.bar-m0)%*%solve(S)%*%(x.bar-m0)\np.value <- 1-pf(g, p, n-p)\n# Null Hypothesis: x.bar==m0\n# Alternative Hypothesis: x.bar!=m0\np.value\n\nI hope this helps.\n\nBest,\nDimitris",
-      "body_snippet": "you could try the following:\n\n# Hotelling's Test\n# x is your data in a two columns matrix\nn <- dim(x)[1]\np <- dim(x)[2]\nx.bar <- as.matrix(colMeans(x))\nm0 <- as.matrix(c(0,0))\nS <- var(x)\ng <-\n(n/(n-1",
-      "thread_id": "thread-e8cbf6f490b4",
-      "thread_depth": 0,
-      "month": "2003-03"
-    },
-    {
-      "id": "msg-074a4fd5d075",
-      "message_id": "<15558b99c57bf3ebc24f1c879b8ae787@NO-ID-FOUND.mhonarc.org>",
-      "from_name": "Unknown",
-      "from_email_hash": "b764cdc0eab7137467211272fa539f1260d1bf2e71bcf6ff3bdc960f5c16aa14",
-      "date": "2003-03-20T16:17:52Z",
-      "subject": "",
-      "subject_clean": "",
-      "in_reply_to": null,
-      "references": [],
-      "body_plain": "I'm not sure what you want to do with it but here's an example:\n\nv<-c(1,2,3,-1,3,-2,4,0,-5,9,0,1,-2)\nv\n[1]  1  2  3 -1  3 -2  4  0 -5  9  0  1 -2\n\nv<0\n[1] F F F T F T F F T F F F T\n\nv[v<0]\n[1] -1 -2 -5 -2\n\nv[v<0]<-1\nv\n [1] 1 2 3 1 3 1 4 0 1 9 0 1 1\n\nManuela Huso\n************************************************************",
-      "body_snippet": "I'm not sure what you want to do with it but here's an example:\n\nv<-c(1,2,3,-1,3,-2,4,0,-5,9,0,1,-2)\nv\n[1]  1  2  3 -1  3 -2  4  0 -5  9  0  1 -2\n\nv<0\n[1] F F F T F T F F T F F F T\n\nv[v<0]\n[1] -1 -2 -",
-      "thread_id": "thread-074a4fd5d075",
-      "thread_depth": 0,
-      "month": "2003-03"
-    },
-    {
-      "id": "msg-4123cabbb279",
-      "message_id": "<e5a51cefd5e8189c7826dd5c81105828@NO-ID-FOUND.mhonarc.org>",
-      "from_name": "Unknown",
-      "from_email_hash": "b764cdc0eab7137467211272fa539f1260d1bf2e71bcf6ff3bdc960f5c16aa14",
-      "date": "2003-03-20T16:17:52Z",
-      "subject": "",
-      "subject_clean": "",
-      "in_reply_to": null,
-      "references": [],
-      "body_plain": "How about:\n\nmy.fun<-function(data){all(data<0)}\n\ntest<-apply(eg.df,2,my.fun)  \n\n#careful df is an splus function\n\n>eg.df<-matrix(c(-1,1,-1,1),4,4,byrow=T)\n\n> eg.df\n     [,1] [,2] [,3] [,4] \n[1,]   -1    1   -1    1\n[2,]   -1    1   -1    1\n[3,]   -1    1   -1    1\n[4,]   -1    1   -1    1\n\n> my.fun<-function(data){all(data<0)}\n\n> test<-apply(eg.df,2,my.fun)  \n\n> test\n\n[1] T F T F\n \n-------------------------------------------------------------\nStephen J. Smith\n************************************************************",
-      "body_snippet": "How about:\n\nmy.fun<-function(data){all(data<0)}\n\ntest<-apply(eg.df,2,my.fun)  \n\n#careful df is an splus function\n\n>eg.df<-matrix(c(-1,1,-1,1),4,4,byrow=T)\n\n> eg.df\n     [,1] [,2] [,3] [,4] \n[1,]   -1 ",
-      "thread_id": "thread-4123cabbb279",
-      "thread_depth": 0,
-      "month": "2003-03"
-    },
-    {
-      "id": "msg-75fdf944a050",
-      "message_id": "<5eb0aecc4abf4d168a67f95a54c99ea7@NO-ID-FOUND.mhonarc.org>",
-      "from_name": "Unknown",
-      "from_email_hash": "b764cdc0eab7137467211272fa539f1260d1bf2e71bcf6ff3bdc960f5c16aa14",
-      "date": "2003-03-20T16:17:52Z",
-      "subject": "",
-      "subject_clean": "",
-      "in_reply_to": null,
-      "references": [],
-      "body_plain": ">         test[i] <- all(df[,i] < 0)\n\nwhich is to say, you want to check which columns have ALL negative\nvalues, right?\n\nyou could do something like this:\n\n  rep(1,nrow(df))%*%ifelse(df<0,1,0) == nrow(df)\n\nhope this helps.\n\n- peter\n************************************************************",
-      "body_snippet": ">         test[i] <- all(df[,i] < 0)\n\nwhich is to say, you want to check which columns have ALL negative\nvalues, right?\n\nyou could do something like this:\n\n  rep(1,nrow(df))%*%ifelse(df<0,1,0) == nrow",
-      "thread_id": "thread-75fdf944a050",
-      "thread_depth": 0,
-      "month": "2003-03"
-    },
-    {
-      "id": "msg-90f68f838961",
-      "message_id": "<1ad46cf139034826330e1fb6893708de@NO-ID-FOUND.mhonarc.org>",
-      "from_name": "Unknown",
-      "from_email_hash": "b764cdc0eab7137467211272fa539f1260d1bf2e71bcf6ff3bdc960f5c16aa14",
-      "date": "2003-03-20T16:17:52Z",
-      "subject": "",
-      "subject_clean": "",
-      "in_reply_to": null,
-      "references": [],
-      "body_plain": "It's a good idea to avoid naming an S-PLUS data object 'df', since that\nwill mask the built-in S-PLUS 'df()' function, which returns the density\nof the F distribution.\n\nHere is a trio of examples using subscripting.  The first selects from\na vector; the second selects from the second column of a data frame. \n\nThe third example returns a logical vector whose elements are T wherever\nthe corresponding element of the column is less than zero, and F elsewhere.  \n\nvector\n``````\n\nThe following commands create and display a repeatable vector named 'daj':\n \n        > set.seed(1)\n \n        > daj <- round(rnorm(35), 2)\n \n        > daj\n         [1] -0.79  0.79 -0.89  0.11  1.37  1.42  1.17 -0.53  0.92 -0.58\n        [11] -0.09 -0.96 -0.27 -1.34  0.76 -0.56  0.19 -0.93 -0.18 -1.58\n        [21]  0.88 -0.22  0.06 -0.80 -0.49 -0.38 -2.17 -0.27 -0.66  1.43\n        [31] -0.59  0.18 -0.99  1.85  1.34\n\nThe following commands create and display those elements of 'daj'\nwhose values are less than zero: \n \n        > test <- daj[daj<0]\n \n        > test\n         [1] -0.79 -0.89 -0.53 -0.58 -0.09 -0.96 -0.27 -1.34 -0.56 -0.93\n        [11] -0.18 -1.58 -0.22 -0.80 -0.49 -0.38 -2.17 -0.27 -0.66 -0.59\n        [21] -0.99\n \n\ndata frame:\n``````````` \n\nThe following commands create and display a data frame named 'daj': \n \n        > daj <- data.frame(    x=round(rnorm(15), 2), \n                                y=round(rnorm(15), 2))\n\n \n        > daj\n               x     y \n         1  0.06 -0.80\n         2  1.01  0.08\n         3 -1.19  1.42\n         4  1.93 -0.97\n         5  0.87  1.16\n         6 -1.30 -0.31\n         7  0.03  0.51\n         8  0.69  0.15\n         9 -0.32 -0.93\n        10  1.39 -2.37\n        11 -0.31  1.49\n        12 -1.12 -1.45\n        13  1.05 -0.68\n        14 -1.38 -0.85\n        15  0.79 -0.29\n\nThe following commands create and display a vector whose elements\nare the negative-valued elements from the second column of the\ndata frame 'daj': \n\n        > test <- daj[ daj[,2] < 0, 2 ]\n \n        > test\n        [1] -0.80 -0.97 -0.31 -0.93 -2.37 -1.45 -0.68 -0.85 -0.29\n\nlogical test\n````````````\n\nThe following command initializes the test vector:\n\n        > test <- as.logical(rep(0, length(daj[,2])))\n\nThe following command displays the initialized test vector:\n \n        > test\n         [1] F F F F F F F F F F F F F F F\n\nThe following command updates the test vector to be true wherever\nthe second column of 'daj' is less than zero:\n \n        > test[ daj[,2] < 0 ] <- T\n\nThe following command displays the resulting logical test vector:\n \n        > test\n         [1] T F F T F T F F T T F T T T T\n \n\nYou can find more information on the S-PLUS operators and functions\nmentioned in this discussion in the on-line help files that are displayed\nwhen you type\n\n        ?df\n        ?set.seed\n        ?round\n        ?rnorm\n        ?\"<-\"\n        ?\"(\"\n        ?\"[\"\n        ?\"<\"\n        ?data.frame\n        ?as.logical\n        ?rep\n        ?length\n        ?masked\nand\n        ?find\n\nat the S-PLUS prompt, in the Commands window.\n\nI hope this helps,\n\n-Doug Johnson\nMathSoft Seattle \n************************************************************\n\nFrom: Renaud Lancelot <lancelot at telecomplus.sn>\n\nHi Kim,\n\nSee apply():\n\n> M <- matrix(-10:9, ncol = 5)\n> M\n     [,1] [,2] [,3] [,4] [,5] \n[1,]  -10   -6   -2    2    6\n[2,]   -9   -5   -1    3    7\n[3,]   -8   -4    0    4    8\n[4,]   -7   -3    1    5    9\n> apply(M, 2, FUN = function(x) any(x < 0))\n[1] T T T F F\n\nCareful with any() or all()...\n\nHope this helps,\n\nRenaud\n************************************************************",
-      "body_snippet": "It's a good idea to avoid naming an S-PLUS data object 'df', since that\nwill mask the built-in S-PLUS 'df()' function, which returns the density\nof the F distribution.\n\nHere is a trio of examples usin",
-      "thread_id": "thread-90f68f838961",
-      "thread_depth": 0,
-      "month": "2003-03"
-    },
-    {
-      "id": "msg-b4ceb1809e9d",
-      "message_id": "<a9ae0a61456f7cf23889e61c7df89344@NO-ID-FOUND.mhonarc.org>",
-      "from_name": "Unknown",
-      "from_email_hash": "b764cdc0eab7137467211272fa539f1260d1bf2e71bcf6ff3bdc960f5c16aa14",
-      "date": "2003-03-20T16:17:52Z",
-      "subject": "",
-      "subject_clean": "",
-      "in_reply_to": null,
-      "references": [],
-      "body_plain": "test <- apply(df,2,function(x){all(x<0)})\n\nBy the way, test is a bad name for any variable or function.\n\n                SDB\n\n************************************************************\nFrom: Rod Tjoelker 865-3197 <rod.tjoelker at boeing.com>\n\nKim,\n\nTry the \"apply\" functions:  \"apply\",\"sapply\",\"lapply\",\"tapply\"\n\ntest <- apply(df,1,function(x) any(x < 0))\n\nHope this helps,\n\nRod\n************************************************************",
-      "body_snippet": "test <- apply(df,2,function(x){all(x<0)})\n\nBy the way, test is a bad name for any variable or function.\n\n                SDB\n\n************************************************************\nFrom: Rod Tjo",
-      "thread_id": "thread-b4ceb1809e9d",
-      "thread_depth": 0,
-      "month": "2003-03"
-    },
-    {
-      "id": "msg-dbc4bb699d03",
-      "message_id": "<98dc57b20f7a9bd713d32cf246592517@NO-ID-FOUND.mhonarc.org>",
-      "from_name": "Unknown",
-      "from_email_hash": "b764cdc0eab7137467211272fa539f1260d1bf2e71bcf6ff3bdc960f5c16aa14",
-      "date": "2003-03-20T16:17:52Z",
-      "subject": "",
-      "subject_clean": "",
-      "in_reply_to": null,
-      "references": [],
-      "body_plain": "If your data is really a data frame (not a matrix) you can speed\nthis up a bit with\n        test <- unlist(lapply(df, function(dfi)all(dfi<0)))\nHowever, the major speedup in this case comes from lapply\ntreating df as a list and using the equivalent of [[i]] instead\nof [,i] on it.  (The subscripting methods for data frames are\nrather slow, those for lists are fast.)  Thus you can squeeze\nout some of the time by avoiding some of the overhead of lapply\nand doing just\n\nf3 <- function(df) {\n        test <- logical(length(df))\n        # names(test) <- names(df) # not needed, but handy\n        df <- as.list(df)\n        for(i in 1:length(df)) {\n                test[i] <- all(df[[i]] < 0)\n        }\n        test\n}\n\nLets call your original method f0:\n\nf0 <- function(df) {\n        test <- logical(ncol(df))\n        for (i in 1:ncol(df))\n        {\n                test[i] <- all(df[,i] < 0)\n        }\n        test\n}\n\nand the lapply method f4:\n\nf4 <- function(df) unlist(lapply(df, function(dfi) all(dfi < 0)))\n\nFor a 10 row by 100 column data I get:\n\n> unix.time(f0(df))\n[1] 1.279999 0.000000 2.000000 0.000000 0.000000\n> unix.time(f3(df))\n[1] 0.1300011 0.0000000 0.0000000 0.0000000 0.0000000\n> unix.time(f4(df))\n[1] 0.2700005 0.0000000 1.0000000 0.0000000 0.0000000\n\nIf we uncomment the line that assigns the names to the output\nin f3 the time goes up to that of f4.  \n\nThe relative timings will change, depending on the dimensions\nof df.\n\n----------------------------------------------------------------------------\nBill Dunlap                                      22461 Mt Vernon-Big Lake Rd\nData Analysis Products Div. of MathSoft, Inc.    Mount Vernon, WA 98274\nbill at statsci.com                                 360-428-8146\n************************************************************",
-      "body_snippet": "If your data is really a data frame (not a matrix) you can speed\nthis up a bit with\n        test <- unlist(lapply(df, function(dfi)all(dfi<0)))\nHowever, the major speedup in this case comes from lappl",
-      "thread_id": "thread-dbc4bb699d03",
-      "thread_depth": 0,
-      "month": "2003-03"
-    },
-    {
-      "id": "msg-f14acd998957",
-      "message_id": "<7ff57ea9415113030b25e61e27db06a4@NO-ID-FOUND.mhonarc.org>",
-      "from_name": "Unknown",
-      "from_email_hash": "b764cdc0eab7137467211272fa539f1260d1bf2e71bcf6ff3bdc960f5c16aa14",
-      "date": "2003-03-20T16:17:52Z",
-      "subject": "",
-      "subject_clean": "",
-      "in_reply_to": null,
-      "references": [],
-      "body_plain": "It is not exactly vectorization but you do this operation with the\n\"apply\" function which applies a function to subsections of an array.\nIf I recall correctly it would look like\n\n apply( as.matrix(df), 2, function(x) any(x < 0) )  # 2 indicates apply to \ncolumns\n\n> df <- as.data.frame( matrix( rnorm(10000, mean = 3), nrow = 1000 ) )\n> apply( as.matrix( df ), 2, function(x) any( x < 0 ) )\n   V1    V2    V3    V4    V5    V6    V7    V8    V9   V10 \n TRUE  TRUE  TRUE FALSE  TRUE  TRUE FALSE FALSE  TRUE  TRUE \n\nIf you want to apply to rows of a matrix you use 1 as the second\nargument.\n\nBTW, I think from your description you wanted \"any\", not \"all\" in the\nfunction.",
-      "body_snippet": "It is not exactly vectorization but you do this operation with the\n\"apply\" function which applies a function to subsections of an array.\nIf I recall correctly it would look like\n\n apply( as.matrix(df)",
-      "thread_id": "thread-f14acd998957",
-      "thread_depth": 0,
-      "month": "2003-03"
-    },
-    {
-      "id": "msg-4719e8929610",
-      "message_id": "<c976ced60cf68d8add12c6a9c69fd46b@NO-ID-FOUND.mhonarc.org>",
-      "from_name": "Unknown",
-      "from_email_hash": "b764cdc0eab7137467211272fa539f1260d1bf2e71bcf6ff3bdc960f5c16aa14",
-      "date": "2003-03-20T16:23:20Z",
-      "subject": "",
-      "subject_clean": "",
-      "in_reply_to": null,
-      "references": [],
-      "body_plain": "An interesting problem. Here is one ad hoc approach that requires a bit\nof exploration first but then is semiautomated. The problem as you state\nit may not have a unique solution.\n\nThis is related to density estimation. As a more general approach\n(instead of relying on circles) you could generate a 2-d density\nfunction. There is software around to do kernel density estimation (e.g.\nV&Rs MASS library has kde2d and there are other packages on Statlib; see\ndiscussion on kde in this list). Once you have a density estimate, you\ncan find the highest density region containing 70% of the data. This\ndoes have a unique solution. Put another way, if you contour the density\nfunction, you just need to find that the contour that just contains 70%\nof the points. I've included this in the example in case you have the\n(highly recommended) MASS library. \n\nGood Luck,\nNick Ellis\n\n# generate 100 data points\nn<-100\nset.seed(10)\ndat<-data.frame(x=rnorm(n),y=rnorm(n))\n# function to find number points inside circle center x radius r\nn.inside.circle<-function(x,r){sum((dat$x-x[1])^2+(dat$y-x[2])^2<r^2)}\n\n# grid of circle centres\nngrid<-10\ngrid<-expand.grid(x=seq(min(dat$x),max(dat$x),len=ngrid),y=seq(min(dat$y\n),max(dat$y),len=ngrid))\n\n#sequence of radii to try\nr<-seq(1,2,.1) # limits found after exploration\nnin<-0*r\nfor(i in seq(along=r)){\n        \nnin[i]<-max(apply(grid,1,function(x,r)n.inside.circle(x,r),r=r[i]))\n}\n\n# nin is max no. points in circle of corresponding radius; interpolate\nto estimate radius of circle\n# containing 70% of points\nrmin<-approx(nin,r,n*0.70)$y\ncat(\"minimum radius\",rmin,\"\\n\")\n\n# find actual numbers of points inside circles of this radius\nnin.rmin<-apply(grid,1,function(x,r)n.inside.circle(x,r),r=rmin)\n\n# locate the point(s) for which circle of radius rmin contains maximum\nnumber (should be close to 70)\nimax<-seq(along=nin.rmin)[nin.rmin==max(nin.rmin)]\n\n# display it all\nplot(dat$x,dat$y)\nfor (j in imax){\n        symbols(grid$x[j],grid$y[j],circles=rmin,add=T,inch=F)\n        text(grid$x[j],grid$y[j],nin.rmin[j],col=2)\n}\n\n# if you have V&Rs MASS library\nlibrary(MASS)\n\n# do kde on data\nKDE<-kde2d(dat$x,dat$y)\n\n# get density at the data points by interpolation (loess) from grid\noutput by kde2d\nKDE.data<-cbind(expand.grid(x=KDE$x,y=KDE$y),z=as.vector(KDE$z))\ndens<-predict(loess(z~x*y,data=KDE.data),dat)\n\n# find 70th percentile from max density\ndens70<-quantile(dens,1-0.70)\n\n# plot those in highest density region\nsubset<-dens>dens70\nsum(subset)\npoints(dat$x[subset],dat$y[subset],col=2)\n\n# alternatively, show corresponding contour of density function\ncontour(KDE,levels=dens70,lty=2,add=T)\n# contour doesn't correspond exactly with coloured points, \n# presumably due to inaccuracy of interpolation.\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
-      "body_snippet": "An interesting problem. Here is one ad hoc approach that requires a bit\nof exploration first but then is semiautomated. The problem as you state\nit may not have a unique solution.\n\nThis is related to ",
-      "thread_id": "thread-4719e8929610",
-      "thread_depth": 0,
-      "month": "2003-03"
-    },
-    {
-      "id": "msg-6a4911bee364",
-      "message_id": "<e096a97d193dbf52c33fbd390e80395f@NO-ID-FOUND.mhonarc.org>",
-      "from_name": "Unknown",
-      "from_email_hash": "b764cdc0eab7137467211272fa539f1260d1bf2e71bcf6ff3bdc960f5c16aa14",
-      "date": "2003-03-20T16:23:20Z",
-      "subject": "",
-      "subject_clean": "",
-      "in_reply_to": null,
-      "references": [],
-      "body_plain": "The \"cov.mve\" function approximates the matrix that represents the\nelllipse with the smallest area that covers 'quan' fraction of the\ndata.  'quan' isn't an argument to 'cov.mve' but you can modify it\nso that you can change this to what you need.\n\nThere are two missing pieces to this solution however:\n\n1) how to draw an ellipse given the matrix representing it.\n\n2) how to scale the matrix so that the solution to 1) covers\nthe proper amount.\n\n-------------------------------------------------------",
-      "body_snippet": "The \"cov.mve\" function approximates the matrix that represents the\nelllipse with the smallest area that covers 'quan' fraction of the\ndata.  'quan' isn't an argument to 'cov.mve' but you can modify it",
-      "thread_id": "thread-6a4911bee364",
-      "thread_depth": 0,
-      "month": "2003-03"
-    },
-    {
-      "id": "msg-d254f1103f21",
-      "message_id": "<13b4ddfb6d7a6339541fb787b3138098@NO-ID-FOUND.mhonarc.org>",
-      "from_name": "Unknown",
-      "from_email_hash": "b764cdc0eab7137467211272fa539f1260d1bf2e71bcf6ff3bdc960f5c16aa14",
-      "date": "2003-03-20T16:33:28Z",
-      "subject": "Re: [S] Brush & Spin on Sun Ultrasparc 1",
-      "subject_clean": "[S] Brush & Spin on Sun Ultrasparc 1",
-      "in_reply_to": null,
-      "references": [],
-      "body_plain": "Dear Mr. Gansen,\n\nI checked our database, and Doug Johnson sent you the following message on\nFebruary 17, 1998 regarding your problem:\n\n>>>>>>>>>>>>>>>>>>>>>>\nDear Carl Gansen,\n\nThank you for your question:\n\n> \n> I have been trying to use brush & spin on our Sun sparc 140e.\n> We are running Solaris SunOS 5.5.1      Generic       May 1996\n> and we have \n> Splus Version 3.4 Release 1 for Sun SPARC, SunOS 5.3 : 1996.\n> \n> The problem that I am seeing is that as you spin the point \n> cloud, the old cloud persists on the screen and is displayed\n> with the new one.  The screen just become a ball of points\n> and you cannot see the desired information.  It operates\n> the same way in openlook, X11, and motif graphics windows.\n> \n\nThis is a known bug involving S-PLUS 3.4, Solaris 2.5 and Common Desktop\nEnvironment:\n\n        \"Many users have reported that 'spin()' and 'brush()' do not\n        erase points when the axes are rotated - leaving a blur in \n        the spin window.  All of the users who have reported this \n        problem are running S-PLUS under Solaris 2.5 and Common \n        Desktop Environment.  If they refresh the screen, all of the\n        old points get erased, and the point cloud is displayed\n        correctly.\"\n\nUnfortunately, we do not yet have a workaround or a fix.  I have linked\nyour question to the bug report in our database.\n \nI hope this helps.  Please contact us here at technical support again \nif you have further questions.  \n   \nSincerely,\n \nDoug Johnson, MS, PE\nS-PLUS Technical Support Engineer\n\nMathSoft, Inc.                                  Email:  support at statsci.com\nData Analysis Products Division                 Phone:  206-283-8802\nSeattle, Washington                             Fax:    206-283-8691\nhttp://www.mathsoft.com\n\n---------------------------------------------------------------------------\n\nP.S.  You may also find our current list of frequently asked questions \n      helpful for some questions, at the following address on our web site:\n\n         http://www.mathsoft.com/splus/splsprod/splusfaq.htm\n\n      The new 64-page document detailing the S-PLUS 4.0 interface with \n      C and Fortran routines is also available from our web site now. \n      It is located at the following address:\n\n         http://www.mathsoft.com/support/cfortran.pdf \n---------------------------------------------------------------------------\n>>>>>>>>>>>>>>>>>>>>>\n\nWe have confirmed this problem on Ultrasparc 1 3D configuration and the\nproblem should be fixed in a later release.\n\nOnce again, I apologize for the inconvenience that this causes you.\n\nSincerely,\n\n--------------------------\nJulia Dryden\nMathSoft Technical Support\nTel: (206) 283-8802\nFax: (206) 283-8691\nemail: support at statsci.com\n--------------------------\n\nOn Thu, 5 Mar 1998, Carl Gansen wrote:\n\n> Please forgive me if this a FAQ but I was unable to find anything\n> in my search so far.\n> \n> I upgraded from an aging Sparc 2 to an Ultrasparc 1 with the \n> \"creator 3d\" configuration. It is one of our current corporate \n> standard configurations that we are encourged to use.\n> \n> Operating system: Sun Microsystems Inc.       SunOS 5.5. Generic May 1996\n> Splus: Version 3.4 Release 1 for Sun SPARC, SunOS 5.3 : 1996 \n> \n> My problem is this.  When I attempt to use either brush or spin\n> the graphics comes up as in the past but as I attempt to rotate \n> the point cloud in any axis the old point locations persist along\n> with the new ones being drawn leaving me with a confusing ball of points\n> on the screen.  I e-mailed and phoned support at statsci.com but have\n> received only an automated e-mail reply but no solution after a couple\n> weeks.  Brush & spin worked on the old Sparc 2.  I do not recall the\n> Sun OS on the Sparc 2 but the Splus package is the same.\n> \n> Am I the only one having this problem?  Has anybody seen and cured\n> this?  I would appreciate any info or suggestions.\n> \n> Thanks in advance for any replies. \n> \n> Carl Gansen\n> Rosemount Inc.\n> Phone 612-828-3062\n> Fax 612-828-3611\n> -----------------------------------------------------------------------\n> This message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\n> send e-mail to s-news-request at wubios.wustl.edu with the BODY of the\n> message:  unsubscribe s-news\n> \n\n----- End Included Message -----\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
-      "body_snippet": "Dear Mr. Gansen,\n\nI checked our database, and Doug Johnson sent you the following message on\nFebruary 17, 1998 regarding your problem:\n\n>>>>>>>>>>>>>>>>>>>>>>\nDear Carl Gansen,\n\nThank you for your que",
-      "thread_id": "thread-d254f1103f21",
-      "thread_depth": 0,
-      "month": "2003-03"
-    },
-    {
       "id": "msg-839a73351ea6",
       "message_id": "<001301c2ef01$0a0990c0$5c284e98@maths.soton.ac.uk>",
       "from_name": "James Dartnall",
@@ -2470,12 +2294,12 @@
       "date": "2003-03-21T00:42:46Z",
       "subject": "Re: recode",
       "subject_clean": "recode",
-      "in_reply_to": null,
+      "in_reply_to": "<000c01c2ef07$19ddefe0$3e1a7680@meth.hhdev.psu.edu>",
       "references": [],
       "body_plain": "ifelse() is the most direct way, but cut() might be easier, especially for\nthe case of general break points. However cut uses intervals that include\nthe right-hand point and exclude the left (\"0.5+ thru 1.5\"), whereas you\nwant the opposite. One trick is to apply cut to the negative of the data and\nreverse the order of the levels. \n\n> x <- seq(0,2,0.1)\n> x\n [1] 0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7\n1.8 1.9 2.0\n> ifelse(x<0.5,0,ifelse(x<1.5,1,2))\n [1] 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2\n> cut(x,breaks=c(-Inf,0.5,1.5,Inf),factor=T)\n [1] -Inf+ thru 0.5 -Inf+ thru 0.5 -Inf+ thru 0.5 -Inf+ thru 0.5 -Inf+ thru\n0.5 -Inf+ thru 0.5  0.5+ thru 1.5  0.5+ thru 1.5\n [9]  0.5+ thru 1.5  0.5+ thru 1.5  0.5+ thru 1.5  0.5+ thru 1.5  0.5+ thru\n1.5  0.5+ thru 1.5  0.5+ thru 1.5  0.5+ thru 1.5\n[17]  1.5+ thru Inf  1.5+ thru Inf  1.5+ thru Inf  1.5+ thru Inf  1.5+ thru\nInf\n> c(0,1,2)[cut(x,breaks=c(-Inf,0.5,1.5,Inf),factor=T)]  # using a factor as\nan index\n [1] 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2                  # not quite\nwhat you want\n> rev(c(0,1,2))[cut(-x,breaks=-rev(c(-Inf,0.5,1.5,Inf)),factor=T)]\n [1] 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2                  # this is\nwhat you want\n\nNick Ellis\nCSIRO Marine Research   mailto:Nick.Ellis at csiro.au\nPO Box 120                      ph    +61 (07) 3826 7260\nCleveland QLD 4163      fax   +61 (07) 3826 7222\nAustralia                       http://www.marine.csiro.au\n \n\n> -----Original Message-----\n> From: Frank Lawrence [mailto:Cougar at psu.edu]\n> Sent: Friday, March 21, 2003 3:35 AM\n> To: s-news at lists.biostat.wustl.edu\n> Subject: [S] recode\n> \n> \n> I would like to know how to quickly recode multiple variables.  In one\n> problem I have, I need to recode the data in a 600 x 200 data \n> frame so that\n> values less than 0.5 are scored 0, those equal to or greater \n> than 1.5 are\n> scored 2, and those in between are scored 1.  Using loops \n> seems to take a\n> very long time.  Is there a more efficient way to accomplish \n> the recode?\n> WIN 2k, Splus 6.1\n> \n> \n> Respectfully, \n> Frank R. Lawrence\n> \n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>",
       "body_snippet": "ifelse() is the most direct way, but cut() might be easier, especially for\nthe case of general break points. However cut uses intervals that include\nthe right-hand point and exclude the left (\"0.5+ th",
-      "thread_id": "thread-623a3814467a",
-      "thread_depth": 0,
+      "thread_id": "thread-af25eaeb3e59",
+      "thread_depth": 1,
       "month": "2003-03"
     },
     {
@@ -2502,12 +2326,12 @@
       "date": "2003-03-21T13:28:32Z",
       "subject": "Re: Semi-Variance",
       "subject_clean": "Semi-Variance",
-      "in_reply_to": null,
+      "in_reply_to": "<20030320141107.49131.qmail@web14201.mail.yahoo.com>",
       "references": [],
       "body_plain": "Hi,\n\nDefining semi-variance as \n\n        (1/n) SUM { (Min (0, x - t))^2 }\n\nthen coding this straight into S would be pretty good as\n\n        (x [x < t] %*% x [x < t]) / length (x)\n\nor\n        SUM (x [x < t] ^ 2) / length (x)\n\nYou'd have to do some checking on dimensions / size etc. \n\nCalculating a min variance portfolio is much trickier.  The NUOPT library will \nhappily do it (if you have it / can afford it). If you have an unconstrained \nproblem then the solution is just matrix multiplication. \n\nRegards,\n\nDavid Jessop\n\n>-----Original Message-----\n>From: Mandans [mailto:mandans_p at yahoo.com]\n>Sent: 20 March 2003 14:11\n>To: s-news at lists.biostat.wustl.edu\n>Subject: Semi-Variance\n>\n>\n>Hi there,\n>\n>It is been such a great a community here. Thanks all\n>you guys.\n>\n>I have a question regarding how to calculate\n>semi-varince using splus. Any one know how to\n>calculate semi-varaince using splus.? And also any\n>functions or scripts which might be able to use to\n>calculate min varince portfolio...(actually minimum\n>semi variance portfolio.)\n>\n>All your help is highly appreciated.\n>Thanks\n>\n>\n>__________________________________________________\n>Do you Yahoo!?\n>Yahoo! Platinum - Watch CBS' NCAA March Madness, live on your desktop!\n>http://platinum.yahoo.com\n>\n\nVisit our website at http://www.ubswarburg.com\n\nThis message contains confidential information and is intended only\nfor the individual named.  If you are not the named addressee you\nshould not disseminate, distribute or copy this e-mail.  Please\nnotify the sender immediately by e-mail if you have received this\ne-mail by mistake and delete this e-mail from your system.\n\nE-mail transmission cannot be guaranteed to be secure or error-free\nas information could be intercepted, corrupted, lost, destroyed,\narrive late or incomplete, or contain viruses.  The sender therefore\ndoes not accept liability for any errors or omissions in the contents\nof this message which arise as a result of e-mail transmission.  If\nverification is required please request a hard-copy version.  This\nmessage is provided for informational purposes and should not be\nconstrued as a solicitation or offer to buy or sell any securities or\nrelated financial instruments.",
       "body_snippet": "Hi,\n\nDefining semi-variance as \n\n        (1/n) SUM { (Min (0, x - t))^2 }\n\nthen coding this straight into S would be pretty good as\n\n        (x [x < t] %*% x [x < t]) / length (x)\n\nor\n        SUM (x [",
-      "thread_id": "thread-cbcd6043a6a3",
-      "thread_depth": 0,
+      "thread_id": "thread-151b19e78192",
+      "thread_depth": 1,
       "month": "2003-03"
     },
     {
@@ -2550,12 +2374,12 @@
       "date": "2003-03-21T17:54:08Z",
       "subject": "factorial",
       "subject_clean": "factorial",
-      "in_reply_to": null,
+      "in_reply_to": "<20030320170842.68625.qmail@web13704.mail.yahoo.com>",
       "references": [],
       "body_plain": "Here is my original query:Hi, all\nI am a newbie at s-plus, I am using splus 6.1, windows\nxp.  There is some thing I could not explain about a\nsystem function factorial, maybe there is something\nfundatmental about s-plus I am not clear.  I would\nappreciate any help.\n\nWhen reading the following code of the system function\nfactorial, my understanding is that after caculate the\nresult, the function then goes on checking to see if n\nis an integer, if it is, it would round the result and\nassign it back to result.  Therefore, if it is not an\ninteger, the wasInteger parameter would be F, which is\ncoersed to be 0 in the next step.  With the indexing\nof vector started at 1, \nresult[0] should not have anything returned.  However,\nif I give 5.5 or another n with a decimal , I would\nhave a decimal returned value. factorial(5.5) gives\nthe following output:287.8853\n\nhere is the system function:\nfactorial <-function(n)\n{\n        result <- gamma(n + 1)\n        wasInteger <- !(n %% 1) & !is.na(n)\n        result[wasInteger] <- round(result[wasInteger])\n        result\n}\n\nThanks for any help.\n\nthings that helped me clarify the confusion are the\nbasic of S explained by the great users in this\ncommunity.   \n\nTim Hesterberg, Patric Burns,  Nick Eliis, Spencer\nGraves,and  David Harris all offered their hand in\nessentially explaned that S's basic data structure is\nvector, and logical vectors are not coerced to\nnumberic in subscripting.(which was my confusion). \nAnd Patric Burns offered a website with Spoetry and \n\"a guide for the unwilling S user\".  The address is:\nhttp://www.burns-stat.com/   I have gone through the\n\"a guide for the unwilling S user\" and is going\nthrough the Spoetry.  Very grateful for the resource.\nNick Eliis also suggested to use the help function on\nhelp(\"[\"). \n\nThanks again for all the help.  I hope this summary\nhelps for other new users. And thanks for David and\nMadeline for point out to me the right etiqutte of\nsummarizing query.    \n\nJosephine\n\n__________________________________________________\nDo you Yahoo!?\nYahoo! Platinum - Watch CBS' NCAA March Madness, live on your desktop!\nhttp://platinum.yahoo.com",
       "body_snippet": "Here is my original query:Hi, all\nI am a newbie at s-plus, I am using splus 6.1, windows\nxp.  There is some thing I could not explain about a\nsystem function factorial, maybe there is something\nfundat",
-      "thread_id": "thread-80d913f88326",
-      "thread_depth": 0,
+      "thread_id": "thread-deb91172fe86",
+      "thread_depth": 1,
       "month": "2003-03"
     },
     {
@@ -2646,12 +2470,12 @@
       "date": "2003-03-23T03:27:34Z",
       "subject": "Re: emacs-shortcuts",
       "subject_clean": "emacs-shortcuts",
-      "in_reply_to": null,
+      "in_reply_to": "<0HC400HES6HKHI@asrcserv1.asrc.cestm.albany.edu>",
       "references": [],
       "body_plain": "> Since a while I experience a strange problem with S-PLUS Version 5.0 R3 under \n> SunOS. I start S-PLUs by executing 'Splus -e' ,in order to get emacs \n> key-bindings for editing. Especially Control-P for going back into the \n> command \n> history is a real handy shortcut. This worked pretty fine until recently when \n> Control-P suddenly changed it behavior and instead of giving the last command \n> it \n> jumps to the very first command in the history. Rendering the function \n> useless, \n> IMO. \n\nHave a look at the file .Splus_history,  there's a good chance it is\ngreater than 1MB in size.  Reducing the size should cure the problem (I\njust use an ordinary text editor).\n\nHope this helps,\nRay Brownrigg",
       "body_snippet": "> Since a while I experience a strange problem with S-PLUS Version 5.0 R3 under \n> SunOS. I start S-PLUs by executing 'Splus -e' ,in order to get emacs \n> key-bindings for editing. Especially Control-",
-      "thread_id": "thread-2212807f2364",
-      "thread_depth": 0,
+      "thread_id": "thread-e87e4a2937c2",
+      "thread_depth": 1,
       "month": "2003-03"
     },
     {
@@ -2748,12 +2572,12 @@
       "date": "2003-03-23T19:43:51Z",
       "subject": "Loess",
       "subject_clean": "Loess",
-      "in_reply_to": null,
+      "in_reply_to": "<063301c2e34c$1bdf8bd0$9f6c5b80@wharton.upenn.edu>",
       "references": [],
       "body_plain": "Hi,\n\nI am using Loess procedure in order to infer certain relationship\nfor the data set of ~130,000 observations with ~300 distinct values of\nsingle predictor. I understand that fitted values y-hat are just 300\nWeighted\nLS fits in certain neighborhood of predictors. I am bit confused about\nhow exactly is this neighborhood assigned . Say I choose spanning\nparameter = .5, for each LS analysis 75000 observations should be used.\nHowever, intuitively it doesn't seem right since points are not equally\ndistributed among predictors and there are many observations for a single\nvalue of predictor.\nI would appreciate if someone could clear this for me.\n\nThank you,\n\nDavorka",
       "body_snippet": "Hi,\n\nI am using Loess procedure in order to infer certain relationship\nfor the data set of ~130,000 observations with ~300 distinct values of\nsingle predictor. I understand that fitted values y-hat ar",
-      "thread_id": "thread-825a55042eaf",
-      "thread_depth": 0,
+      "thread_id": "thread-639fa03e5533",
+      "thread_depth": 1,
       "month": "2003-03"
     },
     {
@@ -2770,8 +2594,8 @@
       ],
       "body_plain": "You have just posted a slightly different version of this question on \nR-help.\n\n- are you using S-PLUS or R?\n- are you using loess.smooth or loess?  (note, no capitals!)\n\nThe differences matter somewhat.\n\nOn Sun, 23 Mar 2003, Davorka Gulisija wrote:\n\n> I am using Loess procedure in order to infer certain relationship\n> for the data set of ~130,000 observations with ~300 distinct values of\n> single predictor. I understand that fitted values y-hat are just 300\n> Weighted\n> LS fits in certain neighborhood of predictors. I am bit confused about\n> how exactly is this neighborhood assigned . Say I choose spanning\n> parameter = .5, for each LS analysis 75000 observations should be used.\n> However, intuitively it doesn't seem right since points are not equally\n> distributed among predictors and there are many observations for a single\n> value of predictor.\n> I would appreciate if someone could clear this for me.\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272866 (PA)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595",
       "body_snippet": "You have just posted a slightly different version of this question on \nR-help.\n\n- are you using S-PLUS or R?\n- are you using loess.smooth or loess?  (note, no capitals!)\n\nThe differences matter somewh",
-      "thread_id": "thread-825a55042eaf",
-      "thread_depth": 1,
+      "thread_id": "thread-639fa03e5533",
+      "thread_depth": 2,
       "month": "2003-03"
     },
     {
@@ -2798,12 +2622,12 @@
       "date": "2003-03-23T22:15:47Z",
       "subject": "recode",
       "subject_clean": "recode",
-      "in_reply_to": null,
+      "in_reply_to": "<000c01c2ef07$19ddefe0$3e1a7680@meth.hhdev.psu.edu>",
       "references": [],
       "body_plain": "I thank Andy Liaw, Chuck Cleland, Bert Gunter, Nick Ellis, Charles Wright,\nPatrick Burns, Spencer Graves, James Holtman, Frédéric Gosselin, Andrew\nRobinson, and Tamara Shatar for their very helpful suggestions.  I have\nlisted their responses below as well as my original question.\n\nFrom: Tamara M. Shatar\n\nHi,\n\nYou might want to try using ifelse statements.\n\nYou can fulfill multiple criteria by using them within each other, e.g.\n\nifelse(mymat<0.5,0,(ifelse(mymat>=1.5,2,1)))\n\nI hope this helps,\n\nTamara.\n\nFrom: Nick Ellis\n\nifelse() is the most direct way, but cut() might be easier, especially for\nthe case of general break points. However cut uses intervals that include\nthe right-hand point and exclude the left (\"0.5+ thru 1.5\"), whereas you\nwant the opposite. One trick is to apply cut to the negative of the data and\nreverse the order of the levels. \n\n> x <- seq(0,2,0.1)\n> x\n [1] 0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7\n1.8 1.9 2.0\n> ifelse(x<0.5,0,ifelse(x<1.5,1,2))\n [1] 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2\n> cut(x,breaks=c(-Inf,0.5,1.5,Inf),factor=T)\n [1] -Inf+ thru 0.5 -Inf+ thru 0.5 -Inf+ thru 0.5 -Inf+ thru 0.5 -Inf+ thru\n0.5 -Inf+ thru 0.5  0.5+ thru 1.5  0.5+ thru 1.5  [9]  0.5+ thru 1.5  0.5+\nthru 1.5  0.5+ thru 1.5  0.5+ thru 1.5  0.5+ thru 1.5  0.5+ thru 1.5  0.5+\nthru 1.5  0.5+ thru 1.5 [17]  1.5+ thru Inf  1.5+ thru Inf  1.5+ thru Inf\n1.5+ thru Inf  1.5+ thru Inf\n> c(0,1,2)[cut(x,breaks=c(-Inf,0.5,1.5,Inf),factor=T)]  # using a factor as\nan index\n [1] 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2                  # not quite\nwhat you want\n> rev(c(0,1,2))[cut(-x,breaks=-rev(c(-Inf,0.5,1.5,Inf)),factor=T)]\n [1] 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2                  # this is\nwhat you want\n\nNick Ellis\nCSIRO Marine Research   mailto:Nick.Ellis at csiro.au\nPO Box 120                      ph    +61 (07) 3826 7260\nCleveland QLD 4163      fax   +61 (07) 3826 7222\nAustralia                       http://www.marine.csiro.au\n\nFrom: Charles (Ted) Wright\n\nIf df is your data frame containing solely numeric quantities to be coded,\nthen the following should work\n\ndf[df < .5] <- 0\ndf[.5 <= df & df <= 1.5] <- 1\ndf[df > 1.5] <- 2\n\nTed Wright\n\nFrom: Frédéric Gosselin \n\nI woudl say commands like: \n\nx[x<0.5]_0 \n\n(for the first condition) \n\nshould work. \n\nSincerely, \n\nFrédéric Gosselin \nResearcher (PhD) & Engineer in Forest Ecology \nCemagref \nDomaine des Barres \n45 290 Nogent-sur-Vernisson \nFRANCE \n\nTel: 33-2-38-95-03-58 \nFax: 33-2-38-95-03-44 \n\n-----Original Message-----\nFrom: Patrick Burns [mailto:pburns at pburns.seanet.com] \nSent: Thursday, March 20, 2003 13:13\nTo: Cougar at psu.edu\nSubject: Re: [S] recode\n\nYou can do things like:\n\nx[x < 0.5] <- 0\n\n(I'm not sure that will work on a whole data frame in one go though, it will\non  a matrix.)\n\nS Poetry might give you some more ideas.\n\nGood luck,\n\nPatrick Burns\n\nBurns Statistics\npatrick at burns-stat.com\n+44 (0) 208 525 0696\nhttp://www.burns-stat.com/    (new home of S Poetry)\n\n-----Original Message-----\nFrom: james.holtman at convergys.com [mailto:james.holtman at convergys.com]\nSent: Thursday, March 20, 2003 12:45\nTo: Cougar at psu.edu\nSubject: Re: [S] recode\n\nIf the dataframe only contains numeric, then make a matrix and do the\nfollowing:\n\nx.1 <- as.matrix(dataframe)\nx.1 <ifelse(x.1<.5, 0, ifelse(x.1>= 1.5, 2, 1))\n\nif there are only certain columns that you want to do it on, then iterate on\nthose columns with the above statement.\n\n>From Andy Liaw:\n\nCoerce the data to a vector, use cut() to categorize it, use codes() to turn\nthe result into 1, 2, etc., subtract 1 from it to have it starts at 0.  Add\ndim attribute back, and if needed, coerce to data.frame.  E.g.,\n\n> x <- as.data.frame(matrix(runif(600*200), 600, 200)*2)\n> xc <- codes(cut(as.matrix(x), c(-Inf, 0.5, 1.5, Inf))-1)\n> table(xc)\n     0     1     2 \n 29854 60021 30125\n> dim(xc) <- dim(x)\n> xc <- as.data.frame(xc)\n\nAndy\n\n> -----Original Message-----\n> From: s-news-owner at lists.biostat.wustl.edu\n> [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Spencer \n> Graves\n> Sent: Thursday, March 20, 2003 12:51\n> To: Cougar at psu.edu\n> Cc: s-news at lists.biostat.wustl.edu\n> Subject: Re: [S] recode\n> \n> \n> How about the following:\n> \n> tst.data <- data.frame(a=seq(0, 2, length=9), b=seq(0, 2, length=9))\n> round(tst.data)\n> \n> Alternatively:\n> \n> (tst.data>=.5)+(tst.data>1.5)\n> \n> Do these do work for you?\n> Best Wishes,\n> Spencer Graves\n\nFrom: Chuck Cleland\n\n  Here is one untested idea using apply() and cut().\n\nmydata <- matrix(rnorm(600*200), ncol=200)\n\napply(mydata, 2, function(x){cut(x, c(min(x), 0.5, 1.5, max(x)))}) - 1\n\nI don't think my example gets it.  For example,\n\n > cut(1:10, c(1, 3, 8, 10))\n  [1] NA  1  1  2  2  2  2  2  3  3\n\nSo you might need something like:\n\ncut(x, c(min(x) - 1, 0.49, 1.5, max(x))\n\nFor the particular problem you mentioned, I thought Spencer \nGraves' second solution solution was quite nice.\n\nregards,\n\nChuck\n\nOriginal Question:\n> I would like to know how to quickly recode multiple variables.  In one \n> problem I have, I need to recode the data in a 600 x 200 data frame so \n> that values less than 0.5 are scored 0, those equal to or greater than \n> 1.5 are scored 2, and those in between are scored 1.  Using loops \n> seems to take a very long time.  Is there a more efficient way to \n> accomplish the recode? WIN 2k, Splus 6.1\n\nRespectfully, \nFrank R. Lawrence, Ph.D.",
       "body_snippet": "I thank Andy Liaw, Chuck Cleland, Bert Gunter, Nick Ellis, Charles Wright,\nPatrick Burns, Spencer Graves, James Holtman, Frédéric Gosselin, Andrew\nRobinson, and Tamara Shatar for their very helpful su",
-      "thread_id": "thread-5d9f034b64cb",
-      "thread_depth": 0,
+      "thread_id": "thread-af25eaeb3e59",
+      "thread_depth": 1,
       "month": "2003-03"
     },
     {
@@ -2830,12 +2654,12 @@
       "date": "2003-03-24T00:24:11Z",
       "subject": "Re: recode",
       "subject_clean": "recode",
-      "in_reply_to": null,
+      "in_reply_to": "<000c01c2ef07$19ddefe0$3e1a7680@meth.hhdev.psu.edu>",
       "references": [],
       "body_plain": "Sam Buttrey brought to my attention the argument left.include of cut(),\nwhich allows you to specify bins closed on the left. Thanks Sam. \n\nThen, in answer to Frank Lawrence's question,\n\nx <- seq(0,2,0.1)\nc(0,1,2)[cut(x,breaks=c(-Inf,0.5,1.5,Inf),factor=T,left.include=T)]     \n\nNick Ellis\nCSIRO Marine Research   mailto:Nick.Ellis at csiro.au\nPO Box 120                      ph    +61 (07) 3826 7260\nCleveland QLD 4163      fax   +61 (07) 3826 7222\nAustralia                       http://www.marine.csiro.au\n \n> -----Original Message-----\n> From: Frank Lawrence [mailto:Cougar at psu.edu]\n> Sent: Friday, March 21, 2003 3:35 AM\n> To: s-news at lists.biostat.wustl.edu\n> Subject: [S] recode\n> \n> \n> I would like to know how to quickly recode multiple variables.  In one\n> problem I have, I need to recode the data in a 600 x 200 data \n> frame so that\n> values less than 0.5 are scored 0, those equal to or greater \n> than 1.5 are\n> scored 2, and those in between are scored 1.  Using loops \n> seems to take a\n> very long time.  Is there a more efficient way to accomplish \n> the recode?\n> WIN 2k, Splus 6.1\n> \n> \n> Respectfully, \n> Frank R. Lawrence\n>",
       "body_snippet": "Sam Buttrey brought to my attention the argument left.include of cut(),\nwhich allows you to specify bins closed on the left. Thanks Sam. \n\nThen, in answer to Frank Lawrence's question,\n\nx <- seq(0,2,0",
-      "thread_id": "thread-10efb8da80c5",
-      "thread_depth": 0,
+      "thread_id": "thread-af25eaeb3e59",
+      "thread_depth": 1,
       "month": "2003-03"
     },
     {
@@ -2869,22 +2693,6 @@
       "body_plain": "Dear All,\n\nI received a reply from Nick Ellis, Thanks very much.\nIt looks like a bug and Nick has already sent CC to\nbugs at insightful.com.\n\nMika\n\n***********************************************************\nmy original question is\n> I'm using S-PLUS 6.0 on WindowsXp.\n> I met a problem on lm.fit.chol.\n>\n> Since this function has \"singular.ok\" argument,\n> I've tried;\n>\n> > data <- data.frame(x=1:10, y=11:20, z=101:110)\n> > mat <- model. matrix(z ~  x+ y, data=data)\n> > lm.fit.chol(y=data$z, x=mat, singular.ok=T)\n> Problem in dimnames(.A1) <- .A0: Cannot have dimnames for nonarray\n> Use traceback() to see the call stack\n>\n> So, I edit some fraction of lm.fit.chol, but I have not\n> received correct result yet.\n>\n> Does anybody have an experience to modify this function?\n***************************************************\nand Nick's reply is.\n***************************************************\n> That looks like a bug. You can also get the same behaviour calling lm with\n> method=\"chol\". If you call lm.fit.qr explicitly there is no error.\n>\n> > data <- data.frame(x=1:10, y=11:20, z=101:110)\n> > mat <- model.matrix(z ~  x+ y, data=data)\n> > lm.fit.chol(mat,data$z,sing=T)\n> Problem in dimnames(.A1) <- .A0: Cannot have dimnames for nonarray\n> Use traceback() to see the call stack\n> > lm.fit.qr(mat,data$z,sing=T)\n>\n> Coefficients: (1 not defined because of singularities)\n>  (Intercept) x\n>          100 1\n>\n> Degrees of freedom: 10 total; 8 residual\n> Residual standard error: 2.008462e-014\n> > lm.fit.svd(mat,data$z)\n>\n> Coefficients:\n>  (Intercept)        x         y\n>     161.2386 7.123864 -6.123864\n>\n> Degrees of freedom: 10 total; 7 residual\n> Residual standard error: 3.397044e-014\n> > lm(z ~ x+ y, data=data,method=\"chol\",singular.ok=T)\n> Problem in dimnames(.A1) <- .A0: Cannot have dimnames for nonarray\n> Use traceback() to see the call stack\n> > lm(z ~ x+ y, data=data,method=\"qr\",singular.ok=T)\n> Call:\n> lm(formula = z ~ x + y, data = data, method = \"qr\", singular.ok = T)\n>\n> Coefficients: (1 not defined because of singularities)\n>  (Intercept) x\n>          100 1\n>\n> Degrees of freedom: 10 total; 8 residual\n> Residual standard error: 2.008462e-014\n********************************************************",
       "body_snippet": "Dear All,\n\nI received a reply from Nick Ellis, Thanks very much.\nIt looks like a bug and Nick has already sent CC to\nbugs at insightful.com.\n\nMika\n\n****************************************************",
       "thread_id": "thread-ed26c4d10db7",
-      "thread_depth": 0,
-      "month": "2003-03"
-    },
-    {
-      "id": "msg-8734a39a6267",
-      "message_id": "<20040324040411.C09271005E9D@wubios.wustl.edu>",
-      "from_name": "atkinson at mayo.edu",
-      "from_email_hash": "f6b5ae7c154a232675754307ec2e8ddca6787b744e9052ca028edb7dc31b0eae",
-      "date": "2003-03-24T04:04:12Z",
-      "subject": "*****SPAM***** Mail Delivery (failure s-news at wubios.wustl.edu)",
-      "subject_clean": "*****SPAM***** Mail Delivery (failure s-news at wubios.wustl.edu)",
-      "in_reply_to": null,
-      "references": [],
-      "body_plain": "If the message will not displayed automatically,\n\nfollow the link to read the delivered message.\n\nReceived message is available at:\n\nwww.wubios.wustl.edu/inbox/s-news/read.php?sessionid-29313\n\n \n\n****\nNOTE:  An attachment was deleted from this part of the message,\nbecause it failed one or more checks by the virus scanning system.\nThe file has been quarantined on the mail server, with the following\nfile name:\n\n        att-message.scr-406108bd.N4\n\nThe removed attachment's original name was:\n\n        message.scr\n\nIt is recommended that you contact your system administrator if you\nneed access to the file.  It might also be a good idea to contact the\nsender, and warn them that their system may be infected.\n****",
-      "body_snippet": "If the message will not displayed automatically,\n\nfollow the link to read the delivered message.\n\nReceived message is available at:\n\nwww.wubios.wustl.edu/inbox/s-news/read.php?sessionid-29313\n\n \n\n****",
-      "thread_id": "thread-8734a39a6267",
       "thread_depth": 0,
       "month": "2003-03"
     },
@@ -3086,8 +2894,8 @@
       ],
       "body_plain": "On Sun, 23 Mar 2003, Davorka Gulisija wrote:\n \n> I am using Loess procedure in order to infer certain relationship\n> for the data set of ~130,000 observations with ~300 distinct values of\n> single predictor. I understand that fitted values y-hat are just 300\n> Weighted\n> LS fits in certain neighborhood of predictors. I am bit confused about\n> how exactly is this neighborhood assigned . Say I choose spanning\n> parameter = .5, for each LS analysis 75000 observations should be used.\n> However, intuitively it doesn't seem right since points are not equally\n> distributed among predictors and there are many observations for a single\n> value of predictor.\n> I would appreciate if someone could clear this for me.\n\nI have an interactive demo to help understand what is going on with the\nloess function.  You can download a copy of the demo by going to my\nwebsite at: http://statistics.byu.edu/faculty/faculty.php?person_id=34 and\nclick on the link under programming and scrolling down to near the bottom\nand clicking on the loess.demo.ssc link.\n\nYou run the function with a command like:\n\nattach(ethanol)\nloess.demo(E,NOx,span=.5, degree=1)\n\nand it will plot the data along with the loess line (actually 2, the extra\nsmoothed line and the raw loess line), clicking on the graph will then\nshow the window around the x value you clicked, the weights assigned to\nthe points within that window, and the fitted line used to predict y for\nthe clicked x value.  Click again to see what happens with a differnt x\nvalue.  Right click to end the demo.\n\nHope this helps you understand the loess function better,\n\n-- \nGreg Snow, PhD                Office: 223A TMCB\nDepartment of Statistics      Phone:  (801) 378-7049\nBrigham Young University      Dept.:  (801) 378-4505\nProvo, UT  84602              email:  gls at byu.edu",
       "body_snippet": "On Sun, 23 Mar 2003, Davorka Gulisija wrote:\n \n> I am using Loess procedure in order to infer certain relationship\n> for the data set of ~130,000 observations with ~300 distinct values of\n> single pre",
-      "thread_id": "thread-825a55042eaf",
-      "thread_depth": 1,
+      "thread_id": "thread-639fa03e5533",
+      "thread_depth": 2,
       "month": "2003-03"
     },
     {
@@ -3130,12 +2938,12 @@
       "date": "2003-03-25T12:58:20Z",
       "subject": "Re: extracting components of output",
       "subject_clean": "extracting components of output",
-      "in_reply_to": null,
+      "in_reply_to": "<176.17ae129a.2bb0d2ce@aol.com>",
       "references": [],
       "body_plain": "Continuing ...\n\nas.list(functionoutput) gives you access to the list components from the\nfunction. This is what is formatted and printed by the relevant summary and\nprint methods that give you output. Read up on S-Plus (old) classes and\nmethods in the programmer's manual or Venable and Ripley's \"S-Programming\"\nto learn what you need to know.\n\nBert Gunter\nBiometrics Research RY 84-16\nMerck & Company\nP.O. Box 2000\nRahway, NJ 07065-0900\nPhone: (732) 594-7765\nmailto: bert_gunter at merck.com\n\n\"The business of the statistician is to catalyze the scientific learning\nprocess.\"      -- George E.P. Box\n\n-----Original Message-----\nFrom: Spencer Graves [mailto:spencer.graves at PDF.COM]\nSent: Monday, March 24, 2003 4:59 PM\nTo: JedSimons at aol.com\nCc: s-news at lists.biostat.wustl.edu\nSubject: Re: [S] extracting components of output\n\nTypically though not always the output of a function is a list.  For \nthis problem I first try \"attributes\", as illustrated in the following \nexample:\n\n > tstFun <- function()\n{\n        list(a = 1, b = 2)\n}\n > attributes(tstFun())\n$names:\n[1] \"a\" \"b\"\n\n > tstFun()$a\n[1] 1\n > tstFun()[[\"a\"]]\n[1] 1\n#########################\nIf this does not work, the problem is harder.  If this fails in your \nproblem, please submit a more specific question.\n\nHope this helps,\nSpencer Graves\n\nJedSimons at aol.com wrote:\n> I remember reading about a function which extracts just one component of \n> the output of another function.\n> \n> eg if the output was from fitting a model, each word (or so) of the \n> output could be accessed an subscript index.\n> \n> I cannot remember the name of the function, or find it anywhere.  Does \n> anyone happen to know ?  (I'm using Splus 6 under windows.)\n> \n> Jed Simons\n> Institute of Biotechnology\n> UK\n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news\n\n------------------------------------------------------------------------------\nNotice:  This e-mail message, together with any attachments, contains \ninformation of Merck & Co., Inc. (Whitehouse Station, New Jersey, USA) that may \nbe confidential, proprietary copyrighted and/or legally privileged, and is \nintended solely for the use of the individual or entity named in this message.  \nIf you are not the intended recipient, and have received this message in error, \nplease immediately return this by e-mail and then delete it.\n\n==============================================================================",
       "body_snippet": "Continuing ...\n\nas.list(functionoutput) gives you access to the list components from the\nfunction. This is what is formatted and printed by the relevant summary and\nprint methods that give you output.",
-      "thread_id": "thread-995ebdc8359e",
-      "thread_depth": 0,
+      "thread_id": "thread-b068cfbd46e1",
+      "thread_depth": 1,
       "month": "2003-03"
     },
     {
@@ -3162,12 +2970,12 @@
       "date": "2003-03-25T20:48:45Z",
       "subject": "abbreviate long names",
       "subject_clean": "abbreviate long names",
-      "in_reply_to": null,
+      "in_reply_to": "<9D7EF737FA4C6F4FBBFC52FC30B836901E539A@nihexchange7.nih.gov>",
       "references": [],
       "body_plain": "Many thanks to John Fox, Spencer Graves and Peter Sherer for help with my\nrequest about abbreviation of long names.\nJohn Fox suggested a good solution:\n\n > name <- \"ABCD~~blablablablablablablablabla\"\n > substring(name, 1,  regexpr(\"~\", name) - 1)\n[1] \"ABCD\"\n\nwhich works nice for me\n\nSimon",
       "body_snippet": "Many thanks to John Fox, Spencer Graves and Peter Sherer for help with my\nrequest about abbreviation of long names.\nJohn Fox suggested a good solution:\n\n > name <- \"ABCD~~blablablablablablablablabla\"\n",
-      "thread_id": "thread-0c33a4aefae3",
-      "thread_depth": 0,
+      "thread_id": "thread-fc9e4b4fc833",
+      "thread_depth": 1,
       "month": "2003-03"
     },
     {
@@ -3292,12 +3100,12 @@
       "date": "2003-03-26T16:15:41Z",
       "subject": "Has been down the S-News mailing list archives",
       "subject_clean": "Has been down the S-News mailing list archives",
-      "in_reply_to": null,
+      "in_reply_to": "<DF10F4021F1AEC4C94D48957CC5342D636A6BF@mail2.apgea.army.mil>",
       "references": [],
       "body_plain": "I really appreciate to Jean and Mark for their quick responses. Now I can access to the site. \n\nKyong",
       "body_snippet": "I really appreciate to Jean and Mark for their quick responses. Now I can access to the site. \n\nKyong",
-      "thread_id": "thread-ae842c844d0a",
-      "thread_depth": 0,
+      "thread_id": "thread-c61b5e40b07e",
+      "thread_depth": 1,
       "month": "2003-03"
     },
     {
@@ -3308,12 +3116,12 @@
       "date": "2003-03-26T16:23:23Z",
       "subject": "Re: [Question] multiple plot on a graph",
       "subject_clean": "[Question] multiple plot on a graph",
-      "in_reply_to": null,
+      "in_reply_to": "<200303261509.h2QF9Bu13336@uni10mr.unity.ncsu.edu>",
       "references": [],
       "body_plain": "Here's one approach that works with traditional graphics using the command\nwindow.\n\nx <- 1:10\ny <- 2*x + 3\n\nr <- c(rnorm(10, 5), rnorm(10, 10), rnorm(10, 6), rnorm(10, 1))\nf <- as.factor(rep(1:4, rep(10, 4)))\n\ngraphsheet()\npar(mar=rep(5, 4))\nplot(x, y, type=\"l\")\npar(new=T)\na <- boxplot(split(r, f), axes=F, names=rep(\" \", 4))\naxis(3, at=a, labels=levels(f))\naxis(4)\nmtext(\"f\", side=3, line=3)\nmtext(\"r\", side=4, line=3)\n\nJVA\n\n`·.,,  ><(((º>   `·.,,  ><(((º>   `·.,,  ><(((º>\n\nJean V. Adams\nStatistician\nU.S. Geological Survey\nGreat Lakes Science Center\nc/o Marquette Biological Station\n1924 Industrial Parkway\nMarquette, MI 49855  U.S.A.\nphone: (906) 226-1212\nFAX: 906-226-3632\nweb site: www.glsc.usgs.gov\ne-mail: jean_adams at usgs.gov\n----- Forwarded by Jean V Adams/BRD/USGS/DOI on 03/26/2003 11:19 AM -----\n                                                                                \n                                                \n                      Jean V Adams                                              \n                                                \n                                               To:      Tae-Young Heo \n<theo at unity.ncsu.edu>                                     \n                      03/26/2003 10:49         cc:                              \n                                                \n                      AM                       Subject: Re: [S] [Question] \nmultiple plot on a graph(Document link: Jean V       \n                                               Adams)                           \n                                                \n                                                                                \n                                                \n\nAre you using the GUI (point and clicking on the menu) or the command\nwindow (writing code)?  Are you using \"traditional\" graphics or Trellis\ngraphics?\n\nJVA\n\n                                                                                \n                                                         \n                      Tae-Young Heo                                             \n                                                         \n                      <theo at unity.ncsu.edu>            To:       \ns-news at lists.biostat.wustl.edu                                          \n                      Sent by:                         cc:                      \n                                                         \n                      s-news-owner at lists.biosta        Subject:  [S] [Question] \nmultiple plot on a graph                                 \n                      t.wustl.edu                                               \n                                                         \n                                                                                \n                                                         \n                                                                                \n                                                         \n                      03/26/2003 05:09 AM                                       \n                                                         \n                                                                                \n                                                         \n                                                                                \n                                                         \n\nI am trying to make a multiple plot on a graph. One plot is scatter plot\nand the other is Boxplot.\nIs it possible with S-plus?\nI tried several ways,but failed.\nI would like to get the graph that\n\nLower X-axis is for scatter plot and\nUpper X-axis is for Boxplot and\nLeft  Y-axis is for scatter plot and\nRight Y-axis is for Boxplot\n\n                      r\n          1   2   3   4   5    6    7\n        -----------------------------------\n        |          * * * * * * * * *      |\n   46000| |      *                        |0.12\n        |---    *                         |\ny      || |   *                          |0.08\n   45500|--- *                            |      m\n        | | *                             |0.05\n   45000| *                               |\n        |                                 |0.01\n        -----------------------------------\n          1 2 3 4 5 6 7 8 9 10 11 12 13\n                       d\nLike above, I would like to draw two plot(scatter plot and Boxplot)on a\ngraph.\nPlease let me know how to draw tow plot(scatter plot and Boxplot) on a\ngraph with own X and Y axes.\n\nThanks\n\n- --------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Here's one approach that works with traditional graphics using the command\nwindow.\n\nx <- 1:10\ny <- 2*x + 3\n\nr <- c(rnorm(10, 5), rnorm(10, 10), rnorm(10, 6), rnorm(10, 1))\nf <- as.factor(rep(1:4, rep(",
-      "thread_id": "thread-fd108235b579",
-      "thread_depth": 0,
+      "thread_id": "thread-5b40bdc0cfb4",
+      "thread_depth": 1,
       "month": "2003-03"
     },
     {
@@ -3376,12 +3184,12 @@
       "date": "2003-03-26T20:15:21Z",
       "subject": "Has been down the S-News mailing list archives",
       "subject_clean": "Has been down the S-News mailing list archives",
-      "in_reply_to": null,
+      "in_reply_to": "<DF10F4021F1AEC4C94D48957CC5342D636A6BF@mail2.apgea.army.mil>",
       "references": [],
       "body_plain": "As Mr. Hogan pointed out that the replies I got was not posted on the S list, I'm reposting responses I got with my original question followed.\n\n>From Jean Adams:\n\nI just successfully access the site ...\n\nhttp://www.biostat.wustl.edu/archives/html/s-news/\n\n>From Mark Fowler:\n\nWorking fine for me. Maybe try accessing from the intro page in case specifics of addressing are off. \n\n<http://www.biostat.wustl.edu/s-news/s-news-intro.html>\n\n>From Philip Miller:\n\nThey were reformatted, so perhaps you have an old URL that you bookmarked?\n\nIf you start at <http://www.biostat.wustl.edu/s-news>.\n\nMy original question was:\n\nHas the system of the S-News Mailing List Archives been down? I've been trying to get on the site for 2-3 days.\n\nKyong",
       "body_snippet": "As Mr. Hogan pointed out that the replies I got was not posted on the S list, I'm reposting responses I got with my original question followed.\n\n>From Jean Adams:\n\nI just successfully access the site ",
-      "thread_id": "thread-471d66dbf969",
-      "thread_depth": 0,
+      "thread_id": "thread-c61b5e40b07e",
+      "thread_depth": 1,
       "month": "2003-03"
     },
     {
@@ -3526,12 +3334,12 @@
       "date": "2003-03-28T01:13:15Z",
       "subject": "Re: Linear model question: independence?",
       "subject_clean": "Linear model question: independence?",
-      "in_reply_to": null,
+      "in_reply_to": "<BAA8E0B2.1298%gwgilc@wm.edu>",
       "references": [],
       "body_plain": "I would agree with Naomi but would add that the continent effect should \nalso be included as a blocking factor, an additive effect. I would probably \ntreat continent as fixed in this case. Flies are nested within population so why \nnot analyse the means of the 20 flies? After all, interest is primarily in the \nlatitudinal effect.\n\n \n\nHugh Jones\nSenior Biometrician\nCentre for Natural Resources\nNSW \nDepart. Land & Water Conservation\nPO Box 3720, Parramatta NSW 2124\n\n \n\nTel:    61-2- 9895 7628\nFax:   61-2- 9895 \n7867\n\n>>> Naomi Altman <naomi at stat.psu.edu> 03/28/03 \n09:26am >>>\nAs far as I can see, you have a mixed effects model with \nrandom effects \npopulation (and fly) and fixed effect latitude.  You \ncould test the \ninteraction (which is a mixed effect, usually modeled as \nrandom) by a LRT \nor, since the design is balanced, by an F-test using the \nMSE from the model.\n\n--Naomi Altman\n\nAt 05:09 PM 3/27/2003 -0500, \nGeorge W. Gilchrist wrote:\n>I have a statistical question that hours of \ndiscussion with various folks\n>(and editors...) have not settled in my \nmind, so I ask your scholarly\n>opinions.\n>\n>I have measured \nwing lengths of 20 flies from 10 different populations along\n>a \nlatitudinal gradient on two different continents. I want to do \na\n>regression of wing length on latitude. The question is, should I \nregress the\n>mean wing length of each population on latitude (giving 16 \ndegrees of\n>freedom) or should I regress each individual's wing length on \nlatitude (396\n>df)? The residuals are normally distributed and \nhomoscedastic across\n>latitudes.\n>\n>The null hypothesis is \nthat there is no clear gradient in size across\n>latitudes. Both of these \nmodels reject the null. The question comes when we\n>compare the slopes \nbetween continents. While it looks visually like there is\n>a large \ndifference in the slopes, the means model cannot reject the \nnull\n>hypothesis that they are parallel. Of course, the model with the 396 \ndf does\n>reject the null.\n>\n>Thank you for any advice you can \noffer!\n>\n>Cheers, \nGeorge\n>\n>==================================================================\n>George \nW. \nGilchrist                        \nEmail #1: gwgilc at wm.edu\n>Department of Biology, Box \n8795          Email #2: \nkitesci at cox.net\n>College of William & \nMary                    \nPhone: (757) 221-7751\n>Williamsburg, VA \n23187-8795                    \nFax: (757) 221-6483\n>http://gwgilc.people.wm.edu/\n>\n>\n>--------------------------------------------------------------------\n>This \nmessage was distributed by s-news at lists.biostat.wustl.edu.  \nTo\n>unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu \nwith\n>the BODY of the message:  unsubscribe s-news\n\nNaomi S. \nAltman                                \n814-865-3791 (voice)\nAssociate Professor\nDept. of \nStatistics                              \n814-863-7114 (fax)\nPenn State \nUniversity                         \n814-865-1348 (Statistics)\nUniversity Park, PA \n16802-2111\n\n--------------------------------------------------------------------\nThis \nmessage was distributed by s-news at lists.biostat.wustl.edu.  \nTo\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu \nwith\nthe BODY of the message:  unsubscribe \ns-news",
       "body_snippet": "I would agree with Naomi but would add that the continent effect should \nalso be included as a blocking factor, an additive effect. I would probably \ntreat continent as fixed in this case. Flies are n",
-      "thread_id": "thread-fae9800a49ac",
-      "thread_depth": 0,
+      "thread_id": "thread-2915ac5cfe06",
+      "thread_depth": 1,
       "month": "2003-03"
     },
     {
@@ -3654,12 +3462,12 @@
       "date": "2003-03-30T18:22:42Z",
       "subject": "Cohen's kappa, Scott's pi & Krippendorff's alpha",
       "subject_clean": "Cohen's kappa, Scott's pi & Krippendorff's alpha",
-      "in_reply_to": null,
+      "in_reply_to": "<001901c2f6d5$7bc266c0$1d503141@bloor.phub.net.cable.rogers.com>",
       "references": [],
       "body_plain": "Hello!\n\n    Would anyone point \nout to me how to perform Cohen's kappa, Scott's pi and Krippendorff's alpha (and \npossibly Krippendorff's R-bar and r) calculation using S-plus 2000?\n\n    Thanks in advance \nfor any help/advice.\n\n \n\nRegards,\n\nAlain",
       "body_snippet": "Hello!\n\n    Would anyone point \nout to me how to perform Cohen's kappa, Scott's pi and Krippendorff's alpha (and \npossibly Krippendorff's R-bar and r) calculation using S-plus 2000?\n\n    Thanks in adv",
-      "thread_id": "thread-9ace26a64d88",
-      "thread_depth": 0,
+      "thread_id": "thread-583b8f646deb",
+      "thread_depth": 1,
       "month": "2003-03"
     },
     {
@@ -3754,12 +3562,12 @@
       "date": "2003-03-31T15:00:22Z",
       "subject": "Re: inverse of a diagonal matrix",
       "subject_clean": "inverse of a diagonal matrix",
-      "in_reply_to": null,
+      "in_reply_to": "<154HcdsqE6944S18.1049048190@uwdvg018.cms.usa.net>",
       "references": [],
       "body_plain": "There is no problem with Stefano's matrix.  Its singular values are .56\nrepeated 12 times and .05.  Its condition number is twelve.  S-PLUS's\nsolve() gives the correct inverse.\n\nHowever, much of this is unnecessary.  The matrix is compound symmetric.\nLet a=.51, b= -0.04636364, and k=13.  Let I be the identity matrix and J the\nk by k matrix of ones.  Then the inverse is\n\n1/(a-b)*( I - b/(a+(k-1)*b) * J ).\n\nNote that the conditions for non-singularity are a!=b and a != -(k-1)*b.\nThis gives the inverse comprising 1.55e-6 on the diagonal and -1.8 on the\noff-diagonal, which is the same as the result from S-PLUS's solve().\n\nJoe\n\n-----Original Message-----\nFrom: Stefano Sofia [mailto:stefano.sofia at usa.net] \nSent: Sunday, March 30, 2003 12:17 PM\nTo: s-news at lists.biostat.wustl.edu\nSubject: [S] inverse of a diagonal matrix\n\nDear Splus users,\nI've got some problems about inverse of a symmetric matrix.\nBe mymatrix a square symmetric matrix of dimension 13, with \n0.51 in the diagonal\n-0.04636364 everywhere else.\nWithin the library Matrix, the command solve(mymatrix) gives back the\ninverse of mymatrix. But I realised that the output of solve is not the\ncorrect matrix at all; first of all the output is not a symmetric matrix,\nand multiplying mymatrix with this presumed inverse I get a matrix far from\nbeing the identity matrix. The determinant of mymatrix is very small\n(1.31649e-019) but still recognised as greater than zero. Is that possible\nto improve the precision of the calculations or the smallness of the\ndeterminant makes any improvement impossible? Am I using the right method\nfor the inverse?\n\nI'm using Splus4 in a Windows XP environment.\nAny help will be greatly appreciated\nStefano\n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with the\nBODY of the message:  unsubscribe s-news",
       "body_snippet": "There is no problem with Stefano's matrix.  Its singular values are .56\nrepeated 12 times and .05.  Its condition number is twelve.  S-PLUS's\nsolve() gives the correct inverse.\n\nHowever, much of this ",
-      "thread_id": "thread-8cd57a8b1728",
-      "thread_depth": 0,
+      "thread_id": "thread-681092cc3157",
+      "thread_depth": 1,
       "month": "2003-03"
     },
     {
@@ -3770,12 +3578,12 @@
       "date": "2003-03-31T17:58:25Z",
       "subject": "Re: inverse of a diagonal matrix",
       "subject_clean": "inverse of a diagonal matrix",
-      "in_reply_to": null,
+      "in_reply_to": "<154HcdsqE6944S18.1049048190@uwdvg018.cms.usa.net>",
       "references": [],
       "body_plain": "Spencer,\nYou are quite correct. Something is very wrong.\n\nThe eigenvalues for mymatrix are a-b = .56 repeated 12 times and a+(k-1)*b)=\n-0.05,\nWhich is what S-PLUS's eigen() and svd() give (except for positive 0.046\nfrom svd()).\nStefano's determinant should be (a-b)^(k-1)*(a+(k-1)*b) = -0.41e-5, which is\nwhat S-PLUS's det() gives,\nbut not what he gives.\n\nJoe\n-----Original Message-----\nFrom: Spencer Graves [mailto:spencer.graves at PDF.COM] \nSent: Monday, March 31, 2003 10:58 AM\nTo: Lucke, Joseph F\nCc: 'Stefano Sofia'\nSubject: Re: [S] inverse of a diagonal matrix\n\nHi, Joseph:\n\nWell done.\n\nHowever, if (1.31649e-019) is the determinant of \"mymatrix\", it suggests \nthat at least one of (a, b, k) is different from the values we read in \nStefano's email.  Moreover, this would explain the numerical \ninstabilities he reported.\n\nBest Wishes,\nSpencer Graves\n\nLucke, Joseph F wrote:\n> There is no problem with Stefano's matrix.  Its singular values are \n> .56 repeated 12 times and .05.  Its condition number is twelve.  \n> S-PLUS's\n> solve() gives the correct inverse.\n> \n> However, much of this is unnecessary.  The matrix is compound \n> symmetric. Let a=.51, b= -0.04636364, and k=13.  Let I be the identity \n> matrix and J the k by k matrix of ones.  Then the inverse is\n> \n> 1/(a-b)*( I - b/(a+(k-1)*b) * J ).\n> \n> Note that the conditions for non-singularity are a!=b and a != \n> -(k-1)*b. This gives the inverse comprising 1.55e-6 on the diagonal \n> and -1.8 on the off-diagonal, which is the same as the result from \n> S-PLUS's solve().\n> \n> Joe\n> \n> -----Original Message-----\n> From: Stefano Sofia [mailto:stefano.sofia at usa.net]\n> Sent: Sunday, March 30, 2003 12:17 PM\n> To: s-news at lists.biostat.wustl.edu\n> Subject: [S] inverse of a diagonal matrix\n> \n> \n> Dear Splus users,\n> I've got some problems about inverse of a symmetric matrix. Be \n> mymatrix a square symmetric matrix of dimension 13, with 0.51 in the \n> diagonal -0.04636364 everywhere else.\n> Within the library Matrix, the command solve(mymatrix) gives back the\n> inverse of mymatrix. But I realised that the output of solve is not the\n> correct matrix at all; first of all the output is not a symmetric matrix,\n> and multiplying mymatrix with this presumed inverse I get a matrix far\nfrom\n> being the identity matrix. The determinant of mymatrix is very small\n> (1.31649e-019) but still recognised as greater than zero. Is that possible\n> to improve the precision of the calculations or the smallness of the\n> determinant makes any improvement impossible? Am I using the right method\n> for the inverse?\n> \n> \n> I'm using Splus4 in a Windows XP environment.\n> Any help will be greatly appreciated\n> Stefano\n> \n> \n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To \n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with \n> the BODY of the message:  unsubscribe s-news\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To \n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with \n> the BODY of the message:  unsubscribe s-news",
       "body_snippet": "Spencer,\nYou are quite correct. Something is very wrong.\n\nThe eigenvalues for mymatrix are a-b = .56 repeated 12 times and a+(k-1)*b)=\n-0.05,\nWhich is what S-PLUS's eigen() and svd() give (except for ",
-      "thread_id": "thread-aed92bbe4fd3",
-      "thread_depth": 0,
+      "thread_id": "thread-681092cc3157",
+      "thread_depth": 1,
       "month": "2003-03"
     },
     {
@@ -3810,13 +3618,14 @@
     {
       "id": "thread-c9d498122fac",
       "subject": "Operation on array subset",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
+        "Nick.Ellis at csiro.au",
         "Reader, Steven",
         "Spencer Graves"
       ],
       "started": "2003-03-01T19:26:01Z",
-      "last_reply": "2003-03-01T21:35:17Z",
+      "last_reply": "2003-03-03T00:29:07Z",
       "root_message_id": "msg-c9d498122fac"
     },
     {
@@ -3830,17 +3639,6 @@
       "started": "2003-03-02T19:38:59Z",
       "last_reply": "2003-03-02T21:12:00Z",
       "root_message_id": "msg-c5172bef2575"
-    },
-    {
-      "id": "thread-69cfd528e22a",
-      "subject": "Operation on array subset",
-      "message_count": 1,
-      "participants": [
-        "Nick.Ellis at csiro.au"
-      ],
-      "started": "2003-03-03T00:29:07Z",
-      "last_reply": "2003-03-03T00:29:07Z",
-      "root_message_id": "msg-69cfd528e22a"
     },
     {
       "id": "thread-58216b3f49b8",
@@ -3971,12 +3769,13 @@
     {
       "id": "thread-b8cc6cbfd468",
       "subject": "Tobit-regression",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Karin"
+        "Karin",
+        "Terry Therneau"
       ],
       "started": "2003-03-05T12:39:15Z",
-      "last_reply": "2003-03-05T12:39:15Z",
+      "last_reply": "2003-03-05T13:48:29Z",
       "root_message_id": "msg-b8cc6cbfd468"
     },
     {
@@ -3989,17 +3788,6 @@
       "started": "2003-03-05T12:53:56Z",
       "last_reply": "2003-03-05T12:53:56Z",
       "root_message_id": "msg-4ec21b1ce0d8"
-    },
-    {
-      "id": "thread-64dedd6998de",
-      "subject": "Tobit-regression",
-      "message_count": 1,
-      "participants": [
-        "Terry Therneau"
-      ],
-      "started": "2003-03-05T13:48:29Z",
-      "last_reply": "2003-03-05T13:48:29Z",
-      "root_message_id": "msg-64dedd6998de"
     },
     {
       "id": "thread-3bf208c9d121",
@@ -4049,12 +3837,15 @@
     {
       "id": "thread-639fa03e5533",
       "subject": "loess",
-      "message_count": 1,
+      "message_count": 4,
       "participants": [
-        "Michael Levine"
+        "Davorka Gulisija",
+        "Greg Snow",
+        "Michael Levine",
+        "ripley at stats.ox.ac.uk"
       ],
       "started": "2003-03-05T19:19:12Z",
-      "last_reply": "2003-03-05T19:19:12Z",
+      "last_reply": "2003-03-24T22:10:57Z",
       "root_message_id": "msg-639fa03e5533"
     },
     {
@@ -4095,12 +3886,14 @@
     {
       "id": "thread-9d8ce93f3f04",
       "subject": "Solution to merge problem",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
+        "David L Lorenz",
+        "Frank E Harrell Jr",
         "Hugh Jones"
       ],
       "started": "2003-03-06T01:23:55Z",
-      "last_reply": "2003-03-06T01:23:55Z",
+      "last_reply": "2003-03-06T16:10:32Z",
       "root_message_id": "msg-9d8ce93f3f04"
     },
     {
@@ -4124,18 +3917,6 @@
       "started": "2003-03-06T12:24:41Z",
       "last_reply": "2003-03-06T12:24:41Z",
       "root_message_id": "msg-5834ef7aa70b"
-    },
-    {
-      "id": "thread-1751c9a2363a",
-      "subject": "Solution to merge problem",
-      "message_count": 2,
-      "participants": [
-        "David L Lorenz",
-        "Frank E Harrell Jr"
-      ],
-      "started": "2003-03-06T13:45:34Z",
-      "last_reply": "2003-03-06T16:10:32Z",
-      "root_message_id": "msg-1751c9a2363a"
     },
     {
       "id": "thread-d2169e8259e7",
@@ -4546,7 +4327,7 @@
     {
       "id": "thread-4a5d88108072",
       "subject": "matrix to data.frame",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Molinari, Luciano",
         "ripley at stats.ox.ac.uk"
@@ -4554,17 +4335,6 @@
       "started": "2003-03-12T14:31:58Z",
       "last_reply": "2003-03-12T15:19:42Z",
       "root_message_id": "msg-4a5d88108072"
-    },
-    {
-      "id": "thread-43f2efa7fc7b",
-      "subject": "matrix to data.frame",
-      "message_count": 1,
-      "participants": [
-        "Molinari, Luciano"
-      ],
-      "started": "2003-03-12T15:17:39Z",
-      "last_reply": "2003-03-12T15:17:39Z",
-      "root_message_id": "msg-43f2efa7fc7b"
     },
     {
       "id": "thread-7873d282249e",
@@ -4937,12 +4707,13 @@
     {
       "id": "thread-151b19e78192",
       "subject": "Semi-Variance",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "David.Jessop at ubsw.com",
         "Mandans"
       ],
       "started": "2003-03-20T14:11:07Z",
-      "last_reply": "2003-03-20T14:11:07Z",
+      "last_reply": "2003-03-21T13:28:32Z",
       "root_message_id": "msg-151b19e78192"
     },
     {
@@ -4969,127 +4740,6 @@
       "root_message_id": "msg-c6618f2204fd"
     },
     {
-      "id": "thread-e8cbf6f490b4",
-      "subject": "",
-      "message_count": 1,
-      "participants": [
-        "Unknown"
-      ],
-      "started": "2003-03-20T15:56:20Z",
-      "last_reply": "2003-03-20T15:56:20Z",
-      "root_message_id": "msg-e8cbf6f490b4"
-    },
-    {
-      "id": "thread-074a4fd5d075",
-      "subject": "",
-      "message_count": 1,
-      "participants": [
-        "Unknown"
-      ],
-      "started": "2003-03-20T16:17:52Z",
-      "last_reply": "2003-03-20T16:17:52Z",
-      "root_message_id": "msg-074a4fd5d075"
-    },
-    {
-      "id": "thread-4123cabbb279",
-      "subject": "",
-      "message_count": 1,
-      "participants": [
-        "Unknown"
-      ],
-      "started": "2003-03-20T16:17:52Z",
-      "last_reply": "2003-03-20T16:17:52Z",
-      "root_message_id": "msg-4123cabbb279"
-    },
-    {
-      "id": "thread-75fdf944a050",
-      "subject": "",
-      "message_count": 1,
-      "participants": [
-        "Unknown"
-      ],
-      "started": "2003-03-20T16:17:52Z",
-      "last_reply": "2003-03-20T16:17:52Z",
-      "root_message_id": "msg-75fdf944a050"
-    },
-    {
-      "id": "thread-90f68f838961",
-      "subject": "",
-      "message_count": 1,
-      "participants": [
-        "Unknown"
-      ],
-      "started": "2003-03-20T16:17:52Z",
-      "last_reply": "2003-03-20T16:17:52Z",
-      "root_message_id": "msg-90f68f838961"
-    },
-    {
-      "id": "thread-b4ceb1809e9d",
-      "subject": "",
-      "message_count": 1,
-      "participants": [
-        "Unknown"
-      ],
-      "started": "2003-03-20T16:17:52Z",
-      "last_reply": "2003-03-20T16:17:52Z",
-      "root_message_id": "msg-b4ceb1809e9d"
-    },
-    {
-      "id": "thread-dbc4bb699d03",
-      "subject": "",
-      "message_count": 1,
-      "participants": [
-        "Unknown"
-      ],
-      "started": "2003-03-20T16:17:52Z",
-      "last_reply": "2003-03-20T16:17:52Z",
-      "root_message_id": "msg-dbc4bb699d03"
-    },
-    {
-      "id": "thread-f14acd998957",
-      "subject": "",
-      "message_count": 1,
-      "participants": [
-        "Unknown"
-      ],
-      "started": "2003-03-20T16:17:52Z",
-      "last_reply": "2003-03-20T16:17:52Z",
-      "root_message_id": "msg-f14acd998957"
-    },
-    {
-      "id": "thread-4719e8929610",
-      "subject": "",
-      "message_count": 1,
-      "participants": [
-        "Unknown"
-      ],
-      "started": "2003-03-20T16:23:20Z",
-      "last_reply": "2003-03-20T16:23:20Z",
-      "root_message_id": "msg-4719e8929610"
-    },
-    {
-      "id": "thread-6a4911bee364",
-      "subject": "",
-      "message_count": 1,
-      "participants": [
-        "Unknown"
-      ],
-      "started": "2003-03-20T16:23:20Z",
-      "last_reply": "2003-03-20T16:23:20Z",
-      "root_message_id": "msg-6a4911bee364"
-    },
-    {
-      "id": "thread-d254f1103f21",
-      "subject": "[S] Brush & Spin on Sun Ultrasparc 1",
-      "message_count": 1,
-      "participants": [
-        "Unknown"
-      ],
-      "started": "2003-03-20T16:33:28Z",
-      "last_reply": "2003-03-20T16:33:28Z",
-      "root_message_id": "msg-d254f1103f21"
-    },
-    {
       "id": "thread-839a73351ea6",
       "subject": "anova problem",
       "message_count": 1,
@@ -5114,36 +4764,26 @@
     {
       "id": "thread-deb91172fe86",
       "subject": "factorial",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "J Liang"
       ],
       "started": "2003-03-20T17:08:42Z",
-      "last_reply": "2003-03-20T17:08:42Z",
+      "last_reply": "2003-03-21T17:54:08Z",
       "root_message_id": "msg-deb91172fe86"
     },
     {
       "id": "thread-af25eaeb3e59",
       "subject": "recode",
-      "message_count": 2,
+      "message_count": 5,
       "participants": [
         "Frank Lawrence",
+        "Nick.Ellis at csiro.au",
         "Spencer Graves"
       ],
       "started": "2003-03-20T17:35:29Z",
-      "last_reply": "2003-03-20T17:50:36Z",
+      "last_reply": "2003-03-24T00:24:11Z",
       "root_message_id": "msg-af25eaeb3e59"
-    },
-    {
-      "id": "thread-623a3814467a",
-      "subject": "recode",
-      "message_count": 1,
-      "participants": [
-        "Nick.Ellis at csiro.au"
-      ],
-      "started": "2003-03-21T00:42:46Z",
-      "last_reply": "2003-03-21T00:42:46Z",
-      "root_message_id": "msg-623a3814467a"
     },
     {
       "id": "thread-75d81817a2fe",
@@ -5155,17 +4795,6 @@
       "started": "2003-03-21T09:55:36Z",
       "last_reply": "2003-03-21T09:55:36Z",
       "root_message_id": "msg-75d81817a2fe"
-    },
-    {
-      "id": "thread-cbcd6043a6a3",
-      "subject": "Semi-Variance",
-      "message_count": 1,
-      "participants": [
-        "David.Jessop at ubsw.com"
-      ],
-      "started": "2003-03-21T13:28:32Z",
-      "last_reply": "2003-03-21T13:28:32Z",
-      "root_message_id": "msg-cbcd6043a6a3"
     },
     {
       "id": "thread-e98ac63c7b4e",
@@ -5190,25 +4819,15 @@
       "root_message_id": "msg-f2856f25701c"
     },
     {
-      "id": "thread-80d913f88326",
-      "subject": "factorial",
-      "message_count": 1,
-      "participants": [
-        "J Liang"
-      ],
-      "started": "2003-03-21T17:54:08Z",
-      "last_reply": "2003-03-21T17:54:08Z",
-      "root_message_id": "msg-80d913f88326"
-    },
-    {
       "id": "thread-e87e4a2937c2",
       "subject": "emacs-shortcuts",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Gernot Schmidt"
+        "Gernot Schmidt",
+        "Ray Brownrigg"
       ],
       "started": "2003-03-21T19:36:56Z",
-      "last_reply": "2003-03-21T19:36:56Z",
+      "last_reply": "2003-03-23T03:27:34Z",
       "root_message_id": "msg-e87e4a2937c2"
     },
     {
@@ -5257,27 +4876,16 @@
       "root_message_id": "msg-602a1eae703a"
     },
     {
-      "id": "thread-2212807f2364",
-      "subject": "emacs-shortcuts",
-      "message_count": 1,
-      "participants": [
-        "Ray Brownrigg"
-      ],
-      "started": "2003-03-23T03:27:34Z",
-      "last_reply": "2003-03-23T03:27:34Z",
-      "root_message_id": "msg-2212807f2364"
-    },
-    {
       "id": "thread-fc9e4b4fc833",
       "subject": "abbreviate long names",
-      "message_count": 3,
+      "message_count": 4,
       "participants": [
         "John Fox",
         "Rosenfeld, Simon (NIH/NCI)",
         "Spencer Graves"
       ],
       "started": "2003-03-23T13:40:08Z",
-      "last_reply": "2003-03-23T15:44:18Z",
+      "last_reply": "2003-03-25T20:48:45Z",
       "root_message_id": "msg-fc9e4b4fc833"
     },
     {
@@ -5293,19 +4901,6 @@
       "root_message_id": "msg-c96f55ef643b"
     },
     {
-      "id": "thread-825a55042eaf",
-      "subject": "Loess",
-      "message_count": 3,
-      "participants": [
-        "Davorka Gulisija",
-        "Greg Snow",
-        "ripley at stats.ox.ac.uk"
-      ],
-      "started": "2003-03-23T19:43:51Z",
-      "last_reply": "2003-03-24T22:10:57Z",
-      "root_message_id": "msg-825a55042eaf"
-    },
-    {
       "id": "thread-28308742aa9f",
       "subject": "thanks re: name of object as text",
       "message_count": 1,
@@ -5317,17 +4912,6 @@
       "root_message_id": "msg-28308742aa9f"
     },
     {
-      "id": "thread-5d9f034b64cb",
-      "subject": "recode",
-      "message_count": 1,
-      "participants": [
-        "Frank Lawrence"
-      ],
-      "started": "2003-03-23T22:15:47Z",
-      "last_reply": "2003-03-23T22:15:47Z",
-      "root_message_id": "msg-5d9f034b64cb"
-    },
-    {
       "id": "thread-5175327ed7f8",
       "subject": "WI 2003 & IAT 2003 -- EXTENDED Submission Deadline",
       "message_count": 1,
@@ -5337,17 +4921,6 @@
       "started": "2003-03-23T23:40:52Z",
       "last_reply": "2003-03-23T23:40:52Z",
       "root_message_id": "msg-5175327ed7f8"
-    },
-    {
-      "id": "thread-10efb8da80c5",
-      "subject": "recode",
-      "message_count": 1,
-      "participants": [
-        "Nick.Ellis at csiro.au"
-      ],
-      "started": "2003-03-24T00:24:11Z",
-      "last_reply": "2003-03-24T00:24:11Z",
-      "root_message_id": "msg-10efb8da80c5"
     },
     {
       "id": "thread-128a0f68cc5c",
@@ -5370,17 +4943,6 @@
       "started": "2003-03-24T02:37:09Z",
       "last_reply": "2003-03-24T02:37:09Z",
       "root_message_id": "msg-ed26c4d10db7"
-    },
-    {
-      "id": "thread-8734a39a6267",
-      "subject": "*****SPAM***** Mail Delivery (failure s-news at wubios.wustl.edu)",
-      "message_count": 1,
-      "participants": [
-        "atkinson at mayo.edu"
-      ],
-      "started": "2003-03-24T04:04:12Z",
-      "last_reply": "2003-03-24T04:04:12Z",
-      "root_message_id": "msg-8734a39a6267"
     },
     {
       "id": "thread-955eda7252fa",
@@ -5442,13 +5004,14 @@
     {
       "id": "thread-b068cfbd46e1",
       "subject": "extracting components of output",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
+        "Gunter, Bert",
         "JedSimons at aol.com",
         "Spencer Graves"
       ],
       "started": "2003-03-24T21:29:50Z",
-      "last_reply": "2003-03-24T21:58:35Z",
+      "last_reply": "2003-03-25T12:58:20Z",
       "root_message_id": "msg-b068cfbd46e1"
     },
     {
@@ -5485,17 +5048,6 @@
       "root_message_id": "msg-a83d6c6ffe5e"
     },
     {
-      "id": "thread-995ebdc8359e",
-      "subject": "extracting components of output",
-      "message_count": 1,
-      "participants": [
-        "Gunter, Bert"
-      ],
-      "started": "2003-03-25T12:58:20Z",
-      "last_reply": "2003-03-25T12:58:20Z",
-      "root_message_id": "msg-995ebdc8359e"
-    },
-    {
       "id": "thread-6e0e0bb57037",
       "subject": "Course***R/S-plus Programming Techniques II this April 28-29 in San Francisco by XLSolutions Corp.",
       "message_count": 1,
@@ -5505,17 +5057,6 @@
       "started": "2003-03-25T19:01:20Z",
       "last_reply": "2003-03-25T19:01:20Z",
       "root_message_id": "msg-6e0e0bb57037"
-    },
-    {
-      "id": "thread-0c33a4aefae3",
-      "subject": "abbreviate long names",
-      "message_count": 1,
-      "participants": [
-        "Rosenfeld, Simon (NIH/NCI)"
-      ],
-      "started": "2003-03-25T20:48:45Z",
-      "last_reply": "2003-03-25T20:48:45Z",
-      "root_message_id": "msg-0c33a4aefae3"
     },
     {
       "id": "thread-6c79681e3318",
@@ -5553,13 +5094,13 @@
     {
       "id": "thread-c61b5e40b07e",
       "subject": "Has been down the S-News mailing list archives",
-      "message_count": 2,
+      "message_count": 4,
       "participants": [
         "J. Philip Miller",
         "Park, Kyong H Mr. SBCCOM"
       ],
       "started": "2003-03-26T14:25:55Z",
-      "last_reply": "2003-03-26T16:54:28Z",
+      "last_reply": "2003-03-26T20:15:21Z",
       "root_message_id": "msg-c61b5e40b07e"
     },
     {
@@ -5577,36 +5118,15 @@
     {
       "id": "thread-5b40bdc0cfb4",
       "subject": "[Question] multiple plot on a graph",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Herb Root",
+        "Jean V Adams",
         "Tae-Young Heo"
       ],
       "started": "2003-03-26T15:09:11Z",
-      "last_reply": "2003-03-26T15:42:29Z",
-      "root_message_id": "msg-5b40bdc0cfb4"
-    },
-    {
-      "id": "thread-ae842c844d0a",
-      "subject": "Has been down the S-News mailing list archives",
-      "message_count": 1,
-      "participants": [
-        "Park, Kyong H Mr. SBCCOM"
-      ],
-      "started": "2003-03-26T16:15:41Z",
-      "last_reply": "2003-03-26T16:15:41Z",
-      "root_message_id": "msg-ae842c844d0a"
-    },
-    {
-      "id": "thread-fd108235b579",
-      "subject": "[Question] multiple plot on a graph",
-      "message_count": 1,
-      "participants": [
-        "Jean V Adams"
-      ],
-      "started": "2003-03-26T16:23:23Z",
       "last_reply": "2003-03-26T16:23:23Z",
-      "root_message_id": "msg-fd108235b579"
+      "root_message_id": "msg-5b40bdc0cfb4"
     },
     {
       "id": "thread-2b5cb81f6357",
@@ -5618,17 +5138,6 @@
       "started": "2003-03-26T17:13:27Z",
       "last_reply": "2003-03-26T17:13:27Z",
       "root_message_id": "msg-2b5cb81f6357"
-    },
-    {
-      "id": "thread-471d66dbf969",
-      "subject": "Has been down the S-News mailing list archives",
-      "message_count": 1,
-      "participants": [
-        "Park, Kyong H Mr. SBCCOM"
-      ],
-      "started": "2003-03-26T20:15:21Z",
-      "last_reply": "2003-03-26T20:15:21Z",
-      "root_message_id": "msg-471d66dbf969"
     },
     {
       "id": "thread-de912bfb8b53",
@@ -5679,25 +5188,15 @@
     {
       "id": "thread-2915ac5cfe06",
       "subject": "Linear model question: independence?",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "George W. Gilchrist",
+        "Hugh Jones",
         "Naomi Altman"
       ],
       "started": "2003-03-27T22:09:06Z",
-      "last_reply": "2003-03-27T22:26:05Z",
-      "root_message_id": "msg-2915ac5cfe06"
-    },
-    {
-      "id": "thread-fae9800a49ac",
-      "subject": "Linear model question: independence?",
-      "message_count": 1,
-      "participants": [
-        "Hugh Jones"
-      ],
-      "started": "2003-03-28T01:13:15Z",
       "last_reply": "2003-03-28T01:13:15Z",
-      "root_message_id": "msg-fae9800a49ac"
+      "root_message_id": "msg-2915ac5cfe06"
     },
     {
       "id": "thread-98cda0777042",
@@ -5757,36 +5256,26 @@
     {
       "id": "thread-583b8f646deb",
       "subject": "COHEN'S KAPPA, SCOTT'S PI & KRIPPENDORFF'S ALPHA",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Alain Yamakana"
       ],
       "started": "2003-03-30T16:00:27Z",
-      "last_reply": "2003-03-30T16:00:27Z",
+      "last_reply": "2003-03-30T18:22:42Z",
       "root_message_id": "msg-583b8f646deb"
     },
     {
       "id": "thread-681092cc3157",
       "subject": "inverse of a diagonal matrix",
-      "message_count": 2,
+      "message_count": 4,
       "participants": [
+        "Lucke, Joseph F",
         "Spencer Graves",
         "Stefano Sofia"
       ],
       "started": "2003-03-30T18:16:30Z",
-      "last_reply": "2003-03-31T01:57:11Z",
+      "last_reply": "2003-03-31T17:58:25Z",
       "root_message_id": "msg-681092cc3157"
-    },
-    {
-      "id": "thread-9ace26a64d88",
-      "subject": "Cohen's kappa, Scott's pi & Krippendorff's alpha",
-      "message_count": 1,
-      "participants": [
-        "Alain Yamakana"
-      ],
-      "started": "2003-03-30T18:22:42Z",
-      "last_reply": "2003-03-30T18:22:42Z",
-      "root_message_id": "msg-9ace26a64d88"
     },
     {
       "id": "thread-c04de7106f3a",
@@ -5821,28 +5310,6 @@
       "started": "2003-03-31T11:21:48Z",
       "last_reply": "2003-03-31T14:39:53Z",
       "root_message_id": "msg-8bfac4731cea"
-    },
-    {
-      "id": "thread-8cd57a8b1728",
-      "subject": "inverse of a diagonal matrix",
-      "message_count": 1,
-      "participants": [
-        "Lucke, Joseph F"
-      ],
-      "started": "2003-03-31T15:00:22Z",
-      "last_reply": "2003-03-31T15:00:22Z",
-      "root_message_id": "msg-8cd57a8b1728"
-    },
-    {
-      "id": "thread-aed92bbe4fd3",
-      "subject": "inverse of a diagonal matrix",
-      "message_count": 1,
-      "participants": [
-        "Lucke, Joseph F"
-      ],
-      "started": "2003-03-31T17:58:25Z",
-      "last_reply": "2003-03-31T17:58:25Z",
-      "root_message_id": "msg-aed92bbe4fd3"
     },
     {
       "id": "thread-409d81adde08",

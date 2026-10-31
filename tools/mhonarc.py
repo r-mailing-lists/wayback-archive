@@ -20,7 +20,14 @@ Subject, In-Reply-To, References and Message-ID only, the sender and every
 address in a subject or in the text written "user at domain", an attachment
 named after Mailman's "next part" line. The Date is written in RFC 2822's form
 whatever form the sender's mailer gave it, as rmail-parser passes over a
-message whose date it cannot read. It prints, for each month, how many
+message whose date it cannot read. A date more than a week outside the month
+the message arrived in was a sender's wrong clock: the message takes the date
+of the one that arrived before it (MHonArc numbers a month's messages as they
+arrive), or after it when it came first, and X-Original-Date keeps what the
+sender's mailer wrote. A message with no In-Reply-To or References of its own
+follows up the one MHonArc's thread index for the month shows it under, as the
+archive showed it to readers. A message the list delivered twice, the second
+time in a later month, is written once, from its first copy. It prints, for each month, how many
 messages its index names that the Wayback Machine never saved.
 
 add takes another copy of the list as an mbox (Gmane's, say) and writes the
@@ -40,7 +47,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from email.header import Header, decode_header, make_header
 from email.utils import format_datetime, getaddresses, parsedate_to_datetime
 from pathlib import Path
@@ -270,8 +277,14 @@ def sent(page, head):
     return None
 
 
-def convert(page, fallback):
-    """A message page as an mbox entry, pipermail's way, and its Message-ID."""
+def message_id_of(page):
+    return next((v for k, v in comments(page) if k == "Message-Id"), "")
+
+
+def convert(page, fallback, repaired=None, parent=None):
+    """A message page as an mbox entry, pipermail's way, and its Message-ID.
+    repaired is the date to give a message whose own is wrong, and parent the
+    Message-ID of the one it follows up when it names none itself."""
     head = fields(page)
     notes = comments(page)
     raw_from = next((v for k, v in notes if k == "From-R13"), "").translate(UNROT13)
@@ -280,23 +293,69 @@ def convert(page, fallback):
     local, _, domain = addr.partition("@")
     who = f"{local} at {domain}" if domain else (obscure(local) or "unknown")
     name = obscure(" ".join(name.split()))
-    when = sent(page, head) or fallback
+    when = repaired or sent(page, head) or fallback
     utc = when.astimezone(timezone.utc)
     stamp = utc.strftime("%a %b ") + f"{utc.day:2d}" + utc.strftime(" %H:%M:%S %Y")
     lines = [f"From {who}  {stamp}", f"From: {who} ({encoded(name)})" if name else f"From: {who}"]
     lines.append(f"Date: {format_datetime(when)}")
+    original = head.get("date") or dict(notes).get("Date", "")
+    if repaired and original:
+        lines.append(f"X-Original-Date: {encoded(' '.join(original.split()))}")
     subject = head.get("subject") or next((v for k, v in notes if k == "Subject"), "")
     lines.append(f"Subject: {encoded(obscure(' '.join(subject.split())))}")
     reply = ids(head.get("in-reply-to", ""))
+    references = [f"<{v}>" for k, v in notes if k == "Reference"]
+    message_id = message_id_of(page)
     if reply:
         lines.append(f"In-Reply-To: <{reply[0]}>")
-    references = [f"<{v}>" for k, v in notes if k == "Reference"]
+    elif parent and not references and parent != message_id:
+        lines.append(f"In-Reply-To: <{parent}>")
     if references:
         lines.append(f"References: {' '.join(references)}")
-    message_id = next((v for k, v in notes if k == "Message-Id"), "")
     if message_id:
         lines.append(f"Message-ID: <{message_id}>")
     return "\n".join(lines) + "\n\n" + body_of(page) + "\n", message_id
+
+
+# How far outside the month a message arrived in its date can be before it is
+# taken for a wrong clock. Mail was slow and zones differ by a day; S-news's
+# dates past that are 25 days to 22 years off.
+SLACK = timedelta(days=7)
+
+
+def thread_parents(index):
+    """msgNNNNN.html => the page it follows up, None for a thread's first
+    message, read from how a month's thread index nests its lists: a message
+    follows up the one whose list item holds the list it is in."""
+    parents, items, lists = {}, [], []
+    for m in re.finditer(r'(?i)<(/?)(ul|li)\b|href="(msg\d+\.html)"', index):
+        closing, tag, href = m.groups()
+        if href:
+            if items and items[-1] is None:
+                items[-1] = href
+                parents.setdefault(href, lists[-1] if lists else None)
+        elif tag.lower() == "li":
+            if not closing:
+                items.append(None)
+            elif items:
+                items.pop()
+        elif not closing:
+            lists.append(items[-1] if items else None)
+        elif lists:
+            lists.pop()
+    return parents
+
+
+def repaired_dates(dates, start, end):
+    """For each of a month's messages, in the order they arrived, the date to
+    give it in place of its own, or None to keep its own (see SLACK)."""
+    good = [w is not None and start - SLACK <= w < end + SLACK for w in dates]
+    repaired = []
+    for i, ok in enumerate(good):
+        before = (dates[j] for j in range(i - 1, -1, -1) if good[j])
+        after = (dates[j] for j in range(i + 1, len(dates)) if good[j])
+        repaired.append(None if ok else (next(before, None) or next(after, None) or start).astimezone(timezone.utc))
+    return repaired
 
 
 def last_month(list_dir):
@@ -313,19 +372,35 @@ def build(list_dir):
         if not old.name.startswith("from-"):
             old.unlink()
     until = last_month(list_dir)
-    total = missing = later = 0
+    total = missing = later = again = 0
+    written = set()
     for month_dir in sorted(p for p in cache.iterdir() if p.is_dir()):
         month = month_dir.name
         y, m = map(int, month.split("-"))
         fallback = datetime(y, m, 1, tzinfo=timezone.utc)
-        pages = sorted(month_dir.glob("msg*.html"))
-        entries = []
-        for p in pages:
+        saved = sorted(month_dir.glob("msg*.html"))
+        pages, texts = [], []
+        for p in saved:
             text = page_text(p)
-            if until and (sent(text, fields(text)) or fallback).astimezone(timezone.utc).strftime("%Y-%m") > until:
+            message_id = message_id_of(text)
+            if message_id in written:
+                again += 1
+                continue
+            if message_id:
+                written.add(message_id)
+            pages.append(p)
+            texts.append(text)
+        dates = [sent(t, fields(t)) for t in texts]
+        repaired = repaired_dates(dates, fallback, datetime(y + m // 12, m % 12 + 1, 1, tzinfo=timezone.utc))
+        index = month_dir / "threads.html"
+        parents = thread_parents(page_text(index)) if index.exists() else {}
+        id_of = {p.name: message_id_of(t) for p, t in zip(pages, texts)}
+        entries = []
+        for p, text, when, fixed in zip(pages, texts, dates, repaired):
+            if until and (fixed or when).astimezone(timezone.utc).strftime("%Y-%m") > until:
                 later += 1
             else:
-                entries.append(convert(text, fallback)[0])
+                entries.append(convert(text, fallback, fixed, id_of.get(parents.get(p.name)) or None)[0])
         if entries:
             (raw / f"{y}-{MONTHS[m - 1]}.mbox").write_text("".join(entries), encoding="utf-8")
         if until and month > until:
@@ -334,12 +409,12 @@ def build(list_dir):
         for index in ("index.html", "threads.html"):
             if (month_dir / index).exists():
                 named |= set(re.findall(r'href="(msg\d+\.html)"', page_text(month_dir / index)))
-        lost = sorted(named - {p.name for p in pages})
+        lost = sorted(named - {p.name for p in saved})
         total += len(entries)
         missing += len(lost)
         print(f"{month}: {len(entries)} messages" + (f", {len(lost)} its index names were never saved" if lost else ""))
     print(f"{list_dir.name}: {total} messages; {missing} more named by the month indexes were never saved"
-          + (f"; {later} sent after {until} left out" if until else ""))
+          + f"; {again} delivered again left out" + (f"; {later} sent after {until} left out" if until else ""))
 
 
 # ---------------------------------------------------------------------------

@@ -205,12 +205,12 @@
       "date": "1998-11-03T12:38:19Z",
       "subject": "Re: [S] model.frame()",
       "subject_clean": "[S] model.frame()",
-      "in_reply_to": null,
+      "in_reply_to": "<199811031106.TAA25719@zootje.maths.uwa.edu.au>",
       "references": [],
       "body_plain": ">>From Adrian Baddeley <adrian at maths.uwa.edu.au>\n \n> Forgive me if this is a FAQ:\n\nA variant on one!\n\n>       try <- function(fmla, data, wt) {\n>          lm(fmla, data = data, weights = wt)\n>       } \n> looks for the object 'wt' in the frame that called try(),\n> rather than using the 'wt' argument in the function.\n> (transcript below.) \n> \n> Is this really the intention?\n\nIt is not totally clear what is the intention, as this is done by\ninternal code in model.frame.default.  However, help(lm) says\n\ndata:     a data.frame in which to interpret the variables  named\n       in the formula, or in the subset and the weights argument.\n       If this is missing, then  the  variables  in  the  formula\n       should  be  on the search list. \n\nand this does suggest that in fact it is looking in frame 0 (rather\nthan in `frame that called try()', which in your examples happens to be\n0).  The frame of try() is not on the relevant search list (and let us\nnot start to debate if it should be all over again).\n\n> I have been using \n>       assign(\".wt\", wt, sys.parent())\n\nI think that should be in frame=1, as otherwise further nesting will not work:\n\nxx <- seq(0,1,by=0.01)\nyy <- xx + rnorm(101) \ndd <- data.frame(x=xx,y=yy)\nww <- rep(1,length(xx))\ntry <- function(fmla, data, wt) \n{ \n  assign(\".wt\", wt, sys.parent())\n  lm(fmla, data = data, weights = .wt)\n}\ntry(y ~ x, dd, ww) # OK\n\ntry2 <- function() \n{\n  ww2 <- rep(1,length(xx))\n  try(y ~ x, dd, ww2)\n}\ntry2() # Error in try(y ~ x, dd, ww2): Object \".wt\" not found\n\ntry <- function(fmla, data, wt) \n{ \n  assign(\".wt\", wt, f=1)\n  lm(fmla, data = data, weights = .wt)\n}\ntry2() # works.\n\n> What is the recommended workaround? \n\nAdd wt to the data frame `data'. It searches for weights there first.\nAs in\n\n        try <- function(fmla, data, wt) {\n           lm(fmla, data = cbind(data, wt=wt), weights = wt)\n        } \n\nBrian\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": ">>From Adrian Baddeley <adrian at maths.uwa.edu.au>\n \n> Forgive me if this is a FAQ:\n\nA variant on one!\n\n>       try <- function(fmla, data, wt) {\n>          lm(fmla, data = data, weights = wt)\n>     ",
-      "thread_id": "thread-69a9f21e6629",
-      "thread_depth": 0,
+      "thread_id": "thread-8cec9e62d050",
+      "thread_depth": 1,
       "month": "1998-11"
     },
     {
@@ -431,12 +431,12 @@
       "date": "1998-11-06T01:26:29Z",
       "subject": "Re: [S] Tests for Normality",
       "subject_clean": "[S] Tests for Normality",
-      "in_reply_to": null,
+      "in_reply_to": "<B0000025377@mimesweeper.edfman.co.uk>",
       "references": [],
       "body_plain": "Viswanath Devanarayan and I have coded up a method developed by\nBrown and Hettmansperger and published in JASA 1996, vol 91, No. 436, pp.\n1668-1675.\nThe main motivation of their work is that the standard tests for normality\n(e.g., Shapiro- Wilk)\nusually test for overall normality and do not indicate the manner of the\ndeparture from normality.\nThere are three main features of the B&H method:\n     1. It tests for skewness, kurtosis, and normal tails separately\n     2. It is more powerful than the Shapiro-Wilk test\n     3. It adjusts for small sample bias (via simulation)\n\nTo try out the attached code, just open a graphics window and then source the\nprogram.\nNote that there is a call to motif() in one place.  For windows users, just\nchange this to win.graph().\n\n# ----------------------------------------------------------------------------\n--------------------------------------------------\n###################################################################\n# Program name: BHtests_version2.s\n#      Updated: December 5, 1997.\n#      Authors: Dave Cummins, V. Devanarayan\n#      Eli Lilly & Company -- Cummins_DJ at lilly.com\n# Purpose:\n#  Splus functions for implementing the Brown-Hettmansperger tests\n#  for skewness, kurtosis and normal tails (see JASA, Dec '96).\n#  For validation purposes, data from their paper have been included\n#  in the variable my.y in the bottom part of this code. In\n#  order to use this program for other data sets, simply call the\n#  function: BHtests(my.data) after sourcing the file: BHtests_version2.s\n####################################################################\n\noptions(digits=15)\n\n# estimate of sigma\n\nest.sigma _ function(y)\n {\n  y _ sort(y)\n  n _ length(y)\n  vec1 _ 1:(n-1)\n  vec2 _ 2:n\n\n  sum(\n      ( y[vec2] - y[vec1] )*dnorm( qnorm( vec1/n ) )\n     )\n }\n\n# estimate of d3\n\nest.d3 _ function(y)\n {\n  y _ sort(y)\n  n _ length(y)\n  vec1 _ 1:(n-2)\n  vec2 _ 2:(n-1)\n\n  d3hat _\n    2^(-.5)*y[1]*( -dnorm(qnorm(1/n))*qnorm(1/n) ) +\n    2^(-.5)*sum(\n                y[vec2]*(\n                         dnorm( qnorm( vec1/n ) )*qnorm( vec1/n ) -\n                         dnorm( qnorm( vec2/n ) )*qnorm( (2:(n-1))/n )\n                        )\n               ) +\n    2^(-.5)*y[n]*( dnorm(qnorm((n-1)/n))*qnorm((n-1)/n) )\n  d3hat\n }\n\n# estimate of d4\n\nest.d4 _ function(y)\n {\n  y _ sort(y)\n  n _ length(y)\n  vec1 _ 1:(n-2)\n  vec2 _ 2:(n-1)\n\n  d4hat _\n    6^(-.5)*y[1]*( -dnorm(qnorm(1/n))*(qnorm(1/n)^2 - 1) ) +\n    6^(-.5)*sum(\n                y[vec2]*(\n                         dnorm(qnorm(vec1/n))*(qnorm(vec1/n)^2 - 1) -\n                         dnorm(qnorm(vec2/n))*(qnorm(vec2/n)^2 - 1)\n                        )\n               ) +\n    6^(-.5)*y[n]*( dnorm(qnorm((n-1)/n))*(qnorm((n-1)/n)^2 - 1) )\n  d4hat\n }\n\n# Statistic Z1  (not adjusted for small sample bias)\n\nz1 _ function(y)  {\n sqrt(3*length(y))*est.d3(y)/est.sigma(y)\n}\n\n# Statistic Z2  (not adjusted for small sample bias)\n\nz2 _ function(y)  {\n sqrt(4*length(y))*est.d4(y)/est.sigma(y)\n}\n\n# This function computes bias adjustment corrections for small samples\n# n: sample size,  r: number of replications\n\nbiasadj _ function(n,r)  {\n z1a _ matrix(0,r,1)\n z2a _ matrix(0,r,1)\n# The set.seed below will give results that match the JASA paper\n# set.seed(158)\n\n cat(\"Iteration:\")\n for (i in 1:r)\n  {\n  if( trunc(i/100)==i/100 ) cat(i,\".. \")\n  ry _ rnorm(n)\n  z1a[i] _ z1(ry)\n  z2a[i] _ z2(ry)\n  }\n cat(\"\\n\")\n cat(\"\\n\")\n c( mean(z2a), sqrt(var(z1a)), sqrt(var(z2a)) )\n}\n\n# This is the function that actually computes the test-statistics\n# and p-values for skewness, kurtosis and nonnormal tails.\n# This function calls the other functions defined above.\n\nBHtests <- function(y,r=1000,plotit=T,legend.size=1)\n {\n###################################################################\n# Program name: BHtests_version2.s\n#      Updated: December 5, 1997.\n#      Authors: Dave Cummins, V. Devanarayan\n# Purpose:\n#  Splus functions for implementing the Brown-Hettmansperger tests\n#  for skewness, kurtosis and normal tails (see JASA, Dec '96).\n#  For validation purposes, data from their paper have been included\n#  in the variable my.y in the bottom part of this program. In\n#  order to use this program for other data sets, simply call the\n#  function: BHtests(my.data) after sourcing the file: BHtests_version2.s\n###################################################################\n\n  y <- sort(y)\n  buv _ biasadj(n=length(y),r)\n  bn _ buv[1]\n  un _ buv[2]\n  vn _ buv[3]\n\n  Z1ab _ sqrt(3*length(y))*est.d3(y)/(un*est.sigma(y))\n  pZ1 _ 2*( 1-pnorm(abs(Z1ab)) )\n  Z2ab _ max( (sqrt(4*length(y))*est.d4(y)/est.sigma(y) - bn)/vn, 0 )\n  pZ2 _ 1-pnorm(Z2ab)\n  Tab _ Z1ab^2 + Z2ab^2\n  pT _ 1-pnorm(sqrt(Tab)) + .5*exp(-Tab/2)\n\n  Z1ab <- round(Z1ab,5)\n  pZ1  <- round(pZ1,5)\n  Z2ab <- round(Z2ab,5)\n  pZ2  <- round(pZ2,5)\n  Tab <- round(Tab,5)\n  pT  <- round(pT,5)\n  cat(\"Bias Adjusted Test Statistic for Skewness     =\",Z1ab,'\\n')\n  cat(\"with asymptotic P-value for a two-sided test  =\",pZ1,'\\n','\\n')\n  cat(\"Bias Adjusted Test Statistic for Kurtosis     =\",Z2ab,'\\n')\n  cat(\"with asymptotic P-value for a one-sided test  =\",pZ2,'\\n','\\n')\n  cat(\"Bias Adjusted Test Statistic for Normal Tails =\",Tab,'\\n')\n  cat(\"with asymptotic P-value for a two-sided test  =\",pT,'\\n','\\n','\\n')\n\n  if(plotit==T)\n    {\n    if(names(dev.cur())==\"null device\")  motif()\n    n <- length(y)\n    vec <- seq(from=0,to=n,by=1)\n    vec[(n+1)] <- 0\n    phi <- dnorm(qnorm(vec/n))\n    b <- phi[1:n] - phi[2:(n+1)]\n    lambda <- t(b) %*% b\n    a <- b / lambda   # equivalent to : solve( t(b)%*%b ) %*% b\n    plot(a,y, ylab=\"Observed Data\",\n         xlab=\"Quantiles of Standard Normal (bias-adj)\")\n\n    if(legend.size>0)\n      {\n      y.width <- max(y) - min(y)\n      a.width <- max(a) - min(a)\n      text.top <- max(y) - .05 * y.width*legend.size\n      text.bott <- max(y) - .40*y.width*legend.size\n      text.left <- min(a) + .05 * a.width*legend.size\n      text.right <- min(a) + .5 * a.width*legend.size\n      lines(a,a*sqrt(var(y))+mean(y))\n      legend(x=c(text.left,text.right),y=c(text.top,text.bott),\n           type=\"n\",bty=\"n\",cex=legend.size,\n           legend=c(\"      p-values     \",\n                    \"      -------------  \",\n                    paste(\"Skewness: \",pZ1,sep=\"\"),\" \",\n                    paste(\"Kurtosis: \",pZ2,sep=\"\"),\" \",\n                    paste(\"Normal Tails: \",pT,sep=\"\"))\n          )\n      }\n    }\n  list(skewness=pZ1,kurtosis=pZ2,tails=pT)\n }\n\n### Here is where we enter the data in the variable my.y\n### and invoke the function BHtests() to perform the tests for\n### skewness, kurtosis and nonnormal tails.\nmy.y _ c(16.1, 18.8, 15.1, 16, 12, 16.8, 18.7, 23.4, 17, 19.9,\n         18.2, 17.5, 17.7, 16.8)  # example data given in the paper\n\nBHtests(my.y,r=500)\n\n# ----------------------------------------------------------------------------\n--------------------------------------------------\n\n\"sinclair, andrew (MIP London)\" <asinclair at edfman.co.uk> on 11/05/98 01:48:00\nPM\n\nTo:   s-news <s-news at wubios.wustl.edu>\ncc:\n\nSubject:  [S] Tests for Normality\n\nDoes anyone know of code/ references for tests of normality ?\n\nI am aware of qqnorm plots, Kolmogorov Smirnoff and chi squared\ngoodness of fit tests.  I need procedures that give a specific p-values,\nand preferably are sensitive to alternatives with fat tails (which is not\ntrue for K-S in my experience).\n\nMany thanks for any advice - I will summarise responses that\nare sent to me only.\n\nAndrew\n\n____________________\n\nAndrew Sinclair\nED & F Man Investment Products\nSugar Quay\nLower Thames Street\nLondon  EC3R 6DU\n\ntel : 0171 285 2089\nfax : 0171 285 2001\nemail : asinclair at edfman.co.uk\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Viswanath Devanarayan and I have coded up a method developed by\nBrown and Hettmansperger and published in JASA 1996, vol 91, No. 436, pp.\n1668-1675.\nThe main motivation of their work is that the stand",
-      "thread_id": "thread-e46d9980bae4",
-      "thread_depth": 0,
+      "thread_id": "thread-9639331893ce",
+      "thread_depth": 1,
       "month": "1998-11"
     },
     {
@@ -511,12 +511,12 @@
       "date": "1998-11-09T14:26:29Z",
       "subject": "Re: [S] importing SAS datasets",
       "subject_clean": "[S] importing SAS datasets",
-      "in_reply_to": null,
+      "in_reply_to": "<3645FFE0.63C27190@bc.edu>",
       "references": [],
       "body_plain": "sas.get runs a background SAS job to read an ordinary SAS\ndataset - doesn't need to be an XPORT one.\n\nCheck out the enhanced version of sas.get in the Hmisc library.\nIt has a new feature where you read the output of PROC CONTENTS\nCNTLOUT= to associate labels with variables.\n-------------------------------------------------------------------------------------------\nFrank E Harrell Jr\nProfessor of Biostatistics and Statistics\nDivision of Biostatistics and Epidemiology\nDepartment of Health Evaluation Sciences\nUniversity of Virginia School of Medicine\nhesweb1.med.virginia.edu/biostat\n-----Original Message-----\nFrom: atakan yalcin <yalcina at bc.edu>\nTo: splus <s-news at wubios.wustl.edu>\nDate: Sunday, November 08, 1998 4:23 PM\nSubject: [S] importing SAS datasets\n\n>Hi all,\n>\n>I am trying to import a SAS dataset into S+.  We're running S+ Version\n>3.4 Release 1 for Sun SPARC.  I used the following SAS program to create\n>\n>a dataset using Xport engine:\n>\n>OPTIONS PS=30700 NOCENTER NONUMBER;\n>\n>LIBNAME ATA 'TEMP:[SCRATCH.YALCINA]';\n>\n>LIBNAME TRAN XPORT 'TRAN1.SSD';\n>\n>PROC DATASETS;\n>COPY IN=ATA OUT=TRAN;\n>SELECT BETAALL;\n>RUN;\n>\n>I then tried to use sas.get() in S+ to convert trans1.ssd into an S+\n>dataset, but I couldn't succeed.  Here are some of the S+ commands I\n>used:\n>\n>> sas.datasets(lib=unix(\"echo /home/yalcina/betas/\"))\n>[1] \"tran1\"\n>\n>> test<-sas.get(lib=unix(\"echo /home/yalcina/betas/\"),mem=\"tran1\")\n>sh: sas: not found\n>_temp_.log: No such file or directory\n>Error in sas.get(lib = unix(\"echo /home/yalcina/be..: SAS job failed\n>with status\n> 256\n>Dumped\n>\n>I'll apprecaite any help that you can give me.\n>Thanks in advance,\n>\n>Atakan Yalcin\n>\n>\n>-----------------------------------------------------------------------\n>This message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\n>send e-mail to s-news-request at wubios.wustl.edu with the BODY of the\n>message:  unsubscribe s-news\n>\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "sas.get runs a background SAS job to read an ordinary SAS\ndataset - doesn't need to be an XPORT one.\n\nCheck out the enhanced version of sas.get in the Hmisc library.\nIt has a new feature where you rea",
-      "thread_id": "thread-f93c3d04a4c3",
-      "thread_depth": 0,
+      "thread_id": "thread-4122fde7936d",
+      "thread_depth": 1,
       "month": "1998-11"
     },
     {
@@ -883,12 +883,12 @@
       "date": "1998-11-12T14:14:54Z",
       "subject": "RE: [S] Norm of a Gaussian r.v.",
       "subject_clean": "[S] Norm of a Gaussian r.v.",
-      "in_reply_to": null,
+      "in_reply_to": "<199811121031.LAA18155@fatou.mathematik.uni-stuttgart.>",
       "references": [],
       "body_plain": "The following paper may be useful:\n\"Numerical computation of multivariate normal probabilities,\" \nby Alan Genz\nJournal of Computational and Graphical Statistics\n1992\nVol.1, No.2, pp.141-149.\n\nI have not used it yet but it looks potentially useful.\n\nMatt Kurbat\nBank of America\nQuantitative Finance\n\nemail: matthew.kurbat at ncmi.com\n\n> -----Original Message-----\n> From: Juergen Dippon [SMTP:dippon at mathematik.uni-stuttgart.de]\n> Sent: Thursday, November 12, 1998 5:31 AM\n> To:   s-news at wubios.wustl.edu\n> Subject:      [S] Norm of a Gaussian r.v.\n> \n> Dear S-Plus users:\n> \n> Has anyone written a (S-)function computing the distribution function of\n> the Euclidean norm of a (centered) multivariate Gaussian random variable\n> G:\n>                          \n>                        P( ||G|| <= x ) = ?\n> \n> Or, more generally, does anyone know of a paper describing how to compute\n> this probability efficiently?\n> \n> Many thanks for any answer!\n> \n>                      Juergen Dippon\n> \n> e-mail: dippon at mathematik.uni-stuttgart.de\n> \n> -----------------------------------------------------------------------\n> This message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\n> send e-mail to s-news-request at wubios.wustl.edu with the BODY of the\n> message:  unsubscribe s-news\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "The following paper may be useful:\n\"Numerical computation of multivariate normal probabilities,\" \nby Alan Genz\nJournal of Computational and Graphical Statistics\n1992\nVol.1, No.2, pp.141-149.\n\nI have n",
-      "thread_id": "thread-fbb519b81442",
-      "thread_depth": 0,
+      "thread_id": "thread-8a7d57586599",
+      "thread_depth": 1,
       "month": "1998-11"
     },
     {
@@ -933,12 +933,12 @@
       "date": "1998-11-12T18:10:30Z",
       "subject": "RE: [S] Norm of a Gaussian r.v.",
       "subject_clean": "[S] Norm of a Gaussian r.v.",
-      "in_reply_to": null,
+      "in_reply_to": "<199811121031.LAA18155@fatou.mathematik.uni-stuttgart.>",
       "references": [],
       "body_plain": "Alan Genz's integration software can be found on his home page:\n\n        http://www.sci.wsu.edu/math/faculty/genz/homepage\n        \nThe routines there are Fortran and C, and not too hard to adapt to call from \nSplus - it is mostly a matter of eliminating Fortran I/O and writing a function \nfor the quantity that you wish to evaluate. (If you like, I've some 'diff's \nfrom \na project in which I did this with his BAYESPACK routine for an integral that \narises in a Bayesian approach to gene mapping.)\n\nHowever, if you do not need values in the extreme tails, this may be the path \nof \nleast resistance (n.b. I did *not* say this is 'efficient'):\n\ntran <- chol(my.dispersion.matrix)\n\nx <-\n apply(matrix(rnorm(nrow(tran)*n.reps.desired),nc=nrow(tran))%*%tran,1,my.norm)\n \nplot(x,seq(from=0,to=1,length=n.reps.desired), type=\"s\")\n\nfor \n\nmy.norm <- function(x) sum(x^2)\nn.reps.desired <- 10000\nnrow(tran)==5\n\nabout 3.2 seconds are required on a SPARC ULTRA 10, S-PLUS Version 3.4 Release \n1 \nfor Sun SPARC, SunOS 5.3 : 1996 \n\n> From: matthew.a.kurbat at ncmi.com\n> To: dippon at mathematik.uni-stuttgart.de, s-news at wubios.wustl.edu\n> Subject: RE: [S] Norm of a Gaussian r.v.\n> Date: Thu, 12 Nov 1998 09:14:54 -0500\n> MIME-Version: 1.0\n> \n> The following paper may be useful:\n> \"Numerical computation of multivariate normal probabilities,\" \n> by Alan Genz\n> Journal of Computational and Graphical Statistics\n> 1992\n> Vol.1, No.2, pp.141-149.\n> \n> I have not used it yet but it looks potentially useful.\n> \n> Matt Kurbat\n> Bank of America\n> Quantitative Finance\n> \n> email: matthew.kurbat at ncmi.com\n> \n> > -----Original Message-----\n> > From:       Juergen Dippon [SMTP:dippon at mathematik.uni-stuttgart.de]\n> > Sent:       Thursday, November 12, 1998 5:31 AM\n> > To: s-news at wubios.wustl.edu\n> > Subject:    [S] Norm of a Gaussian r.v.\n> > \n> > Dear S-Plus users:\n> > \n> > Has anyone written a (S-)function computing the distribution function of\n> > the Euclidean norm of a (centered) multivariate Gaussian random variable\n> > G:\n> >                          \n> >                        P( ||G|| <= x ) = ?\n> > \n> > Or, more generally, does anyone know of a paper describing how to compute\n> > this probability efficiently?\n> > \n> \n\nCharles C. Berry                        (619) 534-2098 \n                                         Dept of Family/Preventive Medicine\nE mailto:cberry at tajo.ucsd.edu            UC San Diego\nhttp://hacuna.ucsd.edu/members/ccb.html  La Jolla, San Diego 92093-0645\n---------------------------------------------Note_Recent_Change----^^^^   \n \n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Alan Genz's integration software can be found on his home page:\n\n        http://www.sci.wsu.edu/math/faculty/genz/homepage\n        \nThe routines there are Fortran and C, and not too hard to adapt to c",
-      "thread_id": "thread-fca178762108",
-      "thread_depth": 0,
+      "thread_id": "thread-8a7d57586599",
+      "thread_depth": 1,
       "month": "1998-11"
     },
     {
@@ -1001,12 +1001,12 @@
       "date": "1998-11-13T00:22:46Z",
       "subject": "RE: [S] Pie diagrams anyone?",
       "subject_clean": "[S] Pie diagrams anyone?",
-      "in_reply_to": null,
+      "in_reply_to": "<9811122312.AA26902@attunga.stats.adelaide.edu.au>",
       "references": [],
       "body_plain": "Note that I'm not at all speaking for MathSoft...\n\nI like pie charts!  \n\nIn particular, I like pie charts for showing the proportions allocated to \ndifferent groups.  For example, displaying how my meagre 401K \n(retirement) account is allocated between different mutual funds.  \n\nI'm particularly fond of the pseudo-3D pie charts available in Excel,\nalthough the exploding 3D pie charts are perhaps a bit too much.\n\nI do feel it's necessary to include percentage values describing the\namount allocated to each slice.  Otherwise the pie charts are\npretty hard to read accurately.\n\nI'll buy the argument that it's hard to accurately read proportions\noff of a pie chart.  I look at the number connected to each slice\nto get the actual proportion.  The pie chart itself just spices\nthings up a bit, and gives a rough feel for group sizes.\n\nI also think barplots are just fine, thank you very much, and\nhave no real interest in dot charts.\n\nNow my understanding is that it's too late to take back my\nStatistics degree, even if I go around spouting such heresy...\n\nCharlie Roosen\n\nOn Thursday, November 12, 1998 3:13 PM, Bill Venables \n[SMTP:wvenable at attunga.stats.adelaide.edu.au] wrote:\n> I received the following very curious personal email today (from\n> an address somewhere in the UK, it seems).\n> \n> >>>>> \"N\" writes:\n> \n>     N> Dear. Mr. Venables,\n> \n>     N> I have been recently converted to being an S-Plus user,\n>     N> and as an avid fan of pie diagrams I was gravley concerned\n>     N> to find some hostility from you aimed towards them in your\n>     N> set of notes.\n> \n>     N> Please can you explain this please?\n> \n> Of course I am half inclined to think that it must be a leg-pull,\n> but I am not completely convinced.\n> \n> The answer is yes, I do rather look down upon pie diagrams as an\n> ineffective device and something that can be easily bettered, but\n> also as something so typical of the abuses of statistics that\n> Disraeli so justifiably ridiculed.  Nevertheless I am curious to\n> know what other people think about them.  Am I alone in this?\n> \n> Irrespective of my opinion of their value I do support their\n> inclusion in S-PLUS, though.  After all managers, advertising\n> executives, lawyers, politicians and their kind have as much\n> right to use S-PLUS as any of us...  :-)\n> \n> Bill.\n> \n> -- \n> _________________________________________________________________\n> Bill Venables, Head, Dep't of Statistics,   Tel.: +61 8 8303 5418\n>                ^^^^ (but not for much longer!)\n> The University of Adelaide,                 Fax.: +61 8 8303 3696\n> South AUSTRALIA.     5005.   Email: Bill.Venables at adelaide.edu.au\n> -----------------------------------------------------------------------\n> This message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\n> send e-mail to s-news-request at wubios.wustl.edu with the BODY of the\n> message:  unsubscribe s-news\n> \n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Note that I'm not at all speaking for MathSoft...\n\nI like pie charts!  \n\nIn particular, I like pie charts for showing the proportions allocated to \ndifferent groups.  For example, displaying how my me",
-      "thread_id": "thread-d890963e28b7",
-      "thread_depth": 0,
+      "thread_id": "thread-2eba7d4558d3",
+      "thread_depth": 1,
       "month": "1998-11"
     },
     {
@@ -1017,12 +1017,12 @@
       "date": "1998-11-13T13:14:17Z",
       "subject": "RE: [S] Pie diagrams anyone?",
       "subject_clean": "[S] Pie diagrams anyone?",
-      "in_reply_to": null,
+      "in_reply_to": "<9811122312.AA26902@attunga.stats.adelaide.edu.au>",
       "references": [],
       "body_plain": "To Messrs Venables, Roosen and others:\n\nRe: Pie Charts (and associated graphical quandaries)\n\nAs this will probably \"explode\" into a juicy discussion, let me bite off a\nsmall slice early. For those who may wish some more background on these\ngraphical issues -- and they HAVE been seriously considered -- two\nreferences:\n\nHoward Wainer's Book:VISUAL REVELATIONS: GRAPHICAL TALES OF FATE AND\nDECEPTION FROM NAPOLEON BONAPARTE TO ROSS PEROT (1997, New York: Copernicus)\nis a readable discussion built around many delightful examples. Wainer even\nhas a kind of pie chart on steroids that he proposes (based on Florence\nNightingale's original version. Yes, that is THE Florence Nightingale of\nnursing fame!). See my review of the book in  the February, 98 AMERICAN\nSTATISTICIAN for a quick overview of contents.\n\nA somewhat more statistical but still very readable exposition of graphical\ndisplays can be found in Bill CLeveland's, THE ELEMENTS OF GRAPHING DATA (\n1994, New Jersey: Hobart Press. books at hobart.com), in particular, pp.\n262-269 on the graphical perception of \"Pop Charts.\"\n\nEnjoy!\n\nBert Gunter\nBiometrics Research RY 70-38\nMerck & Company\nP.O. Box 2000\nRahway, NJ 07065-0900\nPhone: (732) 594-7765   Fax: (732) 594-1565\n\n\"The business of the statistician is to catalyze the scientific learning\nprocess.\"      -- George E.P. Box\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "To Messrs Venables, Roosen and others:\n\nRe: Pie Charts (and associated graphical quandaries)\n\nAs this will probably \"explode\" into a juicy discussion, let me bite off a\nsmall slice early. For those wh",
-      "thread_id": "thread-c3567cc2f2df",
-      "thread_depth": 0,
+      "thread_id": "thread-2eba7d4558d3",
+      "thread_depth": 1,
       "month": "1998-11"
     },
     {
@@ -1033,12 +1033,12 @@
       "date": "1998-11-13T13:39:15Z",
       "subject": "RE: [S] Pie diagrams anyone?",
       "subject_clean": "[S] Pie diagrams anyone?",
-      "in_reply_to": null,
+      "in_reply_to": "<9811122312.AA26902@attunga.stats.adelaide.edu.au>",
       "references": [],
       "body_plain": "Thanks for this mention of Cleveland, who I think has done some of the best\nwork on quantifying problems with\npie charts.\n\nIn general, Cleveland documents that the \"visual tasks\" involved in decoding\nthe information presented in pie chart format are more\ndifficult and less accurate than those involved in reading, say, a dot\nchart.  For example, the eye just isn't as good at comparing\ninformation encoded in angles (pie charts) as in distances along a common\nscale (dot charts).\n\nMany of us also work in areas where data points have associated\nuncertainties and confidence intervals, which dot charts (e.g.) can present,\nbut pie charts can't.\n\nMore generally, why use a presentation format which demonstrably distorts or\nhides subtle data differences, and has to be supplemented, by\nRoosen's own admission, by numbers next to the pie slices?  This seems to\nviolate the spirit of good graphical presentation of data, which\nshould invite the eye to make valid data comparisons on its own.\n\nI suppose I write this only because I have seen so many poor graphical\npresentations of data which often acted to obscure the very point\nthey were trying to make-inexcusable because there are so many good authors\nin the field (Cleveland, Tufte, Tukey, et. al.) who have publicized good\npractices\n\n> -----Original Message-----\n> From: Gunter, Bert [SMTP:bert_gunter at merck.com]\n> Sent: Friday, November 13, 1998 7:14 AM\n> To:   's-news'\n> Subject:      RE: [S] Pie diagrams anyone?\n> \n> To Messrs Venables, Roosen and others:\n> \n> Re: Pie Charts (and associated graphical quandaries)\n> \n> As this will probably \"explode\" into a juicy discussion, let me bite off a\n> small slice early. For those who may wish some more background on these\n> graphical issues -- and they HAVE been seriously considered -- two\n> references:\n> \n> Howard Wainer's Book:VISUAL REVELATIONS: GRAPHICAL TALES OF FATE AND\n> DECEPTION FROM NAPOLEON BONAPARTE TO ROSS PEROT (1997, New York:\n> Copernicus)\n> is a readable discussion built around many delightful examples. Wainer\n> even\n> has a kind of pie chart on steroids that he proposes (based on Florence\n> Nightingale's original version. Yes, that is THE Florence Nightingale of\n> nursing fame!). See my review of the book in  the February, 98 AMERICAN\n> STATISTICIAN for a quick overview of contents.\n> \n> A somewhat more statistical but still very readable exposition of\n> graphical\n> displays can be found in Bill CLeveland's, THE ELEMENTS OF GRAPHING DATA (\n> 1994, New Jersey: Hobart Press. books at hobart.com), in particular, pp.\n> 262-269 on the graphical perception of \"Pop Charts.\"\n> \n> Enjoy!\n> \n> \n> Bert Gunter\n> Biometrics Research RY 70-38\n> Merck & Company\n> P.O. Box 2000\n> Rahway, NJ 07065-0900\n> Phone: (732) 594-7765   Fax: (732) 594-1565\n> \n> \"The business of the statistician is to catalyze the scientific learning\n> process.\"      -- George E.P. Box\n> \n> -----------------------------------------------------------------------\n> This message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\n> send e-mail to s-news-request at wubios.wustl.edu with the BODY of the\n> message:  unsubscribe s-news\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Thanks for this mention of Cleveland, who I think has done some of the best\nwork on quantifying problems with\npie charts.\n\nIn general, Cleveland documents that the \"visual tasks\" involved in decoding\n",
-      "thread_id": "thread-a04ba382d66e",
-      "thread_depth": 0,
+      "thread_id": "thread-2eba7d4558d3",
+      "thread_depth": 1,
       "month": "1998-11"
     },
     {
@@ -1083,12 +1083,12 @@
       "date": "1998-11-13T14:40:00Z",
       "subject": "RE: [S] Pie Diagrams",
       "subject_clean": "[S] Pie Diagrams",
-      "in_reply_to": null,
+      "in_reply_to": "<53D9C95525D1D011970B00805FFED85CA2FA1E@S0-OTT-X10.NRCan.gc.ca>",
       "references": [],
       "body_plain": "Dr. Garrett:\n\nIt is wonderful to hear from a REAL scientist with REAL scientific problems.\nThankyou for your note to s-news. I hope that it encourages other silent\nscientific readers to speak up!\n\nMay I suggest an alternative display that might do better than your pies,\nhowever? \n\nAt each location display the following small rectangular graphic:\n\nThe left part of the graphic is a narrow fixed width bar whose height\nrepresents the total mineral weight at the site. Hence comparing these\nheights by eye gives a more accurate and still geographically located view\nof the total weights than comparing circles (whose sizes we judge as areas,\nnot diameters, so it is important to encode the total as sqrt(diameter) not\ndiameter, even in the pies).\n\n(Clearly separated with a small break or vertical line), the right part of\nthe graphic (perhaps in a different color, though this is not necessary)\nconsists of a (filled?) curve: The \"x-axis\" is simply the first 5 different\nminerals, always in the same order of course (the 6th is redundant, but you\ncould include it if you wanted). The height at each mineral type is simply\nthe proportion of minerals at the site. The curves give a more accurate and\neasier to perceive view of the mineral \"profiles\" both because it is easier\nto make comparisons on a fixed linear scale and because the positions of\neach of the mineral proportions in the graphic do not vary from site to site\nas they do for your pie chart; changing positions makes it more difficult to\nmake comparisons (that is why you have to add color cues -- but color cues\nare always problematic because we perceive different colors differently. One\nslice may look bigger simply because it is a different color).\n\nSo not only can you do better than pie charts, you also don't need colors\n(not everybody has color copiers yet!). Of course, there may be times when\npie charts are the best solution, but I don't think this is it, yet.\n\n        Again, I appreciate your writing in. I always find honest science\nmore interesting than complex statistical ruminations.\n\n> Bert Gunter\n> Biometrics Research RY 70-38\n> Merck & Company\n> P.O. Box 2000\n> Rahway, NJ 07065-0900\n> Phone: (732) 594-7765   Fax: (732) 594-1565\n> \n> \"The business of the statistician is to catalyze the scientific learning\n> process.\"      -- George E.P. Box\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Dr. Garrett:\n\nIt is wonderful to hear from a REAL scientist with REAL scientific problems.\nThankyou for your note to s-news. I hope that it encourages other silent\nscientific readers to speak up!\n\nMay",
-      "thread_id": "thread-56e497aed3bd",
-      "thread_depth": 0,
+      "thread_id": "thread-1eeab39cad39",
+      "thread_depth": 1,
       "month": "1998-11"
     },
     {
@@ -1099,12 +1099,12 @@
       "date": "1998-11-13T15:30:35Z",
       "subject": "RE: [S] Pie Diagrams",
       "subject_clean": "[S] Pie Diagrams",
-      "in_reply_to": null,
+      "in_reply_to": "<53D9C95525D1D011970B00805FFED85CA2FA1E@S0-OTT-X10.NRCan.gc.ca>",
       "references": [],
       "body_plain": "I would say that even non-scientists in the audience (I am not a scientist,\nbut a commercial data analyst)\nhave an interest in clear presentation of data.\n\nWorking in the marketing industry, I see large amounts of information\npresented in graphical form-often in pie charts.\nUsually, the graphics have been prepared with something like Excel or\nPowerpoint.  The pie charts or overcomplicated bar\ncharts (with too many dimensions crossed together) that result always make\nit difficult to interpret relationships between the data points given,\nand could usually be given in a simpler form.\n\nSo-I wrote my first message not merely for theoretical reasons, but because\nI would like to see wider usage of simpler graphical methods (bar charts,\ntables, etc.)\n\nEven Dr. Gunter's e-mail points out a simpler way (without the need for\ncolor) than pie charts to display large datasets.  Would that more people\nin industry thought the same way.\n\n> -----Original Message-----\n> From: Gunter, Bert [SMTP:bert_gunter at merck.com]\n> Sent: Friday, November 13, 1998 8:40 AM\n> To:   'Garrett, Robert'; 's-news'\n> Subject:      RE: [S] Pie Diagrams\n> \n> Dr. Garrett:\n> \n> It is wonderful to hear from a REAL scientist with REAL scientific\n> problems.\n> Thankyou for your note to s-news. I hope that it encourages other silent\n> scientific readers to speak up!\n> \n> May I suggest an alternative display that might do better than your pies,\n> however? \n> \n> At each location display the following small rectangular graphic:\n> \n> The left part of the graphic is a narrow fixed width bar whose height\n> represents the total mineral weight at the site. Hence comparing these\n> heights by eye gives a more accurate and still geographically located view\n> of the total weights than comparing circles (whose sizes we judge as\n> areas,\n> not diameters, so it is important to encode the total as sqrt(diameter)\n> not\n> diameter, even in the pies).\n> \n> (Clearly separated with a small break or vertical line), the right part of\n> the graphic (perhaps in a different color, though this is not necessary)\n> consists of a (filled?) curve: The \"x-axis\" is simply the first 5\n> different\n> minerals, always in the same order of course (the 6th is redundant, but\n> you\n> could include it if you wanted). The height at each mineral type is simply\n> the proportion of minerals at the site. The curves give a more accurate\n> and\n> easier to perceive view of the mineral \"profiles\" both because it is\n> easier\n> to make comparisons on a fixed linear scale and because the positions of\n> each of the mineral proportions in the graphic do not vary from site to\n> site\n> as they do for your pie chart; changing positions makes it more difficult\n> to\n> make comparisons (that is why you have to add color cues -- but color cues\n> are always problematic because we perceive different colors differently.\n> One\n> slice may look bigger simply because it is a different color).\n> \n> So not only can you do better than pie charts, you also don't need colors\n> (not everybody has color copiers yet!). Of course, there may be times when\n> pie charts are the best solution, but I don't think this is it, yet.\n> \n>       Again, I appreciate your writing in. I always find honest science\n> more interesting than complex statistical ruminations.\n> \n> \n> > Bert Gunter\n> > Biometrics Research RY 70-38\n> > Merck & Company\n> > P.O. Box 2000\n> > Rahway, NJ 07065-0900\n> > Phone: (732) 594-7765   Fax: (732) 594-1565\n> > \n> > \"The business of the statistician is to catalyze the scientific learning\n> > process.\"      -- George E.P. Box\n> -----------------------------------------------------------------------\n> This message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\n> send e-mail to s-news-request at wubios.wustl.edu with the BODY of the\n> message:  unsubscribe s-news\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "I would say that even non-scientists in the audience (I am not a scientist,\nbut a commercial data analyst)\nhave an interest in clear presentation of data.\n\nWorking in the marketing industry, I see lar",
-      "thread_id": "thread-60c761a8e0ea",
-      "thread_depth": 0,
+      "thread_id": "thread-1eeab39cad39",
+      "thread_depth": 1,
       "month": "1998-11"
     },
     {
@@ -1147,12 +1147,12 @@
       "date": "1998-11-13T16:02:16Z",
       "subject": "Re: [S] Pie diagrams anyone?",
       "subject_clean": "[S] Pie diagrams anyone?",
-      "in_reply_to": null,
+      "in_reply_to": "<9811122312.AA26902@attunga.stats.adelaide.edu.au>",
       "references": [],
       "body_plain": "Bill Venables <wvenable at attunga.stats.adelaide.edu.au> wrote:\n\n> The answer is yes, I do rather look down upon pie diagrams as an\n> ineffective device and something that can be easily bettered, but\n> also as something so typical of the abuses of statistics that\n> Disraeli so justifiably ridiculed.  Nevertheless I am curious to\n> know what other people think about them.  Am I alone in this?\n\nI'm not a statistician but do create a lot of visual presentations\nof data.  I don't think pie charts should be banned but also can't\nthink of a case where some other display wouldn't work better.\n\nTheir major weaknesses from my point of view:\n\n * Mentally assessing proportions from differences in angular\n   slabs is not as easy as from linear slabs.  People who look\n   at pie charts almost always ask \"what are the actual\n   percentages?\"  A table would do almost as well.\n\n * Other presentations (e.g., bar charts, dot plots) can show\n   not only proportions, but magnitude as well.\n\n * Small pie slices are next to impossible to mentally assess.\n\n * More than three or four pie slices are next to impossible to\n   mentally assess.\n\n * Mentally comparing two pie charts is not as easy as comparing\n   two bar or dot charts.  The latter create \"shapes\" that the\n   mind can retain and contrast.  The former have all exactly\n   the same shape.\n\nTheir major advantage, of course, is that managers and most\nclients think they like them.\n\n--Todd\n-- \nZ. Todd Taylor\nPacific Northwest National Laboratory\nTodd.Taylor at pnl.gov\nWhy are they called 'long shorts'?\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Bill Venables <wvenable at attunga.stats.adelaide.edu.au> wrote:\n\n> The answer is yes, I do rather look down upon pie diagrams as an\n> ineffective device and something that can be easily bettered, but",
-      "thread_id": "thread-d87417637827",
-      "thread_depth": 0,
+      "thread_id": "thread-2eba7d4558d3",
+      "thread_depth": 1,
       "month": "1998-11"
     },
     {
@@ -1375,12 +1375,12 @@
       "date": "1998-11-13T20:37:23Z",
       "subject": "Re: [S] Postscript printing in Windows",
       "subject_clean": "[S] Postscript printing in Windows",
-      "in_reply_to": null,
+      "in_reply_to": "<Pine.SGI.3.95.981113101353.14122B-100000@orca.akctr.noaa.gov>",
       "references": [],
       "body_plain": "MathSoft DAPD:  Please make this a very high priority\n\nThanks for your consideration  -Frank Harrell\n\n-----Original Message-----\nFrom: Anne York <york at orca.akctr.noaa.gov>\nTo: S News <s-news at wubios.wustl.edu>\nDate: Friday, November 13, 1998 3:22 PM\nSubject: [S] Postscript printing in Windows\n\n>There have been several posts concerning the quality of\n>postscript output from Splus using the MS drivers. \n>\n>There is an Splus postscript function that still exists in Splus\n>3.3 and that function seems to override the microsoft drivers.\n>Unfortunately, this function does not seem to exist in splus 4. \n>\n>I did an experiment in Splus 3.3 and compared the output from\n>the old splus driver (OSD)  and the windows driver (WD). I\n>generated postscript files and printed them directly to an\n>HP III SI postscript printer and I viewed and printed them\n>with Ghostscript. All were done at 300 dpi resolution. There was\n>no comparison in the quality of the output:\n>\n>1. The output from OSD appeared sharper in the\n>ghostview screen, the ghostview printed copy on a laserjet III,\n>and direct printing to a laserjet IIIsi postscript printer.  \n>\n>2. The OSD supported line widths greater than 1 for all line\n>types, whereas the WD supported line widths greater than 1 only\n>for line type 1 (solid lines). \n>\n>Is it possible to use the old driver in Splus 4? Perhaps splus\n>should sell (give??) their old driver to Microsoft. \n>\n>Anne\n>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n>Anne E. York\n>National Marine Mammal Laboratory\n>Seattle WA 98115-0070  USA\n>e-mail: york at orca.akctr.noaa.gov\n>Voice: +1 206-526-4039\n>Fax: +1 206-526-6615\n>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n>\n>\n>-----------------------------------------------------------------------\n>This message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\n>send e-mail to s-news-request at wubios.wustl.edu with the BODY of the\n>message:  unsubscribe s-news\n>\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "MathSoft DAPD:  Please make this a very high priority\n\nThanks for your consideration  -Frank Harrell\n\n-----Original Message-----\nFrom: Anne York <york at orca.akctr.noaa.gov>\nTo: S News <s-news at wub",
-      "thread_id": "thread-b5c5051bf784",
-      "thread_depth": 0,
+      "thread_id": "thread-297514f90770",
+      "thread_depth": 1,
       "month": "1998-11"
     },
     {
@@ -1391,12 +1391,12 @@
       "date": "1998-11-13T20:56:59Z",
       "subject": "Re: [S] Pie diagrams anyone?",
       "subject_clean": "[S] Pie diagrams anyone?",
-      "in_reply_to": null,
+      "in_reply_to": "<9811122312.AA26902@attunga.stats.adelaide.edu.au>",
       "references": [],
       "body_plain": "My 2 cents.\n\nI often create \"first-cut\" business cases, with 5 to 10 cash flows\nfor revenues and another 5 to 10 cash flows for costs.  I use pie\ncharts for (automatically) looking at the relative contributions\nof the NPVs of the various flows.  I need to know which are big,\nwhich are small, etc.  Of the big ones, how many are there, and what\nare their relative sizes?  The fact that I can't accurately read\nthe small slices is a benefit.  And yes, I can't accurately judge\nexact relative sizes of the large ones, but as a statistician, I know\nI haven't really estimated them precisely anyhow.  The \"second-cut\" will\ndetermine the larger flows more precisely.  So in this case, I find\nthe short comings of pie charts actually work for my benefit!\n\nAlan Gross\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "My 2 cents.\n\nI often create \"first-cut\" business cases, with 5 to 10 cash flows\nfor revenues and another 5 to 10 cash flows for costs.  I use pie\ncharts for (automatically) looking at the relative con",
-      "thread_id": "thread-f5b52d5f216a",
-      "thread_depth": 0,
+      "thread_id": "thread-2eba7d4558d3",
+      "thread_depth": 1,
       "month": "1998-11"
     },
     {
@@ -1477,12 +1477,12 @@
       "date": "1998-11-15T20:46:10Z",
       "subject": "Fwd: Re: [S] Pie diagrams anyone?",
       "subject_clean": "[S] Pie diagrams anyone?",
-      "in_reply_to": null,
+      "in_reply_to": "<9811122312.AA26902@attunga.stats.adelaide.edu.au>",
       "references": [],
       "body_plain": "I tell my students that the only good reason to use a pie chart is if a\nclient or boss specifically asks for one.  In presenting results from my\nwork, I've never found a situation where pie charts gave a better\npresentation.  With that said, I'd like to make some confessions:\n\nI have an old-fashioned wristwatch with three arms.  This is a visual\ndisplay of time akin to a pie chart.  There is no necessity to encode time\nusing these angles/vectors.  The display adds no information over a digital\nrepresentation of the time.  I even have difficulty determining the time\nfrom a clock or watch with arms but no numeric labels.  I suppose that many\nyears ago there were mechanical advantages to having arms, but I'm fairly\ncertain that this is no longer the case.  My only reason for selecting a\nwatch of this kind is that I find the display more attractive than those of\ndigital watches.\n\nThe speedometer in my car also has a needle rather than a digital display.\nAgain, speed is being encoded with an angle.  Even with the numeric labels\nalong the arc, I'm sure my ability to decode speed is much less accurate\nthan my ability to read a digital.  Yet, I still prefer the needle-arc\nvariety.\n\nThese are two instances where I have some simple information to present --\na single number without making any sorts of comparisons -- and accuracy is\nnot a big concern.  If I were performing a physics experiment involving\nspeed or time where accuracy is important, I'd be better off with a digital\ndisplay.  In these situations, perhaps a pie-like representation is more\nattractive visually than the number itself or a bar/dot format (although I\nstill prefer a bar thermometer over a dial one).\n\nEd Malthouse\n\nEdward C. Malthouse, Ph.D.\nAssistant Professor\nIntegrated Marketing Communications\nMedill School of Journalism\nNorthwestern Universtiy\nEvanson, IL  60208-1290\nTele:  847-467-3376\nFax:  847-491-5925\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "I tell my students that the only good reason to use a pie chart is if a\nclient or boss specifically asks for one.  In presenting results from my\nwork, I've never found a situation where pie charts gav",
-      "thread_id": "thread-fb6338d4a905",
-      "thread_depth": 0,
+      "thread_id": "thread-2eba7d4558d3",
+      "thread_depth": 1,
       "month": "1998-11"
     },
     {
@@ -1923,12 +1923,12 @@
       "date": "1998-11-19T15:42:57Z",
       "subject": "Re: [S] Converting to Splus 5 - is convertOldLibrary necessary?",
       "subject_clean": "[S] Converting to Splus 5 - is convertOldLibrary necessary?",
-      "in_reply_to": null,
+      "in_reply_to": "<l03130304b27912b44fbb@[142.58.140.2]>",
       "references": [],
       "body_plain": "Carl Schwarz <cschwarz at cs.sfu.ca> wrote:\n\n> We've upgraded to Splus 5 under Solaris and I'm attempting to convert my\n> Splus 3.4 routines to Splus 5.\n> \n> I used the convertOldLibrary to convert my .Data from 3.4 to 5, but it\n> strips ALL COMMENTS from all of my functions. This \"feature\" doesn't seem\n> very friendly - is there a work around?\n> \n> More to the point, is it really necessary to use the convertOldLibrary if\n> the old libraries just have pretty basic functions. For example, most of my\n> work involves fitting MLE to generalize linear models using pretty standard\n> stuff. Can I just start up Splus 5 using my old .Data libarires  and use\n> the old functions etc as is?\n\nI maintain all my S functions in separate text files so I can't\nspeak to the transferrability of functions.  It does appear that\nusing unconverted data objects is a no-no, though.  Simply\nattaching an Splus 3.* directory works, but as those objects are\nused in computations memory use seems to increase rapidly and,\napparently, without bound.  (Solaris 2.5.1)\n\nAnother thing I've noticed about Splus 5...trellis graphics\nrender themselves much (MUCH, *MUCH*) slower than before (my\n'before' is version 3.3, not 3.4).\n\nAnd, if version 5 has lesser memory requirements I haven't\nnoticed it yet.  Indeed, the start-up footprint if quite a bit\nlarger than before.  Maybe it holds up under looping better; I\nhaven't tested that.\n\nAny other testimonials?\n\n--Todd\n-- \nZ. Todd Taylor\nPacific Northwest National Laboratory\nTodd.Taylor at pnl.gov\nWhy is it underwear and outerwear, not innerware and overwear?\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Carl Schwarz <cschwarz at cs.sfu.ca> wrote:\n\n> We've upgraded to Splus 5 under Solaris and I'm attempting to convert my\n> Splus 3.4 routines to Splus 5.\n> \n> I used the convertOldLibrary to convert my",
-      "thread_id": "thread-ef8ef6f9983d",
-      "thread_depth": 0,
+      "thread_id": "thread-1f2c961e1d91",
+      "thread_depth": 1,
       "month": "1998-11"
     },
     {
@@ -1987,12 +1987,12 @@
       "date": "1998-11-19T17:09:30Z",
       "subject": "Re: [S] Problem with the OPTIMIZE function",
       "subject_clean": "[S] Problem with the OPTIMIZE function",
-      "in_reply_to": null,
+      "in_reply_to": "<Pine.LNX.4.02A.9811191747020.18597-100000@mms.matematik.su.se>",
       "references": [],
       "body_plain": "> \n> Hi!\n> \n> I have a problem with the 'optimize' function in S-plus\n> (Version 3.4 Release 1 for Sun SPARC, SunOS 5.3 : 1996).\n> I have two functions that I want to optimize over the\n> interval (0,150):\n> \n> my.fcn<-function(x){\n>   (exp(-exp(6.09-.08*x)) - exp(-exp(10-.13*x)))\n> }      \n> \n> my.fcn2<-function(x){\n>   (exp(-exp(6.09-.2*x)) * (1-exp(-exp(10-.25*x))))\n> }\n> \n> However it seems, that the algorithm forgets to check some\n> of the interval.\n\nThis is a known bug (or at least, known to MathSoft and the discoverer).\nDon't use maximum=T prior to 4.5 (I think).  The call\n\n        temp$z <- .Fortran(\"fmin1d\",\n                out = as.double(c(lower, upper, w, fw, tol, .Machine$double.eps\n                        )),\n                as.integer(0))$out[1]\n\nneeds fw replaced by (fsign * fw) as far as I recall.\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "> \n> Hi!\n> \n> I have a problem with the 'optimize' function in S-plus\n> (Version 3.4 Release 1 for Sun SPARC, SunOS 5.3 : 1996).\n> I have two functions that I want to optimize over the\n> interval (0,1",
-      "thread_id": "thread-b6c58a901b6c",
-      "thread_depth": 0,
+      "thread_id": "thread-550c754b8442",
+      "thread_depth": 1,
       "month": "1998-11"
     },
     {
@@ -2003,12 +2003,12 @@
       "date": "1998-11-19T17:30:58Z",
       "subject": "Re: [S] Memory problem with S-PLUS 5.0?",
       "subject_clean": "[S] Memory problem with S-PLUS 5.0?",
-      "in_reply_to": null,
+      "in_reply_to": "<199811191700.MAA24938@cramer.DMS.UMontreal.CA>",
       "references": [],
       "body_plain": "> From: Pierre Duchesne <duchesne at DMS.UMontreal.CA>\n> \n> Here is a simple experiment that I tried with Splus 3.4\n> and Splus 5.0 on a Sun Ultra 60 with 768 M of RAM.\n> \n> fun <- function()\n> {\n>  apply( array(rnorm(9*10000),dim=c(3,3,10000)), 3, solve)\n> }\n> \n> It seems to me that it is a efficient way to invert 10000 3x3\n> matrix.\n> \n> If I look to the memory taken by Splus 3.4, it took less that 2 minutes\n> to do the work, and the memory taken never exceeded 20M.\n> \n> \n> However, if I use the same program under Splus 5.0, I was forced to\n> kill the job after 3 minutes since I was already taking more that 300 M.\n[...]\n> My function was quite simple, without any for, and was using an\n> efficient function like apply().  \n\nAh, that is 3.4-speak. Try listing apply, find it calls lapply and\nthen list lapply to see the for loop.\n\nPlease, S-PLUS 5.0 is not an `upgrade' it is a new system with a high\ndegree of backwards compatibility.  Do remember that many (most?) of\nthe efficiency tips you learnt in S-PLUS 3.x may be wrong or even\nharmful in 5.0.  I don't think any of us yet know enough about the\npossible tricks, but here I would try a for loop (actually I did try,\nbut my version of 5.0 gave me errors of `too many open files').\n\nMay I suggest that reporting simple things that do not work well in 5.0\nis not very helpful.  Reporting useful tricks would be very helpful.\n\nLet me repeat, Bill Venables has documented a useful series of\nexperiments in the Washington workshop notes, and let us take that level\nof experiment as known.\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "> From: Pierre Duchesne <duchesne at DMS.UMontreal.CA>\n> \n> Here is a simple experiment that I tried with Splus 3.4\n> and Splus 5.0 on a Sun Ultra 60 with 768 M of RAM.\n> \n> fun <- function()\n> {\n>  a",
-      "thread_id": "thread-4d2b8c09d939",
-      "thread_depth": 0,
+      "thread_id": "thread-612c6a07f1c2",
+      "thread_depth": 1,
       "month": "1998-11"
     },
     {
@@ -2167,12 +2167,12 @@
       "date": "1998-11-20T22:59:05Z",
       "subject": "[S] generalising regression smoothers",
       "subject_clean": "[S] generalising regression smoothers",
-      "in_reply_to": null,
+      "in_reply_to": "<199811191518.KAA65806@courrier.usherb.ca>",
       "references": [],
       "body_plain": "Subject: Re:[S] generalising regression smoothers\nAuthor:  mhall at rekihaku.ac.jp at NBS-Internet-Gateway\nDate:    11/20/98 07:58 AM\n\nYou might try looking at the LOCFIT macros from ATT (or is it BELL) Labs.\nLOCFIT is designed to use a nearest neighbor bandwidth or span, and can\nalso be set to use a fixed bandwidth.  I don't have their web site \nhandy but do a search on LOCFIT and Clive Loader and you should get a \nmanageable number of answers.\n\nBest, Mark Hall\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Subject: Re:[S] generalising regression smoothers\nAuthor:  mhall at rekihaku.ac.jp at NBS-Internet-Gateway\nDate:    11/20/98 07:58 AM\n\nYou might try looking at the LOCFIT macros from ATT (or is it BEL",
-      "thread_id": "thread-bc982c9b7bd4",
-      "thread_depth": 0,
+      "thread_id": "thread-01e8961a6077",
+      "thread_depth": 1,
       "month": "1998-11"
     },
     {
@@ -2411,12 +2411,12 @@
       "date": "1998-11-23T21:37:00Z",
       "subject": "[S] Generating Multivariate Cauchy",
       "subject_clean": "[S] Generating Multivariate Cauchy",
-      "in_reply_to": null,
+      "in_reply_to": "<Pine.GSO.4.05.9811231610370.14177-100000@gauss>",
       "references": [],
       "body_plain": "Gonzalo Mari (gmari at math.carleton.ca) asks how one may generate\na Multivariate Cauchy in Splus...\n\nThis is a special case of the multivariate t-distribution, which is\ndefined as a multivariate normal divided by the square root of an\nindependent scalar chi squared variate divided by its degrees of\nfreedom.\n\nIn S-Plus it seems best to generate such distributions directly\nfrom their definition.  Thus to generate a multivariate Cauchy\none might do something like:\n\nrnorm(n)/rnorm(1)       ## n is the dimension\n\nIf anyone knows better ways to deal with multivariate\nt-distributions, I would appreciate the information..\n\nAndrey Feuerverger / Statistics / U of Toronto / andrey at utstat.toronto.edu\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Gonzalo Mari (gmari at math.carleton.ca) asks how one may generate\na Multivariate Cauchy in Splus...\n\nThis is a special case of the multivariate t-distribution, which is\ndefined as a multivariate norm",
-      "thread_id": "thread-48aa3db0aa9d",
-      "thread_depth": 0,
+      "thread_id": "thread-75716e6ac5e2",
+      "thread_depth": 1,
       "month": "1998-11"
     },
     {
@@ -2427,12 +2427,12 @@
       "date": "1998-11-23T21:45:00Z",
       "subject": "[S] Generating Multivariate Cauchy",
       "subject_clean": "[S] Generating Multivariate Cauchy",
-      "in_reply_to": null,
+      "in_reply_to": "<Pine.GSO.4.05.9811231610370.14177-100000@gauss>",
       "references": [],
       "body_plain": "Oops!  Sorry about a small error in my posting.\nThe solution ``rnorm(n)/rnorm(1)'' assumes a particular\n`covariation' structure for the multivariate distribution.\nUsually the numerator needs to be linearly transformed\nto introduce the `covariation' desired.\n\nA.F.\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Oops!  Sorry about a small error in my posting.\nThe solution ``rnorm(n)/rnorm(1)'' assumes a particular\n`covariation' structure for the multivariate distribution.\nUsually the numerator needs to be lin",
-      "thread_id": "thread-217169736929",
-      "thread_depth": 0,
+      "thread_id": "thread-75716e6ac5e2",
+      "thread_depth": 1,
       "month": "1998-11"
     },
     {
@@ -2477,12 +2477,12 @@
       "date": "1998-11-24T16:48:43Z",
       "subject": "Re: [S] sammon() function question",
       "subject_clean": "[S] sammon() function question",
-      "in_reply_to": null,
+      "in_reply_to": "<199811241621.LAA69426@courrier.usherb.ca>",
       "references": [],
       "body_plain": "> Date: Tue, 24 Nov 1998 11:21:55 -0500\n> To: s-news at wubios.wustl.edu\n> From: Bill Shipley <bshipley at courrier.usherb.ca>\n> Subject: [S] sammon() function question\n> \n> The Venables & Ripley MASS library includes a function called sammon().\n> This function performs a nonlinear mapping of data from a higher dimensional\n> space into a smaller (eg. 2) dimensional space.  I give the reference for\n> this at the end of the posting.\n> My question concerns the relationship of this to non-metric multidimensional\n> scaling.  Both seem to do somewhat the same thing, but I don't know how\n> (exactly) they differ.  Is one superior to the other under certain conditions?\n> Any leads about the sammon algorithm, or its comparison to other methods, is\n> appreciated.\n\nRipley, B.D. (1996) Pattern Recognition and Neural Networks. CUP. Chapter 9.\n\nBriefly, Sammon tries to preserve short distances, the usual non-metric MDS\ntries to preserve the ordering of distances.  Sammon is usually much faster.\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "> Date: Tue, 24 Nov 1998 11:21:55 -0500\n> To: s-news at wubios.wustl.edu\n> From: Bill Shipley <bshipley at courrier.usherb.ca>\n> Subject: [S] sammon() function question\n> \n> The Venables & Ripley MASS",
-      "thread_id": "thread-a20f0b493db5",
-      "thread_depth": 0,
+      "thread_id": "thread-f70b5b9b4ba9",
+      "thread_depth": 1,
       "month": "1998-11"
     },
     {
@@ -2717,12 +2717,12 @@
       "date": "1998-11-29T05:45:30Z",
       "subject": "[S] EGARCH",
       "subject_clean": "[S] EGARCH",
-      "in_reply_to": null,
+      "in_reply_to": "<19981105080010.29612.rocketmail@send203.yahoomail.com>",
       "references": [],
       "body_plain": "Hi,\n\nDid anybody do model fitting using SPLUS?\n\nI want to prove that EGARCH models fit better than GARCH using stock\nreturns data in library (sp500,hp.s,ibm.s,ford.s,and merck.s).\n\nCan anybody help with the code and comments?\n\nThanks in advance.\n\n_________________________________________________________\nDO YOU YAHOO!?\nGet your free @yahoo.com address at http://mail.yahoo.com\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Hi,\n\nDid anybody do model fitting using SPLUS?\n\nI want to prove that EGARCH models fit better than GARCH using stock\nreturns data in library (sp500,hp.s,ibm.s,ford.s,and merck.s).\n\nCan anybody help wi",
-      "thread_id": "thread-cca86d81ae4c",
-      "thread_depth": 0,
+      "thread_id": "thread-0a32c760ebb2",
+      "thread_depth": 1,
       "month": "1998-11"
     },
     {
@@ -2733,12 +2733,12 @@
       "date": "1998-11-29T05:46:51Z",
       "subject": "[S] EGARCH",
       "subject_clean": "[S] EGARCH",
-      "in_reply_to": null,
+      "in_reply_to": "<19981105080010.29612.rocketmail@send203.yahoomail.com>",
       "references": [],
       "body_plain": "Hi,\n\nDid anybody do model fitting using SPLUS?\n\nI want to prove that EGARCH models fit better than GARCH using stock\nreturns data in library (sp500,hp.s,ibm.s,ford.s,and merck.s).\n\nCan anybody help with the code and comments?\n\nThanks in advance.\n\n_________________________________________________________\nDO YOU YAHOO!?\nGet your free @yahoo.com address at http://mail.yahoo.com\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Hi,\n\nDid anybody do model fitting using SPLUS?\n\nI want to prove that EGARCH models fit better than GARCH using stock\nreturns data in library (sp500,hp.s,ibm.s,ford.s,and merck.s).\n\nCan anybody help wi",
-      "thread_id": "thread-eef94e16cd63",
-      "thread_depth": 0,
+      "thread_id": "thread-0a32c760ebb2",
+      "thread_depth": 1,
       "month": "1998-11"
     },
     {
@@ -2749,12 +2749,12 @@
       "date": "1998-11-29T05:46:55Z",
       "subject": "[S] EGARCH",
       "subject_clean": "[S] EGARCH",
-      "in_reply_to": null,
+      "in_reply_to": "<19981105080010.29612.rocketmail@send203.yahoomail.com>",
       "references": [],
       "body_plain": "Hi,\n\nDid anybody do model fitting using SPLUS?\n\nI want to prove that EGARCH models fit better than GARCH using stock\nreturns data in library (sp500,hp.s,ibm.s,ford.s,and merck.s).\n\nCan anybody help with the code and comments?\n\nThanks in advance.\n\n_________________________________________________________\nDO YOU YAHOO!?\nGet your free @yahoo.com address at http://mail.yahoo.com\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Hi,\n\nDid anybody do model fitting using SPLUS?\n\nI want to prove that EGARCH models fit better than GARCH using stock\nreturns data in library (sp500,hp.s,ibm.s,ford.s,and merck.s).\n\nCan anybody help wi",
-      "thread_id": "thread-33752866af4f",
-      "thread_depth": 0,
+      "thread_id": "thread-0a32c760ebb2",
+      "thread_depth": 1,
       "month": "1998-11"
     },
     {
@@ -2959,12 +2959,12 @@
       "date": "1998-11-30T22:20:18Z",
       "subject": "Re: [S] a gui question...",
       "subject_clean": "[S] a gui question...",
-      "in_reply_to": null,
+      "in_reply_to": "<000601be1c99$7ad97c00$6c0535d1@a2a00232.direct.bconnected.net>",
       "references": [],
       "body_plain": "I'm using ver. 4.5 for Windows (sorry about that)...\n\nThanks for the reply, but I believe your reference applies\nto TRADITIONAL graphs, not EDITABLE graphs.\n\n>\n>You _may_ want the 'adj' argument to 'title'. Hard to say\nsince you\n>give neither platform nor version...\n>\n>\n>\n>\n>Robin Regnier writes:\n> > Hi all,\n> >\n> > I've written a function for creating some customized\n> > editable graphics and am stumped with the following\n> > problem...\n> >\n> > I want to center the \"MainTitle\" automatically over the\n> > length of the x-axis. The default setting centers it in\n> > relation to the width of the entire graph.  I know how\nto\n> > get the current xPosition for the \"MainTitle\" in focus\nand\n> > change it but I need to get at the size (length) of what\nthe\n> > current \"MainTitle\" is.\n> >\n> > Does anyone know this property name and/or where it is\n> > stored ?\n> >\n> > Thanks,\n> >\n> > Robin Regnier\n> > Central Limit Statistical Consulting\n> > RRegnier at CentralLimit.com\n> > http://www.CentralLimit.com\n> >\n>\n> ----------------------------------------------------------\n-------------\n> > This message was distributed by s-news at wubios.wustl.edu.\nTo unsubscribe\n> > send e-mail to s-news-request at wubios.wustl.edu with the\nBODY of the\n> > message:  unsubscribe s-news\n>-----------------------------------------------------------\n------------\n>This message was distributed by s-news at wubios.wustl.edu.\nTo unsubscribe\n>send e-mail to s-news-request at wubios.wustl.edu with the\nBODY of the\n>message:  unsubscribe s-news\n>\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "I'm using ver. 4.5 for Windows (sorry about that)...\n\nThanks for the reply, but I believe your reference applies\nto TRADITIONAL graphs, not EDITABLE graphs.\n\n>\n>You _may_ want the 'adj' argument to 't",
-      "thread_id": "thread-066a27c9461b",
-      "thread_depth": 0,
+      "thread_id": "thread-02c092920a61",
+      "thread_depth": 1,
       "month": "1998-11"
     }
   ],
@@ -3083,12 +3083,13 @@
     {
       "id": "thread-8cec9e62d050",
       "subject": "[S] model.frame()",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Adrian Baddeley"
+        "Adrian Baddeley",
+        "Prof Brian Ripley"
       ],
       "started": "1998-11-03T11:06:45Z",
-      "last_reply": "1998-11-03T11:06:45Z",
+      "last_reply": "1998-11-03T12:38:19Z",
       "root_message_id": "msg-8cec9e62d050"
     },
     {
@@ -3101,17 +3102,6 @@
       "started": "1998-11-03T12:14:09Z",
       "last_reply": "1998-11-03T12:14:09Z",
       "root_message_id": "msg-ecbf8b279c95"
-    },
-    {
-      "id": "thread-69a9f21e6629",
-      "subject": "[S] model.frame()",
-      "message_count": 1,
-      "participants": [
-        "Prof Brian Ripley"
-      ],
-      "started": "1998-11-03T12:38:19Z",
-      "last_reply": "1998-11-03T12:38:19Z",
-      "root_message_id": "msg-69a9f21e6629"
     },
     {
       "id": "thread-3b2c61791c88",
@@ -3171,12 +3161,12 @@
     {
       "id": "thread-0a32c760ebb2",
       "subject": "[S] EGARCH",
-      "message_count": 1,
+      "message_count": 4,
       "participants": [
         "Fouad Abbassi"
       ],
       "started": "1998-11-05T08:00:10Z",
-      "last_reply": "1998-11-05T08:00:10Z",
+      "last_reply": "1998-11-29T05:46:55Z",
       "root_message_id": "msg-0a32c760ebb2"
     },
     {
@@ -3193,12 +3183,13 @@
     {
       "id": "thread-9639331893ce",
       "subject": "[S] Tests for Normality",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "David J Cummins",
         "sinclair, andrew (MIP London)"
       ],
       "started": "1998-11-05T18:48:00Z",
-      "last_reply": "1998-11-05T18:48:00Z",
+      "last_reply": "1998-11-06T01:26:29Z",
       "root_message_id": "msg-9639331893ce"
     },
     {
@@ -3246,17 +3237,6 @@
       "root_message_id": "msg-0e34e744556a"
     },
     {
-      "id": "thread-e46d9980bae4",
-      "subject": "[S] Tests for Normality",
-      "message_count": 1,
-      "participants": [
-        "David J Cummins"
-      ],
-      "started": "1998-11-06T01:26:29Z",
-      "last_reply": "1998-11-06T01:26:29Z",
-      "root_message_id": "msg-e46d9980bae4"
-    },
-    {
       "id": "thread-d4f9f0327195",
       "subject": "[S] Data import of long character variables",
       "message_count": 1,
@@ -3281,12 +3261,13 @@
     {
       "id": "thread-4122fde7936d",
       "subject": "[S] importing SAS datasets",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Frank E Harrell Jr",
         "atakan yalcin"
       ],
       "started": "1998-11-08T20:32:32Z",
-      "last_reply": "1998-11-08T20:32:32Z",
+      "last_reply": "1998-11-09T14:26:29Z",
       "root_message_id": "msg-4122fde7936d"
     },
     {
@@ -3299,17 +3280,6 @@
       "started": "1998-11-09T04:22:54Z",
       "last_reply": "1998-11-09T04:22:54Z",
       "root_message_id": "msg-c569d626468a"
-    },
-    {
-      "id": "thread-f93c3d04a4c3",
-      "subject": "[S] importing SAS datasets",
-      "message_count": 1,
-      "participants": [
-        "Frank E Harrell Jr"
-      ],
-      "started": "1998-11-09T14:26:29Z",
-      "last_reply": "1998-11-09T14:26:29Z",
-      "root_message_id": "msg-f93c3d04a4c3"
     },
     {
       "id": "thread-9ca51d39f078",
@@ -3515,10 +3485,12 @@
     {
       "id": "thread-8a7d57586599",
       "subject": "[S] Norm of a Gaussian r.v.",
-      "message_count": 2,
+      "message_count": 4,
       "participants": [
+        "Charles C. Berry",
         "Juergen Dippon",
-        "Robert Davies"
+        "Robert Davies",
+        "matthew.a.kurbat at ncmi.com"
       ],
       "started": "1998-11-12T10:31:19Z",
       "last_reply": "1998-11-12T19:05:41Z",
@@ -3536,17 +3508,6 @@
       "root_message_id": "msg-e3020d80e583"
     },
     {
-      "id": "thread-fbb519b81442",
-      "subject": "[S] Norm of a Gaussian r.v.",
-      "message_count": 1,
-      "participants": [
-        "matthew.a.kurbat at ncmi.com"
-      ],
-      "started": "1998-11-12T14:14:54Z",
-      "last_reply": "1998-11-12T14:14:54Z",
-      "root_message_id": "msg-fbb519b81442"
-    },
-    {
       "id": "thread-a4f0d40b65aa",
       "subject": "[S] \"-\" doesn't work in \"tree\" formula",
       "message_count": 2,
@@ -3559,96 +3520,38 @@
       "root_message_id": "msg-a4f0d40b65aa"
     },
     {
-      "id": "thread-fca178762108",
-      "subject": "[S] Norm of a Gaussian r.v.",
-      "message_count": 1,
-      "participants": [
-        "Charles C. Berry"
-      ],
-      "started": "1998-11-12T18:10:30Z",
-      "last_reply": "1998-11-12T18:10:30Z",
-      "root_message_id": "msg-fca178762108"
-    },
-    {
       "id": "thread-2eba7d4558d3",
       "subject": "[S] Pie diagrams anyone?",
-      "message_count": 4,
+      "message_count": 10,
       "participants": [
+        "Alan M. Gross",
         "Bill Venables",
+        "Charles Roosen",
+        "Edward C Malthouse",
         "Edwin Romanowicz",
+        "Gunter, Bert",
         "Pat Burns",
+        "Peter Bouman",
+        "Z. Todd Taylor",
         "john at research.ed.asu.edu"
       ],
       "started": "1998-11-12T23:12:44Z",
-      "last_reply": "1998-11-14T19:47:07Z",
+      "last_reply": "1998-11-15T20:46:10Z",
       "root_message_id": "msg-2eba7d4558d3"
-    },
-    {
-      "id": "thread-d890963e28b7",
-      "subject": "[S] Pie diagrams anyone?",
-      "message_count": 1,
-      "participants": [
-        "Charles Roosen"
-      ],
-      "started": "1998-11-13T00:22:46Z",
-      "last_reply": "1998-11-13T00:22:46Z",
-      "root_message_id": "msg-d890963e28b7"
-    },
-    {
-      "id": "thread-c3567cc2f2df",
-      "subject": "[S] Pie diagrams anyone?",
-      "message_count": 1,
-      "participants": [
-        "Gunter, Bert"
-      ],
-      "started": "1998-11-13T13:14:17Z",
-      "last_reply": "1998-11-13T13:14:17Z",
-      "root_message_id": "msg-c3567cc2f2df"
-    },
-    {
-      "id": "thread-a04ba382d66e",
-      "subject": "[S] Pie diagrams anyone?",
-      "message_count": 1,
-      "participants": [
-        "Peter Bouman"
-      ],
-      "started": "1998-11-13T13:39:15Z",
-      "last_reply": "1998-11-13T13:39:15Z",
-      "root_message_id": "msg-a04ba382d66e"
     },
     {
       "id": "thread-1eeab39cad39",
       "subject": "[S] Pie Diagrams",
-      "message_count": 2,
+      "message_count": 4,
       "participants": [
         "Garrett, Robert",
-        "Jim Hodges"
-      ],
-      "started": "1998-11-13T14:09:26Z",
-      "last_reply": "1998-11-13T14:30:22Z",
-      "root_message_id": "msg-1eeab39cad39"
-    },
-    {
-      "id": "thread-56e497aed3bd",
-      "subject": "[S] Pie Diagrams",
-      "message_count": 1,
-      "participants": [
-        "Gunter, Bert"
-      ],
-      "started": "1998-11-13T14:40:00Z",
-      "last_reply": "1998-11-13T14:40:00Z",
-      "root_message_id": "msg-56e497aed3bd"
-    },
-    {
-      "id": "thread-60c761a8e0ea",
-      "subject": "[S] Pie Diagrams",
-      "message_count": 1,
-      "participants": [
+        "Gunter, Bert",
+        "Jim Hodges",
         "Peter Bouman"
       ],
-      "started": "1998-11-13T15:30:35Z",
+      "started": "1998-11-13T14:09:26Z",
       "last_reply": "1998-11-13T15:30:35Z",
-      "root_message_id": "msg-60c761a8e0ea"
+      "root_message_id": "msg-1eeab39cad39"
     },
     {
       "id": "thread-b6e5d893228d",
@@ -3672,17 +3575,6 @@
       "started": "1998-11-13T15:53:40Z",
       "last_reply": "1998-11-13T15:53:40Z",
       "root_message_id": "msg-7deb16adaac6"
-    },
-    {
-      "id": "thread-d87417637827",
-      "subject": "[S] Pie diagrams anyone?",
-      "message_count": 1,
-      "participants": [
-        "Z. Todd Taylor"
-      ],
-      "started": "1998-11-13T16:02:16Z",
-      "last_reply": "1998-11-13T16:02:16Z",
-      "root_message_id": "msg-d87417637827"
     },
     {
       "id": "thread-c0844cc2e815",
@@ -3797,36 +3689,15 @@
     {
       "id": "thread-297514f90770",
       "subject": "[S] Postscript printing in Windows",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Anne York",
+        "Frank E Harrell Jr",
         "Prof Brian D Ripley"
       ],
       "started": "1998-11-13T20:14:29Z",
       "last_reply": "1998-11-13T21:26:56Z",
       "root_message_id": "msg-297514f90770"
-    },
-    {
-      "id": "thread-b5c5051bf784",
-      "subject": "[S] Postscript printing in Windows",
-      "message_count": 1,
-      "participants": [
-        "Frank E Harrell Jr"
-      ],
-      "started": "1998-11-13T20:37:23Z",
-      "last_reply": "1998-11-13T20:37:23Z",
-      "root_message_id": "msg-b5c5051bf784"
-    },
-    {
-      "id": "thread-f5b52d5f216a",
-      "subject": "[S] Pie diagrams anyone?",
-      "message_count": 1,
-      "participants": [
-        "Alan M. Gross"
-      ],
-      "started": "1998-11-13T20:56:59Z",
-      "last_reply": "1998-11-13T20:56:59Z",
-      "root_message_id": "msg-f5b52d5f216a"
     },
     {
       "id": "thread-e47c96e4a3ee",
@@ -3838,17 +3709,6 @@
       "started": "1998-11-14T02:55:41Z",
       "last_reply": "1998-11-14T02:55:41Z",
       "root_message_id": "msg-e47c96e4a3ee"
-    },
-    {
-      "id": "thread-fb6338d4a905",
-      "subject": "[S] Pie diagrams anyone?",
-      "message_count": 1,
-      "participants": [
-        "Edward C Malthouse"
-      ],
-      "started": "1998-11-15T20:46:10Z",
-      "last_reply": "1998-11-15T20:46:10Z",
-      "root_message_id": "msg-fb6338d4a905"
     },
     {
       "id": "thread-d85d93c181a4",
@@ -4024,12 +3884,13 @@
     {
       "id": "thread-1f2c961e1d91",
       "subject": "[S] Converting to Splus 5 - is convertOldLibrary necessary?",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Carl Schwarz"
+        "Carl Schwarz",
+        "Z. Todd Taylor"
       ],
       "started": "1998-11-19T00:18:06Z",
-      "last_reply": "1998-11-19T00:18:06Z",
+      "last_reply": "1998-11-19T15:42:57Z",
       "root_message_id": "msg-1f2c961e1d91"
     },
     {
@@ -4057,24 +3918,14 @@
     {
       "id": "thread-01e8961a6077",
       "subject": "[S] generalising regression smoothers",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Bill Shipley"
+        "Bill Shipley",
+        "mhall at rekihaku.ac.jp"
       ],
       "started": "1998-11-19T15:18:06Z",
-      "last_reply": "1998-11-19T15:18:06Z",
+      "last_reply": "1998-11-20T22:59:05Z",
       "root_message_id": "msg-01e8961a6077"
-    },
-    {
-      "id": "thread-ef8ef6f9983d",
-      "subject": "[S] Converting to Splus 5 - is convertOldLibrary necessary?",
-      "message_count": 1,
-      "participants": [
-        "Z. Todd Taylor"
-      ],
-      "started": "1998-11-19T15:42:57Z",
-      "last_reply": "1998-11-19T15:42:57Z",
-      "root_message_id": "msg-ef8ef6f9983d"
     },
     {
       "id": "thread-f27e96c6fbff",
@@ -4090,46 +3941,26 @@
     {
       "id": "thread-550c754b8442",
       "subject": "[S] Problem with the OPTIMIZE function",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Marianne Maehle-Schmidt"
+        "Marianne Maehle-Schmidt",
+        "Prof Brian Ripley"
       ],
       "started": "1998-11-19T16:59:16Z",
-      "last_reply": "1998-11-19T16:59:16Z",
+      "last_reply": "1998-11-19T17:09:30Z",
       "root_message_id": "msg-550c754b8442"
     },
     {
       "id": "thread-612c6a07f1c2",
       "subject": "[S] Memory problem with S-PLUS 5.0?",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Pierre Duchesne"
+        "Pierre Duchesne",
+        "Prof Brian Ripley"
       ],
       "started": "1998-11-19T16:59:59Z",
-      "last_reply": "1998-11-19T16:59:59Z",
-      "root_message_id": "msg-612c6a07f1c2"
-    },
-    {
-      "id": "thread-b6c58a901b6c",
-      "subject": "[S] Problem with the OPTIMIZE function",
-      "message_count": 1,
-      "participants": [
-        "Prof Brian Ripley"
-      ],
-      "started": "1998-11-19T17:09:30Z",
-      "last_reply": "1998-11-19T17:09:30Z",
-      "root_message_id": "msg-b6c58a901b6c"
-    },
-    {
-      "id": "thread-4d2b8c09d939",
-      "subject": "[S] Memory problem with S-PLUS 5.0?",
-      "message_count": 1,
-      "participants": [
-        "Prof Brian Ripley"
-      ],
-      "started": "1998-11-19T17:30:58Z",
       "last_reply": "1998-11-19T17:30:58Z",
-      "root_message_id": "msg-4d2b8c09d939"
+      "root_message_id": "msg-612c6a07f1c2"
     },
     {
       "id": "thread-bf56492a8871",
@@ -4209,17 +4040,6 @@
       "started": "1998-11-20T19:21:36Z",
       "last_reply": "1998-11-20T19:21:36Z",
       "root_message_id": "msg-67630dcca27a"
-    },
-    {
-      "id": "thread-bc982c9b7bd4",
-      "subject": "[S] generalising regression smoothers",
-      "message_count": 1,
-      "participants": [
-        "mhall at rekihaku.ac.jp"
-      ],
-      "started": "1998-11-20T22:59:05Z",
-      "last_reply": "1998-11-20T22:59:05Z",
-      "root_message_id": "msg-bc982c9b7bd4"
     },
     {
       "id": "thread-9d5339daaccc",
@@ -4348,57 +4168,26 @@
     {
       "id": "thread-75716e6ac5e2",
       "subject": "[S] Generating Multivariate Cauchy",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
-        "Gonzalo Mari"
+        "Gonzalo Mari",
+        "andrey at utstat.toronto.edu"
       ],
       "started": "1998-11-23T21:12:39Z",
-      "last_reply": "1998-11-23T21:12:39Z",
-      "root_message_id": "msg-75716e6ac5e2"
-    },
-    {
-      "id": "thread-48aa3db0aa9d",
-      "subject": "[S] Generating Multivariate Cauchy",
-      "message_count": 1,
-      "participants": [
-        "andrey at utstat.toronto.edu"
-      ],
-      "started": "1998-11-23T21:37:00Z",
-      "last_reply": "1998-11-23T21:37:00Z",
-      "root_message_id": "msg-48aa3db0aa9d"
-    },
-    {
-      "id": "thread-217169736929",
-      "subject": "[S] Generating Multivariate Cauchy",
-      "message_count": 1,
-      "participants": [
-        "andrey at utstat.toronto.edu"
-      ],
-      "started": "1998-11-23T21:45:00Z",
       "last_reply": "1998-11-23T21:45:00Z",
-      "root_message_id": "msg-217169736929"
+      "root_message_id": "msg-75716e6ac5e2"
     },
     {
       "id": "thread-f70b5b9b4ba9",
       "subject": "[S] sammon() function question",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Bill Shipley"
-      ],
-      "started": "1998-11-24T16:21:55Z",
-      "last_reply": "1998-11-24T16:21:55Z",
-      "root_message_id": "msg-f70b5b9b4ba9"
-    },
-    {
-      "id": "thread-a20f0b493db5",
-      "subject": "[S] sammon() function question",
-      "message_count": 1,
-      "participants": [
+        "Bill Shipley",
         "Prof Brian Ripley"
       ],
-      "started": "1998-11-24T16:48:43Z",
+      "started": "1998-11-24T16:21:55Z",
       "last_reply": "1998-11-24T16:48:43Z",
-      "root_message_id": "msg-a20f0b493db5"
+      "root_message_id": "msg-f70b5b9b4ba9"
     },
     {
       "id": "thread-820cfc312ed5",
@@ -4555,39 +4344,6 @@
       "root_message_id": "msg-4685700bc3e6"
     },
     {
-      "id": "thread-cca86d81ae4c",
-      "subject": "[S] EGARCH",
-      "message_count": 1,
-      "participants": [
-        "Fouad Abbassi"
-      ],
-      "started": "1998-11-29T05:45:30Z",
-      "last_reply": "1998-11-29T05:45:30Z",
-      "root_message_id": "msg-cca86d81ae4c"
-    },
-    {
-      "id": "thread-eef94e16cd63",
-      "subject": "[S] EGARCH",
-      "message_count": 1,
-      "participants": [
-        "Fouad Abbassi"
-      ],
-      "started": "1998-11-29T05:46:51Z",
-      "last_reply": "1998-11-29T05:46:51Z",
-      "root_message_id": "msg-eef94e16cd63"
-    },
-    {
-      "id": "thread-33752866af4f",
-      "subject": "[S] EGARCH",
-      "message_count": 1,
-      "participants": [
-        "Fouad Abbassi"
-      ],
-      "started": "1998-11-29T05:46:55Z",
-      "last_reply": "1998-11-29T05:46:55Z",
-      "root_message_id": "msg-33752866af4f"
-    },
-    {
       "id": "thread-410734af2d48",
       "subject": "[S] Help filtering out junk/smut email,",
       "message_count": 1,
@@ -4667,13 +4423,13 @@
     {
       "id": "thread-02c092920a61",
       "subject": "[S] a gui question...",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Robin Regnier",
         "Shawn Boles"
       ],
       "started": "1998-11-30T19:39:37Z",
-      "last_reply": "1998-11-30T21:18:37Z",
+      "last_reply": "1998-11-30T22:20:18Z",
       "root_message_id": "msg-02c092920a61"
     },
     {
@@ -4708,17 +4464,6 @@
       "started": "1998-11-30T21:59:36Z",
       "last_reply": "1998-11-30T21:59:36Z",
       "root_message_id": "msg-c391762594b7"
-    },
-    {
-      "id": "thread-066a27c9461b",
-      "subject": "[S] a gui question...",
-      "message_count": 1,
-      "participants": [
-        "Robin Regnier"
-      ],
-      "started": "1998-11-30T22:20:18Z",
-      "last_reply": "1998-11-30T22:20:18Z",
-      "root_message_id": "msg-066a27c9461b"
     }
   ]
 }

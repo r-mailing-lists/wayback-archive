@@ -27,12 +27,12 @@
       "date": "1998-10-01T06:03:58Z",
       "subject": "Re: [S] summary, df in smooths",
       "subject_clean": "[S] summary, df in smooths",
-      "in_reply_to": null,
+      "in_reply_to": "<3.0.32.19981001150314.00725a84@eduserv.its.unimelb.edu.au>",
       "references": [],
       "body_plain": "Jane Elith <j.elith at botany.unimelb.edu.au>, in her summary, quoted\n> ####Henrik Aalborg-Nielsen: \n> \n> I think I would use a CV criterion and use smooth.spline() directly,\n> e.g.\n> \n>       CV <- rep(NA,50) # Or whatever max you tkink is appropiate\n>       for(df in 2:50) CV[df] <- smooth.spline(x=x, y=y, df=df, cv=T)$cv.crit\n>       plot(1:50,CV,xlab=\"df\")\n> \n> And chose df to minimize CV.  For \"automatic\" handling of future data\n> sets \"of the same kind\" you may just want to use the same df.\n> \n> NOTE:  Hastie & Tibshirani (1990) has a section on automatic selection\n> of smoothing parameters (section 3.4) in their book 'Generalized\n> Additive Models' (Chapman & Hall).  I think one of the messages is\n> that one should be carefull about minimizing CV in that the optimum is\n> very flat.\n\nI'd be interested to get comments on whether an approach that seems to\nwork well in tree-based regression might have application here also.\nI've been experimenting with the Atkinson & Therneau RPART library,\nwhich one can get from Statlib.  \n\nThey recommend marking any cv \"error\" (\"risk\") within one SE of the\nachieved minimum cv error as being equivalent to the minimum.  Then\nthe simplest model is chosen from among all those so tied.  See\nsection 4.2, page 13, of the Therneau & Atkinson document (to be\ndistinguished from the Atkinson & Therneau document) which accompanies\nthe library.  This approach, say Therneau and Atkinson, has proved\nreliable in screening out pure noise variables which have been\ninserted into the data in Monte Carlo trials.  My experience has been\nthat the method very consistently chooses the same size of model.  One\nconclusion is that tree-based models do not work very well on the\nrather small data sets that are used as examples in the S-PLUS4 \"Guide\nto Statistics\"!\n\nI wonder whether this approach has wider application.  It relies,\nof course, on getting an SE estimate for each cv error estimate.\n\nJohn Maindonald.\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Jane Elith <j.elith at botany.unimelb.edu.au>, in her summary, quoted\n> ####Henrik Aalborg-Nielsen: \n> \n> I think I would use a CV criterion and use smooth.spline() directly,\n> e.g.\n> \n>       CV <- r",
-      "thread_id": "thread-c0cda30eb467",
-      "thread_depth": 0,
+      "thread_id": "thread-8c364c2e1965",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -49,8 +49,8 @@
       ],
       "body_plain": "On Thu, 1 Oct 1998, John Maindonald wrote:\n\n> I'd be interested to get comments on whether an approach that seems to\n> work well in tree-based regression might have application here also.\n> I've been experimenting with the Atkinson & Therneau RPART library,\n> which one can get from Statlib.  \n> \n> They recommend marking any cv \"error\" (\"risk\") within one SE of the\n> achieved minimum cv error as being equivalent to the minimum.  Then\n> the simplest model is chosen from among all those so tied.  See\n\nThis `1-SE rule' goes back to at least Breiman, Friedman, Olshen & Stone\n(1984), so there has been a lot of experience with it. Trees are a rather\nparticular problem, with lots of discrete choices, and fit criterion with\nwhich this is used (the error rate) also has rather unusual properties.\n\nOur experience in larger problems is that choosing any minimum (there can\nbe several) is usually better for prediction than the 1-SE rule, even in\nthe original context.  For explanation, the 1-SE rule is a good idea.\nHowever, with a different criterion (for example, for survival trees) the\n1-SE rule does not work well even for explanation, choosing an excessively\nsimple tree.\n\nYes, the minimum for CV in smooth.spline can be very flat: more seriously\nthe curve of the cv-ed criterion can have multiple local minima a long way\napart.  Curve smoothing problems can have more than one plausible degree of\nsmoothing adn which one prefers will depend on the purpose.\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "On Thu, 1 Oct 1998, John Maindonald wrote:\n\n> I'd be interested to get comments on whether an approach that seems to\n> work well in tree-based regression might have application here also.\n> I've been ",
-      "thread_id": "thread-c0cda30eb467",
-      "thread_depth": 1,
+      "thread_id": "thread-8c364c2e1965",
+      "thread_depth": 2,
       "month": "1998-10"
     },
     {
@@ -77,12 +77,12 @@
       "date": "1998-10-01T13:20:13Z",
       "subject": "Re: [S] Proportional odds model",
       "subject_clean": "[S] Proportional odds model",
-      "in_reply_to": null,
+      "in_reply_to": "<Pine.GSO.3.95-960729.981001122503.16482C-100000@finan.ncl.ac.uk>",
       "references": [],
       "body_plain": "The proportional odds model is due to Walker & Duncan (1967 Biometrika) \nalthough there are other relevant papers dating back to the\n1930s.  You can fit this model with the lrm function in the Design library (see \nweb site below or statlib).  The discrete\nproportional hazards model is the continuation ratio ordinal logistic model, \nwhich can also be fit using lrm.  See my article in\nStatistics in Medicine, April 1998.  Note that Design requires the Hmisc \nlibrary also.\n-------------------------------------------------------------------------------------------\nFrank E Harrell Jr\nProfessor of Biostatistics and Statistics\nDivision of Biostatistics and Epidemiology\nDepartment of Health Evaluation Sciences\nUniversity of Virginia School of Medicine\nhesweb1.med.virginia.edu/biostatistics.html\n\n-----Original Message-----\nFrom: Arisman Adnan <Arisman.Adnan at newcastle.ac.uk>\nTo: s-news at wubios.wustl.edu <s-news at wubios.wustl.edu>\nDate: Thursday, October 01, 1998 7:41 AM\nSubject: [S] Proportional odds model\n\n>\n>Dear all,\n>\n>Does anyone know an available function in Splus for ordinal logistic\n>regression using:\n>             proportional odds model\n>             proportional hazard model\n>(McCullagh, 1980)\n>\n>I am using Splus Version 3.4 Release 1 for DEC alpha, unix.\n>\n>Thank you!\n>\n>Sincerely,\n>Aris,---\n>Postgraduate Student\n>Univ. of Newcastle\n>\n>-----------------------------------------------------------------------\n>This message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\n>send e-mail to s-news-request at wubios.wustl.edu with the BODY of the\n>message:  unsubscribe s-news\n>\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "The proportional odds model is due to Walker & Duncan (1967 Biometrika) \nalthough there are other relevant papers dating back to the\n1930s.  You can fit this model with the lrm function in the Design ",
-      "thread_id": "thread-815fbdb81248",
-      "thread_depth": 0,
+      "thread_id": "thread-c2a81c8dacec",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -93,12 +93,12 @@
       "date": "1998-10-01T13:22:07Z",
       "subject": "Re: [S] summary, df in smooths",
       "subject_clean": "[S] summary, df in smooths",
-      "in_reply_to": null,
+      "in_reply_to": "<3.0.32.19981001150314.00725a84@eduserv.its.unimelb.edu.au>",
       "references": [],
       "body_plain": "Regarding tree models, an excellent article is \n\n@Article{ye98mea,\n  author =    {Ye, Jianming},\n  title =    {On measuring and correcting the effects of data\n                  mining and model selection},\n  journal =   JASA,\n  year =    1998,\n  volume =   93,\n  pages =   {120-131},\n  annote =   {generalized degrees of freedom;GDF;effective degrees\n                  of freedom;data mining;model selection;model\n                  uncertainty;overfitting;nonparametric\n                  regression;CART;simulation setup}\n}\n\nYe shows how to estimate the effective d.f. given the excessive\nnumber of comparisons used to form trees.\n-------------------------------------------------------------------------------------------\nFrank E Harrell Jr\nProfessor of Biostatistics and Statistics\nDivision of Biostatistics and Epidemiology\nDepartment of Health Evaluation Sciences\nUniversity of Virginia School of Medicine\nhesweb1.med.virginia.edu/biostatistics.html\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Regarding tree models, an excellent article is \n\n@Article{ye98mea,\n  author =    {Ye, Jianming},\n  title =    {On measuring and correcting the effects of data\n                  mining and model select",
-      "thread_id": "thread-425902f892b5",
-      "thread_depth": 0,
+      "thread_id": "thread-8c364c2e1965",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -303,12 +303,12 @@
       "date": "1998-10-02T23:41:24Z",
       "subject": "Re: [S] importing S-plus graphs into Microsoft Word",
       "subject_clean": "[S] importing S-plus graphs into Microsoft Word",
-      "in_reply_to": null,
+      "in_reply_to": "<9157866FB6C5D111A19600805FA7AD19EFADA1@groexmbcr04bck.pfizer.com>",
       "references": [],
       "body_plain": "Hello Chris,\n\nNo big deal.\n\n1. In S-PLUS, left button click on the graphic you want to copy and\nthen enter Control-C.\n\n2.  In WORD, left button click on the destination location and then\nenter Control-V.  Next, right button click on the graph in WORD to\nobtain a drop-down menu of tools you can use to modify the \nsize and location of the graph.  Use of the tools is somewhat\ntricky and requires practice.\n\n                    Shel at k9ape.com\n\n-----Original Message-----\nFrom: Stein, Christopher D <christopher_d_stein at groton.pfizer.com>\nTo: s-news at wubios.wustl.edu <s-news at wubios.wustl.edu>\nCc: DuBord, Christopher J <christopher_j_dubord at groton.pfizer.com>\nDate: Friday, October 02, 1998 3:49 PM\nSubject: [S] importing S-plus graphs into Microsoft Word\n\n>All -\n>\n>Can someone please enlighten an S-Plus newbie as to the best way to move\n>S-Plus graphs into Word?\n>\n>TIA,\n>\n>Chris Stein\n>-----------------------------------------------------------------------\n>This message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\n>send e-mail to s-news-request at wubios.wustl.edu with the BODY of the\n>message:  unsubscribe s-news\n>\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Hello Chris,\n\nNo big deal.\n\n1. In S-PLUS, left button click on the graphic you want to copy and\nthen enter Control-C.\n\n2.  In WORD, left button click on the destination location and then\nenter Control",
-      "thread_id": "thread-2bb64f3c0363",
-      "thread_depth": 0,
+      "thread_id": "thread-6143bf203163",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -419,12 +419,12 @@
       "date": "1998-10-04T05:49:36Z",
       "subject": "Re: [S] several questions",
       "subject_clean": "[S] several questions",
-      "in_reply_to": null,
+      "in_reply_to": "<2469e171.3616d47a@aol.com>",
       "references": [],
       "body_plain": "Suzie:\n\nNotw the difference between.\n> -2:3\n[1] -2 -1  0  1  2  3\n\nand\n\n> -(2:3)\n[1] -2 -3\n\nThe latter is what you want.\n\nDavid\n\nAt 09:50 PM 10/3/98 EDT, you wrote:\n>I'm not sure how to modify a data frame object so that I can delete columns of\n>data which are not necessary next to each other.\n>\n>Suppose I have 6 columns - Y LY  SY  X1 X2 X3 X4 in a data set called SUSAN\n>\n>where LY = log(Y)\n>and SY = sqrt(Y).\n>\n>Suppose I have a function called stuff and I want to include Y and all the X\n>columns but exclude LY and SY. \n>\n>>stuff(Susan[,-2:3], Susan[,1])\n>\n>isn't working. \n>-----------------------------------------------------------------------\n>This message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\n>send e-mail to s-news-request at wubios.wustl.edu with the BODY of the\n>message:  unsubscribe s-news\n>\nDavid L. Favin\n221 Queens Dr. S.\nLittle Silver NJ 07739\ndavid.favinXXX at worldnet.att.net (Remove XXX to send e-mail)\n732-741-6439\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Suzie:\n\nNotw the difference between.\n> -2:3\n[1] -2 -1  0  1  2  3\n\nand\n\n> -(2:3)\n[1] -2 -3\n\nThe latter is what you want.\n\nDavid\n\nAt 09:50 PM 10/3/98 EDT, you wrote:\n>I'm not sure how to modify a data ",
-      "thread_id": "thread-d960160e1a02",
-      "thread_depth": 0,
+      "thread_id": "thread-fd1398f5a4ea",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -435,12 +435,12 @@
       "date": "1998-10-04T05:52:32Z",
       "subject": "Re: [S] several questions",
       "subject_clean": "[S] several questions",
-      "in_reply_to": null,
+      "in_reply_to": "<2469e171.3616d47a@aol.com>",
       "references": [],
       "body_plain": "Suzie:\n\nNotw the difference between.\n> -2:3\n[1] -2 -1  0  1  2  3\n\nand\n\n> -(2:3)\n[1] -2 -3\n\nThe latter is what you want.\n\nDavid\n\nAt 09:50 PM 10/3/98 EDT, you wrote:\n>I'm not sure how to modify a data frame object so that I can delete columns of\n>data which are not necessary next to each other.\n>\n>Suppose I have 6 columns - Y LY  SY  X1 X2 X3 X4 in a data set called SUSAN\n>\n>where LY = log(Y)\n>and SY = sqrt(Y).\n>\n>Suppose I have a function called stuff and I want to include Y and all the X\n>columns but exclude LY and SY. \n>\n>>stuff(Susan[,-2:3], Susan[,1])\n>\n>isn't working. \n>-----------------------------------------------------------------------\n>This message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\n>send e-mail to s-news-request at wubios.wustl.edu with the BODY of the\n>message:  unsubscribe s-news\n>\nDavid L. Favin\n221 Queens Dr. S.\nLittle Silver NJ 07739\ndavid.favinXXX at worldnet.att.net (Remove XXX to send e-mail)\n732-741-6439\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Suzie:\n\nNotw the difference between.\n> -2:3\n[1] -2 -1  0  1  2  3\n\nand\n\n> -(2:3)\n[1] -2 -3\n\nThe latter is what you want.\n\nDavid\n\nAt 09:50 PM 10/3/98 EDT, you wrote:\n>I'm not sure how to modify a data ",
-      "thread_id": "thread-0e0d09a4a606",
-      "thread_depth": 0,
+      "thread_id": "thread-fd1398f5a4ea",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -725,12 +725,12 @@
       "date": "1998-10-08T01:07:25Z",
       "subject": "RE: [S] NNET question",
       "subject_clean": "[S] NNET question",
-      "in_reply_to": null,
+      "in_reply_to": "<19981007192909.3041.rocketmail@send1e.yahoomail.com>",
       "references": [],
       "body_plain": "I am facing a similar problem. I would appreciate if you could forward me\nthe  responses you received to the following question.\n\nArun Bhattacharyya\nMarketing Sciences\nAT&T, \n\n> ----------\n> From:         Thomas J. Downing[SMTP:t_downing at yahoo.com]\n> Sent:         Wednesday, October 07, 1998 3:29 PM\n> To:   s-news at wubios.wustl.edu\n> Subject:      [S] NNET question\n> \n>       \n>        I am utilizing V & R's nnet library in an attempt to better \n> understand neural networks.  Although I can make predictions using \n> predict.nnet, I do not think I quite understand how predictions are \n> derived from the weights given in the output.  For example, I have \n> fit the following 2-2-1 network :\n> \n>   > z.nnet <- nnet(z ~ x + y,data = ds,size = 2, decay = .007)\n> # weights:  9\n> initial  value 164.278441 \n> iter  10 value 99.745092\n>     .\n> iter 100 value 97.279519\n> final  value 97.279519 \n> stopped after 100 iterations\n> \n>   > summary(z.nnet)\n> a 2-2-1 network with 9 weights\n> options were - decay=0.007\n>  b->h1 i1->h1 i2->h1 \n>   2.16  0.36   3.81 \n>  b->h2 i1->h2 i2->h2 \n>   5.89  4.91  -2.00 \n>   b->o h1->o h2->o \n>   3.46 -5.85 -8.83\n> \n> \n> Given this information, I (naively?) assumed that the forecasting \n> equation would be given by:\n> \n>       Z(i)  =  3.46     -   5.85 * h1   -    8.83 * h2 \n> \n> where:\n>      h1    =  2.16      +    .36 * x    +    3.81 * y \n>      h2    =  5.89      +   4.91 * x    -    2    * y\n> \n> However, when I use these formulas for prediction, I get very different \n> (and obviously very wrong) predictions than those given by\n> predict.nnet. \n> What am I doing wrong? Thank you in advance for any help with this\n> problem!\n> \n> \n> \n> \n> ==\n> -\n> \n> Thomas J. Downing\n> Research Assistant\n> Quantitative Research\n> Value Line, Inc.\n> \n> _________________________________________________________\n> DO YOU YAHOO!?\n> Get your free @yahoo.com address at http://mail.yahoo.com\n> \n> -----------------------------------------------------------------------\n> This message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\n> send e-mail to s-news-request at wubios.wustl.edu with the BODY of the\n> message:  unsubscribe s-news\n> \n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "I am facing a similar problem. I would appreciate if you could forward me\nthe  responses you received to the following question.\n\nArun Bhattacharyya\nMarketing Sciences\nAT&T, \n\n> ----------\n> From:    ",
-      "thread_id": "thread-19464f2b928c",
-      "thread_depth": 0,
+      "thread_id": "thread-5a6218e9a862",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -1095,12 +1095,12 @@
       "date": "1998-10-13T08:27:10Z",
       "subject": "[S] Job vacancy",
       "subject_clean": "[S] Job vacancy",
-      "in_reply_to": null,
+      "in_reply_to": "<199810090357.LAA02208@zootje.maths.uwa.edu.au>",
       "references": [],
       "body_plain": "The Royal Netherlands Meteorological Institute (KNMI) is seeking to\nfill the position of a\n\n                              SCIENTIST\n\nto work on an EC funded project about the influence of climate change\non water resources in Europe. The statistical analysis of the\nrelationships between daily rainfall and upper air data, in particular\nmoisture and flow characteristics, forms the main task. These\nrelationships are used to estimate the change in mean precipitation in\na potential future climate. Generalized linear and generalized\nadditive models have been used to study the link between precipitation\nand other weather variables in long-duration series of observations.\nThe quality of these records should be critically assessed.\n\nA University degree (MSc, PhD) with advanced statistics is required as\nwell as interest in meteorology and climatology. Experience with\nFortran or a comparable programming language are also required.\nFamiliarity with S-PLUS is extremely useful. \n\nAppointment for the duration of the project (until 1 January 2001).\n\nFor information, please contact:\nDr T.A. Buishand\nKNMI\nPO Box 201                                 Phone:    + 31 30 2206450\n3730 AE De Bilt                          Fax:        + 31 30 2210407\nThe Netherlands                          E-mail:    buishand at knmi.nl\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "The Royal Netherlands Meteorological Institute (KNMI) is seeking to\nfill the position of a\n\n                              SCIENTIST\n\nto work on an EC funded project about the influence of climate chan",
-      "thread_id": "thread-b1877ab05b16",
-      "thread_depth": 0,
+      "thread_id": "thread-bb51acfbf21c",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -1111,12 +1111,12 @@
       "date": "1998-10-13T15:48:07Z",
       "subject": "Re: [S] NNET question",
       "subject_clean": "[S] NNET question",
-      "in_reply_to": null,
+      "in_reply_to": "<19981007192909.3041.rocketmail@send1e.yahoomail.com>",
       "references": [],
       "body_plain": "I've been away, but not seen a reply to this.\n\nYou have forgotten the non-linearities in the hidden units.\n\n>       Z(i)  =  3.46     -   5.85 * h1   -    8.83 * h2 \n\nshould be\n\nZ(i)  =  3.46     -   5.85 * logistic(h1)   -    8.83 * logistic(h2)\n\nI have not checked if this is all that is wrong!\n\nIn general such enquiries are best sent to the author of the software, not\nS-news (see the introductory document).\n\n> Date: Wed, 7 Oct 1998 12:29:09 -0700 (PDT)\n> From: \"Thomas J. Downing\" <t_downing at yahoo.com>\n> Subject: [S] NNET question\n> To: s-news at wubios.wustl.edu\n> \n>       \n>        I am utilizing V & R's nnet library in an attempt to better \n> understand neural networks.  Although I can make predictions using \n> predict.nnet, I do not think I quite understand how predictions are \n> derived from the weights given in the output.  For example, I have \n> fit the following 2-2-1 network :\n> \n>   > z.nnet <- nnet(z ~ x + y,data = ds,size = 2, decay = .007)\n> # weights:  9\n> initial  value 164.278441 \n> iter  10 value 99.745092\n>     .\n> iter 100 value 97.279519\n> final  value 97.279519 \n> stopped after 100 iterations\n> \n>   > summary(z.nnet)\n> a 2-2-1 network with 9 weights\n> options were - decay=0.007\n>  b->h1 i1->h1 i2->h1 \n>   2.16  0.36   3.81 \n>  b->h2 i1->h2 i2->h2 \n>   5.89  4.91  -2.00 \n>   b->o h1->o h2->o \n>   3.46 -5.85 -8.83\n> \n> \n> Given this information, I (naively?) assumed that the forecasting \n> equation would be given by:\n> \n>       Z(i)  =  3.46     -   5.85 * h1   -    8.83 * h2 \n> \n> where:\n>      h1    =  2.16      +    .36 * x    +    3.81 * y \n>      h2    =  5.89      +   4.91 * x    -    2    * y\n> \n> However, when I use these formulas for prediction, I get very different \n> (and obviously very wrong) predictions than those given by\n> predict.nnet. \n> What am I doing wrong? Thank you in advance for any help with this\n> problem!\n> \n> \n> \n> \n> ==\n> -\n> \n> Thomas J. Downing\n> Research Assistant\n> Quantitative Research\n> Value Line, Inc.\n> \n> _________________________________________________________\n> DO YOU YAHOO!?\n> Get your free @yahoo.com address at http://mail.yahoo.com\n> \n> -----------------------------------------------------------------------\n> This message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\n> send e-mail to s-news-request at wubios.wustl.edu with the BODY of the\n> message:  unsubscribe s-news\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "I've been away, but not seen a reply to this.\n\nYou have forgotten the non-linearities in the hidden units.\n\n>       Z(i)  =  3.46     -   5.85 * h1   -    8.83 * h2 \n\nshould be\n\nZ(i)  =  3.46     -   ",
-      "thread_id": "thread-e9ee05ceea40",
-      "thread_depth": 0,
+      "thread_id": "thread-5a6218e9a862",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -1225,12 +1225,12 @@
       "date": "1998-10-14T17:24:29Z",
       "subject": "[S] creating postscript for LaTeX?",
       "subject_clean": "[S] creating postscript for LaTeX?",
-      "in_reply_to": null,
+      "in_reply_to": "<3.0.5.32.19981014114253.00823450@pop.stat.uiowa.edu>",
       "references": [],
       "body_plain": "I forgot to mention that I am using S-Plus 4.5r2 on a Win95 PC, in case\nthat makes a difference.  (Sorry for the duplicate posting).\n\n--------------- Text of forwarded message ---------------\nWhat are the best methods to create postscript files (with reliable height\nand width) from S-Plus and import them into LaTeX documents?  I'm\ninterested in automated techiniques which could be most seamlessly\nintegrated into already-existing functions which create large numbers of\nplots in for-loops, and which could create postscript files that don't need\nto be meticulously dealt with on the LaTeX end (eg., adjustment of bounding\nboxes).  I'd appreciate suggestions both for the S-Plus and LaTeX end of\nthings.\n\nAlso, a couple related questions:  Is it possible to include special\ncharacters (eg. Greek letters) in S-Plus graphs?  What is a good way to\nincorporate the placement of legends in the scheme mentioned above-- does\nit need to be automatic, or can placement still be done with locator()?  I\nam generating large numbers of plots in for-loops, each with its own\nlegend.  It's difficult to automate placement since I don't know in advance\nwhich areas of the plot will have the most white space.\n\nThanks in advance for help,\nJohn\n\n ---------------------------------------------------------------\n| John Castelloe       phone: (319)335-2009                     |\n| Computer RA            fax: (319)335-3017                     |\n| Dept. of Statistics    web: http://www.stat.uiowa.edu/~jcaste |\n| University of Iowa  office: 269 SH                            |\n ---------------------------------------------------------------\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news\n\n ---------------------------------------------------------------\n| John Castelloe       phone: (319)335-2009                     |\n| Computer RA            fax: (319)335-3017                     |\n| Dept. of Statistics    web: http://www.stat.uiowa.edu/~jcaste |\n| University of Iowa  office: 269 SH                            |\n ---------------------------------------------------------------\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "I forgot to mention that I am using S-Plus 4.5r2 on a Win95 PC, in case\nthat makes a difference.  (Sorry for the duplicate posting).\n\n--------------- Text of forwarded message ---------------\nWhat are",
-      "thread_id": "thread-c59097ab4157",
-      "thread_depth": 0,
+      "thread_id": "thread-84d83ebf06ad",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -1289,12 +1289,12 @@
       "date": "1998-10-14T21:49:38Z",
       "subject": "Re[2]: [S] Poster presentations",
       "subject_clean": "Re[2]: [S] Poster presentations",
-      "in_reply_to": null,
+      "in_reply_to": "<36250892.5D48C6A1@igs.net>",
       "references": [],
       "body_plain": "Use postscript files.  *.bmp are horrible in COREL.\n In S-Plus use the postscript command to sink all your\n graphs in Splus and import these into your COREL document.\n \n Janey\n \n> > \n> > Hello S-World,\n> > \n> > I am working on a poster presentation to appear at a conference. I have\n> > created some sharp looking graphs in S-Plus printed to a Deskjet colour\n> > printer, but when I export them to .BMP or .TIF format for manipulation\n> > by Corel Presentations, the quality is poor. What is the best way to\n> > export graphs for use by other applications? What is your experience in\n> > using S-Plus to create poster presentations?\n> > \n> > Thanks,\n> > \n> > Catherine Collins.\n> > Canadian Blood Services.\n> > \n> > -----------------------------------------------------------------------\n> > This message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\n> > send e-mail to s-news-request at wubios.wustl.edu with the BODY of the\n> > message:  unsubscribe s-news\n> > \n> \n> \n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Use postscript files.  *.bmp are horrible in COREL.\n In S-Plus use the postscript command to sink all your\n graphs in Splus and import these into your COREL document.\n \n Janey\n \n> > \n> > Hello S-World",
-      "thread_id": "thread-5b801bf79730",
-      "thread_depth": 0,
+      "thread_id": "thread-d33a408d7715",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -1353,12 +1353,12 @@
       "date": "1998-10-15T12:20:08Z",
       "subject": "[S] Logistic regression problems in standard version",
       "subject_clean": "[S] Logistic regression problems in standard version",
-      "in_reply_to": null,
+      "in_reply_to": "<9810150630.AA02932@menris1.icimod.org.np>",
       "references": [],
       "body_plain": "Dear S+ users,\n\nI am new in S+ and using S+ 4.5 Standard version. I am sorry if my \nquestions sound too naive.  I am trying to develop a logisitc regression. \nThe sample  data contain large number of records (more than 28,000) \nderived GIS model. The report file  of the  Logistic Regression analysis \nis attached in this mail. I would like to request if someone could help me\nunderstand  and explain the result. In addition,  I've couple of questions. \n\n(1)  What is the maximum number of records that can be used? \n\n(2) The ANOVA table does not produce Pr(chi) in standard 4.5 version. How \n     can I explain the result of the analysis of deviance  for the  sequential\n     addition of each variable? Or simply, how to identify the \ncritical/significant \n     variables? \n\n(3) How to get the  pseudo R-square value and  what value of pseudo R-square \n    could be considered  ' satisfactory '. \n\n(4) How is it possible to create box plots of the predictors  and the \n     binary response using the standard version. \n\n(5) Has anyone  used step wise logistic regression in standard \n     version? \n\nThanks \n\nI.Sikder\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Dear S+ users,\n\nI am new in S+ and using S+ 4.5 Standard version. I am sorry if my \nquestions sound too naive.  I am trying to develop a logisitc regression. \nThe sample  data contain large number of ",
-      "thread_id": "thread-d10f4724238b",
-      "thread_depth": 0,
+      "thread_id": "thread-ca587deaf9bc",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -1417,12 +1417,12 @@
       "date": "1998-10-15T16:52:18Z",
       "subject": "Re: [S] S code for Tolerance Intervals ?",
       "subject_clean": "[S] S code for Tolerance Intervals ?",
-      "in_reply_to": null,
+      "in_reply_to": "<8025669B.0036D10E.00@EUSVR08.D49.LILLY.COM>",
       "references": [],
       "body_plain": "I thought the list would like to know the results of my enquiry (original\nmessage attached).\n\nIt wouldn't be hard to write a function to get approximate intervals,  but to\nget exact intervals\nyou need a function for quantiles of the non-central t distribution.\n\nI tried creating a function to get quantiles of the non-central F (see below)\n, in hopes of  using\nthe  non-central analogue of the fact that  sqrt ( F[1,n] ) = t[n] , however\nit eventually dawned on\nme that  this only gives you a symmetric region  around zero, not a true\nquantile.   I can't see\na way of  using this to get what I want ........ any ideas ??\n\nThe way forward seems to be to write a C function (maybe converting the\nFortran algorithm\nof Owen) and to call this from S.\n\nPleasant though this would be, I don't have the time and since all the\nnon-centrals and their\ninverses are available in SAS, I might as well use those.   Pity.\n\nThanks to those who replied pointing me in the right direction.\n\nBob Kinley ............ rdk at lilly.com\n________________________________________________________________________\n\nrudimentary function for quantiles of the non-central F :-\n\nfunction(prob, degsf1, degsf2, ncparam = 0, lims = c(0, 10))\n{\n     f <- function(q, p, df1, df2, ncp = 0)\n     {\n          ans <- pf(q, df1, df2, ncp) - p\n          ans\n     }\n     ans <- uniroot(f, interval = lims, p = prob, df1 = degsf1, df2 = degsf2,\nncp = ncparam)\n     ans$root\n}\n\n___________________________________________________________________________\n\nRobert Kinley <KINLEY_ROBERT at lilly.com> on 12/10/98 10:53:21\n\nTo:   s-news at wubios.wustl.edu\ncc:\n\nSubject:  [S] S code for Tolerance Intervals ?\n\nBefore I reinvent any wheels, can anyone point me at some S code to calculate\nbeta-content  tolerance intervals for the Normal distribution.\n\nThat is, to calculate k such that, given Beta and Gamma, Xbar and s (and n),\nthen\nPr. [   Pr. ( Xbar - ks  <   X  <   Xbar + ks)  >=  Beta  ]  >= Gamma\n\nthanks ........... Bob Kinley...........  rdk at lilly.com\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "I thought the list would like to know the results of my enquiry (original\nmessage attached).\n\nIt wouldn't be hard to write a function to get approximate intervals,  but to\nget exact intervals\nyou need",
-      "thread_id": "thread-48b88c263f52",
-      "thread_depth": 0,
+      "thread_id": "thread-04fc808b82e3",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -1449,12 +1449,12 @@
       "date": "1998-10-15T18:13:26Z",
       "subject": "[S] Kappa",
       "subject_clean": "[S] Kappa",
-      "in_reply_to": null,
+      "in_reply_to": "<3.0.3.32.19981010225658.006eb7d0@mailserv.cuhk.edu.hk>",
       "references": [],
       "body_plain": "Dear S-plusers,\n\nThanks to Melania who kindly offered the following function:\n\nfunction(x,y,n,weight=T,file=\"kappa.list\",t1=\"x and y\")\n{\n############################################################################\n#\n##  Reference: J.L.Fleiss , Statistical Method for rates and proportions\nWiley \n##  Chapter 13 \n##  used weights : Fleiss and Cohen 1973\n############################################################################\n#\n## x - categories through the first method\n## y - categories through the second method\n## n - number of categories\n## when the categories are ordered (ex. stage) \n## the weight should be = T (ref: A.Agresti:Categorical Data Analysis\n## page 367, 10.5.2 Generalized Kappa measures)\n#################################################################\nby_table(x,y)\n#n_max(ncol(by),nrow(by))\n\n### makes the table a square matrix\nsquare_function(a,M)\n{\n#################\n# adds extra row and columns such that\n# the matrix is MxM\n###################\nnM_ncol(a)\nmM_nrow(a)\nif (dimnames(a)[[2]][1]!=1)\n{a_cbind(0,a)\nnM_nM+1\ndimnames(a)[[2]][1]_1\n}\nif (dimnames(a)[[1]][1]!=1)\n{a_rbind(0,a)\nmM_mM+1\ndimnames(a)[[1]][1]_1\n}\nif (dimnames(a)[[2]][nM]!=M)\n{a_cbind(a,0)\nnM_nM+1\ndimnames(a)[[2]][nM]_M\n}\nif (dimnames(a)[[1]][mM]!=M)\n{a_rbind(a,0)\nmM_mM+1\ndimnames(a)[[1]][mM]_M\n}\nif (nM!=M)\n{for (i in 1:M)\n  { if (dimnames(a)[[2]][i]!=i)\n    { dummy_vector(mode=\"numeric\",length=mM)\n    l_ncol(a)\n    t_i-1\n    u_i+1\n    v_l+1\n    nam1_dimnames(a)[[2]][1:t]\n    nam2_dimnames(a)[[2]][i:l]\n    a_cbind(a[,1:t],dummy,a[,i:l])\n    dimnames(a)[[2]][i]_i\n    dimnames(a)[[2]][1:t]_nam1\n    dimnames(a)[[2]][u:v]_nam2\n    }\n  }\n}\nif (mM!=M)\n{for (i in 1:M)\n  {if (dimnames(a)[[1]][i]!=i)\n    {dummy_vector(mode=\"numeric\",length=M)\n    l_nrow(a)\n    t_i-1\n    u_i+1\n    v_l+1\n     nam1_dimnames(a)[[1]][1:t]\n     nam2_dimnames(a)[[1]][i:l]\n     a_rbind(a[1:t,],dummy,a[i:l,])\n     dimnames(a)[[1]][i]_i\n     dimnames(a)[[1]][1:t]_nam1\n     dimnames(a)[[1]][u:v]_nam2\n    }\n  }\n}\nreturn(a)\n}\n\na_square(by,n)\n\np_a/sum(a)\nw_matrix(0,ncol=n,nrow=n)\nfor (i in 1:n)\n        {w[i,i]_1\n        }\nif (weight)\n        {for (i in 1:n)\n                {for (j in 1:n)\n                        {w[i,j]_1-((i-j)**2/(n-1)**2)\n                        }\n                }\n        }\npo_sum(w*p)\nhori_apply(p,1,sum)\nvert_apply(p,2,sum)\npe_matrix(0,ncol=1,nrow=n)\nw1_w%*%vert\nw2_hori%*%w\npv_matrix(0,ncol=n,nrow=1)\nfor (i in 1:n)\n        {pe_cbind(pe,vert[i]*hori)\n         pv_rbind(pv,w1[i]+w2)\n        }\npe_pe[,-1]\npv_pv[-1,]\npv_w-pv\npv_sum(pe*pv*pv)\npe_sum(pe*w)\nkw_(po-pe)/(1-pe)\nse_(sqrt(pv-pe**2))/((1-pe)*sqrt(sum(a)))\nci1_kw-1.96*se\nci2_kw+1.96*se\nstorage.mode(kw)_\"single\"\nstorage.mode(ci1)_\"single\"\nstorage.mode(ci2)_\"single\"\nstorage.mode(se)_\"single\"\nsink(file,append=T)\ncat(t1,\"\\n\")\ncat(\"\\n\",\"\\n\")\ncat(\"A Kappa of 1 shows perfect concordance\",\"\\n\")\ncat(\"Below 0.40 is a poor concordance\",\"\\n\")\ncat(\"Negative values show that agreement is weaker than expected by\nchance\",\"\\n\")\ncat(\"The table used :\",\"\\n\")\nfor (i in 1:n)\n        {cat(\"     \",a[i,],\"\\n\")\n        }\ncat(\"Kappa=\",kw,\"\\n\")\ncat(\"Weights=\",\"\\n\")\nfor (i in 1:n)\n        {cat(\"     \",w[i,],\"\\n\")\n        }\ncat(\"Standard error=\",se,\"\\n\")\ncat(\"95% confidence intervals :\",ci1,\" ; \",ci2,\"\\n\")\ncat(\"\\n\",\"\\n\",\"\\n\",\"\\n\")\nsink()\nreturn(kw,se)\n}\n\nGratitude goes to Lynd for the following function:\n\n\"cohen.kappa\"<-\nfunction(xtab)\n{\n#computes Cohen's kappa and variance estimates, 95% CI\n#from a symmetric agreement table xtab\n#return value is a list with elements kap and vark\n#See Bishop et al. Disc. Mult. Analysis pp. 395-397\n#DISCLAIMER: The contents of the materials made available here are\n#not provided #with a warranty of any kind. LYND BACON & ASSOCIATES,\n#LTD DOES NOT MAKE AND #HEREBY DISCLAIMS ANY EXPRESS OR IMPLIED\n#WARRANTIES INCLUDING, BUT NOT LIMITED #TO, THE WARRANTIES OF\n#NON-INFRINGEMENT, MERCHANTABILITY OR FITNESS FOR A #PARTICULAR\n#PURPOSE, OR ARISING FROM A COURSE OF DEALING, USAGE OR TRADE\n#PRACTICE.\n\n        ci <- vector(length = 2)\n        kap <- NULL\n        vark <- NULL\n        totn <- NULL\n        if(nrow(xtab) != ncol(xtab)) {\n                cat(\"\\n freq. table not symmetric.\\n\")\n                return(kap, vark, totn)\n        }\n# compute obs props:\n        totn <- sum(xtab)\n        obs <- xtab/totn        # calc marginals, expected diag props.\n        pi <- apply(xtab, 1, sum)/totn\n        pj <- apply(xtab, 2, sum)/totn\n        exp <- outer(pi, pj)\n        theta.2 <- sum(diag(exp))\n        theta.1 <- sum(diag(obs))\n        kap <- (theta.1 - theta.2)/(1 - theta.2)\n        theta.3 <- diag(obs) %*% (pi + pj)\n        theta.4 <- sum(obs * outer(pi, pj, FUN = \"+\")^2)        \n        # cat(\"\\n thetas 1,2,3,4 \\n\", theta.1, theta.2, theta.3, theta.4, \"\\n\") \n# calc the var est\n        vark <- (theta.1 * (1 - theta.1))/(1 - theta.2)^2\n        vark <- vark + (2 * (1 - theta.1) * (2 * theta.1 * theta.2 - \ntheta.3))/(1\n- theta.2)^3\n        vark <- vark + ((1 - theta.1)^2 * (theta.4 - 4 *theta.2^2))/(1 \n-theta.2)^4\n        vark <- as.vector(vark/totn)\n        ci[1] <- kap - 1.96 * sqrt(vark)\n        ci[2] <- kap + 1.96 * sqrt(vark)\n        return(kap, vark, totn, ci)\n}\n\nHope these functions are useful reference to others.\n\nSincerely,\n\nLin\n\n--------------------------------------------------------------------\nDr. L. Y. Hin\nDepartment of Obstetrics & Gynaecology\nPrince of Wales Hospital\nHong Kong SAR\nTel. (852) 2632 2807\nFax. (852) 2636 0008\n--------------------------------------------------------------------\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Dear S-plusers,\n\nThanks to Melania who kindly offered the following function:\n\nfunction(x,y,n,weight=T,file=\"kappa.list\",t1=\"x and y\")\n{\n###############################################################",
-      "thread_id": "thread-22cad6f1f058",
-      "thread_depth": 0,
+      "thread_id": "thread-8afb33c4f3c0",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -1481,12 +1481,12 @@
       "date": "1998-10-15T18:51:12Z",
       "subject": "[S] data manipulation",
       "subject_clean": "[S] data manipulation",
-      "in_reply_to": null,
+      "in_reply_to": "<3.0.3.32.19981016024928.006e74a4@mailserv.cuhk.edu.hk>",
       "references": [],
       "body_plain": "Dear S-plusers,\n\nI am in the process of translating all my algortihms that had previously\nbeen written in APL into S, and I have several difficulties.  Would be very\ngrateful if you can help:\n\nLet's say there exists a, whereby a<-c(1,2,3,4,5,6,7,8,7).\n\n(1) How do we drop the third element only, leaving a to be 1 2 4 5 6 7 8 7 ?\n\n(2) How do we repalce the second element with vector c(10,11,12), yielding\nthe vector 1 10 11 12 3 4 5 6 7 8 7?\n\n(3) How do we reverse the sequence of a, yielding 7 8 7 6 5 4 3 2 1?\n\n(4) How do we rotate the vector forward by three place, yielding the vector\n7 8 7 1 2 3 4 5 6?\n\n(5) How do we rotate the vector backwards two places, yielding the vector\n3 4 5 6 7 8 7 1 2?\n\n(6) How do we select the 2nd, 3rd, and 4th element in the vector a so that\nwe can create two vectors a which is 1 5 6 7 8 7, and b which is 2 3 4?\n\nMuch obliged.\n\nLin\n\n--------------------------------------------------------------------\nDr. L. Y. Hin\nDepartment of Obstetrics & Gynaecology\nPrince of Wales Hospital\nHong Kong SAR\nTel. (852) 2632 2807\nFax. (852) 2636 0008\n--------------------------------------------------------------------\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Dear S-plusers,\n\nI am in the process of translating all my algortihms that had previously\nbeen written in APL into S, and I have several difficulties.  Would be very\ngrateful if you can help:\n\nLet's s",
-      "thread_id": "thread-e6a0f27ff07a",
-      "thread_depth": 0,
+      "thread_id": "thread-ae239d5f7404",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -1593,12 +1593,12 @@
       "date": "1998-10-16T05:26:40Z",
       "subject": "[S] Bivariate measure of Location",
       "subject_clean": "[S] Bivariate measure of Location",
-      "in_reply_to": null,
+      "in_reply_to": "<19981016042548.7891.qmail@hotmail.com>",
       "references": [],
       "body_plain": "How to write an Splus function for the following bivariate measure of \nlocation (the center of a scatter plot).\n\nYou peel-off k-convex hulls.\n\nThen you take the mean of the remaining points.\n\nWhat is the finite sample breakdown of this operator?\n\nThanks.\n\nEllen Parzynski.\n\nrutgers State University.\n\n______________________________________________________\nGet Your Private, Free Email at http://www.hotmail.com\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "How to write an Splus function for the following bivariate measure of \nlocation (the center of a scatter plot).\n\nYou peel-off k-convex hulls.\n\nThen you take the mean of the remaining points.\n\nWhat is ",
-      "thread_id": "thread-ac4c5f75edfd",
-      "thread_depth": 0,
+      "thread_id": "thread-fe945415c2be",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -1675,12 +1675,12 @@
       "date": "1998-10-16T12:33:10Z",
       "subject": "Re: [S] Problem reading large files.",
       "subject_clean": "[S] Problem reading large files.",
-      "in_reply_to": null,
+      "in_reply_to": "<199810160116.UAA01555@wubios.wustl.edu>",
       "references": [],
       "body_plain": ">  From Andreas.Krause at genedata.com Fri Oct 16 08:22:56 1998\n>  Date: Fri, 16 Oct 1998 14:12:36 +0200\n>  To: andrey at utstat.toronto.edu\n>  \n>  Hi.\n>  As I have the same equipment, Splus 3.4 on an SGI, I tried your example.\n>  x <- rnorm (100000)\n>  write (x, \"x\", n=1)\n>  unix.time (xx <- scan (\"x\"))\n>  [1] 4.25000000 0.09000003 4.00000000 0.00000000 0.00000000\n>  \n>  So it takes 4.3 seconds to read in the data on our machine without changing \n> the\n>  object size.\n>  Reading in 500,000 values took 24 seconds and I had to set \n>  options (object.size=1E+10)\n>  Splus didn't occupy more than 15 Meg in memory.\n\n    The same exercise took 5.54 and 27.85 seconds, respectively, for\n    reading in the data sets with 100,000 and 500,000 observations.\n    I'm running S-Plus 3.4 on the UNIX.\n\n    Obviously, it all depends on the available RAM on the system, and\n    the allocated swap space. As I had indicated to Dr Feuerverger\n    (andrey at utstat.toronto.edu) in a personal communication, I believe\n    it all has to do with the amount of swap space that's available on\n    the system. Please correct me if I'm wrong, or if there are other\n    (more elegant) ways of handling this problem.\n\n--\nCande V. Ananth\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nAssistant Professor                       Tel: (732) 235-7940\nDiv of Epidemiology and Biostatistics     Fax: (732) 235-6627\nDept of OB/GYN and Reproductive Sciences  ananthcv at EPI.UMDNJ.EDU\nUMDNJ-Robert Wood Johnson Medical School  http://www.rwj-obgyn.umdnj.edu/\n125 Paterson St, New Brunswick NJ 08901      homepages/Ananth/ananth.html   \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": ">  From Andreas.Krause at genedata.com Fri Oct 16 08:22:56 1998\n>  Date: Fri, 16 Oct 1998 14:12:36 +0200\n>  To: andrey at utstat.toronto.edu\n>  \n>  Hi.\n>  As I have the same equipment, Splus 3.4 on an",
-      "thread_id": "thread-6e9abff8684a",
-      "thread_depth": 0,
+      "thread_id": "thread-8c6ddbd1da69",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -1839,12 +1839,12 @@
       "date": "1998-10-17T00:03:50Z",
       "subject": "[S] Hodges-Lehman Measure of Location",
       "subject_clean": "[S] Hodges-Lehman Measure of Location",
-      "in_reply_to": null,
+      "in_reply_to": "<19981016053846.9821.qmail@hotmail.com>",
       "references": [],
       "body_plain": "I wrote the following to plot the influence curve for the Hodges-Lehmann \nof location:\n\nfunction (hlml,n,p)\n{        x0<-rep(0,n)\n         z<rep(0,n)\n         x<-rnorm(n)\n         for (i in 1:n)\n         { x0[i]<-rnorm(1)\n           y<-c(x,x0[i])\n           z{i]<-hlml(y)   #hlml computes the Hodges Lehman measure of \n                           #location\n         }\nplot (x0,z)\n}\n\nIs the above correct? If not why?\n\nAlso I am desperate trying to figure out how to compare the median of a \nsample X and the Hodges Lehman measure of location of the same sample \n(in SPLUS).\n\nThanks of your suggestions.\n\nEllen Parzynski.\n \n\n______________________________________________________\nGet Your Private, Free Email at http://www.hotmail.com\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "I wrote the following to plot the influence curve for the Hodges-Lehmann \nof location:\n\nfunction (hlml,n,p)\n{        x0<-rep(0,n)\n         z<rep(0,n)\n         x<-rnorm(n)\n         for (i in 1:n)\n     ",
-      "thread_id": "thread-e7c3475daf6e",
-      "thread_depth": 0,
+      "thread_id": "thread-817ecd9697fe",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -1955,12 +1955,12 @@
       "date": "1998-10-19T09:15:52Z",
       "subject": "Re: [S] Summary: Creating postscript for LaTeX",
       "subject_clean": "[S] Summary: Creating postscript for LaTeX",
-      "in_reply_to": null,
+      "in_reply_to": "<3.0.5.32.19981018124151.0082ead0@pop.stat.uiowa.edu>",
       "references": [],
       "body_plain": "> Date: Mon, 19 Oct 1998 01:57:16 -0700 (PDT)\n> From: John Wallace <jrw at fish.washington.edu>\n> To: John Castelloe <jcaste at stat.uiowa.edu>\n> Subject: Re: [S] Summary: Creating postscript for LaTeX\n> \n> \n> >> I forgot to mention that I am using S-Plus 4.5r2 on a Win95 PC, in case\n> >> that makes a difference.  (Sorry for the duplicate posting).\n\nSide comment: almost all of the suggestions in the summary are Unix-only:\nthe Windows postscript() device does NOT produce valid EPS.\n\n[John Wallace quoting John Castelloe quoting me]\n\n> > Yes, it makes an enormous difference.  I do not believe there is a\n> > reliable way to create EPS files on that system. The postscript()\n> > graphics driver does not generate EPS, Export Graph generates (IMHO)\n> > poor-quality plots, so one is reduced to using win.printer/graphsheet\n> > with a PostScript printer driver.  On Windows 95 I know of no good one\n> > for EPS (I use Adobe's driver for the distiller device, but it less than\n> > ideal).  On NT I believe that Adobe does now have a level-2 only driver\n> > that gives EPS output. \n\n[John Wallace]\n\n> On Win95 try the 'Apple LaserWriter Pro 630' driver.  After installing, go\n> to Properties and look under the Postscript tab. Under 'PostScript output\n> format' there is an option for EPS.  Also, under the same tab, the\n> 'Advanced' button will give an option for Level 2 or Level 1 features. \n> \n> A look at some test output from Splus shows the first line as:\n> \n> %!PS-Adobe-3.0 EPSF-3.0\n> \n> And importing into Gsview gives the type as 'EPS'.\n> \n> Works for me, but I am unsure how 'ideal' it is.\n\nYou can indeed produce EPS from the Microsoft Win95 printer drivers (as\nI said), but it is far from ideal. In fact, I would say it is poor\npostscript, and not properly resolution independent (which you need for\nEPS which is almost certainly going to be rescaled) and full of\nunneeded code (for EPS).  The Adobe printer driver set for Windows 95\n(from their Web site, or with Acrobat 3.01:  the full set, not just\nReader) is better, but still not as good as one would hope. My\npreference is the Adobe driver with the distiller PPD: that is set up\nto produce as `clean' postscript as possible.\n\nThis is not a small point: I can quite clearly see the differences\nbetween output produced on Unix and on Windows S-PLUS (via any of the\nroutes) even on a 600dpi printer in the evenness of the lines and the\naccuracy of the tick labels, after including at, say, 10cm width in\na LaTeX document. On a phototypesetter it is screamingly obvious.\n\nYou cannot get EPS from Microsoft's WinNT printer drivers, AFAIK (and it\nis discussed frequently on newsgroups).  You can get level-2 only EPS from\nAdobe's recent WinNT printer drivers.\n\nThe underlying problem is that MathSoft have never fixed postscript() in\nWindows: I hope one day they will make the effort to port the Unix\ndevice driver.\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "> Date: Mon, 19 Oct 1998 01:57:16 -0700 (PDT)\n> From: John Wallace <jrw at fish.washington.edu>\n> To: John Castelloe <jcaste at stat.uiowa.edu>\n> Subject: Re: [S] Summary: Creating postscript for LaTe",
-      "thread_id": "thread-83b4531474c0",
-      "thread_depth": 0,
+      "thread_id": "thread-809403f9b9fb",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -1971,12 +1971,12 @@
       "date": "1998-10-19T10:42:33Z",
       "subject": "Re: [S] Logistic regression problems in Standard Version",
       "subject_clean": "[S] Logistic regression problems in Standard Version",
-      "in_reply_to": null,
+      "in_reply_to": "<9810150630.AA02932@menris1.icimod.org.np>",
       "references": [],
       "body_plain": "Thanks to Renaud Lancelot for helping to explain the  result of \nlogistic regression report. \n\n> I am new in S+ and using S+ 4.5 Standard version. I am sorry if my\n> questions sound too naive.  I am trying to develop a logisitc\n> regression. The sample  data contain large number of records (more\n> than 28,000) derived GIS model. The report file  of the  Logistic\n> Regression analysis is attached in this mail. I would like to\n> request if someone could help me understand  and explain the result.\n> In addition,  I've couple of questions.\n\nDeviance Residuals:\n       Min         1Q      Median        3Q      Max \n -3.069086 -0.3280827 -0.02042211 0.6201363 3.144234\n***\ngives you some indications on the dispersion of residuals. You have to\nplot the resdiduals to do that (use resid()) *** Coefficients:\n                    Value    Std. Error    t value \n(Intercept) -8.0842219589 0.63972925231 -12.636943\n         V2 -0.0210170268 0.00337424122  -6.228668\n         V3  0.2662767744 0.01661605618  16.025269\n         V4 -0.0011611856 0.00003287313 -35.323243\n         V5 -0.0100953342 0.00572956844  -1.761971\n         V6  0.2424987778 0.01203381433  20.151448\n         V7  0.0484523502 0.00195516028  24.781779\n         V8  0.0078187176 0.00062731179  12.463846\n         V9  0.0098965947 0.00366897305   2.697375\n        V10 -0.0001520750 0.00012221146  -1.244359\n        V11 -0.0009061981 0.00016316028  -5.554037\n***\ngives you parameters values as well as the Wald statistics (t value)\nwhich simply is the ratio of the param to its sts error (e.g.\n-8.0842... / 0.6397... = -12.6369). To get the p value, compare this\nto a Chi2 with 1 df. You can slightly modify the summary.glm function\nto do that or use the matrix returned from summary(coef(my.model)),\ne.g. 1 - pchisq(abs(coef(summary(my.model))[,3]), 1).\n\nNB: the returned values for the std. error and t value are computed\nfor dispersion parameter = 1. You have to check that this is\nacceptable, using summary(my.model, disp=0)\n\nThe correlation matrix gives you the correlation of coefficients. If\nyou don't want this to appear (boring with large models), use\nsummary(my.model, cor=0)\n\n***\n\nTerms added sequentially (first to last)\n     Df Deviance Resid. Df Resid. Dev \nNULL                 28414   39192.14\n  V2  1  5761.24     28413   33430.90\n  V3  1    69.72     28412   33361.18\n  V4  1 10823.09     28411   22538.09\n  V5  1   293.19     28410   22244.90\n  V6  1  1482.68     28409   20762.23\n  V7  1   734.58     28408   20027.65\n  V8  1   167.32     28407   19860.32\n  V9  1    10.29     28406   19850.03\n V10  1     1.19     28405   19848.84\n V11  1    35.12     28404   19813.72\n\ngives you the likelihood ratio statistics: gives you the deviance\nreduction resulting from the introduction of each term in the model,\nin a sequantial way. It means that you won't have the same results\ndepending on the introduction order. To get the statistics and the p\nvalue, anova(my.model, test=\"Chisq\"). That's the way you can compare\nany two or more nested models. Careful: you have to check that the\nWald test and the LR test give broadly similar results (they're always\ndifferent and the LR test is considered as being (much) more\nreliable). If it is not the case, it means that you have problems in\nyour data: collinearities, clustering and other amusements.\n\nYou should carefully read the Chambers & Hastie book (statistical\nmodels in S) as well as the VR book (modern applied statistics with\nS-Plus).\n\n> \n> (1)  What is the maximum number of records that can be used?\n\nI don't think there is any maximum (except from the RAM/speed of your\ncomputer)... > > (2) The ANOVA table does not produce Pr(chi) in\nstandard 4.5 version. How >      can I explain the result of the\nanalysis of deviance  for the  sequential >      addition of each\nvariable? Or simply, how to identify the critical/significant >     \nvariables?\n\nsee above: with the standard version, see \"Compare models\" option and\ncheck one model with the \"Chi squared\" statistics\n\n> (3) How to get the  pseudo R-square value and  what value of pseudo\n> R-square\n>     could be considered  ' satisfactory '.\n\nThat's a big question ! No ideal answer. For technical details and\ncomputations of pseudo R-square, see Myers R.H., Montgomery D.C.,\n1997. A tutorial on generalized linear models. Journal of Quality\nTechnology, 29 (3) : 274-291. The pseudo R-square value can easily be\nextracted from the model: R2.like <- (my.model$null.deviance -\nmy.model$deviance)/my.model$null.deviance but I don't know with the\nstandard version. Maybe you have to compute it from the output, which\nis not a big deal !\n\n> (4) How is it possible to create box plots of the predictors  and\n> the\n>      binary response using the standard version.\n\nwhat do you mean ? box plots of predicted proba ? or bxpl for each\nterm of the model ?\n\n> \n> (5) Has anyone  used step wise logistic regression in standard\n>      version?\n\nNo but you have to be very careful. The step.glm function is known to\ngive strange results (sometimes...).\n\nMy advice: get the PROFESSIONAL version and use the MASS library,\nwhere you can find Brian Ripley's stepAIC which is really great for\nstepwise logistic regression.\n\nHope this helps and best regards,\n\nRenaud\n\n> \n> Thanks\n> \n> I.Sikder\n> \n> --------------------------------------------------------------------\n> -- This message was distributed by s-news at wubios.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at wubios.wustl.edu with the\n> BODY of the message:  unsubscribe s-news\n\n-- \nRenaud Lancelot\nISRA-LNERV\nBP 2057 Dakar-Hann\nSenegal\n\ntel     (221) 832 49 02\nfax     (221) 821 18 79\nemail   renaud.lancelot at cirad.fr\nIftikhar U. Sikder\nResearch Associate \nInternational Centre for Integrated\nMountain Development (ICIMOD) \nGPO Box: 3226\nKathmandu, Nepal\nPhone: 977-1-525313 (O)\nPhone: 977-1-536141 (R)\nFax :  977-1-524509/536747\n\n  /\\    /\\    /\\    /\\\n /  \\  /  \\  /  \\  /  \\ \n/    \\/    \\/    \\/    \\\n*^*^*^*^*^*^*^*^*^*^*^*^*^*^*^*^*^*^*^*^*^*^*^*^*^*^*^*^*^*^*^*^*^*^*^*^*\nDisclaimer: Any opinions given here are my own and not\nnecessarily those of the ICIMOD\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Thanks to Renaud Lancelot for helping to explain the  result of \nlogistic regression report. \n\n> I am new in S+ and using S+ 4.5 Standard version. I am sorry if my\n> questions sound too naive.  I am t",
-      "thread_id": "thread-b5edd5e01974",
-      "thread_depth": 0,
+      "thread_id": "thread-ca587deaf9bc",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -2163,12 +2163,12 @@
       "date": "1998-10-21T12:03:04Z",
       "subject": "Re: [S] delimiting strings",
       "subject_clean": "[S] delimiting strings",
-      "in_reply_to": null,
+      "in_reply_to": "<B0000018521@mimesweeper.edfman.co.uk>",
       "references": [],
       "body_plain": "Slightly more than a one-liner (for legibility):\n\ndelimit_function(st) \n{\nif(length(st) != 1) stop(\"works only on a single string\")\n                ### blank front and back simplifies things later\nst_paste(\" \",st,\" \",sep=\"\")\nlen_nchar(st)   \n                ## for generality, define any set of whitespace characters\nblank_!!match(substring(st,1:len,1:len),c(\" \",\"\\t\"),0)\nstart_(2:len)[diff(blank)==-1]\nend_(2:len-1)[diff(blank)==1]\nsubstring(st,start,end)\n}\n\n----- Begin Included Message -----\n\nDate: Wed, 21 Oct 1998 12:38:00 +0100\nFrom: \"sinclair, andrew (MIP London)\" <asinclair at edfman.co.uk>\nSubject: [S] delimiting strings\nTo: s-news <s-news at wubios.wustl.edu>\n\nDear Splus-ers,\n\nNow I would like to be able to do :\n\n> delimit(tmp, sep=\" \")\n[1]  \"Hello\"  \"World\"  \"!!\"\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Slightly more than a one-liner (for legibility):\n\ndelimit_function(st) \n{\nif(length(st) != 1) stop(\"works only on a single string\")\n                ### blank front and back simplifies things later\nst_",
-      "thread_id": "thread-4605add3c5c7",
-      "thread_depth": 0,
+      "thread_id": "thread-4fb863c7132d",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -2179,12 +2179,12 @@
       "date": "1998-10-21T12:35:17Z",
       "subject": "re: [S] delimiting strings",
       "subject_clean": "[S] delimiting strings",
-      "in_reply_to": null,
+      "in_reply_to": "<B0000018521@mimesweeper.edfman.co.uk>",
       "references": [],
       "body_plain": "On Wed Oct 21 12:38:00 1998,\n\"sinclair, andrew (MIP London)\" <asinclair at edfman.co.uk> wrote:\n>I am in need of a function that reverses what  paste()  does.\n>\n>e.g.\n>> tmp <- paste( c(\"Hello\", \"World\", \"!!\", collapse = \" \" )\n>> tmp\n>\"Hello World !!\"\n>\n>Now I would like to be able to do :\n>\n>> delimit(tmp, sep=\" \")\n>[1]  \"Hello\"  \"World\"  \"!!\"\n>\n>Surely this function already exists in Splus - I just don't know of it ??\n>Or maybe one of you smart guys can write a nice one-liner ?!\n\nHello,\n\nIn S-PLUS 3.3 for Windoze, you can use this handy one-liner:\n\n> unlist(unpaste(\"Hello World !!\", sep = \" \"))\n[1] \"Hello\" \"World\" \"!!\"   \n\nI assume unpaste() still is available in 4.0 and 4.5, I don't recall if it is \nin UNIX versions. It does not, however, seem to be documented anywhere!  Thus \nif you plan to use it in a function for general consumption, you probably \nshould include a copy so it is guaranteed to be available.\n\nYou could have found this function with, e.g.\n\n> lapply(search(), objects, pat = \"*paste*\"),\n\nassuming, of course, you had guessed that \"paste\" was in the function name.\n\nCheers,\nScott\n=========================================\nScott.Chasalow at users.pv.wau.nl\n\nWageningen Agricultural University\nLaboratory of Plant Breeding\nP.O. Box 386\n6700 AJ Wageningen\nTHE NETHERLANDS\n\nhttp://www.spg.wau.nl/pv/staff/Chasal_S.htm\n===========================================\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "On Wed Oct 21 12:38:00 1998,\n\"sinclair, andrew (MIP London)\" <asinclair at edfman.co.uk> wrote:\n>I am in need of a function that reverses what  paste()  does.\n>\n>e.g.\n>> tmp <- paste( c(\"Hello\", \"Worl",
-      "thread_id": "thread-df466b6009b9",
-      "thread_depth": 0,
+      "thread_id": "thread-4fb863c7132d",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -2211,12 +2211,12 @@
       "date": "1998-10-21T14:22:32Z",
       "subject": "re: [S] unpaste",
       "subject_clean": "[S] unpaste",
-      "in_reply_to": null,
+      "in_reply_to": "<199810211334.KAA14895@tanner.math.unb.ca>",
       "references": [],
       "body_plain": "Just a wee P.S.\n\nThanks to Alan Zaslavsky, Stephen Smith, and Rolf Turner, we learn that \nunpaste() indeed is available in Splus 3.3 and 4.5 for Windows, and Splus 3.4 \nfor Unix.\n\nI've done a little detective work, and it seems that unpaste first appeared as \npart of the chron library, which is \"not supported by Statsci\", according to \nthe little message you get from library(chron).  However, at some point some \nof the functions from the chron library, including unpaste, were folded into \nSPLUS proper.  So they SHOULD in principle now be \"supported by Statsci\".  Or \nat least by DAPD, Mathsoft anyway...\n\n-Scott\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Just a wee P.S.\n\nThanks to Alan Zaslavsky, Stephen Smith, and Rolf Turner, we learn that \nunpaste() indeed is available in Splus 3.3 and 4.5 for Windows, and Splus 3.4 \nfor Unix.\n\nI've done a little d",
-      "thread_id": "thread-d6981d92c2a6",
-      "thread_depth": 0,
+      "thread_id": "thread-272b7a394e2a",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -2291,12 +2291,12 @@
       "date": "1998-10-21T17:35:14Z",
       "subject": "Re: [S] S+ bug?",
       "subject_clean": "[S] S+ bug?",
-      "in_reply_to": null,
+      "in_reply_to": "<002623E7.1322@inet.spri.sp.com>",
       "references": [],
       "body_plain": "> From: FRANK.J.JEN at spcorp.com (FRANK J JEN)\n>      That is, if there is only one row that both elements are not NA,\n>      the same procedure gives a vector (of length 2) instead of a\n>      matrix (of dimension 1x2).\n\nThis design decision was hotly argued during the development of S version\n3 (back around 1987) and the decision was that the default would be that\nsubscripting that selects a single value in any dimension would drop that\ndimension.  This is how we make vectors out of columns of matrices.  However,\nthe opposite treatment (keep matrix regardless) is still available:\n\nxy.nomissing_xy[!is.na(xy[,1]) & !is.na(xy[,2]), ,drop=F]\n\nHOWEVER, even this won't work if no rows are selected! (in current version\nof S) In fact 0-dimension arrays are not allowed so you can't keep the\nmatrix structure then.  Moral of the story: special cases you always\nhave among you.  (I think that S version 4 allows 0-dimension arrays,\nbut I'm not sure.)\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "> From: FRANK.J.JEN at spcorp.com (FRANK J JEN)\n>      That is, if there is only one row that both elements are not NA,\n>      the same procedure gives a vector (of length 2) instead of a\n>      matri",
-      "thread_id": "thread-33f3a4a617d7",
-      "thread_depth": 0,
+      "thread_id": "thread-7ac49e0d3a5e",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -2493,8 +2493,8 @@
       ],
       "body_plain": ">>>>> \"Scott\" == Scott Chasalow <Scott.Chasalow at USERS.PV.WAU.NL> writes:\n\n    Scott> You could have found this function with, e.g.\n\n    >> lapply(search(), objects, pat = \"*paste*\"),\n\n    Scott> assuming, of course, you had guessed that \"paste\" was\n    Scott> in the function name.\n\nNice detective work, Scott (which should not have been necessary,\nof course).  I didn't know of it either, and I thought I had made\na real effort to dig around in all the little nooks and crannies.\nIt makes you wonder what other little gems still lie hidden.\n\nFor the record, Unix people need to use a different pattern\nmatching regular expression:\n\n> unlist(lapply(search(), objects, pat=\".*paste.*\"))\n[1] \"paste.fun.frame\" \"unpaste\"         \"paste\"          \n\n(I've checked, `paste.fun.frame' really isn't likely to be of\nmuch direct use...)\n\nAnother often partially overlooked group are those that start\nwith \"un...\"\n\n> unlist(lapply(search, objects, pat = \"^un.*$\")  # again, only Unix\n\n-- \n_________________________________________________________________\nBill Venables, Head, Dep't of Statistics,   Tel.: +61 8 8303 5418\nThe University of Adelaide,                 Fax.: +61 8 8303 3696\nSouth AUSTRALIA.     5005.   Email: Bill.Venables at adelaide.edu.au\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": ">>>>> \"Scott\" == Scott Chasalow <Scott.Chasalow at USERS.PV.WAU.NL> writes:\n\n    Scott> You could have found this function with, e.g.\n\n    >> lapply(search(), objects, pat = \"*paste*\"),\n\n    Scott> as",
-      "thread_id": "thread-df466b6009b9",
-      "thread_depth": 1,
+      "thread_id": "thread-4fb863c7132d",
+      "thread_depth": 2,
       "month": "1998-10"
     },
     {
@@ -2523,12 +2523,12 @@
       "date": "1998-10-22T12:27:33Z",
       "subject": "Re: [S] Inverse function for x[col(x)<row(x)]",
       "subject_clean": "[S] Inverse function for x[col(x)<row(x)]",
-      "in_reply_to": null,
+      "in_reply_to": "<199810212132.QAA10135@wubios.wustl.edu>",
       "references": [],
       "body_plain": "> From: andrey at utstat.toronto.edu\n> \n> Randi Chen asks if S-Plus has a function which does the inverse\n> of  \"x[col(x)<row(x)]\".  This operation is very similar to\n> compressed storage of a symmetric matix.  I am not aware of\n> an explicit inverse function in S-Plus to do this. \n\nAs we seem to have a succession of replies, not all of which work, let\nme make explicit that as I understand this the inverse function is to\nsubset the left-hand side of the assignment (implicitly using the \"[<-\" \nfunction, which could be used explicitly):\n\nz <- x[col(x)<row(x)]\ndo something to z\nx[col(x)<row(x)] <- z\n\nIt really is as simple as that, the essence of Audrey's solution.\n\n> x <- matrix(1:25, 5,5)\n> z\n [1]  2  3  4  5  8  9 10 14 15 20\n> x[col(x)<row(x)] <- -z\n> x\n     [,1] [,2] [,3] [,4] [,5] \n[1,]    1    6   11   16   21\n[2,]   -2    7   12   17   22\n[3,]   -3   -8   13   18   23\n[4,]   -4   -9  -14   19   24\n[5,]   -5  -10  -15  -20   25\n\nPuzzling, the original poster's solution does not do precisely what\nhe asked for (it creates a lower-triangular matrix, not replaces part of x).\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "> From: andrey at utstat.toronto.edu\n> \n> Randi Chen asks if S-Plus has a function which does the inverse\n> of  \"x[col(x)<row(x)]\".  This operation is very similar to\n> compressed storage of a symmetr",
-      "thread_id": "thread-f21e8c0981b4",
-      "thread_depth": 0,
+      "thread_id": "thread-c2fde10c4574",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -2735,12 +2735,12 @@
       "date": "1998-10-23T09:35:29Z",
       "subject": "re: [S] warning on the use of unpaste",
       "subject_clean": "[S] warning on the use of unpaste",
-      "in_reply_to": null,
+      "in_reply_to": "<199810221809.NAA06019@likelihood.stat.iastate.edu>",
       "references": [],
       "body_plain": "On Thu Oct 22 19:09:10 1998,\n\"\"William Q. Meeker\"\" <wqmeeker at iastate.edu> wrote:\n>Now that unpaste() has been uncovered, users should be warned about\n>\n>unpaste(NULL)\n>\n>and\n>\n>unpaste(numeric(0))\n>\n>either of which will suddenly and unpleasantly kill your S-Plus\n>session ... \n\nYes, thanks for the warning.  On my S-plus 3.3 for Windows, sometimes\nthis works and sometimes it kills S-plus.  The problem is in a C function\ncalled by unpaste.  I suspect a zero-length string causes improper\nmemory allocation and it ends up trying to access memory it shouldn't.\nWhether or not that causes a problem (such as S-death) varies depending\non for what that memory is being used.\n\nThis brings up an important more general point which is perhaps worth \nrepeating:  undocumented S functions must always be used with rather\nmore care than the standard documented ones.  They are likely to be\nless bullet-proofed, which is reasonable when their authors intended\nthem only for a very specific purpose for which they knew a lot about the\npossible input (perhaps by screening it in calling functions).\n\nIn this case, unpaste() is quite unrobust to various sorts of pathological\ninputs we evil users might wish to pass it.  Witness:\n\n> unpaste(\"\")\nError in tabulate: Missing value where logical needed: if(nbins < max(bin)) \nstop\n(\"nbins must be at least as large as max(bin)\")\n        . . .\nDumped\n\n> unpaste(c(\"Hi there\", \"bye now\"), sep = \" \")  # This works fine\n[[1]]:\n[1] \"Hi\"  \"bye\"\n\n[[2]]:\n[1] \"there\" \"now\"  \n\n> unpaste(c(\"Hi there\", \"\"), sep = \" \") # This is not so nice\n[[1]]:\n[1] \"Hi\" \"NA\"\n\n[[2]]:\n[1] \"there\" \"NA\"   \n\n# And god forbid the strings should have different numbers of fields!\n> unpaste(c(\"Hi there !!\", \"bye now\"), sep = \" \")\nError in rep.int: rep() only defined for length(times)==1 or length(x): \nrep.int(\n1:xlen, times)\n        . . .\nDumped\n\n Finally,  Mark Bravington makes a good point that unpaste() can be slow \ncompared to a more direct use of substring() for specific applications.\nThis is not surprising.  Although it lacks bullet-proofing, unpaste() does\na lot of computations to be rather more general than needed in Mark's\nexample.  His Moral - don't do what I did and rewrite your code to avoid\n\"substring\" in favour of \"unpaste\" - is well taken.  But if it does what you\nwant for one-off jobs and interactive use, go right ahead.\n\nCheers,\nScott\n=========================================\nScott.Chasalow at users.pv.wau.nl\n\nWageningen Agricultural University\nLaboratory of Plant Breeding\nP.O. Box 386\n6700 AJ Wageningen\nTHE NETHERLANDS\n\nhttp://www.spg.wau.nl/pv/staff/Chasal_S.htm\n==========================================\n \n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "On Thu Oct 22 19:09:10 1998,\n\"\"William Q. Meeker\"\" <wqmeeker at iastate.edu> wrote:\n>Now that unpaste() has been uncovered, users should be warned about\n>\n>unpaste(NULL)\n>\n>and\n>\n>unpaste(numeric(0))\n",
-      "thread_id": "thread-e0fd9bc5cbc4",
-      "thread_depth": 0,
+      "thread_id": "thread-7a812c15c2b3",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -2805,8 +2805,8 @@
       ],
       "body_plain": "I too have been searching for an effective way to use S-PLUS on windows\nmachines, after several years of using emacs and ESS under Solaris. I have\nfound script windows to be quite useful, *in their place*.  However, their\nplace is definitely *not* for creating functions. It's still way too\nprimitive compared to ESS, the formatting features of which have been\nkindly ported to the windows environment by B. Ripley, I believe.  \n\nHowever, script windows ARE nice for packaging an analysis. I use the point\nand shoot features to develop and execute various portions of the analysis,\nand then run the whole thing, directing output to a report file for\nsubsequent massaging in word, excel, etc. \n\nAs for functions, though, I create them in ESS and source them in.  Are\nthere better approaches?\n\ndave\n\nAt 08:55 AM 10/23/98 , Jean Adams wrote:\n>     \n>     I believe my situation is very similar to Eric Gibson's.  I use \n>     WinEdit for editing S-PLUS programs, cutting and pasting commands in \n>     the S-PLUS commands window.  After reading Eric's summary, in which \n>     Chuck Taylor and Brian Ripley recommended trying the script window, I \n>     decided to give it a shot.\n>     \n>     Initially it was a bit awkward for me, simply because I wasn't used to \n>     it.  Cursor movement and highlighting felt different.  The commands \n>     and output appeared in the lower half of the script window instead of \n>     in the command window.  I missed the color syntax highlighting of \n>     WinEdit, but I thought I might be able to get over that since I could \n>     now click on the run icon instead of hitting Ctrl-c Ctrl-v all the \n>     time.  Then, S-PLUS crashed, and I lost everything in the script file.\n>     \n>     For me, this is unacceptable.  S-PLUS crashes often enough for me that \n>     the occasional loss of unsaved material in a script file would waste a \n>     lot of my time and effort (if not send me to the funny farm).  I \n>     appreciate the suggestion to try the script window, but for now, I \n>     will stick to WinEdit.  The color syntax highlighting comes in handy \n>     for editing a variety of programs (for me that's primarily S-PLUS, \n>     SQL, and SAS).  That means I don't have to relearn the quirks of a \n>     different editor every time I switch programming hats.  And the \n>     display of the cursor's location (line and column numbers) is great \n>     for browsing and editing data stored as large text files.  As for \n>     speeding up the process, I guess I'll have to settle for an increase \n>     in brace {} usage.\n>     \n>     JVA\n>     \n>     Jean V. Adams                      U.S. Geological Survey\n>     e-mail: jean_adams at usgs.gov        Great Lakes Science Center\n>     phone:  (734) 214-9307             1451 Green Road\n>     FAX:    734-994-8780               Ann Arbor, MI 48105-2899  USA\n>\n> \n----\nDavid O. Nelson\nLawrence Livermore National Laboratory\nBox 808, L-452\nLivermore CA 94551\nPh: (925) 423-8898  Fax: (925) 422-2282\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "I too have been searching for an effective way to use S-PLUS on windows\nmachines, after several years of using emacs and ESS under Solaris. I have\nfound script windows to be quite useful, *in their pl",
-      "thread_id": "thread-5fed9439f33b",
-      "thread_depth": 1,
+      "thread_id": "thread-6188e3a63d6e",
+      "thread_depth": 2,
       "month": "1998-10"
     },
     {
@@ -2817,12 +2817,12 @@
       "date": "1998-10-23T15:55:26Z",
       "subject": "Re: [S] Summary of braces { }",
       "subject_clean": "[S] Summary of braces { }",
-      "in_reply_to": null,
+      "in_reply_to": "<852566A5.0077C467.00@nts1.novartis.com>",
       "references": [],
       "body_plain": "I believe my situation is very similar to Eric Gibson's.  I use \n     WinEdit for editing S-PLUS programs, cutting and pasting commands in \n     the S-PLUS commands window.  After reading Eric's summary, in which \n     Chuck Taylor and Brian Ripley recommended trying the script window, I \n     decided to give it a shot.\n     \n     Initially it was a bit awkward for me, simply because I wasn't used to \n     it.  Cursor movement and highlighting felt different.  The commands \n     and output appeared in the lower half of the script window instead of \n     in the command window.  I missed the color syntax highlighting of \n     WinEdit, but I thought I might be able to get over that since I could \n     now click on the run icon instead of hitting Ctrl-c Ctrl-v all the \n     time.  Then, S-PLUS crashed, and I lost everything in the script file.\n     \n     For me, this is unacceptable.  S-PLUS crashes often enough for me that \n     the occasional loss of unsaved material in a script file would waste a \n     lot of my time and effort (if not send me to the funny farm).  I \n     appreciate the suggestion to try the script window, but for now, I \n     will stick to WinEdit.  The color syntax highlighting comes in handy \n     for editing a variety of programs (for me that's primarily S-PLUS, \n     SQL, and SAS).  That means I don't have to relearn the quirks of a \n     different editor every time I switch programming hats.  And the \n     display of the cursor's location (line and column numbers) is great \n     for browsing and editing data stored as large text files.  As for \n     speeding up the process, I guess I'll have to settle for an increase \n     in brace {} usage.\n     \n     JVA\n     \n     Jean V. Adams                      U.S. Geological Survey\n     e-mail: jean_adams at usgs.gov        Great Lakes Science Center\n     phone:  (734) 214-9307             1451 Green Road\n     FAX:    734-994-8780               Ann Arbor, MI 48105-2899  USA\n\n______________________________ Reply Separator _________________________________\nSubject: [S] Summary of braces { }\nAuthor:  eric.gibson at pharma.Novartis.com at NBS-Internet-Gateway\nDate:    10/22/98 06:42 PM\n\nDear colleagues,\n\nHere's the original post, with replies from\nBill Dunlap and Chuck Taylor at Mathsoft\nand Brian Ripley.  They all give very useful\ninformation.  I'll try to give script windows a shot,\nbut I have been using the wordpad and pasting\nsince version 3.2 for windows and old habits die hard.\n\nThanks to all.\n-Eric Gibson\n\n     < original post snipped >\n\nEric Gibson, Ph.D.\nNovartis Pharmaceuticals\nThe opinions expressed herein are those of Eric Gibson and\nin no way represent Novartis Pharmaceuticals.\neric.gibson at pharma.novartis.com\n\n     < comment from Bill Dunlap snipped >\n\n>>From Chuck Taylor:\n\nAn unsolicited recommendation:  Try the script window in S-PLUS 4.x\ninstead of Wordpad. You can open a script window by selecting\nFile/New/Script File. Enter your text as usual. Then you can run either\nthe entire file or selected text with the Run button. The Run button is\nthe F10 key, or, equivalently, you can click on the icon that looks like a\nsolid triangle pointing to the right on the bottom line of the toolbar.\nThis saves cutting and pasting. File/Save then saves your file as text\n(with a *.ssc suffix).\n\nYou can also open a script window to create a function (say \"foo\") by\ntyping Edit(foo).\n\nBest regards,\n\nChuck\n\n|-----------------------------------------------------------------------|\n| Chuck Taylor                       Senior Quality Assurance Engineer  |\n| MathSoft Seattle, WA, USA          chuck at statsci.com                  |\n|                                                                       |\n| \"All statements in this message represent the opinions of the author  |\n| and do not necessarily reflect official MathSoft policy or position.\" |\n|-----------------------------------------------------------------------|\n\n>>From Brian Ripley:\n\n     < a few paragraphs snipped >\n\nThe reason I know this is that the easiest way I find to work when\ndemonstrating with 4.5 is to have commands in a script window, highlight\nthem and submit them. That does submit them as a single expression.  I\nwould think a script window is at least as useful an editor for S source as\nWordpad (if not as useful as ESS mode in NTemacs, since that gives syntax\nhighlighting). As a new feature, script windows are probably still highly\nunder-valued.\n\n--\nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "I believe my situation is very similar to Eric Gibson's.  I use \n     WinEdit for editing S-PLUS programs, cutting and pasting commands in \n     the S-PLUS commands window.  After reading Eric's summa",
-      "thread_id": "thread-5fed9439f33b",
-      "thread_depth": 0,
+      "thread_id": "thread-6188e3a63d6e",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -2993,12 +2993,12 @@
       "date": "1998-10-26T03:45:44Z",
       "subject": "Re: [S] Large (sparse) matrix is killing me",
       "subject_clean": "[S] Large (sparse) matrix is killing me",
-      "in_reply_to": null,
+      "in_reply_to": "<199810230213.TAA13370@panini.Stanford.EDU>",
       "references": [],
       "body_plain": "Last week I asked about existing facilities for handling large sparse\nmatrices. Alan Zaslavsky kindly pointed me to the data structures he\nhad used in his plr library for polytomous logistic regression\n(available in Statlib).\n\nHis data structures are: \n> data: *nonzero* values from the sparse matrix, arranged in row-major order\n> col.index: the *column* index corresponding to each element of data\n> last: the index of the position in the data and col.index vectors \n> corresponding\n>    to the last nonzero element of each row.\n> \n> For example, if the matrix is\n> \n> 35    0    0\n> 0     0    91\n> 42   11    0\n> 0    81    0\n> \n> then data=(35,91,42,11,81), col.index=(1,3,1,2,2), last=(1,2,4,5)\n> \n> (Note that the use of row-major ordering is because the typical use of\n> this is for calculating X'X or X'WX or X'Y, so we work on one row at a\n> time.)\n> \n> The benefit of this, besides storage efficiency, is that as we work\n> on each row we use col.index to pull out nonzero elements, never\n> doing any calculations on the zero elements.  So the operation count\n> of the outer product calculation for one row goes from (# columns)^2\n> to (# nonzero entries)^2.\n\nI needed a convenient way to build the matrices one row at a time and\nonly needed to access only one row at a time, so I ended up\nimplementing sparse matrices as a list of sparse vectors with each\nelement of the list corresponding to one row. I also defined sparse\nvectors as a list of two elements: vector of values and corresponding\nvector of indices.\n\nWith a few auxiliary functions I can now do all I need.\n\n## create and multiply large sparse vectors:\n##     tempvec <- vector.sparse(values=1:3, indices=c(1,4,6), len=10^20)\n##     tempvec2 <- vector.sparse(1:3,c(1,4,9), 10^20)\n##     length(tempvec2) == 1e+20\n##     tempvec%*%tempvec2 == 5\n## create sparse matrices from sparse vectors:\n##     tempMat <- matrix.sparse.row(tempvec, tempvec2)\n##     dim(tempMat) == c(2,1e+20)\n## access rows of sparse matrices in a natural way\n##     tempMat[1,]%*%tempMat[2,] == 5\n##     tempMat[3,] <- tempvec\n##     dim(tempMat) == c(3,1e+20)\n## just about nothing else is implemented except nice printing of the above.\n\nThis didn't seem to be such a hot topic for this list so I won't use\nup bandwidth by posting the code--unless more than three people\nask me for it.\n\n-Arman.\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Last week I asked about existing facilities for handling large sparse\nmatrices. Alan Zaslavsky kindly pointed me to the data structures he\nhad used in his plr library for polytomous logistic regressio",
-      "thread_id": "thread-c6aa51975076",
-      "thread_depth": 0,
+      "thread_id": "thread-68535ff01cb4",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -3057,12 +3057,12 @@
       "date": "1998-10-26T10:15:49Z",
       "subject": "[S] Re: summary of braces: editing functions",
       "subject_clean": "[S] Re: summary of braces: editing functions",
-      "in_reply_to": null,
+      "in_reply_to": "<\"/GUID:F6D32C36786AD211A6280000F84AA40F*\"@MHS>",
       "references": [],
       "body_plain": "On Mon Oct 26 10:38:12 1998,\nMark Bravington FSMG CEFAS <M.V.BRAVINGTON at cefas.co.uk> wrote:\n>(By way of reply to \"dave\" who creates functions in  ESS and sources them in, \n>but is interested in other ways):\n...\n>This is a perennial topic on S-news, and there are other approaches. I \n>believe Frank Harrell compiled a list a while back (NB that my technique \n>post-dates Frank's list). Also, someone (can't remember who, sorry) recently \n>announced a system that maintains and edits separate text files away from the \n>Splus source. My approach does have the advantage that the formatted source \n>code is stored with the Splus object, so porting stuff is easy.\n\nHoi,\n\nUm, I think that \"someone\" must be me.  You can find out more about,\nand download, my \"efun\" library for managing S-PLUS function\ndevelopment at\n\nhttp://www.spg.wau.nl/pv/pub/chasalow/S/win/efun2_0\n\nor\n\nhttp://www.spg.wau.nl/pv/pub/chasalow/S/unix/efun1_7\n\n-Scott\n=========================================\nScott.Chasalow at users.pv.wau.nl\n\nWageningen Agricultural University\nLaboratory of Plant Breeding\nP.O. Box 386\n6700 AJ Wageningen\nTHE NETHERLANDS\n\nhttp://www.spg.wau.nl/pv/staff/Chasal_S.htm\n===========================================\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "On Mon Oct 26 10:38:12 1998,\nMark Bravington FSMG CEFAS <M.V.BRAVINGTON at cefas.co.uk> wrote:\n>(By way of reply to \"dave\" who creates functions in  ESS and sources them in, \n>but is interested in oth",
-      "thread_id": "thread-9648b2700786",
-      "thread_depth": 0,
+      "thread_id": "thread-c698fbd69276",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -3123,12 +3123,12 @@
       "date": "1998-10-26T15:48:00Z",
       "subject": "[S] In search of a density",
       "subject_clean": "[S] In search of a density",
-      "in_reply_to": null,
+      "in_reply_to": "<3633F2ED.E64CC7CC@rumac.upr.clu.edu>",
       "references": [],
       "body_plain": "Wolfgang Rolke asked:\nI have a rather strange question: I am looking for a symmetric unimodal\ndensity with support on the whole real line with tails that die off not\nslower than a standard normal and an explicit expression for the inverse\nof the cumulative distribution function. Something like the double\nexponential would do, only its tails are to heavy...\n\nThis one, although elementary, was tricky;  hope it's not too inappropriate\nto post a solution here:  One such density is:\n\n        f(x)  =  C    if    |x| < 1    and\n        f(x)  =  C*(x^2)*exp(-abs(x^3))    if    |x| > 1.\n\nwhere  C = 3e/(6e+2).  (Yes, it was a rather strange question!)\n\nAndrey Feuerverger, Toronto.\nandrey at utstat.toronto.edu\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Wolfgang Rolke asked:\nI have a rather strange question: I am looking for a symmetric unimodal\ndensity with support on the whole real line with tails that die off not\nslower than a standard normal and ",
-      "thread_id": "thread-20c46df32be7",
-      "thread_depth": 0,
+      "thread_id": "thread-bf12e37e1011",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -3431,12 +3431,12 @@
       "date": "1998-10-28T00:35:13Z",
       "subject": "RE: [S] Upgrade to my ls() function (Win9x flavor) [Part 1 of 2]",
       "subject_clean": "[S] Upgrade to my ls() function (Win9x flavor) [Part 1 of 2]",
-      "in_reply_to": null,
+      "in_reply_to": "<Pine.SUN.3.96.981027020704.8381A-100000@pisces.fish.washington.edu>",
       "references": [],
       "body_plain": "> \n> Having been stymied by find() not having the ability to use wild\n> characters, I have upgraded my old ls() function\n\nJohn,\n\nthere is an undocumented function find.objects() that accepts wild\ncards. I got this information from Pat Burns' S Poetry book.\n\nNick Ellis\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "> \n> Having been stymied by find() not having the ability to use wild\n> characters, I have upgraded my old ls() function\n\nJohn,\n\nthere is an undocumented function find.objects() that accepts wild\ncard",
-      "thread_id": "thread-100784458c42",
-      "thread_depth": 0,
+      "thread_id": "thread-440c9d1a169b",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -3645,8 +3645,8 @@
       ],
       "body_plain": "On Wed, 28 Oct 1998, Nick Ellis wrote:\n\n> there is an undocumented function find.objects() that accepts wild\n> cards. I got this information from Pat Burns' S Poetry book.\n> \n\n> ls(find, all=T, long=T)\n[[5]]:\n             data.class storage.mode extent object.size \n        find   function     function      4        2989\n  find.calls   function     function      5         755\n   find.data   function     function      4        3159\n    find.doc   function     function      3       15607\nfind.objects   function     function      4        5121\n\n...\n\nSure enough...now where was find.objects() when we were all looking for\nunpaste()? :)\n\n-- \nJohn Wallace\nUniversity of Washington                    ^    ^    ^\nFisheries Research Institute               / \\  / \\  / \\   ^\nBox 357980                                 / \\  / \\   |   / \\\nSeattle, WA 98195-7980                      |    |  o__~  / \\\nPHONE   (206) 543-1513                  @ @         /\\/\\   |\nFAX     (206) 685-7471                   ~    \nE-MAIL        jw at u.washington.edu              o\nWWW      http://www.fish.washington.edu/people/jrw/Wallace.html \n                                                o  _///_ //\n                                                <`)=  _<<\n                                                    \\\\\\  \\\\\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "On Wed, 28 Oct 1998, Nick Ellis wrote:\n\n> there is an undocumented function find.objects() that accepts wild\n> cards. I got this information from Pat Burns' S Poetry book.\n> \n\n> ls(find, all=T, long=T",
-      "thread_id": "thread-100784458c42",
-      "thread_depth": 1,
+      "thread_id": "thread-440c9d1a169b",
+      "thread_depth": 2,
       "month": "1998-10"
     },
     {
@@ -3662,22 +3662,6 @@
       "body_plain": "Hello,\n\nSome people were confused about the question I posted yesterday, so I \nwill try to be more clear.\n\nSuppose you have k groups with possibly different means and standard \ndeviations.  Suppose you take a random sample from each of the groups \nand you want to test whether all groups follow a normal distribution. \n One possible way to test this is to create \"z-scores\" or \"z-values\" \nwithin each group by taking the observations within the i'th group \n(i=1,2,...,k) and subtracting the i'th group mean and dividing by the \ni'th group standard deviation.  You can then combine all of these \n\"z-values\" from all of the k groups into one sample and apply the \nShapiro-Wilk goodness-of-fit test to this one sample.  Has anyone seen \nthis proposed test in the published literature?\n\nThanks for your time!!\n\nSincerely,\n\n--Steve M.\n\n  _____________\n  |    ***    |  Steven P. Millard, Ph.D.\n  |     *     |\n  | *   *   * |  P robability,      TEL:    206-528-4877\n  |   * * *   |  S tatistics &      FAX:    206-528-4802\n  |     *     |  I nformation       E-mail: SMillard at ProbStatInfo.com\n  |     *     |                     Web:    www.ProbStatInfo.com\n  |    ***    |  7723 44th Avenue NE\n  |___________|  Seattle, WA 98115-5117 USA\n\nOriginal Querry:\n\nHello,\n\nWilk and Shapiro wrote a paper in 1968 (Technometrics, Vol.10, No.4, \npp.825-839) suggesting a way to test simultaneously for normality for \nseveral, say k, groups with possibly different population means and \nstandard deviations, based on random samples from each of the groups. \n Wilk and Shapiro actually propose two similar procures, both based on \ncombining the k p-values from the k individual goodness-of-fit tests \nfor each group.  (One procedure was proposed by Fisher in the context \nof combining the results of several independent tests.)\n\nWilk and Shapiro's procedures are not really specific to the \nShapiro-Wilk test, since they involve simply combining p-values from \nseveral independent tests.\n\nHere's my question:  I've seen it suggested that you simply compute the \nz-scores for each group, combine the z-scores, and perform the \ngoodness-of-fit test on the z-scores.  Has anyone seen this proposed \ntest in the published literature?\n\nThanks for your time!!\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Hello,\n\nSome people were confused about the question I posted yesterday, so I \nwill try to be more clear.\n\nSuppose you have k groups with possibly different means and standard \ndeviations.  Suppose yo",
       "thread_id": "thread-7a96dfdbbdd3",
-      "thread_depth": 0,
-      "month": "1998-10"
-    },
-    {
-      "id": "msg-0667b6234344",
-      "message_id": "<622.438983.710712@>",
-      "from_name": "art1234 at visto.com",
-      "from_email_hash": "5f04206ab2b326675613817b53da21d5cd64de8dfdd859367fba4b0a593840d9",
-      "date": "1998-10-28T19:40:13Z",
-      "subject": "[S] laser printer toner advertisement",
-      "subject_clean": "[S] laser printer toner advertisement",
-      "in_reply_to": null,
-      "references": [],
-      "body_plain": "BENCHMARK SUPPLY\n7540 BRIDGEGATE COURT\nATLANTA GA 30350\n\n***LASER PRINTER TONER CARTRIDGES***\n***FAX AND COPIER TONER***\n \n   CHECK OUT OUR NEW CARTRIDGE PRICES :\n \n\nAPPLE \n \n  LASER WRITER  PRO 600 OR 16/600         $69\n  LASER WRITER SELECT 300,310.360         $69\n  LASER WRITER 300, 320                   $54 \n  LASER WRITER LS,NT,2NTX,2F,2G & 2SC     $54 \n  LASER WRITER 12/640                     $79 \n\nHEWLETT PACKARD \n\n  LASERJET SERIES 2,3 & 3D (95A)          $49 \n  LASERJET SERIES  2P AND 3P (75A)        $54 \n  LASERJET SERIES 3SI AND 4SI (91A)       $75 \n  LASERJET SERIES 4L AND 4P               $49 \n  LASERJET SERIES 4, 4M, 5, 5M, 4+ (98A)  $59 \n  LASERJET SERIES 4000 HIGH YIELD  (27X)  $99 \n  LASERJET SERIES 4V                      $95 \n  LASERJET SERIES 5SI , 8000              $95 \n  LASERJET SERIES 5L AND 6L               $49 \n  LASERJET SERIES 5P, 5MP, 6P, 6MP        $59 \n  LASERJET SERIES 5000 (29A)             $135\n  LASERJET SERIES 1100 (92A)              $49 \n  LASERJET SERIES 2100 (96A)              $89\n  LASERJET SERIES 8100 (82X)             $145\n\nHP LASERFAX \n\n  LASERFAX 500, 700, FX1,                 $59 \n  LASERFAX 5000, 7000, FX2,               $59 \n  LASERFAX  FX3                           $69 \n  LASERFAX  FX4                           $79 \n \n\nLEXMARK \n\n  OPTRA  4019, 4029  HIGH YIELD          $135 \n  OPTRA R, 4039, 4049 HIGH YIELD         $135 \n  OPTRA S 4059 HIGH YIELD                $135 \n  OPTRA E                                 $59 \n  OPTRA  N                               $115 \n \n\nEPSON \n\n  EPL-7000, 8000                         $105 \n  EPL-1000, 1500                         $105 \n \n\nCANON \n\n  LBP-430                                 $49 \n  LBP-460, 465                            $59 \n  LBP-8 II                                $54 \n  LBP-LX                                  $54 \n  LBP-MX                                  $95 \n  LBP-AX                                  $49 \n  LBP-EX                                  $59 \n  LBP-SX                                  $49 \n  LBP-BX                                  $95 \n  LBP-PX                                  $49 \n  LBP-WX                                  $95 \n  LBP-VX                                  $59 \n  CANON FAX L700 THRU L790 FX1            $59 \n  CANONFAX L5000 L70000  FX2              $59 \n \n\nCANON COPIERS \n\n  PC 20, 25 ETC....                       $89 \n  PC 3, 6RE, 7, 11  (A30)                 $69 \n  PC 320 THRU 780  (E40)                  $89 \n \n\nNEC \n\n  SERIES 2 LASER MODEL 90,95             $105\n\nPLEASE NOTE:\n\n1) ALL OUR CARTRIDGES ARE GENUINE OEM CARTRIDGES.\n2) WE DO NOT SEND OUT CATALOGS OR PRICE LISTS \n3) WE DO NOT FAX QUOTES OR PRICE LISTS.  \n4) WE DO NOT SELL TO RESELLERS OR BUY FROM DISTRIBUTERS\n5) WE DO NOT CARRY: BROTHER-MINOLTA-KYOSERA-PANASONIC PRODUCTS\n6) WE DO NOT CARRY: XEROX-FUJITSU-OKIDATA OR SHARP PRODUCTS\n7) WE DO NOT CARRY ANY COLOR PRINTER SUPPLIES    \n8) WE DO NOT CARRY DESKJET/INKJET OR BUBBLEJET SUPPLIES\n9) WE DO NOT BUY FROM OR SELL TO RECYCLERS OR REMANUFACTURERS\n\n   WE ACCEPT GOVERNMENT, SCHOOL & UNIVERSITY PURCHASE ORDERS\n   JUST LEAVE YOUR PO # WITH CORRECT BILLING & SHIPPING ADDRESS\n\n               \n\n****OUR OPERATOR ASSISTED ORDER LINE IS 770-399-0953 ****\n****OUR AUTOMATED ORDER LINE IS 800-650-5062****\n****OUR CUSTOMER SERVICE  LINE IS 800-586-0540****\n****OUR E-MAIL REMOVAL AND COMPLAINT LINE IS 800-759-5313****\n\n****PLACE YOUR ORDER AS FOLLOWS**** :\n\nBY PHONE   770-399-0953 \n\nBY FAX:    770-698-9700 \nBY MAIL:   BENCHMARK PRINT SUPPLY\n           7540 BRIDGEGATE COURT\n,          ATLANTA GA 30350\n\nMAKE SURE YOU INCLUDE THE FOLLOWING INFORMATION IN YOUR ORDER: \n\n             1)  YOUR PHONE NUMBER \n             2)  COMPANY NAME \n             3)  SHIPPING ADDRESS \n             4)  YOUR NAME \n             5)  ITEMS NEEDED WITH QUANTITIES \n             6)  METHOD OF PAYMENT. (COD OR CREDIT CARD) \n             7)  CREDIT CARD NUMBER WITH EXPIRATION DATE \n\n \n1) WE SHIP UPS GROUND. ADD $4.5 FOR SHIPPING AND HANDLING.\n2) COD CHECK ORDERS ADD $3.5 TO YOUR SHIPPING COST.\n2) WE ACCEPT ALL MAJOR CREDIT CARD OR \"COD\" ORDERS.\n3) OUR STANDARD MERCHANDISE REFUND POLICY IS NET 30 DAYS\n4) OUR STANDARD MERCHANDISE REPLCAMENT POLICY IS NET 90 DAYS. \n\nNOTE NUMBER (1): \n\nPLEASE DO NOT CALL OUR ORDER LINE TO REMOVE YOUR E-MAIL \nADDRESS OR COMPLAIN. OUR ORDER LINE IS NOT SETUP TO FORWARD \nYOUR E-MAIL ADDRESS REMOVAL REQUESTS OR PROCESS YOUR \nCOMPLAINTS..IT WOULD BE A WASTED PHONE CALL.YOUR ADDRESS \nWOULD NOT BE REMOVED AND YOUR COMPLAINTS WOULD NOT BE \nHANDLED.PLEASE CALL OUR TOLL FREE E-MAIL REMOVAL AND \nCOMPLAINT LINE TO DO THAT.\n\nNOTE NUMBER (2):\n\nOUR E-MAIL RETURN ADDRESS IS NOT SETUP TO ANSWER ANY \nQUESTIONS YOU MIGHT HAVE REGARDING OUR PRODUCTS. OUR E-MAIL \nRETURN ADDRESS IS ALSO NOT SETUP TO TAKE ANY ORDERS AT \nTHIS TIME. PLEASE CALL THE ORDER LINE TO PLACE YOUR ORDER\n OR HAVE ANY QUESTIONS ANSWERED. OTHERWISE PLEASE CALL OUR \nCUSTOMER SERCICE LINE.\n\nNOTE NUMBER (3):\n\nOWNERS OF ANY OF THE DOMAINS THAT APPEAR IN THE HEADER OF \nTHIS MESSAGE,ARE IN NO WAY  ASSOCIATED WITH, PROMOTING, \nDISTRIBUTING OR ENDORSING ANY OF THE PRODUCTS ADVERTISED \nHEREIN AND ARE NOT LIABLE TO ANY CLAIMS THAT MAY ARISE \nTHEREOF.    \n         \n\n \n \n \n \n \n \n \n \n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
-      "body_snippet": "BENCHMARK SUPPLY\n7540 BRIDGEGATE COURT\nATLANTA GA 30350\n\n***LASER PRINTER TONER CARTRIDGES***\n***FAX AND COPIER TONER***\n \n   CHECK OUT OUR NEW CARTRIDGE PRICES :\n \n\nAPPLE \n \n  LASER WRITER  PRO 600 O",
-      "thread_id": "thread-0667b6234344",
       "thread_depth": 0,
       "month": "1998-10"
     },
@@ -3705,12 +3689,12 @@
       "date": "1998-10-29T16:06:41Z",
       "subject": "[S] Mathsoft S-PLUS courses, UK",
       "subject_clean": "[S] Mathsoft S-PLUS courses, UK",
-      "in_reply_to": null,
+      "in_reply_to": "<B12DA4E3D446D111B4CD0020AFF0EB7403C9A7@ntserver.mathsoft.co.uk>",
       "references": [],
       "body_plain": "[Please excuse the rapid reposting of this announcement.  Due to a problem with\nour WWW server (now resolved) we understand a number of on-line registrations \nhave been lost.  If you have not received confirmation of your registration, \nplease re-register.  Thanks -- DMS]\n\n    **************************************************************\n    **                                                          **\n    **                   MathSoft International                 **\n    **                                                          **\n    **          S-PLUS Training Courses Nov/Dec 1998            **\n    **          FULL Details: http://www.mathsoft.co.uk         **\n    **                                                          **\n    ** 30/11 -01/12/98:  Financial Modelling in S-PLUS, London  **\n    ** 15/12/98:         S-PLUS Jump Start, Oxford              **\n    ** 16-17/12/98:      Datat Analysis in S-PLUS, Oxford       **\n    ** 18/12/98:         S-PLUS for ArcView + S+Spatial, Oxford **\n    **                                                          **\n    **************************************************************\n\n    Financial Modelling in S-PLUS\n\n    30/11 - 01/12/1998, London\n\n    Presented by Dr Peter Kempthorne (Kempthorne Analytics)\n\n    This lecture style course is designed as a\n    fast starting point for new users of S-PLUS and as an\n    intensive overview of advanced statistical analytics\n    for finance. Course participants learn S-PLUS basics\n    and advanced financial analytics including volatility\n    modelling and factor modelling for portfolio analysis and\n    risk management. A detailed manual, and software libraries\n    containing course functions and sample data files are\n    presented to each course participant.\n\n    The cost of the two day course is ?995 + VAT for commercial\n    delegates, ?695 + VAT for academic delegates.\n\n    For a detailed course agenda: http://www.mathsoft.co.uk\n\n    ------------------------------------------------------------\n\n                        S-PLUS Jump Start Course\n\n                             15 Dec. 1998\n                              Oxford, UK\n\n    This one-day S-PLUS training course provides an\n    introduction to the S-PLUS GUI and the S-PLUS command line language,\n    basic data analysis, graphics and running statistical models.\n    The course will be taught at an introductory level and assume no knowledge\n    of S-PLUS.\n\n    The cost of the course is 95 GBP + VAT for commercial delegates,\n    50 GBP + VAT for Academic delegates.\n\n    ------------------------------------------------------------\n\n                        Data Analysis in S-PLUS\n\n                           16-17 Dec. 1998\n                              Oxford, UK\n\n    This two-day S-PLUS training course will include an\n    introduction to S-PLUS and the S language, basic data\n    analysis, graphics, data manipulation and management, S-PLUS\n    tricks and troubleshooting. The course will be taught at an\n    introductory / intermediate level. An elementary knowledge\n    of statistics will be assumed.\n\n    The cost of the course is 595 GBP + VAT for commercial delegates,\n    445 GBP + VAT for Academic delegates.\n\n    ------------------------------------------------------------\n\n                  S-PLUS for ArcView GIS & S+SpatialStats\n                           18/12/98, Oxford\n\n    S-PLUS for ArcVIew GIS is the newest add-on module for S-PLUS. This\n    one-day introductory training course is aimed at new and existing\n    users of S-PLUS who would like to evaluate S-PLUS 4.5, S-PLUS for ArcVIew\n    and S+SpatialStats for the purposes of analysing spatial data.\n\n    The cost of the course is 195 GBP + VAT for commercial\n    delegates and 95 GBP + VAT for academic delegates.\n\n    ------------------------------------------------------------\n\n    To book your place on any of the above training courses\n    please contact us as soon as possible at the address given\n    below or fill out our registration forms on the WWW:\n\n    http://www.mathsoft.co.uk\n\n    (Go to MathSoft UK : Union Jack flag)\n\n    +-----------------------------+------------------------------+\n    | MathSoft International      | Email: splus at mathsoft.co.uk  |\n    | Knighway House, Park Street | Tel:   +44 (0)1276 475350    |\n    | Bagshot GU19 5AQ, UK.       | Fax:   +44 (0)1276 45 12 24  |\n    +-----------------------------+------------------------------+\n\n--\nDavid M Smith  (dsmith at mathsoft.co.uk)\nMathsoft International, Bagshot, UK\nTel +44 01276 452299 x212\nFax +44 01276 451224\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "[Please excuse the rapid reposting of this announcement.  Due to a problem with\nour WWW server (now resolved) we understand a number of on-line registrations \nhave been lost.  If you have not received",
-      "thread_id": "thread-4a8f9709743f",
-      "thread_depth": 0,
+      "thread_id": "thread-cdc295294e54",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -3769,12 +3753,12 @@
       "date": "1998-10-29T20:14:27Z",
       "subject": "Re: [S] Date Conversion",
       "subject_clean": "[S] Date Conversion",
-      "in_reply_to": null,
+      "in_reply_to": "<199810291924.OAA11022@ptq2.etsd>",
       "references": [],
       "body_plain": "Hi,\n\nJust thought of dates(substring(dts,2), format='ymd'), but this is really messy \nwith possible implication of Y2K (year 2000) problem. I guess I will just have \nto deal with a messy function until v5.0 arrives next year. Hopefully, v5 \ndoesn't have this problem.\n  Thanks,\n\nHoon,\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Hi,\n\nJust thought of dates(substring(dts,2), format='ymd'), but this is really messy \nwith possible implication of Y2K (year 2000) problem. I guess I will just have \nto deal with a messy function unti",
-      "thread_id": "thread-7542769a45da",
-      "thread_depth": 0,
+      "thread_id": "thread-c91824910522",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -3785,12 +3769,12 @@
       "date": "1998-10-29T20:33:39Z",
       "subject": "Re: [S] Date Conversion",
       "subject_clean": "[S] Date Conversion",
-      "in_reply_to": null,
+      "in_reply_to": "<199810291924.OAA11022@ptq2.etsd>",
       "references": [],
       "body_plain": "Hi,\n\nFirstly, I think the function you want is dates(), not\ndate().  Using this function requires the syntax\ndates(\"1998/01/01\", format=\"y/m/d\").\n\nThis means you need to convert your vector from 19980101 to\n1998/01/01.  I believe there is a section in the user's\nguide that shows you how to do this using parse() and\nsubstitute() (don't quote me on this ;) ).  I'm really not\nup on this stuff right now but one way may be to create\nthree separate vectors; the first one takes the first 4\ncharacters, the second takes 5-6 characters, and the third\ntakes the last two.  You could then use my.dates <-\npaste(x,\"/\",y,\"/\",z,sep=\"\") to get the required vector.\n\nI hope this helps by at least giving you a few ideas on how\nto tackle the problem.\n\nRobin Regnier\nCentral Limit Statistical Consulting\nRRegnier at CentralLimit.com\nhttp://www.CentralLimit.com\n\n-----Original Message-----\nFrom: PT Quants Group Dir <ptquants at nyptsrv1.etsd.ml.com>\nTo: s-news at wubios.wustl.edu <s-news at wubios.wustl.edu>\nDate: Thursday, October 29, 1998 11:28 AM\nSubject: [S] Date Conversion\n\n>Hi,\n>\n>   I have date in '19980101' format and I want to convert\nin/out from S+.\n>\n>date('19980101', format='ymd') does not work\n>date( y, 'ymd') results in 980101\n>\n>Is there a good way to convert it back and forth? And\nespecially as a vector rather than looping?\n>Thanks,\n>\n>S.Y.,\n>-----------------------------------------------------------\n------------\n>This message was distributed by s-news at wubios.wustl.edu.\nTo unsubscribe\n>send e-mail to s-news-request at wubios.wustl.edu with the\nBODY of the\n>message:  unsubscribe s-news\n>\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Hi,\n\nFirstly, I think the function you want is dates(), not\ndate().  Using this function requires the syntax\ndates(\"1998/01/01\", format=\"y/m/d\").\n\nThis means you need to convert your vector from 19980",
-      "thread_id": "thread-183cef3e463f",
-      "thread_depth": 0,
+      "thread_id": "thread-c91824910522",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -3849,12 +3833,12 @@
       "date": "1998-10-30T17:41:11Z",
       "subject": "re: [S] Summary about CIs for Median",
       "subject_clean": "[S] Summary about CIs for Median",
-      "in_reply_to": null,
+      "in_reply_to": "<4130D5B1F917D21189F1080009FCC2092FF86D@lsmail.crn.nestrd.ch>",
       "references": [],
       "body_plain": "On Wed Oct 28 16:45:02 1998,\n<marcel.baumgartner at rdls.nestle.com> wrote:\n>thanks for the quick reply concerning my query about\n>CIs for the median.\n...\n>Luc Wouters (wouters at janbe.jnj.com) sent me the following\n>function:\n>\n>----------Message from Luc Wouters-------------------------\n>A distribution-free confidence interval on the median assuming only iid is\n>based on the order statistics and the binomial distribution. See Lehmann\n>(Nonparametrics: Statistical Methods Based on Ranks, Holden-Day, 1975, p.\n>182-183). The following S-Plus function can be used to set up such a 95 %\n>distribution-free confidence interval on the median:\n...\n>conf.med(1:6)\n>>$median:\n>>[1] 3.5\n>>$lower:\n>>[1] 1\n>>$upper:\n>>[1] 6\n...\n>\n>When the data are differences, then these C.I.'s are related to the sign\n>test. Notice that these C.I. have the disadvantage of being rather\n>conservative.\n\nI have an SPLUS function for computing C.I.'s for any quantile, based\non the same ideas as is Luc Wouter's function.  Luc's function gives an\napproximately symmetric 95% CI for the median.  Besides giving C.I.'s for \nother\nquantiles and for a specified range of coverage probabilities, I allow the \nuser to\ncompute many different confidence intervals, perhaps with only slightly \ndifferent\ncoverage probabilities, different lengths, symmetric or not, and so on.  You \ncan\nthen look at them all and pick the one you prefer; the function can sort them \nor\nsubset them in various ways to help you do so.\n\nIf anyone would like a copy of this function, please drop me an email.  The \ncode,\nincluding that for three local support functions,  is too long to send to the \nwhole \nlist.\n\nHere are a couple of examples:\n\n# A CI for the median\n> ci.quantile(x = 1:6, p = 0.5, level.range = c(0.945, 1))\n\n     Lower Upper Length   Level \n[1,]     1     6      5 0.96875\nattr(, \"percentile\"):\n 50% \n 3.5\n\n# Various CIs for the median\n> ci.quantile(x = 1:6, p = 0.5, level.range = c(0, 1))\n\n      Lower Upper Length    Level \n [1,]     1     6      5 0.968750\n [2,]     1     5      4 0.875000\n [3,]     2     6      4 0.875000\n [4,]     2     5      3 0.781250\n [5,]     1     4      3 0.640625\n [6,]     3     6      3 0.640625\n [7,]     2     4      2 0.546875\n [8,]     3     5      2 0.546875\n [9,]     1     3      2 0.328125\n[10,]     3     4      1 0.312500\n[11,]     2     3      1 0.234375\nattr(, \"percentile\"):\n 50% \n 3.5\n\n# Various CIs for the upper quartile\n> ci.quantile(x = 1:6, p = 0.75, level.range = c(0,1))\n\n      Lower Upper Length     Level \n [1,]     1     6      5 0.8217773\n [2,]     2     6      4 0.8173828\n [3,]     3     6      3 0.7844238\n [4,]     4     6      2 0.6525879\n [5,]     1     5      4 0.4658203\n [6,]     2     5      3 0.4614258\n [7,]     3     5      2 0.4284668\n [8,]     4     5      1 0.2966309\n [9,]     1     4      3 0.1691895\n[10,]     2     4      2 0.1647949\n[11,]     3     4      1 0.1318359\nattr(, \"percentile\"):\n  75% \n 4.75\n\n# Various CIs for the lower quartile\n> ci.quantile(x = 1:6, p = 0.25, level.range = c(0, 1))\n\n     Lower Upper Length     Level \n[1,]     1     6      5 0.8217773\n[2,]     1     5      4 0.8173828\n[3,]     1     4      3 0.7844238\n[4,]     1     3      2 0.6525879\n[5,]     1     2      1 0.3559570\nattr(, \"percentile\"):\n  25% \n 2.25\nCheers,\nScott\n=========================================\nScott.Chasalow at users.pv.wau.nl\n\nWageningen Agricultural University\nLaboratory of Plant Breeding\nP.O. Box 386\n6700 AJ Wageningen\nTHE NETHERLANDS\n\nhttp://www.spg.wau.nl/pv/staff/Chasal_S.htm\n==========================================\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "On Wed Oct 28 16:45:02 1998,\n<marcel.baumgartner at rdls.nestle.com> wrote:\n>thanks for the quick reply concerning my query about\n>CIs for the median.\n...\n>Luc Wouters (wouters at janbe.jnj.com) sent ",
-      "thread_id": "thread-272036700362",
-      "thread_depth": 0,
+      "thread_id": "thread-b89667062a48",
+      "thread_depth": 1,
       "month": "1998-10"
     },
     {
@@ -3915,12 +3899,12 @@
       "date": "1998-10-30T21:42:54Z",
       "subject": "Re: [S] Date Conversion",
       "subject_clean": "[S] Date Conversion",
-      "in_reply_to": null,
+      "in_reply_to": "<199810291924.OAA11022@ptq2.etsd>",
       "references": [],
       "body_plain": "Benjamin,\n\n   On the money. It works well without worry about Y2K problem. I think it \nshould work with century number too, but I guess Splus will have backward \ncompatiability problem.\n   Thanks,\n\nS.Y.\n\n> From benjamin at clardy.net Fri Oct 30 10:41:17 1998\n> MIME-Version: 1.0\n> To: PT Quants Group Dir <ptquants at nyptsrv1.etsd.ml.com>\n> Subject: Re: [S] Date Conversion\n> Content-Transfer-Encoding: 7bit\n> \n> The \"ymd\" informat will not take a 4 digit year, but you can\n> use the century argument to overcome this.  The century argument\n> can either be a single atomic number, or as in this case, a vector\n> of century numbers.\n> \n> mydate <- dates(format=\"ymd\",out.format=\"ymd\"          \n> ,substring(mydate.txt,3,8)\n>    ,century=as.numeric(substring(mydate.txt,1,2))*100)\n> \n> \n> Benjamin\n> \n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Benjamin,\n\n   On the money. It works well without worry about Y2K problem. I think it \nshould work with century number too, but I guess Splus will have backward \ncompatiability problem.\n   Thanks,\n\nS.",
-      "thread_id": "thread-7b5fd58e636b",
-      "thread_depth": 0,
+      "thread_id": "thread-c91824910522",
+      "thread_depth": 1,
       "month": "1998-10"
     }
   ],
@@ -3928,58 +3912,28 @@
     {
       "id": "thread-8c364c2e1965",
       "subject": "[S] summary, df in smooths",
-      "message_count": 1,
+      "message_count": 4,
       "participants": [
-        "Jane Elith"
-      ],
-      "started": "1998-10-01T05:03:15Z",
-      "last_reply": "1998-10-01T05:03:15Z",
-      "root_message_id": "msg-8c364c2e1965"
-    },
-    {
-      "id": "thread-c0cda30eb467",
-      "subject": "[S] summary, df in smooths",
-      "message_count": 2,
-      "participants": [
+        "Frank E Harrell Jr",
+        "Jane Elith",
         "John Maindonald",
         "Prof Brian D Ripley"
       ],
-      "started": "1998-10-01T06:03:58Z",
-      "last_reply": "1998-10-01T06:40:56Z",
-      "root_message_id": "msg-c0cda30eb467"
+      "started": "1998-10-01T05:03:15Z",
+      "last_reply": "1998-10-01T13:22:07Z",
+      "root_message_id": "msg-8c364c2e1965"
     },
     {
       "id": "thread-c2a81c8dacec",
       "subject": "[S] Proportional odds model",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Arisman Adnan"
+        "Arisman Adnan",
+        "Frank E Harrell Jr"
       ],
       "started": "1998-10-01T11:32:45Z",
-      "last_reply": "1998-10-01T11:32:45Z",
-      "root_message_id": "msg-c2a81c8dacec"
-    },
-    {
-      "id": "thread-815fbdb81248",
-      "subject": "[S] Proportional odds model",
-      "message_count": 1,
-      "participants": [
-        "Frank E Harrell Jr"
-      ],
-      "started": "1998-10-01T13:20:13Z",
       "last_reply": "1998-10-01T13:20:13Z",
-      "root_message_id": "msg-815fbdb81248"
-    },
-    {
-      "id": "thread-425902f892b5",
-      "subject": "[S] summary, df in smooths",
-      "message_count": 1,
-      "participants": [
-        "Frank E Harrell Jr"
-      ],
-      "started": "1998-10-01T13:22:07Z",
-      "last_reply": "1998-10-01T13:22:07Z",
-      "root_message_id": "msg-425902f892b5"
+      "root_message_id": "msg-c2a81c8dacec"
     },
     {
       "id": "thread-bbf673f32064",
@@ -4084,12 +4038,13 @@
     {
       "id": "thread-6143bf203163",
       "subject": "[S] importing S-plus graphs into Microsoft Word",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Sheldon L. Epstein",
         "Stein, Christopher D"
       ],
       "started": "1998-10-02T20:46:30Z",
-      "last_reply": "1998-10-02T20:46:30Z",
+      "last_reply": "1998-10-02T23:41:24Z",
       "root_message_id": "msg-6143bf203163"
     },
     {
@@ -4102,17 +4057,6 @@
       "started": "1998-10-02T21:51:19Z",
       "last_reply": "1998-10-02T21:51:19Z",
       "root_message_id": "msg-af3d8aa0ed6d"
-    },
-    {
-      "id": "thread-2bb64f3c0363",
-      "subject": "[S] importing S-plus graphs into Microsoft Word",
-      "message_count": 1,
-      "participants": [
-        "Sheldon L. Epstein"
-      ],
-      "started": "1998-10-02T23:41:24Z",
-      "last_reply": "1998-10-02T23:41:24Z",
-      "root_message_id": "msg-2bb64f3c0363"
     },
     {
       "id": "thread-f92fab439b1b",
@@ -4162,35 +4106,14 @@
     {
       "id": "thread-fd1398f5a4ea",
       "subject": "[S] several questions",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
+        "David Favin",
         "SusieMM at aol.com"
       ],
       "started": "1998-10-04T01:50:50Z",
-      "last_reply": "1998-10-04T01:50:50Z",
-      "root_message_id": "msg-fd1398f5a4ea"
-    },
-    {
-      "id": "thread-d960160e1a02",
-      "subject": "[S] several questions",
-      "message_count": 1,
-      "participants": [
-        "David Favin"
-      ],
-      "started": "1998-10-04T05:49:36Z",
-      "last_reply": "1998-10-04T05:49:36Z",
-      "root_message_id": "msg-d960160e1a02"
-    },
-    {
-      "id": "thread-0e0d09a4a606",
-      "subject": "[S] several questions",
-      "message_count": 1,
-      "participants": [
-        "David Favin"
-      ],
-      "started": "1998-10-04T05:52:32Z",
       "last_reply": "1998-10-04T05:52:32Z",
-      "root_message_id": "msg-0e0d09a4a606"
+      "root_message_id": "msg-fd1398f5a4ea"
     },
     {
       "id": "thread-842d13e73207",
@@ -4338,12 +4261,14 @@
     {
       "id": "thread-5a6218e9a862",
       "subject": "[S] NNET question",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
+        "Bhattacharyya, Arunava, BRGM BRGMS",
+        "Prof Brian Ripley",
         "Thomas J. Downing"
       ],
       "started": "1998-10-07T19:29:09Z",
-      "last_reply": "1998-10-07T19:29:09Z",
+      "last_reply": "1998-10-13T15:48:07Z",
       "root_message_id": "msg-5a6218e9a862"
     },
     {
@@ -4367,17 +4292,6 @@
       "started": "1998-10-07T21:49:37Z",
       "last_reply": "1998-10-07T21:49:37Z",
       "root_message_id": "msg-8eb052c34be4"
-    },
-    {
-      "id": "thread-19464f2b928c",
-      "subject": "[S] NNET question",
-      "message_count": 1,
-      "participants": [
-        "Bhattacharyya, Arunava, BRGM BRGMS"
-      ],
-      "started": "1998-10-08T01:07:25Z",
-      "last_reply": "1998-10-08T01:07:25Z",
-      "root_message_id": "msg-19464f2b928c"
     },
     {
       "id": "thread-5541ffa18228",
@@ -4448,12 +4362,13 @@
     {
       "id": "thread-bb51acfbf21c",
       "subject": "[S] Job vacancy",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Adrian Baddeley"
+        "Adrian Baddeley",
+        "Theo Brandsma"
       ],
       "started": "1998-10-09T03:57:55Z",
-      "last_reply": "1998-10-09T03:57:55Z",
+      "last_reply": "1998-10-13T08:27:10Z",
       "root_message_id": "msg-bb51acfbf21c"
     },
     {
@@ -4514,12 +4429,12 @@
     {
       "id": "thread-8afb33c4f3c0",
       "subject": "[S] kappa",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Dr. L. Y. Hin"
       ],
       "started": "1998-10-10T14:56:58Z",
-      "last_reply": "1998-10-10T14:56:58Z",
+      "last_reply": "1998-10-15T18:13:26Z",
       "root_message_id": "msg-8afb33c4f3c0"
     },
     {
@@ -4547,12 +4462,12 @@
     {
       "id": "thread-04fc808b82e3",
       "subject": "[S] S code for Tolerance Intervals ?",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Robert Kinley"
       ],
       "started": "1998-10-12T09:53:21Z",
-      "last_reply": "1998-10-12T09:53:21Z",
+      "last_reply": "1998-10-15T16:52:18Z",
       "root_message_id": "msg-04fc808b82e3"
     },
     {
@@ -4622,28 +4537,6 @@
       "root_message_id": "msg-6862d6390c9c"
     },
     {
-      "id": "thread-b1877ab05b16",
-      "subject": "[S] Job vacancy",
-      "message_count": 1,
-      "participants": [
-        "Theo Brandsma"
-      ],
-      "started": "1998-10-13T08:27:10Z",
-      "last_reply": "1998-10-13T08:27:10Z",
-      "root_message_id": "msg-b1877ab05b16"
-    },
-    {
-      "id": "thread-e9ee05ceea40",
-      "subject": "[S] NNET question",
-      "message_count": 1,
-      "participants": [
-        "Prof Brian Ripley"
-      ],
-      "started": "1998-10-13T15:48:07Z",
-      "last_reply": "1998-10-13T15:48:07Z",
-      "root_message_id": "msg-e9ee05ceea40"
-    },
-    {
       "id": "thread-8d2368e047eb",
       "subject": "[S] S+ Spatial stats question",
       "message_count": 2,
@@ -4691,24 +4584,13 @@
     {
       "id": "thread-84d83ebf06ad",
       "subject": "[S] creating postscript for LaTeX?",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "John Castelloe"
       ],
       "started": "1998-10-14T16:42:53Z",
-      "last_reply": "1998-10-14T16:42:53Z",
-      "root_message_id": "msg-84d83ebf06ad"
-    },
-    {
-      "id": "thread-c59097ab4157",
-      "subject": "[S] creating postscript for LaTeX?",
-      "message_count": 1,
-      "participants": [
-        "John Castelloe"
-      ],
-      "started": "1998-10-14T17:24:29Z",
       "last_reply": "1998-10-14T17:24:29Z",
-      "root_message_id": "msg-c59097ab4157"
+      "root_message_id": "msg-84d83ebf06ad"
     },
     {
       "id": "thread-9201e4bb7e48",
@@ -4735,24 +4617,14 @@
     {
       "id": "thread-d33a408d7715",
       "subject": "[S] Poster presentations",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Catherine Collins"
-      ],
-      "started": "1998-10-14T20:24:50Z",
-      "last_reply": "1998-10-14T20:24:50Z",
-      "root_message_id": "msg-d33a408d7715"
-    },
-    {
-      "id": "thread-5b801bf79730",
-      "subject": "Re[2]: [S] Poster presentations",
-      "message_count": 1,
-      "participants": [
+        "Catherine Collins",
         "janey at utstat.toronto.edu"
       ],
-      "started": "1998-10-14T21:49:38Z",
+      "started": "1998-10-14T20:24:50Z",
       "last_reply": "1998-10-14T21:49:38Z",
-      "root_message_id": "msg-5b801bf79730"
+      "root_message_id": "msg-d33a408d7715"
     },
     {
       "id": "thread-7f6a3c26346a",
@@ -4779,24 +4651,13 @@
     {
       "id": "thread-ca587deaf9bc",
       "subject": "[S] Logistic regression problems in standard version",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
         "Iftikhar U. Sikder"
       ],
       "started": "1998-10-15T12:20:07Z",
-      "last_reply": "1998-10-15T12:20:07Z",
+      "last_reply": "1998-10-19T10:42:33Z",
       "root_message_id": "msg-ca587deaf9bc"
-    },
-    {
-      "id": "thread-d10f4724238b",
-      "subject": "[S] Logistic regression problems in standard version",
-      "message_count": 1,
-      "participants": [
-        "Iftikhar U. Sikder"
-      ],
-      "started": "1998-10-15T12:20:08Z",
-      "last_reply": "1998-10-15T12:20:08Z",
-      "root_message_id": "msg-d10f4724238b"
     },
     {
       "id": "thread-4af4f7080d45",
@@ -4832,17 +4693,6 @@
       "root_message_id": "msg-cea6fbc5609b"
     },
     {
-      "id": "thread-48b88c263f52",
-      "subject": "[S] S code for Tolerance Intervals ?",
-      "message_count": 1,
-      "participants": [
-        "Robert Kinley"
-      ],
-      "started": "1998-10-15T16:52:18Z",
-      "last_reply": "1998-10-15T16:52:18Z",
-      "root_message_id": "msg-48b88c263f52"
-    },
-    {
       "id": "thread-f3e47d6e4305",
       "subject": "[S] trellis graphics problem resolved: print!",
       "message_count": 1,
@@ -4854,37 +4704,15 @@
       "root_message_id": "msg-f3e47d6e4305"
     },
     {
-      "id": "thread-22cad6f1f058",
-      "subject": "[S] Kappa",
-      "message_count": 1,
-      "participants": [
-        "Dr. L. Y. Hin"
-      ],
-      "started": "1998-10-15T18:13:26Z",
-      "last_reply": "1998-10-15T18:13:26Z",
-      "root_message_id": "msg-22cad6f1f058"
-    },
-    {
       "id": "thread-ae239d5f7404",
       "subject": "[S] data manipulation",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Dr. L. Y. Hin"
       ],
       "started": "1998-10-15T18:49:28Z",
-      "last_reply": "1998-10-15T18:49:28Z",
-      "root_message_id": "msg-ae239d5f7404"
-    },
-    {
-      "id": "thread-e6a0f27ff07a",
-      "subject": "[S] data manipulation",
-      "message_count": 1,
-      "participants": [
-        "Dr. L. Y. Hin"
-      ],
-      "started": "1998-10-15T18:51:12Z",
       "last_reply": "1998-10-15T18:51:12Z",
-      "root_message_id": "msg-e6a0f27ff07a"
+      "root_message_id": "msg-ae239d5f7404"
     },
     {
       "id": "thread-4cb3bbae9415",
@@ -4911,9 +4739,10 @@
     {
       "id": "thread-8c6ddbd1da69",
       "subject": "[S] Problem reading large files.",
-      "message_count": 4,
+      "message_count": 5,
       "participants": [
         "Andreas Krause",
+        "Cande V Ananth",
         "Douglas Bates",
         "Tae-Sung Shin",
         "andrey at utstat.toronto.edu"
@@ -4936,12 +4765,13 @@
     {
       "id": "thread-fe945415c2be",
       "subject": "[S] Bivariate measure of Location",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Ellen Parzynski",
         "Mark Panzani"
       ],
       "started": "1998-10-16T04:25:48Z",
-      "last_reply": "1998-10-16T04:25:48Z",
+      "last_reply": "1998-10-16T05:26:40Z",
       "root_message_id": "msg-fe945415c2be"
     },
     {
@@ -4956,25 +4786,14 @@
       "root_message_id": "msg-d2f17d88bf57"
     },
     {
-      "id": "thread-ac4c5f75edfd",
-      "subject": "[S] Bivariate measure of Location",
-      "message_count": 1,
-      "participants": [
-        "Ellen Parzynski"
-      ],
-      "started": "1998-10-16T05:26:40Z",
-      "last_reply": "1998-10-16T05:26:40Z",
-      "root_message_id": "msg-ac4c5f75edfd"
-    },
-    {
       "id": "thread-817ecd9697fe",
       "subject": "[S] Hodges-Lehman Measure of Location",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Ellen Parzynski"
       ],
       "started": "1998-10-16T05:38:46Z",
-      "last_reply": "1998-10-16T05:38:46Z",
+      "last_reply": "1998-10-17T00:03:50Z",
       "root_message_id": "msg-817ecd9697fe"
     },
     {
@@ -4998,17 +4817,6 @@
       "started": "1998-10-16T09:58:27Z",
       "last_reply": "1998-10-16T09:58:27Z",
       "root_message_id": "msg-e2cfc36a95cd"
-    },
-    {
-      "id": "thread-6e9abff8684a",
-      "subject": "[S] Problem reading large files.",
-      "message_count": 1,
-      "participants": [
-        "Cande V Ananth"
-      ],
-      "started": "1998-10-16T12:33:10Z",
-      "last_reply": "1998-10-16T12:33:10Z",
-      "root_message_id": "msg-6e9abff8684a"
     },
     {
       "id": "thread-95c530372561",
@@ -5088,17 +4896,6 @@
       "root_message_id": "msg-953f81a68b35"
     },
     {
-      "id": "thread-e7c3475daf6e",
-      "subject": "[S] Hodges-Lehman Measure of Location",
-      "message_count": 1,
-      "participants": [
-        "Ellen Parzynski"
-      ],
-      "started": "1998-10-17T00:03:50Z",
-      "last_reply": "1998-10-17T00:03:50Z",
-      "root_message_id": "msg-e7c3475daf6e"
-    },
-    {
       "id": "thread-6ee0f0e6364d",
       "subject": "[S] How to omit na's from scatterplot matrix (splom)?",
       "message_count": 1,
@@ -5145,36 +4942,15 @@
     {
       "id": "thread-809403f9b9fb",
       "subject": "[S] Summary: Creating postscript for LaTeX",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "John Castelloe",
-        "John Wallace"
-      ],
-      "started": "1998-10-18T17:41:51Z",
-      "last_reply": "1998-10-19T08:57:16Z",
-      "root_message_id": "msg-809403f9b9fb"
-    },
-    {
-      "id": "thread-83b4531474c0",
-      "subject": "[S] Summary: Creating postscript for LaTeX",
-      "message_count": 1,
-      "participants": [
+        "John Wallace",
         "Prof Brian Ripley"
       ],
-      "started": "1998-10-19T09:15:52Z",
+      "started": "1998-10-18T17:41:51Z",
       "last_reply": "1998-10-19T09:15:52Z",
-      "root_message_id": "msg-83b4531474c0"
-    },
-    {
-      "id": "thread-b5edd5e01974",
-      "subject": "[S] Logistic regression problems in Standard Version",
-      "message_count": 1,
-      "participants": [
-        "Iftikhar U. Sikder"
-      ],
-      "started": "1998-10-19T10:42:33Z",
-      "last_reply": "1998-10-19T10:42:33Z",
-      "root_message_id": "msg-b5edd5e01974"
+      "root_message_id": "msg-809403f9b9fb"
     },
     {
       "id": "thread-cfe6cc2c50ec",
@@ -5234,12 +5010,12 @@
     {
       "id": "thread-cdc295294e54",
       "subject": "[S] Mathsoft S-PLUS courses, UK",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "David Smith"
       ],
       "started": "1998-10-20T14:42:09Z",
-      "last_reply": "1998-10-20T14:42:09Z",
+      "last_reply": "1998-10-29T16:06:41Z",
       "root_message_id": "msg-cdc295294e54"
     },
     {
@@ -5290,58 +5066,28 @@
     {
       "id": "thread-4fb863c7132d",
       "subject": "[S] delimiting strings",
-      "message_count": 1,
+      "message_count": 4,
       "participants": [
+        "Alan Zaslavsky",
+        "Bill Venables",
+        "Scott.Chasalow at USERS.PV.WAU.NL",
         "sinclair, andrew (MIP London)"
       ],
       "started": "1998-10-21T11:38:00Z",
-      "last_reply": "1998-10-21T11:38:00Z",
-      "root_message_id": "msg-4fb863c7132d"
-    },
-    {
-      "id": "thread-4605add3c5c7",
-      "subject": "[S] delimiting strings",
-      "message_count": 1,
-      "participants": [
-        "Alan Zaslavsky"
-      ],
-      "started": "1998-10-21T12:03:04Z",
-      "last_reply": "1998-10-21T12:03:04Z",
-      "root_message_id": "msg-4605add3c5c7"
-    },
-    {
-      "id": "thread-df466b6009b9",
-      "subject": "[S] delimiting strings",
-      "message_count": 2,
-      "participants": [
-        "Bill Venables",
-        "Scott.Chasalow at USERS.PV.WAU.NL"
-      ],
-      "started": "1998-10-21T12:35:17Z",
       "last_reply": "1998-10-21T23:11:25Z",
-      "root_message_id": "msg-df466b6009b9"
+      "root_message_id": "msg-4fb863c7132d"
     },
     {
       "id": "thread-272b7a394e2a",
       "subject": "[S] unpaste",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Rolf Turner"
-      ],
-      "started": "1998-10-21T13:34:38Z",
-      "last_reply": "1998-10-21T13:34:38Z",
-      "root_message_id": "msg-272b7a394e2a"
-    },
-    {
-      "id": "thread-d6981d92c2a6",
-      "subject": "[S] unpaste",
-      "message_count": 1,
-      "participants": [
+        "Rolf Turner",
         "Scott.Chasalow at USERS.PV.WAU.NL"
       ],
-      "started": "1998-10-21T14:22:32Z",
+      "started": "1998-10-21T13:34:38Z",
       "last_reply": "1998-10-21T14:22:32Z",
-      "root_message_id": "msg-d6981d92c2a6"
+      "root_message_id": "msg-272b7a394e2a"
     },
     {
       "id": "thread-f18c7414a603",
@@ -5368,12 +5114,13 @@
     {
       "id": "thread-7ac49e0d3a5e",
       "subject": "[S] S+ bug?",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Alan Zaslavsky",
         "FRANK J JEN"
       ],
       "started": "1998-10-21T17:15:56Z",
-      "last_reply": "1998-10-21T17:15:56Z",
+      "last_reply": "1998-10-21T17:35:14Z",
       "root_message_id": "msg-7ac49e0d3a5e"
     },
     {
@@ -5387,17 +5134,6 @@
       "started": "1998-10-21T17:26:35Z",
       "last_reply": "1998-10-21T19:00:08Z",
       "root_message_id": "msg-377841845777"
-    },
-    {
-      "id": "thread-33f3a4a617d7",
-      "subject": "[S] S+ bug?",
-      "message_count": 1,
-      "participants": [
-        "Alan Zaslavsky"
-      ],
-      "started": "1998-10-21T17:35:14Z",
-      "last_reply": "1998-10-21T17:35:14Z",
-      "root_message_id": "msg-33f3a4a617d7"
     },
     {
       "id": "thread-c8edc6bec5d9",
@@ -5491,24 +5227,14 @@
     {
       "id": "thread-c2fde10c4574",
       "subject": "[S] Inverse function for x[col(x)<row(x)]",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Prof Brian Ripley",
         "andrey at utstat.toronto.edu"
       ],
       "started": "1998-10-21T21:31:00Z",
-      "last_reply": "1998-10-21T21:31:00Z",
-      "root_message_id": "msg-c2fde10c4574"
-    },
-    {
-      "id": "thread-f21e8c0981b4",
-      "subject": "[S] Inverse function for x[col(x)<row(x)]",
-      "message_count": 1,
-      "participants": [
-        "Prof Brian Ripley"
-      ],
-      "started": "1998-10-22T12:27:33Z",
       "last_reply": "1998-10-22T12:27:33Z",
-      "root_message_id": "msg-f21e8c0981b4"
+      "root_message_id": "msg-c2fde10c4574"
     },
     {
       "id": "thread-ba90a019b25d",
@@ -5524,13 +5250,14 @@
     {
       "id": "thread-7a812c15c2b3",
       "subject": "[S] warning on the use of unpaste",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "\"\"William Q. Meeker\"\"",
-        "Patrick Connolly"
+        "Patrick Connolly",
+        "Scott.Chasalow at USERS.PV.WAU.NL"
       ],
       "started": "1998-10-22T18:09:10Z",
-      "last_reply": "1998-10-22T19:08:07Z",
+      "last_reply": "1998-10-23T09:35:29Z",
       "root_message_id": "msg-7a812c15c2b3"
     },
     {
@@ -5570,12 +5297,14 @@
     {
       "id": "thread-6188e3a63d6e",
       "subject": "[S] Summary of braces { }",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
+        "David O. Nelson",
+        "Jean Adams",
         "eric.gibson at pharma.Novartis.com"
       ],
       "started": "1998-10-22T22:42:21Z",
-      "last_reply": "1998-10-22T22:42:21Z",
+      "last_reply": "1998-10-23T15:55:26Z",
       "root_message_id": "msg-6188e3a63d6e"
     },
     {
@@ -5603,12 +5332,12 @@
     {
       "id": "thread-68535ff01cb4",
       "subject": "[S] Large (sparse) matrix is killing me",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Arman Maghbouleh"
       ],
       "started": "1998-10-23T02:13:33Z",
-      "last_reply": "1998-10-23T02:13:33Z",
+      "last_reply": "1998-10-26T03:45:44Z",
       "root_message_id": "msg-68535ff01cb4"
     },
     {
@@ -5621,17 +5350,6 @@
       "started": "1998-10-23T09:03:51Z",
       "last_reply": "1998-10-23T09:03:51Z",
       "root_message_id": "msg-faa335a0094b"
-    },
-    {
-      "id": "thread-e0fd9bc5cbc4",
-      "subject": "[S] warning on the use of unpaste",
-      "message_count": 1,
-      "participants": [
-        "Scott.Chasalow at USERS.PV.WAU.NL"
-      ],
-      "started": "1998-10-23T09:35:29Z",
-      "last_reply": "1998-10-23T09:35:29Z",
-      "root_message_id": "msg-e0fd9bc5cbc4"
     },
     {
       "id": "thread-d48dc460e8ab",
@@ -5665,18 +5383,6 @@
       "started": "1998-10-23T14:14:43Z",
       "last_reply": "1998-10-23T14:14:43Z",
       "root_message_id": "msg-78c29be2deed"
-    },
-    {
-      "id": "thread-5fed9439f33b",
-      "subject": "[S] Summary of braces { }",
-      "message_count": 2,
-      "participants": [
-        "David O. Nelson",
-        "Jean Adams"
-      ],
-      "started": "1998-10-23T15:55:26Z",
-      "last_reply": "1998-10-23T15:55:26Z",
-      "root_message_id": "msg-5fed9439f33b"
     },
     {
       "id": "thread-e9ed23f2cddf",
@@ -5790,25 +5496,15 @@
       "root_message_id": "msg-64d70f43bf28"
     },
     {
-      "id": "thread-c6aa51975076",
-      "subject": "[S] Large (sparse) matrix is killing me",
-      "message_count": 1,
-      "participants": [
-        "Arman Maghbouleh"
-      ],
-      "started": "1998-10-26T03:45:44Z",
-      "last_reply": "1998-10-26T03:45:44Z",
-      "root_message_id": "msg-c6aa51975076"
-    },
-    {
       "id": "thread-bf12e37e1011",
       "subject": "[S] In search of a density",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Wolfgang Rolke"
+        "Wolfgang Rolke",
+        "andrey at utstat.toronto.edu"
       ],
       "started": "1998-10-26T03:56:29Z",
-      "last_reply": "1998-10-26T03:56:29Z",
+      "last_reply": "1998-10-26T15:48:00Z",
       "root_message_id": "msg-bf12e37e1011"
     },
     {
@@ -5825,24 +5521,14 @@
     {
       "id": "thread-c698fbd69276",
       "subject": "[S] Re: summary of braces: editing functions",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Mark Bravington FSMG CEFAS"
-      ],
-      "started": "1998-10-26T09:38:12Z",
-      "last_reply": "1998-10-26T09:38:12Z",
-      "root_message_id": "msg-c698fbd69276"
-    },
-    {
-      "id": "thread-9648b2700786",
-      "subject": "[S] Re: summary of braces: editing functions",
-      "message_count": 1,
-      "participants": [
+        "Mark Bravington FSMG CEFAS",
         "Scott.Chasalow at USERS.PV.WAU.NL"
       ],
-      "started": "1998-10-26T10:15:49Z",
+      "started": "1998-10-26T09:38:12Z",
       "last_reply": "1998-10-26T10:15:49Z",
-      "root_message_id": "msg-9648b2700786"
+      "root_message_id": "msg-c698fbd69276"
     },
     {
       "id": "thread-c11304cd2f79",
@@ -5865,17 +5551,6 @@
       "started": "1998-10-26T15:19:46Z",
       "last_reply": "1998-10-26T15:19:46Z",
       "root_message_id": "msg-cb2a83faf272"
-    },
-    {
-      "id": "thread-20c46df32be7",
-      "subject": "[S] In search of a density",
-      "message_count": 1,
-      "participants": [
-        "andrey at utstat.toronto.edu"
-      ],
-      "started": "1998-10-26T15:48:00Z",
-      "last_reply": "1998-10-26T15:48:00Z",
-      "root_message_id": "msg-20c46df32be7"
     },
     {
       "id": "thread-958fab34c980",
@@ -5946,12 +5621,13 @@
     {
       "id": "thread-440c9d1a169b",
       "subject": "[S] Upgrade to my ls() function (Win9x flavor) [Part 1 of 2]",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
-        "John Wallace"
+        "John Wallace",
+        "Nick Ellis"
       ],
       "started": "1998-10-27T10:19:34Z",
-      "last_reply": "1998-10-27T10:19:34Z",
+      "last_reply": "1998-10-28T18:45:29Z",
       "root_message_id": "msg-440c9d1a169b"
     },
     {
@@ -6077,18 +5753,6 @@
       "root_message_id": "msg-bcc46975d924"
     },
     {
-      "id": "thread-100784458c42",
-      "subject": "[S] Upgrade to my ls() function (Win9x flavor) [Part 1 of 2]",
-      "message_count": 2,
-      "participants": [
-        "John Wallace",
-        "Nick Ellis"
-      ],
-      "started": "1998-10-28T00:35:13Z",
-      "last_reply": "1998-10-28T18:45:29Z",
-      "root_message_id": "msg-100784458c42"
-    },
-    {
       "id": "thread-9e7f723b3c3c",
       "subject": "[S] problem using gam",
       "message_count": 1,
@@ -6201,12 +5865,13 @@
     {
       "id": "thread-b89667062a48",
       "subject": "[S] Summary about CIs for Median",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Scott.Chasalow at USERS.PV.WAU.NL",
         "marcel.baumgartner at rdls.nestle.com"
       ],
       "started": "1998-10-28T15:45:02Z",
-      "last_reply": "1998-10-28T15:45:02Z",
+      "last_reply": "1998-10-30T17:41:11Z",
       "root_message_id": "msg-b89667062a48"
     },
     {
@@ -6232,17 +5897,6 @@
       "root_message_id": "msg-7a96dfdbbdd3"
     },
     {
-      "id": "thread-0667b6234344",
-      "subject": "[S] laser printer toner advertisement",
-      "message_count": 1,
-      "participants": [
-        "art1234 at visto.com"
-      ],
-      "started": "1998-10-28T19:40:13Z",
-      "last_reply": "1998-10-28T19:40:13Z",
-      "root_message_id": "msg-0667b6234344"
-    },
-    {
       "id": "thread-c9bb9425a5ac",
       "subject": "[S] Position opening in St. Louis",
       "message_count": 1,
@@ -6252,17 +5906,6 @@
       "started": "1998-10-28T20:01:54Z",
       "last_reply": "1998-10-28T20:01:54Z",
       "root_message_id": "msg-c9bb9425a5ac"
-    },
-    {
-      "id": "thread-4a8f9709743f",
-      "subject": "[S] Mathsoft S-PLUS courses, UK",
-      "message_count": 1,
-      "participants": [
-        "David Smith"
-      ],
-      "started": "1998-10-29T16:06:41Z",
-      "last_reply": "1998-10-29T16:06:41Z",
-      "root_message_id": "msg-4a8f9709743f"
     },
     {
       "id": "thread-201258e28a92",
@@ -6289,35 +5932,14 @@
     {
       "id": "thread-c91824910522",
       "subject": "[S] Date Conversion",
-      "message_count": 1,
+      "message_count": 4,
       "participants": [
-        "PT Quants Group Dir"
-      ],
-      "started": "1998-10-29T19:24:47Z",
-      "last_reply": "1998-10-29T19:24:47Z",
-      "root_message_id": "msg-c91824910522"
-    },
-    {
-      "id": "thread-7542769a45da",
-      "subject": "[S] Date Conversion",
-      "message_count": 1,
-      "participants": [
-        "PT Quants Group Dir"
-      ],
-      "started": "1998-10-29T20:14:27Z",
-      "last_reply": "1998-10-29T20:14:27Z",
-      "root_message_id": "msg-7542769a45da"
-    },
-    {
-      "id": "thread-183cef3e463f",
-      "subject": "[S] Date Conversion",
-      "message_count": 1,
-      "participants": [
+        "PT Quants Group Dir",
         "Robin Regnier"
       ],
-      "started": "1998-10-29T20:33:39Z",
-      "last_reply": "1998-10-29T20:33:39Z",
-      "root_message_id": "msg-183cef3e463f"
+      "started": "1998-10-29T19:24:47Z",
+      "last_reply": "1998-10-30T21:42:54Z",
+      "root_message_id": "msg-c91824910522"
     },
     {
       "id": "thread-3d3e3cf3eb5b",
@@ -6353,17 +5975,6 @@
       "root_message_id": "msg-14fd45fdb950"
     },
     {
-      "id": "thread-272036700362",
-      "subject": "[S] Summary about CIs for Median",
-      "message_count": 1,
-      "participants": [
-        "Scott.Chasalow at USERS.PV.WAU.NL"
-      ],
-      "started": "1998-10-30T17:41:11Z",
-      "last_reply": "1998-10-30T17:41:11Z",
-      "root_message_id": "msg-272036700362"
-    },
-    {
       "id": "thread-9ab1b0a8f417",
       "subject": "[S] txt",
       "message_count": 1,
@@ -6384,17 +5995,6 @@
       "started": "1998-10-30T19:56:11Z",
       "last_reply": "1998-10-30T19:56:11Z",
       "root_message_id": "msg-cdb83d4eeb7d"
-    },
-    {
-      "id": "thread-7b5fd58e636b",
-      "subject": "[S] Date Conversion",
-      "message_count": 1,
-      "participants": [
-        "PT Quants Group Dir"
-      ],
-      "started": "1998-10-30T21:42:54Z",
-      "last_reply": "1998-10-30T21:42:54Z",
-      "root_message_id": "msg-7b5fd58e636b"
     }
   ]
 }

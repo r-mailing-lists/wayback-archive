@@ -11,7 +11,7 @@
       "date": "2000-11-30T23:35:39Z",
       "subject": "RE: (pas d'objet)",
       "subject_clean": "(pas d'objet)",
-      "in_reply_to": null,
+      "in_reply_to": "<3A269053.E9D302E7@ifremer.fr>",
       "references": [],
       "body_plain": "Just a few footnotes by a cranky old curmudgeon...\n\n> -----Original Message-----\n> From: Timothy J. Wade [mailto:tjwade at uclink4.berkeley.edu]\n> Sent: Friday, 1 December 2000 6:51\n> To: Marion VERDOIT; S-news at wubios.wustl.edu\n> Subject: Re: [S] (pas d'objet)\n> \n> \n> Sorry, correction:\n> \n> Try this:\n> a <- c(\"NA\",\"1\", \"NA\", \"5\", \"NA\", \"6\",\"8\",\"10\")\n> x <- c(1:length(a))\n\nThis is not a hanging offence, but the c() is entirely unnecessary here.\nIncluding such things in public code tends to confuse people and to start\noff littel myths and prejudices.\n\nx <- 1:length(a)     ## is OK but\nx <- seq(along = a)  ## can sometimes be safer.\n\n> \n> **z<-x[a==\"NA\"]**    NOT z<-z[a==\"NA\"]\n\nTrue but you could also \n\nz <- seq(along = a)[is.element(a, \"NA\")]\n\nfor example and do it in one neat step, without becoming all that\nobfuscated.\n\n> \n> At 06:37 PM 11/30/2000 +0100, Marion VERDOIT wrote:\n> >Hello,\n> >I have a vector\n> >a<-c(\"NA\",\"1\", \"NA\", \"5\", \"NA\", \"6\",\"8\",\"10\")\n> >I want the positions of the \"NA\"s in a, i.e.:\n> >1 3 5\n> >I try\n> >match(\"NA\", a), but it returns only the first position :\n> > > 1\n> >have you the solution?\n\nNearly.  You put the arguments to match() the wrong way round.\n\nmatch(a, \"NA\")\n\nwould have just about got you there.  The is.element() function is really\njust a front end to match for people who forget which way round to put the\narguments!\n\nBill Venables.\n\n> >Thank you\n> >---------------------------------------------------------------------\n> >This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> >unsubscribe send e-mail to \n> s-news-request at lists.biostat.wustl.edu with\n> >the BODY of the message:  unsubscribe s-news\n> \n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n> \n> \n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>",
       "body_snippet": "Just a few footnotes by a cranky old curmudgeon...\n\n> -----Original Message-----\n> From: Timothy J. Wade [mailto:tjwade at uclink4.berkeley.edu]\n> Sent: Friday, 1 December 2000 6:51\n> To: Marion VERDO",
@@ -81,12 +81,12 @@
       "date": "2000-12-01T15:49:53Z",
       "subject": "Re: for loop in R",
       "subject_clean": "for loop in R",
-      "in_reply_to": null,
+      "in_reply_to": "<NIEELJHCHBOJGFPONOHDIELJCBAA.aspano@consodata.it>",
       "references": [],
       "body_plain": "> From: aspano at consodata.it\n> Date: Fri, 1 Dec 2000 16:06:50 -0800\n> \n> This is a test in R I am quite happy about\n\nThis is S-news, though, and the (other?) R experts live on lists like\nR-help and R-devel.\n\n> Rgui  --vsize=256M\n> > str <- paste(rep(\"A\", 2500), collapse=\"\")\n> >  mat <- cbind(rep(str, 100000))\n> > for(i in 1:100000){cat(substring(mat[i], 1:2500, 1:2500)[1:10], \"<-\",i,\n> \"\\n\")}\n> \n> Somehow it works. I am rigth to say that R release memory after each step of\n> the for loop??\n\nNo, R garbage collects unused objects when it runs out of space.\nIt can run your example in its default workspace.  I get (R-1.2.0 pre-release)\n\n> gcinfo(T)\n> for(i in 1:100000){cat(substring(mat[i], 1:2500, 1:2500)[1:10], \"<-\",i,\"\\n\")}\nA A A A A A A A A A <- 1 \nA A A A A A A A A A <- 2 \nA A A A A A A A A A <- 3 \nA A A A A A A A A A <- 4 \nA A A A A A A A A A <- 5 \nA A A A A A A A A A <- 6 \nA A A A A A A A A A <- 7 \nA A A A A A A A A A <- 8 \nA A A A A A A A A A <- 9 \nA A A A A A A A A A <- 10 \nA A A A A A A A A A <- 11 \nA A A A A A A A A A <- 12 \nA A A A A A A A A A <- 13 \nA A A A A A A A A A <- 14 \nA A A A A A A A A A <- 15 \nGarbage collection 2 = 0+0+2 (level 2) ... \n195710 cons cells free (55%)\n5.0 Mbytes of heap free (83%)\n...\n\n> If I am wrong, how does R manages the memory to work with this bug matrix??\n\nIt's not a `bug' matrix.  There is only one copy of str in R, and you\nneed very litle memory.  S-PLUS (I tried 5.1) is not so economical, but\nis this of any practical relevance?  You are doing the same thing\n100000 times.\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595",
       "body_snippet": "> From: aspano at consodata.it\n> Date: Fri, 1 Dec 2000 16:06:50 -0800\n> \n> This is a test in R I am quite happy about\n\nThis is S-news, though, and the (other?) R experts live on lists like\nR-help and ",
-      "thread_id": "thread-3bb1e4209e8e",
-      "thread_depth": 0,
+      "thread_id": "thread-54b7090501a3",
+      "thread_depth": 1,
       "month": "2000-12"
     },
     {
@@ -103,8 +103,8 @@
       ],
       "body_plain": "Professor Ripley,\n        Your comment on relevancy is, if I may say, irrelevant. The original\nposter's example demonstrates a program that runs efficiently in one system (R)\nand not in another (S+5). Your comment seems to imply that this will only be\ntrue for useless programs, which I think even a casual S+5 user will find\nuncredible. A more interesting counter argument would be a program (useful or\nnot) that runs inefficiently in R, but not in S+5. Not being an R user I can't\noffer such a thing, anyone else?\n\n        Matt\n\nOn Fri, 1 Dec 2000, Prof Brian Ripley wrote:\n\n<snip> \n> \n> It's not a `bug' matrix.  There is only one copy of str in R, and you\n> need very litle memory.  S-PLUS (I tried 5.1) is not so economical, but\n> is this of any practical relevance?  You are doing the same thing\n> 100000 times.\n> \n>",
       "body_snippet": "Professor Ripley,\n        Your comment on relevancy is, if I may say, irrelevant. The original\nposter's example demonstrates a program that runs efficiently in one system (R)\nand not in another (S+5).",
-      "thread_id": "thread-3bb1e4209e8e",
-      "thread_depth": 1,
+      "thread_id": "thread-54b7090501a3",
+      "thread_depth": 2,
       "month": "2000-12"
     },
     {
@@ -121,8 +121,8 @@
       ],
       "body_plain": "Matt Calder is misreading my posting, not for the first time.  What is of\nno practical relevance is processing the very same string (not even\nidentical strings) 100000 times.  *I* made no comparisons of the\nreal-life efficiencies of R and S-PLUS (not even current versions like\n6.0) in my posting.\n\nOn Fri, 1 Dec 2000, Matt Calder wrote:\n\n> Professor Ripley,\n>       Your comment on relevancy is, if I may say, irrelevant. The original\n> poster's example demonstrates a program that runs efficiently in one system \n> (R)\n> and not in another (S+5). Your comment seems to imply that this will only be\n> true for useless programs, which I think even a casual S+5 user will find\n> uncredible. A more interesting counter argument would be a program (useful or\n> not) that runs inefficiently in R, but not in S+5. Not being an R user I can't\n> offer such a thing, anyone else?\n> \n>       Matt\n> \n> \n> On Fri, 1 Dec 2000, Prof Brian Ripley wrote:\n> \n> <snip> \n> > \n> > It's not a `bug' matrix.  There is only one copy of str in R, and you\n> > need very litle memory.  S-PLUS (I tried 5.1) is not so economical, but\n> > is this of any practical relevance?  You are doing the same thing\n> > 100000 times.\n> > \n> > \n> \n> \n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595",
       "body_snippet": "Matt Calder is misreading my posting, not for the first time.  What is of\nno practical relevance is processing the very same string (not even\nidentical strings) 100000 times.  *I* made no comparisons ",
-      "thread_id": "thread-3bb1e4209e8e",
-      "thread_depth": 2,
+      "thread_id": "thread-54b7090501a3",
+      "thread_depth": 3,
       "month": "2000-12"
     },
     {
@@ -233,12 +233,12 @@
       "date": "2000-12-02T22:56:24Z",
       "subject": "RE: wtgms.f2 != NA",
       "subject_clean": "wtgms.f2 != NA",
-      "in_reply_to": null,
+      "in_reply_to": "<NPELLJGFJFGIOAHJFBAEIELECKAA.healthmaps@home.com>",
       "references": [],
       "body_plain": "Richard E Hoskins asks the seminal question:\n\n> \n> If the following works ...\n> \n> wtgms.f2[wtgms.f2 < 1000]\n>  [1] 765  NA  NA 635  NA  NA  NA 850 590  NA  NA 992 840  NA 713 539\n> [17] 964 595 856 540 595 975 580 840 544  NA 652 650 539 693 340 539\n> [33]  NA  NA  NA 560  NA  NA  NA 879 700 794  NA  NA  NA\n> \n> Why doesn't the following?\n> \n> wtgms.f2[wtgms.f2 != NA]  (I want to get all non-missing elements in\n> wtgms.f2)\n>    [1] NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA\n>   [21] NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA NA\n\nThis is a good opportunity to get your model on how NA works within S\nstraight.  The first thing to settle completely in your mind is that \"NA\" is\nnot a value, it is a marker for something that is NOT there.  This is the\ncase whether it appears in data or in expressions.\n\nIn this light consider the expression \"wtgms.f2 != NA\".  The right hand side\nof the inequality is not supplied, it is only marked as being NOT AVAILABLE.\nHence the expression itself cannot (yet) be evaluated.  Hence all values\nthat might have depended on it are likewise NOT AVAILABLE.  Hence the\nbehaviour you see.\n\nIn many systems the counterpart of NA is simply another value, but one that\nwill never legitimately be used as data, even though it can be used in\nexpressions, so your question is not entirely surprising.  \n\nThe exact position with NA is, of course, a little more complex than this as\nit often covers three sorts of, let's say, \"ineffable\" values, namely true\nNAs, NaNs and Infs, but that's another story....\n\nBill Venables.\n\n--\nBill Venables, CSIRO/CMIS Environmetrics Project\nEmail: Bill.Venables at cmis.csiro.au\nPhone: +61 7 3826 7251\nFax:   +61 7 3826 7304\nPostal: PO Box 120, Cleveland, Qld 4163, AUSTRALIA",
       "body_snippet": "Richard E Hoskins asks the seminal question:\n\n> \n> If the following works ...\n> \n> wtgms.f2[wtgms.f2 < 1000]\n>  [1] 765  NA  NA 635  NA  NA  NA 850 590  NA  NA 992 840  NA 713 539\n> [17] 964 595 856 5",
-      "thread_id": "thread-05c19ea2cb69",
-      "thread_depth": 0,
+      "thread_id": "thread-df51f7f42b4a",
+      "thread_depth": 1,
       "month": "2000-12"
     },
     {
@@ -351,12 +351,12 @@
       "date": "2000-12-04T14:34:39Z",
       "subject": "Re: wtgms.f2 != NA",
       "subject_clean": "wtgms.f2 != NA",
-      "in_reply_to": null,
+      "in_reply_to": "<NPELLJGFJFGIOAHJFBAEIELECKAA.healthmaps@home.com>",
       "references": [],
       "body_plain": "> Date: Mon, 04 Dec 2000 09:20:55 -0500\n> From: \"Martin H. H. Stevens\" <hstevens at rci.rutgers.edu>\n> X-Accept-Language: en,pdf\n> CC: Health Maps <healthmaps at home.com>, s-plus <s-news at wubios.wustl.edu>\n> Subject: Re: [S] wtgms.f2 != NA\n> \n> > The following, which makes sort of sense to me (an S+ novice), appears to\n> > work.\n> >\n> > wtgms.f2[wtgms.f2 != \"NA\"]\n> > I think this expression returns all records for where value (the thing \ninside\n> >\n> > the \"\") is \"not available\".\n> > Your original version without the quotes returned ... \"oops. the value to\n> > return is not [yet] available.\"\n> > ...if that makes sense to you.\n> >\n> > I wouldn't mind additional elaboration if anyone cares to comment.\n\nThe preferred solution is indeed wtgms.f2[!is.na(wtgms.f2)], as I\nposted.  Your solution works by coercing wtgms.f2 to character, and\nthan checking if the coerced value is \"NA\".  This is inefficient, and\ndoes not work correctly with NaNs: (S-PLUS 6.0)\n\n> x <- c(1, NA, 0/0)\n> x\n[1]  1 NA NA\n> is.na(x)\n[1] F T T\n> x != \"NA\"\n[1] T F T\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595",
       "body_snippet": "> Date: Mon, 04 Dec 2000 09:20:55 -0500\n> From: \"Martin H. H. Stevens\" <hstevens at rci.rutgers.edu>\n> X-Accept-Language: en,pdf\n> CC: Health Maps <healthmaps at home.com>, s-plus <s-news at wubios.wu",
-      "thread_id": "thread-a96d905ace49",
-      "thread_depth": 0,
+      "thread_id": "thread-df51f7f42b4a",
+      "thread_depth": 1,
       "month": "2000-12"
     },
     {
@@ -452,12 +452,12 @@
       "date": "2000-12-04T17:19:45Z",
       "subject": "Re: NAs and subsetting data frames",
       "subject_clean": "NAs and subsetting data frames",
-      "in_reply_to": null,
+      "in_reply_to": "<p05001900b65166ce2c2e@[128.115.153.6]>",
       "references": [],
       "body_plain": "> Date: Mon, 4 Dec 2000 07:46:25 -0800\n> To: s-news at wubios.wustl.edu\n> From: Don MacQueen <macq at llnl.gov>\n> Subject: [S] NAs and subsetting data frames\n> \n> Since testing for the presence of NA has been a recent topic, I would \n> like to comment on the behavior shown in the following example\n> \n> >  tst <- data.frame(x=c(1:3,rep(NA,3)),a=letters[1:6],y=1:6)\n> >  tst\n>     x a y\n> 1  1 a 1\n> 2  2 b 2\n> 3  3 c 3\n> 4 NA d 4\n> 5 NA e 5\n> 6 NA f 6\n> \n> >  tst[tst$x==1,]\n> Problem in dimnames(x) <- list(rn, dimnames(x)[[2]]): Component 1 of \n> dimnames has length 6, should be 4\n> Use traceback() to see the call stack\n> \n> >  tst$x==1\n> [1]  T  F  F NA NA NA\n> \n> >  tst[!is.na(tst$x) & tst$x==1,]\n>    x a y\n> 1 1 a 1\n> \n> I understand the rationale; if the value of x is unknown, then it is \n> unknown whether or not the value equals 1. None the less, when I want \n> the subset where  x=1, I would prefer the expression tst[tst$x==1,] \n> to return the subset where x is known to be 1, rather than crash.\n> \n----------\n\nPrecisely.  I often wrap subscript expressions in naF(), where\n\nnaF <- function(x) {\n        x <- as.logical(x)\n        x[is.na(x)] <- FALSE\n        x\n}\n\nThus\n\n> tst[naF(tst$x==1),]\n  x a y \n1 1 a 1\n\nRichard Raubertas\nrfr at bst.rochester.edu",
       "body_snippet": "> Date: Mon, 4 Dec 2000 07:46:25 -0800\n> To: s-news at wubios.wustl.edu\n> From: Don MacQueen <macq at llnl.gov>\n> Subject: [S] NAs and subsetting data frames\n> \n> Since testing for the presence of NA ",
-      "thread_id": "thread-6e940fddfd40",
-      "thread_depth": 0,
+      "thread_id": "thread-2c1e5a104498",
+      "thread_depth": 1,
       "month": "2000-12"
     },
     {
@@ -548,12 +548,12 @@
       "date": "2000-12-04T23:49:47Z",
       "subject": "RE: Quadruple integration",
       "subject_clean": "Quadruple integration",
-      "in_reply_to": null,
+      "in_reply_to": "<27839F4FFBF6D21181E20008C7C5640805C02AAF@exdkba04.novo.dk>",
       "references": [],
       "body_plain": "Peter Thyregod asks:\n\n> -----Original Message-----\n> From: PTHY (Peter Thyregod) [mailto:pthy at novonordisk.com]\n> Sent: Monday, 4 December 2000 20:21\n> To: 's-news at lists.biostat.wustl.edu'\n> Subject: [S] Quadruple integration\n> \n> \n> Using version 5.1 on a HP unix system.\n> \n> In the s-news archives I found an answer on how to perform double \n> integration of a function in two variables when the limits of the \n> inner integral are functions of the second variable. The answer \n> is attached below.\n> \n> How does this extend to a quadruple integration (of the same kind \n> with limits depending on the variables, and with the integrand being \n> a function f(x,y,z,w) of all four variables) ?\n\nIn actual fact the example given below is not for a double integral so much\nas for a repeated integral in the old sense.  The same idea could be pushed\nfurther to more levels of repeated integral, provided you could express your\nregion of integration by, for example, giving the lower and upper x-limits\nas functions of (y, z, w), the lower and upper y-limits as functions of (z,\nw), &c.  It would be tedious to do so and very, very slow to work so my\nstrong recommendation is that you abandon this idea and try some other.  \n\nI seem to recall there is an R multiple integral library but I don't know\nwhat is involved in porting it to S-PLUS (probably more than setting up R on\nyour system...).\n\nBill Venables.\n\n> Thank you,\n> Peter Thyregod\n> Technical University of Denmark/Novo Nordisk A/S\n> --------------------------------------------------\n> On 6 Mar 1999 Bill Venables writes:\n> \n> %Tony Diaz asks:\n> %\n> %> \n> %> Can somebody provide me with an illuminating sample implementation\n> %> of double integration using the integrate() function in S-plus (in\n> %> case it matters, I'm using v4.0). I am looking for an \n> example with a\n> %> more \"general scope\" than the one provided in the \"help(integrate)\"\n> %> documentation. Specifically, I'd like to know how to setup \n> the inner\n> %> integral using lower and upper limits that are both general\n> %> functions of the second variable.\n> %> \n> %> Just to be sure, let me give a specific sample problem. Suppose\n> %> \n> %>      myfun <- function(x,y){x+y}\n> %> \n> %> which we want to integrate over the region\n> %> \n> %>      1-y < x < y\n> %>      .5 < y < 1.\n> %> \n> %> How does one write an Splus function for the inner integral?\n> %\n> %I find the example in the S+5.0 help file a bit misleading.  Here\n> %is a single function in the style of that one that shows one way\n> %of doing it.  \n> %\n> %The important thing to remember is that the inner integral has to\n> %be a function of two variables, *vectorized* in the sense that\n> %given a vector of values for the outer variable of integration it\n> %has to supply a vector of results for the inner integral, (if you\n> %get my drift...)  This is what the unlist(lapply(...)) is all about.\n> %\n> %double.integral.demo.fn <- function() {\n> %  fun <- function(y) \n> %    unlist(lapply(y,\n> %                  function(y) {\n> %                    integrate(f = function(x, y) x+y,\n> %                              lower = 1-y,\n> %                              upper = y, \n> %                           y = y)$integral\n> %                  }))\n> %  integrate(f = fun,\n> %            lower = 0.5,\n> %            upper = 1)$integral\n> %}\n> %\n> %Here is a test run:\n> %\n> %> double.integral.demo.fn()\n> %[1] 0.33333\n> %\n> %(It's not exactly very fast, though!)\n> %\n> %Bill Venables\n> %\n> %-- \n> \n> \n> \n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>",
       "body_snippet": "Peter Thyregod asks:\n\n> -----Original Message-----\n> From: PTHY (Peter Thyregod) [mailto:pthy at novonordisk.com]\n> Sent: Monday, 4 December 2000 20:21\n> To: 's-news at lists.biostat.wustl.edu'\n> Subj",
-      "thread_id": "thread-5c616ae1cd9e",
-      "thread_depth": 0,
+      "thread_id": "thread-c9ac5dfa5098",
+      "thread_depth": 1,
       "month": "2000-12"
     },
     {
@@ -564,12 +564,12 @@
       "date": "2000-12-05T00:22:31Z",
       "subject": "RE: (No Subject)",
       "subject_clean": "(No Subject)",
-      "in_reply_to": null,
+      "in_reply_to": "<PECBGHAIOPNKAAAA@mailcity.com>",
       "references": [],
       "body_plain": "Albert Howarth asks:\n\n> -----Original Message-----\n> From: albert horwath [mailto:al_horwath at lycos.com]\n> Sent: Tuesday, 5 December 2000 3:41\n> To: splus\n> Subject: [S] (No Subject)\n> \n> \n> Dear S-Colleagues:\n> I am trying to estimate cumulants of a sample distribution \n> which is expected to be slightly non-normal (say, \n> t-distribution with ~15 degrees of freedom, or \n> chi-square with ~20 df).  I am using standard analytical \n> expressions of cumulants through moments. The latter, as far \n> as I know are assumed to be unbiased. I have only \n> comparatively small sample, about, say,\n> 40 to 100 datapoints. I was completely shocked how biased are \n> the sample cumulants! \n\nWhy?  The standard analytical expressions are non-linear functions of\nquantities that themselves are known to be biased estimators of their\npopulation counterparts.  While unbiasedness might be considered possible, I\nwould hardly rate it as likely.\n\nIn fact this problem has a long and illustrious history.  R A Fisher posed,\nand solved the following problem: \"Find a homogeneous polynomial function of\nthe sample of degree r that is an unbiased estimator of the rth cumulant of\nthe distribution\".  The solution came to be knows as the k-statistics of the\nsample.  They start off with the sample mean and the usual sample variance\n(with the n-1 divisor).  Kendall and Stuart vol.1, for example, somewhat\nexuberantly present the first 9 or 10, as I recall, though I can't really\nimagine why.\n\nThe extension to multivariate distributions was (I think) tackled by Tukey\nand his \"polykays\" are the result, I seem to recall.\n\n> I am not saying here about their \n> variances which are naturally expected to be large. Does \n> anybody of you guys know any unbiased approach to estimating \n> sample cumulants?\n\nYes, use k-statistics.  I have always found this a fairly artificial\nproblem, though.  How often does one really get a homogeneous sample?  How\noften does one really get one large enough to make estimation of the higher\norder cumulants a realistic thing to do?  What do you do with them when you\nget them?\n\nIt is conceivably possible you might want to use, say, k3 and k4 in\nconjunction with an Edgeworth or Cornish-Fisher expansion to estimate, say,\ntail areas or quantiles in a smooth but approximately non-parametric way,\nbut I would never push it much further.  (I am always willing to be\nconvinced otherwise, though.  Life is a long learning process.)\n\nBill Venables.\n\n>",
       "body_snippet": "Albert Howarth asks:\n\n> -----Original Message-----\n> From: albert horwath [mailto:al_horwath at lycos.com]\n> Sent: Tuesday, 5 December 2000 3:41\n> To: splus\n> Subject: [S] (No Subject)\n> \n> \n> Dear S-",
-      "thread_id": "thread-5b62e11e883e",
-      "thread_depth": 0,
+      "thread_id": "thread-a2cc27884bf8",
+      "thread_depth": 1,
       "month": "2000-12"
     },
     {
@@ -646,12 +646,12 @@
       "date": "2000-12-05T20:35:47Z",
       "subject": "RE: Summary: copying column names between data frames",
       "subject_clean": "Summary: copying column names between data frames",
-      "in_reply_to": null,
+      "in_reply_to": "<D7E1E71C0658D4118C9D00104B6D756D07F9F9@AMU01>",
       "references": [],
       "body_plain": "Quick comment:\n\n<.... snipped>\n> os> win.test\n> one two three \n> 1 1 2 3\n> 2 1 2 3\n> 3 1 2 3\n> 4 1 2 3\n> os> win.add\n> a b c d e \n> 1 11 12 13 14 15\n> 2 11 12 13 14 15\n> 3 11 12 13 14 15\n> 4 11 12 13 14 15\n> os> good\n> [1] T T F F T\n> \n####### Why does the last column name get mangled to X3  from the next\nline??  #######\n(answer below if you wish to peek )\n\n> os> win.new <- cbind(win.test[,1:2], win.add[,good], win.test[,3])\n> os> win.new\n> one two a b e X3 \n> 1 1 2 11 12 15 3\n> 2 1 2 11 12 15 3\n> 3 1 2 11 12 15 3\n> 4 1 2 11 12 15 3\n> \n> \nAnswer: win.test[,3] is a single column and is automatically converted to a\nvector.A vector has no \"dim\" attrribute and hence no \"dimnames\" attribute so\nthe name is lost.The same would happen if you specified a single column to\nbind with logicals. Hence to be safe, you may have to assign the dimnames\n(or names , if its a dataframe) attribute explicitly.\n\nwin.new<-cbind(win.add[,good],win.test[,2:3]) WOULD, however, keep the\ncorrect names (mod possible duplication of names, of course) for the same\nreasons.\n\nCheers,\n\nBert Gunter\nBiometrics Research RY 70-38\nMerck & Company\nP.O. Box 2000\nRahway, NJ 07065-0900\nPhone: (732) 594-7765\nmailto: bert_gunter at merck.com\n\n\"The business of the statistician is to catalyze the scientific learning\nprocess.\"      -- George E.P. Box",
       "body_snippet": "Quick comment:\n\n<.... snipped>\n> os> win.test\n> one two three \n> 1 1 2 3\n> 2 1 2 3\n> 3 1 2 3\n> 4 1 2 3\n> os> win.add\n> a b c d e \n> 1 11 12 13 14 15\n> 2 11 12 13 14 15\n> 3 11 12 13 14 15\n> 4 11 12 13 ",
-      "thread_id": "thread-e5c412b907d7",
-      "thread_depth": 0,
+      "thread_id": "thread-8d02af00977a",
+      "thread_depth": 1,
       "month": "2000-12"
     },
     {
@@ -684,8 +684,8 @@
       ],
       "body_plain": "> ####### Why does the last column name get mangled to X3  from the next\n> line??  ####### (answer below if you wish to peek )\n>\n> > os> win.new <- cbind(win.test[,1:2], win.add[,good], win.test[,3])\n> > os> win.new\n> > one two a b e X3\n\nBert is absolutely correct: win.test[,3] is a vector, and so the column name\nis lost.  But on the other hand, win.test[,3,drop=F] is a data frame with a\nsingle column named \"three\", so\n\nwin.new <- cbind(win.test[,1:2], win.add[,good], win.test[,3,drop=F])\n\nwould also produce the desired result with the correct names.\n\nThe drop=F trick is also handy for extracting a 1-row or 1-column matrix\nfrom a larger matrix, preserving the dimnames.\n\n# David\n\n--\nDavid M Smith <dsmith at splus.mathsoft.com>\nS-PLUS Product Marketing Manager, MathSoft DAPD, Seattle WA\nTel: +1 (206) 283 8802 x360\nFax: +1 (206) 283 0347\n\nCheck out http://www.splus.com/consulting to learn about new services we are\noffering.\n\n> -----Original Message-----\n> From: s-news-owner at lists.biostat.wustl.edu\n> [mailto:s-news-owner at lists.biostat.wustl.edu]On Behalf Of Gunter, Bert\n> Sent: Tuesday, December 05, 2000 12:36\n> To: S-PLUS Newsgroup (E-mail); 'Winifred Lambert'\n> Subject: RE: [S] Summary: copying column names between data frames\n>\n>\n>       Quick comment:\n>\n>\n> <.... snipped>\n> > os> win.test\n> > one two three\n> > 1 1 2 3\n> > 2 1 2 3\n> > 3 1 2 3\n> > 4 1 2 3\n> > os> win.add\n> > a b c d e\n> > 1 11 12 13 14 15\n> > 2 11 12 13 14 15\n> > 3 11 12 13 14 15\n> > 4 11 12 13 14 15\n> > os> good\n> > [1] T T F F T\n> >\n> ####### Why does the last column name get mangled to X3  from the next\n> line??  #######\n> (answer below if you wish to peek )\n>\n> > os> win.new <- cbind(win.test[,1:2], win.add[,good], win.test[,3])\n> > os> win.new\n> > one two a b e X3\n> > 1 1 2 11 12 15 3\n> > 2 1 2 11 12 15 3\n> > 3 1 2 11 12 15 3\n> > 4 1 2 11 12 15 3\n> >\n> >\n> Answer: win.test[,3] is a single column and is automatically\n> converted to a\n> vector.A vector has no \"dim\" attrribute and hence no \"dimnames\"\n> attribute so\n> the name is lost.The same would happen if you specified a single column to\n> bind with logicals. Hence to be safe, you may have to assign the dimnames\n> (or names , if its a dataframe) attribute explicitly.\n>\n> win.new<-cbind(win.add[,good],win.test[,2:3]) WOULD, however, keep the\n> correct names (mod possible duplication of names, of course) for the same\n> reasons.\n>\n> Cheers,\n>\n>\n> Bert Gunter\n> Biometrics Research RY 70-38\n> Merck & Company\n> P.O. Box 2000\n> Rahway, NJ 07065-0900\n> Phone: (732) 594-7765\n> mailto: bert_gunter at merck.com\n>\n> \"The business of the statistician is to catalyze the scientific learning\n> process.\"      -- George E.P. Box\n>\n>\n>\n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news",
       "body_snippet": "> ####### Why does the last column name get mangled to X3  from the next\n> line??  ####### (answer below if you wish to peek )\n>\n> > os> win.new <- cbind(win.test[,1:2], win.add[,good], win.test[,3])\n",
-      "thread_id": "thread-e5c412b907d7",
-      "thread_depth": 1,
+      "thread_id": "thread-8d02af00977a",
+      "thread_depth": 2,
       "month": "2000-12"
     },
     {
@@ -1057,12 +1057,12 @@
       "date": "2000-12-07T12:59:18Z",
       "subject": "Re: Krause/Olsen 2nd Edition error",
       "subject_clean": "Krause/Olsen 2nd Edition error",
-      "in_reply_to": null,
+      "in_reply_to": "<5.0.2.1.2.20001206091915.00a68a18@127.0.0.1>",
       "references": [],
       "body_plain": "Marc Feldesman is correct in pointing out the error in our book.\nThe correction is\n\npage 73, line 14\nreads\n     > seq(0, 1, 0.03, length=15)\nand should read\n     > seq(0, by=0.03, length=15)\n\nby and length to the seq function are not mutually exclusive though, as can be \nseen from the correction.\nMore precisely, each sequence is defined by exactly 3 (any 3) out of the 4 \nparameters, from, to, by, and length.\n\n             Andreas Krause\n\nPS. The errata list is maintained online at \nhttp://www2.active.ch/~krause.a/doc/splus-book/\n\nDr. Andreas Krause\nNovartis Pharma AG\nBiostatistics\nWSJ-27.1.18\n4002 Basel\nSwitzerland",
       "body_snippet": "Marc Feldesman is correct in pointing out the error in our book.\nThe correction is\n\npage 73, line 14\nreads\n     > seq(0, 1, 0.03, length=15)\nand should read\n     > seq(0, by=0.03, length=15)\n\nby and l",
-      "thread_id": "thread-29a162904c2b",
-      "thread_depth": 0,
+      "thread_id": "thread-2b07d84401e9",
+      "thread_depth": 1,
       "month": "2000-12"
     },
     {
@@ -1237,12 +1237,12 @@
       "date": "2000-12-08T23:14:02Z",
       "subject": "Re: GIS and spatial statistics",
       "subject_clean": "GIS and spatial statistics",
-      "in_reply_to": null,
+      "in_reply_to": "<200012080211.KAA03566@zootje.maths.uwa.edu.au>",
       "references": [],
       "body_plain": "see\nhttp://www.stat.colostate.edu/~rdavis/st523/\n\n                                                                                \n                  \n                    \"Health Maps\"                                               \n                  \n                    <healthmaps at home.com>             To:     \"s-plus\" \n<s-news at wubios.wustl.edu>  \n                    Sent by:                          cc:                       \n                  \n                    s-news-owner at lists.biostat        Subject:     [S] GIS and \nspatial statistics \n                    .wustl.edu                                                  \n                  \n                                                                                \n                  \n                                                                                \n                  \n                    12/07/00 12:09 PM                                           \n                  \n                                                                                \n                  \n                                                                                \n                  \n\nAre their free routines for spatial statistics somewhere?  I have those in\nMASS, a couple off statlib (pretty good), but is there some other place\nwhere R/S people are contributing Spatial statistical routines for R or S?\nAnyone made a free link of SPLUS to a GIS package?\n\nThanks\n\nRichard E. Hoskins\n\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "see\nhttp://www.stat.colostate.edu/~rdavis/st523/\n\n                                                                                \n                  \n                    \"Health Maps\"                 ",
-      "thread_id": "thread-f04dd4315892",
-      "thread_depth": 0,
+      "thread_id": "thread-c0e287349833",
+      "thread_depth": 1,
       "month": "2000-12"
     },
     {
@@ -1253,12 +1253,12 @@
       "date": "2000-12-08T23:58:10Z",
       "subject": "RE: GIS and spatial statistics",
       "subject_clean": "GIS and spatial statistics",
-      "in_reply_to": null,
+      "in_reply_to": "<200012080211.KAA03566@zootje.maths.uwa.edu.au>",
       "references": [],
       "body_plain": "> -----Original Message-----\n> From: sandy_haire at usgs.gov [mailto:sandy_haire at usgs.gov]\n> Sent: Saturday, 9 December 2000 9:14\n> To: Health Maps\n> Cc: s-news at wubios.wustl.edu; s-news-owner at lists.biostat.wustl.edu\n> Subject: Re: [S] GIS and spatial statistics\n> \n> \n> \n> see\n> http://www.stat.colostate.edu/~rdavis/st523/\n\nI did.  What I see is that their stuff includes a lot of publicly available\ncode (or at least their description says so) but they restrict access to\ntheir library so that the public cannot get hold of it.   \n\n--\nBill Venables, CSIRO/CMIS Environmetrics Project\nEmail: Bill.Venables at cmis.csiro.au\nPhone: +61 7 3826 7251\nFax:   +61 7 3826 7304\nPostal: PO Box 120, Cleveland, Qld 4163, AUSTRALIA\n\"Failing to plan is planning to fail\"  Anon.",
       "body_snippet": "> -----Original Message-----\n> From: sandy_haire at usgs.gov [mailto:sandy_haire at usgs.gov]\n> Sent: Saturday, 9 December 2000 9:14\n> To: Health Maps\n> Cc: s-news at wubios.wustl.edu; s-news-owner at",
-      "thread_id": "thread-a9295e182599",
-      "thread_depth": 0,
+      "thread_id": "thread-c0e287349833",
+      "thread_depth": 1,
       "month": "2000-12"
     },
     {
@@ -1319,12 +1319,12 @@
       "date": "2000-12-11T14:11:34Z",
       "subject": "RE: Changing the case of variable names imported from SAS",
       "subject_clean": "Changing the case of variable names imported from SAS",
-      "in_reply_to": null,
+      "in_reply_to": "<sa2f9712.060@ndri.org>",
       "references": [],
       "body_plain": "I didn't see an answer to you on S-news, so here is what I do:\n\n        import.data(\"auxvars\", \"z:/data/auxvars.sd2\", \"sas\")\n        names(auxvars) <- casefold(names(auxvars))\n\nHope this helps...\n\n  - Lane\n\n-----Original Message-----\nFrom: Peter Flom [mailto:peter.flom at ndri.org]\nSent: Thursday, December 07, 2000 1:56 PM\nTo: S-news at wubios.wustl.edu\nSubject: [S] Changing the case of variable names imported from SAS\n\nI frequently import datasets to S-Plus from SAS.  The default makes the\nvariable names CAPITAL letters.  Since S-Plus is case sensitive and its\nfunction names use mostly lower case letters, this makes it a pain to type\n(i.e., I am constantly either holding down shift, or turning caps lock on\nand off).  Is there a way to make the variable names lower case?\n\nTIA\n\nPeter L. Flom, Ph.D.\nPrincipal Research Associate\nNational Development and Research Institutes, Inc.\n2 World Trade Center\n16th floor\nNew York, NY 10048\n\n(212) 845-4485\n(212) 845-4698 (fax)\nPeter.Flom at ndri.org\n\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "I didn't see an answer to you on S-news, so here is what I do:\n\n        import.data(\"auxvars\", \"z:/data/auxvars.sd2\", \"sas\")\n        names(auxvars) <- casefold(names(auxvars))\n\nHope this helps...\n\n  -",
-      "thread_id": "thread-178338589604",
-      "thread_depth": 0,
+      "thread_id": "thread-2554f4f62dfe",
+      "thread_depth": 1,
       "month": "2000-12"
     },
     {
@@ -1499,12 +1499,12 @@
       "date": "2000-12-12T13:40:25Z",
       "subject": "RE: Off-topic---hardware",
       "subject_clean": "Off-topic---hardware",
-      "in_reply_to": null,
+      "in_reply_to": "<Pine.SOL.3.96.1001212151821.4355F-100000@aitken.scitec.auckland.ac.nz>",
       "references": [],
       "body_plain": "I would also be concerned about security (from hacking).  Many of the hacker\nattacks at our institution have come against Linux.   I think that it is\nmore inexperienced users doing their own system management than that Linux\nis inherently worse about security than Solaris.\n\nIf you retain your SysAdmin and secure the system, you'll likely be OK.\n\nDoc\n> ----------\n> From:         David Scott[SMTP:d.scott at auckland.ac.nz]\n> Sent:         Monday, December 11, 2000 10:09 PM\n> To:   r-help at stat.math.ethz.ch; s-news\n> Subject:      [S] Off-topic---hardware\n> \n> \n> Sorry to be completely off topic here, but I know there will be many list\n> members who have an interest in and knowledge of hardware.\n> \n> We have for some time used Sun hardware for our departmental servers, most\n> recently Sun Ultras of various specifications, running Solaris. We share\n> some hardware with Mathematics as well. \n> \n> The applications we use are the usual suspects:\n> R (obviously), S-PLUS, the statistical software which must not be\n> named***, Matlab, Maple\n> also we have compilers, C, C++, Fortran, and various tools such as TeX\n> etc.\n> \n> I am of the view that Sun is pretty damn expensive these days\n> (particularly in NZ$), and also less and less defines the mainstream.\n> Whereas once most things first appeared on Sun, now much of the action is\n> for free unix OS with intel hardware.\n> \n> For these reasons we are looking at purchasing a four processor intel box.\n> We are looking at the IBM Netfinity 7100 and the Intel ISP4400. For us the\n> IBm is much more expensive for what looks like pretty much the same specs.\n> \n> One concern in moving away from Sun is reliability. Our Ultra 450 has been\n> super reliable. The only times it has gone down are when we have taken it\n> down or when we have had extended power failures so the UPS can't maintain\n> supply. We would not want to go to unreliable hardware (or OS for that\n> matter).\n> \n> Now to the questions:\n> \n> Does anyone have any experience with this sort of hardware and OS\n> combination which they could share with me?\n> \n> In particular does anyone have experience of the the IBM and or Intel\n> boxes?\n> \n> Does anyone have any suggestions for other similar hardware?\n> \n> Does anyone have any comments about the general idea of moving away from\n> Sun/Solaris to Intel/free unix?\n> \n> Replies to me only thanks, not the list. I will try and summarise if there\n> is interest.\n> \n> David Scott\n> \n> *** my Harry Potter joke---SAS\n> \n> _________________________________________________________________\n> David Scott     Department of Statistics\n>                 The University of Auckland, PB 92019\n>                 Auckland        NEW ZEALAND\n> Phone: +64 9 373 7599 ext 6830     Fax: +64 9 373 7018            \n> Email:  d.scott at Auckland.ac.nz\n> \n> President, New Zealand Statistical Association\n> Head, Department of Statistics, University of Auckland\n> \n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>",
       "body_snippet": "I would also be concerned about security (from hacking).  Many of the hacker\nattacks at our institution have come against Linux.   I think that it is\nmore inexperienced users doing their own system ma",
-      "thread_id": "thread-8df1e3646053",
-      "thread_depth": 0,
+      "thread_id": "thread-eac4850798d1",
+      "thread_depth": 1,
       "month": "2000-12"
     },
     {
@@ -1531,12 +1531,12 @@
       "date": "2000-12-12T16:35:06Z",
       "subject": "RE: GIS and spatial statistics",
       "subject_clean": "GIS and spatial statistics",
-      "in_reply_to": null,
+      "in_reply_to": "<200012080211.KAA03566@zootje.maths.uwa.edu.au>",
       "references": [],
       "body_plain": "Please accept my apologies--the last time I looked at the url in my\nprevious message, no password was required.  I called Robin Reich, and he\ntold me to refer you to his page, which has the same spatial library (and\nalso a 500 p. manual), available without a password.\n\nhttp://www.cnr.colostate.edu/~robin/\n\nSandy\n\nSandra L. Haire\nUSGS-Biological Resources Division\nMidcontinent Ecological Science Center\nFort Collins, Colorado 80525\nphone: 970-226-9367\ne-mail: sandy_haire at usgs.gov\n\n                                                                                \n         \n                    Bill.Venables@CMI                                           \n         \n                    S.CSIRO.AU               To:     sandy_haire at usgs.gov,      \n         \n                                             healthmaps at home.com                \n         \n                    12/08/00 04:58 PM        cc:     s-news at wubios.wustl.edu    \n         \n                                             Subject:     RE: [S] GIS and \nspatial        \n                                             statistics                         \n         \n                                                                                \n         \n\n> -----Original Message-----\n> From: sandy_haire at usgs.gov [mailto:sandy_haire at usgs.gov]\n> Sent: Saturday, 9 December 2000 9:14\n> To: Health Maps\n> Cc: s-news at wubios.wustl.edu; s-news-owner at lists.biostat.wustl.edu\n> Subject: Re: [S] GIS and spatial statistics\n>\n>\n>\n> see\n> http://www.stat.colostate.edu/~rdavis/st523/\n\nI did.  What I see is that their stuff includes a lot of publicly available\ncode (or at least their description says so) but they restrict access to\ntheir library so that the public cannot get hold of it.\n\n--\nBill Venables, CSIRO/CMIS Environmetrics Project\nEmail: Bill.Venables at cmis.csiro.au\nPhone: +61 7 3826 7251\nFax:   +61 7 3826 7304\nPostal: PO Box 120, Cleveland, Qld 4163, AUSTRALIA\n\"Failing to plan is planning to fail\"  Anon.",
       "body_snippet": "Please accept my apologies--the last time I looked at the url in my\nprevious message, no password was required.  I called Robin Reich, and he\ntold me to refer you to his page, which has the same spati",
-      "thread_id": "thread-1e6769e9a222",
-      "thread_depth": 0,
+      "thread_id": "thread-c0e287349833",
+      "thread_depth": 1,
       "month": "2000-12"
     },
     {
@@ -1649,12 +1649,12 @@
       "date": "2000-12-13T07:56:46Z",
       "subject": "Re: multivariate K function/L function",
       "subject_clean": "multivariate K function/L function",
-      "in_reply_to": null,
+      "in_reply_to": "<D2AFDCADBA45D3119D490001FA7EF14904D2CEB4@mail1.tay.ac.uk>",
       "references": [],
       "body_plain": "Janine Illian writes:\n\n> I am using SPLUS 2000 and would like to analyse some marked point pattern\n> data (qualitative marks).\n> Have any of you ever used SPLUS to calculate the multivariate K-function/\n> L-function in this context?\n\nYes; this is implemented in `spatstat',\navailable from\n        http://www.maths.uwa.edu.au/~adrian/spatstat.html\n\nHere's a typical worked example. \nThe text file \"mydata\" contains data in table format\nwith each row containing entries x, y, m representing the (x,y) coordinates\nof a point and its mark value m. The window of observation is (say)\nthe rectangle [0,10] x [0, 5].\n\n        df <- read.table(\"mydata\", header=T)\n        df$marks <- factor(df$marks, levels=c(\"Cold\", \"Warm\", \"Hot\"))\n\n        pp <- point.pattern(df$x, df$y, c(0,10), c(0,5), marks=df$m)\n\n        plot(pp)\n\n        # univariate K-function\n        K <- Kest(pp)\n        plot(K$r, K$border, type=\"l\", xlab=\"r\", ylab=\"K(r)\")\n        lines(K$r, pi * K$r^2, lty=2)\n\n        # cross K-function\n        Khc <- Kcross(pp, \"Hot\", \"Cold\")        \n        plot(Khc$r, Khc$border, type=\"l\", xlab=\"r\", ylab=\"Kcross(r)\")\n        lines(Khc$r, pi * Khc$r^2, lty=2)\n\nThe plots can be done more elegantly using plot.formula():\n        plot(border ~ r, data=Khc)\n\nThe L-function is done by hand:\n        plot(sqrt(border/pi) ~ r, data=Khc)\n\n====\nProf Adrian Baddeley, Mathematics & Statistics, University of Western Australia\n                <http://maths.uwa.edu.au/~adrian/>",
       "body_snippet": "Janine Illian writes:\n\n> I am using SPLUS 2000 and would like to analyse some marked point pattern\n> data (qualitative marks).\n> Have any of you ever used SPLUS to calculate the multivariate K-functio",
-      "thread_id": "thread-e2e7bbf2c409",
-      "thread_depth": 0,
+      "thread_id": "thread-c796aae9ec50",
+      "thread_depth": 1,
       "month": "2000-12"
     },
     {
@@ -1731,12 +1731,12 @@
       "date": "2000-12-13T16:08:54Z",
       "subject": "RE: Re: subsetting data frames",
       "subject_clean": "subsetting data frames",
-      "in_reply_to": null,
+      "in_reply_to": "<012201c06519$4c54fd80$cee1f380@nottingham.ac.uk>",
       "references": [],
       "body_plain": "Many thanks to Ursula, Jean, Jason, Matthew, Leonid, Robert, Nick and\nMarcel.\nThe answer is, of course I'm missing a comma (to specify rows in the 2D\nmatrix represented by a dataframe):\n\n> datasubset.df <- data.df[flag==1, ]\n\nMany also suggested putting 'data.df$' in front of 'flag', in case 'flag'\nhadn't been placed in the current environment (eg. by attach-ing data.df).\n\nFor me, however, the problem was the lack of comma.\n\nStuart\n\nPS. These responses arrived just over a minute after I posted this. Perhaps\nthe server should gather some stats, and offer a trophy!\n\n*************************************************************\nStuart Leask MA MRCPsych\nClinical Lecturer in Psychiatry\nDuncan Macmillan House\nPorchester Road               \"Ask a clock how it works, &\nNottingham                    all it will tell you is the time\"\nUK   NG3 6AA\nTel: +44-0 115 969 1300 xtn 40784 Fax: 0115 955 5352\n*************************************************************",
       "body_snippet": "Many thanks to Ursula, Jean, Jason, Matthew, Leonid, Robert, Nick and\nMarcel.\nThe answer is, of course I'm missing a comma (to specify rows in the 2D\nmatrix represented by a dataframe):\n\n> datasubset.",
-      "thread_id": "thread-6604939bdf99",
-      "thread_depth": 0,
+      "thread_id": "thread-b83660a44019",
+      "thread_depth": 1,
       "month": "2000-12"
     },
     {
@@ -1927,12 +1927,12 @@
       "date": "2000-12-14T21:45:47Z",
       "subject": "Job Announcement",
       "subject_clean": "Job Announcement",
-      "in_reply_to": null,
+      "in_reply_to": "<200012052310.PAA15884@whistler.cbr.washington.edu>",
       "references": [],
       "body_plain": "Research Consultant \n\nReference: P9074\nDepartment: Fishery and Aquatic Sciences\nDate Available: November 17, 2000\nClosing Date: Open until filled.\n\nLocation: Downtown Seattle at 1325 4th Avenue with views of Puget Sound.\n\nGeneral Duties/Description: \nInterested in the latest environmental issues in the Pacific\nNorthwest?  Would you like to make a contribution to the current salmon\nrestoration effort? Columbia Basin Research (CBR) is a research unit in\nthe nationally top-ranked School of Aquatic and Fishery Sciences of the\nUniversity of Washington, working on the technological edge of\nquantifying wildlife population and evaluating population management\neffectiveness. The applicant should be someone willing to pioneer\nresearch in a highly topical field  to accurately assess survival\nprocesses in the Columbia Basin.\n\nDescription \nDevelop new statistical methods for design and analysis of animal\ntagging studies. Develop new statistical software to analyze fish and\nwildlife tagging studies. Analyze historical tagging data. Write\ntechnical reports and peer-reviewed papers. Provide project\nadministration including proposal writing and interaction with\nsponsors. Provide public presentation of research findings. Provide\ntechnical assistance to researchers from a variety of public agencies\non tagging issues.\n\nRequirements: \nPhD in statistics, biometry, or fisheries with experience in parameter\nestimation with applications to environmental sciences. Experience in\nanalyzing fish and wildlife data with special emphasis on statistical\ntheory. Familiarity with maximum likelihood estimation and\nmark-recapture theory strongly desired, Ability to work independently\nto develop statistical methods, carry out analyses of complex data\nsets, and present research findings in written and verbal forms\nnecessary. Experience with UNIX.\n\nSalary: Salary is commensurate with qualifications and experience.\n\nHow to Apply: \nSend resume, cover letter summarizing research experience, and two current \nletters of reference to: \n\nMs. Anita Whitney \nResearch Consultant Search, Reference #P9074\nSchool of Aquatic and Fishery Sciences \nUniversity of Washington \nBox 355020 \nSeattle, Washington 98195-5020 \n\nThe University of Washington is an equal opportunity, affirmative action \nemployer. \n                                                        Rich            \n\n                            Columbia Basin Research\n                     School of Aquatic & Fishery Sciences\n                         Puget Sound Plaza, suite 1820\n                           Seattle, Washington  98101               \n                                 (206)616-7492\n                         http://www.cbr.washington.edu/\n              --------------------------------------------------",
       "body_snippet": "Research Consultant \n\nReference: P9074\nDepartment: Fishery and Aquatic Sciences\nDate Available: November 17, 2000\nClosing Date: Open until filled.\n\nLocation: Downtown Seattle at 1325 4th Avenue with v",
-      "thread_id": "thread-75b7e0f27874",
-      "thread_depth": 0,
+      "thread_id": "thread-2d9580ef8caa",
+      "thread_depth": 1,
       "month": "2000-12"
     },
     {
@@ -1991,12 +1991,12 @@
       "date": "2000-12-14T22:55:31Z",
       "subject": "Re: Conditional Logistic Regression",
       "subject_clean": "Conditional Logistic Regression",
-      "in_reply_to": null,
+      "in_reply_to": "<200012142227.RAA17871@beryllium.apa.com>",
       "references": [],
       "body_plain": "1. Yes, you are looking a infinite coefficients.  The default convergence\ncriteria for phreg is tighter than that for coxph() (more so than necessary,\nin my opinion -- but computers are fast).  \n\n  2. Within each strata (a case-control group), it suffices to have the time\nvalue for the controls be larger than that for the case.  Beyond that\nconstraint, you can use any values for \"time\" that you please, including \ndifferent choices in each strata.  The documentation for coxph() says to use a \nconstant because\n        a. it was the easiest explanation to give to users\n        b. it rather vividly shows that \"time\" is in essence a dummy value.\n        \n        Terry T.\n        \n                \n\n Terry M. Therneau, Ph.D.                        (507) 284-3694 \n Head, Section of Biostatistics                  (507) 284-9542  FAX\n Mayo Clinic                                     therneau.terry at mayo.edu\n Rochester, Minn 55905",
       "body_snippet": "1. Yes, you are looking a infinite coefficients.  The default convergence\ncriteria for phreg is tighter than that for coxph() (more so than necessary,\nin my opinion -- but computers are fast).  \n\n  2.",
-      "thread_id": "thread-f8bd2e2bb383",
-      "thread_depth": 0,
+      "thread_id": "thread-746acbfb0c1a",
+      "thread_depth": 1,
       "month": "2000-12"
     },
     {
@@ -2205,12 +2205,12 @@
       "date": "2000-12-15T20:27:27Z",
       "subject": "bivariate normal integral",
       "subject_clean": "bivariate normal integral",
-      "in_reply_to": null,
+      "in_reply_to": "<200012181230.NAA16820@elrond.uc3m.es>",
       "references": [],
       "body_plain": "Hello all , \n\n I want to compute the bi-dimensional integral I of the probability \ndensity function of a Bivariate Normal random variable X = (x,y) \nover \na) parallepiped\nb) Cilynder The centre is any point (Xc,Yc) of the plan.\n\n          / / \n       I =| | f(x,y) dy dx \n          | | \n          / / \n\n  If you have some information or C code for my problem, \nplease let me know. \nAny reference would be helpful. \n\nThanks in advance. \n\nEladio Dapena UC3M Spain",
       "body_snippet": "Hello all , \n\n I want to compute the bi-dimensional integral I of the probability \ndensity function of a Bivariate Normal random variable X = (x,y) \nover \na) parallepiped\nb) Cilynder The centre is any",
-      "thread_id": "thread-e5cc3a707173",
-      "thread_depth": 0,
+      "thread_id": "thread-ab8a3b6ce25a",
+      "thread_depth": 1,
       "month": "2000-12"
     },
     {
@@ -2269,12 +2269,12 @@
       "date": "2000-12-17T15:32:32Z",
       "subject": "Re: How to use \"Correlation\" argument in lme function ??",
       "subject_clean": "How to use \"Correlation\" argument in lme function ??",
-      "in_reply_to": null,
+      "in_reply_to": "<a05001900b65f091da2a9@[213.228.8.232]>",
       "references": [],
       "body_plain": "> I need to use the function lme and especially the argument\n> \"correlation\". This function is defined in the book \"Mixed-Effects\n> Models in S and S=Plus\" p.474 as follows: lme ( fixed, data, random,\n> correlation, weights, subset, method, na.action, control )\n> \n> But my version of S-Plus 4.0 still tells me that lme does not have \n> \"correclation\" arguement and that ir is defined as follows :\n\nS-PLUS 4.0 comes with version 2.1 of NLME and the version of NLME\ndescribed in the book is 3.1. There have been substantial changes in\nthe code between the two versions, including the argument list for the\nlme and nlme functions. You should update to the latest version of\nNLME, available at http://nlme.stat.wisc.edu.\n\nRegards,\n\n--Jose'\n\n-----------------------------------------------------------------------------\n Jose' Pinheiro\n Bell Laboratories                      jcp at research.bell-labs.com\n 600 Mountain Avenue, Room 2C-258       office: (908) 582-2390\n Murray Hill, NJ 07974                  fax:    (908) 582-3340\n-----------------------------------------------------------------------------",
       "body_snippet": "> I need to use the function lme and especially the argument\n> \"correlation\". This function is defined in the book \"Mixed-Effects\n> Models in S and S=Plus\" p.474 as follows: lme ( fixed, data, random,",
-      "thread_id": "thread-a9b394bad543",
-      "thread_depth": 0,
+      "thread_id": "thread-a2772450ed4e",
+      "thread_depth": 1,
       "month": "2000-12"
     },
     {
@@ -2291,8 +2291,8 @@
       ],
       "body_plain": "Hi there,\n\nI hope this mail of mine makes it to the list ( looks like non of my\nprevious mails ever made it ).\n\nAnyways, coming to the question:-\n\n1) I am trying to calculate variogram.cloud for a relatively huge dataset\n( it has 10000 observations ). When i tried to run the variogram.cloud\ncommand on my data Splus (5.1 for SUN Sparc ) after a lot of fight gave up\nand poped  up and error message something like this:-\n\nvar.cloud.nv.random.df=variogram.cloud(NVI~easting+northing,\ndata=nv.random.df)\n\nerror:- Problem in zi-zj: unable to obtain requested dynamic memory\n\nIn the above nv.random.df is the dataset whcih has normalized vegetation\nindex at 10000 locations.\n\nFYI:-\n\nI am running Splus 5.1 Release 1 for SUN Sparc  (i am running the on\nboth Ultra 10's and Ultra 60's).\n\nHow can i over come this?? I am aware that there is something with regard\nto dynamic memory allocation. Any hints/suggestions would be\nappreciated. In the meantime i too would refer to the Splus manuals for\nsomething relating to the increasing of dynamic memory allocation.\n\nRegards\n\nReddy\n\n***********************----------------------**********************************\n\nGVS Prabhakar Reddy\nGraduate Research Assistant \nBiological Resources Engineering(ENBE) \n\nResidence address:                      Office address:\n\n-------------------                     ------------------------------\n\n4910,Hollywood Road                     Model Analysis Lab ( GIS lab)\nCollege Park,Maryland                   Biological resources Engineering \nUSA-20740                               University of Maryland,CollegePark\n                                        USA-20742\n\ntel:301-982-7148(r)                     tel:301-405-0109\n\n-----------------------------------------------------------------------------\nURLs: http://www.wam.umd.edu/~reddyg ; http://www.glue.umd.edu/~reddyg\n\nemail:reddyg at glue.umd.edu;reddyg at wam.umd.edu;reddyg at runoff.umd.edu\n\n-----------------------------------------------------------------------------\n\n\"Between the Known and the Unknown there exists the 'DOORS'!!!!\"\n                                                --Jim Morrison (1944-1971)\n\n**************************--------------------*********************************",
       "body_snippet": "Hi there,\n\nI hope this mail of mine makes it to the list ( looks like non of my\nprevious mails ever made it ).\n\nAnyways, coming to the question:-\n\n1) I am trying to calculate variogram.cloud for a rel",
-      "thread_id": "thread-e2e7bbf2c409",
-      "thread_depth": 1,
+      "thread_id": "thread-c796aae9ec50",
+      "thread_depth": 2,
       "month": "2000-12"
     },
     {
@@ -2367,12 +2367,12 @@
       "date": "2000-12-18T13:36:39Z",
       "subject": "query",
       "subject_clean": "query",
-      "in_reply_to": null,
+      "in_reply_to": "<200012181129.LAA0000029846@chapman.ma>",
       "references": [],
       "body_plain": "Hi,\n\nI wonder if anyone could help me to get rid of the title\n\n\"Series x\" which appears automatically in the plot of the\n\n\"acf(x)\" in S-Plus (Unix Version).\n\nThanks in advance,\n\nSamia Adham \n\nPhD. student\n\nDepartment of Mathematics (Statistics Section)\n\nImperial College, London",
       "body_snippet": "Hi,\n\nI wonder if anyone could help me to get rid of the title\n\n\"Series x\" which appears automatically in the plot of the\n\n\"acf(x)\" in S-Plus (Unix Version).\n\nThanks in advance,\n\nSamia Adham \n\nPhD. stu",
-      "thread_id": "thread-2a5f2afab634",
-      "thread_depth": 0,
+      "thread_id": "thread-504a4922796c",
+      "thread_depth": 1,
       "month": "2000-12"
     },
     {
@@ -2449,12 +2449,12 @@
       "date": "2000-12-18T17:59:22Z",
       "subject": "formula conversion",
       "subject_clean": "formula conversion",
-      "in_reply_to": null,
+      "in_reply_to": "<KDODBNDOPBNFDAAA@mailcity.com>",
       "references": [],
       "body_plain": "Dear S-colleagues:\nMany thanks to s+ wizards Bert Gunter \nand Samuel Buttrey for help with my request\non \"formula conversion\". Combining their ideas I managed to solve \nmy problem.\n\nHere is the original posting\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\nSuppose that I have an expession:\ny<-2+x+ a*sin(x)+b*exp(x)+c*x^1.3\nI need to create a formula\ny~x+sin(x)+exp(x)+x^1.3\n\nAnd vice versa:\nI have a formula\ny~x+sin(x)+exp(x)+x^1.3\nand coefficients: c0,c1,c2,c3,c4\nI need to compute ( I mean to create an expression and evaluate it)\ny<-c1+c2*x+ c3*sin(x)+c4*exp(x)+c5*x^1.3\n\nIs that possible to automatically do this kind of conversions in s+?\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~\nHere are the answers (slightly edited)\n\nHere's a way to do the second, as long as it's always an additive model,\nso that the separators on the right side are always +'s.\n\n> f <- y~x+sin(x)+exp(x)+x^1.3 # your formula\n> x <- 2 # set a value for x\n> coefs <- c(1,2,3,4,5) # some coefficients; the first is the constant term\n\n> df <- as.character(f) # puts \" ~ \" into df[1], \"y\" into df[2], everything\nelse into df[3]\n\n> rhs.pieces <- unlist (unpaste (df[3], sep=\"+\")) # separate pieces\n> my.expr <- paste (df[2], \"<-\", coefs[1], \"+\", paste (coefs[-1], \"*\",\nrhs.pieces, collapse=\"+\")) # put it together...\n> eval (parse (text = my.expr))\n[1] 49.59556\n> 1 + 2 * x + 3 * sin(2) + 4 * exp(2) + 5 * 2^1.3 # check\n[1] 49.59556\n\nOkay. The first is a little trickier, but again unpaste (twice) can do the\ntrick, again assuming there are only *'s and +'s.\n\nf <- expression (y<-2+x+ a*sin(x)+b*exp(x)+c*x^1.3) # starting point\nf <- as.character(f) # convert to character\n\nless.than <- (1:nchar(f))[substring (f, 1:nchar(f), 1:nchar(f)) == \"<\"]\nlhs <- substring (f, 1, less.than - 2)                # extract lhs; skip\nspace and \"<\"\nrhs <- substring (f, less.than + 2, nchar(f)) # extract rhs: skip hyphen and\nspace\n\nrhs.pieces <- unlist (unpaste (rhs, sep=\"+\"))[-1] # break up, discard\nconstant\n#\n# Omit the first piece, which has no \"*\" in it. To each of the remaining\npieces, apply the unpaste function. The\n# result is a matrix from which we want the second row.\n#\nrhs.pieces[-1] <- unlist (sapply (rhs.pieces[-1], unpaste, sep=\"*\")[2,])\nnew.expr <- parse (text = paste (lhs, \"~\", paste (rhs.pieces,\ncollapse=\"+\")))\n\nSam Buttrey\n\n~~~~~~~~~~~~~~~~~~~~~~~~\nThese tasks are fairly easy using unpaste() \n \n  > z_\"5+4x+9x^2\"\n  > terms<-unpaste(z, sep=\"+\")\n  > terms\n  [[1]]:\n  [1] \"5\"\n\n  [[2]]:\n  [1] \"4x\"\n\n  [[3]]:\n  [1] \"9x^2\"\n\n  Now you can use lapply to remove the first character from each component\n  with substring():\n\n  > terms_lapply(terms, function(x)substring(x,2))\n  > terms\n  [[1]]:\n  [1] \"\"\n\n  [[2]]:\n  [1] \"x\"\n\n  [[3]]:\n  [1] \"x^2\"\n\n  You can now unlist() this into a vector and use paste on the NONconstant\n  terms to rebuild the formula -- you paste the constant term on afterwards.\n\n  > cf_c(3,5)\n  > paste(cf,unlist(terms)[-1],sep=\"*\",collapse='+')\n  [1] \"3*x+5*x^2\"    \n\n  Bert\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nThanks again\nAlbert Horwath\n\nGet FREE Email/Voicemail with 15MB at Lycos Communications at \nhttp://comm.lycos.com",
       "body_snippet": "Dear S-colleagues:\nMany thanks to s+ wizards Bert Gunter \nand Samuel Buttrey for help with my request\non \"formula conversion\". Combining their ideas I managed to solve \nmy problem.\n\nHere is the origin",
-      "thread_id": "thread-fa5bc3f0b07d",
-      "thread_depth": 0,
+      "thread_id": "thread-88730ab6bec0",
+      "thread_depth": 1,
       "month": "2000-12"
     },
     {
@@ -2803,12 +2803,12 @@
       "date": "2000-12-23T10:35:14Z",
       "subject": "(No Subject)",
       "subject_clean": "(No Subject)",
-      "in_reply_to": null,
+      "in_reply_to": "<PECBGHAIOPNKAAAA@mailcity.com>",
       "references": [],
       "body_plain": "Dear S-Colleagues:\nCan anybody indicate a reference where the resistance of popular \ntests for normality (such as Shapiro-Wilk or Kolmogorov-Smirnov) with respect \nto serial correlation is discussed? More generally, are any theoretical \napproaches known for evaluating how serial correlation interferes with the \nhypothesis testing procedures?\n\nMerry Christmas and Happy New Year to everybody\n\nAlbert Horwath\nAss.Prof, Social Psychology,\nOHSU, Columbus, OH\n \n\nGet FREE Email/Voicemail with 15MB at Lycos Communications at \nhttp://comm.lycos.com",
       "body_snippet": "Dear S-Colleagues:\nCan anybody indicate a reference where the resistance of popular \ntests for normality (such as Shapiro-Wilk or Kolmogorov-Smirnov) with respect \nto serial correlation is discussed? ",
-      "thread_id": "thread-fbdca211834c",
-      "thread_depth": 0,
+      "thread_id": "thread-a2cc27884bf8",
+      "thread_depth": 1,
       "month": "2000-12"
     },
     {
@@ -2955,18 +2955,6 @@
       "root_message_id": "msg-e9247cd6c880"
     },
     {
-      "id": "thread-3bb1e4209e8e",
-      "subject": "for loop in R",
-      "message_count": 3,
-      "participants": [
-        "Matt Calder",
-        "Prof Brian Ripley"
-      ],
-      "started": "2000-12-01T15:49:53Z",
-      "last_reply": "2000-12-01T17:20:41Z",
-      "root_message_id": "msg-3bb1e4209e8e"
-    },
-    {
       "id": "thread-8b67c9a3bec3",
       "subject": "summary...",
       "message_count": 1,
@@ -2991,8 +2979,10 @@
     {
       "id": "thread-54b7090501a3",
       "subject": "for loop in R",
-      "message_count": 1,
+      "message_count": 4,
       "participants": [
+        "Matt Calder",
+        "Prof Brian Ripley",
         "aspano at consodata.it"
       ],
       "started": "2000-12-02T00:06:50Z",
@@ -3013,26 +3003,17 @@
     {
       "id": "thread-df51f7f42b4a",
       "subject": "wtgms.f2 != NA",
-      "message_count": 4,
+      "message_count": 6,
       "participants": [
+        "Bill.Venables at CMIS.CSIRO.AU",
         "Health Maps",
         "Martin H. H. Stevens",
-        "Prof Brian D Ripley"
+        "Prof Brian D Ripley",
+        "Prof Brian Ripley"
       ],
       "started": "2000-12-02T21:11:51Z",
       "last_reply": "2000-12-04T14:46:37Z",
       "root_message_id": "msg-df51f7f42b4a"
-    },
-    {
-      "id": "thread-05c19ea2cb69",
-      "subject": "wtgms.f2 != NA",
-      "message_count": 1,
-      "participants": [
-        "Bill.Venables at CMIS.CSIRO.AU"
-      ],
-      "started": "2000-12-02T22:56:24Z",
-      "last_reply": "2000-12-02T22:56:24Z",
-      "root_message_id": "msg-05c19ea2cb69"
     },
     {
       "id": "thread-eea1384a80bf",
@@ -3070,33 +3051,24 @@
     {
       "id": "thread-c9ac5dfa5098",
       "subject": "Quadruple integration",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Bill.Venables at CMIS.CSIRO.AU",
         "PTHY (Peter Thyregod)"
       ],
       "started": "2000-12-04T10:21:09Z",
-      "last_reply": "2000-12-04T10:21:09Z",
+      "last_reply": "2000-12-04T23:49:47Z",
       "root_message_id": "msg-c9ac5dfa5098"
-    },
-    {
-      "id": "thread-a96d905ace49",
-      "subject": "wtgms.f2 != NA",
-      "message_count": 1,
-      "participants": [
-        "Prof Brian Ripley"
-      ],
-      "started": "2000-12-04T14:34:39Z",
-      "last_reply": "2000-12-04T14:34:39Z",
-      "root_message_id": "msg-a96d905ace49"
     },
     {
       "id": "thread-2c1e5a104498",
       "subject": "NAs and subsetting data frames",
-      "message_count": 3,
+      "message_count": 4,
       "participants": [
         "David M Smith",
         "Don MacQueen",
-        "Martin Maechler"
+        "Martin Maechler",
+        "Richard Raubertas"
       ],
       "started": "2000-12-04T15:46:25Z",
       "last_reply": "2000-12-06T07:53:48Z",
@@ -3125,25 +3097,15 @@
       "root_message_id": "msg-93b4d976a135"
     },
     {
-      "id": "thread-6e940fddfd40",
-      "subject": "NAs and subsetting data frames",
-      "message_count": 1,
-      "participants": [
-        "Richard Raubertas"
-      ],
-      "started": "2000-12-04T17:19:45Z",
-      "last_reply": "2000-12-04T17:19:45Z",
-      "root_message_id": "msg-6e940fddfd40"
-    },
-    {
       "id": "thread-a2cc27884bf8",
       "subject": "(No Subject)",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
+        "Bill.Venables at CMIS.CSIRO.AU",
         "albert horwath"
       ],
       "started": "2000-12-04T17:41:16Z",
-      "last_reply": "2000-12-04T17:41:16Z",
+      "last_reply": "2000-12-23T10:35:14Z",
       "root_message_id": "msg-a2cc27884bf8"
     },
     {
@@ -3192,28 +3154,6 @@
       "root_message_id": "msg-d7e2d12a90e8"
     },
     {
-      "id": "thread-5c616ae1cd9e",
-      "subject": "Quadruple integration",
-      "message_count": 1,
-      "participants": [
-        "Bill.Venables at CMIS.CSIRO.AU"
-      ],
-      "started": "2000-12-04T23:49:47Z",
-      "last_reply": "2000-12-04T23:49:47Z",
-      "root_message_id": "msg-5c616ae1cd9e"
-    },
-    {
-      "id": "thread-5b62e11e883e",
-      "subject": "(No Subject)",
-      "message_count": 1,
-      "participants": [
-        "Bill.Venables at CMIS.CSIRO.AU"
-      ],
-      "started": "2000-12-05T00:22:31Z",
-      "last_reply": "2000-12-05T00:22:31Z",
-      "root_message_id": "msg-5b62e11e883e"
-    },
-    {
       "id": "thread-a08f1d58acbb",
       "subject": "One more question on \"predict.gam() for bs()\"",
       "message_count": 1,
@@ -3238,25 +3178,15 @@
     {
       "id": "thread-8d02af00977a",
       "subject": "Summary: copying column names between data frames",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
+        "David M Smith",
+        "Gunter, Bert",
         "Winifred Lambert"
       ],
       "started": "2000-12-05T15:18:44Z",
-      "last_reply": "2000-12-05T15:18:44Z",
-      "root_message_id": "msg-8d02af00977a"
-    },
-    {
-      "id": "thread-e5c412b907d7",
-      "subject": "Summary: copying column names between data frames",
-      "message_count": 2,
-      "participants": [
-        "David M Smith",
-        "Gunter, Bert"
-      ],
-      "started": "2000-12-05T20:35:47Z",
       "last_reply": "2000-12-05T21:24:46Z",
-      "root_message_id": "msg-e5c412b907d7"
+      "root_message_id": "msg-8d02af00977a"
     },
     {
       "id": "thread-f259e9ae04f5",
@@ -3272,13 +3202,13 @@
     {
       "id": "thread-2d9580ef8caa",
       "subject": "Job Announcement",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Mary Lindstrom",
         "Rich Townsend"
       ],
       "started": "2000-12-05T23:10:07Z",
-      "last_reply": "2000-12-11T16:54:26Z",
+      "last_reply": "2000-12-14T21:45:47Z",
       "root_message_id": "msg-2d9580ef8caa"
     },
     {
@@ -3352,12 +3282,13 @@
     {
       "id": "thread-2b07d84401e9",
       "subject": "Krause/Olsen 2nd Edition error",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Marc Feldesman"
+        "Marc Feldesman",
+        "andreas.krause at pharma.Novartis.com"
       ],
       "started": "2000-12-06T17:33:09Z",
-      "last_reply": "2000-12-06T17:33:09Z",
+      "last_reply": "2000-12-07T12:59:18Z",
       "root_message_id": "msg-2b07d84401e9"
     },
     {
@@ -3474,17 +3405,6 @@
       "root_message_id": "msg-1499f0f00db8"
     },
     {
-      "id": "thread-29a162904c2b",
-      "subject": "Krause/Olsen 2nd Edition error",
-      "message_count": 1,
-      "participants": [
-        "andreas.krause at pharma.Novartis.com"
-      ],
-      "started": "2000-12-07T12:59:18Z",
-      "last_reply": "2000-12-07T12:59:18Z",
-      "root_message_id": "msg-29a162904c2b"
-    },
-    {
       "id": "thread-79a47d6194b0",
       "subject": "Thanks for the slope comparison",
       "message_count": 1,
@@ -3498,12 +3418,13 @@
     {
       "id": "thread-2554f4f62dfe",
       "subject": "Changing the case of variable names imported from SAS",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Bishop, Lane",
         "Peter Flom"
       ],
       "started": "2000-12-07T18:56:20Z",
-      "last_reply": "2000-12-07T18:56:20Z",
+      "last_reply": "2000-12-11T14:11:34Z",
       "root_message_id": "msg-2554f4f62dfe"
     },
     {
@@ -3542,12 +3463,14 @@
     {
       "id": "thread-c0e287349833",
       "subject": "GIS and spatial statistics",
-      "message_count": 1,
+      "message_count": 4,
       "participants": [
-        "Adrian Baddeley"
+        "Adrian Baddeley",
+        "Bill.Venables at CMIS.CSIRO.AU",
+        "sandy_haire at usgs.gov"
       ],
       "started": "2000-12-08T02:11:39Z",
-      "last_reply": "2000-12-08T02:11:39Z",
+      "last_reply": "2000-12-12T16:35:06Z",
       "root_message_id": "msg-c0e287349833"
     },
     {
@@ -3571,28 +3494,6 @@
       "started": "2000-12-08T15:04:11Z",
       "last_reply": "2000-12-08T15:04:11Z",
       "root_message_id": "msg-11f2871cdcc5"
-    },
-    {
-      "id": "thread-f04dd4315892",
-      "subject": "GIS and spatial statistics",
-      "message_count": 1,
-      "participants": [
-        "sandy_haire at usgs.gov"
-      ],
-      "started": "2000-12-08T23:14:02Z",
-      "last_reply": "2000-12-08T23:14:02Z",
-      "root_message_id": "msg-f04dd4315892"
-    },
-    {
-      "id": "thread-a9295e182599",
-      "subject": "GIS and spatial statistics",
-      "message_count": 1,
-      "participants": [
-        "Bill.Venables at CMIS.CSIRO.AU"
-      ],
-      "started": "2000-12-08T23:58:10Z",
-      "last_reply": "2000-12-08T23:58:10Z",
-      "root_message_id": "msg-a9295e182599"
     },
     {
       "id": "thread-92cd61124d9e",
@@ -3626,17 +3527,6 @@
       "started": "2000-12-11T10:43:14Z",
       "last_reply": "2000-12-11T10:43:14Z",
       "root_message_id": "msg-fdbfd69ca436"
-    },
-    {
-      "id": "thread-178338589604",
-      "subject": "Changing the case of variable names imported from SAS",
-      "message_count": 1,
-      "participants": [
-        "Bishop, Lane"
-      ],
-      "started": "2000-12-11T14:11:34Z",
-      "last_reply": "2000-12-11T14:11:34Z",
-      "root_message_id": "msg-178338589604"
     },
     {
       "id": "thread-76482fb301e5",
@@ -3697,12 +3587,13 @@
     {
       "id": "thread-eac4850798d1",
       "subject": "Off-topic---hardware",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "David Scott"
+        "David Scott",
+        "Muhlbaier, Lawrence"
       ],
       "started": "2000-12-12T03:09:51Z",
-      "last_reply": "2000-12-12T03:09:51Z",
+      "last_reply": "2000-12-12T13:40:25Z",
       "root_message_id": "msg-eac4850798d1"
     },
     {
@@ -3719,24 +3610,15 @@
     {
       "id": "thread-c796aae9ec50",
       "subject": "multivariate K function/L function",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
-        "Illian, Janine B"
+        "Adrian Baddeley",
+        "Illian, Janine B",
+        "Prabhakar Reddy Gudla Venkata Siva"
       ],
       "started": "2000-12-12T12:37:58Z",
-      "last_reply": "2000-12-12T12:37:58Z",
+      "last_reply": "2000-12-18T06:12:00Z",
       "root_message_id": "msg-c796aae9ec50"
-    },
-    {
-      "id": "thread-8df1e3646053",
-      "subject": "Off-topic---hardware",
-      "message_count": 1,
-      "participants": [
-        "Muhlbaier, Lawrence"
-      ],
-      "started": "2000-12-12T13:40:25Z",
-      "last_reply": "2000-12-12T13:40:25Z",
-      "root_message_id": "msg-8df1e3646053"
     },
     {
       "id": "thread-8628850fd4c3",
@@ -3750,17 +3632,6 @@
       "started": "2000-12-12T16:31:40Z",
       "last_reply": "2000-12-12T17:09:18Z",
       "root_message_id": "msg-8628850fd4c3"
-    },
-    {
-      "id": "thread-1e6769e9a222",
-      "subject": "GIS and spatial statistics",
-      "message_count": 1,
-      "participants": [
-        "sandy_haire at usgs.gov"
-      ],
-      "started": "2000-12-12T16:35:06Z",
-      "last_reply": "2000-12-12T16:35:06Z",
-      "root_message_id": "msg-1e6769e9a222"
     },
     {
       "id": "thread-1eceb7d3bef3",
@@ -3797,18 +3668,6 @@
       "root_message_id": "msg-2ae96d623fa3"
     },
     {
-      "id": "thread-e2e7bbf2c409",
-      "subject": "multivariate K function/L function",
-      "message_count": 2,
-      "participants": [
-        "Adrian Baddeley",
-        "Prabhakar Reddy Gudla Venkata Siva"
-      ],
-      "started": "2000-12-13T07:56:46Z",
-      "last_reply": "2000-12-18T06:12:00Z",
-      "root_message_id": "msg-e2e7bbf2c409"
-    },
-    {
       "id": "thread-84275a5afedb",
       "subject": "printing a summary statistics",
       "message_count": 2,
@@ -3823,35 +3682,24 @@
     {
       "id": "thread-88730ab6bec0",
       "subject": "formula conversion",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "albert horwath"
       ],
       "started": "2000-12-13T11:31:57Z",
-      "last_reply": "2000-12-13T11:31:57Z",
+      "last_reply": "2000-12-18T17:59:22Z",
       "root_message_id": "msg-88730ab6bec0"
     },
     {
       "id": "thread-b83660a44019",
       "subject": "subsetting data frames",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Dr Stuart Leask"
       ],
       "started": "2000-12-13T15:28:07Z",
-      "last_reply": "2000-12-13T15:28:07Z",
-      "root_message_id": "msg-b83660a44019"
-    },
-    {
-      "id": "thread-6604939bdf99",
-      "subject": "subsetting data frames",
-      "message_count": 1,
-      "participants": [
-        "Dr Stuart Leask"
-      ],
-      "started": "2000-12-13T16:08:54Z",
       "last_reply": "2000-12-13T16:08:54Z",
-      "root_message_id": "msg-6604939bdf99"
+      "root_message_id": "msg-b83660a44019"
     },
     {
       "id": "thread-5d135d0b2bad",
@@ -3954,17 +3802,6 @@
       "root_message_id": "msg-7c1dffcd20e3"
     },
     {
-      "id": "thread-75b7e0f27874",
-      "subject": "Job Announcement",
-      "message_count": 1,
-      "participants": [
-        "Rich Townsend"
-      ],
-      "started": "2000-12-14T21:45:47Z",
-      "last_reply": "2000-12-14T21:45:47Z",
-      "root_message_id": "msg-75b7e0f27874"
-    },
-    {
       "id": "thread-909b6fded068",
       "subject": "Linear mixed effects",
       "message_count": 1,
@@ -3978,12 +3815,13 @@
     {
       "id": "thread-746acbfb0c1a",
       "subject": "Conditional Logistic Regression",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Carlos Alzola"
+        "Carlos Alzola",
+        "Terry Therneau"
       ],
       "started": "2000-12-14T22:27:22Z",
-      "last_reply": "2000-12-14T22:27:22Z",
+      "last_reply": "2000-12-14T22:55:31Z",
       "root_message_id": "msg-746acbfb0c1a"
     },
     {
@@ -3998,25 +3836,15 @@
       "root_message_id": "msg-84de52958213"
     },
     {
-      "id": "thread-f8bd2e2bb383",
-      "subject": "Conditional Logistic Regression",
-      "message_count": 1,
-      "participants": [
-        "Terry Therneau"
-      ],
-      "started": "2000-12-14T22:55:31Z",
-      "last_reply": "2000-12-14T22:55:31Z",
-      "root_message_id": "msg-f8bd2e2bb383"
-    },
-    {
       "id": "thread-a2772450ed4e",
       "subject": "How to use \"Correlation\" argument in lme function ??",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Jose Pinheiro",
         "Safwan Qasem"
       ],
       "started": "2000-12-14T23:45:26Z",
-      "last_reply": "2000-12-14T23:45:26Z",
+      "last_reply": "2000-12-17T15:32:32Z",
       "root_message_id": "msg-a2772450ed4e"
     },
     {
@@ -4111,17 +3939,6 @@
       "root_message_id": "msg-49aeaf68e1ae"
     },
     {
-      "id": "thread-e5cc3a707173",
-      "subject": "bivariate normal integral",
-      "message_count": 1,
-      "participants": [
-        "Eladio Dapena"
-      ],
-      "started": "2000-12-15T20:27:27Z",
-      "last_reply": "2000-12-15T20:27:27Z",
-      "root_message_id": "msg-e5cc3a707173"
-    },
-    {
       "id": "thread-ec9ad1a4b9d7",
       "subject": "[Getting GUI Dialog box to dissapear before function ends]",
       "message_count": 1,
@@ -4153,17 +3970,6 @@
       "started": "2000-12-16T21:02:38Z",
       "last_reply": "2000-12-16T21:02:38Z",
       "root_message_id": "msg-8628fe6d211c"
-    },
-    {
-      "id": "thread-a9b394bad543",
-      "subject": "How to use \"Correlation\" argument in lme function ??",
-      "message_count": 1,
-      "participants": [
-        "Jose Pinheiro"
-      ],
-      "started": "2000-12-17T15:32:32Z",
-      "last_reply": "2000-12-17T15:32:32Z",
-      "root_message_id": "msg-a9b394bad543"
     },
     {
       "id": "thread-f4af35115ba8",
@@ -4202,24 +4008,14 @@
     {
       "id": "thread-504a4922796c",
       "subject": "Query",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Adham, Samia A Y",
         "samia.adham at ic.ac.uk"
       ],
       "started": "2000-12-18T11:29:05Z",
-      "last_reply": "2000-12-18T11:29:05Z",
-      "root_message_id": "msg-504a4922796c"
-    },
-    {
-      "id": "thread-2a5f2afab634",
-      "subject": "query",
-      "message_count": 1,
-      "participants": [
-        "Adham, Samia A Y"
-      ],
-      "started": "2000-12-18T13:36:39Z",
       "last_reply": "2000-12-18T13:36:39Z",
-      "root_message_id": "msg-2a5f2afab634"
+      "root_message_id": "msg-504a4922796c"
     },
     {
       "id": "thread-154a53889861",
@@ -4255,20 +4051,9 @@
       "root_message_id": "msg-b084dff5a2cc"
     },
     {
-      "id": "thread-fa5bc3f0b07d",
-      "subject": "formula conversion",
-      "message_count": 1,
-      "participants": [
-        "albert horwath"
-      ],
-      "started": "2000-12-18T17:59:22Z",
-      "last_reply": "2000-12-18T17:59:22Z",
-      "root_message_id": "msg-fa5bc3f0b07d"
-    },
-    {
       "id": "thread-ab8a3b6ce25a",
       "subject": "bivariate normal integral",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Eladio Dapena"
       ],
@@ -4485,17 +4270,6 @@
       "started": "2000-12-22T21:13:27Z",
       "last_reply": "2000-12-22T21:13:27Z",
       "root_message_id": "msg-e045e7750d6d"
-    },
-    {
-      "id": "thread-fbdca211834c",
-      "subject": "(No Subject)",
-      "message_count": 1,
-      "participants": [
-        "albert horwath"
-      ],
-      "started": "2000-12-23T10:35:14Z",
-      "last_reply": "2000-12-23T10:35:14Z",
-      "root_message_id": "msg-fbdca211834c"
     },
     {
       "id": "thread-69352a0592bd",

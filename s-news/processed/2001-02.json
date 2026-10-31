@@ -109,12 +109,12 @@
       "date": "2001-02-01T11:30:05Z",
       "subject": "Re: Problems with ODBC",
       "subject_clean": "Problems with ODBC",
-      "in_reply_to": null,
+      "in_reply_to": "<6B60C62BEC35D311BD2A00A0C9724D540271ECFD@slon11313.csfp.co.uk>",
       "references": [],
       "body_plain": "> From: \"Harrington, Justin\" <justin.harrington at csfb.com>\n> Date: Thu, 1 Feb 2001 11:03:29 -0000\n> \n> S-PLUS 2000 Release 2\n(might be worth upgrading ...)\n\n> Hi all,\n> I'm having some problems with using ODBC to import data from an Access db.\n> When importing a column from a table which is a combination of cells with\n> grades (A to E) and empty cells, it automatically makes the column a factor\n> data type (fair enough), and fills in the blank cells with whatever the\n> previous observation was (not good!). My question is twofold:\n\nUm.  Are those empty/blank cells actually blank or are they NULL?  The\nlook the same in front-ends in general, but they are not the same.\n\n> 1)  Is there any way I can select the data type each column is? In this case\n> I'd like to make them strings. I've tried the preview option, and that seems\n> to have had no effect.\n\nI assume by `strings' you mean a character vector.  S4 has strings,\nso S+6.0 will, but they are different so it is good to not confuse them.\n\n> 2) Why does the factor data type behave this way? Surely if it has no\n> observation, it should call that cell an NA (as it would in the case of\n> numeric data). \n\nSurely it is a bug.  When ODBC C code encounters a NULL, it reports\nit in a flag and does not change the field.  I've managed to write code\nthat did this for numeric values too.\n\nAs far as I know using \"\" not NULL in the database avoids this problem.\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595",
       "body_snippet": "> From: \"Harrington, Justin\" <justin.harrington at csfb.com>\n> Date: Thu, 1 Feb 2001 11:03:29 -0000\n> \n> S-PLUS 2000 Release 2\n(might be worth upgrading ...)\n\n> Hi all,\n> I'm having some problems with",
-      "thread_id": "thread-3a3900ecf89f",
-      "thread_depth": 0,
+      "thread_id": "thread-fbb878bd1000",
+      "thread_depth": 1,
       "month": "2001-02"
     },
     {
@@ -125,12 +125,12 @@
       "date": "2001-02-01T12:57:15Z",
       "subject": "Re: Ordinal Regression",
       "subject_clean": "Ordinal Regression",
-      "in_reply_to": null,
+      "in_reply_to": "<3A79159F.32DB8FD3@HRZ.Uni-Dortmund.DE>",
       "references": [],
       "body_plain": "In addition to the Agresti books already mentioned (which are good) there are\n\nGoodman, L. (1984)  The analysis of cross classified data having ordered \ncategories.  Harvard U. P\n\nCliff, N. (1996).  Ordinal methods for behavioral data analysis.  Lawrence \nErlbaum Assoc.\n\nand\n\nClogg, C. and Shihadeh, E. (1994) Statistical models for ordinal variables. \nSage.\n\nThe first is a collection of Goodman's papers.  He has written and thought a \nLOT about this topic.\n\nThe second is a, to my mind, somewhat simplistic approach recommending using \nsome (relatively) standard nonparametric procedures in novel ways.\n\nThe last is a highly innovative approach, which appears to me to be very \nuseful.  I would love if someone wrote some S-Plus programs to do these \nanalyses, my skills are not up to it.\n\nYou might also want to look for articles by Don Hedeker.\n\nHTH\n\nPeter L. Flom, Ph.D.\nPrincipal Research Associate\nNational Development and Research Institutes, Inc.\n2 World Trade Center\n16th floor\nNew York, NY 10048\n\n(212) 845-4485\n(212) 845-4698 (fax)\nPeter.Flom at ndri.org",
       "body_snippet": "In addition to the Agresti books already mentioned (which are good) there are\n\nGoodman, L. (1984)  The analysis of cross classified data having ordered \ncategories.  Harvard U. P\n\nCliff, N. (1996).  O",
-      "thread_id": "thread-12157b6fd032",
-      "thread_depth": 0,
+      "thread_id": "thread-aba30db0a2a3",
+      "thread_depth": 1,
       "month": "2001-02"
     },
     {
@@ -205,12 +205,12 @@
       "date": "2001-02-01T14:12:08Z",
       "subject": "Re: Confusion about least squares",
       "subject_clean": "Confusion about least squares",
-      "in_reply_to": null,
+      "in_reply_to": "<3A7969BE.1F3784B8@asml.nl>",
       "references": [],
       "body_plain": "> From: Sicco Schets <Sicco.Schets at asml.nl>\n> I am a bit confused about all the different possible functions available\n> for linear model fitting and LSQ. I see functions as : lsfit, lm, glm,\n> solve, qr.solve (only in R) qr.coef etc.\n> \n> I want to use the best method for solving a set of linear equations of\n> the form Ax=b, where there are more equations than unknowns. The R\n> manual suggests qr.solve. What is the equivalent in S?\n\nA brief tour:\n\nsolve: solves equations like Ax=B, where there are as many equations as \n        unknowns, that is A is square and full rank.  (Also can invert A,\n        if no B is specified.)\n\nlsfit: least squares regression of B on A, where A is specified as a full-rank\n        matrix with more rows than columns.  I think this is what you are\n        talking about.  (More commonly in regression, written as Y=Xb+e\n        where b is the coefficient vector to be estimated.)\n\nlm: also solves the least squares regression problem, but rather than the \n        user giving the design matrix, it is specified using a model\n        formula.  Hence coding of contrasts for categorical variables, \n        calculation of interactions, and so forth are handled automatically.\n        Also, the output object contains a lot of additional information\n        that can be used with other functions that calculate tests of\n        various hypotheses, print results neatly, re-run the regression\n        with modified specification, etc.\n\nglm: like lm but more general, fitting a large collection of Generalized\n        Linear Models such as logistic regression, Poisson regression, \n        etc.  Can be used for least square regression, but that would be\n        overkill.",
       "body_snippet": "> From: Sicco Schets <Sicco.Schets at asml.nl>\n> I am a bit confused about all the different possible functions available\n> for linear model fitting and LSQ. I see functions as : lsfit, lm, glm,\n> sol",
-      "thread_id": "thread-d074389e0636",
-      "thread_depth": 0,
+      "thread_id": "thread-8845be0c4470",
+      "thread_depth": 1,
       "month": "2001-02"
     },
     {
@@ -423,12 +423,12 @@
       "date": "2001-02-02T11:39:34Z",
       "subject": "FW: Importing a Excel file",
       "subject_clean": "Importing a Excel file",
-      "in_reply_to": null,
+      "in_reply_to": "<8F02BF209C9BD311806A080009DBA8AE0B0A42@netsvr3>",
       "references": [],
       "body_plain": "After I got an answer from ED Jones, I checked the Excel file. It has a\nblank sheet. Below is Ed Jones reply followed by an original question.\n\nKyong\n\nGee that is strange.. are you sure the file type is \".xls\".. what version of\nexcel are you using?  Possibly you are using a newer version, and Splus 2000\ndoes not know how to convert the file. \nOh... also the excel file must be in a flat file format.. each row is one\nobservation and each column is one variable.. No graphics, No multiple rows\nof headers.  One header row is allowed, but that needs to be specified when\nyou do the import. \ngood luck - edward jones \n-- \n \n____________________________________________________________________________\n____\n| Email: ejones at stat.tamucc.edu | Homepage:\nhttp://normal.tamucc.edu/jones/ |\n| Phone: (361)-825-2682         | Class Website: http://www.math.tamucc.edu/\n|\n \n----------------------------------------------------------------------------\n----\n   \n\n-----Original Message-----\nFrom:   Park, Kyong H Mr. SBCCOM [mailto:kyong.park at sbccom.apgea.army.mil] \nSent:   Thursday, February 01, 2001 8:36 AM\nTo:     'S-plus post'\nSubject:        [S] Importing a Excel file\n\nDear S+ users, I've not having any problem importing an Excel file until\nnow. It keeps importing a blank file, so I reinstalled a Splus2000 R2 and\ntried again without success. Appreciate your help.\nKyong\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "After I got an answer from ED Jones, I checked the Excel file. It has a\nblank sheet. Below is Ed Jones reply followed by an original question.\n\nKyong\n\nGee that is strange.. are you sure the file type ",
-      "thread_id": "thread-5afe84e8acf7",
-      "thread_depth": 0,
+      "thread_id": "thread-cc736a60c11f",
+      "thread_depth": 1,
       "month": "2001-02"
     },
     {
@@ -885,12 +885,12 @@
       "date": "2001-02-06T17:00:40Z",
       "subject": "Re: survival and factor interactions",
       "subject_clean": "survival and factor interactions",
-      "in_reply_to": null,
+      "in_reply_to": "<4.3.2.7.2.20010206162951.00b219c0@dochart.stir.ac.uk>",
       "references": [],
       "body_plain": "Yes, interactions work fine in the survival focused regression routines.\nWhy no examples?\n  I can answer for the Splus manuals, since I'm responsible for most of their\nexamples.  They all happen to use fairly small data sets, not surprizing if\nyou knew that they all started as a part of my test suite (bugs are easier to\nnarrow down in a small data set).  Because they are small, there just isn't\na big enough N to entertain interactions from a statistical/analysis point of\nview. \n\n        Terry Therneau",
       "body_snippet": "Yes, interactions work fine in the survival focused regression routines.\nWhy no examples?\n  I can answer for the Splus manuals, since I'm responsible for most of their\nexamples.  They all happen to us",
-      "thread_id": "thread-deb96b5e627d",
-      "thread_depth": 0,
+      "thread_id": "thread-6d23806fa43f",
+      "thread_depth": 1,
       "month": "2001-02"
     },
     {
@@ -901,12 +901,12 @@
       "date": "2001-02-06T17:20:07Z",
       "subject": "Re: [S] How to keep Splus going after a failure of inverting a matrix",
       "subject_clean": "[S] How to keep Splus going after a failure of inverting a matrix",
-      "in_reply_to": null,
+      "in_reply_to": "<f9440ed23a4957a2839ebe95224ae27e@NO-ID-FOUND.mhonarc.org>",
       "references": [],
       "body_plain": "There are a couple of ways to explicitly check whether the matrix is\nsingular. You could use qr() and see if the rank component indicates that\nthe matrix is less than full rank.  If you look at the code for solve()\nyou will see that it uses qr() so adding that check is easy and adds no\ncalculations.\n\n> solve.default\nfunction(a, b)\n{\n    if(!(missing(b) || is.numeric(b) || mode(b) == \"complex\"))\n        stop(\"b must be numeric or complex\")\n    if(!is.list(a))\n        a <- qr(a)\n    if(missing(b))\n        solve.qr(a)\n    else solve.qr(a, b)\n}\n\nYou also could use svd() (or eigen(), if the matrix is symmetric) and set\na criterion (e.g. ratio of largest to smallest singular value < 1e8) that\ndefines the matrix as almost singular.",
       "body_snippet": "There are a couple of ways to explicitly check whether the matrix is\nsingular. You could use qr() and see if the rank component indicates that\nthe matrix is less than full rank.  If you look at the co",
-      "thread_id": "thread-afe9da13cd9f",
-      "thread_depth": 0,
+      "thread_id": "thread-f72b88ffbdef",
+      "thread_depth": 1,
       "month": "2001-02"
     },
     {
@@ -917,12 +917,12 @@
       "date": "2001-02-06T17:34:21Z",
       "subject": "Re: [S] How to keep Splus going after a failure of inverting a matrix",
       "subject_clean": "[S] How to keep Splus going after a failure of inverting a matrix",
-      "in_reply_to": null,
+      "in_reply_to": "<f9440ed23a4957a2839ebe95224ae27e@NO-ID-FOUND.mhonarc.org>",
       "references": [],
       "body_plain": "On Tue, 6 Feb 2001, Xiaofei Wang wrote:\n\n> \n> In my simulation, I have to use solve() to invert a matrix which sometimes\n> could be singular. However, once the inverse is failed, Splus will stop\n> abruptly, give error message and discard everything from previous\n> simulation.\n> \n> My question is how to keep Splus going even when the inverse is failed.\n\nYou can use the try() function to keep going after an otherwise\nfatal error.  If you suspect that\n        z <- f(x,y)\nmight fail then replace it with\n        z <- try(f(x,y))\n        if (inherits(z, \"Error\")) {\n                ... deal with error ...\n        } else {\n                ... z now has the value of f(x,y) ...\n        }\ntry(expression) returns the value of the expression if it succeeded\nand returns an object of class \"Error\" containing the error message\nif it failed.\n\n> If I need to check singularity before doing inverse, what is a good way to do\n> the checking.\n\nYou could look at the singular values (from svd()) but it might\nbe easiest to use try().\n\n----------------------------------------------------------------------------\nBill Dunlap                                      22461 Mt Vernon-Big Lake Rd\nInsightful Corporation                           Mount Vernon, WA 98274\nbill at insightful.com                              360-428-8146\n \"Formerly known as MathSoft, Insightful Corporation provides analytical\n solutions leveraging S-PLUS, StatServer and consulting services.\"\n\n \"All statements in this message represent the opinions of the author and do\n not necessarily reflect Insightful Corporation policy or position.\"",
       "body_snippet": "On Tue, 6 Feb 2001, Xiaofei Wang wrote:\n\n> \n> In my simulation, I have to use solve() to invert a matrix which sometimes\n> could be singular. However, once the inverse is failed, Splus will stop\n> abr",
-      "thread_id": "thread-1ba29dbf4a64",
-      "thread_depth": 0,
+      "thread_id": "thread-f72b88ffbdef",
+      "thread_depth": 1,
       "month": "2001-02"
     },
     {
@@ -933,12 +933,12 @@
       "date": "2001-02-06T17:42:14Z",
       "subject": "RE: [S] How to keep Splus going after a failure of inverting a ma trix",
       "subject_clean": "[S] How to keep Splus going after a failure of inverting a ma trix",
-      "in_reply_to": null,
+      "in_reply_to": "<1107e27d68bd5bad5f31a972838032d7@NO-ID-FOUND.mhonarc.org>",
       "references": [],
       "body_plain": "[ The following text is in the \"iso-8859-1\" character set. ]\n    [ Your display is set for the \"US-ASCII\" character set.  ]\n    [ Some characters may be displayed incorrectly. ]\n\nThere is an undocumented Splus function called 'try' that will try\nto apply a function, and give different returns depending upon\nwhether or not the function returned an error.  \n\nI don't recall the details of the syntax, but you might\n\"try\" :) experimenting with it (it would be something like\ntry(solve(x)) ), or searching through old splus postings\nfor \"try\" on statlib\n\nMatt Kurbat\n\n-----Original Message-----\nFrom: Xiaofei Wang [mailto:wangxi at email.unc.edu]\nSent: Tuesday, February 06, 2001 7:54 AM\nTo: s-news at wubios.wustl.edu\nSubject: [S] How to keep Splus going after a failure of inverting a\nmatrix\n\nDear Splus users,\n\nI am new to this mailing list. My question could be very simple to most of\nyou.\n\nIn my simulation, I have to use solve() to invert a matrix which sometimes\ncould be singular. However, once the inverse is failed, Splus will stop\nabruptly, give error message and discard everything from previous\nsimulation.\n\nMy question is how to keep Splus going even when the inverse is failed. If\nI need to check singularity before doing inverse, what is a good way to do\nthe checking. The information given by traceback() is as follows:\n\nMessage: Error in .Fortran(if(!cmplx) \"dqr\" else \"zqr\",: subroutine\ndqr: 64 missing value(s) in argument 1\n \n6: .Fortran(if(!cmplx) \"dqr\" else \"zqr\",\n5: qr.default(a)\n4: solve.default(tmp2)\n3: eval(i, local)\n2: source(\"test.ssc\")\n\nCan anybody give me some advice? Thanks.\n\nXiaofei Wang\nGraduate Student in Biostatistics\nUniv. of North Carolina at Chapel Hill\n\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "[ The following text is in the \"iso-8859-1\" character set. ]\n    [ Your display is set for the \"US-ASCII\" character set.  ]\n    [ Some characters may be displayed incorrectly. ]\n\nThere is an undocumen",
-      "thread_id": "thread-2be98148b4d2",
-      "thread_depth": 0,
+      "thread_id": "thread-ac7b8c84b0a1",
+      "thread_depth": 1,
       "month": "2001-02"
     },
     {
@@ -949,12 +949,12 @@
       "date": "2001-02-06T17:59:29Z",
       "subject": "RE: [S] How to keep Splus going after a failure of inverting a ma trix",
       "subject_clean": "[S] How to keep Splus going after a failure of inverting a ma trix",
-      "in_reply_to": null,
+      "in_reply_to": "<1107e27d68bd5bad5f31a972838032d7@NO-ID-FOUND.mhonarc.org>",
       "references": [],
       "body_plain": "[ The following text is in the \"iso-8859-1\" character set. ]\n    [ Your display is set for the \"US-ASCII\" character set.  ]\n    [ Some characters may be displayed incorrectly. ]\n\n\"Try\" is an undocumented Splus function that I found out about through\ntechnical support.  Here is an example I found.  \n\n                result <- try(nls(BurnoutMultiplier ~\nAsym/(1+exp((xmid-SurvivalRatio)/scal)),\n                 start = list(Asym = start.val.df$Asym[i], xmid =\nstart.val.df$xmid[i],\n                 scal = start.val.df$scal[i]), data = tempDF))\n\n                if (unclass(attr(result, \"class\")) != \"Error\")\n                {\n                        IndexofGoodStart[i] <- T\n                }\n\nTry it out, and when you get it working for your example,\nthen please repost to the group.\n\nBest,\nmatt kurbat\n\n-----Original Message-----\nFrom: Xiaofei Wang [mailto:wangxi at email.unc.edu]\nSent: Tuesday, February 06, 2001 7:54 AM\nTo: s-news at wubios.wustl.edu\nSubject: [S] How to keep Splus going after a failure of inverting a\nmatrix\n\nDear Splus users,\n\nI am new to this mailing list. My question could be very simple to most of\nyou.\n\nIn my simulation, I have to use solve() to invert a matrix which sometimes\ncould be singular. However, once the inverse is failed, Splus will stop\nabruptly, give error message and discard everything from previous\nsimulation.\n\nMy question is how to keep Splus going even when the inverse is failed. If\nI need to check singularity before doing inverse, what is a good way to do\nthe checking. The information given by traceback() is as follows:\n\nMessage: Error in .Fortran(if(!cmplx) \"dqr\" else \"zqr\",: subroutine\ndqr: 64 missing value(s) in argument 1\n \n6: .Fortran(if(!cmplx) \"dqr\" else \"zqr\",\n5: qr.default(a)\n4: solve.default(tmp2)\n3: eval(i, local)\n2: source(\"test.ssc\")\n\nCan anybody give me some advice? Thanks.\n\nXiaofei Wang\nGraduate Student in Biostatistics\nUniv. of North Carolina at Chapel Hill\n\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "[ The following text is in the \"iso-8859-1\" character set. ]\n    [ Your display is set for the \"US-ASCII\" character set.  ]\n    [ Some characters may be displayed incorrectly. ]\n\n\"Try\" is an undocumen",
-      "thread_id": "thread-7bcaab97fd35",
-      "thread_depth": 0,
+      "thread_id": "thread-ac7b8c84b0a1",
+      "thread_depth": 1,
       "month": "2001-02"
     },
     {
@@ -965,12 +965,12 @@
       "date": "2001-02-06T20:55:51Z",
       "subject": "Re: Re: gamma model",
       "subject_clean": "gamma model",
-      "in_reply_to": null,
+      "in_reply_to": "<200102061517.f16FHw424811@becrux.biostat.wisc.edu>",
       "references": [],
       "body_plain": "RC> B.P. Ripley states, in response to a question by Eric Wong:\n\nBPR> Whoever that is?\n\nEric Wong was the person I took to be the originator of the thread.\nB.P. Ripley is a statistician noted for technical expertise and \nlack of social graces.\n\nA few comments on the subject, which was the estimation of shape\nparameters by glm().  One does need to summarize the object created by glm()\nin order to get this explicitly computed: summary(glm()) has a component\ncalled $dispersion.\n\nAnother issue, which wasn't raised but which is potentially important\n(I learned the hard way) is to use the correct distribution in an\nanalysis of deviance given by the anova() function.  The test=\"F\"\noption is appropriate when the dispersion parameter is estimated and\nthe test=\"Chi\" option is suitable for models in which it is set to\none.  They can yield quite different output.\n\nRick.\n\n--------------------------------\nRick Chappell, Ph.D. <> Associate Professor, Dept. of Biostatistics\nUniversity of Wisconsin at Madison Medical School \n600 Highland Avenue, K6/430 <> Madison, WI  53792  USA\nchappell at stat.wisc.edu <> Work (608) 263-5572 / FAX 263-1059 / Home 233-3664",
       "body_snippet": "RC> B.P. Ripley states, in response to a question by Eric Wong:\n\nBPR> Whoever that is?\n\nEric Wong was the person I took to be the originator of the thread.\nB.P. Ripley is a statistician noted for tech",
-      "thread_id": "thread-9930131f4e86",
-      "thread_depth": 0,
+      "thread_id": "thread-94f7af409dec",
+      "thread_depth": 1,
       "month": "2001-02"
     },
     {
@@ -981,12 +981,12 @@
       "date": "2001-02-06T21:01:07Z",
       "subject": "Re: [S] How to keep Splus going after a failure of inverting a matrix",
       "subject_clean": "[S] How to keep Splus going after a failure of inverting a matrix",
-      "in_reply_to": null,
+      "in_reply_to": "<f9440ed23a4957a2839ebe95224ae27e@NO-ID-FOUND.mhonarc.org>",
       "references": [],
       "body_plain": "On Tue, 6 Feb 2001, Xiaofei Wang wrote:\n\n> Dear Splus users,\n>\n> I am new to this mailing list. My question could be very simple to most of\n> you.\n>\n> In my simulation, I have to use solve() to invert a matrix which sometimes\n> could be singular. However, once the inverse is failed, Splus will stop\n> abruptly, give error message and discard everything from previous\n> simulation.\n>\n> My question is how to keep Splus going even when the inverse is failed. If\n> I need to check singularity before doing inverse, what is a good way to do\n> the checking. The information given by traceback() is as follows:\n\nLook up try() if you have a tolerably recent version of S-PLUS.\nIf not, see the workaround in V&R's S Programming.  That way either get\nthe answer or can keep going.\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595",
       "body_snippet": "On Tue, 6 Feb 2001, Xiaofei Wang wrote:\n\n> Dear Splus users,\n>\n> I am new to this mailing list. My question could be very simple to most of\n> you.\n>\n> In my simulation, I have to use solve() to invert",
-      "thread_id": "thread-53d9c80d9173",
-      "thread_depth": 0,
+      "thread_id": "thread-f72b88ffbdef",
+      "thread_depth": 1,
       "month": "2001-02"
     },
     {
@@ -1021,8 +1021,8 @@
       ],
       "body_plain": "According to Rick Chappell:\n|> \n|> \n|> RC> B.P. Ripley states, in response to a question by Eric Wong:\n|> \n|> BPR> Whoever that is?\n|> \n|> Eric Wong was the person I took to be the originator of the thread.\n|> B.P. Ripley is a statistician noted for technical expertise and \n|> lack of social graces.\n\nNot to mention his willingness to share his extensive technical\nexpertise, which is a social grace of a kind.\n\n-- \n*************************************************************\nPatrick Connolly\nHortResearch        \nMt Albert               It's better to do nothing than to waste time\nAuckland                                      ..... Viktoras Kulvinskas\nNew Zealand                          \nPh: +64-9 815 4200 x 7188\n*************************************************************",
       "body_snippet": "According to Rick Chappell:\n|> \n|> \n|> RC> B.P. Ripley states, in response to a question by Eric Wong:\n|> \n|> BPR> Whoever that is?\n|> \n|> Eric Wong was the person I took to be the originator of the t",
-      "thread_id": "thread-9930131f4e86",
-      "thread_depth": 1,
+      "thread_id": "thread-94f7af409dec",
+      "thread_depth": 2,
       "month": "2001-02"
     },
     {
@@ -1055,8 +1055,8 @@
       ],
       "body_plain": ">>> B.P. Ripley is a statistician noted for technical expertise and\n>>> lack of social graces.  \n\nHuh.  I suspect you mean B.D. Ripley, and I disagree strongly on the\nlater comment. \n\n-- \nA.J. Rossini                            Rsrch. Asst. Prof. of Biostatistics\nUW Biostat/Center for AIDS Research     rossini at u.washington.edu        \nFHCRC/SCHARP/HIV Vaccine Trials Net     rossini at scharp.org\n-------- (friday is unknown) --------\nFHCRC: M--W : 206-667-7025 (fax=4812)|Voicemail is pretty sketchy\nCFAR:  ??   : 206-731-3647 (fax=3694)|Email is far better than phone\nUW:    Th   : 206-543-1044 (fax=3286)|Change last 4 digits of phone to FAX",
       "body_snippet": ">>> B.P. Ripley is a statistician noted for technical expertise and\n>>> lack of social graces.  \n\nHuh.  I suspect you mean B.D. Ripley, and I disagree strongly on the\nlater comment. \n\n-- \nA.J. Rossini",
-      "thread_id": "thread-9930131f4e86",
-      "thread_depth": 2,
+      "thread_id": "thread-94f7af409dec",
+      "thread_depth": 3,
       "month": "2001-02"
     },
     {
@@ -1135,12 +1135,12 @@
       "date": "2001-02-07T14:58:11Z",
       "subject": "biting the hand that feeds you",
       "subject_clean": "biting the hand that feeds you",
-      "in_reply_to": null,
+      "in_reply_to": "<4.3.2.7.2.20010206181354.00a9d340@pop3.frontiernet.net>",
       "references": [],
       "body_plain": "Here is my definition of Professor Bryan Ripley:\n1. An outstanding mathematical statistician of nowadays well known to all the \nstatistical world\n2. An author of \n\"Pattern Recognition and Neural Networks\"\n\"Stochastic simulation\"\n\"V&R\" \nand numerous publications covering wide range of difficult statistical issues, \nboth in theory and practical applications.\n3.An excellent programmer and expert in many algorithmic languages and platforms\n4. A person who is kind enough to generously share his vast knowledge with \neverybody whoever asks for help\n\nPermanent presence of Professor Ripley in S-PLUS user list creates a feeling \nthat there is an ultimate knowledge and last resort in all the difficult \nsituations. I believe that those who does not understand this are probably new \nto this list or aliens in S-PLUS community. \n\nAlbert Horwath, PhD\n\nGet your small business started at Lycos Small Business at \nhttp://www.lycos.com/business/mail.html",
       "body_snippet": "Here is my definition of Professor Bryan Ripley:\n1. An outstanding mathematical statistician of nowadays well known to all the \nstatistical world\n2. An author of \n\"Pattern Recognition and Neural Netwo",
-      "thread_id": "thread-153ef89031a5",
-      "thread_depth": 0,
+      "thread_id": "thread-ff761ff521ce",
+      "thread_depth": 1,
       "month": "2001-02"
     },
     {
@@ -1201,12 +1201,12 @@
       "date": "2001-02-07T16:21:30Z",
       "subject": "RE: biting the hand that feeds you",
       "subject_clean": "biting the hand that feeds you",
-      "in_reply_to": null,
+      "in_reply_to": "<4.3.2.7.2.20010206181354.00a9d340@pop3.frontiernet.net>",
       "references": [],
       "body_plain": "What do you say? Time to move on to issues of more technical bent?\n\nChris\n\n___________________________________________\n\nChris Stein\nSAS and Statistical Software Support Services (S5)\nPfizer Global Research and Development Informatics\nBuilding T261A/103, mailstop 8260-151\nGroton, CT 06370\n(860) 441-6825 (voice)\n(860) 441-5992 (fax)\nchristopher_d_stein at groton.pfizer.com\n___________________________________________\n\n-----Original Message-----\nFrom: albert horwath [mailto:al_horwath at lycos.com]\nSent: Wednesday, February 07, 2001 9:58 AM\nTo: s-plus\nSubject: [S] biting the hand that feeds you\n\nHere is my definition of Professor Bryan Ripley:\n1. An outstanding mathematical statistician of nowadays well known to all\nthe statistical world\n2. An author of \n\"Pattern Recognition and Neural Networks\"\n\"Stochastic simulation\"\n\"V&R\" \nand numerous publications covering wide range of difficult statistical\nissues, both in theory and practical applications.\n3.An excellent programmer and expert in many algorithmic languages and\nplatforms\n4. A person who is kind enough to generously share his vast knowledge with\neverybody whoever asks for help\n\nPermanent presence of Professor Ripley in S-PLUS user list creates a feeling\nthat there is an ultimate knowledge and last resort in all the difficult\nsituations. I believe that those who does not understand this are probably\nnew to this list or aliens in S-PLUS community. \n\nAlbert Horwath, PhD\n\nGet your small business started at Lycos Small Business at\nhttp://www.lycos.com/business/mail.html\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "What do you say? Time to move on to issues of more technical bent?\n\nChris\n\n___________________________________________\n\nChris Stein\nSAS and Statistical Software Support Services (S5)\nPfizer Global Res",
-      "thread_id": "thread-ebbf1508d4de",
-      "thread_depth": 0,
+      "thread_id": "thread-ff761ff521ce",
+      "thread_depth": 1,
       "month": "2001-02"
     },
     {
@@ -1251,12 +1251,12 @@
       "date": "2001-02-07T17:23:43Z",
       "subject": "Re: gamma model",
       "subject_clean": "gamma model",
-      "in_reply_to": null,
+      "in_reply_to": "<200102061517.f16FHw424811@becrux.biostat.wisc.edu>",
       "references": [],
       "body_plain": "The topic, if we can rise above the flames, is an interesting one in\ngeneral.\n\nThe original question addressed the issue of estimating dispersion\nparameters in generalized linear models.  This is done via summary(),\nwhich in turn invokes summary.glm(), operating on results produced\nfrom glm().  The estimate isn't an MLE but a Pearson statistic.\nMcCullagh and Nelder give good reasons to choose the latter for a gamma\ndistribution but don't say anything about the loss of efficiency.  Does\nanyone have any ideas on this?\n\nA related issue is when to estimate the (over)dispersion parameter for\nbinomial and Poisson distributions or, more properly, when to use such\nan estimate in inference about the mean.  For very small class sizes in\nthe binomial, I would think it is too variable to be of use.  For very\nlarge class sizes I would use the estimate to adjust p-values and\nconfidence intervals.  But for the general case, I don't have a sense.\nAnyone need a thesis topic?  Or have I missed one which has already been\ndone (I know about Liang and McCullagh's nice case study in Biometrics\n49, pp. 623-630, 1993)?\n\nJean-Baptiste DENIS writes:\nJ-BD> If the quotation is true, I would appreciate an answer from Rick Chappell.\n\nA few people have criticized me in the newsgroup for this (and about a\ndozen have agreed with me by e-mail, an interesting case of selection\nbias), so I suppose I ought to reply:\n\nThe quotation, which was:\n\nRC|> Eric Wong was the person I took to be the originator of the thread.\nRC|> B.P. Ripley is a statistician noted for technical expertise and\nRC|> lack of social graces.\n\nis certainly true in the sense that I wrote it.  Whether its content\nis accurate, except for the middle initial, those who care can judge.\n\nI have been participating, usefully I believe and hope, in this list\nfrom its inception and these five words constitute the first which can\nremotely be considered a flame.\n\nI have seen a great many cases in which B.D. Ripley gave valuable\ntechnical advice.  But I have also seen too many replies in which he\nwas quite rude to me and many others in response to items as trivial as\nmispellings.   This includes posters whose primary language is not\nEnglish.  Yes, after a certain point, I am not averse to asking anyone\nto mind his manners.\n\nNow does anyone have any opinions on my technical comments?\n\nRick Chappell.\n\n--------------------------------\nRick Chappell, Ph.D. <> Associate Professor, Dept. of Biostatistics\nUniversity of Wisconsin at Madison Medical School\n600 Highland Avenue, K6/430 <> Madison, WI  53792  USA\nchappell at stat.wisc.edu <> Work (608) 263-5572 / FAX 263-1059 / Home 233-3664",
       "body_snippet": "The topic, if we can rise above the flames, is an interesting one in\ngeneral.\n\nThe original question addressed the issue of estimating dispersion\nparameters in generalized linear models.  This is done",
-      "thread_id": "thread-eca00fc65bc6",
-      "thread_depth": 0,
+      "thread_id": "thread-94f7af409dec",
+      "thread_depth": 1,
       "month": "2001-02"
     },
     {
@@ -1451,12 +1451,12 @@
       "date": "2001-02-08T15:24:39Z",
       "subject": "RE: Bug in importData",
       "subject_clean": "Bug in importData",
-      "in_reply_to": null,
+      "in_reply_to": "<Pine.GSO.4.21.0102081523451.23180-200000@newton.gbar.dtu.dk>",
       "references": [],
       "body_plain": "On my version (NT S+ 2000)\nimport.data(DataFrame=\"test.bug1\",FileName=\"bug.txt\",FileType=\"ASCII\",Delimi\nters=\";\")\n\nimports data correctly (three columns), whereas \n\nimport.data(DataFrame=\"test.bug2\",FileName=\"bug.txt\",FileType=\"ASCII\")\n\ncreates the data frame with 1 column. The last three rows are displayed as\nx;GM;GHI\nx;GM\nx;GM;GHI\n\nDoes not look correct. \n\nTo avoid problems, import the data with Delimiters option explicitly given.\nFor example\n\nimport.data(DataFrame=\"test.bug3\",FileName=\"bug.txt\",FileType=\"ASCII\",Delimi\nters=\"ZZZ\")\n\ncreates correct data frame (with one column, and the next to last element \nx;GM  GM;GHI )\nLeonid Gibiansky\n\n-----Original Message-----\nFrom: immhan at student.dtu.dk [mailto:immhan at student.dtu.dk]\nSent: Thursday, February 08, 2001 9:50 AM\nTo: s-news-list\nSubject: [S] Bug in importData\n\nDear All,\n\nThere seems to be a bug in importData() in S-PLUS 5.1 (HP-UX) as far\nas I can tell this bug is not present in S-PLUS 6.0 (Linux): Comments\nfrom Insightful, please :-)\n\nDescription of the bug:\n\nWhen importing an ASCII file like (se attachment):\n\nx;GM;GHI \n[260 identical rows]\nx;GM;GHI \nx;GM  GM;GHI \nx;GM;GHI \n\nThe 2nd column in the 2nd last line gets imported wrongly as \"GM \".\nWhen there is less rows the string gets imported correctly.  This is\nquite disturbing if you have many lines and don't really know which\nstrings to expect!\n\nDo anybody know if numeric values can be imported wrongly by this bug\nor a similar one?\n\nRegards,\nHenrik\n\n--------------------------------------------------------------------------\n   Henrik Aalborg Nielsen                  \n   Informatics and Mathematical Modelling\n   Section for Statistics, Time Series Group\n   Technical University of Denmark\n   Richard Petersens Plads, Build.321,\n   DK-2800 Kgs. Lyngby, Denmark.\n   Phone:  +45 4525 3418\n   Fax.:   +45 4588 2673\n   E-mail: han at imm.dtu.dk\n   URL:    http://www.imm.dtu.dk/~han\n--------------------------------------------------------------------------",
       "body_snippet": "On my version (NT S+ 2000)\nimport.data(DataFrame=\"test.bug1\",FileName=\"bug.txt\",FileType=\"ASCII\",Delimi\nters=\";\")\n\nimports data correctly (three columns), whereas \n\nimport.data(DataFrame=\"test.bug2\",F",
-      "thread_id": "thread-552887cc2ec2",
-      "thread_depth": 0,
+      "thread_id": "thread-b9b084ef145f",
+      "thread_depth": 1,
       "month": "2001-02"
     },
     {
@@ -1547,12 +1547,12 @@
       "date": "2001-02-09T21:42:23Z",
       "subject": "RE: non-interactive S-Plus session",
       "subject_clean": "non-interactive S-Plus session",
-      "in_reply_to": null,
+      "in_reply_to": "<AFD78192EC49D311BFAE00902798AB8F0BDDB5@jupiter.sc.arbitrade.com>",
       "references": [],
       "body_plain": "Many thank to all who responded. The simplest (and very good) solution\nsuggested was to redirect stdin and stdout:\nSplus < infile > outfile\n\nI should have figured it out myself.\n\nThanks,\nVadim\n\n-----Original Message-----\nFrom: Vadim Ogranovich [mailto:vograno at arbitrade.com]\nSent: Friday, February 09, 2001 12:48 PM\nTo: s-news at lists.biostat.wustl.edu\nCc: Yuan Ma\nSubject: [S] non-interactive S-Plus session\n\nHi, I need to run S-Plus jobs on Sun Solaris in non-interactive yet\nsynchronous way, i.e. I don't want Splus to return until Sqpe completes the\njob. I tried\nSplus BATCH infile outfile\nbut it seems to just launch Sqpe a-synchronously and return right away.\n\nIs there any way to do this?\n\nThank you,\nVadim\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Many thank to all who responded. The simplest (and very good) solution\nsuggested was to redirect stdin and stdout:\nSplus < infile > outfile\n\nI should have figured it out myself.\n\nThanks,\nVadim\n\n-----O",
-      "thread_id": "thread-4a58bbc5b173",
-      "thread_depth": 0,
+      "thread_id": "thread-9ed3a1431f52",
+      "thread_depth": 1,
       "month": "2001-02"
     },
     {
@@ -1595,12 +1595,12 @@
       "date": "2001-02-10T04:50:13Z",
       "subject": "RE: fitting a normal to a few digitized points?",
       "subject_clean": "fitting a normal to a few digitized points?",
-      "in_reply_to": null,
+      "in_reply_to": "<5.0.2.1.0.20010209164221.00ab3ec0@solander.bc.ca>",
       "references": [],
       "body_plain": "Todd Hatfield asks:\n\n| -----Original Message-----\n| From: Todd Hatfield [mailto:hatfield at solander.bc.ca]\n| Sent: Saturday, 10 February 2001 12:13\n| To: s-news at wubios.wustl.edu\n| Subject: [S] fitting a normal to a few digitized points?\n|\n| I am using S+ 2000 R2 on Win98.\n| \n| I have 1500 dome-shaped curves from a variety of simulations \n| and empirical measurements (not mine).  \n\nDome-shaped or bell-shaped?  Most importantly, are they positive and\nasymptote to zero in both directions?  This is pretty vital information but\nsince you talk of a percentage of the peak height, I presume this will be\nthe case at least notionally.\n\n| For each curve I digitized the peak and four points on each \n| side of the peak at specified proportions (> 50%) of the peak height.\n| \n| I would now like to come up with an approximation for each of \n| my digitized curves using a normal distribution, and obtain a measure of \n| how well the approximation fits the digitized points (some sort of R2).   \n\nI would next ask if deviations from the putative normal form were best\nmodelled as absolute or relative (independent) errors.  If you are dealing\nwith a situation where the errors were relative and independent) you are in\nluck.  Take the logs of the curve values, fit a quadratic regression (which\nyou can do with a very fast function in S if you set your mind to it) and\ndeduce your normal parameters from there.  If not, you may have a sticky\nnon-linear regression on your hands.\n\n| The mean of a fitted normal curve would be constrained to match the peak\nof \n| a digitized curve, so I guess it means solving for the best s.\n\nI take it you mean the mean has to match the *position* of the peak, but\noffhand I don't see why.  If you have sampling variation why is the postion\nof the peak necessarily accurately determined but the shape at the peak\nneeds another 8 points around it?  Unless you have a good reason to do\notherwise, I would have thought that you would want to use all the\ninformation to estimate both parameters.\n\nActually, if your curves are not normalized, you have three parameters:\nmean, standard deviation and total mass, which correspond to (and are\nnon-linear functions of) the three parameters determining the quadratic.\n\n| I'm not sure how to do this, and I'd sure appreciate it if \n| someone could point me in the right direction to complete my task.\n\nWe could if we knew more about the problem.  Questions like a sensible error\nstructure and whether or not it is positive with zero asymptotes are\ncrucial.  The above is of necessity a speculative response, so please use\nwith discretion.\n\nBill Venables.\n\n--\nBill Venables, CSIRO/CMIS Environmetrics Project\nEmail: Bill.Venables at cmis.csiro.au\nPhone: +61 7 3826 7251\nFax:   +61 7 3826 7304\nPostal: PO Box 120, Cleveland, Qld 4163, AUSTRALIA\n\n| \n| \n| Thanks,\n| \n| Todd Hatfield\n| \n| ---------------------------------------------------------------------\n| This message was distributed by s-news at lists.biostat.wustl.edu.  To\n| unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n| the BODY of the message:  unsubscribe s-news\n|",
       "body_snippet": "Todd Hatfield asks:\n\n| -----Original Message-----\n| From: Todd Hatfield [mailto:hatfield at solander.bc.ca]\n| Sent: Saturday, 10 February 2001 12:13\n| To: s-news at wubios.wustl.edu\n| Subject: [S] fit",
-      "thread_id": "thread-13049582a270",
-      "thread_depth": 0,
+      "thread_id": "thread-ddc95481b605",
+      "thread_depth": 1,
       "month": "2001-02"
     },
     {
@@ -2181,12 +2181,12 @@
       "date": "2001-02-14T18:43:45Z",
       "subject": "tenure-track position",
       "subject_clean": "tenure-track position",
-      "in_reply_to": null,
+      "in_reply_to": "<200102141559.IAA15922@math.cudenver.edu>",
       "references": [],
       "body_plain": "Apologies for duplicate postings.\n\n                            REVISED POSTING\n          TENURE-TRACK/TENURED POSITION, DEPT OF MATHEMATICS\n           UNIVERSITY OF COLORADO--DENVER, DENVER, COLORADO\n\n The Department of Mathematics at the University of Colorado at Denver \n seeks to fill a faculty position in applied statistics, rank open, \n contingent  on budgetary approval, beginning August 2001.  Applicants \n must have a Ph.D.  in statistics or a related discipline, and demonstrated\n ability to interface well with faculty in other areas.    \n \n We offer B.S., M.S., and Ph.D. degrees; faculty interests \n span computational mathematics, discrete mathematics, engineering \n mathematics, operations research, probability, and statistics.  \n  \n Applicants for tenured positions should have demonstrated accomplishments in  \n research, teaching, and program development, as well as strong commitment to  \n outreach and professional service.  Applicants for tenure-track positions  \n should demonstrate potential for success in research and teaching, and have\n a strong commitment to program development, outreach, and professional\n service.  The Department currently maintains a network of Unix- and Linux-  \n based computers, with S-Plus being the principal statistics environment.\n\n Review of applications begins February 28, 2001, and continues\n until the position is filled.  To apply, please send a current vita,\n list of publications, a statement of research plans and goals,\n a statement of teaching philosophy, and arrange to have three letters\n of recommendation sent to:\n\n     Search Committee\n     Mathematics Department - Campus Box 170\n     University of Colorado at Denver\n     P.O. Box 173364\n     Denver, CO 80217-3364\n     Fax: 303-556-8550\n \n CU-Denver is located in the heart of downtown Denver, 1/2 block\n off Larimer Square, close to Lower Downtown and the Denver Performing\n Arts Center, and 70 miles from Keystone, Vail, and other ski resorts.\n For more information on our department and the university, please\n visit our web site at http://www-math.cudenver.edu.\n \n The University of Colorado at Denver is an equal opportunity\n employer committed to excellence through inclusiveness.  The Colorado\n Open Records Act (C.R.S. 24-72-204) requires a written request\n for confidentiality at the time of application.  Applications without\n such a request may be open records and may be disclosed.",
       "body_snippet": "Apologies for duplicate postings.\n\n                            REVISED POSTING\n          TENURE-TRACK/TENURED POSITION, DEPT OF MATHEMATICS\n           UNIVERSITY OF COLORADO--DENVER, DENVER, COLORADO\n",
-      "thread_id": "thread-ce2920679706",
-      "thread_depth": 0,
+      "thread_id": "thread-8a16424e135a",
+      "thread_depth": 1,
       "month": "2001-02"
     },
     {
@@ -2229,12 +2229,12 @@
       "date": "2001-02-14T20:37:03Z",
       "subject": "Re: ridge regression",
       "subject_clean": "ridge regression",
-      "in_reply_to": null,
+      "in_reply_to": "<76D006EB9224D411B12B0008C7C59D960136FC17@nihexchange9.nih.gov>",
       "references": [],
       "body_plain": "The \"ridge\" command is used as an example in the development of penalized\nmodels.  Look at \"Penalized Cox Models and Frailty\", Technical Report #66,\non the web site for the Section of Biostatistics, Mayo Clinic \n        (www.mayo.edu/hsr/biostat.html)\n        \n  The function is ok as a teaching example, but not fully developed.  It\nreally should be a part of the \"Examples\" library in Splus, rather than a\nstandard part of the survival library.\n\n        Terry Therneau",
       "body_snippet": "The \"ridge\" command is used as an example in the development of penalized\nmodels.  Look at \"Penalized Cox Models and Frailty\", Technical Report #66,\non the web site for the Section of Biostatistics, M",
-      "thread_id": "thread-c8e4f0b5da8d",
-      "thread_depth": 0,
+      "thread_id": "thread-1b2e4c221ad5",
+      "thread_depth": 1,
       "month": "2001-02"
     },
     {
@@ -2245,12 +2245,12 @@
       "date": "2001-02-14T20:56:38Z",
       "subject": "Ridge regression",
       "subject_clean": "Ridge regression",
-      "in_reply_to": null,
+      "in_reply_to": "<76D006EB9224D411B12B0008C7C59D960136FC17@nihexchange9.nih.gov>",
       "references": [],
       "body_plain": "The Design library handles penalized maximum likelihood estimation\nfor least squares and logistic models.  For least squares this is\nridge regression.  The ols function in Design does a decent job\nin treating categorical predictors differently than continous\nones in scaling regression coefficients to put into the penalty\nfunction.  ols also allows you to specify differential penalization\n(e.g., penalize nonlinear interaction terms the most, followed\nby linear interactions, followed by nonlinear main effects, then\nminimally penalizing main linear effects).\n-- \nFrank E Harrell Jr              Prof. of Biostatistics & Statistics\nDiv. of Biostatistics & Epidem. Dept. of Health Evaluation Sciences\nU. Virginia School of Medicine  http://hesweb1.med.virginia.edu/biostat",
       "body_snippet": "The Design library handles penalized maximum likelihood estimation\nfor least squares and logistic models.  For least squares this is\nridge regression.  The ols function in Design does a decent job\nin ",
-      "thread_id": "thread-a7b84ed7e1cf",
-      "thread_depth": 0,
+      "thread_id": "thread-1b2e4c221ad5",
+      "thread_depth": 1,
       "month": "2001-02"
     },
     {
@@ -2988,6 +2988,22 @@
       "month": "2001-02"
     },
     {
+      "id": "msg-037c3e046d6b",
+      "message_id": "<3.0.5.32.19990226172711.00794660@cgocable.ca>",
+      "from_name": "Isabelle Gaboury",
+      "from_email_hash": "60fb17111cf6de98093f1bf4004e71ea1eb56da5d72ea9535b69a41b5aa192c9",
+      "date": "2001-02-21T21:46:15Z",
+      "subject": "Summation problem",
+      "subject_clean": "Summation problem",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hi,\n\nI wrote this function:\nadd5 <- function(i, epsilon, pi, pij)\n{\nresr <- 0;\nfor (j in 1:(n-1))\n        {denomi <- 0;\n         for (k in 1 :(n-1))\n                denomi <- ((1-epsilon[k])*pi[k]*pij[k,j]) + denomi;\n         resr <<- ((x[n,j]*(1-epsilon[i])*pi[i]*pij[i,j])/denomi) + resr;\n        }\n}\n\nfrom which I would expect to get the value \"resr\", which is in fact a sum\nof j \"resr\" terms. But, if I print the value of \"resr\" at each step j, I\ngot 0 all the time. Outside of the function, if I use the value of \"resr\",\nit gives me the first term of the sum over the j terms... How come???\n\nI tried to put \"resr <- 0;\" outside of the function. But, problem: it works\nonly (i.e. \"resr\" contains the correct sum) only if this function is asked\ndirectly in the commands window. If I put \"resr <- 0;\" plus function add5\n(without resr <- 0;) in another function, I go back to my first problem,\ni.e. the sum is incorrect.\n\nWhat a stange problem... Any help will be really appreciated!\nIsabelle Gaboury",
+      "body_snippet": "Hi,\n\nI wrote this function:\nadd5 <- function(i, epsilon, pi, pij)\n{\nresr <- 0;\nfor (j in 1:(n-1))\n        {denomi <- 0;\n         for (k in 1 :(n-1))\n                denomi <- ((1-epsilon[k])*pi[k]*pij",
+      "thread_id": "thread-037c3e046d6b",
+      "thread_depth": 0,
+      "month": "2001-02"
+    },
+    {
       "id": "msg-d52441513438",
       "message_id": "<852569FA.0077738D.00@knotes.kodak.com>",
       "from_name": "brandon.paris at kodak.com",
@@ -3210,12 +3226,12 @@
       "date": "2001-02-23T15:19:12Z",
       "subject": "FW: merging two data sets",
       "subject_clean": "merging two data sets",
-      "in_reply_to": null,
+      "in_reply_to": "<58E57EDE91C5D411803100500478EA5007660D@bus1.bus.olemiss.edu>",
       "references": [],
       "body_plain": "I have not had time yet to check if this works, but I have already received\na request for me to post any answers that I would have received to my\nquestion.\n\nI will look at this shortly and in the meantime, all my thanks to Nick\nEllis.\n\nRichard\n\n-----Original Message-----\nFrom: Nick Ellis [mailto:nick.ellis at marine.csiro.au]\nSent: Friday, February 23, 2001 1:35 AM\nTo: 'Boylan, Richard'\nSubject: RE: [S] merging two data sets\n\nReshaping data often crops up, and I have two functions that sometimes come\nin handy: reshape and table.trans. See bottom for definitions and\nattachments for help files.\n\nYour example still had a typo so I have created an example dat2 with unique\ncolumn names and exactly two observations per year.\n\nFirst reshape dat1\n> dat1\n  id year.start year.end obs1 obs2 obs3\n1 AL       1950     1952    1    2    3\n2 AL       1953     1954    4    5    6\n3 AK       1950     1954   21   22   23\n> n <- rep(1:nrow(dat1),dat1$year.end-dat1$year.start+1)\n> y <- unlist(apply(dat1[,2:3],1,function(x) x[1]:x[2]))\n> dat1r <- data.frame(dat1[n,],year=y)\n> dat1r\n    id year.start year.end obs1 obs2 obs3 year\n X1 AL       1950     1952    1    2    3 1950\nX11 AL       1950     1952    1    2    3 1951\nX12 AL       1950     1952    1    2    3 1952\n X2 AL       1953     1954    4    5    6 1953\nX23 AL       1953     1954    4    5    6 1954\n X3 AK       1950     1954   21   22   23 1950\nX34 AK       1950     1954   21   22   23 1951\nX35 AK       1950     1954   21   22   23 1952\nX36 AK       1950     1954   21   22   23 1953\nX37 AK       1950     1954   21   22   23 1954\n\nNow reshape what I think you mean by dat2\n> dat2\n   id Y1950.obs1 Y1951.obs1 Y1952.obs1 Y1953.obs1 Y1954.obs1 Y1950.obs2\nY1951.obs2 Y1952.obs2 Y1953.obs2 Y1954.obs2\nAL AL          7          8          9         10         11         12\n13         14         15         16\nAK AK         17         18         19         20         21         22\n23         24         25         26\n> dat2r <- reshape(dat2,1,2:11)\n> dat2r <- cbind(dat2r,unpaste(dat2r$label,\".\"))\n> dat2r\n   id      label value  X2.1 X2.2\n 1 AL Y1950.obs1     7 Y1950 obs1\n 2 AK Y1950.obs1    17 Y1950 obs1\n 3 AL Y1951.obs1     8 Y1951 obs1\n 4 AK Y1951.obs1    18 Y1951 obs1\n 5 AL Y1952.obs1     9 Y1952 obs1\n 6 AK Y1952.obs1    19 Y1952 obs1\n 7 AL Y1953.obs1    10 Y1953 obs1\n 8 AK Y1953.obs1    20 Y1953 obs1\n 9 AL Y1954.obs1    11 Y1954 obs1\n10 AK Y1954.obs1    21 Y1954 obs1\n11 AL Y1950.obs2    12 Y1950 obs2\n12 AK Y1950.obs2    22 Y1950 obs2\n13 AL Y1951.obs2    13 Y1951 obs2\n14 AK Y1951.obs2    23 Y1951 obs2\n15 AL Y1952.obs2    14 Y1952 obs2\n16 AK Y1952.obs2    24 Y1952 obs2\n17 AL Y1953.obs2    15 Y1953 obs2\n18 AK Y1953.obs2    25 Y1953 obs2\n19 AL Y1954.obs2    16 Y1954 obs2\n20 AK Y1954.obs2    26 Y1954 obs2\n\nWant to reshape this so obs1 and obs2 are in separate columns\n\n> dat2rr <- table.trans(dat2r$value,dat2r[,c(1,4,5)])\n> dat2rr$year <- as.numeric(substring(dat2rr[,2],2))\n> dat2rr\n   id  X2.1 obs1 obs2 year\n 1 AL Y1950    7   12 1950\n 2 AK Y1950   17   22 1950\n 3 AL Y1951    8   13 1951\n 4 AK Y1951   18   23 1951\n 5 AL Y1952    9   14 1952\n 6 AK Y1952   19   24 1952\n 7 AL Y1953   10   15 1953\n 8 AK Y1953   20   25 1953\n 9 AL Y1954   11   16 1954\n10 AK Y1954   21   26 1954\n\nNow merge with dat1r\n\n> merge(dat1r,dat2rr,by.x=c(1,7),by.y=c(1,5),all=T)\n   id year year.start year.end obs1.x obs2.x obs3  X2.1 obs1.y obs2.y\n 1 AK 1950       1950     1954     21     22   23 Y1950     17     22\n 2 AK 1951       1950     1954     21     22   23 Y1951     18     23\n 3 AK 1952       1950     1954     21     22   23 Y1952     19     24\n 4 AK 1953       1950     1954     21     22   23 Y1953     20     25\n 5 AK 1954       1950     1954     21     22   23 Y1954     21     26\n 6 AL 1950       1950     1952      1      2    3 Y1950      7     12\n 7 AL 1951       1950     1952      1      2    3 Y1951      8     13\n 8 AL 1952       1950     1952      1      2    3 Y1952      9     14\n 9 AL 1953       1953     1954      4      5    6 Y1953     10     15\n10 AL 1954       1953     1954      4      5    6 Y1954     11     16\n\ntable.trans relies on all combinations of id, year and obs1/2 occurring.\n\n> reshape\nfunction(obj, col.copy = NULL, col.unfold = 1:dim(obj)[2], label = \"label\",\nvalue = \"value\")\n{\n        n <- dim(obj)[1]\n        p <- length(col.unfold)\n        res <- vector(\"list\", length(col.copy) + 2)\n        names(res) <- c(if(is.null(col.copy)) NULL else dimnames(obj[,\ncol.copy,\ndrop = F])[[2]], label, value)\n        for(i in seq(along = col.copy)) {\n                res[[i]] <- rep(obj[, col.copy[i]], p)\n        }\n        res[[label]] <- rep(dimnames(obj[, col.unfold, drop = F])[[2]],\nrep(n, p))\n        res[[value]] <- as.vector(data.matrix(obj[, col.unfold, drop = F]))\n        as.data.frame(res)\n}\n> table.trans\nfunction(X, INDICES, ...)\n{\n        len.ind <- length(INDICES)\n        IN1 <- interaction(INDICES[ - len.ind], drop = T)\n        IN2 <- INDICES[[len.ind]]\n        a <- tapply(X, data.frame(IN1, IN2), c, ...)    # browser()\n        res <- cbind(INDICES[IN2 == levels(IN2)[1],  - len.ind], a)\n        res\n}\n\nNick Ellis\nCSIRO Marine Research   mailto:Nick.Ellis at marine.csiro.au\nPO Box 120                      ph    +61 (07) 3826 7260\nCleveland QLD 4163      fax   +61 (07) 3826 7222\nAustralia                       http://www.marine.csiro.au\n\n> -----Original Message-----\n> From: Boylan, Richard [mailto:rboylan at bus.olemiss.edu]\n> Sent: Friday, 23 February 2001 15:00\n> To: 'Nick Ellis '\n> Subject: RE: [S] merging two data sets\n>\n>\n>\n> Sorry, the column names of the second data set are unique, just a typo\n> in one row that I am corrcting below.\n>\n> I am completing the example to make it clearer.\n> First data set has\n>\n> AL 1950 1952 1 2 3\n> AL 1953 1954 4 5 6\n> AK 1950 1954 21 22 23\n>\n> Second data set has\n>\n> 1950_obs1  1951_obs1  1952_obs1 1953_obs1 1952_obs1 1950_obs2\n>  1951_obs2\n> AL   7         8           9         10       11       12          13\n> AK   14       15          16         17       18       19          20\n>\n> Let me do the mergin in two steps.\n>\n> First one, re-write the first data set as\n>\n> AL 1950 1 2 3\n> AL 1951 1 2 3\n> AL 1952 1 2 3\n> AL 1953 4 5 6\n> AL 1954 4 5 6\n> AK 1950 21 22 23\n> AK 1951 21 22 23\n> AK 1951 21 22 23\n> ...\n>\n> Rewrite the second dat set as\n>\n> AL 1950 7 12\n> AL 1951 8 13\n> AL 1952 9 14\n> AL 1953 10 ...\n> AK 1950 14 19\n> AK 1951  15 19\n>\n> Then, combine the two data sets as follows:\n>\n> AL 1950 1 2 3 7 12\n> AL 1951 1 2 3 8 13\n> AL 1952 1 2 3 9 14\n> AL 1953 4 5 6 ...\n> AL 1954 4 5 6 ..\n> AK 1950 21 22 23 14 19\n> AK 1951 21 22 23 15 19\n> AK 1951 21 22 23\n>\n>\n> -----Original Message-----\n> From: Nick Ellis\n> To: 'Boylan, Richard'\n> Sent: 2/22/01 6:11 PM\n> Subject: RE: [S] merging two data sets\n>\n> I couldn't work out from your example what you wanted. The\n> column names\n> of\n> the second data set are not unique. What happens to data values 10 and\n> 11?\n>\n> Nick Ellis\n> CSIRO Marine Research mailto:Nick.Ellis at marine.csiro.au\n> PO Box 120                    ph    +61 (07) 3826 7260\n> Cleveland QLD 4163            fax   +61 (07) 3826 7222\n> Australia                     http://www.marine.csiro.au\n>\n>\n>\n> > -----Original Message-----\n> > From: s-news-owner at lists.biostat.wustl.edu\n> > [mailto:s-news-owner at lists.biostat.wustl.edu]On Behalf Of Boylan,\n> > Richard\n> > Sent: Friday, 23 February 2001 5:49\n> > To: s-news at lists.biostat.wustl.edu\n> > Subject: [S] merging two data sets\n> >\n> >\n> >\n> > I need to combine two data sets and would like some\n> > suggestions on how to go\n> > about doing it.\n> > I understand that you may not want to take the time to read\n> > through the\n> > problem, but if you don't\n> > mind just skimming through it to point me towards the general\n> > direction\n> > (e.g, some people have told\n> > me to use SAS instead of Splus for this type of problem).\n> >\n> > Thanks. Richard\n> >\n> >\n> > What I want to get is a data set in which a row looks as follows:\n> >\n> > location_i    year_j   measurement1_{ij}  measurement2_{ij}\n> >\n> > where measurement1_{ij} and measurement2_{ij} are two rows of\n> > measurements.\n> >\n> > In the first data set, a row looks like this:\n> >\n> > location_i  beginning_year  end_year  measurement1_i\n> >\n> > In the second data set, a row looks like this\n> >\n> > location_1  measurement2_{i1} measurement2_{i2} measurement2_{i3} ..\n> >\n> > Here is an example to make things more understandable.\n> >\n> > First data set has\n> >\n> > AL 1950 1952 1 2 3\n> > AL 1953 1954 4 5 6\n> > AK 1950 1954\n> >\n> > Second data set has\n> >\n> >        1950_obs1  1951_obs1  1952_obs1 1952_obs1 1952_obs1\n> 1950_obs2\n> > 1951_obs2 ..\n> > AL        7               8                  9             10\n> >            11\n> > 12              13\n> > AK      14             15                16              17\n> >          18\n> > 19               20\n> >\n> > The data I want would be\n> >\n> > AL 1950 1 2 3 7 12\n> > AL 1951 1 2 3 8 13\n> > AL 1952 1 2 3 9 ...\n> > AL 1953 4 5 6 ...\n> > AK 1950 ....\n> > AK 1951 ...\n> > ...\n> >\n> >\n> >\n> >\n> >\n> >\n> >\n> >\n> ---------------------------------------------------------------------\n> > This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> > unsubscribe send e-mail to\n> s-news-request at lists.biostat.wustl.edu with\n> > the BODY of the message:  unsubscribe s-news\n> >\n>\n\ntable_trans.d\n\nDescription: Binary data\n\nreshape.d\n\nDescription: Binary data",
       "body_snippet": "I have not had time yet to check if this works, but I have already received\na request for me to post any answers that I would have received to my\nquestion.\n\nI will look at this shortly and in the mean",
-      "thread_id": "thread-c9eda25268b3",
-      "thread_depth": 0,
+      "thread_id": "thread-54d1b607bb70",
+      "thread_depth": 1,
       "month": "2001-02"
     },
     {
@@ -3226,12 +3242,12 @@
       "date": "2001-02-23T18:14:23Z",
       "subject": "RE: Disappearing objects",
       "subject_clean": "Disappearing objects",
-      "in_reply_to": null,
+      "in_reply_to": "<15104802790BD411A2C100D0B73EA33CA83859@remailnt3-re01.westat.com>",
       "references": [],
       "body_plain": "Thanks to Greg Snow, Sam Buttrey, Nick Ellis, Patrick Connolly, and immhan\nwho suggested that using synchronize() might allow a user to see objects\ncreated by someone else.\n\nAfter a little experimentation, we determined that this does not work on our\nplatform (Windows95 PCs, Novell Netware on network. SPLUS 2000 Prof. Release\n1).  Exiting SPLUS and re-entering does work but is pretty inconvenient,\nespecially if you're working on a deadline.\n\nOriginal post:\n> Two of us are trying to use the same _data directory on a server.  We are\n> running into a couple of problems.  First, we are finding that objects\n> created by one person are not seen by the other.  This is usually cured if\n> the person exits SPLUS and re-enters it.  Although not we'd hoped for, we\n> can understand this.\n\nR. Valliant",
       "body_snippet": "Thanks to Greg Snow, Sam Buttrey, Nick Ellis, Patrick Connolly, and immhan\nwho suggested that using synchronize() might allow a user to see objects\ncreated by someone else.\n\nAfter a little experimenta",
-      "thread_id": "thread-8f03ad5b3e53",
-      "thread_depth": 0,
+      "thread_id": "thread-ec4e5dcaaf98",
+      "thread_depth": 1,
       "month": "2001-02"
     },
     {
@@ -3242,12 +3258,12 @@
       "date": "2001-02-23T18:34:50Z",
       "subject": "RE: RE: Disappearing objects",
       "subject_clean": "Disappearing objects",
-      "in_reply_to": null,
+      "in_reply_to": "<15104802790BD411A2C100D0B73EA33CA83859@remailnt3-re01.westat.com>",
       "references": [],
       "body_plain": "Richard,\n\nYou might try detaching and re-attaching the directory.  The following\nfunction works for me to fix a similar problem:\n\nretach <- function(what = 1)\n{\n# detach and re-attach\n        searchlist <- detach(what)\n        attach(searchlist[what], pos = what)\n        invisible(search())\n}\n\nfor example:  retach(1)\nto re-attach the work directory.\n\nYopu may have to close and re-open any object explorer pointing into that\ndirectory.\n\n   - Lane\n\n-----Original Message-----\nFrom: Richard Valliant [mailto:VALLIAR1 at WESTAT.com]\nSent: Friday, February 23, 2001 1:14 PM\nTo: S-News@Lists. Biostat. Wustl. Edu (E-mail)\nCc: Richard Valliant\nSubject: [S] RE: Disappearing objects\n\nThanks to Greg Snow, Sam Buttrey, Nick Ellis, Patrick Connolly, and immhan\nwho suggested that using synchronize() might allow a user to see objects\ncreated by someone else.\n\nAfter a little experimentation, we determined that this does not work on our\nplatform (Windows95 PCs, Novell Netware on network. SPLUS 2000 Prof. Release\n1).  Exiting SPLUS and re-entering does work but is pretty inconvenient,\nespecially if you're working on a deadline.\n\nOriginal post:\n> Two of us are trying to use the same _data directory on a server.  We are\n> running into a couple of problems.  First, we are finding that objects\n> created by one person are not seen by the other.  This is usually cured if\n> the person exits SPLUS and re-enters it.  Although not we'd hoped for, we\n> can understand this.\n\nR. Valliant\n\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Richard,\n\nYou might try detaching and re-attaching the directory.  The following\nfunction works for me to fix a similar problem:\n\nretach <- function(what = 1)\n{\n# detach and re-attach\n        searchli",
-      "thread_id": "thread-ef527c808658",
-      "thread_depth": 0,
+      "thread_id": "thread-ec4e5dcaaf98",
+      "thread_depth": 1,
       "month": "2001-02"
     },
     {
@@ -3308,12 +3324,12 @@
       "date": "2001-02-24T18:47:52Z",
       "subject": "read a file with name the current date automatically",
       "subject_clean": "read a file with name the current date automatically",
-      "in_reply_to": null,
+      "in_reply_to": "<3.0.3.32.20010222230715.00685fec@aueb.gr>",
       "references": [],
       "body_plain": "Hi all.\n\nI would like to thank Mark Fisher, Jean  Adams, Phil Spector,\nPatrick Connolly, Nick Ellis, Andrea Spano, for  giving very \ninteresting  and helpful answers to my question.\n\nBelow there is the original question and the answers given.\nThanks a lot.\nSpyros.\n\nThe original question was:\n\nI would like every working  day to import a file using read.table.\nThe file will be in D:\\\\DATA\\\\2001\\\\\nand it will be named as the paste of \"dat\", of the current date \n(yymmdd) and the \".txt\" extension. The name of the object will\nbe the paste of \"dat\" and the current date.\n\nfor example:\ncurrent <- \"dat010222.txt\"\nfilename <- paste(\"D:\\\\DATA\\\\2001\\\\\", current, sep=\"\")\ndat010222 <-  read.table(filename,header = TRUE, sep = c(1, 11, 21, 31 ,\n41),skip=1)\n\nIs there a way for this to be done automatically for each new day,\nusing a function like date()?\n\nAnd the answers were:\n\nFrom: Mark Fisher\nHere is one way to generate the date you seem to want.\n\ndatelist<-unlist(unpaste(date(),sep=\" \"))\ncurrent<-paste(\"dat\",format(dates(paste(datelist[2],\"/\",datelist[3],\"/\",date\nlist[5])),format=\"mdy\"),\".txt\",sep=\"\")\n\nFrom: Jean Adams\n\nA function like this should work for you ...\n\ndat.name <- function() {\n    ds <- date()\n    mon <- substring(ds, 5, 7)\n    m <- match(mon, month.abb)\n    mm <- if(m<10) paste(\"0\", m, sep=\"\") else as.character(m)\n    dd <- substring(ds, 9, 10)\n    yy <- substring(ds, 23, 24)\n    paste(\"dat\", yy, mm, dd, sep=\"\")\n    }\n\nThen you could use it like this ...\ncurrent <- paste(dat.name(), \".txt\", sep=\"\")\nfilename <- paste(\"D:\\\\DATA\\\\2001\\\\\", current, sep=\"\")\nassign(dat.name, read.table(filename,header = TRUE, sep = c(1, 11, 21, 31\n,41),skip=1)\n\nFrom: Phil Spector \n\ndatetostr <- function()\n{\n        thedate <- date()\n        n <- nchar(thedate)\n        str <- substring(thedate, 1:n, 1:n)\n        str <- paste(sapply(str, function(x)\n        ifelse(x == \" \", \"\\n\", x)), collapse = \"\")\n        parts <- string.break.line(str)[[1]]\n        parts <- parts[grep(\"[^ ][^ ]*\", parts)]\n        monnum <- c(paste(\"0\", 1:9, sep = \"\"), \"10\", \"11\", \"12\")\n        names(monnum) <- c(\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\", \"Jul\",\n                \"Aug\", \"Sep\", \"Oct\", \"Nov\", \"Dec\")\n        day <- ifelse(nchar(parts[3]) == 1, paste(\"0\", parts[3], sep = \"\"),\n                parts[3])\n        paste(substring(parts[6], 3, 4), monnum[parts[2]], day, sep = \"\")\n}\n\nFrom: Patrick Connolly\n\nIt's easy to do it on a unix system, but you could do a more\ncomplicated version with the corresponding DOS calls.\n\nIn unix I would use \n\ncurrent_unix(\"date +%y%m%d\")\nfilename <- paste(\"D:\\\\DATA\\\\2001\\\\dat\", current, \"txt\",sep=\"\")\n\nThere might be a similar way in DOS to get the same format.  Lots of\nthings in DOS are similar.  Otherwise, you could do some text\nmanipulation of what DOS gives you with paste(), substring() and\nunpaste().  You'll need to use parse to deal with the LHS of this\npart:\n\ndat010222 <-  read.table(filename,header = TRUE, sep = c(1, 11, 21, 31 ,\n41),skip=1)\n\nI don't know just what format DOS gives you so I can't make a good\nsuggestion.\n\nAnd also  from Patrick Connolly\n\nI tinkered a bit more with this in unix.  You should be able to modify\nit to make it work in Windows.\n\nThis will work if your datafile is in your working directory.  It will\nput the dataframe is the corresponding .Data directory:\n\nfunction()\n{\n    current <- unix(\"date +%y%m%d\")\n    new.object.name <- paste(\"dat\", current, sep = \"\")\n    filename <- paste(\"dat\", current, \"txt\", sep = \".\")\n    dat.today <- read.table(filename, T, as.is = T, sep = \"\\t\", row.names = \n       NULL)\n    dbwrite(search()[1], new.object.name, dat.today)\n    detach(\".Data\")\n    attach(\".Data\", pos = 1)\n}\n\nSeems to be necessary to reattach the .Data directory otherwise the\nobject is not visable.  I've modified the use of read.table() to suit\nthe file I was playing with, so you'll need to change it back.\n\nIf I knew what the options in DOS were for date, I might be able to\nmake that part work too.  Anyway, in S, you should be able to get the\nbits together into the same form.\n\nFrom: Nick Ellis\n\nFirst let's get the date string:\n\n> today()\n[1] 23 Feb 2001\n> dates(today())\n[1] 02/23/2001\n> as.character(dates(today()))\n[1] \"02/23/2001\"\n> unpaste(as.character(dates(today())),sep=\"/\")\n[[1]]:\n[1] \"02\"\n\n[[2]]:\n[1] \"23\"\n\n[[3]]:\n[1] \"2001\"\n\n> unlist(unpaste(as.character(dates(today())),sep=\"/\"))\n[1] \"02\"   \"23\"   \"2001\"\n> paste(unlist(unpaste(as.character(dates(today())),sep=\"/\")),collapse=\"\")\n[1] \"02232001\"\n>\n\nHaving got the date string the rest is easy:\n\n> d <-\npaste(unlist(unpaste(as.character(dates(today())),sep=\"/\")),collapse=\"\")\n> current <- paste(\"dat\",d,\".txt\",sep=\"\")\n> filename <- paste(\"D:\\\\DATA\\\\2001\\\\\", current, sep=\"\")\n> datname <- paste(\"dat\", d, sep=\"\")\n> assign(datname, read.table(filename, header = T, sep = c(1, 11, 21, 31 ,\n41), skip=1), where=1)\n\nand from: Andrea Spano\n\nsomething like this should work but you'll have to run\n\n> loadit()\n\neverytime you want to import a new file\n\nCiao\n\nAndrea\n\nloadit <- function(){\ncurrent <- paste(\"dat\", as.character(dates(paste(substring(date(),\n9,10),substring(date(), 5,7),substring(date(), 23,24), sep = \"/\"),format =\n\"d/m/y\", out = \"ymd\")), \".txt\", sep = \"\")\nfilename <- paste(\"D:\\\\DATA\\\\2001\\\\\", current, sep=\"\")\nassign(substring(current, 1, 9), filename )\n}",
       "body_snippet": "Hi all.\n\nI would like to thank Mark Fisher, Jean  Adams, Phil Spector,\nPatrick Connolly, Nick Ellis, Andrea Spano, for  giving very \ninteresting  and helpful answers to my question.\n\nBelow there is th",
-      "thread_id": "thread-8c3a55c3d393",
-      "thread_depth": 0,
+      "thread_id": "thread-b7ee878a8edf",
+      "thread_depth": 1,
       "month": "2001-02"
     },
     {
@@ -3395,6 +3411,22 @@
       "body_plain": "Hi, everyone\n\n\tI have got a bivariate time series data and I want to fit an\n\nappropriate VARIMA model to them. Any body knows How can I do this and knows \nany function that help me in this regard?\n\n\tActually, I want to use just S-Plus and I have not access to another \npackage or S-plus improvement package.\n\n\tAny reply or introduce a good tutorial web-site will be appreciated.\n\n Thank you in advance,\n Mohamed\n\n_________________________________________________________________\nGet your FREE download of MSN Explorer at http://explorer.msn.com",
       "body_snippet": "Hi, everyone\n\n\tI have got a bivariate time series data and I want to fit an\n\nappropriate VARIMA model to them. Any body knows How can I do this and knows \nany function that help me in this regard?\n\n\tA",
       "thread_id": "thread-035ba8ed9cb3",
+      "thread_depth": 0,
+      "month": "2001-02"
+    },
+    {
+      "id": "msg-aab84a578f87",
+      "message_id": "<MAEFKKKJKILLHCPMAEKMCEDCCAAA.derek.eder@neuro.gu.se>",
+      "from_name": "Derek N Eder",
+      "from_email_hash": "b2cb2a852f8a057ee638319c35ce80221262ca33f7ee4b124e3e3aa350f0fe8c",
+      "date": "2001-02-26T14:43:01Z",
+      "subject": "S+ outputs to real world? (sounds and ports)",
+      "subject_clean": "S+ outputs to real world? (sounds and ports)",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Dear S+ newsgroup,\n\nI'm using SPlus, version 4.5 (Windows)\n\nI can't find any native facilities to make sounds even as simple as the old\nControl-G 'bell' -- is there a way to generate a system 'beep'?\n\nAlso, does anyone know of a function or utility to read and write bits to\nthe parallel port (a poor man's binary I/O port).\n\nThank you all most sincerely,\n\nDerek\n\nDerek N. Eder\nGöteborgs Universitet\nInstitutionen för klinisk neurovetenskap - psykiatri\nSahlgrenska universitetssjukhuset\nBlå straket 17\nSE 413 45  Göteborg\nSverige\n\ntlf. +46 (031) 34 26 139\nderek.eder at neuro.gu.se\n\nGothenburg University\nInstitute of clinical neuroscience,\nsection for Psychiatry\nSU/SS\nSE 413 45  Göteborg\nSweden",
+      "body_snippet": "Dear S+ newsgroup,\n\nI'm using SPlus, version 4.5 (Windows)\n\nI can't find any native facilities to make sounds even as simple as the old\nControl-G 'bell' -- is there a way to generate a system 'beep'?\n",
+      "thread_id": "thread-aab84a578f87",
       "thread_depth": 0,
       "month": "2001-02"
     },
@@ -3808,12 +3840,13 @@
     {
       "id": "thread-aba30db0a2a3",
       "subject": "Ordinal regression",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Christmann, Andreas"
+        "Christmann, Andreas",
+        "Peter Flom"
       ],
       "started": "2001-02-01T07:51:59Z",
-      "last_reply": "2001-02-01T07:51:59Z",
+      "last_reply": "2001-02-01T12:57:15Z",
       "root_message_id": "msg-aba30db0a2a3"
     },
     {
@@ -3842,56 +3875,36 @@
     {
       "id": "thread-fbb878bd1000",
       "subject": "Problems with ODBC",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Harrington, Justin"
-      ],
-      "started": "2001-02-01T11:03:29Z",
-      "last_reply": "2001-02-01T11:03:29Z",
-      "root_message_id": "msg-fbb878bd1000"
-    },
-    {
-      "id": "thread-3a3900ecf89f",
-      "subject": "Problems with ODBC",
-      "message_count": 1,
-      "participants": [
+        "Harrington, Justin",
         "Prof Brian Ripley"
       ],
-      "started": "2001-02-01T11:30:05Z",
+      "started": "2001-02-01T11:03:29Z",
       "last_reply": "2001-02-01T11:30:05Z",
-      "root_message_id": "msg-3a3900ecf89f"
-    },
-    {
-      "id": "thread-12157b6fd032",
-      "subject": "Ordinal Regression",
-      "message_count": 1,
-      "participants": [
-        "Peter Flom"
-      ],
-      "started": "2001-02-01T12:57:15Z",
-      "last_reply": "2001-02-01T12:57:15Z",
-      "root_message_id": "msg-12157b6fd032"
+      "root_message_id": "msg-fbb878bd1000"
     },
     {
       "id": "thread-cc736a60c11f",
       "subject": "Importing a Excel file",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Park, Kyong H Mr. SBCCOM"
       ],
       "started": "2001-02-01T13:36:29Z",
-      "last_reply": "2001-02-01T13:36:29Z",
+      "last_reply": "2001-02-02T11:39:34Z",
       "root_message_id": "msg-cc736a60c11f"
     },
     {
       "id": "thread-8845be0c4470",
       "subject": "Confusion about least squares",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Alan Zaslavsky",
         "Sicco Schets"
       ],
       "started": "2001-02-01T13:50:54Z",
-      "last_reply": "2001-02-01T13:50:54Z",
+      "last_reply": "2001-02-01T14:12:08Z",
       "root_message_id": "msg-8845be0c4470"
     },
     {
@@ -3915,17 +3928,6 @@
       "started": "2001-02-01T14:05:29Z",
       "last_reply": "2001-02-01T14:05:29Z",
       "root_message_id": "msg-29f977c1b6bc"
-    },
-    {
-      "id": "thread-d074389e0636",
-      "subject": "Confusion about least squares",
-      "message_count": 1,
-      "participants": [
-        "Alan Zaslavsky"
-      ],
-      "started": "2001-02-01T14:12:08Z",
-      "last_reply": "2001-02-01T14:12:08Z",
-      "root_message_id": "msg-d074389e0636"
     },
     {
       "id": "thread-24cae195016a",
@@ -4009,17 +4011,6 @@
       "started": "2001-02-02T00:54:59Z",
       "last_reply": "2001-02-02T02:30:45Z",
       "root_message_id": "msg-a5e754a4023c"
-    },
-    {
-      "id": "thread-5afe84e8acf7",
-      "subject": "Importing a Excel file",
-      "message_count": 1,
-      "participants": [
-        "Park, Kyong H Mr. SBCCOM"
-      ],
-      "started": "2001-02-02T11:39:34Z",
-      "last_reply": "2001-02-02T11:39:34Z",
-      "root_message_id": "msg-5afe84e8acf7"
     },
     {
       "id": "thread-c3623bef160a",
@@ -4193,13 +4184,15 @@
     {
       "id": "thread-94f7af409dec",
       "subject": "gamma model",
-      "message_count": 2,
+      "message_count": 6,
       "participants": [
+        "A.J. Rossini",
+        "Patrick Connolly",
         "Prof Brian Ripley",
         "Rick Chappell"
       ],
       "started": "2001-02-06T15:17:58Z",
-      "last_reply": "2001-02-06T16:47:54Z",
+      "last_reply": "2001-02-07T17:23:43Z",
       "root_message_id": "msg-94f7af409dec"
     },
     {
@@ -4228,126 +4221,54 @@
     {
       "id": "thread-f72b88ffbdef",
       "subject": "[S] How to keep Splus going after a failure of inverting a matrix",
-      "message_count": 1,
+      "message_count": 4,
       "participants": [
-        "Jingli Song"
+        "Alan Zaslavsky",
+        "Bill Dunlap",
+        "Jingli Song",
+        "Prof Brian Ripley"
       ],
       "started": "2001-02-06T16:24:03Z",
-      "last_reply": "2001-02-06T16:24:03Z",
+      "last_reply": "2001-02-06T21:01:07Z",
       "root_message_id": "msg-f72b88ffbdef"
     },
     {
       "id": "thread-6d23806fa43f",
       "subject": "survival and factor interactions",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Andrew Beckerman"
+        "Andrew Beckerman",
+        "Terry Therneau"
       ],
       "started": "2001-02-06T16:34:51Z",
-      "last_reply": "2001-02-06T16:34:51Z",
+      "last_reply": "2001-02-06T17:00:40Z",
       "root_message_id": "msg-6d23806fa43f"
     },
     {
       "id": "thread-ac7b8c84b0a1",
       "subject": "[S] How to keep Splus going after a failure of inverting a ma trix",
-      "message_count": 1,
-      "participants": [
-        "Buttrey, Samuel"
-      ],
-      "started": "2001-02-06T16:45:26Z",
-      "last_reply": "2001-02-06T16:45:26Z",
-      "root_message_id": "msg-ac7b8c84b0a1"
-    },
-    {
-      "id": "thread-deb96b5e627d",
-      "subject": "survival and factor interactions",
-      "message_count": 1,
-      "participants": [
-        "Terry Therneau"
-      ],
-      "started": "2001-02-06T17:00:40Z",
-      "last_reply": "2001-02-06T17:00:40Z",
-      "root_message_id": "msg-deb96b5e627d"
-    },
-    {
-      "id": "thread-afe9da13cd9f",
-      "subject": "[S] How to keep Splus going after a failure of inverting a matrix",
-      "message_count": 1,
-      "participants": [
-        "Alan Zaslavsky"
-      ],
-      "started": "2001-02-06T17:20:07Z",
-      "last_reply": "2001-02-06T17:20:07Z",
-      "root_message_id": "msg-afe9da13cd9f"
-    },
-    {
-      "id": "thread-1ba29dbf4a64",
-      "subject": "[S] How to keep Splus going after a failure of inverting a matrix",
-      "message_count": 1,
-      "participants": [
-        "Bill Dunlap"
-      ],
-      "started": "2001-02-06T17:34:21Z",
-      "last_reply": "2001-02-06T17:34:21Z",
-      "root_message_id": "msg-1ba29dbf4a64"
-    },
-    {
-      "id": "thread-2be98148b4d2",
-      "subject": "[S] How to keep Splus going after a failure of inverting a ma trix",
-      "message_count": 1,
-      "participants": [
-        "Kurbat, Matt"
-      ],
-      "started": "2001-02-06T17:42:14Z",
-      "last_reply": "2001-02-06T17:42:14Z",
-      "root_message_id": "msg-2be98148b4d2"
-    },
-    {
-      "id": "thread-7bcaab97fd35",
-      "subject": "[S] How to keep Splus going after a failure of inverting a ma trix",
-      "message_count": 1,
-      "participants": [
-        "Kurbat, Matt"
-      ],
-      "started": "2001-02-06T17:59:29Z",
-      "last_reply": "2001-02-06T17:59:29Z",
-      "root_message_id": "msg-7bcaab97fd35"
-    },
-    {
-      "id": "thread-9930131f4e86",
-      "subject": "gamma model",
       "message_count": 3,
       "participants": [
-        "A.J. Rossini",
-        "Patrick Connolly",
-        "Rick Chappell"
+        "Buttrey, Samuel",
+        "Kurbat, Matt"
       ],
-      "started": "2001-02-06T20:55:51Z",
-      "last_reply": "2001-02-07T02:43:08Z",
-      "root_message_id": "msg-9930131f4e86"
-    },
-    {
-      "id": "thread-53d9c80d9173",
-      "subject": "[S] How to keep Splus going after a failure of inverting a matrix",
-      "message_count": 1,
-      "participants": [
-        "Prof Brian Ripley"
-      ],
-      "started": "2001-02-06T21:01:07Z",
-      "last_reply": "2001-02-06T21:01:07Z",
-      "root_message_id": "msg-53d9c80d9173"
+      "started": "2001-02-06T16:45:26Z",
+      "last_reply": "2001-02-06T17:59:29Z",
+      "root_message_id": "msg-ac7b8c84b0a1"
     },
     {
       "id": "thread-ff761ff521ce",
       "subject": "Biting the hand that feeds you",
-      "message_count": 3,
+      "message_count": 5,
       "participants": [
         "Arthur Nádas",
         "Florin Vaida",
-        "Jean-Baptiste DENIS"
+        "Jean-Baptiste DENIS",
+        "Stein, Christopher D",
+        "albert horwath"
       ],
       "started": "2001-02-07T00:13:07Z",
-      "last_reply": "2001-02-07T15:48:28Z",
+      "last_reply": "2001-02-07T16:21:30Z",
       "root_message_id": "msg-ff761ff521ce"
     },
     {
@@ -4373,17 +4294,6 @@
       "root_message_id": "msg-c26829e27458"
     },
     {
-      "id": "thread-153ef89031a5",
-      "subject": "biting the hand that feeds you",
-      "message_count": 1,
-      "participants": [
-        "albert horwath"
-      ],
-      "started": "2001-02-07T14:58:11Z",
-      "last_reply": "2001-02-07T14:58:11Z",
-      "root_message_id": "msg-153ef89031a5"
-    },
-    {
       "id": "thread-06b462df1c8c",
       "subject": "Ripley HE THE MAN",
       "message_count": 1,
@@ -4406,17 +4316,6 @@
       "root_message_id": "msg-155a7d4a75d0"
     },
     {
-      "id": "thread-ebbf1508d4de",
-      "subject": "biting the hand that feeds you",
-      "message_count": 1,
-      "participants": [
-        "Stein, Christopher D"
-      ],
-      "started": "2001-02-07T16:21:30Z",
-      "last_reply": "2001-02-07T16:21:30Z",
-      "root_message_id": "msg-ebbf1508d4de"
-    },
-    {
       "id": "thread-bfc10e14f995",
       "subject": "error message SOLVED",
       "message_count": 4,
@@ -4429,17 +4328,6 @@
       "started": "2001-02-07T16:32:47Z",
       "last_reply": "2001-02-08T09:14:57Z",
       "root_message_id": "msg-bfc10e14f995"
-    },
-    {
-      "id": "thread-eca00fc65bc6",
-      "subject": "gamma model",
-      "message_count": 1,
-      "participants": [
-        "Rick Chappell"
-      ],
-      "started": "2001-02-07T17:23:43Z",
-      "last_reply": "2001-02-07T17:23:43Z",
-      "root_message_id": "msg-eca00fc65bc6"
     },
     {
       "id": "thread-cc7de5dc7384",
@@ -4522,24 +4410,14 @@
     {
       "id": "thread-b9b084ef145f",
       "subject": "Bug in importData",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Gibiansky, Leonid",
         "immhan at student.dtu.dk"
       ],
       "started": "2001-02-08T14:49:30Z",
-      "last_reply": "2001-02-08T14:49:30Z",
-      "root_message_id": "msg-b9b084ef145f"
-    },
-    {
-      "id": "thread-552887cc2ec2",
-      "subject": "Bug in importData",
-      "message_count": 1,
-      "participants": [
-        "Gibiansky, Leonid"
-      ],
-      "started": "2001-02-08T15:24:39Z",
       "last_reply": "2001-02-08T15:24:39Z",
-      "root_message_id": "msg-552887cc2ec2"
+      "root_message_id": "msg-b9b084ef145f"
     },
     {
       "id": "thread-d590015fa402",
@@ -4588,24 +4466,13 @@
     {
       "id": "thread-9ed3a1431f52",
       "subject": "non-interactive S-Plus session",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Vadim Ogranovich"
       ],
       "started": "2001-02-09T20:48:13Z",
-      "last_reply": "2001-02-09T20:48:13Z",
-      "root_message_id": "msg-9ed3a1431f52"
-    },
-    {
-      "id": "thread-4a58bbc5b173",
-      "subject": "non-interactive S-Plus session",
-      "message_count": 1,
-      "participants": [
-        "Vadim Ogranovich"
-      ],
-      "started": "2001-02-09T21:42:23Z",
       "last_reply": "2001-02-09T21:42:23Z",
-      "root_message_id": "msg-4a58bbc5b173"
+      "root_message_id": "msg-9ed3a1431f52"
     },
     {
       "id": "thread-db49442be91d",
@@ -4621,24 +4488,14 @@
     {
       "id": "thread-ddc95481b605",
       "subject": "fitting a normal to a few digitized points?",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Bill.Venables at CMIS.CSIRO.AU",
         "Todd Hatfield"
       ],
       "started": "2001-02-10T02:13:14Z",
-      "last_reply": "2001-02-10T02:13:14Z",
-      "root_message_id": "msg-ddc95481b605"
-    },
-    {
-      "id": "thread-13049582a270",
-      "subject": "fitting a normal to a few digitized points?",
-      "message_count": 1,
-      "participants": [
-        "Bill.Venables at CMIS.CSIRO.AU"
-      ],
-      "started": "2001-02-10T04:50:13Z",
       "last_reply": "2001-02-10T04:50:13Z",
-      "root_message_id": "msg-13049582a270"
+      "root_message_id": "msg-ddc95481b605"
     },
     {
       "id": "thread-6f09264264ad",
@@ -4870,12 +4727,12 @@
     {
       "id": "thread-8a16424e135a",
       "subject": "Tenure-track position",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Karen Kafadar"
       ],
       "started": "2001-02-14T15:59:10Z",
-      "last_reply": "2001-02-14T15:59:10Z",
+      "last_reply": "2001-02-14T18:43:45Z",
       "root_message_id": "msg-8a16424e135a"
     },
     {
@@ -4914,17 +4771,6 @@
       "root_message_id": "msg-9fd32ced6d8e"
     },
     {
-      "id": "thread-ce2920679706",
-      "subject": "tenure-track position",
-      "message_count": 1,
-      "participants": [
-        "Karen Kafadar"
-      ],
-      "started": "2001-02-14T18:43:45Z",
-      "last_reply": "2001-02-14T18:43:45Z",
-      "root_message_id": "msg-ce2920679706"
-    },
-    {
       "id": "thread-5233b58f4b12",
       "subject": "Problem with timeSpan() {[CASE#65849]}",
       "message_count": 1,
@@ -4938,35 +4784,15 @@
     {
       "id": "thread-1b2e4c221ad5",
       "subject": "ridge regression",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
-        "Sung, Myong-Hee (NCI)"
-      ],
-      "started": "2001-02-14T19:22:41Z",
-      "last_reply": "2001-02-14T19:22:41Z",
-      "root_message_id": "msg-1b2e4c221ad5"
-    },
-    {
-      "id": "thread-c8e4f0b5da8d",
-      "subject": "ridge regression",
-      "message_count": 1,
-      "participants": [
+        "Frank E Harrell Jr",
+        "Sung, Myong-Hee (NCI)",
         "Terry Therneau"
       ],
-      "started": "2001-02-14T20:37:03Z",
-      "last_reply": "2001-02-14T20:37:03Z",
-      "root_message_id": "msg-c8e4f0b5da8d"
-    },
-    {
-      "id": "thread-a7b84ed7e1cf",
-      "subject": "Ridge regression",
-      "message_count": 1,
-      "participants": [
-        "Frank E Harrell Jr"
-      ],
-      "started": "2001-02-14T20:56:38Z",
+      "started": "2001-02-14T19:22:41Z",
       "last_reply": "2001-02-14T20:56:38Z",
-      "root_message_id": "msg-a7b84ed7e1cf"
+      "root_message_id": "msg-1b2e4c221ad5"
     },
     {
       "id": "thread-8e52513618de",
@@ -5391,6 +5217,17 @@
       "root_message_id": "msg-d3c303cd9e8f"
     },
     {
+      "id": "thread-037c3e046d6b",
+      "subject": "Summation problem",
+      "message_count": 1,
+      "participants": [
+        "Isabelle Gaboury"
+      ],
+      "started": "2001-02-21T21:46:15Z",
+      "last_reply": "2001-02-21T21:46:15Z",
+      "root_message_id": "msg-037c3e046d6b"
+    },
+    {
       "id": "thread-d52441513438",
       "subject": "Nested Logit Models",
       "message_count": 1,
@@ -5404,12 +5241,13 @@
     {
       "id": "thread-ec4e5dcaaf98",
       "subject": "Disappearing objects",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
+        "Bishop, Lane",
         "Richard Valliant"
       ],
       "started": "2001-02-22T14:18:08Z",
-      "last_reply": "2001-02-22T14:18:08Z",
+      "last_reply": "2001-02-23T18:34:50Z",
       "root_message_id": "msg-ec4e5dcaaf98"
     },
     {
@@ -5448,23 +5286,23 @@
     {
       "id": "thread-54d1b607bb70",
       "subject": "merging two data sets",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Boylan, Richard"
       ],
       "started": "2001-02-22T19:49:18Z",
-      "last_reply": "2001-02-22T19:49:18Z",
+      "last_reply": "2001-02-23T15:19:12Z",
       "root_message_id": "msg-54d1b607bb70"
     },
     {
       "id": "thread-b7ee878a8edf",
       "subject": "read a file with name the current date automatically",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Spyros Vrontos"
       ],
       "started": "2001-02-22T21:07:15Z",
-      "last_reply": "2001-02-22T21:07:15Z",
+      "last_reply": "2001-02-24T18:47:52Z",
       "root_message_id": "msg-b7ee878a8edf"
     },
     {
@@ -5502,39 +5340,6 @@
       "root_message_id": "msg-9622e2d7e9df"
     },
     {
-      "id": "thread-c9eda25268b3",
-      "subject": "merging two data sets",
-      "message_count": 1,
-      "participants": [
-        "Boylan, Richard"
-      ],
-      "started": "2001-02-23T15:19:12Z",
-      "last_reply": "2001-02-23T15:19:12Z",
-      "root_message_id": "msg-c9eda25268b3"
-    },
-    {
-      "id": "thread-8f03ad5b3e53",
-      "subject": "Disappearing objects",
-      "message_count": 1,
-      "participants": [
-        "Richard Valliant"
-      ],
-      "started": "2001-02-23T18:14:23Z",
-      "last_reply": "2001-02-23T18:14:23Z",
-      "root_message_id": "msg-8f03ad5b3e53"
-    },
-    {
-      "id": "thread-ef527c808658",
-      "subject": "Disappearing objects",
-      "message_count": 1,
-      "participants": [
-        "Bishop, Lane"
-      ],
-      "started": "2001-02-23T18:34:50Z",
-      "last_reply": "2001-02-23T18:34:50Z",
-      "root_message_id": "msg-ef527c808658"
-    },
-    {
       "id": "thread-94deec5389c5",
       "subject": "Disappearing objects--summary",
       "message_count": 2,
@@ -5556,17 +5361,6 @@
       "started": "2001-02-23T21:14:02Z",
       "last_reply": "2001-02-23T21:14:02Z",
       "root_message_id": "msg-71234174889f"
-    },
-    {
-      "id": "thread-8c3a55c3d393",
-      "subject": "read a file with name the current date automatically",
-      "message_count": 1,
-      "participants": [
-        "Spyros Vrontos"
-      ],
-      "started": "2001-02-24T18:47:52Z",
-      "last_reply": "2001-02-24T18:47:52Z",
-      "root_message_id": "msg-8c3a55c3d393"
     },
     {
       "id": "thread-a9876b57615b",
@@ -5611,6 +5405,17 @@
       "started": "2001-02-26T14:43:01Z",
       "last_reply": "2001-02-26T14:43:01Z",
       "root_message_id": "msg-035ba8ed9cb3"
+    },
+    {
+      "id": "thread-aab84a578f87",
+      "subject": "S+ outputs to real world? (sounds and ports)",
+      "message_count": 1,
+      "participants": [
+        "Derek N Eder"
+      ],
+      "started": "2001-02-26T14:43:01Z",
+      "last_reply": "2001-02-26T14:43:01Z",
+      "root_message_id": "msg-aab84a578f87"
     },
     {
       "id": "thread-b5ec2f83bfe9",

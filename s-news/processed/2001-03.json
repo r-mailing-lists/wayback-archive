@@ -270,12 +270,12 @@
       "date": "2001-03-02T12:01:00Z",
       "subject": "Re: Confidence Interval on Quotient",
       "subject_clean": "Confidence Interval on Quotient",
-      "in_reply_to": null,
+      "in_reply_to": "<200103012142.RAA26742@tanner.math.unb.ca>",
       "references": [],
       "body_plain": "Charles Annis writes:\n\n>  In your note to snews just now you mentioned your earlier note on the\n>  confidence interval for a quotient (original attached).\n>  \n>  Please excuse me if this is an obvious question:  In your 31 January\n>  note you have \"Y-bar.\"   What is Y-bar?\n\nWhoops --- typo!!!\n\nI wrote:\n\n>    Bootstrapping isn't necessary, at least under some ``usual''\n>    assumptions --- normality and homoscedasticity.\n>  \n>    Suppose X_1, ..., X_n1 ~ N(mu_1,sigma^2);\n>            X_1, ..., X_n2 ~ N(mu_2,sigma^2)  (same sigma).\n>  \n>    Let rho = mu_1/mu_2.\n                    .\n                    .\n                    .\n\nThe ``Suppose'' should read\n\n    Suppose X_1, ..., X_n1 ~ N(mu_1,sigma^2);\n            Y_1, ..., Y_n2 ~ N(mu_2,sigma^2)  (same sigma).\n            ^         ^\n            |||||||||||\n            !!!!!!!!!!!\n\nSorry 'bout that!!!\n\n                                cheers,\n\n                                        Rolf Turner\n                                        rolf at math.unb.ca",
       "body_snippet": "Charles Annis writes:\n\n>  In your note to snews just now you mentioned your earlier note on the\n>  confidence interval for a quotient (original attached).\n>  \n>  Please excuse me if this is an obvious",
-      "thread_id": "thread-caf4155ac41b",
-      "thread_depth": 0,
+      "thread_id": "thread-1d98bbc9049e",
+      "thread_depth": 1,
       "month": "2001-03"
     },
     {
@@ -366,12 +366,12 @@
       "date": "2001-03-02T18:13:53Z",
       "subject": "FW: import data question",
       "subject_clean": "import data question",
-      "in_reply_to": null,
+      "in_reply_to": "<4495FF893208D411ABEB00508BCA32BBDF1BB0@ntserver2.kmv.com>",
       "references": [],
       "body_plain": "Dear Splus Users,\n\nI would appreciate your help with the following.  \n\nWhen I issue the following command (using Splus 2000 on Win NT or\nWin95)...:\n\n        import.data(FileName =\n                \"C:\\\\divTest2.xls\",\n                FileType = \"Excel\", ColNames = \"\", Format = \"\",\n                TargetStartCol = \"1\", DataFrame = \"divTest2\")\n\n...I get the following message:\n\n        Out of memory or not enough memory for what you are trying to do.\n        In some circumstances this could be caused by lack of disk space.  \n        Please see the manual for possible solutions.\n\nSome of the columns I'm importing are entirely missing values \n(#N/A in Excel, NA in Splus), \nand that may be the cause of the problem\n(and yes I DO want some entirely NA columns in this situation).  \nThe columns in question are read in as empty character strings.  \n\nMY QUESTIONS:\n1) Is there any way to get \"import.data\" to take what WAS a column of\nentirely missing values in Excel and read it in as such in Splus?  \n(I CAN make a workaround,\nbut am curious to know if there is a direct route).  \n\n2) Is this a problem?  Sounds like a dumb question, but everything proceeds\nfine from here: the data set looks otherwise normal, and I can simply find\nthe offending columns by using is.numeric (my remaining columns ARE\nnumeric).  \nI'm just worried about the message \"Out of memory...lack of disk space....\"\n\nNote that I don't have apparent memory problems after this, \nand don't have disk space problems.  \n\nAny help will be appreciated.  \n\nThank You and Best Regards,\n\nMatt",
       "body_snippet": "Dear Splus Users,\n\nI would appreciate your help with the following.  \n\nWhen I issue the following command (using Splus 2000 on Win NT or\nWin95)...:\n\n        import.data(FileName =\n                \"C:\\",
-      "thread_id": "thread-d665fc229a15",
-      "thread_depth": 0,
+      "thread_id": "thread-ba6c9516dd18",
+      "thread_depth": 1,
       "month": "2001-03"
     },
     {
@@ -594,12 +594,12 @@
       "date": "2001-03-05T23:14:27Z",
       "subject": "Re: Summary: taking combinations of a data frame",
       "subject_clean": "Summary: taking combinations of a data frame",
-      "in_reply_to": null,
+      "in_reply_to": "<3.0.3.32.20010302104137.006e6e90@aueb.gr>",
       "references": [],
       "body_plain": "Spyros Vrontos <svrontos at aueb.gr> summarized responses to\nhis question about getting all choose(10,6) combinations of 6 elements\nchosen from 1:10, including functions:\n* subsets\n* allSelections\n\n(1) Venables & Ripley have a second version of subsets() that\nadds error checking (page 50 of their S Programming book).\n\n(2) Both solutions are recursive, and get very slow as n increases.\nHere is a faster non-recursive solution, e.g. for n=19 it takes 3.8\nseconds vs over 500 for the other solutions, to compute the matrices\nfor every value of k.\n\ncombinations <- function(n, k){\n  # Compute all n choose k combinations of size k from 1:n\n  # Return matrix with k rows and choose(n,k) columns.\n  if(!is.numeric(n) || length(n) != 1 || n%%1) stop(\"'n' must be an integer\")\n  if(!is.numeric(k) || length(k) != 1 || k%%1) stop(\"'k' must be an integer\")\n  if(k > n || k <= 0) return(numeric(0))\n  rowMatrix <- function(n) structure(1:n, dim=c(1,n))\n  colMatrix <- function(n) structure(1:n, dim=c(n,1))\n  if(k == n) return(colMatrix(n))\n  if(k == 1) return(rowMatrix(n))\n  L <- vector(\"list\", k)\n  # L[[j]] will contain combinations(N, j) for N = 2:n\n  L[[1]] <- rowMatrix(2)\n  L[[2]] <- colMatrix(2)\n  Diff <- n-k\n  for(N in seq(3, n, by=1)){\n    # loop over j in reverse order, to avoid overwriting\n    for(j in seq(pmin(k, N-1), pmax(2, N-Diff), by= -1))\n      L[[j]] <- cbind(L[[j]], rbind(L[[j-1]], N, deparse.level=0))\n    if(N <= Diff+1) L[[1]] <- rowMatrix(N)\n    else L[[N-(Diff+1)]] <- numeric(0)\n    if(N <= k) L[[N]] <- colMatrix(N)\n  }\n  L[[k]]\n}\n\nTim Hesterberg",
       "body_snippet": "Spyros Vrontos <svrontos at aueb.gr> summarized responses to\nhis question about getting all choose(10,6) combinations of 6 elements\nchosen from 1:10, including functions:\n* subsets\n* allSelections\n\n(1",
-      "thread_id": "thread-5b51a039851e",
-      "thread_depth": 0,
+      "thread_id": "thread-5025deb22f92",
+      "thread_depth": 1,
       "month": "2001-03"
     },
     {
@@ -1205,25 +1205,6 @@
       "month": "2001-03"
     },
     {
-      "id": "msg-6d48cb7c6fb9",
-      "message_id": "<3.0.6.32.20010309102454.0099d880@pop.srv.ualberta.ca>",
-      "from_name": "Abdulkadir Hussein",
-      "from_email_hash": "cc297b0c649c1f8b13e1f6415f3a51c42c56a531c10c6e528f39ad8b6b59f9f3",
-      "date": "2001-03-09T17:24:54Z",
-      "subject": "S+Seqtrial",
-      "subject_clean": "S+Seqtrial",
-      "in_reply_to": "<Pine.GSO.4.21.0202250830040.29504-100000@fisher.byu.edu>",
-      "references": [
-        "<6B677297622ED311A8E100902785F9310302A6AA@ribes.for.orst.edu>",
-        "<Pine.GSO.4.21.0202250830040.29504-100000@fisher.byu.edu>"
-      ],
-      "body_plain": "Dear S-news members,\nDoes anyone know whether or not the S+Seqtrial software can perform group\nsequential trials  with about 100 interim analyses?\n\nBest regards\nAbdul",
-      "body_snippet": "Dear S-news members,\nDoes anyone know whether or not the S+Seqtrial software can perform group\nsequential trials  with about 100 interim analyses?\n\nBest regards\nAbdul",
-      "thread_id": "thread-6d48cb7c6fb9",
-      "thread_depth": 0,
-      "month": "2001-03"
-    },
-    {
       "id": "msg-195375295dc4",
       "message_id": "<Pine.GSO.4.32.0103091443560.25087-100000@wubios>",
       "from_name": "Erich Schraer",
@@ -1791,12 +1772,12 @@
       "date": "2001-03-13T20:07:22Z",
       "subject": "Re: Background fill when plotting",
       "subject_clean": "Background fill when plotting",
-      "in_reply_to": null,
+      "in_reply_to": "<76D006EB9224D411B12B0008C7C59D960136FC47@nihexchange9.nih.gov>",
       "references": [],
       "body_plain": "Thank you all for responding so quickly.\nI didn't know it was a well known graphics bug.\nI deleted the _pref directory and it seems to work just fine now.\nBut now I lost an excuse to replace my PC ;-)\n\nMyong-Hee",
       "body_snippet": "Thank you all for responding so quickly.\nI didn't know it was a well known graphics bug.\nI deleted the _pref directory and it seems to work just fine now.\nBut now I lost an excuse to replace my PC ;-)",
-      "thread_id": "thread-e19161dcfcab",
-      "thread_depth": 0,
+      "thread_id": "thread-9acf2e0192f8",
+      "thread_depth": 1,
       "month": "2001-03"
     },
     {
@@ -1807,12 +1788,12 @@
       "date": "2001-03-13T21:31:53Z",
       "subject": "Re: Background fill when plotting",
       "subject_clean": "Background fill when plotting",
-      "in_reply_to": null,
+      "in_reply_to": "<76D006EB9224D411B12B0008C7C59D960136FC47@nihexchange9.nih.gov>",
       "references": [],
       "body_plain": "Hi again,\n\nDeborah Carlson asked me to post a solution to the dark red background\nproblem.  The one that worked for me was pointed out by many people and it\ncan also be found on the snews archive of FAQs, I was told.  Here it is:\n\nFirst, close Splus and delete the _pref directory (its corruption is the\nlikely source of the problem).\nBefore this, make sure you make a backup copy of any personal modification\nin it.\nThen restart Splus.\n\nI hope this works for everyone.  Another suggestion was setting the default\nusing \"Options\" menus but I already tried that before and it didn't work. \n\nMyong-Hee",
       "body_snippet": "Hi again,\n\nDeborah Carlson asked me to post a solution to the dark red background\nproblem.  The one that worked for me was pointed out by many people and it\ncan also be found on the snews archive of F",
-      "thread_id": "thread-955f76cfaa00",
-      "thread_depth": 0,
+      "thread_id": "thread-9acf2e0192f8",
+      "thread_depth": 1,
       "month": "2001-03"
     },
     {
@@ -1839,12 +1820,12 @@
       "date": "2001-03-14T00:32:35Z",
       "subject": "Re: Reference books for Mixed Distribution",
       "subject_clean": "Reference books for Mixed Distribution",
-      "in_reply_to": null,
+      "in_reply_to": "<8F02BF209C9BD311806A080009DBA8AE01ADC709@netsvr3>",
       "references": [],
       "body_plain": "Noted.\n\n>>> \"Park, Kyong H Mr. SBCCOM\" \n<kyong.park at SBCCOM.APGEA.ARMY.MIL> 03/10/01 12:24am >>>\nThanks \nto all who replied so quickly: Ted Thomson, John Oehlert, Tom\nRichards, Rolf \nTurner and Abyn Jones. Provided below are responses followed\nby my question. \nI deleted some of the same book titles from \ndifferent\nresponders.\n\nKyong\n\nTitterington, D. M., Smith, A. F. \nM. and Makov, U. E. (1985)\n\\QTR{sl}{Statistical Analysis of Finite Mixture \nDistributions.} New York:\nJohn Wiley.\nThere's also a new Wiley(?) book out \nby McLachlan.\nSee also McLachlan, G. J. and Krishnan (1997) The EM algorithm \nand\nextensions. New York: John Wiley & Sons\n>From Rolf Turner: \n@Book{Eve,\nauthor          \n={Everitt, B. S. and Hand, D. \nJ.},\nyear            \n={1981},\ntitle           \n={Finite Mixture \nDistributions},\npublisher       ={Chapman \n\\& Hall},\naddress         \n={London}\n\n@Book{Lin,\nauthor          \n={Lindsay, B. \nG.},\nyear            \n={1995},\ntitle           \n={Mixture Models:  Theory, Geometry and \nApplications},\npublisher       ={NSF-CBMS \nRegional Conference Series \nin\n                  \nProbability and Statistics, \nIMS},\nvolume          \n={5},\naddress         ={Hayward \nCA}}\n\n@Book{McL,\nauthor          \n={McLachlan, G. J. and Basford, K. \nE.},\nyear            \n={1988},\ntitle           \n={Mixture Models:  Inference and Applications \nto\n                  \nClustering},\npublisher       \n={Dekker},\naddress         ={New \nYork}}\nFinite Mixture Models \nby Geoffrey McLachlan and David Peel\nand \nit seems very understandable.\n        \n        \n@Book{Tit,\nauthor          \n={Titterington, D. M. and Smith, A. F. M. \nand\n                   \nMakov, U. \nE.},\nyear            \n={1985},\ntitle           \n={Statistical Analysis of Finite Mixture \nDistributions},\npublisher       \n={Wiley},\naddress         ={New \nYork}}\n\nQuestion: HI, S+ Users, I am looking for reference books about \nmixture\ndistributions.\nI'd appreciate your \nhelp.\n\n---------------------------------------------------------------------\nThis \nmessage was distributed by s-news at lists.biostat.wustl.edu.  \nTo\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu \nwith\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Noted.\n\n>>> \"Park, Kyong H Mr. SBCCOM\" \n<kyong.park at SBCCOM.APGEA.ARMY.MIL> 03/10/01 12:24am >>>\nThanks \nto all who replied so quickly: Ted Thomson, John Oehlert, Tom\nRichards, Rolf \nTurner and Abyn",
-      "thread_id": "thread-8c70d24ec71c",
-      "thread_depth": 0,
+      "thread_id": "thread-52f6ea293a61",
+      "thread_depth": 1,
       "month": "2001-03"
     },
     {
@@ -2017,12 +1998,12 @@
       "date": "2001-03-14T22:51:25Z",
       "subject": "test for linearity",
       "subject_clean": "test for linearity",
-      "in_reply_to": null,
+      "in_reply_to": "<HAAJFEHAGBMHDAAA@mailcity.com>",
       "references": [],
       "body_plain": "Dear Friends:\n\nMany thanks to Thierry de Meeus, Patric Conolly, Andy Liaw, Matthew Wiener,\nSeen Keenan, Vicki Lancaster, and James Pratt who responded \nto my question about testing for linearity. The summary of all the responses is \nfairly simple: try various nonlinear perturbations of the linear model and \nobserve behavior of p-value in the F-test for significance of additional \ncoefficients.  \n\nI would like to especially thank Vicki Lancaster who sent me a nice report \non practical approach to testing for linearity and Jim Pratt who made a \ndetailed analysis of the problem\n\nWith my very best regards\nStanley Rubinsten\n\nGet 250 color business cards for FREE! at Lycos Mail\nhttp://mail.lycos.com/freemail/vistaprint_index.html",
       "body_snippet": "Dear Friends:\n\nMany thanks to Thierry de Meeus, Patric Conolly, Andy Liaw, Matthew Wiener,\nSeen Keenan, Vicki Lancaster, and James Pratt who responded \nto my question about testing for linearity. The ",
-      "thread_id": "thread-95ac15b87a63",
-      "thread_depth": 0,
+      "thread_id": "thread-e39c98c3378a",
+      "thread_depth": 1,
       "month": "2001-03"
     },
     {
@@ -2081,12 +2062,12 @@
       "date": "2001-03-15T17:05:37Z",
       "subject": "Neutralizing effect of variables",
       "subject_clean": "Neutralizing effect of variables",
-      "in_reply_to": null,
+      "in_reply_to": "<OFA96A0A76.DF7E72BD-ON85256A0F.0072A819@spgdag.ca>",
       "references": [],
       "body_plain": "You might wish to start with \n\nMosteller F, Tukey JW. (1977). Data analysis and regression. New York:\nAddison-Wesley.\n(there is a chapter on removing effects~ something like regression as\nexclusion)\n\nif you knew the effects exactly (almost with out error), you might want to\nconsider using the \"offset\" command\n\nif any variable selection is required  (interactions, higher orders) how\nlikely you are to be successful is indicated in  \n\nMaldonado G, Greenland S. (1993). Simulation study of confounder-selection\nstrategies. Am J Epidemiol\n138(11),923-936. \n\nhope these are of some help\n\nKeith O'Rourke\nStatistician, Department of Surgery and Clinical Epidemiology Unit\nUniversity of Ottawa / Ottawa Hospital \nPhone (613) 798-5555 x16055\nFax (613) 761-5351\nWeb http://www.lri.ca/profiles/orourke.htm",
       "body_snippet": "You might wish to start with \n\nMosteller F, Tukey JW. (1977). Data analysis and regression. New York:\nAddison-Wesley.\n(there is a chapter on removing effects~ something like regression as\nexclusion)\n\n",
-      "thread_id": "thread-faf9578481d3",
-      "thread_depth": 0,
+      "thread_id": "thread-bd7707f15dae",
+      "thread_depth": 1,
       "month": "2001-03"
     },
     {
@@ -2097,12 +2078,12 @@
       "date": "2001-03-15T17:32:07Z",
       "subject": "Mixed model for a multiple-watershed study",
       "subject_clean": "Mixed model for a multiple-watershed study",
-      "in_reply_to": null,
+      "in_reply_to": "<3AAD2F95.F46E61E2@axe.humboldt.edu>",
       "references": [],
       "body_plain": "Colleagues:\n\nNo one replied to my earlier query but i think I should have included\na random effect for storms in the model.  I shall attempt a revised\nmodel:\n\ny_ij = alpha + beta * x_j + a_i  + b_i * x_j + c_j + other fixed effects\n+\nrandom error\n\nwhere y_ij is the response of watershed i in storm j\nx_j is the response at the control watershed in storm j\nalpha and beta are fixed effects for the mean response\na_i and b_i are random effects for watershed i\nc_j is a random effect for storm j\n\nThe covariances within storms are a function of\nspatial separation between watersheds.\n\nIs the following model statement sensible?\n\nnlme(y ~ x, random =  ~ storm + (x | wshed), data = peakflows,\n                   corr = corExp(form = ~ dx + dy | storm))\n\nwhere storm and wshed are factors, x is the response from the control\nwatershed and dx and dy are spatial coordinates for the watersheds.\nThe \"other fixed effects\" have been omitted for simplicity.\n\nAlso what would the groupedData formula look like for peakflows?\n\nThanks for your advice.  I'm rather green on the subject of nlme.\n\nJack Lewis\n\nMy original message follows:\n\nI am trying to formulate a mixed model applicable to multiple-watershed\nexperiments.  (This is an important topic in hydrological research that\nhas never been adequately addressed).  The design involves measurements\nof a response variable such as storm peak flows at multiple\nstream-gaging stations before and after a land management treatment is\napplied.  A control watershed is left untreated for the entire period of\n\nstudy.  A number of storms occurs before and after treatment.  The\nresponse to storms at the control watershed is a continuous covariate\nand I would like to model the variation among gaging stations as a\nrandom effect.  I believe storm might be viewed as a random blocking\nfactor.  (Antecedent conditions and storm characteristics such as\nrainfall intensity and duration tend to make responses within a storm\nmore uniform than responses between storms of a given rainfall amount.)\nI also know that the errors for nearby stations are positively\ncorrelated and I would initially like to treat consecutive storms as\nindependent.\n\nThe basic model looks like this\n\ny_ij = alpha + beta * x_j + a_i  + b_i * x_j + other fixed effects +\nrandom error\n\nwhere y_ij is the response of watershed i in storm j\nx_j is the response at the control watershed in storm j\nalpha and beta are fixed effects for the mean response\na_i and b_i are random effects for watershed i\n\nAND the covariances of the random errors are modelled as a function of\nspatial separation between watersheds.  The error covariance matrix\nmight be viewed as a block diagonal structure with an identical diagonal\n\nblock for each storm.\n\nI am having trouble seeing how to do this with the nlme package.  I know\n\nit has the capability to model within-group covariance structures.  But\nI want to model the between-watershed (within-storm) covariances, not\nthe within-watershed covariances.  How can such a model be specified for\n\nnlme?\n\nThank you very much for considering this problem.\n\n--\nJack Lewis                           Redwood Sciences Laboratory\n707-825-2929 voice                   Pacific Southwest Research Station\n707-825-2901 fax                     USDA Forest Service\njl7001 at axe.humboldt.edu              http://www.rsl.psw.fs.fed.us\njlewis01 at fs.fed.us (alternate)\n\n           --------------------------------------------\nThought must be divided against itself before it can come to any\nknowledge of itself.                             (Aldous Huxley)",
       "body_snippet": "Colleagues:\n\nNo one replied to my earlier query but i think I should have included\na random effect for storms in the model.  I shall attempt a revised\nmodel:\n\ny_ij = alpha + beta * x_j + a_i  + b_i * ",
-      "thread_id": "thread-97c1586746d4",
-      "thread_depth": 0,
+      "thread_id": "thread-4eac79547a23",
+      "thread_depth": 1,
       "month": "2001-03"
     },
     {
@@ -2163,12 +2144,12 @@
       "date": "2001-03-16T13:18:03Z",
       "subject": "Re: Working with objects of class \"by\"",
       "subject_clean": "Working with objects of class \"by\"",
-      "in_reply_to": null,
+      "in_reply_to": "<15023.20738.604696.508557@arbres2a>",
       "references": [],
       "body_plain": "I'm not sure if anybody has mentioned it yet, but you might try summarize()\nfrom Dr. Harrell's Hmisc library.\n\nMatthew D. Austin\nBiostatistician\n\nQuintiles, Inc.\nP. O. Box 9708\nKansas City, MO 64134\nPhone:  (816) 767 3771  Fax:  (816) 767 7372\nemail:  matthew.austin at quintiles.com\n\ndsmith at mathsoft.co.uk (David Smith)@lists.biostat.wustl.edu on 03/16/2001\n01:57:20 AM\n\nSent by:  s-news-owner at lists.biostat.wustl.edu\n\nTo:   <a296180 at mica.fmr.com>\ncc:   \"S-News\" <s-news at wubios.wustl.edu>\n\nSubject:  Re: [S] Working with objects of class \"by\"\n\nI knocked this function up recently to solve a similar problem: converting\nthe output of by() into a data frame.  I've hardly tested it, but it seems\nto work when the result is a vector or named list of scalars (basically,\nanything that could be converted to a data frame).\n\nas.data.frame.by <- function(byobj) {\n## works when result of by is a vector, or list of scalars\n## basically works by rbinding together all the cells of byobj\n     dn <- dimnames(byobj)\n     combs <- expand.grid(lapply(dn,factor))\n     rbind.args <- as.list(byobj)\n     rbind.args[[1]] <- data.frame(rbind.args[[1]])\n     valdf <- do.call(\"rbind\", rbind.args)\n     cbind(combs, valdf)\n}\n\nUse at your own risk, usual disclaimers apply, etc.\n\n# David\n\n--\nDavid M Smith <dsmith at insightful.com>\nS-PLUS Product Marketing Manager, Insightful Corp, Seattle WA\nTel: +1 (206) 283 8802 x360\nFax: +1 (206) 283 0347\n\nMathSoft is now Insightful!  See www.insightful.com for details.\n\n> -----Original Message-----\n> From: s-news-owner at lists.biostat.wustl.edu\n> [mailto:s-news-owner at lists.biostat.wustl.edu]On Behalf Of David Kane -\n> GEODE <David Kane\n> Sent: Wednesday, March 14, 2001 03:26\n> To: s-news at lists.biostat.wustl.edu\n> Subject: [S] Working with objects of class \"by\"\n>\n>\n> Hi,\n>\n> I am having trouble working with objects of class \"by\". Consider a simple\n> example:\n>\n> > version\n> Version 6.0 Release 1 for Sun SPARC, SunOS 5.6 : 2000\n> > y <- data.frame(a =\n> as.factor(c(\"level1\",\"level1\",\"level2\",\"level2\",\"level2\")), b = c(1:5))\n> > y\n>        a b\n> 1 level1 1\n> 2 level1 2\n> 3 level2 3\n> 4 level2 4\n> 5 level2 5\n> > byObject <- by(y$b, y$a, function(x) {sum(x) + x^2})\n> > byObject\n> INDICES:level1\n>   x\n> 1 4\n> 2 7\n> ----------------------------------------------------------\n> INDICES:level2\n>    x\n> 3 21\n> 4 28\n> 5 37\n>\n>\n> I understand from the documentation that byObject is an array of mode\n> list. What is the \"elegant\" way of combining this back with the orignal\n> dataframe y? I want something a resulting dataframe that looks like\n>\n>        a b x\n> 1 level1 1 4\n> 2 level1 2 7\n> 3 level2 3 21\n> 4 level2 4 28\n> 5 level2 5 37\n>\n> but I am not sure how to manipulate byObject to get this. In my\n> actual project,\n> y would have many thousands of rows and y$a would have 100+\n> levels. I realize\n> that this toy example could be handled with tapply, but I am using\n> \"by\" becuase the actual function takes a dataframe as the argument.\n>\n> Thanks for any suggestions.\n>\n> David Kane\n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>\n\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "I'm not sure if anybody has mentioned it yet, but you might try summarize()\nfrom Dr. Harrell's Hmisc library.\n\nMatthew D. Austin\nBiostatistician\n\nQuintiles, Inc.\nP. O. Box 9708\nKansas City, MO 64134\nP",
-      "thread_id": "thread-6fc8751cbfe4",
-      "thread_depth": 0,
+      "thread_id": "thread-ca6a8c7774f8",
+      "thread_depth": 1,
       "month": "2001-03"
     },
     {
@@ -2455,12 +2436,12 @@
       "date": "2001-03-19T21:25:05Z",
       "subject": "Re: log(-log x) distribution",
       "subject_clean": "log(-log x) distribution",
-      "in_reply_to": null,
+      "in_reply_to": "<4554F6F7C942D411AE3100D0B784A192295840@MAILSRVR>",
       "references": [],
       "body_plain": "Do you have Xi = p, or Xi=1-p, where p is a proportion/\nprobability.  With Xi=1-p this is a complementary log-log\ndistribution.  It can be motivated as an extreme value\ndistribution.  The idea is that failure occurs when the\nfirst of a number of \"maintenance\" systems fails.\n\nI have a short note that has the details,\nthat will shortly appear as an appendix to a paper in\n\"Postharvest Biology and Technology\".  The paper is:\n\"Apple cultivar effects on codling moth (Lepidoptera:\nTorticidae) mortality following fumigation with methyl\nbromide.\"\n\n> From: \"Gibiansky, Leonid\" <gibianskyl at globomax.com>\n> To: \"splus (E-mail)\" <s-news at wubios.wustl.edu>\n> Subject: [S] log(-log x) distribution\n> Date: Mon, 19 Mar 2001 07:52:09 -0500\n> \n> Dear All,\n> Could you, please, help with the stat question: I have a data set Xi such\n> that log(-log Xi) is normally distributed. What can be said about the Xi\n> distribution ? Is it one of the known ones, and if yes, what kind of process\n> leads to such distribution ? \n> Thanks\n> Leonid\n\nJohn Maindonald               email : john.maindonald at anu.edu.au        \nStatistical Consulting Unit,  phone : (6125)3998        \nc/o CMA, SMS,                 fax   : (6125)5549  \nJohn Dedman Mathematical Sciences Building\nAustralian National University\nCanberra ACT 0200\nAustralia",
       "body_snippet": "Do you have Xi = p, or Xi=1-p, where p is a proportion/\nprobability.  With Xi=1-p this is a complementary log-log\ndistribution.  It can be motivated as an extreme value\ndistribution.  The idea is that",
-      "thread_id": "thread-5adcf51057e0",
-      "thread_depth": 0,
+      "thread_id": "thread-0bc5c4785306",
+      "thread_depth": 1,
       "month": "2001-03"
     },
     {
@@ -2621,8 +2602,8 @@
       ],
       "body_plain": "Hi,\n\nI cannot get SPLUS  2000 to launch.  Every time I try,   the following\nmessage appears:\n\nDr. Watson for Windows NT\nAn application error has occurred & an application error log\nis being generated.\nSplus.exe\nException access violation (0x0000005). Address:0x02bf6cf3\n\nThis problem started after my SPLUS session was interrupted\nbecause of a power failure. I can launch the program as\nadministrator but not in my own  personal  ID.  I have\nreinstalled the package but  this did not fix the problem.\n\nAny idea what is going on?\n\nThanks,\nMrigesh\n--\n----------------------------------------------------------\nMrigesh  Kshatriya\nDepartment of Zoology & Entomology,\nUniversity of Pretoria, Pretoria, 0002, South Africa\nvoice: (27-12) 420-4282 fax: (27-12) 420-3210\nhome:  (27-12) 420-3677\nemail: mkshatriya at zoology.up.ac.za\n----------------------------------------------------------",
       "body_snippet": "Hi,\n\nI cannot get SPLUS  2000 to launch.  Every time I try,   the following\nmessage appears:\n\nDr. Watson for Windows NT\nAn application error has occurred & an application error log\nis being generated.",
-      "thread_id": "thread-5adcf51057e0",
-      "thread_depth": 1,
+      "thread_id": "thread-0bc5c4785306",
+      "thread_depth": 2,
       "month": "2001-03"
     },
     {
@@ -2649,12 +2630,12 @@
       "date": "2001-03-21T15:39:11Z",
       "subject": "Re: mixed multinomial model: factor coding",
       "subject_clean": "mixed multinomial model: factor coding",
-      "in_reply_to": null,
+      "in_reply_to": "<vines.492E+NM7iuA@agr.agr.kuleuven.ac.be>",
       "references": [],
       "body_plain": "> Date: Wed, 21 Mar 2001 12:57:13 CET\n> X-Priority: 3 (Normal)\n> To: <s-news at wubios.wustl.edu>\n> From: <hans.coppenolle at agr.kuleuven.ac.be> (Hans Coppenolle)\n> Subject: [S] mixed multinomial model: factor coding\n> X-Incognito-SN: 297\n> X-Incognito-Version: 5.0.1.93\n> \n> Hello,\n> \n> I want to fit a mixed proportional odds model...\n> My categorical response has 3 levels...\n> I have 2 factorial factors (with 2 levels) as independent variables...\n> My independent variables are random (subject-specific)...\n> \n> How do i code my independent factors??\n> Dummy coding (0-1) or (-1,1)???\n> Can i treat my intercept as fixed??\n\nWhat software are you using?  E.g. polr in library MASS does all the\ncoding for you.\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595",
       "body_snippet": "> Date: Wed, 21 Mar 2001 12:57:13 CET\n> X-Priority: 3 (Normal)\n> To: <s-news at wubios.wustl.edu>\n> From: <hans.coppenolle at agr.kuleuven.ac.be> (Hans Coppenolle)\n> Subject: [S] mixed multinomial mod",
-      "thread_id": "thread-dc2dbc3574b0",
-      "thread_depth": 0,
+      "thread_id": "thread-337310f47ef2",
+      "thread_depth": 1,
       "month": "2001-03"
     },
     {
@@ -2882,12 +2863,12 @@
       "date": "2001-03-22T16:51:46Z",
       "subject": "FW: Confusion with options(error=NULL)",
       "subject_clean": "Confusion with options(error=NULL)",
-      "in_reply_to": null,
+      "in_reply_to": "<476F432195CDD111B18200008326BA5001094791@mcdc-ftc-1.cdc.gov>",
       "references": [],
       "body_plain": "Apologies: S-Plus 2000, R 1 (have tried to get the network guy to update to\n2 many times!), on Windows NT.\n\nBrad Biggerstaff, Ph.D.\nMathematical Statistician\nDivision of Vector-Borne Infectious Diseases\nCDC/National Center for Infectious Diseases\nPO Box 2087 Fort Collins, CO  80522-2087\n970.221.6473 +++ bbiggerstaff at cdc.gov\n\n>  -----Original Message-----\n> From:         Biggerstaff, Brad J.  \n> Sent: Thursday, March 22, 2001 9:20 AM\n> To:   's-news at lists.biostat.wustl.edu'\n> Cc:   Biggerstaff, Brad J.\n> Subject:      Confusion with options(error=NULL)\n> \n> \n> In the following code fragment\n> \n>       ...\n>                       default.opts <- options()\n>                       on.exit(options(default.opts))\n>                       options(error=NULL)\n>                       # use Venables & Ripley's try() which returns NULL\n> rather than the error message\n>                       result <- \n>       \n> vr.try(do.call(\"uniroot\",c(list(f=eval(as.name\n> (compute.function)),lower=lower,upper=upper),uni.args))$root)\n>               }\n>               structure(list(compute.this=compute.this,result=result,\n>                       call=match.call()),class=\"icc.sample.size\")\n> }\n> \n> I am trying to supress the printing of the error message resulting from\n> the call to uniroot when the endpoints of the search interval have the\n> same sign (or any other error message, actually).  I then will print out\n> my own message within a print method by looking for a NULL value in\n> result.  The trouble is that the error message is still printed, though I\n> thought options(error=NULL) should take care of this:  from the help page,\n> \"The option error=NULL eliminates all error actions.\"\n> \n> Any suggestions?\n> \n> FYI: the try() version used here can be found on p. 48 of V&R's _S\n> Programming_.  I'd rather have NULL than the S-Plus-generated error\n> message in this case.\n> \n> Brad Biggerstaff, Ph.D.\n> Mathematical Statistician\n> Division of Vector-Borne Infectious Diseases\n> CDC/National Center for Infectious Diseases\n> PO Box 2087 Fort Collins, CO  80522-2087\n> 970.221.6473 +++ bbiggerstaff at cdc.gov\n> \n>",
       "body_snippet": "Apologies: S-Plus 2000, R 1 (have tried to get the network guy to update to\n2 many times!), on Windows NT.\n\nBrad Biggerstaff, Ph.D.\nMathematical Statistician\nDivision of Vector-Borne Infectious Diseas",
-      "thread_id": "thread-d284b2203664",
-      "thread_depth": 0,
+      "thread_id": "thread-6c0ee249df9e",
+      "thread_depth": 1,
       "month": "2001-03"
     },
     {
@@ -3030,12 +3011,12 @@
       "date": "2001-03-23T13:33:12Z",
       "subject": "Re: compare scan(), read.table(), and importData()",
       "subject_clean": "compare scan(), read.table(), and importData()",
-      "in_reply_to": null,
+      "in_reply_to": "<p05001908b6e057cb6cb7@[128.115.153.6]>",
       "references": [],
       "body_plain": "Don and all,\n\nFor the portion of your post dealing with importData(), I have had very\nsimilar experiences, and coincidentally, was planning to write to the list\non issues related to this topic.  In my case, I have for example 2.5 million\nobservations and 5 columns in a csv file.  I only tried using S-PLUS 6 for\nLinux and S-PLUS 6 for Windows Beta 2.  The machines these reside on our\nsimilar with dual processors around 800 MHZ and 1.5 GB or RAM.\n\n(What versions and platforms were you using?)\n\nread.table() takes just under 8 minutes to read in a file like the above,\nwhich is acceptable for me.  importData() was taking so long on the same\nfile that I killed the process after nearly an hour.  My recollection may be\nfaulty, but it seems that importData() would not be so bad on other formats,\nsuch as a SAS data set. Also, I wonder if the Sv4 read enhancements come\ninto play here with read.table().\n\nAlso interestingly, exportData() was much faster in producing a CSV file\nthan write.table() after processing such a data set -- a couple of seconds\nversus over 2 minutes, respectively, to output a file of approximately\n12,000 observations and 30 columns.\n\nI'd certainly like to hear any others experiences and opinions on these\ntypes of issues.\n\nThanks,\nBill\n\n______________________________\nBill Pikounis, Ph.D.\n   E-mail: v_bill_pikounis at merck.com\n   Phone: 732.594.3913\n   Fax:  732.594.1565\n\nMerck Research Laboratories\nP.O. Box 2000, MailDrop RY70-38\n126 E. Lincoln Ave\nRahway, NJ 07065-0900\n\n> -----Original Message-----\n> From: Don MacQueen [mailto:macq at llnl.gov]\n> Sent: Thursday, March 22, 2001 8:43 PM\n> To: s-news at wubios.wustl.edu\n> Subject: [S] compare scan(), read.table(), and importData()\n> \n> \n> I just spent the last hour or so figuring out why read.table() and \n> importData() produced dataframes with different numbers of rows from \n> the same ascii data file.\n> \n> It turns out that read.table() ignores blank lines in the data file; \n> importData() gives a row of all NAs.\n> \n> This is not documented in the help() pages for either of these. In \n> fact, help(read.table) says explicitly,\n>    \"creates a data frame with the same number of rows\n>     as there are lines in the file\"\n> and therefore does not do what it says it does. The \n> documentation is wrong.\n> \n> A performance comparison of\n>    (1) scan() using the n= argument followed by conversion to \n> a data frame\n>    (2) read.table()\n>    (3) importData()\n> on a file with 116577 lines and 16 fields had the following elapsed \n> times in seconds (two repetitions each)\n>     (1) 20, 23\n>     (2) 29, 30\n>     (3) 69, 71\n> \n> So\n>    - scan + conversion is fastest, but not all that much \n> compared with \n> read.table\n>    - importData is much slower\n> \n> However, I don't know of convenient way to disable the coercion of \n> characters to factors when converting a list, as created by scan() to \n> a dataframe. read.table() has the as.is=T option, and importData() \n> has the stringsAsFactors=F option. The latter being, perhaps, \n> somewhat better, since it gives character variables the class \"AsIs\" \n> which prevents subsequent conversion to factors, at least in some \n> types of operations.\n> \n> My bottom line: read.table() is the best choice.\n> \n> -Don\n> -- \n> --------------------------------------\n> Don MacQueen\n> Environmental Protection Department\n> Lawrence Livermore National Laboratory\n> Livermore, CA, USA\n> --------------------------------------\n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>",
       "body_snippet": "Don and all,\n\nFor the portion of your post dealing with importData(), I have had very\nsimilar experiences, and coincidentally, was planning to write to the list\non issues related to this topic.  In my",
-      "thread_id": "thread-c661a9970fd3",
-      "thread_depth": 0,
+      "thread_id": "thread-02cf93b7e1e5",
+      "thread_depth": 1,
       "month": "2001-03"
     },
     {
@@ -3055,6 +3036,38 @@
       "month": "2001-03"
     },
     {
+      "id": "msg-6b9c0de16540",
+      "message_id": "<3abb8416.595b.0@mach1.wlu.ca>",
+      "from_name": "Alastair Dempster",
+      "from_email_hash": "dd3fdbfc9ceac2296979b8e7c4c78d6370b8efb1dd0f8d3d6047c24c106ad85a",
+      "date": "2001-03-23T15:43:31Z",
+      "subject": "",
+      "subject_clean": "",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "My apologies for this second message.  I realized that I had not explained the\nspp function.  It creates a spatial point pattern object.  It comes from the\nSpatial Stats module.  \n\nAlso, please ignore the line that reads:\nx.spp<-spp(theData)\n\nThank you,\n\nAlastair Dempster",
+      "body_snippet": "My apologies for this second message.  I realized that I had not explained the\nspp function.  It creates a spatial point pattern object.  It comes from the\nSpatial Stats module.  \n\nAlso, please ignore",
+      "thread_id": "thread-6b9c0de16540",
+      "thread_depth": 0,
+      "month": "2001-03"
+    },
+    {
+      "id": "msg-adf900d7731f",
+      "message_id": "<3abb7c55.445e.0@mach1.wlu.ca>",
+      "from_name": "Alastair Dempster",
+      "from_email_hash": "dd3fdbfc9ceac2296979b8e7c4c78d6370b8efb1dd0f8d3d6047c24c106ad85a",
+      "date": "2001-03-23T15:43:31Z",
+      "subject": "Object Names in Functions",
+      "subject_clean": "Object Names in Functions",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "This is a beginner question but I have looked at the archives and the \ndocumentation\nand I still stuck.\n\nI would like to keep some objects created inside a function and I would like\nto specify their names dynamically.\n\nMy code is as follows:\nmyfunc<-function(theData)\n{\nx.spp<-spp(theData)\ny<-paste(c(deparse(substitute(theData)),\".spp\"),collapse=\"\") \nassign(y,spp(theData),immediate=T)\n}\n\nMy function returns a null rather than the object I want and I am not sure why.\n If my input is say gr99e I expect an object named gr99e.spp to be created.\n\nCan anyone set me straight?\n\nAlastair Dempster\nWilfrid Laurier University\nWaterloo, Canada",
+      "body_snippet": "This is a beginner question but I have looked at the archives and the \ndocumentation\nand I still stuck.\n\nI would like to keep some objects created inside a function and I would like\nto specify their n",
+      "thread_id": "thread-adf900d7731f",
+      "thread_depth": 0,
+      "month": "2001-03"
+    },
+    {
       "id": "msg-f7877ce3f138",
       "message_id": "<p05001902b6e11e8ebe46@[128.115.153.6]>",
       "from_name": "Don MacQueen",
@@ -3068,8 +3081,8 @@
       ],
       "body_plain": "Oops, I forgot to include\n\n>  version\nVersion 6.0 Release 1 for Sun SPARC, SunOS 5.6 : 2000\n\nI've used importData() with SAS datasets on the order of 50000 \nrecords and not noticed a problem.\n\n-Don\n\nAt 8:33 AM -0500 3/23/01, Pikounis, V. Bill wrote:\n> Don and all,\n>\n>\n>\n> For the portion of your post dealing with importData(), I have had very\n> similar experiences, and coincidentally, was planning to write to the list\n> on issues related to this topic.  In my case, I have for example 2.5 million\n> observations and 5 columns in a csv file.  I only tried using S-PLUS 6 for\n> Linux and S-PLUS 6 for Windows Beta 2.  The machines these reside on our\n> similar with dual processors around 800 MHZ and 1.5 GB or RAM.\n>\n> (What versions and platforms were you using?)\n>\n>\n>\n> read.table() takes just under 8 minutes to read in a file like the above,\n> which is acceptable for me.  importData() was taking so long on the same\n> file that I killed the process after nearly an hour.  My recollection may be\n> faulty, but it seems that importData() would not be so bad on other formats,\n> such as a SAS data set. Also, I wonder if the Sv4 read enhancements come\n> into play here with read.table().\n>\n> Also interestingly, exportData() was much faster in producing a CSV file\n> than write.table() after processing such a data set -- a couple of seconds\n> versus over 2 minutes, respectively, to output a file of approximately\n> 12,000 observations and 30 columns.\n>\n> I'd certainly like to hear any others experiences and opinions on these\n> types of issues.\n>\n> Thanks,\n> Bill\n>\n> ______________________________\n> Bill Pikounis, Ph.D.\n>    E-mail: v_bill_pikounis at merck.com\n>    Phone: 732.594.3913\n>    Fax:  732.594.1565\n>\n> Merck Research Laboratories\n> P.O. Box 2000, MailDrop RY70-38\n> 126 E. Lincoln Ave\n> Rahway, NJ 07065-0900\n>\n>\n>\n> >  -----Original Message-----\n> >  From: Don MacQueen [mailto:macq at llnl.gov]\n> >  Sent: Thursday, March 22, 2001 8:43 PM\n> >  To: s-news at wubios.wustl.edu\n> >  Subject: [S] compare scan(), read.table(), and importData()\n> >\n> >  I just spent the last hour or so figuring out why read.table() and\n> >  importData() produced dataframes with different numbers of rows from\n> >  the same ascii data file.\n> >\n> >  It turns out that read.table() ignores blank lines in the data file;\n> >  importData() gives a row of all NAs.\n> >\n> >  This is not documented in the help() pages for either of these. In\n> >  fact, help(read.table) says explicitly,\n> >     \"creates a data frame with the same number of rows\n> >      as there are lines in the file\"\n> >  and therefore does not do what it says it does. The\n> >  documentation is wrong.\n> >\n> >  A performance comparison of\n> >     (1) scan() using the n= argument followed by conversion to\n> >  a data frame\n> >     (2) read.table()\n> >     (3) importData()\n> >  on a file with 116577 lines and 16 fields had the following elapsed\n> >  times in seconds (two repetitions each)\n> >      (1) 20, 23\n> >      (2) 29, 30\n> >      (3) 69, 71\n> >\n> >  So\n> >     - scan + conversion is fastest, but not all that much\n> >  compared with\n> >  read.table\n> >     - importData is much slower\n> >\n> >  However, I don't know of convenient way to disable the coercion of\n> >  characters to factors when converting a list, as created by scan() to\n> >  a dataframe. read.table() has the as.is=T option, and importData()\n> >  has the stringsAsFactors=F option. The latter being, perhaps,\n> >  somewhat better, since it gives character variables the class \"AsIs\"\n> >  which prevents subsequent conversion to factors, at least in some\n> >  types of operations.\n> >\n> >  My bottom line: read.table() is the best choice.\n> >\n> >\n> >\n> >  -Don\n> >  --\n> >  --------------------------------------\n> >  Don MacQueen\n> >  Environmental Protection Department\n> >  Lawrence Livermore National Laboratory\n> >  Livermore, CA, USA\n> >  --------------------------------------\n> >  ---------------------------------------------------------------------\n> >  This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> >  unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> >  the BODY of the message:  unsubscribe s-news\n>  >\n--\n--------------------------------------\nDon MacQueen\nEnvironmental Protection Department\nLawrence Livermore National Laboratory\nLivermore, CA, USA\n--------------------------------------",
       "body_snippet": "Oops, I forgot to include\n\n>  version\nVersion 6.0 Release 1 for Sun SPARC, SunOS 5.6 : 2000\n\nI've used importData() with SAS datasets on the order of 50000 \nrecords and not noticed a problem.\n\n-Don\n\nA",
-      "thread_id": "thread-c661a9970fd3",
-      "thread_depth": 1,
+      "thread_id": "thread-02cf93b7e1e5",
+      "thread_depth": 2,
       "month": "2001-03"
     },
     {
@@ -3226,12 +3239,12 @@
       "date": "2001-03-25T13:43:18Z",
       "subject": "Re: extracting a matrix from a data frame",
       "subject_clean": "extracting a matrix from a data frame",
-      "in_reply_to": null,
+      "in_reply_to": "<3ABCF4AC.23714.C2BB049@localhost>",
       "references": [],
       "body_plain": "Thanks to everyone for their answers to this one.  \n\n> data.matrix(twblack[,4:22])\n\nwhere twblack is my imported data frame, does exactly what I \nwanted, dumping the first three columns and taking the remaining 19 \nwhich were simple numeric variables as a matrix.  I don't know what \nI was doing wrong as I'd have sworn I'd tried that and got error \nmessages yesterday.  \n\nWonderful list!\n\nChris\n\nChris Evans <chris at psyctc.org>\nConsultant Psychiatrist in Psychotherapy,\nRampton Hospital; Associate R&D Director,\nTavistock & Portman NHS Trust;\nHon. SL Institute of Psychiatry\n*** My views are my own and not representative \nof those institutions ***",
       "body_snippet": "Thanks to everyone for their answers to this one.  \n\n> data.matrix(twblack[,4:22])\n\nwhere twblack is my imported data frame, does exactly what I \nwanted, dumping the first three columns and taking the",
-      "thread_id": "thread-69472382082b",
-      "thread_depth": 0,
+      "thread_id": "thread-b0df3a8639be",
+      "thread_depth": 1,
       "month": "2001-03"
     },
     {
@@ -3265,22 +3278,6 @@
       "body_plain": "I would like to perform an element wise multiplication by row of two \nmatrices(A*B), A and B being matrices with equal number of rows, and the \nresulting matrix having the number of rows of A or B but the number of \ncolumns being a product of the number of columns of both matrices.\n\nI have used a naive way of combining vectors of different multiplication, \nbut needed a general appoach.\n\nThanks.\n\nVumani\n_________________________________________________________________________\nGet Your Private, Free E-mail from MSN Hotmail at http://www.hotmail.com.",
       "body_snippet": "I would like to perform an element wise multiplication by row of two \nmatrices(A*B), A and B being matrices with equal number of rows, and the \nresulting matrix having the number of rows of A or B but",
       "thread_id": "thread-94a089ee4ee1",
-      "thread_depth": 0,
-      "month": "2001-03"
-    },
-    {
-      "id": "msg-aab84a578f87",
-      "message_id": "<MAEFKKKJKILLHCPMAEKMCEDCCAAA.derek.eder@neuro.gu.se>",
-      "from_name": "Derek N Eder",
-      "from_email_hash": "b2cb2a852f8a057ee638319c35ce80221262ca33f7ee4b124e3e3aa350f0fe8c",
-      "date": "2001-03-26T13:40:30Z",
-      "subject": "S+ outputs to real world? (sounds and ports)",
-      "subject_clean": "S+ outputs to real world? (sounds and ports)",
-      "in_reply_to": null,
-      "references": [],
-      "body_plain": "Dear S+ newsgroup,\n\nI'm using SPlus, version 4.5 (Windows)\n\nI can't find any native facilities to make sounds even as simple as the old\nControl-G 'bell' -- is there a way to generate a system 'beep'?\n\nAlso, does anyone know of a function or utility to read and write bits to\nthe parallel port (a poor man's binary I/O port).\n\nThank you all most sincerely,\n\nDerek\n\nDerek N. Eder\nGöteborgs Universitet\nInstitutionen för klinisk neurovetenskap - psykiatri\nSahlgrenska universitetssjukhuset\nBlå straket 17\nSE 413 45  Göteborg\nSverige\n\ntlf. +46 (031) 34 26 139\nderek.eder at neuro.gu.se\n\nGothenburg University\nInstitute of clinical neuroscience,\nsection for Psychiatry\nSU/SS\nSE 413 45  Göteborg\nSweden",
-      "body_snippet": "Dear S+ newsgroup,\n\nI'm using SPlus, version 4.5 (Windows)\n\nI can't find any native facilities to make sounds even as simple as the old\nControl-G 'bell' -- is there a way to generate a system 'beep'?\n",
-      "thread_id": "thread-aab84a578f87",
       "thread_depth": 0,
       "month": "2001-03"
     },
@@ -3832,12 +3829,12 @@
       "date": "2001-03-28T17:45:15Z",
       "subject": "Re: script window toggling",
       "subject_clean": "script window toggling",
-      "in_reply_to": null,
+      "in_reply_to": "<994DC7B72E4CD311A56D0008C707B35903CF3CF3@usrymx05.merck.com>",
       "references": [],
       "body_plain": "F6 key does the toggling for my Splus2000 on Windows 98.\nTry a few F keys to see if any works for you.\n\nMyong-Hee Sung\n\n> -----Original Message-----\n> From: Pikounis, V. Bill [SMTP:v_bill_pikounis at merck.com]\n> Sent: Wednesday, March 28, 2001 11:04 AM\n> To:   s-news at wubios.wustl.edu; 'support at insightful.com'\n> Subject:      [S] script window toggling\n> \n> Hello all,\n> I am using SPLUS for Windows 2000 or 6 Beta on NT 4 SP 6.  \n> \n> The script window has 2 panes, one for input of commands and one for\n> output\n> or results from execution of those commands.  Other than using the mouse,\n> is\n> there any way to switch (input) focus between these two panes? Best\n> scenario\n> for me would be an already built-in key sequence.  \n> \n> Thanks,\n> Bill\n> \n> License # WN44551\n> ______________________________\n> Bill Pikounis, Ph.D.\n>    E-mail: v_bill_pikounis at merck.com\n>    Phone: 732.594.3913\n>    Fax:  732.594.1565\n> \n> Merck Research Laboratories\n> P.O. Box 2000, MailDrop RY70-38\n> 126 E. Lincoln Ave\n> Rahway, NJ 07065-0900\n> \n> \n> \n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news",
       "body_snippet": "F6 key does the toggling for my Splus2000 on Windows 98.\nTry a few F keys to see if any works for you.\n\nMyong-Hee Sung\n\n> -----Original Message-----\n> From: Pikounis, V. Bill [SMTP:v_bill_pikounis at ",
-      "thread_id": "thread-f7e59997b99a",
-      "thread_depth": 0,
+      "thread_id": "thread-b1cd2ef14f2a",
+      "thread_depth": 1,
       "month": "2001-03"
     },
     {
@@ -4115,22 +4112,6 @@
       "thread_id": "thread-747d30d7fd70",
       "thread_depth": 1,
       "month": "2001-03"
-    },
-    {
-      "id": "msg-d1257d866238",
-      "message_id": "<000701c0ba05$90031da0$3466b240@mike>",
-      "from_name": "Michael C. Wilson",
-      "from_email_hash": "33d464d26aefa8939b52226ecea82a48b4b96f620b000ac9080806e456a4553a",
-      "date": "2001-03-31T17:09:47Z",
-      "subject": "runs.target",
-      "subject_clean": "runs.target",
-      "in_reply_to": null,
-      "references": [],
-      "body_plain": "I know runs.target can find the indices of out of \ncontrol run lengths for a Shewhart Chart.  However, is there a command or a \nseries of commands that does this for a CUSUM chart?\n\n \n\nThanks,\n\nMike Wilson",
-      "body_snippet": "I know runs.target can find the indices of out of \ncontrol run lengths for a Shewhart Chart.  However, is there a command or a \nseries of commands that does this for a CUSUM chart?\n\n \n\nThanks,\n\nMike W",
-      "thread_id": "thread-d1257d866238",
-      "thread_depth": 0,
-      "month": "2001-03"
     }
   ],
   "threads": [
@@ -4225,12 +4206,12 @@
     {
       "id": "thread-1d98bbc9049e",
       "subject": "Confidence Interval on Quotient",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Rolf Turner"
       ],
       "started": "2001-03-01T21:42:45Z",
-      "last_reply": "2001-03-01T21:42:45Z",
+      "last_reply": "2001-03-02T12:01:00Z",
       "root_message_id": "msg-1d98bbc9049e"
     },
     {
@@ -4291,12 +4272,13 @@
     {
       "id": "thread-5025deb22f92",
       "subject": "Summary: taking combinations of a data frame",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Spyros Vrontos"
+        "Spyros Vrontos",
+        "Tim Hesterberg x319"
       ],
       "started": "2001-03-02T08:41:37Z",
-      "last_reply": "2001-03-02T08:41:37Z",
+      "last_reply": "2001-03-05T23:14:27Z",
       "root_message_id": "msg-5025deb22f92"
     },
     {
@@ -4309,17 +4291,6 @@
       "started": "2001-03-02T09:19:08Z",
       "last_reply": "2001-03-02T09:19:08Z",
       "root_message_id": "msg-410b619c54a9"
-    },
-    {
-      "id": "thread-caf4155ac41b",
-      "subject": "Confidence Interval on Quotient",
-      "message_count": 1,
-      "participants": [
-        "Rolf Turner"
-      ],
-      "started": "2001-03-02T12:01:00Z",
-      "last_reply": "2001-03-02T12:01:00Z",
-      "root_message_id": "msg-caf4155ac41b"
     },
     {
       "id": "thread-91860da78070",
@@ -4368,24 +4339,13 @@
     {
       "id": "thread-ba6c9516dd18",
       "subject": "import data question",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Kurbat, Matt"
       ],
       "started": "2001-03-02T18:08:42Z",
-      "last_reply": "2001-03-02T18:08:42Z",
-      "root_message_id": "msg-ba6c9516dd18"
-    },
-    {
-      "id": "thread-d665fc229a15",
-      "subject": "import data question",
-      "message_count": 1,
-      "participants": [
-        "Kurbat, Matt"
-      ],
-      "started": "2001-03-02T18:13:53Z",
       "last_reply": "2001-03-02T18:13:53Z",
-      "root_message_id": "msg-d665fc229a15"
+      "root_message_id": "msg-ba6c9516dd18"
     },
     {
       "id": "thread-41edf9b93057",
@@ -4509,17 +4469,6 @@
       "started": "2001-03-05T20:06:46Z",
       "last_reply": "2001-03-05T20:06:46Z",
       "root_message_id": "msg-57e786882c56"
-    },
-    {
-      "id": "thread-5b51a039851e",
-      "subject": "Summary: taking combinations of a data frame",
-      "message_count": 1,
-      "participants": [
-        "Tim Hesterberg x319"
-      ],
-      "started": "2001-03-05T23:14:27Z",
-      "last_reply": "2001-03-05T23:14:27Z",
-      "root_message_id": "msg-5b51a039851e"
     },
     {
       "id": "thread-e62083d52c09",
@@ -4890,24 +4839,14 @@
     {
       "id": "thread-52f6ea293a61",
       "subject": "Reference books for Mixed Distribution",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Nagaratnam Sreedharan",
         "Park, Kyong H Mr. SBCCOM"
       ],
       "started": "2001-03-09T16:24:04Z",
-      "last_reply": "2001-03-09T16:24:04Z",
+      "last_reply": "2001-03-14T00:32:35Z",
       "root_message_id": "msg-52f6ea293a61"
-    },
-    {
-      "id": "thread-6d48cb7c6fb9",
-      "subject": "S+Seqtrial",
-      "message_count": 1,
-      "participants": [
-        "Abdulkadir Hussein"
-      ],
-      "started": "2001-03-09T17:24:54Z",
-      "last_reply": "2001-03-09T17:24:54Z",
-      "root_message_id": "msg-6d48cb7c6fb9"
     },
     {
       "id": "thread-195375295dc4",
@@ -4989,12 +4928,12 @@
     {
       "id": "thread-e39c98c3378a",
       "subject": "test for linearity",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Stanley Ribinstein"
       ],
       "started": "2001-03-12T15:14:43Z",
-      "last_reply": "2001-03-12T15:14:43Z",
+      "last_reply": "2001-03-14T22:51:25Z",
       "root_message_id": "msg-e39c98c3378a"
     },
     {
@@ -5033,12 +4972,12 @@
     {
       "id": "thread-4eac79547a23",
       "subject": "Mixed model for a multiple-watershed study",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Jack Lewis"
       ],
       "started": "2001-03-12T20:20:37Z",
-      "last_reply": "2001-03-12T20:20:37Z",
+      "last_reply": "2001-03-15T17:32:07Z",
       "root_message_id": "msg-4eac79547a23"
     },
     {
@@ -5205,36 +5144,14 @@
     {
       "id": "thread-9acf2e0192f8",
       "subject": "Background fill when plotting",
-      "message_count": 2,
+      "message_count": 4,
       "participants": [
         "David M Smith",
         "Sung, Myong-Hee (NCI)"
       ],
       "started": "2001-03-13T17:52:50Z",
-      "last_reply": "2001-03-13T18:03:51Z",
-      "root_message_id": "msg-9acf2e0192f8"
-    },
-    {
-      "id": "thread-e19161dcfcab",
-      "subject": "Background fill when plotting",
-      "message_count": 1,
-      "participants": [
-        "Sung, Myong-Hee (NCI)"
-      ],
-      "started": "2001-03-13T20:07:22Z",
-      "last_reply": "2001-03-13T20:07:22Z",
-      "root_message_id": "msg-e19161dcfcab"
-    },
-    {
-      "id": "thread-955f76cfaa00",
-      "subject": "Background fill when plotting",
-      "message_count": 1,
-      "participants": [
-        "Sung, Myong-Hee (NCI)"
-      ],
-      "started": "2001-03-13T21:31:53Z",
       "last_reply": "2001-03-13T21:31:53Z",
-      "root_message_id": "msg-955f76cfaa00"
+      "root_message_id": "msg-9acf2e0192f8"
     },
     {
       "id": "thread-2c018e71fb00",
@@ -5246,17 +5163,6 @@
       "started": "2001-03-13T22:22:25Z",
       "last_reply": "2001-03-13T22:22:25Z",
       "root_message_id": "msg-2c018e71fb00"
-    },
-    {
-      "id": "thread-8c70d24ec71c",
-      "subject": "Reference books for Mixed Distribution",
-      "message_count": 1,
-      "participants": [
-        "Nagaratnam Sreedharan"
-      ],
-      "started": "2001-03-14T00:32:35Z",
-      "last_reply": "2001-03-14T00:32:35Z",
-      "root_message_id": "msg-8c70d24ec71c"
     },
     {
       "id": "thread-026be4af4378",
@@ -5272,11 +5178,12 @@
     {
       "id": "thread-ca6a8c7774f8",
       "subject": "Working with objects of class \"by\"",
-      "message_count": 3,
+      "message_count": 4,
       "participants": [
         "David Smith",
         "Don MacQueen",
-        "a296180 at mica.fmr.com (David Kane - GEODE"
+        "a296180 at mica.fmr.com (David Kane - GEODE",
+        "matthew.austin at quintiles.com"
       ],
       "started": "2001-03-14T11:26:10Z",
       "last_reply": "2001-03-16T15:52:51Z",
@@ -5352,24 +5259,14 @@
     {
       "id": "thread-bd7707f15dae",
       "subject": "Neutralizing effect of variables",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Gerald.Jean at spgdag.ca"
+        "Gerald.Jean at spgdag.ca",
+        "O'Rourke, Keith"
       ],
       "started": "2001-03-14T21:01:32Z",
-      "last_reply": "2001-03-14T21:01:32Z",
+      "last_reply": "2001-03-15T17:05:37Z",
       "root_message_id": "msg-bd7707f15dae"
-    },
-    {
-      "id": "thread-95ac15b87a63",
-      "subject": "test for linearity",
-      "message_count": 1,
-      "participants": [
-        "Stanley Ribinstein"
-      ],
-      "started": "2001-03-14T22:51:25Z",
-      "last_reply": "2001-03-14T22:51:25Z",
-      "root_message_id": "msg-95ac15b87a63"
     },
     {
       "id": "thread-ce9d8b6f890f",
@@ -5405,28 +5302,6 @@
       "root_message_id": "msg-2b63be81f4d9"
     },
     {
-      "id": "thread-faf9578481d3",
-      "subject": "Neutralizing effect of variables",
-      "message_count": 1,
-      "participants": [
-        "O'Rourke, Keith"
-      ],
-      "started": "2001-03-15T17:05:37Z",
-      "last_reply": "2001-03-15T17:05:37Z",
-      "root_message_id": "msg-faf9578481d3"
-    },
-    {
-      "id": "thread-97c1586746d4",
-      "subject": "Mixed model for a multiple-watershed study",
-      "message_count": 1,
-      "participants": [
-        "Jack Lewis"
-      ],
-      "started": "2001-03-15T17:32:07Z",
-      "last_reply": "2001-03-15T17:32:07Z",
-      "root_message_id": "msg-97c1586746d4"
-    },
-    {
       "id": "thread-a61809f63f8b",
       "subject": "k-means cluster",
       "message_count": 1,
@@ -5447,17 +5322,6 @@
       "started": "2001-03-16T08:05:03Z",
       "last_reply": "2001-03-16T08:05:03Z",
       "root_message_id": "msg-e754a51fc1df"
-    },
-    {
-      "id": "thread-6fc8751cbfe4",
-      "subject": "Working with objects of class \"by\"",
-      "message_count": 1,
-      "participants": [
-        "matthew.austin at quintiles.com"
-      ],
-      "started": "2001-03-16T13:18:03Z",
-      "last_reply": "2001-03-16T13:18:03Z",
-      "root_message_id": "msg-6fc8751cbfe4"
     },
     {
       "id": "thread-5f1e5d0f009c",
@@ -5561,12 +5425,14 @@
     {
       "id": "thread-0bc5c4785306",
       "subject": "log(-log x) distribution",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
-        "Gibiansky, Leonid"
+        "Gibiansky, Leonid",
+        "John Maindonald",
+        "M Kshatriya"
       ],
       "started": "2001-03-19T12:52:09Z",
-      "last_reply": "2001-03-19T12:52:09Z",
+      "last_reply": "2001-03-21T11:58:27Z",
       "root_message_id": "msg-0bc5c4785306"
     },
     {
@@ -5623,18 +5489,6 @@
       "started": "2001-03-19T18:51:37Z",
       "last_reply": "2001-03-19T18:51:37Z",
       "root_message_id": "msg-dc9e4d8cb004"
-    },
-    {
-      "id": "thread-5adcf51057e0",
-      "subject": "log(-log x) distribution",
-      "message_count": 2,
-      "participants": [
-        "John Maindonald",
-        "M Kshatriya"
-      ],
-      "started": "2001-03-19T21:25:05Z",
-      "last_reply": "2001-03-21T11:58:27Z",
-      "root_message_id": "msg-5adcf51057e0"
     },
     {
       "id": "thread-fd30855dfbbd",
@@ -5738,24 +5592,14 @@
     {
       "id": "thread-337310f47ef2",
       "subject": "mixed multinomial model: factor coding",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Prof Brian Ripley",
         "hans.coppenolle at agr.kuleuven.ac.be"
       ],
       "started": "2001-03-21T12:57:13Z",
-      "last_reply": "2001-03-21T12:57:13Z",
-      "root_message_id": "msg-337310f47ef2"
-    },
-    {
-      "id": "thread-dc2dbc3574b0",
-      "subject": "mixed multinomial model: factor coding",
-      "message_count": 1,
-      "participants": [
-        "Prof Brian Ripley"
-      ],
-      "started": "2001-03-21T15:39:11Z",
       "last_reply": "2001-03-21T15:39:11Z",
-      "root_message_id": "msg-dc2dbc3574b0"
+      "root_message_id": "msg-337310f47ef2"
     },
     {
       "id": "thread-b2e06067ac74",
@@ -5831,12 +5675,12 @@
     {
       "id": "thread-6c0ee249df9e",
       "subject": "Confusion with options(error=NULL)",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Biggerstaff, Brad J."
       ],
       "started": "2001-03-22T16:19:50Z",
-      "last_reply": "2001-03-22T16:19:50Z",
+      "last_reply": "2001-03-22T16:51:46Z",
       "root_message_id": "msg-6c0ee249df9e"
     },
     {
@@ -5860,17 +5704,6 @@
       "started": "2001-03-22T16:49:52Z",
       "last_reply": "2001-03-22T16:49:52Z",
       "root_message_id": "msg-7d0c0310feb4"
-    },
-    {
-      "id": "thread-d284b2203664",
-      "subject": "Confusion with options(error=NULL)",
-      "message_count": 1,
-      "participants": [
-        "Biggerstaff, Brad J."
-      ],
-      "started": "2001-03-22T16:51:46Z",
-      "last_reply": "2001-03-22T16:51:46Z",
-      "root_message_id": "msg-d284b2203664"
     },
     {
       "id": "thread-4af9a675b529",
@@ -5919,12 +5752,13 @@
     {
       "id": "thread-02cf93b7e1e5",
       "subject": "compare scan(), read.table(), and importData()",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
-        "Don MacQueen"
+        "Don MacQueen",
+        "Pikounis, V. Bill"
       ],
       "started": "2001-03-23T01:42:41Z",
-      "last_reply": "2001-03-23T01:42:41Z",
+      "last_reply": "2001-03-23T15:43:31Z",
       "root_message_id": "msg-02cf93b7e1e5"
     },
     {
@@ -5939,18 +5773,6 @@
       "root_message_id": "msg-4993e3c1cf2d"
     },
     {
-      "id": "thread-c661a9970fd3",
-      "subject": "compare scan(), read.table(), and importData()",
-      "message_count": 2,
-      "participants": [
-        "Don MacQueen",
-        "Pikounis, V. Bill"
-      ],
-      "started": "2001-03-23T13:33:12Z",
-      "last_reply": "2001-03-23T15:43:31Z",
-      "root_message_id": "msg-c661a9970fd3"
-    },
-    {
       "id": "thread-8b5dc24d1a86",
       "subject": "question",
       "message_count": 1,
@@ -5960,6 +5782,28 @@
       "started": "2001-03-23T14:15:57Z",
       "last_reply": "2001-03-23T14:15:57Z",
       "root_message_id": "msg-8b5dc24d1a86"
+    },
+    {
+      "id": "thread-6b9c0de16540",
+      "subject": "",
+      "message_count": 1,
+      "participants": [
+        "Alastair Dempster"
+      ],
+      "started": "2001-03-23T15:43:31Z",
+      "last_reply": "2001-03-23T15:43:31Z",
+      "root_message_id": "msg-6b9c0de16540"
+    },
+    {
+      "id": "thread-adf900d7731f",
+      "subject": "Object Names in Functions",
+      "message_count": 1,
+      "participants": [
+        "Alastair Dempster"
+      ],
+      "started": "2001-03-23T15:43:31Z",
+      "last_reply": "2001-03-23T15:43:31Z",
+      "root_message_id": "msg-adf900d7731f"
     },
     {
       "id": "thread-342307ca2dac",
@@ -6031,7 +5875,7 @@
     {
       "id": "thread-b0df3a8639be",
       "subject": "extracting a matrix from a data frame",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Chris Evans",
         "Tim Hesterberg x319"
@@ -6052,17 +5896,6 @@
       "root_message_id": "msg-fe1874e761a5"
     },
     {
-      "id": "thread-69472382082b",
-      "subject": "extracting a matrix from a data frame",
-      "message_count": 1,
-      "participants": [
-        "Chris Evans"
-      ],
-      "started": "2001-03-25T13:43:18Z",
-      "last_reply": "2001-03-25T13:43:18Z",
-      "root_message_id": "msg-69472382082b"
-    },
-    {
       "id": "thread-94a089ee4ee1",
       "subject": "Element wise multiplication",
       "message_count": 1,
@@ -6072,17 +5905,6 @@
       "started": "2001-03-26T10:08:34Z",
       "last_reply": "2001-03-26T10:08:34Z",
       "root_message_id": "msg-94a089ee4ee1"
-    },
-    {
-      "id": "thread-aab84a578f87",
-      "subject": "S+ outputs to real world? (sounds and ports)",
-      "message_count": 1,
-      "participants": [
-        "Derek N Eder"
-      ],
-      "started": "2001-03-26T13:40:30Z",
-      "last_reply": "2001-03-26T13:40:30Z",
-      "root_message_id": "msg-aab84a578f87"
     },
     {
       "id": "thread-ca318feff187",
@@ -6368,12 +6190,13 @@
     {
       "id": "thread-b1cd2ef14f2a",
       "subject": "script window toggling",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Pikounis, V. Bill"
+        "Pikounis, V. Bill",
+        "Sung, Myong-Hee (NCI)"
       ],
       "started": "2001-03-28T16:04:18Z",
-      "last_reply": "2001-03-28T16:04:18Z",
+      "last_reply": "2001-03-28T17:45:15Z",
       "root_message_id": "msg-b1cd2ef14f2a"
     },
     {
@@ -6386,17 +6209,6 @@
       "started": "2001-03-28T16:39:32Z",
       "last_reply": "2001-03-28T16:39:32Z",
       "root_message_id": "msg-bc795ff69809"
-    },
-    {
-      "id": "thread-f7e59997b99a",
-      "subject": "script window toggling",
-      "message_count": 1,
-      "participants": [
-        "Sung, Myong-Hee (NCI)"
-      ],
-      "started": "2001-03-28T17:45:15Z",
-      "last_reply": "2001-03-28T17:45:15Z",
-      "root_message_id": "msg-f7e59997b99a"
     },
     {
       "id": "thread-ba01db75248c",
@@ -6564,17 +6376,6 @@
       "started": "2001-03-30T23:01:18Z",
       "last_reply": "2001-03-31T05:22:23Z",
       "root_message_id": "msg-747d30d7fd70"
-    },
-    {
-      "id": "thread-d1257d866238",
-      "subject": "runs.target",
-      "message_count": 1,
-      "participants": [
-        "Michael C. Wilson"
-      ],
-      "started": "2001-03-31T17:09:47Z",
-      "last_reply": "2001-03-31T17:09:47Z",
-      "root_message_id": "msg-d1257d866238"
     }
   ]
 }

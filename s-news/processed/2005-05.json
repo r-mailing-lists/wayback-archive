@@ -129,12 +129,12 @@
       "date": "2005-05-03T07:37:08Z",
       "subject": "Re: Error in reading: \"data values\"",
       "subject_clean": "Error in reading: \"data values\"",
-      "in_reply_to": null,
+      "in_reply_to": "<CA871298CD1882459F7859BD08DC06E4C53089@slumail.ad.slu.se>",
       "references": [],
       "body_plain": "Thank you very much, Bill! You are right. The problem results from the\ncorrupted data set. As I showed, the data set (mydata: longer4hmm1) was\na list, to which I repeated reading data in. Each element of it has 5000\nnumeric and 5000 integers. I only ran one s-plus session and it was\nstored in local disk. I am running S-plus 6.2 in Win2k. So, I just don't\nunderstand why it could happen.\n\nRegards,\nYingfu\n\n-----Original Message-----\nFrom: Bill Dunlap [mailto:bill at insightful.com] \nSent: den 2 maj 2005 18:07\nTo: Yingfu Xie\nSubject: Re: [S] Error in reading: \"data values\" \n\nOn Mon, 2 May 2005, Yingfu Xie wrote:\n\n> > myest[,i]<- myfunction to maximize a likelihood function for\n> data_i[[1]], my own script too.\n> > i=i+1;\n> > repeat data generation and estimation...\n>\n> It works, at least firstly. However, suddenly (when i=49), an error\n> occurs. It says\n>\n> > myest[,i]<-myfunction(data=mydata[[i]][[1]])\n> Warning messages:\n>   bounds can only be used with method L-BFGS-B in: optim(par = ini, fn\n>       = mylikelihood, lower = c(rep(c(0.001, rep(0, k)), ....\n> Problem: Error in reading: \"data values\" (object or file longer4hmm1):\nNo such file or directory\n> Use traceback() to see the call stack\n>\n> > traceback()\n> 10: eval(action, sys.parent())\n> 9: doErrorAction(\"Problem: Error in reading: \\\"data values\\\" (object\nor file mydata): No such file or directory\",\n> ...\n> Now, even estimation for all previous data fails, with the same\nproblem.\n> >From traceback(), the problem seems being in get(). But, why? Why it\n> happens all of a sudden? It remains even after restart my S-plus\n> session. I searched archive and googled without finding. Any idea?\n\nThis means that the file in .Data containing \"longer4hmm1\"\n(or \"mydata\"?) has been corrupted.  If you run 2 Splus sessions\nat once, both writing into the same .Data directory, this could happen.\n\nHas this happened repeatedly?\n\nYou should be able to clean it up by doing\n        > rm(longer4hmm1)\n        > rm(mydata)\n\n------------------------------------------------------------------------\n----\nBill Dunlap\nInsightful Corporation\nBill at Insightful dot com\n360-428-8146\n\n \"All statements in this message represent the opinions of the author\nand do\n not necessarily reflect Insightful Corporation policy or position.\"\n\n###########################################\n\nThis message has been scanned by F-Secure Anti-Virus for Microsoft Exchange.\nFor more information, connect to http://www.f-secure.com/",
       "body_snippet": "Thank you very much, Bill! You are right. The problem results from the\ncorrupted data set. As I showed, the data set (mydata: longer4hmm1) was\na list, to which I repeated reading data in. Each element",
-      "thread_id": "thread-c73e66a893ca",
-      "thread_depth": 0,
+      "thread_id": "thread-c08cf0e88cdb",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -293,12 +293,12 @@
       "date": "2005-05-05T19:05:32Z",
       "subject": "Re: Smoothing and disaggregating",
       "subject_clean": "Smoothing and disaggregating",
-      "in_reply_to": null,
+      "in_reply_to": "<OF16D240B7.6202726B-ON85256FF7.0057F8D3@ldcorp.com>",
       "references": [],
       "body_plain": "I suggest using bs() or ns().\nUse one of these to create a basis.  Then solve for the coefficients\nthat satisfy the constraints, that averages of 6 values give specified\nvalues.  E.g.\n        bs(x, knots, Bound=T) %*% coefficients\ngives predictions at x; you need to find coefficients.\n\nIf you use too many knots, then there will not be a unique solution.\nIn that case, you could choose the coefficients that minimize the\nsquared integrated second derivative of the smooth curve, subject\nto the constraints.\n\nWith a set of knots of the right size, there is only one solution.\nThere may be a set of knots of that size that yields the globally-optimum\nsolution (minimal integral of f''^2 subject to the constraints).\n\nTim Hesterberg\n\n>I am not sure if there is a solution to the following question:\n>\n>I have a vector of monthly values, e.g.\n>val.mo <- c( 1.4059,1.4134,1.4254, 1.4274, 1.3944, 1.3674, 1.3479, 1.3464,\n>1.3754, 1.4104, 1.4461, 1.4740, 1.4709, 1.4559, 1.4229, 1.4013, 1.3794,\n>1.3634, 1.3417)\n>corresponding to certain (19 in this case) consecutive months.\n>\n>I would like to disaggregate each monthly value to a number of intra-month\n>slots - four or six , equidistant in time, with the following constraints:\n>- the curve should be \"reasonably\" smooth  (interp will do this fine)\n>- the average of the 6 slot values should be equal to the monthly number\n>(this is violated by .2-.3%)\n>\n>Intuitively I see  that you cannot do this both infinitely smoothly and\n>infinitesimally close to the original value.  Is there a way/method that\n>will get me closer to where I want to be?\n>\n>Any ideas out there would be appreciated...\n>\n>Yannis Tzamouranis\n\n========================================================\n| Tim Hesterberg       Research Scientist              |\n| timh at insightful.com  Insightful Corp.                |\n| (206)802-2319        1700 Westlake Ave. N, Suite 500 |\n| (206)283-8691 (fax)  Seattle, WA 98109-3012, U.S.A.  |\n|                      www.insightful.com/Hesterberg   |\n========================================================\nDownload the S+Resample library from www.insightful.com/downloads/libraries",
       "body_snippet": "I suggest using bs() or ns().\nUse one of these to create a basis.  Then solve for the coefficients\nthat satisfy the constraints, that averages of 6 values give specified\nvalues.  E.g.\n        bs(x, kn",
-      "thread_id": "thread-271914239d8f",
-      "thread_depth": 0,
+      "thread_id": "thread-ed3a413a1ace",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -427,12 +427,12 @@
       "date": "2005-05-06T14:54:30Z",
       "subject": "Re: Subdividing pairs plots",
       "subject_clean": "Subdividing pairs plots",
-      "in_reply_to": null,
+      "in_reply_to": "<427B7B68.5040000@imap.iu.edu>",
       "references": [],
       "body_plain": "I recommend the xysplom function that we provide as part of the library\nassociated with our book\n\n                Statistical Analysis and Data Display\n                Richard M. Heiberger and Burt Holland\n\nFull details of the book are available at the Springer site\n   http://springeronline.com/0-387-40270-5\nThe website also points to the downloadable online files that accompany the \nbook.\n\nWe will be giving a short course at the Joint Statistics Meetings this summer in\nMinneapolis on Monday, August 8, 2005.\n\nFor your example (slightly simplified), use the sequence\n\nabc <- data.frame(matrix(rnorm(80), 10))\nnames(abc) <- c(\"v1\",\"v2\",\"v3\",\"v4\",\"v5\",\"v6\",\"v7\",\"v8\")\nxysplom(v1+v2+v3+v4 ~ v1+v2+v3+v4, data=abc)\nxysplom(v1+v2+v3+v4 ~ v5+v6+v7+v8, data=abc)\nxysplom(v5+v6+v7+v8 ~ v1+v2+v3+v4, data=abc)\nxysplom(v5+v6+v7+v8 ~ v5+v6+v7+v8, data=abc)",
       "body_snippet": "I recommend the xysplom function that we provide as part of the library\nassociated with our book\n\n                Statistical Analysis and Data Display\n                Richard M. Heiberger and Burt Ho",
-      "thread_id": "thread-831dc9f84ba5",
-      "thread_depth": 0,
+      "thread_id": "thread-c45df38ba459",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -664,12 +664,12 @@
       "date": "2005-05-10T17:41:29Z",
       "subject": "Re: Off-topic: Anocova of change scores with baseline",
       "subject_clean": "Off-topic: Anocova of change scores with baseline",
-      "in_reply_to": null,
+      "in_reply_to": "<C4A57662D47C7B44B781D39E4C8F0694024CFACC@SAIGA.win.uthscsa.edu>",
       "references": [],
       "body_plain": "Joseph,\nAs you can see from the simple function below, the results from the two\nmodels are not the same. I believe the difference is in the error\ncomponent of the two models, they are not the same.\nJohn\n\nfunction()\n{\n        y1 <- c(1:100)\n        y2 <- y1 + rnorm(length(y1), 0, 20)\n        diff <- y2 - y1\n        fitY2Y1 <- lm(y2 ~ y1)\n        fitdiff <- lm(diff ~ y1)\n        print(summary(fitY2Y1))\n        print(summary(fitdiff))\n        return()\n}\n\nJohn Sorkin M.D., Ph.D.\nChief, Biostatistics and Informatics\nBaltimore VA Medical Center GRECC and\nUniversity of Maryland School of Medicine Claude Pepper OAIC\n\nUniversity of Maryland School of Medicine\nDivision of Gerontology\nBaltimore VA Medical Center\n10 North Greene Street\nGRECC (BT/18/GR)\nBaltimore, MD 21201-1524\n\n410-605-7119 \nNOTE NEW EMAIL ADDRESS:\njsorkin at grecc.umaryland.edu\n\n>>> \"Lucke, Joseph F\" <LUCKE at uthscsa.edu> 5/10/2005 12:03:35 PM >>>\nGeneralized smart people:\n\nAs an IRB member, I am running across a large number of analyses of\ncovariance of gain scores (Yn - Y0) were Y0 is included as a\ncovariate.\nThe model is thus\n\nYn - Y0 = aY0 + cX ...\n\nI thought that this analysis was equivalent to\n\nYn = bY0 + cX ..., \n\nbecause b = (1+a).\n\nIs this a new approach in clinical trials? What am I missing?\n\nJoe\n\nJoseph F. Lucke, PhD\nStatistical Scientist & Assistant Professor\nSchool of Nursing\nUniversity of Texas Health Science Center\nSan Antonio, TX 78229-3900\nVoice: 210 567 0474\nFax: 210 567 5822\nEmail: lucke at uthscsa.edu",
       "body_snippet": "Joseph,\nAs you can see from the simple function below, the results from the two\nmodels are not the same. I believe the difference is in the error\ncomponent of the two models, they are not the same.\nJo",
-      "thread_id": "thread-03e5239f8b46",
-      "thread_depth": 0,
+      "thread_id": "thread-39abe91f3a50",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -796,12 +796,12 @@
       "date": "2005-05-11T17:08:30Z",
       "subject": "Re: question on lists",
       "subject_clean": "question on lists",
-      "in_reply_to": null,
+      "in_reply_to": "<20050511165242.3291.qmail@web61314.mail.yahoo.com>",
       "references": [],
       "body_plain": "See ?table.\n\nAndy\n\n> From: Dave Evens\n> \n> Dear All,\n> \n> I have a large number of lists and some of the items\n> occur on more than than one list, but only once on\n> each list. For example, I have an item, \"A1\", that\n> occurs 10 times, item \"A2\" that occurs 8 times.\n> \n> Is there an easy way to create a table of all the\n> items and the number of occurences of the items?\n> \n> Thanks in advance for any help.\n> \n> Dave\n> \n> \n>               \n> __________________________________ \n> Do you Yahoo!? \n> Make Yahoo! your home page \n> http://www.yahoo.com/r/hs\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n> \n> \n> \n\n------------------------------------------------------------------------------\nNotice:  This e-mail message, together with any attachments, contains \ninformation of Merck & Co., Inc. (One Merck Drive, Whitehouse Station, New \nJersey, USA 08889), and/or its affiliates (which may be known outside the \nUnited States as Merck Frosst, Merck Sharp & Dohme or MSD and in Japan, as \nBanyu) that may be confidential, proprietary copyrighted and/or legally \nprivileged. It is intended solely for the use of the individual or entity named \non this message.  If you are not the intended recipient, and have received this \nmessage in error, please notify us immediately by reply e-mail and then delete \nit from your system.\n------------------------------------------------------------------------------",
       "body_snippet": "See ?table.\n\nAndy\n\n> From: Dave Evens\n> \n> Dear All,\n> \n> I have a large number of lists and some of the items\n> occur on more than than one list, but only once on\n> each list. For example, I have an ",
-      "thread_id": "thread-f689ca7f8d1b",
-      "thread_depth": 0,
+      "thread_id": "thread-48d498cbf642",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -812,12 +812,12 @@
       "date": "2005-05-11T17:18:30Z",
       "subject": "Re: question on lists",
       "subject_clean": "question on lists",
-      "in_reply_to": null,
+      "in_reply_to": "<20050511165242.3291.qmail@web61314.mail.yahoo.com>",
       "references": [],
       "body_plain": "nn <- paste(\"A\", 1:10, sep=\"\")\n\ntmp <- list()\nfor (i in LETTERS[1:12]) tmp[[i]] <- nn[sample(10, sample(10,1))]\ntmp\n\ntable(unlist(tmp))\n\n> nn <- paste(\"A\", 1:10, sep=\"\")\n> \n> tmp <- list()\n> for (i in LETTERS[1:12]) tmp[[i]] <- nn[sample(10, sample(10,1))]\n> tmp\n$A:\n[1] \"A6\" \"A2\" \"A8\" \"A4\" \"A3\" \"A9\"\n\n$B:\n[1] \"A4\" \"A7\" \"A9\" \"A5\"\n\n$C:\n[1] \"A2\"\n\n$D:\n[1] \"A8\" \"A2\"\n\n$E:\n[1] \"A5\" \"A4\" \"A3\"\n\n$F:\n[1] \"A10\" \"A7\"  \"A4\"  \"A5\"  \"A6\"  \"A2\"  \"A3\" \n\n$G:\n[1] \"A3\" \"A8\" \"A1\" \"A6\" \"A2\" \"A4\" \"A7\"\n\n$H:\n[1] \"A7\" \"A4\" \"A2\" \"A5\"\n\n$I:\n[1] \"A1\" \"A9\" \"A8\"\n\n$J:\n[1] \"A7\" \"A2\"\n\n$K:\n[1] \"A1\"  \"A6\"  \"A7\"  \"A9\"  \"A5\"  \"A4\"  \"A3\"  \"A10\"\n\n$L:\n[1] \"A5\"  \"A3\"  \"A1\"  \"A6\"  \"A10\"\n\n> \n> table(unlist(tmp))\n A1 A10 A2 A3 A4 A5 A6 A7 A8 A9 \n  4   3  7  6  7  6  5  6  4  4\n>",
       "body_snippet": "nn <- paste(\"A\", 1:10, sep=\"\")\n\ntmp <- list()\nfor (i in LETTERS[1:12]) tmp[[i]] <- nn[sample(10, sample(10,1))]\ntmp\n\ntable(unlist(tmp))\n\n> nn <- paste(\"A\", 1:10, sep=\"\")\n> \n> tmp <- list()\n> for (i in",
-      "thread_id": "thread-9da4c23828db",
-      "thread_depth": 0,
+      "thread_id": "thread-48d498cbf642",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -926,12 +926,12 @@
       "date": "2005-05-11T23:29:58Z",
       "subject": "Re: last question of the week",
       "subject_clean": "last question of the week",
-      "in_reply_to": null,
+      "in_reply_to": "<54668D97C0199943A454516A5FF6481E58AC7C@EXCHUS001.AD.MLP.COM>",
       "references": [],
       "body_plain": "Wow, that does work ? I don’t\nunderstand\n\nwhy that works though.\n\nc(matrix) just puts everything into a\nvector , I guess ?\n\nYou learn something every day with this\nstuff.\n\nThanks so much.\n\n \n\n \n\n-----Original Message-----\n\nFrom: Austin, Matt\n[mailto:maustin at amgen.com] \n\nSent: Wednesday, May 11, 2005 7:26\nPM\n\nTo: Leeds, Mark\n\nSubject: RE: last question of the\nweek\n\n \n\nWhat about something as\nsimple as\n\n \n\ntemp[c(decimate)] <- 0\n\n \n\nThe function I sent you\nearlier actually does just this.\n\n \n\n \n\nMatt Austin \n\nStatistician\n\nAmgen \n\nOne\nAmgen Center Drive \n\nM/S\n24-2-C \n\nThousand\nOaks CA 93021 \n\n(805)\n447 - 7431 \n\n\"Today has the fatigue of a Friday and the\ndesperation of a Monday\"  -- S. Pearce 2005 \n\n-----Original\nMessage-----\n\nFrom: Leeds, Mark\n[mailto:mleeds at mlp.com]\n\nSent: Wednesday, May 11, 2005\n16:19 PM\n\nTo: s-news at lists.biostat.wustl.edu\n\nCc: maustin at amgen.com\n\nSubject: last question of the week\n\nI have an sapply function that\nreturns something\n\ncalled decimate which is\n\ntwo vectors ( I think it's actually\na matrix )\n\nsuch as \n\n \n\n     \n[,1]    [,2]\n\n[1,]  124   211\n\n[2,]  125   212\n\n[3,]  126   213\n\n \n\nI have a vector temp\n\nand I want to set all\n\nthe indices of temp\n\nequal to zero where the\n\nindices are above.\n\n \n\nObviously temp[decimate]<-0\n\ndoesn't work because temp is a\nvector.\n\n \n\nI won't ask any other questions\n\nfor atleast a week ( if I\n\ncan figue this out, there won't\n\nbe any ). Thanks.\n\n \n\n                                   \nmark",
       "body_snippet": "Wow, that does work ? I don’t\nunderstand\n\nwhy that works though.\n\nc(matrix) just puts everything into a\nvector , I guess ?\n\nYou learn something every day with this\nstuff.\n\nThanks so much.\n\n \n\n \n\n-----",
-      "thread_id": "thread-da542f7e20d0",
-      "thread_depth": 0,
+      "thread_id": "thread-fdad91782c77",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -976,12 +976,12 @@
       "date": "2005-05-11T23:41:37Z",
       "subject": "Re: seq(0, 1, .05)==0.15 doesn't work",
       "subject_clean": "seq(0, 1, .05)==0.15 doesn't work",
-      "in_reply_to": null,
+      "in_reply_to": "<A6BA75E72CCB724ABA1B3A885F928BD801B23665@msxcentral4.hydroqc.hydro.qc.ca>",
       "references": [],
       "body_plain": "Prof Ripley,\n\nThat was an unnecessarily rude reply. The question even showed that\nAgin Patrick had in mind the issue of precision in the comparison.\nPeople ask questions because they do not know the answers and they want\nto learn. If you think that you are making the S+ community a favour\nreplying in that way I think that you are wrong.\n\nLuis\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nDr Luis A. Apiolaza\nPrincipal Forest Biometrician\nForestry Tasmania\nGPO Box 207\nHobart Tas 7001\nAustralia\n\nemail:    Luis.Apiolaza at forestrytas.com.au\nphone: +61-3-6233 8127\nweb:     http://www.forestrytas.com.au\n             http://uncronopio.org/luis\n\"All I want is a warm bed, a kind word,\n and unlimited power\" --Ashleigh Brilliant\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n>>> Prof Brian Ripley <ripley at stats.ox.ac.uk> 12/05/2005 04:46:56 >>>\nRight, testing floating-point quantities for equality is a really bad \nidea, and all good S books do cover this.  Hint: read MASS4.\n\nI suggest you ask your supervisor to send you on a basic numerical \nanalysis course to avoid embarrassing the institution whose email\naddress \nyou are bringing into disrepute.  (I am quite serious: that is what we\ndo \nwith people who post things like this.)\n\nOn Wed, 11 May 2005 Agin.Patrick at hydro.qc.ca wrote:\n\n> On my S-Plus (4.5, Windows XP), the particular command \"seq(0, 1,\n> .05)==0.15\" does not work.\n\nYes, it does: it your preconceptions that `do not work'.\n\n> The result of that command is:\n> [1] F F F F F F F F F F F F F F F F F F F F F\n>\n> It is a precision-related problem as the command:\n>> seq(0, 1, .05)>0.15 & seq(0, 1, .05)<0.1500000000000001\n> returns:\n> [1] F F F T F F F F F F F F F F F F F F F F F\n>\n> and the command\n>> seq(0, 1, .05)>0.15 & seq(0, 1, .05)<0.15000000000000001 #(one more\nzero)\n> returns:\n> [1] F F F F F F F F F F F F F F F F F F F F F\n>\n> So the question is: how to specify the tolerance for comparison of\nreal\n> numbers?\n\n?all.equal.\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk \nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/ \nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272866 (PA)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news\n-----------------------------------------------------\nThis transmission is intended solely for the person or \norganisation to whom it is addressed.\nIt is confidential and may contain legally privileged \ninformation. If you have received this transmission in \nerror,you may not use, copy or distribute it.\nPlease advise us by return e-mail or by phoning 61 3 62338203 \nand immediately delete the transmission in its entirety.\nWe will meet your reasonable expenses of notifying us.\nDespite our use of anti-virus software, Forestry Tasmania \ncannot guarantee that this transmission is virus-free. \n-----------------------------------------------------",
       "body_snippet": "Prof Ripley,\n\nThat was an unnecessarily rude reply. The question even showed that\nAgin Patrick had in mind the issue of precision in the comparison.\nPeople ask questions because they do not know the a",
-      "thread_id": "thread-fb5bcc880b90",
-      "thread_depth": 0,
+      "thread_id": "thread-43f7687e96a6",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -992,12 +992,12 @@
       "date": "2005-05-12T00:04:14Z",
       "subject": "Re: last question of the week",
       "subject_clean": "last question of the week",
-      "in_reply_to": null,
+      "in_reply_to": "<54668D97C0199943A454516A5FF6481E58AC7C@EXCHUS001.AD.MLP.COM>",
       "references": [],
       "body_plain": "It \nshouldn't be necessary to convert the index matrix to a vector, because a matrix \nis just a vector with \"dim\" attribute.  E.g.,\n\n \n\n> \nx <- runif(10)\n> i <- matrix(sample(6), 3, 2)\n> \ni\n     [,1] [,2] \n[1,]    \n6    1\n[2,]    3    \n4\n[3,]    2    5\n> x[i]\n[1] 0.09494705 \n0.68577909 0.29513006 0.39066383 0.08009610 0.27393581\n> x\n [1] \n0.39066383 0.29513006 0.68577909 0.08009610 0.27393581 0.09494705 0.81268953 \n0.25020313 0.35203717 0.51954747\n\nAndy\n\n>\n>\n>   -----Original Message-----\n> From:\n>   s-news-owner at lists.biostat.wustl.edu\n>   [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Leeds,\n>   Mark\n> Sent: Wednesday, May 11, 2005 7:30 PM\n> To: Austin,\n>   Matt\n> Cc: s-news at lists.biostat.wustl.edu\n> Subject: Re: [S]\n>   last question of the week\n>\n>\n>\n>\n>   Wow, that does work ?\n>   I don’t understand\n>\n>   why that works\n>   though.\n>\n>   c(matrix) just puts\n>   everything into a vector , I guess ?\n>\n>   You learn something\n>   every day with this stuff.\n>\n>   Thanks so\n>   much.\n>\n>\n>\n>\n>\n>   -----Original\n>   Message-----\n> From: Austin,\n>   Matt [mailto:maustin at amgen.com]\n> Sent: Wednesday, May 11, 2005 7:26\n>   PM\n> To: Leeds,\n>   Mark\n> Subject: RE: last\n>   question of the week\n>\n>\n>\n>\n>   What\n>   about something as simple as\n>\n>\n>\n>\n>\n>\n>\n>   temp[c(decimate)]\n>   <- 0\n>\n>\n>\n>\n>\n>\n>\n>   The\n>   function I sent you earlier actually does just this.\n>\n>\n>\n>\n>\n>\n>\n>\n>   Matt Austin\n>\n> Statistician\n>\n>   Amgen\n> One Amgen\n>   Center Drive\n> M/S 24-2-C\n> Thousand\n>   Oaks CA 93021\n> (805) 447 - 7431\n>\n>\n>   \"Today has the fatigue of a Friday\n>   and the desperation of a Monday\"  -- S. Pearce 2005\n>\n>   -----Original\n>   Message-----\n> From: Leeds,\n>   Mark [mailto:mleeds at mlp.com]\n> Sent: Wednesday, May 11, 2005 16:19\n>   PM\n> To:\n>   s-news at lists.biostat.wustl.edu\n> Cc: maustin at amgen.com\n> Subject: last question of the\n>   week\n>\n>   I have an sapply function that\n>   returns something\n>\n>   called decimate which\n>   is\n>\n>   two vectors ( I think it's\n>   actually a matrix )\n>\n>   such as\n>\n>\n>\n>\n>   [,1]    [,2]\n>\n>   [1,]  124\n>   211\n>\n>   [2,]  125\n>   212\n>\n>   [3,]  126\n>   213\n>\n>\n>\n>   I have a vector\n>   temp\n>\n>   and I want to set\n>   all\n>\n>   the indices of\n>   temp\n>\n>   equal to zero where\n>   the\n>\n>   indices are\n>   above.\n>\n>\n>\n>   Obviously\n>   temp[decimate]<-0\n>\n>   doesn't work because temp is a\n>   vector.\n>\n>\n>\n>   I won't ask any other\n>   questions\n>\n>   for atleast a week ( if\n>   I\n>\n>   can figue this out, there\n>   won't\n>\n>   be any ).\n> Thanks.\n>\n>\n>\n>\n>   mark\n\n------------------------------------------------------------------------------\n\nNotice:  This e-mail message, together with any attachments, contains information of Merck & Co., Inc. (One Merck Drive, Whitehouse Station, New Jersey, USA 08889), and/or its affiliates (which may be known outside the United States as Merck Frosst, Merck Sharp & Dohme or MSD and in Japan, as Banyu) that may be confidential, proprietary copyrighted and/or legally privileged. It is intended solely for the use of the individual or entity named on this message.  If you are not the intended recipient, and have received this message in error, please notify us immediately by reply e-mail and then delete it from your system.\n\n------------------------------------------------------------------------------",
       "body_snippet": "It \nshouldn't be necessary to convert the index matrix to a vector, because a matrix \nis just a vector with \"dim\" attribute.  E.g.,\n\n \n\n> \nx <- runif(10)\n> i <- matrix(sample(6), 3, 2)\n> \ni\n     [,1] ",
-      "thread_id": "thread-c8f43377a66f",
-      "thread_depth": 0,
+      "thread_id": "thread-fdad91782c77",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -1014,8 +1014,8 @@
       ],
       "body_plain": "Agreed!  I subscribe to this maillist as well as R-help in order to \nlearn.  Since I've started, I've been seriously disturbed by the \narrogant tone often taken by certain (presumably very smart) frequent \nposters in replies to questions.  I've had several of my colleagues who \nfeel the same way tell me that it makes them very hesitant to post \nquestions.  As we all learn by everyone's mistakes, I'd like to request \nthat the over-the-top chastising be discontinued.\nJust try to remember - there was a time when you didn't know this \nmaterial either and had to learn it.  Exactly how would you respond to \nthe accusation that you were, \"embarrassing the institution whose email \naddress you are bringing into disrepute?\"\n\nLuis Apiolaza wrote:\n> Prof Ripley,\n>\n> That was an unnecessarily rude reply. The question even showed that\n> Agin Patrick had in mind the issue of precision in the comparison.\n> People ask questions because they do not know the answers and they want\n> to learn. If you think that you are making the S+ community a favour\n> replying in that way I think that you are wrong.\n>\n> Luis\n\n--\n\nEric Archer, Ph.D.\nNOAA-SWFSC\n8604 La Jolla Shores Dr.\nLa Jolla, CA 92037\n858-546-7121,7003(FAX)\neric.archer at noaa.gov",
       "body_snippet": "Agreed!  I subscribe to this maillist as well as R-help in order to \nlearn.  Since I've started, I've been seriously disturbed by the \narrogant tone often taken by certain (presumably very smart) freq",
-      "thread_id": "thread-fb5bcc880b90",
-      "thread_depth": 1,
+      "thread_id": "thread-43f7687e96a6",
+      "thread_depth": 2,
       "month": "2005-05"
     },
     {
@@ -1044,12 +1044,12 @@
       "date": "2005-05-12T11:15:26Z",
       "subject": "Re: seq(0, 1, .05)==0.15 doesn't work",
       "subject_clean": "seq(0, 1, .05)==0.15 doesn't work",
-      "in_reply_to": null,
+      "in_reply_to": "<A6BA75E72CCB724ABA1B3A885F928BD801B23665@msxcentral4.hydroqc.hydro.qc.ca>",
       "references": [],
       "body_plain": "Public flogging and humiliation of others are one way to pat one's own back\nbut I doubt it is an approved pedagogical method in some parts of the\nworld.\n\nAt any rate, given the nature of this list, a moderated, scientific  list,\nshould such content not be excluded from it?  In view of such coarse\nbehavior by this person I readily sent a message of support to Mr. Agin\nPatrick yesterday prompting him to ignore it and continue interacting with\nthe list.\n\nYannis Tzamouranis",
       "body_snippet": "Public flogging and humiliation of others are one way to pat one's own back\nbut I doubt it is an approved pedagogical method in some parts of the\nworld.\n\nAt any rate, given the nature of this list, a ",
-      "thread_id": "thread-18285da71b8e",
-      "thread_depth": 0,
+      "thread_id": "thread-43f7687e96a6",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -1060,12 +1060,12 @@
       "date": "2005-05-12T11:26:49Z",
       "subject": "Re: seq(0, 1, .05)==0.15 doesn't work",
       "subject_clean": "seq(0, 1, .05)==0.15 doesn't work",
-      "in_reply_to": null,
+      "in_reply_to": "<A6BA75E72CCB724ABA1B3A885F928BD801B23665@msxcentral4.hydroqc.hydro.qc.ca>",
       "references": [],
       "body_plain": "Dear Friends:\n\nI would suggest that we all ask Brian Ripley to simply shut up. Everybody has his book, and because he is usually making references to it in his arrogant responses, his personal participation is not necessary.  It is his participation that disreputes this list. This list is not his backyard. This is a very friendly community of people who learn from each other, community of people of all walks of life, from all the planet, with very different levels of mastering of S-PLUS language and English language. And collective intellectual power of this community is far greater than that of any individual, whatever smart he  (supposedly) is. \n\n \n\nI have an idea for Brian. I would suggest that he simply opens his own web-page (it's easy nowadays) and accept only the people with comparable knowledge of S-PLUS (and be careful not invite by mistake somebody smarter than him!) \n\nJewel\n\n\t\tDo you Yahoo!?\n \nMake Yahoo! your home page",
       "body_snippet": "Dear Friends:\n\nI would suggest that we all ask Brian Ripley to simply shut up. Everybody has his book, and because he is usually making references to it in his arrogant responses, his personal partici",
-      "thread_id": "thread-0954f41f020c",
-      "thread_depth": 0,
+      "thread_id": "thread-43f7687e96a6",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -1076,12 +1076,12 @@
       "date": "2005-05-12T11:38:34Z",
       "subject": "Re: seq(0, 1, .05)==0.15 doesn't work",
       "subject_clean": "seq(0, 1, .05)==0.15 doesn't work",
-      "in_reply_to": null,
+      "in_reply_to": "<A6BA75E72CCB724ABA1B3A885F928BD801B23665@msxcentral4.hydroqc.hydro.qc.ca>",
       "references": [],
       "body_plain": "Eric Archer wrote:\n\n> Agreed!  I subscribe to this maillist as well as R-help in order to \n> learn.  Since I've started, I've been seriously disturbed by the \n> arrogant tone often taken by certain (presumably very smart) frequent \n> posters in replies to questions.  I've had several of my colleagues who \n> feel the same way tell me that it makes them very hesitant to post \n> questions.  As we all learn by everyone's mistakes, I'd like to request \n> that the over-the-top chastising be discontinued.\n> Just try to remember - there was a time when you didn't know this \n> material either and had to learn it.  Exactly how would you respond to \n> the accusation that you were, \"embarrassing the institution whose email \n> address you are bringing into disrepute?\"\n> \n> \n> Luis Apiolaza wrote:\n> > Prof Ripley,\n> > \n> > That was an unnecessarily rude reply. The question even showed that\n> > Agin Patrick had in mind the issue of precision in the comparison.\n> > People ask questions because they do not know the answers and they want\n> > to learn. If you think that you are making the S+ community a favour\n> > replying in that way I think that you are wrong.\n\n        Oh, get off the pot you guys.  The Splus and R help lists\n        provide just about the best computing support in the world.\n        You are getting free and immediate access to the sharpest\n        minds in the business.  If you can't put up with a bit of\n        acerbity in order to obtain that level of expert help, then\n        you are pretty pathetic.\n\n        Go away and use Excel, or some similar crap if you don't\n        like it.\n\n                                        cheers,\n\n                                                Rolf Turner\n                                                rolf at math.unb.ca",
       "body_snippet": "Eric Archer wrote:\n\n> Agreed!  I subscribe to this maillist as well as R-help in order to \n> learn.  Since I've started, I've been seriously disturbed by the \n> arrogant tone often taken by certain (p",
-      "thread_id": "thread-1558d53c83ef",
-      "thread_depth": 0,
+      "thread_id": "thread-43f7687e96a6",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -1114,8 +1114,8 @@
       ],
       "body_plain": "It would be a tremendous loss to the S community if people such as the\nProf. were to stop contributing.  Remember that everyone who helps you\nby posting replies on this list does so out of their own time and\nwithout compensation.  In exchange for this \"valuable service\" we\nshould all seek to ask intelligent and thought provoking questions and\nnot flood the list with overly simple queries that we are too lazy to\nlook up somewhere.\n\nI too have had my statistical knowledged questioned by the Prof., but\nits a small price to pay for the valuable advice which is contributed\non a daily basis!  I would add that he did provide the answer by\npointing to the all.equal() function.\n\nThanks,\n\nRoger\n\nOn 5/12/05, Jewel Bright <jwlbright at yahoo.com> wrote:\n> \n> Dear Friends:\n> I would suggest that we all ask Brian Ripley to simply shut up. Everybody\n> has his book, and because he is usually making references to it in his\n> arrogant responses, his personal participation is not necessary.  It is his\n> participation that disreputes this list. This list is not his backyard. This\n> is a very friendly community of people who learn from each other, community\n> of people of all walks of life, from all the planet, with very different\n> levels of mastering of S-PLUS language and English language. And collective\n> intellectual power of this community is far greater than that of any\n> individual, whatever smart he  (supposedly) is. \n>  \n> I have an idea for Brian. I would suggest that he simply opens his own\n> web-page (it's easy nowadays) and accept only the people with comparable\n> knowledge of S-PLUS (and be careful not invite by mistake somebody smarter\n> than him!) \n> Jewel\n> \n> ________________________________\n> Do you Yahoo!?\n> Make Yahoo! your home page \n> \n>",
       "body_snippet": "It would be a tremendous loss to the S community if people such as the\nProf. were to stop contributing.  Remember that everyone who helps you\nby posting replies on this list does so out of their own t",
-      "thread_id": "thread-0954f41f020c",
-      "thread_depth": 1,
+      "thread_id": "thread-43f7687e96a6",
+      "thread_depth": 2,
       "month": "2005-05"
     },
     {
@@ -1182,8 +1182,8 @@
       ],
       "body_plain": "> Oh, get off the pot you guys.  The Splus and R help lists provide\n> just about the best computing support in the world. You are getting\n> free and immediate access to the sharpest minds in the business.\n\nYou can't be serious?  A person has an option of how he or she responds\nand interacts:  They could provide advice and solutions and gently guide \nand encourage the questioner or they could provide the solution and flog \nthem for not know the answer.  They choose.  And in a community, we \nchoose what sort of behavior we will tolerate.  If you don't mind the \nlatter, then bully for you.  But the community DOES have posting \nguidelines about a variety of issues - why can't civility be one of those.\nI'll say it again - as a teacher of many things for many years, the \nsingle thing I try to keep in mind is that time when I didn't understand \nwhat I'm teaching and how I got over that hump.\n\n> If you can't put up with a bit of acerbity in order to obtain that level\n> of expert help, then you are pretty pathetic.\n>\n> Go away and use Excel, or some similar crap if you don't like it.\n>\n> cheers,\n>\n> Rolf Turner rolf at math.unb.ca\n\nAnd I could just as easily say that if our newbie or ill-formed \nquestions bother other people so much that they have to attempt to slap \nus around, then they are pretty pathetic.  Why don't they stick to their \ndeveloper lists if they don't like it?  Who's really the child here, the \none who has the outburst, or the one who tries to restore order?\n\n--\n\nEric Archer, Ph.D.\nNOAA-SWFSC\n8604 La Jolla Shores Dr.\nLa Jolla, CA 92037\n858-546-7121,7003(FAX)\neric.archer at noaa.gov",
       "body_snippet": "> Oh, get off the pot you guys.  The Splus and R help lists provide\n> just about the best computing support in the world. You are getting\n> free and immediate access to the sharpest minds in the busin",
-      "thread_id": "thread-1558d53c83ef",
-      "thread_depth": 1,
+      "thread_id": "thread-43f7687e96a6",
+      "thread_depth": 2,
       "month": "2005-05"
     },
     {
@@ -1210,12 +1210,12 @@
       "date": "2005-05-12T17:35:18Z",
       "subject": "Re: Apology",
       "subject_clean": "Apology",
-      "in_reply_to": null,
+      "in_reply_to": "<Pine.LNX.4.61.0505121815310.31239@gannet.stats>",
       "references": [],
       "body_plain": "Despite the carefully worded non-apology of professor Ripley (\"ill-judged\"\nand \"that some people found it offensive\" does not quite amount to \"my bad\njudgement\" and \"my offensive comments\"), as a person on the receiving side\nof this kind of treatement, I think the point was made loudly and clearly.\n\nSo it is probably time to burry the hatchet and go on with the important\nwork of this list.\n\nYannis Tzamouranis\n\n|---------+------------------------------------>\n|         |           Prof Brian Ripley        |\n|         |           <ripley at stats.ox.ac.uk>  |\n|         |           Sent by:                 |\n|         |           s-news-owner at lists.biosta|\n|         |           t.wustl.edu              |\n|         |                                    |\n|         |                                    |\n|         |           05/12/2005 01:19 PM      |\n|         |                                    |\n|---------+------------------------------------>\n  \n>------------------------------------------------------------------------------------------------------------------------|\n  |                                                                             \n                                           |\n  |       To:       s-news at lists.biostat.wustl.edu                              \n                                           |\n  |       cc:                                                                   \n                                           |\n  |       Subject:  [S] Apology                                                 \n                                           |\n  \n>------------------------------------------------------------------------------------------------------------------------|\n\nI am very sorry that a ill-judged remark of mine has led to such a torrent\nof off-topic postings, and that some people found it offensive.\n\n--\nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272866 (PA)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Despite the carefully worded non-apology of professor Ripley (\"ill-judged\"\nand \"that some people found it offensive\" does not quite amount to \"my bad\njudgement\" and \"my offensive comments\"), as a pers",
-      "thread_id": "thread-fcd043fc6cfa",
-      "thread_depth": 0,
+      "thread_id": "thread-c0c39f64ebbe",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -1226,12 +1226,12 @@
       "date": "2005-05-12T17:44:27Z",
       "subject": "Re: Interpreting glmmpql results.",
       "subject_clean": "Interpreting glmmpql results.",
-      "in_reply_to": null,
+      "in_reply_to": "<A2E8314904B3D311BB72009027718F420C02CE0C@lis-exchange2.lmu.ac.uk>",
       "references": [],
       "body_plain": "1) I dont think glmmpql is a function that ships with S-PLUS 7. Is this from\na user-contributed package? I strongly recommend that you use the new\ncorrelatedData library in S-PLUS 7. There is help and doc in the library\ndirectory eg in:\nC:\\Program Files\\Insightful\\splus70\\library\\correlatedData\nas a basic install\n\nThe correlatedData library includes PQL ( glme() ); and exact (quadrature)\nmethods for binomial and Poisson regression. PQL generally works well,\ncontrary to what some folks say :-) See Breslow and Clayton (1993) and\nWolfinger and O'Connell (1993) for details. The latter paper has a more\nintuitive derivation and explanation even if I do say so :-)... And PQL is\nimplemented in the correlatedData library in a way that improves upon an\nearlier SAS MACRO implementation... \n\nMixed models with non-Gaussian responses is a very interesting, important and\nexpansive area! Please join us at next weeks (free) webinar on this topic,\ngiven by Jose Pinheiro of Novartis who was deeply involved in the development\nof glme() and correlatedData:\nhttp://www.insightful.com/news_events/webcasts/2005/05novartis/default.asp\n\n2) In general, to set a factor variable in S-PLUS, set options()$contrast to\ncontrast.treatment or something. Look at the help on contrast and/or search\nthe list archive.   \n\n3) Lets get on with our statistical software discussions on the list - it is\na great user-contributed S-PLUS/stats list and everyone is making very\nvaluable contributions. So lets keep it coming. In particular, if anyone\ndevelops any interesting applications of glme() and the correlatedData\nlibrary please let me know - I have a goal to pull together a collection of\napplications in this area over the coming year. \n\nGood luck !\n\nMichael\n\nMichael O'Connell, Ph.D. \nDirector, Life Science Solutions   W: (800) 569-0123 x454 \nInsightful Corporation                               \nmoconnell at insightful.com           www.insightful.com \n\n-----Original Message-----\nFrom: Clegg, Philip [mailto:P.Clegg at leedsmet.ac.uk]\nSent: Thursday, May 12, 2005 11:20 AM\nTo: 's-news at lists.biostat.wustl.edu'\nSubject: [S] Interpreting glmmpql results.\n\nI see that in the recent period, there have been many postings about list\netiquette,  the appropriateness of questions asked, and the need to avoid\ntrivial questions. I recently asked  about why glmmpql seems to treat two\nlevel factors  as  continuous variables but received no replies. I hope this\ndoes not mean my question is trivial. I am also concerned that I have not\nasked the question in the right way. But what is the right way to ask the\nquestion. \nIt is difficult to formulate questions in appropriate statistical language\nif your own are of expertise is an a non-mathematical or statistical\nsubject. I  want to use glmmpql as a tool to find out if there is a spatial\ncomponent to suicide. I doubt that I will ever understand how the tool was\nconstructed - just as I have no real understanding of what lies underneath\nthe bonnet/hood of my car.\n\nBest wishes, \nPhil\n\n-----Original Message-----\nFrom: Clegg, Philip [mailto:P.Clegg at leedsmet.ac.uk] \nSent: 10 May 2005 12:38\nTo: 's-news at lists.biostat.wustl.edu'\nSubject: [S] Numerical codes in GlMMPQL\n\nI am attempting to fit a glmmpql model on suicide case history data using\npostcode as a spatial random effect. Most of the variables I wish to test\nare in binary form with codes 0, 1 and -1 for missing data. In the following\nexample, the p-value for the intercept is highly significant indicating that\nthere is a spatial postcode effect. The relationship between Gender and\n'notreatz' (whether or not cases had treatment for mental illness in the\nlast year) is also significant. However, my problem is that gender does not\nappear to have been treated as a factor but as a continuous variable. I\nguess the problem is that S-Plus does not recognise my variables as\ncategorical. I have tried using as.factor but that has not helped. Has\nanyone any advice please? Best wishes, Phil \n\n> summary(glmmPQL(notreatz ~ genderz, family = binomial, random =  ~ 1 |\n        POSTCODE))\niteration 1 \nLinear mixed-effects model fit by maximum likelihood\n Data: NULL \n       AIC      BIC    logLik \n  1026.248 1040.103 -509.1238\n\nRandom effects:\n Formula:  ~ 1 | POSTCODE\n        (Intercept)  Residual \nStdDev:  0.01600788 0.9999703\n\nVariance function:\n Structure: fixed weights\n Formula:  ~ invwt \nFixed effects: notreatz ~ genderz \n                Value Std.Error  DF  t-value p-value \n(Intercept) 0.7145204 0.1805515 229 3.957432  0.0001\n    genderz 0.5382434 0.1805512   5 2.981112  0.0308\n\nStandardized Within-Group Residuals:\n       Min        Q1       Med        Q3       Max \n -1.870798 -1.092102 0.5345133 0.9156031 0.9156726\n\nNumber of Observations: 236\nNumber of Groups: 230\n\n \n\nTo view the terms under which this email is distributed, please go to\nhttp://disclaimer.leedsmet.ac.uk/email.htm\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with the\nBODY of the message:  unsubscribe s-news\n\nTo view the terms under which this email is distributed, please go to\nhttp://disclaimer.leedsmet.ac.uk/email.htm\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "1) I dont think glmmpql is a function that ships with S-PLUS 7. Is this from\na user-contributed package? I strongly recommend that you use the new\ncorrelatedData library in S-PLUS 7. There is help and",
-      "thread_id": "thread-8866e6870f3d",
-      "thread_depth": 0,
+      "thread_id": "thread-b39390af9371",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -1280,8 +1280,8 @@
       ],
       "body_plain": "For those who do not have Splus 7,\nglmmPQL is available with the MASS library. Here is a comparable result\nusing both:\n\nglme is from the  correlated data library and\nglmmPQL is from the MASS library.\n\nBoth glmmPQL and glme are from Jose Pinheiro, as I understand, with glmmPQL\ngenerated from iterative calls to lme. \nThus, they should and do on this one example, produce consistent results. \n\nHowever, Splus Version 7.0 glme has additional methods such as LAPLACE and\nAGQUAD for likelihood approximations. However, in this case the Residual\nvariance is 1.0. \n\nsummary(glme(y ~ trt + I(week > 2), random = ~ 1 |\nID,family=binomial,data=bacteria,method=\"PQL\"))\nGeneralized linear mixed-effects model fit by PQL \nFamily: Binomial with Logit link\n  Data: bacteria \n      AIC      BIC    logLik \n  1113.68 1134.042 -550.8402\n\nRandom effects:\n Formula:  ~ 1 | ID\n        (Intercept)  Residual \nStdDev:    1.409806 0.7801296\n\nFixed effects: y ~ trt + I(week > 2) \n                Value Std.Error  DF   t-value p-value \n(Intercept)  1.940794 0.2810486 169  6.905548  <.0001\n       trt1 -0.623590 0.3219447  47 -1.936949  0.0588\n       trt2 -0.043518 0.1911304  47 -0.227687  0.8209\nI(week > 2) -0.803483 0.1791946 169 -4.483858  <.0001\n\nDeviance Within-Group Residuals:\n       Min        Q1      Med        Q3      Max \n -2.391251 0.1730478 0.380906 0.5270572 1.447784\n\nNumber of Observations: 220\nNumber of Groups: 50 \n> summary(glmmPQL(y ~ trt + I(week > 2), random = ~ 1 |\nID,family=binomial,data=bacteria))\niteration 1 \niteration 2 \niteration 3 \niteration 4 \niteration 5 \niteration 6 \nLinear mixed-effects model fit by maximum likelihood\n Data: bacteria \n       AIC      BIC    logLik \n  1113.622 1133.984 -550.8111\n\nRandom effects:\n Formula:  ~ 1 | ID\n        (Intercept)  Residual \nStdDev:    1.410632 0.7800514\n\nVariance function:\n Structure: fixed weights\n Formula:  ~ invwt \n\nFixed effects: y ~ trt + I(week > 2) \n                Value Std.Error  DF   t-value p-value \n(Intercept)  1.941156 0.2811167 169  6.905160  <.0001\n       trt1 -0.623677 0.3220311  47 -1.936699  0.0588\n       trt2 -0.043550 0.1911861  47 -0.227787  0.8208\nI(week > 2) -0.803628 0.1791689 169 -4.485307  <.0001\n\nStandardized Within-Group Residuals:\n       Min        Q1       Med        Q3      Max \n -5.198533 0.1572341 0.3513082 0.4949478 1.744882\n\nNumber of Observations: 220\nNumber of Groups: 50 \n>\n\n-----Original Message-----\nFrom: s-news-owner at lists.biostat.wustl.edu\n[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Michael O'Connell\nSent: Thursday, May 12, 2005 11:44 AM\nTo: Clegg, Philip; s-news at lists.biostat.wustl.edu\nSubject: Re: [S] Interpreting glmmpql results.\n\n1) I dont think glmmpql is a function that ships with S-PLUS 7. Is this from\na user-contributed package? I strongly recommend that you use the new\ncorrelatedData library in S-PLUS 7. There is help and doc in the library\ndirectory eg in:\nC:\\Program Files\\Insightful\\splus70\\library\\correlatedData\nas a basic install\n\nThe correlatedData library includes PQL ( glme() ); and exact (quadrature)\nmethods for binomial and Poisson regression. PQL generally works well,\ncontrary to what some folks say :-) See Breslow and Clayton (1993) and\nWolfinger and O'Connell (1993) for details. The latter paper has a more\nintuitive derivation and explanation even if I do say so :-)... And PQL is\nimplemented in the correlatedData library in a way that improves upon an\nearlier SAS MACRO implementation... \n\nMixed models with non-Gaussian responses is a very interesting, important\nand\nexpansive area! Please join us at next weeks (free) webinar on this topic,\ngiven by Jose Pinheiro of Novartis who was deeply involved in the\ndevelopment\nof glme() and correlatedData:\nhttp://www.insightful.com/news_events/webcasts/2005/05novartis/default.asp\n\n2) In general, to set a factor variable in S-PLUS, set options()$contrast to\ncontrast.treatment or something. Look at the help on contrast and/or search\nthe list archive.   \n\n3) Lets get on with our statistical software discussions on the list - it is\na great user-contributed S-PLUS/stats list and everyone is making very\nvaluable contributions. So lets keep it coming. In particular, if anyone\ndevelops any interesting applications of glme() and the correlatedData\nlibrary please let me know - I have a goal to pull together a collection of\napplications in this area over the coming year. \n\nGood luck !\n\nMichael\n\nMichael O'Connell, Ph.D. \nDirector, Life Science Solutions   W: (800) 569-0123 x454 \nInsightful Corporation                               \nmoconnell at insightful.com           www.insightful.com \n\n-----Original Message-----\nFrom: Clegg, Philip [mailto:P.Clegg at leedsmet.ac.uk]\nSent: Thursday, May 12, 2005 11:20 AM\nTo: 's-news at lists.biostat.wustl.edu'\nSubject: [S] Interpreting glmmpql results.\n\nI see that in the recent period, there have been many postings about list\netiquette,  the appropriateness of questions asked, and the need to avoid\ntrivial questions. I recently asked  about why glmmpql seems to treat two\nlevel factors  as  continuous variables but received no replies. I hope this\ndoes not mean my question is trivial. I am also concerned that I have not\nasked the question in the right way. But what is the right way to ask the\nquestion. \nIt is difficult to formulate questions in appropriate statistical language\nif your own are of expertise is an a non-mathematical or statistical\nsubject. I  want to use glmmpql as a tool to find out if there is a spatial\ncomponent to suicide. I doubt that I will ever understand how the tool was\nconstructed - just as I have no real understanding of what lies underneath\nthe bonnet/hood of my car.\n\nBest wishes, \nPhil\n\n-----Original Message-----\nFrom: Clegg, Philip [mailto:P.Clegg at leedsmet.ac.uk] \nSent: 10 May 2005 12:38\nTo: 's-news at lists.biostat.wustl.edu'\nSubject: [S] Numerical codes in GlMMPQL\n\nI am attempting to fit a glmmpql model on suicide case history data using\npostcode as a spatial random effect. Most of the variables I wish to test\nare in binary form with codes 0, 1 and -1 for missing data. In the following\nexample, the p-value for the intercept is highly significant indicating that\nthere is a spatial postcode effect. The relationship between Gender and\n'notreatz' (whether or not cases had treatment for mental illness in the\nlast year) is also significant. However, my problem is that gender does not\nappear to have been treated as a factor but as a continuous variable. I\nguess the problem is that S-Plus does not recognise my variables as\ncategorical. I have tried using as.factor but that has not helped. Has\nanyone any advice please? Best wishes, Phil \n\n> summary(glmmPQL(notreatz ~ genderz, family = binomial, random =  ~ 1 |\n        POSTCODE))\niteration 1 \nLinear mixed-effects model fit by maximum likelihood\n Data: NULL \n       AIC      BIC    logLik \n  1026.248 1040.103 -509.1238\n\nRandom effects:\n Formula:  ~ 1 | POSTCODE\n        (Intercept)  Residual \nStdDev:  0.01600788 0.9999703\n\nVariance function:\n Structure: fixed weights\n Formula:  ~ invwt \nFixed effects: notreatz ~ genderz \n                Value Std.Error  DF  t-value p-value \n(Intercept) 0.7145204 0.1805515 229 3.957432  0.0001\n    genderz 0.5382434 0.1805512   5 2.981112  0.0308\n\nStandardized Within-Group Residuals:\n       Min        Q1       Med        Q3       Max \n -1.870798 -1.092102 0.5345133 0.9156031 0.9156726\n\nNumber of Observations: 236\nNumber of Groups: 230\n\n \n\nTo view the terms under which this email is distributed, please go to\nhttp://disclaimer.leedsmet.ac.uk/email.htm\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with the\nBODY of the message:  unsubscribe s-news\n\nTo view the terms under which this email is distributed, please go to\nhttp://disclaimer.leedsmet.ac.uk/email.htm\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "For those who do not have Splus 7,\nglmmPQL is available with the MASS library. Here is a comparable result\nusing both:\n\nglme is from the  correlated data library and\nglmmPQL is from the MASS library.\n",
-      "thread_id": "thread-8866e6870f3d",
-      "thread_depth": 1,
+      "thread_id": "thread-b39390af9371",
+      "thread_depth": 2,
       "month": "2005-05"
     },
     {
@@ -1292,12 +1292,12 @@
       "date": "2005-05-12T19:26:00Z",
       "subject": "Re: One possible way to improve interactions on the S-news list",
       "subject_clean": "One possible way to improve interactions on the S-news list",
-      "in_reply_to": null,
+      "in_reply_to": "<200505121835.j4CIZZS6026504@billings.nlm.nih.gov>",
       "references": [],
       "body_plain": "Splitting the list would be difficult to implement. The dividing line may\nbe vague, and people may not always know which sublist to post on. One\nwould have to be at the \"Advanced\" level to know what quesion is\n\"intermediate\". And imagine when people start to post question to every\nsublist ...\n\nPerhaps one easier solution here: given that the purpose of posting here is\nto obtain free advice, It would seem fair for those who do not wish to take\nharsh wording to state: \"Friendly worded reply only.\"\n\nChuanpu\n-------------------------------------------------------------------\nChuanpu Hu, Ph.D.\nBiostatistics\nsanofi-aventis\n9 Great Valley Parkway, Room 242\nMalvern, PA 19355-1304\nTel: (610) 889-6774\nFax: (610) 889-6932\n-------------------------------------------------------------------\n\n                                                                       \n                      \"R. P. Channing                                  \n                      [\\\"Rick\\\"] Rodgers\"               To:      \ns-news at lists.biostat.wustl.edu\n                      <rodgers at billings.nlm.nih         cc:            \n                      .gov>                             Subject: [S] One \npossible way to improve interactions on\n                      Sent by:                          the S-news list\n                      s-news-owner at lists.biosta                        \n                      t.wustl.edu                                      \n                                                                       \n                                                                       \n                      05/12/2005 02:35 PM                              \n                      Please respond to \"R. P.                         \n                      Channing [\\\"Rick\\\"]                              \n                      Rodgers\"                                         \n                                                                       \n                                                                       \n\nI've been following this list with interest almost from its inception,\nthough rarely contribute, as I do so little with statistics these days. :(\nThe issue of civility comes up regularly.  I sympathize with newbies,\nand those patient teachers who empathize with them, but also with\nthose who would be sad to see *any* list participants banned, ignored,\nor otherwise interfered with.  We may regret the harsh tone of some\ncontributors, but some of these same individuals have clearly been very\ngenerous with their time and considerable talents, and contributed\nenormously\nto the value of the list.  It is inescapable that a single list will have\nto\ncope with a very wide range of abilities with respect to statistics,\nnumerical\ncomputing, and computer science, as well as a range of personality types\nand professional expectations.\n\nOne solution would be to split the list into 2-3 sublists, with the strings\n\"beginner,\" \"intermediate\" and \"advanced\" (or something equivalent but\nshorter)\nadded to their names.  The automatically-added footers could be modified to\ninclude a sentence stating the goals of that sublist, the level of\nexpertise\nexpected of postings, and the level of civility expected in responses.\nExperts could dip into the beginner and intermediate lists only when they\nwere\nso inclined, with no grounds for ad hominem attacks on posters, and\nelementary\nquestions would presumably be much less frequent in the more advanced\nlists.\nNewbies and intermediates could quietly monitor the more advanced lists for\npurposes of self-education.\n\nI realize that considerable effort would be required from the list\nadministrators to set up something like this, but it might be worth further\ncondideration, in the interest of maintaining comity in this valued\ncommunity!\n\nBest Regards to All,\n\nRick Rodgers\n--------------------------------------------------------------------------------\n\nR. P. C. Rodgers, M.D. * rodgers at nlm.nih.gov * (301)435-3267 (voice, fax)\nOHPCC, LHNCBC, U.S. National Library of Medicine, NIH\nBldg 38, Rm. B1N-30F2, 8600 Rockville Pike, Bethesda MD 20894 USA\nhttp://lhc.nlm.nih.gov/staff/rodgers/rodgers.html\n\n------------- End Forwarded Message -------------\n\n--------------------------------------------------------------------------------\n\nR. P. C. Rodgers, M.D. * rodgers at nlm.nih.gov * (301)435-3267 (voice, fax)\nOHPCC, LHNCBC, U.S. National Library of Medicine, NIH\nBldg 38, Rm. B1N-30F2, 8600 Rockville Pike, Bethesda MD 20894 USA\nhttp://lhc.nlm.nih.gov/staff/rodgers/rodgers.html\n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news\n\n----------------------------------------------------------\nLe présent message ainsi que ses éventuelles pièces jointes est\nexclusivement destiné au(x) destinataire(s), personnes physiques ou\nmorales, qu'il désigne.\nIl constitue de ce fait une correspondance à caractère privé et peut\ncontenir des informations confidentielles.\nSi ce message vous est parvenu par erreur, nous vous remercions d'en aviser\nimmédiatement l'expéditeur par retour de courrier électronique puis de le\ndétruire, ainsi que ses éventuelles pièces jointes, sans en conserver de\ncopie.\n\nThis message, including any attachment, is intended for the use of the\nindividual or entity to which it is addressed.\nIt is therefore to be considered as a private correspondence which may\ncontain confidential information.\nIf you are not the intended recipient, please advise the sender immediately\nby reply e.mail and delete this message and any attachment thereto without\nretaining a copy.\n----------------------------------------------------------",
       "body_snippet": "Splitting the list would be difficult to implement. The dividing line may\nbe vague, and people may not always know which sublist to post on. One\nwould have to be at the \"Advanced\" level to know what q",
-      "thread_id": "thread-26ae10c316d1",
-      "thread_depth": 0,
+      "thread_id": "thread-7017c3308f11",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -1342,12 +1342,12 @@
       "date": "2005-05-13T02:46:55Z",
       "subject": "Re: statistic for sequences",
       "subject_clean": "statistic for sequences",
-      "in_reply_to": null,
+      "in_reply_to": "<20050512232945.84361.qmail@web20321.mail.yahoo.com>",
       "references": [],
       "body_plain": "To clarify my previous message the sequences that I am analyzing are activity states similar to those in queing theory and operations research.  The data are then categorical.  While methods for analyzing differences in DNA sequences exist they are far too restrictive since they deal with very few states and the rate of error is relatively small.  \n\n \n\nI use collected sequences to develop transitional probability matrices to then attempt to simulate additional sequences based on the original single step transitions.  So alternatively I am exploring methods for comparing and quantifying the differences in these probability matrices.  Is there a standard method or perhaps a creative and justifiable technique?\n\n \n\nThanks so much!\n\n \n\n>Hello group,\n>Does S-PLUS have any functions for determining differences between \n>sequences? Can anyone direct me to general statistics to quantify \n>differences in sequences? Any help would be appreciated - from references \n>to equations.\n\n\"Francisco J. Zagmutt\" <gerifalte28 at hotmail.com> wrote:\n> Differences between sequences of what? integers? Strings? DNA sequences?\n> Please try to be more specific when you post a question so people in this\n> list can actually help you with your question. Otherwise you either don't\n> get a response at all or even worst, you expose yourself to be (justifiably)\n> \"chewed out\" by some people on this forum.\n>\n> Cheers\n>\n> Francisco\n>\n> >From: tonicrac\n> >To: s-news at lists.biostat.wustl.edu\n> >Subject: [S] statistic for sequences\n> >Date: Thu, 12 May 2005 16:29:45 -0700 (PDT)\n> >\n> >Hello group,\n> >Does S-PLUS have any functions for determining differences between\n> >sequences? Can anyone direct me to general statistics to quantify\n> >differences in sequences? Any help would be appreciated - from references\n> >to\n>  equations.\n> >\n> >Thanks!\n> >\n> >\n> >---------------------------------\n> >Yahoo! Mail Mobile\n> > Take Yahoo! Mail with you! Check email on your mobile phone.\n\n\t\tDiscover Yahoo!\n \nHave fun online with music videos, cool games, IM & more. Check it out!",
       "body_snippet": "To clarify my previous message the sequences that I am analyzing are activity states similar to those in queing theory and operations research.  The data are then categorical.  While methods for analy",
-      "thread_id": "thread-2064f7fdea3a",
-      "thread_depth": 0,
+      "thread_id": "thread-2ce7e14182e7",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -1390,12 +1390,12 @@
       "date": "2005-05-13T11:44:31Z",
       "subject": "Re: SEs from lm",
       "subject_clean": "SEs from lm",
-      "in_reply_to": null,
+      "in_reply_to": "<s2845500.021@grecc.umaryland.edu>",
       "references": [],
       "body_plain": "summary(fit1)$coef will give you a matrix with the coefficients,\nSEs, t-value and p-value.\n\nUse to objects() function to determine the information you can get\nfrom an object. \n\nThierry\n\n--------------------------------------------------------\n\nir. Thierry\n Onkelinx\n\nInstituut\nvoor Bosbouw en Wildbeheer / Institute of Forestry and Game Management\n\nGaverstraat\n4\n\n9500\nGeraardsbergen\n\nBelgium\n\ntel.\n+ 32 54 436 185\n\n \n\nDit\nis mijn nieuw e-mailadres / Please note my new email address: Thierry.Onkelinx at inbo.be\n\nWebsite:\nhttp://ibw.inbo.be\n\nVan:\ns-news-owner at lists.biostat.wustl.edu\n[mailto:s-news-owner at lists.biostat.wustl.edu] Namens John Sorkin\n\nVerzonden: vrijdag 13 mei 2005 13:19\n\nAan: s-news at lists.biostat.wustl.edu\n\nOnderwerp: [S] SEs from lm\n\n \n\nSPlus 6.2 running under Windows\n2000\n\nPlease forgive a basic question.\n\n \n\nI are using lm, e.g.\nfit1<-lm(y~x). I would like to obtain the coefficients AND the SEs of the\ncoefficient. I know I can get the coefficient using fit1$coefficients[1] and\nfit1$coefficients[2], but this does not give the SEs. Could some one tell me\nhow and can get the SEs? Is there anyway to use a single statement to\nget the coefficients and SE?\n\nThanks\n\nJohn\n\n \n\nJohn Sorkin M.D., Ph.D.\n\nChief, Biostatistics and Informatics\n\nBaltimore VA Medical Center GRECC and\n\nUniversity of Maryland School of Medicine Claude Pepper OAIC\n\n \n\nUniversity of Maryland School of\nMedicine\n\nDivision of Gerontology\n\nBaltimore VA Medical Center\n\n10 North Greene Street\n\nGRECC (BT/18/GR)\n\nBaltimore, MD 21201-1524\n\n \n\n410-605-7119 \n\nNOTE NEW EMAIL ADDRESS:\n\njsorkin at grecc.umaryland.edu",
       "body_snippet": "summary(fit1)$coef will give you a matrix with the coefficients,\nSEs, t-value and p-value.\n\nUse to objects() function to determine the information you can get\nfrom an object. \n\nThierry\n\n--------------",
-      "thread_id": "thread-6977205e1c98",
-      "thread_depth": 0,
+      "thread_id": "thread-e1af2f211d59",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -1540,12 +1540,12 @@
       "date": "2005-05-16T16:08:29Z",
       "subject": "Re: Auto point numbering with plot(x,y)",
       "subject_clean": "Auto point numbering with plot(x,y)",
-      "in_reply_to": null,
+      "in_reply_to": "<42876FF1.3040809@imap.iu.edu>",
       "references": [],
       "body_plain": "The pts argument for identify allows for non-interactive\nidentification:\n\n> x <- runif(10)\n> y <- runif(10)\n> plot(x,y)\n> identify(x,y, pts=list(x=x,y=y))\n\nGreg Snow, Ph.D.\nStatistical Data Center, LDS Hospital\nIntermountain Health Care\ngreg.snow at ihc.com\n(801) 408-8111\n\n>>> David Parkhurst <parkhurs at imap.iu.edu> 05/15/05 09:51AM >>>\nIs there a way to cause plot(x,y) to number each point with its row \nnumber automatically?  I know how to do this with identify(), point by\n\npoint, but can it be done without all that mousing?\n\nDave Parkhurst\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "The pts argument for identify allows for non-interactive\nidentification:\n\n> x <- runif(10)\n> y <- runif(10)\n> plot(x,y)\n> identify(x,y, pts=list(x=x,y=y))\n\nGreg Snow, Ph.D.\nStatistical Data Center, LD",
-      "thread_id": "thread-75a016702ca7",
-      "thread_depth": 0,
+      "thread_id": "thread-dca2fb717f02",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -1556,12 +1556,12 @@
       "date": "2005-05-16T17:30:24Z",
       "subject": "Re: Padding out a vector of characters to a constant width",
       "subject_clean": "Padding out a vector of characters to a constant width",
-      "in_reply_to": null,
+      "in_reply_to": "<946C68E53B08A84283BD1639AF350BBADF8111@ilife118.ilim.com>",
       "references": [],
       "body_plain": "> I have a vector characters and I want to padd these out with a fixed\n> character so that each element of the vector has the same length.\n> \n> If my vector is \"A\",\"AA\",\"B\",\"DDD\" and my padding character is \"X\" then I\n> want to return the vector \"XXA\",\"XAA\",\"XXB\",\"DDD\", so each element has a\n> length of 3. I have solved this problem with the following two functions but\n> I can't help thinking that there must be a simpler method?\n\npad.leading.chars <- function(x, pad.char)\n{\n        ## x = character vector\n        ## pad.char = string to be repeated to pad (1 or more characters)\n                        ## number of characters in shortest and longest strings\nminmax.char <- range(nchar(x))\n                        ## create the padding string\npadding <- paste(rep(pad.char,diff(minmax.char)),collapse=\"\")\n                        ## pad it by prepending string of needed length\npaste(substring(padding,1,minmax.char[2]-nchar(x)),x,sep=\"\")\n}",
       "body_snippet": "> I have a vector characters and I want to padd these out with a fixed\n> character so that each element of the vector has the same length.\n> \n> If my vector is \"A\",\"AA\",\"B\",\"DDD\" and my padding charac",
-      "thread_id": "thread-5960d8992764",
-      "thread_depth": 0,
+      "thread_id": "thread-b6ba149c2425",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -1588,12 +1588,12 @@
       "date": "2005-05-16T20:23:20Z",
       "subject": "Re: Stripping time column from time series",
       "subject_clean": "Stripping time column from time series",
-      "in_reply_to": null,
+      "in_reply_to": "<17EA796340230948802BA1BC6D88085C03F244D4@mlnyb701mb.amrs.win.ml.com>",
       "references": [],
       "body_plain": "use positions(x.ts)\n\n \n\n-Horace\n\n>>> \"Tang, Roy Haicheng (Corp Credit - NY)\" <RoyHaicheng_Tang at ml.com> 05/16/05 1:18 PM >>>\n\nHi all, \n\nI generated a time series with functions timeSeries and seriesMerge. Now I am trying to get the time column from the (multi-variate) time series (say, MTS). If I use MTS[,1], I get the first time series, with both time points and value of series. But I only want the time points, not the series values.\n\nThanks for any help! \n\n-haicheng \n\nIf you are not an intended recipient of this e-mail, please notify the sender, delete it and do not read, act upon, print, disclose, copy, retain or redistribute it. Click here for important additional terms relating to this e-mail.     http://www.ml.com/email_terms/",
       "body_snippet": "use positions(x.ts)\n\n \n\n-Horace\n\n>>> \"Tang, Roy Haicheng (Corp Credit - NY)\" <RoyHaicheng_Tang at ml.com> 05/16/05 1:18 PM >>>\n\nHi all, \n\nI generated a time series with functions timeSeries and series",
-      "thread_id": "thread-a6e72465fa51",
-      "thread_depth": 0,
+      "thread_id": "thread-f7088e9740a0",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -1670,12 +1670,12 @@
       "date": "2005-05-17T16:37:48Z",
       "subject": "Re: Interpreting glmmpql results.",
       "subject_clean": "Interpreting glmmpql results.",
-      "in_reply_to": null,
+      "in_reply_to": "<A2E8314904B3D311BB72009027718F420C02CE0C@lis-exchange2.lmu.ac.uk>",
       "references": [],
       "body_plain": "Thomas\n \nthanks for the clarification! One correction is that I believe glmmPQL was\ndeveloped by Brian Ripley and Bill Venables; as part of the fabulous MASS\nlibrary - Software and datasets to support `Modern Applied Statistics with\nS', fourth edition, by W. N. Venables and B. D. Ripley. Springer, 2002, ISBN\n0-387-95457-0.\n \nIm looking forward to an interesting webinar on generalized linear mixed\nmodels this week\nhttp://www.insightful.com/news_events/webcasts/2005/05novartis/default.asp\n \nMichael\n\n        -----Original Message----- \n        From: Thomas Jagger [mailto:tjagger at blarg.net] \n        Sent: Thu 5/12/2005 3:12 PM \n        To: Michael O'Connell \n        Cc: s-news at lists.biostat.wustl.edu \n        Subject: RE: [S] Interpreting glmmpql results.\n        \n        \n\n        For those who do not have Splus 7,\n        glmmPQL is available with the MASS library. Here is a comparable\nresult\n        using both:\n        \n        glme is from the  correlated data library and\n        glmmPQL is from the MASS library.\n        \n        Both glmmPQL and glme are from Jose Pinheiro, as I understand, with\nglmmPQL\n        generated from iterative calls to lme.\n        Thus, they should and do on this one example, produce consistent\nresults.\n        \n        However, Splus Version 7.0 glme has additional methods such as\nLAPLACE and\n        AGQUAD for likelihood approximations. However, in this case the\nResidual\n        variance is 1.0.\n        \n        summary(glme(y ~ trt + I(week > 2), random = ~ 1 |\n        ID,family=binomial,data=bacteria,method=\"PQL\"))\n        Generalized linear mixed-effects model fit by PQL\n        Family: Binomial with Logit link\n          Data: bacteria\n              AIC      BIC    logLik\n          1113.68 1134.042 -550.8402\n        \n        Random effects:\n         Formula:  ~ 1 | ID\n                (Intercept)  Residual\n        StdDev:    1.409806 0.7801296\n        \n        Fixed effects: y ~ trt + I(week > 2)\n                        Value Std.Error  DF   t-value p-value\n        (Intercept)  1.940794 0.2810486 169  6.905548  <.0001\n               trt1 -0.623590 0.3219447  47 -1.936949  0.0588\n               trt2 -0.043518 0.1911304  47 -0.227687  0.8209\n        I(week > 2) -0.803483 0.1791946 169 -4.483858  <.0001\n        \n        Deviance Within-Group Residuals:\n               Min        Q1      Med        Q3      Max\n         -2.391251 0.1730478 0.380906 0.5270572 1.447784\n        \n        Number of Observations: 220\n        Number of Groups: 50\n        > summary(glmmPQL(y ~ trt + I(week > 2), random = ~ 1 |\n        ID,family=binomial,data=bacteria))\n        iteration 1\n        iteration 2\n        iteration 3\n        iteration 4\n        iteration 5\n        iteration 6\n        Linear mixed-effects model fit by maximum likelihood\n         Data: bacteria\n               AIC      BIC    logLik\n          1113.622 1133.984 -550.8111\n        \n        Random effects:\n         Formula:  ~ 1 | ID\n                (Intercept)  Residual\n        StdDev:    1.410632 0.7800514\n        \n        Variance function:\n         Structure: fixed weights\n         Formula:  ~ invwt\n        \n        Fixed effects: y ~ trt + I(week > 2)\n                        Value Std.Error  DF   t-value p-value\n        (Intercept)  1.941156 0.2811167 169  6.905160  <.0001\n               trt1 -0.623677 0.3220311  47 -1.936699  0.0588\n               trt2 -0.043550 0.1911861  47 -0.227787  0.8208\n        I(week > 2) -0.803628 0.1791689 169 -4.485307  <.0001\n        \n        Standardized Within-Group Residuals:\n               Min        Q1       Med        Q3      Max\n         -5.198533 0.1572341 0.3513082 0.4949478 1.744882\n        \n        Number of Observations: 220\n        Number of Groups: 50\n        >\n        \n        -----Original Message-----\n        From: s-news-owner at lists.biostat.wustl.edu\n        [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Michael\nO'Connell\n        Sent: Thursday, May 12, 2005 11:44 AM\n        To: Clegg, Philip; s-news at lists.biostat.wustl.edu\n        Subject: Re: [S] Interpreting glmmpql results.\n        \n        1) I dont think glmmpql is a function that ships with S-PLUS 7. Is\nthis from\n        a user-contributed package? I strongly recommend that you use the new\n        correlatedData library in S-PLUS 7. There is help and doc in the\nlibrary\n        directory eg in:\n        C:\\Program Files\\Insightful\\splus70\\library\\correlatedData\n        as a basic install\n        \n        The correlatedData library includes PQL ( glme() ); and exact\n(quadrature)\n        methods for binomial and Poisson regression. PQL generally works\nwell,\n        contrary to what some folks say :-) See Breslow and Clayton (1993)\nand\n        Wolfinger and O'Connell (1993) for details. The latter paper has a\nmore\n        intuitive derivation and explanation even if I do say so :-)... And\nPQL is\n        implemented in the correlatedData library in a way that improves upon\nan\n        earlier SAS MACRO implementation...\n        \n        Mixed models with non-Gaussian responses is a very interesting,\nimportant\n        and\n        expansive area! Please join us at next weeks (free) webinar on this\ntopic,\n        given by Jose Pinheiro of Novartis who was deeply involved in the\n        development\n        of glme() and correlatedData:\n        \nhttp://www.insightful.com/news_events/webcasts/2005/05novartis/default.asp\n        \n        2) In general, to set a factor variable in S-PLUS, set\noptions()$contrast to\n        contrast.treatment or something. Look at the help on contrast and/or\nsearch\n        the list archive.  \n        \n        3) Lets get on with our statistical software discussions on the list\n- it is\n        a great user-contributed S-PLUS/stats list and everyone is making\nvery\n        valuable contributions. So lets keep it coming. In particular, if\nanyone\n        develops any interesting applications of glme() and the\ncorrelatedData\n        library please let me know - I have a goal to pull together a\ncollection of\n        applications in this area over the coming year.\n        \n        Good luck !\n        \n        Michael\n        \n        Michael O'Connell, Ph.D.\n        Director, Life Science Solutions   W: (800) 569-0123 x454\n        Insightful Corporation                              \n        moconnell at insightful.com           www.insightful.com\n        \n        \n        -----Original Message-----\n        From: Clegg, Philip [mailto:P.Clegg at leedsmet.ac.uk]\n        Sent: Thursday, May 12, 2005 11:20 AM\n        To: 's-news at lists.biostat.wustl.edu'\n        Subject: [S] Interpreting glmmpql results.\n        \n        \n        \n        I see that in the recent period, there have been many postings about\nlist\n        etiquette,  the appropriateness of questions asked, and the need to\navoid\n        trivial questions. I recently asked  about why glmmpql seems to treat\ntwo\n        level factors  as  continuous variables but received no replies. I\nhope this\n        does not mean my question is trivial. I am also concerned that I have\nnot\n        asked the question in the right way. But what is the right way to ask\nthe\n        question.\n        It is difficult to formulate questions in appropriate statistical\nlanguage\n        if your own are of expertise is an a non-mathematical or statistical\n        subject. I  want to use glmmpql as a tool to find out if there is a\nspatial\n        component to suicide. I doubt that I will ever understand how the\ntool was\n        constructed - just as I have no real understanding of what lies\nunderneath\n        the bonnet/hood of my car.\n        \n        Best wishes,\n        Phil\n        \n        \n        \n        -----Original Message-----\n        From: Clegg, Philip [mailto:P.Clegg at leedsmet.ac.uk]\n        Sent: 10 May 2005 12:38\n        To: 's-news at lists.biostat.wustl.edu'\n        Subject: [S] Numerical codes in GlMMPQL\n        \n        \n        I am attempting to fit a glmmpql model on suicide case history data\nusing\n        postcode as a spatial random effect. Most of the variables I wish to\ntest\n        are in binary form with codes 0, 1 and -1 for missing data. In the\nfollowing\n        example, the p-value for the intercept is highly significant\nindicating that\n        there is a spatial postcode effect. The relationship between Gender\nand\n        'notreatz' (whether or not cases had treatment for mental illness in\nthe\n        last year) is also significant. However, my problem is that gender\ndoes not\n        appear to have been treated as a factor but as a continuous variable.\nI\n        guess the problem is that S-Plus does not recognise my variables as\n        categorical. I have tried using as.factor but that has not helped.\nHas\n        anyone any advice please? Best wishes, Phil\n        \n        \n        > summary(glmmPQL(notreatz ~ genderz, family = binomial, random =  ~\n1 |\n                POSTCODE))\n        iteration 1\n        Linear mixed-effects model fit by maximum likelihood\n         Data: NULL\n               AIC      BIC    logLik\n          1026.248 1040.103 -509.1238\n        \n        Random effects:\n         Formula:  ~ 1 | POSTCODE\n                (Intercept)  Residual\n        StdDev:  0.01600788 0.9999703\n        \n        Variance function:\n         Structure: fixed weights\n         Formula:  ~ invwt\n        Fixed effects: notreatz ~ genderz\n                        Value Std.Error  DF  t-value p-value\n        (Intercept) 0.7145204 0.1805515 229 3.957432  0.0001\n            genderz 0.5382434 0.1805512   5 2.981112  0.0308\n        \n        Standardized Within-Group Residuals:\n               Min        Q1       Med        Q3       Max\n         -1.870798 -1.092102 0.5345133 0.9156031 0.9156726\n        \n        Number of Observations: 236\n        Number of Groups: 230\n        \n        \n        \n        \n        To view the terms under which this email is distributed, please go to\n        http://disclaimer.leedsmet.ac.uk/email.htm\n        --------------------------------------------------------------------\n        This message was distributed by s-news at lists.biostat.wustl.edu.  To\n        unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu\nwith the\n        BODY of the message:  unsubscribe s-news\n        \n        \n        To view the terms under which this email is distributed, please go to\n        http://disclaimer.leedsmet.ac.uk/email.htm\n        --------------------------------------------------------------------\n        This message was distributed by s-news at lists.biostat.wustl.edu.  To\n        unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu\nwith\n        the BODY of the message:  unsubscribe s-news\n        --------------------------------------------------------------------\n        This message was distributed by s-news at lists.biostat.wustl.edu.  To\n        unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu\nwith\n        the BODY of the message:  unsubscribe s-news",
       "body_snippet": "Thomas\n \nthanks for the clarification! One correction is that I believe glmmPQL was\ndeveloped by Brian Ripley and Bill Venables; as part of the fabulous MASS\nlibrary - Software and datasets to support",
-      "thread_id": "thread-7a84b449a20a",
-      "thread_depth": 0,
+      "thread_id": "thread-b39390af9371",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -1798,12 +1798,12 @@
       "date": "2005-05-18T07:56:02Z",
       "subject": "Re: loops & importing files",
       "subject_clean": "loops & importing files",
-      "in_reply_to": null,
+      "in_reply_to": "<20050517184205.56480.qmail@web50205.mail.yahoo.com>",
       "references": [],
       "body_plain": "I had a similar problem. S+ froze when running a script with multiple\nnested loops. I solved it by coding each loop into a separate function.\n\nI hope this helps.\n\nThierry\n\n--------------------------------------------------------\nir. Thierry Onkelinx\nInstituut voor Bosbouw en Wildbeheer / Institute of Forestry and Game\nManagement\nGaverstraat 4\n9500 Geraardsbergen\nBelgium\ntel. + 32 54 436 185\n \nDit is mijn nieuw e-mailadres / Please note my new email address:\nThierry.Onkelinx at inbo.be\nWebsite: http://ibw.inbo.be\n-----Oorspronkelijk bericht-----\nVan: s-news-owner at lists.biostat.wustl.edu\n[mailto:s-news-owner at lists.biostat.wustl.edu] Namens Joe Cerniglia\nVerzonden: dinsdag 17 mei 2005 20:42\nAan: s-news at lists.biostat.wustl.edu\nOnderwerp: [S] loops & importing files\n\nI am looking for an efficient way to run a batch of\nfiles through a set of SPLUS functions. \n\nThe for loop seems to freeze SPLUS at approximately\n700 files.\n\nMy process is as follows:\n\nStart with 1200 text files\n\nI am using a for loop to import each file.\n        \nI pass the file to a set of functions.  \n        \nWithin those functions there are several for  loops\nand calls to other functions\n\noutput the file\n\nMove to the next file.\n\nThanks.\n\nJoe\n\n                \n__________________________________ \nYahoo! Mail Mobile \nTake Yahoo! Mail with you! Check email on your mobile phone. \nhttp://mobile.yahoo.com/learn/mail \n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "I had a similar problem. S+ froze when running a script with multiple\nnested loops. I solved it by coding each loop into a separate function.\n\nI hope this helps.\n\nThierry\n\n----------------------------",
-      "thread_id": "thread-469cc84d715e",
-      "thread_depth": 0,
+      "thread_id": "thread-50b0e8a13639",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -1832,12 +1832,12 @@
       "date": "2005-05-18T13:25:49Z",
       "subject": "Re: another list/vector question",
       "subject_clean": "another list/vector question",
-      "in_reply_to": null,
+      "in_reply_to": "<54668D97C0199943A454516A5FF6481E58AD45@EXCHUS001.AD.MLP.COM>",
       "references": [],
       "body_plain": "I believe this does what you asked for.\nI don't understand why you need the intermediate DECIMATEC.\nresult is the matrix you described.\n\nThe trick of working with several lists is to do the sapply on the indices\nof the components rather than on the components themselves.\n\nThe data structure as described looks cumbersome.  I assume it\nis meaningful in the context from which you abstracted it.\n\nRich\n\nDECIMATE <- list(24:28, 64:70)\nDECIMATEB <- list(29:34, 71:80)\ntemp <- sample(how.many)\n\nfun.AB <- function(x, DA, DB) {\n  c(DA[[x]], DB[[x]])\n}\n\nDECIMATEC <- lapply(1:length(DECIMATE), fun.AB, DA=DECIMATE, DB=DECIMATEB)\n\nhow.many <- rev(rev(DECIMATEB)[[1]])[1]\nlist1 <- numeric(how.many)\nlist1[length(DECIMATE[[1]]) + (1:length(DECIMATEB[[1]]))] <- \ntemp[DECIMATEB[[1]]]\nlist2 <- numeric(how.many)\nlist2[length(DECIMATE[[2]]) + (1:length(DECIMATEB[[2]]))] <- \ntemp[DECIMATEB[[2]]]\n\nfun.ABt <- function(x, DA, DB, temp) {\n  how.many <- rev(rev(DB)[[1]])[1]\n  result <- numeric(how.many)\n  result[length(DA[[x]]) + (1:length(DB[[x]]))] <- temp[DB[[x]]]\n  result\n}\n\nresult <- sapply(1:length(DECIMATE), fun.ABt, DA=DECIMATE, DB=DECIMATEB, temp)",
       "body_snippet": "I believe this does what you asked for.\nI don't understand why you need the intermediate DECIMATEC.\nresult is the matrix you described.\n\nThe trick of working with several lists is to do the sapply on ",
-      "thread_id": "thread-e49ce63f7bb2",
-      "thread_depth": 0,
+      "thread_id": "thread-f67de7d450bd",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -1848,12 +1848,12 @@
       "date": "2005-05-18T13:32:02Z",
       "subject": "Re: another list/vector question",
       "subject_clean": "another list/vector question",
-      "in_reply_to": null,
+      "in_reply_to": "<54668D97C0199943A454516A5FF6481E58AD45@EXCHUS001.AD.MLP.COM>",
       "references": [],
       "body_plain": "Sorry, I had a statement out of order in my previous reply\n\nDECIMATE <- list(24:28, 64:70)\nDECIMATEB <- list(29:34, 71:80)\nhow.many <- rev(rev(DECIMATEB)[[1]])[1]\ntemp <- sample(how.many)\n\nfun.AB <- function(x, DA, DB) {\n  c(DA[[x]], DB[[x]])\n}\n\nDECIMATEC <- lapply(1:length(DECIMATE), fun.AB, DA=DECIMATE, DB=DECIMATEB)\n\nlist1 <- numeric(how.many)\nlist1[length(DECIMATE[[1]]) + (1:length(DECIMATEB[[1]]))] <- \ntemp[DECIMATEB[[1]]]\nlist2 <- numeric(how.many)\nlist2[length(DECIMATE[[2]]) + (1:length(DECIMATEB[[2]]))] <- \ntemp[DECIMATEB[[2]]]\n\nfun.ABt <- function(x, DA, DB, temp) {\n  how.many <- rev(rev(DB)[[1]])[1]\n  result <- numeric(how.many)\n  result[length(DA[[x]]) + (1:length(DB[[x]]))] <- temp[DB[[x]]]\n  result\n}\n\nresult <- sapply(1:length(DECIMATE), fun.ABt, DA=DECIMATE, DB=DECIMATEB, temp)",
       "body_snippet": "Sorry, I had a statement out of order in my previous reply\n\nDECIMATE <- list(24:28, 64:70)\nDECIMATEB <- list(29:34, 71:80)\nhow.many <- rev(rev(DECIMATEB)[[1]])[1]\ntemp <- sample(how.many)\n\nfun.AB <- f",
-      "thread_id": "thread-c36417e20d8f",
-      "thread_depth": 0,
+      "thread_id": "thread-f67de7d450bd",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -1985,12 +1985,12 @@
       "date": "2005-05-18T21:45:47Z",
       "subject": "Re: statistical terminology controversy",
       "subject_clean": "statistical terminology controversy",
-      "in_reply_to": null,
+      "in_reply_to": "<8986151694190742869D08450EE4DCDE5C2557@amu-exch.ensco.win>",
       "references": [],
       "body_plain": "The terminology in my field is \"calibration\" data set for your \n\"dependent\" and \"validation\" for your \n\"independent\" data set.  The terms \"dependent\" and \"independent\" have too \nmany incompatible uses already.\n\n-----Original Message-----\nFrom: \ns-news-owner at lists.biostat.wustl.edu \n[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of \nLambert.Winnie\nSent: Wednesday, May 18, 2005 4:24 PM\nTo: \nS-PLUS Newsgroup\nSubject: [S] statistical terminology \ncontroversy\n\nThis is NOT an \nS-LUS-specific question, just letting you know so you don’t \nhave to read any further if not interested in anything non-S-PLUS. \n\n \n\nThere is a bit of a controversy in \nmy office concerning specific statistical terminology. I developed a set of \nlogistic regression equations that calculate the probability of lightning \noccurrence for the day using a 15-year data set of several observation \ntypes.  I stratified the data into two sets: one was used to create the \nequations, and the other was used to test the equations’ performance. In my \nfield, these are commonly called the ‘dependent’ and ‘independent’ data sets, \nrespectively.\n\n \n\nOne of us insists that the common \nterminology be used, the other says the data sets should be called ‘development’ \nand ‘testing’ since that is what they are used for, and since the terms \n‘dependent’ and ‘independent’ refer to other issues in \nstatistics.\n\n \n\nAny statistics expert willing to \njump into the fray is welcome. There is no money riding on this, only pride. \n\n \n\n*****************************************************************\n\nWinifred C. Lambert  Senior \nScientist/Meteorologist\n\nENSCO, \nInc.\n\nAerospace Sciences and Engineering \nDivision\n\n1980 N. Atlantic Ave., \nSuite 230\n\nCocoa \nBeach, FL  32931\n\nVOICE:  321.853.8130  \nFAX:  321.853.8415\n\nEMAIL:  lambert.winnie at ensco.com\n\n \n\nAMU Quarterly Reports are available \nonline:\n\nhttp://science.ksc.nasa.gov/amu\n\n*****************************************************************\n\n \n\nThe information contained in this email message is intended only for the \nuse of the individuals to whom it is addressed and may contain information that \nis privileged and sensitive. If the reader of this message is not the intended \nrecipient, you are hereby notified that any dissemination, distribution or \ncopying of this communication is strictly prohibited. If you have received this \ncommunication in error, please notify the sender immediately by email at the \nabove referenced address. Thank you.",
       "body_snippet": "The terminology in my field is \"calibration\" data set for your \n\"dependent\" and \"validation\" for your \n\"independent\" data set.  The terms \"dependent\" and \"independent\" have too \nmany incompatible uses",
-      "thread_id": "thread-27596736cc23",
-      "thread_depth": 0,
+      "thread_id": "thread-c6dbad7248cb",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -2007,8 +2007,8 @@
       ],
       "body_plain": "In statistical/machine learning these would\nbe called “training” and “validation” data sets.\n\n \n\n--------------------------------------------------------------------------\n\nRavi Varadhan, Ph.D.\n\nAssistant\nProfessor,  The Center on Aging and Health\n\nDivision of\nGeriatric Medicine and Gerontology\n\nJohns Hopkins\n University\n\nPh: (410)\n502-2619\n\nFax: (410)\n614-9625\n\nEmail:  rvaradhan at jhmi.edu\n\n--------------------------------------------------------------------------\n\nFrom:\ns-news-owner at lists.biostat.wustl.edu [mailto:s-news-owner at lists.biostat.wustl.edu]\nOn Behalf Of Lucke, Joseph F\n\nSent: Wednesday, May 18, 2005 5:46\nPM\n\nTo: Lambert.Winnie; S-PLUS\nNewsgroup\n\nSubject: Re: [S] statistical\nterminology controversy\n\n \n\nThe terminology in my field is\n\"calibration\" data set for your \"dependent\" and\n\"validation\" for your \"independent\" data set.  The\nterms \"dependent\" and \"independent\" have too many\nincompatible uses already.\n\n-----Original Message-----\n\nFrom:\ns-news-owner at lists.biostat.wustl.edu\n[mailto:s-news-owner at lists.biostat.wustl.edu] On\nBehalf Of Lambert.Winnie\n\nSent: Wednesday, May 18, 2005 4:24\nPM\n\nTo: S-PLUS Newsgroup\n\nSubject: [S] statistical\nterminology controversy\n\nThis is NOT an S-LUS-specific question, just\nletting you know so you don’t have to read any further if not interested\nin anything non-S-PLUS. \n\n \n\nThere is a bit of a controversy in my office concerning\nspecific statistical terminology. I developed a set of logistic regression\nequations that calculate the probability of lightning occurrence for the day\nusing a 15-year data set of several observation types.  I stratified the\ndata into two sets: one was used to create the equations, and the other was\nused to test the equations’ performance. In my field, these are commonly\ncalled the ‘dependent’ and ‘independent’ data sets,\nrespectively.\n\n \n\nOne of us insists that the common terminology be used, the\nother says the data sets should be called ‘development’ and\n‘testing’ since that is what they are used for, and since the terms\n‘dependent’ and ‘independent’ refer to other issues in\nstatistics.\n\n \n\nAny statistics expert willing to jump into the fray is\nwelcome. There is no money riding on this, only pride. \n\n \n\n*****************************************************************\n\nWinifred C. Lambert  Senior Scientist/Meteorologist\n\nENSCO, Inc.\n\nAerospace Sciences and Engineering Division\n\n1980 N. Atlantic\n  Ave., Suite 230\n\nCocoa Beach, FL  32931\n\nVOICE:  321.853.8130  FAX:  321.853.8415\n\nEMAIL:  lambert.winnie at ensco.com\n\n \n\nAMU Quarterly Reports are available online:\n\nhttp://science.ksc.nasa.gov/amu\n\n*****************************************************************\n\n \n\nThe information contained in this email message is intended only for\nthe use of the individuals to whom it is addressed and may contain information\nthat is privileged and sensitive. If the reader of this message is not the\nintended recipient, you are hereby notified that any dissemination,\ndistribution or copying of this communication is strictly prohibited. If you\nhave received this communication in error, please notify the sender immediately\nby email at the above referenced address. Thank you.",
       "body_snippet": "In statistical/machine learning these would\nbe called “training” and “validation” data sets.\n\n \n\n--------------------------------------------------------------------------\n\nRavi Varadhan, Ph.D.\n\nAssis",
-      "thread_id": "thread-27596736cc23",
-      "thread_depth": 1,
+      "thread_id": "thread-c6dbad7248cb",
+      "thread_depth": 2,
       "month": "2005-05"
     },
     {
@@ -2037,12 +2037,12 @@
       "date": "2005-05-18T21:59:14Z",
       "subject": "Re: statistical terminology controversy",
       "subject_clean": "statistical terminology controversy",
-      "in_reply_to": null,
+      "in_reply_to": "<8986151694190742869D08450EE4DCDE5C2557@amu-exch.ensco.win>",
       "references": [],
       "body_plain": "The terms \"training\" and \"test\" are commonly used in the cross-validation and subsequently the bootstrap literatures. To be more informative, you may want to call the former the \"learning\" dataset, the later the \"validation\" set.\n\n \n\nLendasse, Wertz, Verleysen, Model Selection with Cross-Validations and Bootstraps ? Application to Time Series Prediction with RBFN Models, ICANN/ICONIP 2003, LNCS 2714, pp. 573-580, 2003.\n\n \n\nHorace W. Tso\n\nPGE\n\nPortland, Oregon\n\n   \n\n>>> \"Lambert.Winnie\" <lambert.winnie at ensco.com> 05/18/05 2:23 PM >>>\n\nThis is NOT an S-LUS-specific question, just letting you know so you don?t have to read any further if not interested in anything non-S-PLUS. \n\n \n\nThere is a bit of a controversy in my office concerning specific statistical terminology. I developed a set of logistic regression equations that calculate the probability of lightning occurrence for the day using a 15-year data set of several observation types.  I stratified the data into two sets: one was used to create the equations, and the other was used to test the equations? performance. In my field, these are commonly called the ?dependent? and ?independent? data sets, respectively.\n\n \n\nOne of us insists that the common terminology be used, the other says the data sets should be called ?development? and ?testing? since that is what they are used for, and since the terms ?dependent? and ?independent? refer to other issues in statistics.\n\n \n\nAny statistics expert willing to jump into the fray is welcome. There is no money riding on this, only pride. \n\n \n\n*****************************************************************\n\nWinifred C. Lambert  Senior Scientist/Meteorologist\n\nENSCO, Inc.\n\nAerospace Sciences and Engineering Division\n\n1980 N. Atlantic Ave., Suite 230\n\nCocoa Beach, FL  32931\n\nVOICE:  321.853.8130  FAX:  321.853.8415\n\nEMAIL:  lambert.winnie at ensco.com\n\n \n\nAMU Quarterly Reports are available online:\n\nhttp://science.ksc.nasa.gov/amu\n\n*****************************************************************\n\n \n\nThe information contained in this email message is intended only for the use of the individuals to whom it is addressed and may contain information that is privileged and sensitive. If the reader of this message is not the intended recipient, you are hereby notified that any dissemination, distribution or copying of this communication is strictly prohibited. If you have received this communication in error, please notify the sender immediately by email at the above referenced address. Thank you.",
       "body_snippet": "The terms \"training\" and \"test\" are commonly used in the cross-validation and subsequently the bootstrap literatures. To be more informative, you may want to call the former the \"learning\" dataset, th",
-      "thread_id": "thread-f9b9a5ced042",
-      "thread_depth": 0,
+      "thread_id": "thread-c6dbad7248cb",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -2053,12 +2053,12 @@
       "date": "2005-05-19T01:50:39Z",
       "subject": "Re: statistical terminology controversy",
       "subject_clean": "statistical terminology controversy",
-      "in_reply_to": null,
+      "in_reply_to": "<8986151694190742869D08450EE4DCDE5C2557@amu-exch.ensco.win>",
       "references": [],
       "body_plain": "I don't see a controversy; it depends on the \naudience.\n\n \n\nDifferent fields use different terms for the same \nstatistical concepts.\n\nSo you'd use dependent/independent if you're speaking \nto statisticians; development/testing to meteorologist.  \n\n \n\nI'm not even sure it'd be desirable to have the same \nstatistical term used in all fields that uses statistics (most, to be \nsure).\n\nThat would probably make dry journal articles even \ndrier.\n\n \n\nThat's my $.02,\n\n- Iyue\n\n \n\n>\n>\n>   From: s-news-owner at lists.biostat.wustl.edu\n>   [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of\n>   Lambert.Winnie\n> Sent: Wednesday, May 18, 2005 5:24\n>   PM\n> To: S-PLUS Newsgroup\n> Subject: [S] statistical\n>   terminology controversy\n>\n>\n>\n>\n>\n>\n>   This is NOT an\n>   S-LUS-specific question, just letting you know so you\n>   don’t have to read any further if not interested in anything non-S-PLUS.\n>\n>\n>\n>\n>   There is a bit of a controversy in\n>   my office concerning specific statistical terminology. I developed a set of\n>   logistic regression equations that calculate the probability of lightning\n>   occurrence for the day using a 15-year data set of several observation\n>   types.  I stratified the data into two sets: one was used to create the\n>   equations, and the other was used to test the equations’ performance. In my\n>   field, these are commonly called the ‘dependent’ and ‘independent’ data sets,\n>   respectively.\n>\n>\n>\n>   One of us insists that the common\n>   terminology be used, the other says the data sets should be called\n>   ‘development’ and ‘testing’ since that is what they are used for, and since\n>   the terms ‘dependent’ and ‘independent’ refer to other issues in\n>   statistics.\n>\n>\n>\n>   Any statistics expert willing to\n>   jump into the fray is welcome. There is no money riding on this, only pride.\n>\n>\n>\n>\n>   *****************************************************************\n>\n>   Winifred C. Lambert  Senior\n>   Scientist/Meteorologist\n>\n>   ENSCO,\n>   Inc.\n>\n>   Aerospace Sciences and Engineering\n>   Division\n>\n>   1980 N. Atlantic Ave., Suite\n>   230\n>\n>   Cocoa\n>   Beach, FL  32931\n>\n>   VOICE:  321.853.8130\n>   FAX:  321.853.8415\n>\n>   EMAIL:  lambert.winnie at ensco.com\n>\n>\n>\n>   AMU Quarterly Reports are\n>   available online:\n>\n>   http://science.ksc.nasa.gov/amu\n>\n>   *****************************************************************\n>\n>\n>\n>\n>   The information contained in this email message is intended only for the\n>   use of the individuals to whom it is addressed and may contain information\n>   that is privileged and sensitive. If the reader of this message is not the\n>   intended recipient, you are hereby notified that any dissemination,\n>   distribution or copying of this communication is strictly prohibited. If you\n>   have received this communication in error, please notify the sender\n>   immediately by email at the above referenced address. Thank\n> you.",
       "body_snippet": "I don't see a controversy; it depends on the \naudience.\n\n \n\nDifferent fields use different terms for the same \nstatistical concepts.\n\nSo you'd use dependent/independent if you're speaking \nto statisti",
-      "thread_id": "thread-f9b8276f0da6",
-      "thread_depth": 0,
+      "thread_id": "thread-c6dbad7248cb",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -2075,8 +2075,8 @@
       ],
       "body_plain": "Sung, Iyue wrote:\n> I don't see a controversy; it depends on the audience.\n\nI can't quite agree with that.  'Dependent' and 'independent' datasets \nis not valid terminology in any field that I know of, especially statistics.\n\n-Frank Harrell\n\n>\n> Different fields use different terms for the same statistical concepts.\n> So you'd use dependent/independent if you're speaking to statisticians;\n> development/testing to meteorologist.\n>\n> I'm not even sure it'd be desirable to have the same statistical term\n> used in all fields that uses statistics (most, to be sure).\n>\n> That would probably make dry journal articles even drier.\n>\n> That's my $.02,\n>\n> - Iyue\n>\n>\n>\n>     *From:* s-news-owner at lists.biostat.wustl.edu\n>     [mailto:s-news-owner at lists.biostat.wustl.edu] *On Behalf Of\n>     *Lambert.Winnie\n>     *Sent:* Wednesday, May 18, 2005 5:24 PM\n>     *To:* S-PLUS Newsgroup\n>     *Subject:* [S] statistical terminology controversy\n>\n>     * This is NOT an S-LUS-specific question, * just letting you know so\n>     you don’t have to read any further if not interested in anything\n>     non-S-PLUS.\n>\n>\n>\n>\n>     There is a bit of a controversy in my office concerning specific\n>     statistical terminology. I developed a set of logistic regression\n>     equations that calculate the probability of lightning occurrence for\n>     the day using a 15-year data set of several observation types.  I\n>     stratified the data into two sets: one was used to create the\n>     equations, and the other was used to test the equations’\n>     performance. In my field, these are commonly called the ‘dependent’\n>     and ‘independent’ data sets, respectively.\n>\n>\n>\n>\n>     One of us insists that the common terminology be used, the other\n>     says the data sets should be called ‘development’ and ‘testing’\n>     since that is what they are used for, and since the terms\n>     ‘dependent’ and ‘independent’ refer to other issues in statistics.\n>\n>\n>\n>\n>     Any statistics expert willing to jump into the fray is welcome.\n>     There is no money riding on this, only pride.\n>\n>\n>\n>\n>     *****************************************************************\n>\n>     Winifred C. Lambert  Senior Scientist/Meteorologist\n>\n>     ENSCO, Inc.\n>\n>     Aerospace Sciences and Engineering Division\n>\n>     1980 N. Atlantic Ave., Suite 230\n>\n>     Cocoa Beach , FL   32931\n>\n>     VOICE:  321.853.8130  FAX:  321.853.8415\n>\n>     EMAIL:  lambert.winnie at ensco.com <mailto:lambert.winnie at ensco.com>\n>\n>\n>\n>\n>     AMU Quarterly Reports are available online:\n>\n>     http://science.ksc.nasa.gov/amu\n>\n>     *****************************************************************\n>\n>\n>\n>\n>     The information contained in this email message is intended only for\n>     the use of the individuals to whom it is addressed and may contain\n>     information that is privileged and sensitive. If the reader of this\n>     message is not the intended recipient, you are hereby notified that\n>     any dissemination, distribution or copying of this communication is\n>     strictly prohibited. If you have received this communication in\n>     error, please notify the sender immediately by email at the above\n>     referenced address. Thank you.\n\n--\nFrank E Harrell Jr   Professor and Chair           School of Medicine\n                     Department of Biostatistics   Vanderbilt University",
       "body_snippet": "Sung, Iyue wrote:\n> I don't see a controversy; it depends on the audience.\n\nI can't quite agree with that.  'Dependent' and 'independent' datasets \nis not valid terminology in any field that I know of",
-      "thread_id": "thread-f9b8276f0da6",
-      "thread_depth": 1,
+      "thread_id": "thread-c6dbad7248cb",
+      "thread_depth": 2,
       "month": "2005-05"
     },
     {
@@ -2087,12 +2087,12 @@
       "date": "2005-05-19T03:25:15Z",
       "subject": "Re: statistical terminology controversy",
       "subject_clean": "statistical terminology controversy",
-      "in_reply_to": null,
+      "in_reply_to": "<8986151694190742869D08450EE4DCDE5C2557@amu-exch.ensco.win>",
       "references": [],
       "body_plain": "Mmm, well - I wasn't speaking to whether Dependent/Independent are good\nterms in meteorology; I'd agree that it may be confusing.  But I'm\nassuming Weather folks have a good rationale for using those terms.\nAnyways, I interpreted the issue as whether Winnie and colleagues should\nuse the common labels used in meteorology, or that used by\nstatisticians.\n\n> -----Original Message-----\n> From: Frank E Harrell Jr [mailto:f.harrell at vanderbilt.edu] \n> Sent: Wednesday, May 18, 2005 10:55 PM\n> To: Sung, Iyue\n> Cc: S-PLUS Newsgroup\n> Subject: Re: [S] statistical terminology controversy\n> \n> Sung, Iyue wrote:\n> > \n> > I don't see a controversy; it depends on the audience.\n> \n> I can't quite agree with that.  'Dependent' and 'independent' \n> datasets is not valid terminology in any field that I know \n> of, especially statistics.\n> \n> -Frank Harrell\n> \n> >  \n> > Different fields use different terms for the same \n> statistical concepts.\n> > So you'd use dependent/independent if you're speaking to \n> > statisticians; development/testing to meteorologist.\n> >  \n> > I'm not even sure it'd be desirable to have the same \n> statistical term \n> > used in all fields that uses statistics (most, to be sure).\n> > That would probably make dry journal articles even drier.\n> >  \n> > That's my $.02,\n> > - Iyue\n> >  \n> > \n> >     *From:* s-news-owner at lists.biostat.wustl.edu\n> >     [mailto:s-news-owner at lists.biostat.wustl.edu] *On Behalf Of\n> >     *Lambert.Winnie\n> >     *Sent:* Wednesday, May 18, 2005 5:24 PM\n> >     *To:* S-PLUS Newsgroup\n> >     *Subject:* [S] statistical terminology controversy\n> > \n> >     * This is NOT an S-LUS-specific question, * just \n> letting you know so\n> >     you don't have to read any further if not interested in anything\n> >     non-S-PLUS.\n> > \n> >      \n> > \n> >     There is a bit of a controversy in my office concerning specific\n> >     statistical terminology. I developed a set of logistic \n> regression\n> >     equations that calculate the probability of lightning \n> occurrence for\n> >     the day using a 15-year data set of several observation \n> types.  I\n> >     stratified the data into two sets: one was used to create the\n> >     equations, and the other was used to test the equations'\n> >     performance. In my field, these are commonly called the \n> 'dependent'\n> >     and 'independent' data sets, respectively.\n> > \n> >      \n> > \n> >     One of us insists that the common terminology be used, the other\n> >     says the data sets should be called 'development' and 'testing'\n> >     since that is what they are used for, and since the terms\n> >     'dependent' and 'independent' refer to other issues in \n> statistics.\n> > \n> >      \n> > \n> >     Any statistics expert willing to jump into the fray is welcome.\n> >     There is no money riding on this, only pride.\n> > \n> >      \n> > \n> >     \n> *****************************************************************\n> > \n> >     Winifred C. Lambert  Senior Scientist/Meteorologist\n> > \n> >     ENSCO, Inc.\n> > \n> >     Aerospace Sciences and Engineering Division\n> > \n> >     1980 N. Atlantic Ave., Suite 230\n> > \n> >     Cocoa Beach , FL   32931\n> > \n> >     VOICE:  321.853.8130  FAX:  321.853.8415\n> > \n> >     EMAIL:  lambert.winnie at ensco.com \n> <mailto:lambert.winnie at ensco.com>\n> > \n> >      \n> > \n> >     AMU Quarterly Reports are available online:\n> > \n> >     http://science.ksc.nasa.gov/amu\n> > \n> >     \n> *****************************************************************",
       "body_snippet": "Mmm, well - I wasn't speaking to whether Dependent/Independent are good\nterms in meteorology; I'd agree that it may be confusing.  But I'm\nassuming Weather folks have a good rationale for using those ",
-      "thread_id": "thread-e5282af2dacc",
-      "thread_depth": 0,
+      "thread_id": "thread-c6dbad7248cb",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -2103,12 +2103,12 @@
       "date": "2005-05-19T06:53:52Z",
       "subject": "Re: statistical terminology controversy",
       "subject_clean": "statistical terminology controversy",
-      "in_reply_to": null,
+      "in_reply_to": "<8986151694190742869D08450EE4DCDE5C2557@amu-exch.ensco.win>",
       "references": [],
       "body_plain": "So it boils down to the \nquestion(s): Why do meteorolgists use the Dependent/Independent terminology? \nWhat do the 'dependent' data set depend on?\n\n \n\nGeir\n\n \n\nGeir Egil Eide\n\nBiostatistician, Associate Professor II,\n\nCentre for Clinical Research, Section for Epidemiology and Medical \nStatistics,\n\nHaukeland University Hospital, Department of Public Health and Primary Health \nCare,\n\nthe Armauer Hansen House, University of Bergen,\n\nN-5021 Bergen, Bergen\n\nNorway \n\ntel: +47 55975534 Home page: http://www.uib.no/isf/people/geir.htm\n\nfax: +47 55976088\n\nemail: Geir.Egil.Eide at Haukeland.No\n\nFrom: s-news-owner at lists.biostat.wustl.edu on \nbehalf of Sung, Iyue\nSent: Thu 5/19/2005 5:25 AM\nTo: Frank E \nHarrell Jr\nCc: S-PLUS Newsgroup\nSubject: Re: [S] statistical \nterminology controversy\n\nMmm, well - I wasn't speaking to whether \nDependent/Independent are good\nterms in meteorology; I'd agree that it may be \nconfusing.  But I'm\nassuming Weather folks have a good rationale for \nusing those terms.\nAnyways, I interpreted the issue as whether Winnie and \ncolleagues should\nuse the common labels used in meteorology, or that used \nby\nstatisticians.\n\n> -----Original Message-----\n> \nFrom: Frank E Harrell Jr [mailto:f.harrell at vanderbilt.edu]\n> \nSent: Wednesday, May 18, 2005 10:55 PM\n> To: Sung, Iyue\n> Cc: S-PLUS \nNewsgroup\n> Subject: Re: [S] statistical terminology \ncontroversy\n>\n> Sung, Iyue wrote:\n> >\n> > I don't \nsee a controversy; it depends on the audience.\n>\n> I can't quite \nagree with that.  'Dependent' and 'independent'\n> datasets is not \nvalid terminology in any field that I know\n> of, especially \nstatistics.\n>\n> -Frank Harrell\n>\n> > \n> \n> Different fields use different terms for the same\n> statistical \nconcepts.\n> > So you'd use dependent/independent if you're speaking \nto\n> > statisticians; development/testing to meteorologist.\n> \n> \n> > I'm not even sure it'd be desirable to have the \nsame\n> statistical term\n> > used in all fields that uses \nstatistics (most, to be sure).\n> > That would probably make dry journal \narticles even drier.\n> > \n> > That's my $.02,\n> \n> - Iyue\n> > \n> >\n> >     \n*From:* s-news-owner at lists.biostat.wustl.edu\n> \n>     [mailto:s-news-owner at lists.biostat.wustl.edu] \n*On Behalf Of\n> >     *Lambert.Winnie\n> \n>     *Sent:* Wednesday, May 18, 2005 5:24 PM\n> \n>     *To:* S-PLUS Newsgroup\n> \n>     *Subject:* [S] statistical terminology \ncontroversy\n> >\n> >     * This is NOT an \nS-LUS-specific question, * just\n> letting you know so\n> \n>     you don't have to read any further if not \ninterested in anything\n> >     non-S-PLUS.\n> \n>\n> >     \n> >\n> \n>     There is a bit of a controversy in my office \nconcerning specific\n> >     statistical \nterminology. I developed a set of logistic\n> regression\n> \n>     equations that calculate the probability of \nlightning\n> occurrence for\n> >     the day \nusing a 15-year data set of several observation\n> types.  I\n> \n>     stratified the data into two sets: one was used to \ncreate the\n> >     equations, and the other was \nused to test the equations'\n> >     performance. In \nmy field, these are commonly called the\n> 'dependent'\n> \n>     and 'independent' data sets, respectively.\n> \n>\n> >     \n> >\n> \n>     One of us insists that the common terminology be \nused, the other\n> >     says the data sets should \nbe called 'development' and 'testing'\n> >     since \nthat is what they are used for, and since the terms\n> \n>     'dependent' and 'independent' refer to other issues \nin\n> statistics.\n> >\n> \n>     \n> >\n> \n>     Any statistics expert willing to jump into the fray \nis welcome.\n> >     There is no money riding on \nthis, only pride.\n> >\n> \n>     \n> >\n> \n>    \n> \n*****************************************************************\n> \n>\n> >     Winifred C. Lambert  Senior \nScientist/Meteorologist\n> >\n> >     ENSCO, \nInc.\n> >\n> >     Aerospace Sciences and \nEngineering Division\n> >\n> >     1980 N. \nAtlantic Ave., Suite 230\n> >\n> >     Cocoa \nBeach , FL   32931\n> >\n> >     \nVOICE:  321.853.8130  FAX:  321.853.8415\n> >\n> \n>     EMAIL:  lambert.winnie at ensco.com\n> \n<mailto:lambert.winnie at ensco.com>\n> \n>\n> >     \n> >\n> \n>     AMU Quarterly Reports are available online:\n> \n>\n> >     http://science.ksc.nasa.gov/amu\n> \n>\n> >    \n> \n*****************************************************************\n--------------------------------------------------------------------\nThis \nmessage was distributed by s-news at lists.biostat.wustl.edu.  \nTo\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu \nwith\nthe BODY of the message:  unsubscribe \ns-news",
       "body_snippet": "So it boils down to the \nquestion(s): Why do meteorolgists use the Dependent/Independent terminology? \nWhat do the 'dependent' data set depend on?\n\n \n\nGeir\n\n \n\nGeir Egil Eide\n\nBiostatistician, Associa",
-      "thread_id": "thread-7faa747a4fe3",
-      "thread_depth": 0,
+      "thread_id": "thread-c6dbad7248cb",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -2153,12 +2153,12 @@
       "date": "2005-05-19T12:56:29Z",
       "subject": "Re: problem entering factor data in GUI",
       "subject_clean": "problem entering factor data in GUI",
-      "in_reply_to": null,
+      "in_reply_to": "<428B7079.1060804@bio.ntnu.no>",
       "references": [],
       "body_plain": "Henrik,\n\nCheck that data entry buffering is off.\n\nSelect menu 'Options' | 'General Settings...' to show 'General Settings'\ndialogue, select 'Data' tab (second one), uncheck 'Buffer Data Entry'\ncheck box (fifth one down upper left side).\n\nDaveT.\n**********************************************************\nSilviculture Data Analyst\nOntario Forest Research Institute\nOntario Ministry of Natural Resources\nSault Ste. Marie, Ontario, Canada\ndavid.thompson at mnr.gov.on.ca\n**********************************************************\n\n>-----Original Message-----\n>From: Henrik Parn [mailto:henrik.parn at bio.ntnu.no] \n>Sent: May 18, 2005 12:43 PM\n>To: s-news at lists.biostat.wustl.edu\n>Subject: problem entering factor data in GUI\n>\n>\n>Dear S-Plus community,\n>\n>I have a data set with both numeric and factor columns. I try to add \n>some additional data to this data set, by entering them in a GUI data \n>window with the keyboard. Entering data in numerical columns \n>works fine, \n>but I have small problem with the factor columns;  for some reason \n>entering a value in factor columns fails on the first attempt; for \n>example when I enter a '1' in a factor column cell, press the right \n>direction key (or any other way to 'enter'), the '1' disappears and \n>turns into 'NA'. However, if I step back to the same 'NA-cell' \n>with the \n>left arrow and enter the same '1' again, it works.\n>\n>Thanks for any suggestions to solve this little problem!\n>\n>\n>Henrik\n>S-plus 6.2 for Windows, 12 Jan 2004\n>\n>-- \n>************************\n>Henrik Pärn\n>Department of Biology\n>NTNU\n>7491 Trondheim\n>Norway\n>\n>+47 735 96282 (office)\n>+47 909 89 255 (mobile)\n>+47 735 96100 (fax)\n>************************",
       "body_snippet": "Henrik,\n\nCheck that data entry buffering is off.\n\nSelect menu 'Options' | 'General Settings...' to show 'General Settings'\ndialogue, select 'Data' tab (second one), uncheck 'Buffer Data Entry'\ncheck b",
-      "thread_id": "thread-2ae414a4f52f",
-      "thread_depth": 0,
+      "thread_id": "thread-e8950755f1a2",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -2315,12 +2315,12 @@
       "date": "2005-05-19T23:20:08Z",
       "subject": "Re: how to write an ascii file from a dataframe",
       "subject_clean": "how to write an ascii file from a dataframe",
-      "in_reply_to": null,
+      "in_reply_to": "<E3FBCB35FBB8294A9B480A3B2DB73356384AE9@boa.edc3.pitt.edu>",
       "references": [],
       "body_plain": "Try exportData,\n\nFor example, if the variables are in the patients.var data frame:\n\nexportData(patients.vars, file=\"c:/test.txt\")\n\nwill create a comma delimited ASCII file. See in help for the arguments\nfor type, which specify other formats that you can export to.\n\nCheers,\n\nLuis\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nDr Luis A. Apiolaza\nPrincipal Forest Biometrician\nForestry Tasmania\nGPO Box 207\nHobart Tas 7001\nAustralia\n\nemail:    Luis.Apiolaza at forestrytas.com.au\nphone: +61-3-6233 8127\nweb:     http://www.forestrytas.com.au\n             http://uncronopio.org/luis\n\"All I want is a warm bed, a kind word,\n and unlimited power\" --Ashleigh Brilliant\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n>>> \"Im, Kelly\" <im at edc.pitt.edu> 20/05/2005 07:42:59 >>>\nHello,\n\nI can't seem to locate a function in splus (2000, windows) where I can\nwrite my results into a simple ascii file. I've got only 6 numeric\nvariables for 1000 some patients. Tried write(), dump(),\ndump.data(),dput(), but can't seem to make it look like a simple\nascii file which contains variables x1, x2, .. x6.  I must be missing\nsomething here. I'd appreciate any advice. Thank you,\n\nkelly im\n\n-----------------------------------------------------\nThis transmission is intended solely for the person or \norganisation to whom it is addressed.\nIt is confidential and may contain legally privileged \ninformation. If you have received this transmission in \nerror,you may not use, copy or distribute it.\nPlease advise us by return e-mail or by phoning 61 3 62338203 \nand immediately delete the transmission in its entirety.\nWe will meet your reasonable expenses of notifying us.\nDespite our use of anti-virus software, Forestry Tasmania \ncannot guarantee that this transmission is virus-free. \n-----------------------------------------------------",
       "body_snippet": "Try exportData,\n\nFor example, if the variables are in the patients.var data frame:\n\nexportData(patients.vars, file=\"c:/test.txt\")\n\nwill create a comma delimited ASCII file. See in help for the argumen",
-      "thread_id": "thread-8430d537eb50",
-      "thread_depth": 0,
+      "thread_id": "thread-229e3e47cb2e",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -2347,12 +2347,12 @@
       "date": "2005-05-20T17:09:22Z",
       "subject": "Re: tables in pdfs",
       "subject_clean": "tables in pdfs",
-      "in_reply_to": null,
+      "in_reply_to": "<20050520163712.88857.qmail@web50207.mail.yahoo.com>",
       "references": [],
       "body_plain": "Hi Joe\n\nFYI - you can do this with the Insightful S-PLUS Clinical Reporting Solution\nhttp://www.insightful.com/industry/pharm/development.asp\n\nThis solution has actually been picked up by folks in industries other than\nLife Sciences. It includes an S-PLUS library for writing out tables and\ngraphs into RTF->PDF. The SPXML library in S-PLUS 7 also includes tools for\nwriting out rtf tables via XML transforms e.g. heres some self-contained\ncode:\n\nmyObject <- sample[1:50]\n# Specify where to write our XML (file system name/location)\nmyXMLFile <- \"Example.xml\"\n# Write as XML\ncreateXMLFile(myObject, myXMLFile)\n# Set HTML filename (file system name/location)\nmyHTMLFile <- paste(getenv(\"S_PROJ\"), \"\\\\example.html\", sep=\"\")\n# Convert XML to HTML\nxml2html(myXMLFile, myHTMLFile)\n# Can easily go to other formats via wrapper functions\n# or underlying javaXMLTransform function\nxml2pdf(myXMLFile, \"H:\\myFile.pdf\")\njavaXMLTransform(myXMLFile, \"H:\\myFile.rtf\")\njavaXMLTransform(myXMLFile, \"H:\\myFile.ps\")\n\nThe S-PLUS RTF library included in the S-PLUS Clinical Reporting Solution\nprovides fine control of table styles, fonts etc. The SPXML library in S-PLUS\n7 allows simple production of generic tables. Both approaches have their\nstrong suits. There are other approaches to RTF/PDF reporting with S-PLUS\navailable through Insightful Prof Services. \n\ngoodluck!\n\nMichael\n\n-----Original Message-----\nFrom: Joe Cerniglia [mailto:cj5815 at yahoo.com]\nSent: Friday, May 20, 2005 12:37 PM\nTo: s-news at lists.biostat.wustl.edu\nSubject: [S] tables in pdfs\n\nI created a pdf that contains several graphs from\nSPLUS using pdf.Graph.  Is there a way add a matrix\n(as a table) in the same pdf.\n\nThanks,\n\nJoe\n\n                \n__________________________________ \nDo you Yahoo!? \nRead only the mail you want - Yahoo! Mail SpamGuard. \nhttp://promotions.yahoo.com/new_mail \n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Hi Joe\n\nFYI - you can do this with the Insightful S-PLUS Clinical Reporting Solution\nhttp://www.insightful.com/industry/pharm/development.asp\n\nThis solution has actually been picked up by folks in ind",
-      "thread_id": "thread-1d551344c978",
-      "thread_depth": 0,
+      "thread_id": "thread-1191274037d5",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -2429,12 +2429,12 @@
       "date": "2005-05-24T12:42:21Z",
       "subject": "Re: New to S-Plus and simple question (I hope)",
       "subject_clean": "New to S-Plus and simple question (I hope)",
-      "in_reply_to": null,
+      "in_reply_to": "<001601c5605a$6db4b650$6602a8c0@IBM03F534730B4>",
       "references": [],
       "body_plain": "That's easy. In the menu go to Window>History>Display.\n\nThierry\n\n--------------------------------------------------------\nir. Thierry Onkelinx\nInstituut voor Bosbouw en Wildbeheer / Institute of Forestry and Game\nManagement\nGaverstraat 4\n9500 Geraardsbergen\nBelgium\ntel. + 32 54 436 185\n \nDit is mijn nieuw e-mailadres / Please note my new email address:\nThierry.Onkelinx at inbo.be\nWebsite: http://ibw.inbo.be\n\n-----Oorspronkelijk bericht-----\nVan: s-news-owner at lists.biostat.wustl.edu\n[mailto:s-news-owner at lists.biostat.wustl.edu] Namens David Kaplan\nVerzonden: dinsdag 24 mei 2005 14:17\nAan: s-news at lists.biostat.wustl.edu\nOnderwerp: [S] New to S-Plus and simple question (I hope)\n\nHi,\n\nI am new to S-Plus and I have, what I hope, is a simple question.  When \nusing the S-Plus GUI, how to I get the program to also print out the \nrelevant command lines?  For example, if I ask for a graphic or a data \nsummary, I would like to also have the commands that created them.\nAlso, \ncan the commands be saved in such a way as to be able to use them later.\n\nFor example, if I write a special program for an analysis, I would like\nto \nsave that program to use later.  I can't seem to find how that is done.\n\nThanks in advance.\n\nDavid\n\n=====================================\nDavid Kaplan, PhD\nProfessor of Education\nSchool of Education\nUniversity of Delaware\nNewark DE 19716\n\nVoice:             302-831-8696\nFax:                302-831-4110\nemail:              mailto:dkaplan at udel.edu\nHomepage:     http://www.udel.edu/dkaplan\nSOE page:      http://www.udel.edu/educ\n======================================\n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "That's easy. In the menu go to Window>History>Display.\n\nThierry\n\n--------------------------------------------------------\nir. Thierry Onkelinx\nInstituut voor Bosbouw en Wildbeheer / Institute of Fores",
-      "thread_id": "thread-afddafb545ee",
-      "thread_depth": 0,
+      "thread_id": "thread-62295ecffaf4",
+      "thread_depth": 1,
       "month": "2005-05"
     },
     {
@@ -2905,12 +2905,12 @@
     {
       "id": "thread-c08cf0e88cdb",
       "subject": "Error in reading: \"data values\"",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Yingfu Xie"
       ],
       "started": "2005-05-02T15:10:58Z",
-      "last_reply": "2005-05-02T15:10:58Z",
+      "last_reply": "2005-05-03T07:37:08Z",
       "root_message_id": "msg-c08cf0e88cdb"
     },
     {
@@ -2946,17 +2946,6 @@
       "started": "2005-05-03T03:02:11Z",
       "last_reply": "2005-05-03T03:02:11Z",
       "root_message_id": "msg-50d337991dca"
-    },
-    {
-      "id": "thread-c73e66a893ca",
-      "subject": "Error in reading: \"data values\"",
-      "message_count": 1,
-      "participants": [
-        "Yingfu Xie"
-      ],
-      "started": "2005-05-03T07:37:08Z",
-      "last_reply": "2005-05-03T07:37:08Z",
-      "root_message_id": "msg-c73e66a893ca"
     },
     {
       "id": "thread-6467e2c37195",
@@ -3007,13 +2996,14 @@
     {
       "id": "thread-ed3a413a1ace",
       "subject": "Smoothing and disaggregating",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "David L Lorenz",
+        "Tim Hesterberg",
         "TzamouranisY at LouisDreyfus.com"
       ],
       "started": "2005-05-04T17:08:58Z",
-      "last_reply": "2005-05-05T12:56:10Z",
+      "last_reply": "2005-05-05T19:05:32Z",
       "root_message_id": "msg-ed3a413a1ace"
     },
     {
@@ -3037,17 +3027,6 @@
       "started": "2005-05-04T20:03:49Z",
       "last_reply": "2005-05-04T20:03:49Z",
       "root_message_id": "msg-5ad37546a894"
-    },
-    {
-      "id": "thread-271914239d8f",
-      "subject": "Smoothing and disaggregating",
-      "message_count": 1,
-      "participants": [
-        "Tim Hesterberg"
-      ],
-      "started": "2005-05-05T19:05:32Z",
-      "last_reply": "2005-05-05T19:05:32Z",
-      "root_message_id": "msg-271914239d8f"
     },
     {
       "id": "thread-eeeedcb40026",
@@ -3089,24 +3068,14 @@
     {
       "id": "thread-c45df38ba459",
       "subject": "Subdividing pairs plots",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "David Parkhurst"
-      ],
-      "started": "2005-05-06T14:12:56Z",
-      "last_reply": "2005-05-06T14:12:56Z",
-      "root_message_id": "msg-c45df38ba459"
-    },
-    {
-      "id": "thread-831dc9f84ba5",
-      "subject": "Subdividing pairs plots",
-      "message_count": 1,
-      "participants": [
+        "David Parkhurst",
         "Richard M. Heiberger"
       ],
-      "started": "2005-05-06T14:54:30Z",
+      "started": "2005-05-06T14:12:56Z",
       "last_reply": "2005-05-06T14:54:30Z",
-      "root_message_id": "msg-831dc9f84ba5"
+      "root_message_id": "msg-c45df38ba459"
     },
     {
       "id": "thread-8cda7d1edd31",
@@ -3190,26 +3159,16 @@
     {
       "id": "thread-39abe91f3a50",
       "subject": "Off-topic: Anocova of change scores with baseline",
-      "message_count": 3,
+      "message_count": 4,
       "participants": [
         "Alan Hochberg",
         "Frank E Harrell Jr",
+        "John Sorkin",
         "Lucke, Joseph F"
       ],
       "started": "2005-05-10T16:03:35Z",
       "last_reply": "2005-05-11T09:44:39Z",
       "root_message_id": "msg-39abe91f3a50"
-    },
-    {
-      "id": "thread-03e5239f8b46",
-      "subject": "Off-topic: Anocova of change scores with baseline",
-      "message_count": 1,
-      "participants": [
-        "John Sorkin"
-      ],
-      "started": "2005-05-10T17:41:29Z",
-      "last_reply": "2005-05-10T17:41:29Z",
-      "root_message_id": "msg-03e5239f8b46"
     },
     {
       "id": "thread-d9bc2c7af3b8",
@@ -3259,35 +3218,15 @@
     {
       "id": "thread-48d498cbf642",
       "subject": "question on lists",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
-        "Dave Evens"
-      ],
-      "started": "2005-05-11T16:52:42Z",
-      "last_reply": "2005-05-11T16:52:42Z",
-      "root_message_id": "msg-48d498cbf642"
-    },
-    {
-      "id": "thread-f689ca7f8d1b",
-      "subject": "question on lists",
-      "message_count": 1,
-      "participants": [
-        "Liaw, Andy"
-      ],
-      "started": "2005-05-11T17:08:30Z",
-      "last_reply": "2005-05-11T17:08:30Z",
-      "root_message_id": "msg-f689ca7f8d1b"
-    },
-    {
-      "id": "thread-9da4c23828db",
-      "subject": "question on lists",
-      "message_count": 1,
-      "participants": [
+        "Dave Evens",
+        "Liaw, Andy",
         "Richard M. Heiberger"
       ],
-      "started": "2005-05-11T17:18:30Z",
+      "started": "2005-05-11T16:52:42Z",
       "last_reply": "2005-05-11T17:18:30Z",
-      "root_message_id": "msg-9da4c23828db"
+      "root_message_id": "msg-48d498cbf642"
     },
     {
       "id": "thread-056218a1e963",
@@ -3303,13 +3242,19 @@
     {
       "id": "thread-43f7687e96a6",
       "subject": "seq(0, 1, .05)==0.15 doesn't work",
-      "message_count": 2,
+      "message_count": 9,
       "participants": [
         "Agin.Patrick at hydro.qc.ca",
-        "Prof Brian Ripley"
+        "Eric Archer",
+        "Jewel Bright",
+        "Luis Apiolaza",
+        "Prof Brian Ripley",
+        "Rolf Turner",
+        "TzamouranisY at LouisDreyfus.com",
+        "roger bos"
       ],
       "started": "2005-05-11T18:17:55Z",
-      "last_reply": "2005-05-11T18:46:56Z",
+      "last_reply": "2005-05-12T16:59:02Z",
       "root_message_id": "msg-43f7687e96a6"
     },
     {
@@ -3338,25 +3283,15 @@
     {
       "id": "thread-fdad91782c77",
       "subject": "last question of the week",
-      "message_count": 2,
+      "message_count": 4,
       "participants": [
         "Alan Zaslavsky",
-        "Leeds, Mark"
+        "Leeds, Mark",
+        "Liaw, Andy"
       ],
       "started": "2005-05-11T23:19:24Z",
-      "last_reply": "2005-05-11T23:37:09Z",
+      "last_reply": "2005-05-12T00:04:14Z",
       "root_message_id": "msg-fdad91782c77"
-    },
-    {
-      "id": "thread-da542f7e20d0",
-      "subject": "last question of the week",
-      "message_count": 1,
-      "participants": [
-        "Leeds, Mark"
-      ],
-      "started": "2005-05-11T23:29:58Z",
-      "last_reply": "2005-05-11T23:29:58Z",
-      "root_message_id": "msg-da542f7e20d0"
     },
     {
       "id": "thread-f147cfab317f",
@@ -3368,64 +3303,6 @@
       "started": "2005-05-11T23:39:07Z",
       "last_reply": "2005-05-11T23:39:07Z",
       "root_message_id": "msg-f147cfab317f"
-    },
-    {
-      "id": "thread-fb5bcc880b90",
-      "subject": "seq(0, 1, .05)==0.15 doesn't work",
-      "message_count": 2,
-      "participants": [
-        "Eric Archer",
-        "Luis Apiolaza"
-      ],
-      "started": "2005-05-11T23:41:37Z",
-      "last_reply": "2005-05-12T00:10:30Z",
-      "root_message_id": "msg-fb5bcc880b90"
-    },
-    {
-      "id": "thread-c8f43377a66f",
-      "subject": "last question of the week",
-      "message_count": 1,
-      "participants": [
-        "Liaw, Andy"
-      ],
-      "started": "2005-05-12T00:04:14Z",
-      "last_reply": "2005-05-12T00:04:14Z",
-      "root_message_id": "msg-c8f43377a66f"
-    },
-    {
-      "id": "thread-18285da71b8e",
-      "subject": "seq(0, 1, .05)==0.15 doesn't work",
-      "message_count": 1,
-      "participants": [
-        "TzamouranisY at LouisDreyfus.com"
-      ],
-      "started": "2005-05-12T11:15:26Z",
-      "last_reply": "2005-05-12T11:15:26Z",
-      "root_message_id": "msg-18285da71b8e"
-    },
-    {
-      "id": "thread-0954f41f020c",
-      "subject": "seq(0, 1, .05)==0.15 doesn't work",
-      "message_count": 2,
-      "participants": [
-        "Jewel Bright",
-        "roger bos"
-      ],
-      "started": "2005-05-12T11:26:49Z",
-      "last_reply": "2005-05-12T13:23:17Z",
-      "root_message_id": "msg-0954f41f020c"
-    },
-    {
-      "id": "thread-1558d53c83ef",
-      "subject": "seq(0, 1, .05)==0.15 doesn't work",
-      "message_count": 2,
-      "participants": [
-        "Eric Archer",
-        "Rolf Turner"
-      ],
-      "started": "2005-05-12T11:38:34Z",
-      "last_reply": "2005-05-12T16:59:02Z",
-      "root_message_id": "msg-1558d53c83ef"
     },
     {
       "id": "thread-f4aacc8e7b6a",
@@ -3453,57 +3330,38 @@
     {
       "id": "thread-b39390af9371",
       "subject": "Interpreting glmmpql results.",
-      "message_count": 1,
+      "message_count": 4,
       "participants": [
-        "Clegg, Philip"
+        "Clegg, Philip",
+        "Michael O'Connell",
+        "Thomas Jagger"
       ],
       "started": "2005-05-12T15:20:13Z",
-      "last_reply": "2005-05-12T15:20:13Z",
+      "last_reply": "2005-05-17T16:37:48Z",
       "root_message_id": "msg-b39390af9371"
     },
     {
       "id": "thread-c0c39f64ebbe",
       "subject": "Apology",
-      "message_count": 1,
-      "participants": [
-        "Prof Brian Ripley"
-      ],
-      "started": "2005-05-12T17:19:39Z",
-      "last_reply": "2005-05-12T17:19:39Z",
-      "root_message_id": "msg-c0c39f64ebbe"
-    },
-    {
-      "id": "thread-fcd043fc6cfa",
-      "subject": "Apology",
-      "message_count": 1,
-      "participants": [
-        "TzamouranisY at LouisDreyfus.com"
-      ],
-      "started": "2005-05-12T17:35:18Z",
-      "last_reply": "2005-05-12T17:35:18Z",
-      "root_message_id": "msg-fcd043fc6cfa"
-    },
-    {
-      "id": "thread-8866e6870f3d",
-      "subject": "Interpreting glmmpql results.",
       "message_count": 2,
       "participants": [
-        "Michael O'Connell",
-        "Thomas Jagger"
+        "Prof Brian Ripley",
+        "TzamouranisY at LouisDreyfus.com"
       ],
-      "started": "2005-05-12T17:44:27Z",
-      "last_reply": "2005-05-12T19:12:54Z",
-      "root_message_id": "msg-8866e6870f3d"
+      "started": "2005-05-12T17:19:39Z",
+      "last_reply": "2005-05-12T17:35:18Z",
+      "root_message_id": "msg-c0c39f64ebbe"
     },
     {
       "id": "thread-7017c3308f11",
       "subject": "One possible way to improve interactions on the S-news list",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Chuanpu.Hu at sanofi-aventis.com",
         "R. P. Channing [\"Rick\"] Rodgers"
       ],
       "started": "2005-05-12T18:35:35Z",
-      "last_reply": "2005-05-12T18:35:35Z",
+      "last_reply": "2005-05-12T19:26:00Z",
       "root_message_id": "msg-7017c3308f11"
     },
     {
@@ -3518,38 +3376,16 @@
       "root_message_id": "msg-bb37bb832a69"
     },
     {
-      "id": "thread-26ae10c316d1",
-      "subject": "One possible way to improve interactions on the S-news list",
-      "message_count": 1,
-      "participants": [
-        "Chuanpu.Hu at sanofi-aventis.com"
-      ],
-      "started": "2005-05-12T19:26:00Z",
-      "last_reply": "2005-05-12T19:26:00Z",
-      "root_message_id": "msg-26ae10c316d1"
-    },
-    {
       "id": "thread-2ce7e14182e7",
       "subject": "statistic for sequences",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Francisco J. Zagmutt",
         "tonicrac"
       ],
       "started": "2005-05-12T23:29:45Z",
-      "last_reply": "2005-05-13T01:58:55Z",
-      "root_message_id": "msg-2ce7e14182e7"
-    },
-    {
-      "id": "thread-2064f7fdea3a",
-      "subject": "statistic for sequences",
-      "message_count": 1,
-      "participants": [
-        "tonicrac"
-      ],
-      "started": "2005-05-13T02:46:55Z",
       "last_reply": "2005-05-13T02:46:55Z",
-      "root_message_id": "msg-2064f7fdea3a"
+      "root_message_id": "msg-2ce7e14182e7"
     },
     {
       "id": "thread-7ed4ca411cfc",
@@ -3565,26 +3401,16 @@
     {
       "id": "thread-e1af2f211d59",
       "subject": "SEs from lm",
-      "message_count": 3,
+      "message_count": 4,
       "participants": [
         "Chuck Cleland",
         "John Sorkin",
+        "ONKELINX, Thierry",
         "Thomas D. Fletcher"
       ],
       "started": "2005-05-13T11:19:00Z",
       "last_reply": "2005-05-13T13:04:35Z",
       "root_message_id": "msg-e1af2f211d59"
-    },
-    {
-      "id": "thread-6977205e1c98",
-      "subject": "SEs from lm",
-      "message_count": 1,
-      "participants": [
-        "ONKELINX, Thierry"
-      ],
-      "started": "2005-05-13T11:44:31Z",
-      "last_reply": "2005-05-13T11:44:31Z",
-      "root_message_id": "msg-6977205e1c98"
     },
     {
       "id": "thread-fb67b5c88161",
@@ -3622,20 +3448,22 @@
     {
       "id": "thread-dca2fb717f02",
       "subject": "Auto point numbering with plot(x,y)",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Alan Zaslavsky",
-        "David Parkhurst"
+        "David Parkhurst",
+        "Greg Snow"
       ],
       "started": "2005-05-15T15:51:13Z",
-      "last_reply": "2005-05-15T18:11:19Z",
+      "last_reply": "2005-05-16T16:08:29Z",
       "root_message_id": "msg-dca2fb717f02"
     },
     {
       "id": "thread-b6ba149c2425",
       "subject": "Padding out a vector of characters to a constant width",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
+        "Alan Zaslavsky",
         "Glenn.Treacy at ILIM.COM",
         "Thomas Jagger"
       ],
@@ -3644,48 +3472,16 @@
       "root_message_id": "msg-b6ba149c2425"
     },
     {
-      "id": "thread-75a016702ca7",
-      "subject": "Auto point numbering with plot(x,y)",
-      "message_count": 1,
-      "participants": [
-        "Greg Snow"
-      ],
-      "started": "2005-05-16T16:08:29Z",
-      "last_reply": "2005-05-16T16:08:29Z",
-      "root_message_id": "msg-75a016702ca7"
-    },
-    {
-      "id": "thread-5960d8992764",
-      "subject": "Padding out a vector of characters to a constant width",
-      "message_count": 1,
-      "participants": [
-        "Alan Zaslavsky"
-      ],
-      "started": "2005-05-16T17:30:24Z",
-      "last_reply": "2005-05-16T17:30:24Z",
-      "root_message_id": "msg-5960d8992764"
-    },
-    {
       "id": "thread-f7088e9740a0",
       "subject": "Stripping time column from time series",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Horace Tso",
         "Tang, Roy Haicheng (Corp Credit - NY)"
       ],
       "started": "2005-05-16T20:18:32Z",
-      "last_reply": "2005-05-16T20:18:32Z",
-      "root_message_id": "msg-f7088e9740a0"
-    },
-    {
-      "id": "thread-a6e72465fa51",
-      "subject": "Stripping time column from time series",
-      "message_count": 1,
-      "participants": [
-        "Horace Tso"
-      ],
-      "started": "2005-05-16T20:23:20Z",
       "last_reply": "2005-05-16T20:23:20Z",
-      "root_message_id": "msg-a6e72465fa51"
+      "root_message_id": "msg-f7088e9740a0"
     },
     {
       "id": "thread-60ef305e4f52",
@@ -3722,17 +3518,6 @@
       "root_message_id": "msg-62ab972ac858"
     },
     {
-      "id": "thread-7a84b449a20a",
-      "subject": "Interpreting glmmpql results.",
-      "message_count": 1,
-      "participants": [
-        "Michael O'Connell"
-      ],
-      "started": "2005-05-17T16:37:48Z",
-      "last_reply": "2005-05-17T16:37:48Z",
-      "root_message_id": "msg-7a84b449a20a"
-    },
-    {
       "id": "thread-a0ac853fc4d9",
       "subject": "New course***Advanced Statistical Modelling in R/S-plus",
       "message_count": 1,
@@ -3746,12 +3531,13 @@
     {
       "id": "thread-50b0e8a13639",
       "subject": "loops & importing files",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Joe Cerniglia"
+        "Joe Cerniglia",
+        "ONKELINX, Thierry"
       ],
       "started": "2005-05-17T18:42:05Z",
-      "last_reply": "2005-05-17T18:42:05Z",
+      "last_reply": "2005-05-18T07:56:02Z",
       "root_message_id": "msg-50b0e8a13639"
     },
     {
@@ -3781,12 +3567,13 @@
     {
       "id": "thread-f67de7d450bd",
       "subject": "another list/vector question",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
-        "Leeds, Mark"
+        "Leeds, Mark",
+        "Richard M. Heiberger"
       ],
       "started": "2005-05-18T04:14:51Z",
-      "last_reply": "2005-05-18T04:14:51Z",
+      "last_reply": "2005-05-18T13:32:02Z",
       "root_message_id": "msg-f67de7d450bd"
     },
     {
@@ -3814,39 +3601,6 @@
       "root_message_id": "msg-9f54903491f3"
     },
     {
-      "id": "thread-469cc84d715e",
-      "subject": "loops & importing files",
-      "message_count": 1,
-      "participants": [
-        "ONKELINX, Thierry"
-      ],
-      "started": "2005-05-18T07:56:02Z",
-      "last_reply": "2005-05-18T07:56:02Z",
-      "root_message_id": "msg-469cc84d715e"
-    },
-    {
-      "id": "thread-e49ce63f7bb2",
-      "subject": "another list/vector question",
-      "message_count": 1,
-      "participants": [
-        "Richard M. Heiberger"
-      ],
-      "started": "2005-05-18T13:25:49Z",
-      "last_reply": "2005-05-18T13:25:49Z",
-      "root_message_id": "msg-e49ce63f7bb2"
-    },
-    {
-      "id": "thread-c36417e20d8f",
-      "subject": "another list/vector question",
-      "message_count": 1,
-      "participants": [
-        "Richard M. Heiberger"
-      ],
-      "started": "2005-05-18T13:32:02Z",
-      "last_reply": "2005-05-18T13:32:02Z",
-      "root_message_id": "msg-c36417e20d8f"
-    },
-    {
       "id": "thread-3dc24bd707c9",
       "subject": "reply's from my vector/list question",
       "message_count": 1,
@@ -3860,82 +3614,32 @@
     {
       "id": "thread-e8950755f1a2",
       "subject": "problem entering factor data in GUI",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Henrik Parn"
+        "Henrik Parn",
+        "Thompson, David (MNR)"
       ],
       "started": "2005-05-18T16:42:33Z",
-      "last_reply": "2005-05-18T16:42:33Z",
+      "last_reply": "2005-05-19T12:56:29Z",
       "root_message_id": "msg-e8950755f1a2"
     },
     {
       "id": "thread-c6dbad7248cb",
       "subject": "statistical terminology controversy",
-      "message_count": 2,
+      "message_count": 9,
       "participants": [
+        "Frank E Harrell Jr",
+        "Geir Eide",
+        "Horace Tso",
         "Lambert.Winnie",
+        "Lucke, Joseph F",
+        "Ravi Varadhan",
+        "Sung, Iyue",
         "Tony Plate"
       ],
       "started": "2005-05-18T21:23:59Z",
-      "last_reply": "2005-05-18T21:54:00Z",
-      "root_message_id": "msg-c6dbad7248cb"
-    },
-    {
-      "id": "thread-27596736cc23",
-      "subject": "statistical terminology controversy",
-      "message_count": 2,
-      "participants": [
-        "Lucke, Joseph F",
-        "Ravi Varadhan"
-      ],
-      "started": "2005-05-18T21:45:47Z",
-      "last_reply": "2005-05-18T21:48:53Z",
-      "root_message_id": "msg-27596736cc23"
-    },
-    {
-      "id": "thread-f9b9a5ced042",
-      "subject": "statistical terminology controversy",
-      "message_count": 1,
-      "participants": [
-        "Horace Tso"
-      ],
-      "started": "2005-05-18T21:59:14Z",
-      "last_reply": "2005-05-18T21:59:14Z",
-      "root_message_id": "msg-f9b9a5ced042"
-    },
-    {
-      "id": "thread-f9b8276f0da6",
-      "subject": "statistical terminology controversy",
-      "message_count": 2,
-      "participants": [
-        "Frank E Harrell Jr",
-        "Sung, Iyue"
-      ],
-      "started": "2005-05-19T01:50:39Z",
-      "last_reply": "2005-05-19T02:54:32Z",
-      "root_message_id": "msg-f9b8276f0da6"
-    },
-    {
-      "id": "thread-e5282af2dacc",
-      "subject": "statistical terminology controversy",
-      "message_count": 1,
-      "participants": [
-        "Sung, Iyue"
-      ],
-      "started": "2005-05-19T03:25:15Z",
-      "last_reply": "2005-05-19T03:25:15Z",
-      "root_message_id": "msg-e5282af2dacc"
-    },
-    {
-      "id": "thread-7faa747a4fe3",
-      "subject": "statistical terminology controversy",
-      "message_count": 1,
-      "participants": [
-        "Geir Eide"
-      ],
-      "started": "2005-05-19T06:53:52Z",
       "last_reply": "2005-05-19T06:53:52Z",
-      "root_message_id": "msg-7faa747a4fe3"
+      "root_message_id": "msg-c6dbad7248cb"
     },
     {
       "id": "thread-9926c7272646",
@@ -3948,17 +3652,6 @@
       "started": "2005-05-19T09:50:50Z",
       "last_reply": "2005-05-19T10:39:19Z",
       "root_message_id": "msg-9926c7272646"
-    },
-    {
-      "id": "thread-2ae414a4f52f",
-      "subject": "problem entering factor data in GUI",
-      "message_count": 1,
-      "participants": [
-        "Thompson, David (MNR)"
-      ],
-      "started": "2005-05-19T12:56:29Z",
-      "last_reply": "2005-05-19T12:56:29Z",
-      "root_message_id": "msg-2ae414a4f52f"
     },
     {
       "id": "thread-3cae8b80fd90",
@@ -4042,46 +3735,26 @@
     {
       "id": "thread-229e3e47cb2e",
       "subject": "how to write an ascii file from a dataframe",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Im, Kelly"
-      ],
-      "started": "2005-05-19T21:42:59Z",
-      "last_reply": "2005-05-19T21:42:59Z",
-      "root_message_id": "msg-229e3e47cb2e"
-    },
-    {
-      "id": "thread-8430d537eb50",
-      "subject": "how to write an ascii file from a dataframe",
-      "message_count": 1,
-      "participants": [
+        "Im, Kelly",
         "Luis Apiolaza"
       ],
-      "started": "2005-05-19T23:20:08Z",
+      "started": "2005-05-19T21:42:59Z",
       "last_reply": "2005-05-19T23:20:08Z",
-      "root_message_id": "msg-8430d537eb50"
+      "root_message_id": "msg-229e3e47cb2e"
     },
     {
       "id": "thread-1191274037d5",
       "subject": "tables in pdfs",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Joe Cerniglia"
-      ],
-      "started": "2005-05-20T16:37:12Z",
-      "last_reply": "2005-05-20T16:37:12Z",
-      "root_message_id": "msg-1191274037d5"
-    },
-    {
-      "id": "thread-1d551344c978",
-      "subject": "tables in pdfs",
-      "message_count": 1,
-      "participants": [
+        "Joe Cerniglia",
         "Michael O'Connell"
       ],
-      "started": "2005-05-20T17:09:22Z",
+      "started": "2005-05-20T16:37:12Z",
       "last_reply": "2005-05-20T17:09:22Z",
-      "root_message_id": "msg-1d551344c978"
+      "root_message_id": "msg-1191274037d5"
     },
     {
       "id": "thread-7b651d793c35",
@@ -4109,24 +3782,14 @@
     {
       "id": "thread-62295ecffaf4",
       "subject": "New to S-Plus and simple question (I hope)",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "David Kaplan"
-      ],
-      "started": "2005-05-24T12:16:34Z",
-      "last_reply": "2005-05-24T12:16:34Z",
-      "root_message_id": "msg-62295ecffaf4"
-    },
-    {
-      "id": "thread-afddafb545ee",
-      "subject": "New to S-Plus and simple question (I hope)",
-      "message_count": 1,
-      "participants": [
+        "David Kaplan",
         "ONKELINX, Thierry"
       ],
-      "started": "2005-05-24T12:42:21Z",
+      "started": "2005-05-24T12:16:34Z",
       "last_reply": "2005-05-24T12:42:21Z",
-      "root_message_id": "msg-afddafb545ee"
+      "root_message_id": "msg-62295ecffaf4"
     },
     {
       "id": "thread-f3c7329783c0",

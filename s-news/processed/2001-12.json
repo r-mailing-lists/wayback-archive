@@ -349,12 +349,12 @@
       "date": "2001-12-03T19:33:02Z",
       "subject": "FW: How to drop unused factor levels in Splus6 (again)?",
       "subject_clean": "How to drop unused factor levels in Splus6 (again)?",
-      "in_reply_to": null,
+      "in_reply_to": "<0E21AA045067D211A2F300A02461F7A004AB0546@MCDC-ATL-51>",
       "references": [],
       "body_plain": "Hi, Bill Dunlap provided that clue that has solved my problem.\nAfter reading chapter 10 of the S+ Programmer's Guide, and some\npoking around in the code, I made my own copy of Dr Harrell's\nversion of the function \"[.data.frame\". In line 79 I changed\n\nxj <- (if(length(dim(xj)) == 2) xj[i,  , drop = F] else xj[i]);\n\nto\n\nxj <- (if(length(dim(xj)) == 2) xj[i,  , drop = F] else xj[i,drop=T])\n\nNow the unused levels disappear as they did in Splus2000.\n\nThanks very much to everyone who responded, especially Bill Dunlap\nof Insightful and Frank Harrell.\n\n-Bob Byers\n\n-----Original Message-----\nFrom: Bill Dunlap [mailto:bill at insightful.com]\nSent: Monday, December 03, 2001 11:37 AM\nTo: Byers, Bob\nCc: fharrell at virginia.edu\nSubject: Re: [S]How to drop unused factor levels in Splus6 (again)?\n\nOn Mon, 3 Dec 2001, Byers, Bob wrote:\n\n> So the level \"WPV 20425\" for factor ID and the level \"E\" for SEROTYPE have\n> disappeared. This is what I want to happen.\n> But under Splus 6:\n>\n> S-PLUS : Copyright (c) 1988, 2001 Insightful Corp.\n> S : Copyright Lucent Technologies, Inc.\n> Professional Edition Version 6.0.3 Release 2 for Microsoft Windows : 2001\n> Hmisc library by Frank E Harrell Jr, Tue Jul 24 19:35:55 PDT 2001\n>\n> This library is provided by FE Harrell <fharrell at virginia.edu>.\n> It is not supported by Insightful Corp.\n> Type library(Hmisc, help=T) to view the readme file for the Hmisc library.\n> Hmisc redefines [.factor to drop unused levels of factor variables\n> when subscripting. To prevent this behavior, issue the command\n> options(drop.unused.levels=F). You must use\n> options(drop.unused.levels=F) for multicomp to calculate correctly.\n\nIf I understand you correctly, your basic problem is that Hmisc's\nsubscripting method for factor is not being used.  I haven't looked at\nHmisc recently, but it may be because the subscripting method is not\nbeing installed with setMethod(), as is required for \"SV4-style\"\nmethods (Splus6 is based on S version 4, which has a new generic\nfunction/method system.)\n\nSplus 6 is shipped with new-style [ methods for factors and ordered factors:\n\n   > showMethods(\"[\")\n         Database                 x\n    [1,] \"main\"   \"ANY\"\n    [2,] \"splus\"  \"Matrix\"\n    [3,] \"splus\"  \"Surv\"\n    [4,] \"splus\"  \"data.frame\"\n    [5,] \"splus\"  \"pframe\"\n    [6,] \"splus\"  \"factor\"\n    [7,] \"splus\"  \"ordered\"\n    ...\n\nand you need to use setMethod to override one of these.  Use something\nlike\n    setMethod(\"[\", \"factor\", yourfunction, where=\"Hmisc\")\n    setMethod(\"[\", \"ordered\", yourfunction, where=\"Hmisc\")\nto install them.  Look at the current methods with getMethod(\"[\",\"factor\"),\netc.  You may find it better to alter them than to install the old Hmisc\n[.factor, as some of the rules about default values in methods have\nchanged.  You need to install the method for factors and ordered\nfactors since the new-style method-dispatch method doesn't follow the\nold-style inheritance.\n\n----------------------------------------------------------------------------\nBill Dunlap                                      22461 Mt Vernon-Big Lake Rd\nInsightful Corporation                           Mount Vernon, WA 98274\nbill at insightful.com                              360-428-8146\n \"Formerly known as MathSoft, Insightful Corporation provides analytical\n solutions leveraging S-PLUS, StatServer, S-PLUS Analytic Server and\n consulting services.\"\n\n \"All statements in this message represent the opinions of the author and do\n not necessarily reflect Insightful Corporation policy or position.\"",
       "body_snippet": "Hi, Bill Dunlap provided that clue that has solved my problem.\nAfter reading chapter 10 of the S+ Programmer's Guide, and some\npoking around in the code, I made my own copy of Dr Harrell's\nversion of ",
-      "thread_id": "thread-6f56be7ecce3",
-      "thread_depth": 0,
+      "thread_id": "thread-a4877e41cf79",
+      "thread_depth": 1,
       "month": "2001-12"
     },
     {
@@ -397,12 +397,12 @@
       "date": "2001-12-04T13:47:19Z",
       "subject": "Re: problems with dyn.load",
       "subject_clean": "problems with dyn.load",
-      "in_reply_to": null,
+      "in_reply_to": "<sc0cc442.083@wpo.nerc.ac.uk>",
       "references": [],
       "body_plain": "> c7<-seq(1,10)\n> c5<-seq(10,1)\n> c8<-seq(2,11)\n> dyn.load(\"c:/arloop.obj\")\n> ## Call Fortran subroutine to perform looping\n> calc<-.Fortran(\"arloop\", c7=as.double(c7), c5=as.double(c5),\n>                 c8=as.double(c8), N=as.integer(N))\n\nDid you define N ?\nWhat is the sequence of arguments for your fortran routine?\nShould N be the first argument because it describes the dimension of\narrays?\n\nAndreas\n=======================================\nDr. Andreas Christmann\nUniversitaet Dortmund\nHochschulrechenzentrum\nWissenschaftliche Anwendungen\nD-44221 Dortmund\nGERMANY\nemail  A.Christmann at hrz.uni-dortmund.de\nphone  (049)-231-755-2763\nfax    (049)-231-755-2731\n=======================================",
       "body_snippet": "> c7<-seq(1,10)\n> c5<-seq(10,1)\n> c8<-seq(2,11)\n> dyn.load(\"c:/arloop.obj\")\n> ## Call Fortran subroutine to perform looping\n> calc<-.Fortran(\"arloop\", c7=as.double(c7), c5=as.double(c5),\n>            ",
-      "thread_id": "thread-afd5ce7c5cc0",
-      "thread_depth": 0,
+      "thread_id": "thread-263a28dd3f52",
+      "thread_depth": 1,
       "month": "2001-12"
     },
     {
@@ -413,12 +413,12 @@
       "date": "2001-12-04T15:50:33Z",
       "subject": "Re: problems with dyn.load",
       "subject_clean": "problems with dyn.load",
-      "in_reply_to": null,
+      "in_reply_to": "<sc0cc442.083@wpo.nerc.ac.uk>",
       "references": [],
       "body_plain": "Further to my previous message about dyn.load. The problem seems to be to do \nwith the naming of \npassed arguments. The command:-\n\ncalc<-.Fortran(\"ARLOOP\",   as.integer(N), c7=as.double(c7), c5=as.double(c5), \nc8=as.double(c8))\n\nworks whereas\n\ncalc<-.Fortran(\"ARLOOP\", N=as.integer(N), c7=as.double(c7), c5=as.double(c5), \nc8=as.double(c8))\n\ndoesn't. This seems odd (to me at least). Anyone know why this happens?\n\nAndy",
       "body_snippet": "Further to my previous message about dyn.load. The problem seems to be to do \nwith the naming of \npassed arguments. The command:-\n\ncalc<-.Fortran(\"ARLOOP\",   as.integer(N), c7=as.double(c7), c5=as.dou",
-      "thread_id": "thread-3f3dad05a6cd",
-      "thread_depth": 0,
+      "thread_id": "thread-263a28dd3f52",
+      "thread_depth": 1,
       "month": "2001-12"
     },
     {
@@ -435,8 +435,8 @@
       ],
       "body_plain": "On Tue, 4 Dec 2001, Andy Scott wrote:\n\n> Further to my previous message about dyn.load. The problem seems to be to do \n> with the naming of\n> passed arguments. The command:-\n>\n> calc<-.Fortran(\"ARLOOP\",   as.integer(N), c7=as.double(c7), c5=as.double(c5), \n> c8=as.double(c8))\n>\n> works whereas\n>\n> calc<-.Fortran(\"ARLOOP\", N=as.integer(N), c7=as.double(c7), c5=as.double(c5), \n> c8=as.double(c8))\n>\n> doesn't. This seems odd (to me at least). Anyone know why this happens?\n\nTry (here 6.0 on Linux)\n\n> args(.Fortran)\nfunction(NAME, ..., NAOK = F, specialsok = F, COPY = NULL, CLASSES = NULL)\n\nso you need to use NAME=\"ARLOOP\" or partial matching gets you ...\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595",
       "body_snippet": "On Tue, 4 Dec 2001, Andy Scott wrote:\n\n> Further to my previous message about dyn.load. The problem seems to be to do \n> with the naming of\n> passed arguments. The command:-\n>\n> calc<-.Fortran(\"ARLOOP",
-      "thread_id": "thread-3f3dad05a6cd",
-      "thread_depth": 1,
+      "thread_id": "thread-263a28dd3f52",
+      "thread_depth": 2,
       "month": "2001-12"
     },
     {
@@ -545,12 +545,12 @@
       "date": "2001-12-05T03:00:17Z",
       "subject": "Re: A bug in Splus6",
       "subject_clean": "A bug in Splus6",
-      "in_reply_to": null,
+      "in_reply_to": "<001a01c17d04$fd122310$95a81eac@BSTE3005>",
       "references": [],
       "body_plain": "Thanks to David Smith and Nick Ellis for their \nquick responses.\n\n \n\nThey both pointed out that  S-PLUS 6 contains an improvement to \"apply\" to make it \nrun faster, but it doesn't consider the case where the intention of the \niterating function is to only use the side effects, but not to return any \nvalue.  \n\nThe solution to the problem is to return a value \nsuch as in the following command:\n\n \n\napply(lamda,2,function(x){hist(x,prob=T); lines(density(x)); 1})\n\n \n\nBest,\n\nRavi.\n\n>     -----Original Message-----\n> From:\n>     Ravi Varadhan <rvaradha at jhsph.edu>\n> To: s-news at lists.biostat.wustl.edu\n>     <s-news at lists.biostat.wustl.edu>\n> Date:\n>     Tuesday, December 04, 2001 3:37 PM\n> Subject: [S] A bug in\n>     Splus6\n>\n>\n>\n>     Hi:\n>\n>\n>\n>     I am using Splus6 Rlease 2 on Windows 2000. I\n>     have a Pentium III processor.  I am trying to obtain a series of\n>     histogram plots with kernel density estimates superimposed using the\n>     following command:\n>\n>\n>\n>     apply(lamda,2,function(x){hist(x,prob=T); lines(density(x))})\n>\n>\n>\n>     where \"lamda\" is a matrix with 10\n>     columns.  Instead of getting 10 plots, I get 11 plots, where the first\n>     and second plots are identical.  When I plot w/o the kernel density\n>     estimate I obtain 12 plots of histograms, where the first two are again\n>     identical.  This problem does not occur in Splus2000.\n>\n>\n>\n>\n>     Can someone tell me why this \"bug\"\n>     occurs?\n>\n>\n>\n>\n>     Here is the entire code:\n>\n>\n>\n>     pump.fail <- data.frame(failure =\n>     c(5,1,5,14,3,19,1,1,4,22),\n>\n>     time =\n>     c(94.32,15.72,62.88,125.76,5.24,31.44,1.05,1.05,2.10,10.48))\n>\n>     nsim <- 5000\n>\n>     alpha <- 1.8\n>\n>     gamma <- 0.01\n>\n>     delta <- 1.0\n>\n>     nvar <- nrow(pump.fail)\n>\n>     beta <- rep(0, nsim)\n>\n>     lamda <- matrix(0, nrow=nsim,\n>     ncol=nvar)\n>\n>     beta[1] <- rgamma(n=1, shape=gamma,\n>     rate=delta)\n>\n>     lamda[1, ] <-\n>     pump.fail$failure/pump.fail$time\n>\n>     for (i in 2:nsim){\n>\n>     beta[i] <- rgamma(n=1, shape =\n>     nvar*alpha + gamma, rate = delta + sum(lamda[i-1, ]))\n>\n>     lamda[i, ] <- rgamma(n=nvar, shape =\n>     pump.fail$failure + alpha, rate = pump.fail$time + beta[i])\n>\n>     }\n>\n>     par(mfrow=c(5,2))\n>\n>     apply(lamda,2,function(x){hist(x,prob=T);\n>     lines(density(x))})\n>\n>\n>",
       "body_snippet": "Thanks to David Smith and Nick Ellis for their \nquick responses.\n\n \n\nThey both pointed out that  S-PLUS 6 contains an improvement to \"apply\" to make it \nrun faster, but it doesn't consider the case wh",
-      "thread_id": "thread-a95a93601a02",
-      "thread_depth": 0,
+      "thread_id": "thread-83d36af2dd75",
+      "thread_depth": 1,
       "month": "2001-12"
     },
     {
@@ -585,6 +585,22 @@
       "body_snippet": "On Wed, 5 Dec 2001, vito muggeo wrote:\n\n> Dear all,\n> I've written some function where global assignements are requested,\n> for instance:\n> fn<-function(....){\n> x<<-....\n> y<<-....\n> ....\n> rm(x,y, w",
       "thread_id": "thread-4c66977a7f78",
       "thread_depth": 1,
+      "month": "2001-12"
+    },
+    {
+      "id": "msg-cad24bc8b2f0",
+      "message_id": "<38269C04.59DFC3FE@beykent.edu.tr>",
+      "from_name": "Kenan Gocer",
+      "from_email_hash": "ffc695fb6c80f0f5697f537f64ee3ba137d09eb9d8c38b84ba3bd40639c51e31",
+      "date": "2001-12-05T09:22:09Z",
+      "subject": "FOR MULTIVARIATE DISTRIBUTION TESTING",
+      "subject_clean": "FOR MULTIVARIATE DISTRIBUTION TESTING",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "hi\n KENAN GÖÇER FROM  ISTANBUL\nYOU CAN USE MULTIPLE REGRESION,  SAVE SELECT MAHALONOBIS DISTRUBITION\nTHAN  CHI SQUARE TESTING",
+      "body_snippet": "hi\n KENAN GÖÇER FROM  ISTANBUL\nYOU CAN USE MULTIPLE REGRESION,  SAVE SELECT MAHALONOBIS DISTRUBITION\nTHAN  CHI SQUARE TESTING",
+      "thread_id": "thread-cad24bc8b2f0",
+      "thread_depth": 0,
       "month": "2001-12"
     },
     {
@@ -679,12 +695,12 @@
       "date": "2001-12-05T15:46:25Z",
       "subject": "Re: Modifying lowess to yield quantiles",
       "subject_clean": "Modifying lowess to yield quantiles",
-      "in_reply_to": null,
+      "in_reply_to": "<200112042131.fB4LVYh25406@spidey.speakeasy.net>",
       "references": [],
       "body_plain": "But doesn't that assume that lowess is estimating an actual quantile (say\nthe median)?  It does *not*, if the conditional distribution is skewed.\n\nAndy\n\n> -----Original Message-----\n> From: Anne York [mailto:anne.york at noaa.gov]\n> Sent: Wednesday, December 05, 2001 10:37 AM\n> To: ebellin at speakeasy.net; s-news at lists.biostat.wustl.edu\n> Subject: Re: [S] Modifying lowess to yield quantiles\n> \n> \n> \n> I have seen an application similar to what you are requesting for\n> moderately large data sets. THe idea is to fit a smooth, e.g. loess or\n> other, then fit a smooth to the points below the the original \n> smooth and\n> another to those above it. With sufficient data, one could do this\n> several times. Potentially, this method could be used to examine\n> patterns in residuals from any model. \n> \n> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n> Anne E. York\n> National Marine Mammal Laboratory\n> Seattle WA 98115-0070  USA\n> e-mail: anne.york at noaa.gov\n> Voice: +1 206-526-4039\n> Fax: +1 206-526-6615\n> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n> \n> ebellin at speakeasy.net wrote:\n> > \n> > To the group:\n> > \n> > The lowess smoother is a particularly attractive method of \n> displaying the central tendency of data at each point along a \n> continuous scale.  It creates a mean of response variables at \n> each x axis value allowing responses from neighboring x \n> values to impact on the predicted value.  This influence \n> attenuates as x value becomes more distant.\n> > \n> > My question is this:\n> > \n> > Does anyone know how to get the lowess function or some \n> function like it generate a 25th quantile for binned values \n> around the x axis points which can then be used to draw a \n> line to represent a lowess like 25th quantile line.\n> > \n> > I would like to represent the 25th quantile as well as the \n> mean with the weighting power of the lowess smoother or \n> something like it.\n> > \n> > Sincerely,\n> > Eran Bellin, M.D.\n> > \n> ---------------------------------------------------------------------\n> > This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> > unsubscribe send e-mail to \n> s-news-request at lists.biostat.wustl.edu with\n> > the BODY of the message:  unsubscribe s-news\n> \n> --\n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>",
       "body_snippet": "But doesn't that assume that lowess is estimating an actual quantile (say\nthe median)?  It does *not*, if the conditional distribution is skewed.\n\nAndy\n\n> -----Original Message-----\n> From: Anne York ",
-      "thread_id": "thread-e3a2c2be94b7",
-      "thread_depth": 0,
+      "thread_id": "thread-7ada7349ccb1",
+      "thread_depth": 1,
       "month": "2001-12"
     },
     {
@@ -695,12 +711,12 @@
       "date": "2001-12-05T15:54:59Z",
       "subject": "Re: Modifying lowess to yield quantiles",
       "subject_clean": "Modifying lowess to yield quantiles",
-      "in_reply_to": null,
+      "in_reply_to": "<200112042131.fB4LVYh25406@spidey.speakeasy.net>",
       "references": [],
       "body_plain": "Does quantile regression the job?\n\nhttp://www.econ.uiuc.edu/~roger/research/rq/rq.html\n\nhttp://lib.stat.cmu.edu/S/\nhttp://lib.stat.cmu.edu/S/quantreg\n\nquantreg\n    Routines to compute quantile regressions including analogues of\ntrimmed means for the linear model. Updated version contains new\nfunctions\n    implementing new forms of rank tests for linear models based on the\ndual quantile regression process.\n(roger at ysidro.econ.uiuc.edu)[23/Aug/91]\n    [1/Jun/95](48 kbytes)\n\nAndreas\n\n=======================================\nAndreas Christmann\nUniversitaet Dortmund\nHochschulrechenzentrum\nWissenschaftliche Anwendungen\nD-44221 Dortmund\nemail  A.Christmann at hrz.uni-dortmund.de\nphone  (049)-231-755-2763\nfax    (049)-231-755-2731\n=======================================",
       "body_snippet": "Does quantile regression the job?\n\nhttp://www.econ.uiuc.edu/~roger/research/rq/rq.html\n\nhttp://lib.stat.cmu.edu/S/\nhttp://lib.stat.cmu.edu/S/quantreg\n\nquantreg\n    Routines to compute quantile regress",
-      "thread_id": "thread-17b7d91fabdf",
-      "thread_depth": 0,
+      "thread_id": "thread-7ada7349ccb1",
+      "thread_depth": 1,
       "month": "2001-12"
     },
     {
@@ -717,8 +733,8 @@
       ],
       "body_plain": "Yes, I think you are reight that  the distribution of the residuals\nwould have to be somewhat well behaved. I was thinking of this as an\nexploratory technique, rather than as a hard estimate for the quantiles. \n\nAnne\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nAnne E. York\nNational Marine Mammal Laboratory\nSeattle WA 98115-0070  USA\ne-mail: anne.york at noaa.gov\nVoice: +1 206-526-4039\nFax: +1 206-526-6615\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\nOn Wed, 5 Dec 2001, Liaw, Andy wrote:\n\n>But doesn't that assume that lowess is estimating an actual quantile (say\n>the median)?  It does *not*, if the conditional distribution is skewed.\n>\n>Andy\n>\n>> -----Original Message-----\n>> From: Anne York [mailto:anne.york at noaa.gov]\n>> Sent: Wednesday, December 05, 2001 10:37 AM\n>> To: ebellin at speakeasy.net; s-news at lists.biostat.wustl.edu\n>> Subject: Re: [S] Modifying lowess to yield quantiles\n>> \n>> \n>> \n>> I have seen an application similar to what you are requesting for\n>> moderately large data sets. THe idea is to fit a smooth, e.g. loess or\n>> other, then fit a smooth to the points below the the original \n>> smooth and\n>> another to those above it. With sufficient data, one could do this\n>> several times. Potentially, this method could be used to examine\n>> patterns in residuals from any model. \n>> \n>> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n>> Anne E. York\n>> National Marine Mammal Laboratory\n>> Seattle WA 98115-0070  USA\n>> e-mail: anne.york at noaa.gov\n>> Voice: +1 206-526-4039\n>> Fax: +1 206-526-6615\n>> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n>> \n>> ebellin at speakeasy.net wrote:\n>> > \n>> > To the group:\n>> > \n>> > The lowess smoother is a particularly attractive method of \n>> displaying the central tendency of data at each point along a \n>> continuous scale.  It creates a mean of response variables at \n>> each x axis value allowing responses from neighboring x \n>> values to impact on the predicted value.  This influence \n>> attenuates as x value becomes more distant.\n>> > \n>> > My question is this:\n>> > \n>> > Does anyone know how to get the lowess function or some \n>> function like it generate a 25th quantile for binned values \n>> around the x axis points which can then be used to draw a \n>> line to represent a lowess like 25th quantile line.\n>> > \n>> > I would like to represent the 25th quantile as well as the \n>> mean with the weighting power of the lowess smoother or \n>> something like it.\n>> > \n>> > Sincerely,\n>> > Eran Bellin, M.D.\n>> > \n>> ---------------------------------------------------------------------\n>> > This message was distributed by s-news at lists.biostat.wustl.edu.  To\n>> > unsubscribe send e-mail to \n>> s-news-request at lists.biostat.wustl.edu with\n>> > the BODY of the message:  unsubscribe s-news\n>> \n>> --\n>> ---------------------------------------------------------------------\n>> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n>> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n>> the BODY of the message:  unsubscribe s-news\n>> \n>\n>",
       "body_snippet": "Yes, I think you are reight that  the distribution of the residuals\nwould have to be somewhat well behaved. I was thinking of this as an\nexploratory technique, rather than as a hard estimate for the q",
-      "thread_id": "thread-e3a2c2be94b7",
-      "thread_depth": 1,
+      "thread_id": "thread-7ada7349ccb1",
+      "thread_depth": 2,
       "month": "2001-12"
     },
     {
@@ -729,12 +745,12 @@
       "date": "2001-12-05T15:57:18Z",
       "subject": "Re: Modifying lowess to yield quantiles",
       "subject_clean": "Modifying lowess to yield quantiles",
-      "in_reply_to": null,
+      "in_reply_to": "<200112042131.fB4LVYh25406@spidey.speakeasy.net>",
       "references": [],
       "body_plain": "All:\n\nJohn Tukey talks about ideas like this in his classic EXPLORATORY DATA\nANALYSIS. Bill Cleveland talks about a related idea, slicing, in his book,\nVISUALIZING DATA. The idea in both cases is to take (possibly overlapping)\nbins of the x values and smooth quantile estimates of the y's from each.\nThis is not and cannot be exactly the same as lowess, which is based on\nlocal regression -- that is, conditional expectation. If you wanted to go\nthat way,, I suppose you might try something like local quantile regression,\nbased on Koenker and Bassett's quantile regression methods, but that\nprobably is fairly hairy unless there is work on this that has been\npublished (help anyone?). \n\nCheers,\nBert Gunter\nBiometrics Research RY 70-38\nMerck & Company\nP.O. Box 2000\nRahway, NJ 07065-0900\nPhone: (732) 594-7765\nmailto: bert_gunter at merck.com\n\n\"The business of the statistician is to catalyze the scientific learning\nprocess.\"      -- George E.P. Box\n\n-----Original Message-----\nFrom: Anne York [mailto:anne.york at noaa.gov]\nSent: Wednesday, December 05, 2001 10:37 AM\nTo: ebellin at speakeasy.net; s-news at lists.biostat.wustl.edu\nSubject: Re: [S] Modifying lowess to yield quantiles\n\nI have seen an application similar to what you are requesting for\nmoderately large data sets. THe idea is to fit a smooth, e.g. loess or\nother, then fit a smooth to the points below the the original smooth and\nanother to those above it. With sufficient data, one could do this\nseveral times. Potentially, this method could be used to examine\npatterns in residuals from any model. \n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nAnne E. York\nNational Marine Mammal Laboratory\nSeattle WA 98115-0070  USA\ne-mail: anne.york at noaa.gov\nVoice: +1 206-526-4039\nFax: +1 206-526-6615\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\nebellin at speakeasy.net wrote:\n> \n> To the group:\n> \n> The lowess smoother is a particularly attractive method of displaying the\ncentral tendency of data at each point along a continuous scale.  It creates\na mean of response variables at each x axis value allowing responses from\nneighboring x values to impact on the predicted value.  This influence\nattenuates as x value becomes more distant.\n> \n> My question is this:\n> \n> Does anyone know how to get the lowess function or some function like it\ngenerate a 25th quantile for binned values around the x axis points which\ncan then be used to draw a line to represent a lowess like 25th quantile\nline.\n> \n> I would like to represent the 25th quantile as well as the mean with the\nweighting power of the lowess smoother or something like it.\n> \n> Sincerely,\n> Eran Bellin, M.D.\n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n\n--\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "All:\n\nJohn Tukey talks about ideas like this in his classic EXPLORATORY DATA\nANALYSIS. Bill Cleveland talks about a related idea, slicing, in his book,\nVISUALIZING DATA. The idea in both cases is to t",
-      "thread_id": "thread-0387278cdb1c",
-      "thread_depth": 0,
+      "thread_id": "thread-7ada7349ccb1",
+      "thread_depth": 1,
       "month": "2001-12"
     },
     {
@@ -745,12 +761,12 @@
       "date": "2001-12-05T16:54:03Z",
       "subject": "Re: Modifying lowess to yield quantiles",
       "subject_clean": "Modifying lowess to yield quantiles",
-      "in_reply_to": null,
+      "in_reply_to": "<200112042131.fB4LVYh25406@spidey.speakeasy.net>",
       "references": [],
       "body_plain": "I've been having an off-line discussion with Dr. Bellin on this subject. \nHow would a pointwise prediction interval work for a quantile estimate?  It \nwould seem that \"well behaved\" residuals would be an assumption here as \nwell.\n\nRick Ditmars\nAssociate Principal Geophysicist\nGeomega\n2995 Baseline Rd.\nBoulder, CO  80303\n(303)442-2549 ext. 124\nrditmars at geomega.com\n\n-----Original Message-----\nFrom:   Liaw, Andy [SMTP:andy_liaw at merck.com]\nSent:   Wednesday, December 05, 2001 8:46 AM\nTo:     'Anne York'; ebellin at speakeasy.net; s-news at lists.biostat.wustl.edu\nSubject:        Re: [S] Modifying lowess to yield quantiles\n\nBut doesn't that assume that lowess is estimating an actual quantile (say\nthe median)?  It does *not*, if the conditional distribution is skewed.\n\nAndy\n\n> -----Original Message-----\n> From: Anne York [mailto:anne.york at noaa.gov]\n> Sent: Wednesday, December 05, 2001 10:37 AM\n> To: ebellin at speakeasy.net; s-news at lists.biostat.wustl.edu\n> Subject: Re: [S] Modifying lowess to yield quantiles\n>\n>\n>\n> I have seen an application similar to what you are requesting for\n> moderately large data sets. THe idea is to fit a smooth, e.g. loess or\n> other, then fit a smooth to the points below the the original\n> smooth and\n> another to those above it. With sufficient data, one could do this\n> several times. Potentially, this method could be used to examine\n> patterns in residuals from any model.\n>\n> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n> Anne E. York\n> National Marine Mammal Laboratory\n> Seattle WA 98115-0070  USA\n> e-mail: anne.york at noaa.gov\n> Voice: +1 206-526-4039\n> Fax: +1 206-526-6615\n> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n>\n> ebellin at speakeasy.net wrote:\n> >\n> > To the group:\n> >\n> > The lowess smoother is a particularly attractive method of\n> displaying the central tendency of data at each point along a\n> continuous scale.  It creates a mean of response variables at\n> each x axis value allowing responses from neighboring x\n> values to impact on the predicted value.  This influence\n> attenuates as x value becomes more distant.\n> >\n> > My question is this:\n> >\n> > Does anyone know how to get the lowess function or some\n> function like it generate a 25th quantile for binned values\n> around the x axis points which can then be used to draw a\n> line to represent a lowess like 25th quantile line.\n> >\n> > I would like to represent the 25th quantile as well as the\n> mean with the weighting power of the lowess smoother or\n> something like it.\n> >\n> > Sincerely,\n> > Eran Bellin, M.D.\n> >\n> ---------------------------------------------------------------------\n> > This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> > unsubscribe send e-mail to\n> s-news-request at lists.biostat.wustl.edu with\n> > the BODY of the message:  unsubscribe s-news\n>\n> --\n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>\n\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "I've been having an off-line discussion with Dr. Bellin on this subject. \nHow would a pointwise prediction interval work for a quantile estimate?  It \nwould seem that \"well behaved\" residuals would be",
-      "thread_id": "thread-25bae96d1b8e",
-      "thread_depth": 0,
+      "thread_id": "thread-7ada7349ccb1",
+      "thread_depth": 1,
       "month": "2001-12"
     },
     {
@@ -800,8 +816,8 @@
       ],
       "body_plain": "A generalization of Duan's smearing estimator may be worth a look\n(see Chapter 15 of Regression Modeling Strategies (Harrell, 2001) and\nthe areg.boot function in the Hmisc library).  The idea is to use a\nprocedure like AVAS to estimate a function g such that residuals from\n  g(Y) = f1(X1) + f2(X2) + ... + fp(Xp)\nare exchangeable.  The smearing estimator of quantile q of Y | X\nis then g^-1(f1(X1)+...+fp(Xp)+Rq)\nwhere Rq is the qth quantile of the vector of n residuals from the\ntransformation model.\n\nFrank Harrell\n\nOn Wed, 5 Dec 2001 07:57:11 -0800 (PST)\nAnne York <york at noaa.gov> wrote:\n\n> Yes, I think you are reight that  the distribution of the residuals\n> would have to be somewhat well behaved. I was thinking of this as an\n> exploratory technique, rather than as a hard estimate for the quantiles. \n> \n> \n> Anne\n> \n> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n> Anne E. York\n> National Marine Mammal Laboratory\n> Seattle WA 98115-0070  USA\n> e-mail: anne.york at noaa.gov\n> Voice: +1 206-526-4039\n> Fax: +1 206-526-6615\n> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n> \n> On Wed, 5 Dec 2001, Liaw, Andy wrote:\n> \n> >But doesn't that assume that lowess is estimating an actual quantile (say\n> >the median)?  It does *not*, if the conditional distribution is skewed.\n> >\n> >Andy\n> >\n> >> -----Original Message-----\n> >> From: Anne York [mailto:anne.york at noaa.gov]\n> >> Sent: Wednesday, December 05, 2001 10:37 AM\n> >> To: ebellin at speakeasy.net; s-news at lists.biostat.wustl.edu\n> >> Subject: Re: [S] Modifying lowess to yield quantiles\n> >> \n> >> \n> >> \n> >> I have seen an application similar to what you are requesting for\n> >> moderately large data sets. THe idea is to fit a smooth, e.g. loess or\n> >> other, then fit a smooth to the points below the the original \n> >> smooth and\n> >> another to those above it. With sufficient data, one could do this\n> >> several times. Potentially, this method could be used to examine\n> >> patterns in residuals from any model. \n> >> \n> >> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n> >> Anne E. York\n> >> National Marine Mammal Laboratory\n> >> Seattle WA 98115-0070  USA\n> >> e-mail: anne.york at noaa.gov\n> >> Voice: +1 206-526-4039\n> >> Fax: +1 206-526-6615\n> >> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n> >> \n> >> ebellin at speakeasy.net wrote:\n> >> > \n> >> > To the group:\n> >> > \n> >> > The lowess smoother is a particularly attractive method of \n> >> displaying the central tendency of data at each point along a \n> >> continuous scale.  It creates a mean of response variables at \n> >> each x axis value allowing responses from neighboring x \n> >> values to impact on the predicted value.  This influence \n> >> attenuates as x value becomes more distant.\n> >> > \n> >> > My question is this:\n> >> > \n> >> > Does anyone know how to get the lowess function or some \n> >> function like it generate a 25th quantile for binned values \n> >> around the x axis points which can then be used to draw a \n> >> line to represent a lowess like 25th quantile line.\n> >> > \n> >> > I would like to represent the 25th quantile as well as the \n> >> mean with the weighting power of the lowess smoother or \n> >> something like it.\n> >> > \n> >> > Sincerely,\n> >> > Eran Bellin, M.D.\n> >> > \n> >> ---------------------------------------------------------------------\n> >> > This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> >> > unsubscribe send e-mail to \n> >> s-news-request at lists.biostat.wustl.edu with\n> >> > the BODY of the message:  unsubscribe s-news\n> >> \n> >> --\n> >> ---------------------------------------------------------------------\n> >> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> >> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> >> the BODY of the message:  unsubscribe s-news\n> >> \n> >\n> >\n> \n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n\n-- \nFrank E Harrell Jr              Prof. of Biostatistics & Statistics\nDiv. of Biostatistics & Epidem. Dept. of Health Evaluation Sciences\nU. Virginia School of Medicine  http://hesweb1.med.virginia.edu/biostat",
       "body_snippet": "A generalization of Duan's smearing estimator may be worth a look\n(see Chapter 15 of Regression Modeling Strategies (Harrell, 2001) and\nthe areg.boot function in the Hmisc library).  The idea is to us",
-      "thread_id": "thread-e3a2c2be94b7",
-      "thread_depth": 2,
+      "thread_id": "thread-7ada7349ccb1",
+      "thread_depth": 3,
       "month": "2001-12"
     },
     {
@@ -812,12 +828,12 @@
       "date": "2001-12-05T18:01:43Z",
       "subject": "Modifying lowess to yield quantiles",
       "subject_clean": "Modifying lowess to yield quantiles",
-      "in_reply_to": null,
+      "in_reply_to": "<200112042131.fB4LVYh25406@spidey.speakeasy.net>",
       "references": [],
       "body_plain": "Let me try resending this ...\n\nAll:\n\nJohn Tukey talks about ideas like this in his classic EXPLORATORY DATA\nANALYSIS. Bill Cleveland talks about a related idea, slicing, in his book,\nVISUALIZING DATA. The idea in both cases is to take (possibly overlapping)\nbins of the x values and smooth quantile estimates of the y's from each.\nThis is not and cannot be exactly the same as lowess, which is based on\nlocal regression -- that is, conditional expectation. If you wanted to go\nthat way,, I suppose you might try something like local quantile regression,\nbased on Koenker and Bassett's quantile regression methods, but that\nprobably is fairly hairy unless there is work on this that has been\npublished (help anyone?). \n\nCheers,\nBert Gunter\nBiometrics Research RY 70-38\nMerck & Company\nP.O. Box 2000\nRahway, NJ 07065-0900\nPhone: (732) 594-7765\nmailto: bert_gunter at merck.com\n\n\"The business of the statistician is to catalyze the scientific learning\nprocess.\"      -- George E.P. Box\n\n-----Original Message-----\nFrom: Anne York [mailto:anne.york at noaa.gov]\nSent: Wednesday, December 05, 2001 10:37 AM\nTo: ebellin at speakeasy.net; s-news at lists.biostat.wustl.edu\nSubject: Re: [S] Modifying lowess to yield quantiles\n\nI have seen an application similar to what you are requesting for\nmoderately large data sets. THe idea is to fit a smooth, e.g. loess or\nother, then fit a smooth to the points below the the original smooth and\nanother to those above it. With sufficient data, one could do this\nseveral times. Potentially, this method could be used to examine\npatterns in residuals from any model. \n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nAnne E. York\nNational Marine Mammal Laboratory\nSeattle WA 98115-0070  USA\ne-mail: anne.york at noaa.gov\nVoice: +1 206-526-4039\nFax: +1 206-526-6615\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\nebellin at speakeasy.net wrote:\n> \n> To the group:\n> \n> The lowess smoother is a particularly attractive method of displaying the\ncentral tendency of data at each point along a continuous scale.  It creates\na mean of response variables at each x axis value allowing responses from\nneighboring x values to impact on the predicted value.  This influence\nattenuates as x value becomes more distant.\n> \n> My question is this:\n> \n> Does anyone know how to get the lowess function or some function like it\ngenerate a 25th quantile for binned values around the x axis points which\ncan then be used to draw a line to represent a lowess like 25th quantile\nline.\n> \n> I would like to represent the 25th quantile as well as the mean with the\nweighting power of the lowess smoother or something like it.\n> \n> Sincerely,\n> Eran Bellin, M.D.\n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n\n--\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Let me try resending this ...\n\nAll:\n\nJohn Tukey talks about ideas like this in his classic EXPLORATORY DATA\nANALYSIS. Bill Cleveland talks about a related idea, slicing, in his book,\nVISUALIZING DATA.",
-      "thread_id": "thread-a9ead56bd026",
-      "thread_depth": 0,
+      "thread_id": "thread-7ada7349ccb1",
+      "thread_depth": 1,
       "month": "2001-12"
     },
     {
@@ -846,12 +862,12 @@
       "date": "2001-12-05T19:00:37Z",
       "subject": "Re: Modifying lowess to yield quantiles",
       "subject_clean": "Modifying lowess to yield quantiles",
-      "in_reply_to": null,
+      "in_reply_to": "<200112042131.fB4LVYh25406@spidey.speakeasy.net>",
       "references": [],
       "body_plain": ">  ebellin at speakeasy.net wrote:\n [snip]\n >  > Does anyone know how to get the lowess function or some \n >  function like it\n >  generate a 25th quantile for binned values around the x \n >  axis points which\n >  can then be used to draw a line to represent a lowess like \n >  25th quantile\n >  line.\n >  > \n >  > I would like to represent the 25th quantile as well as \n >  the mean with the\n >  weighting power of the lowess smoother or something like it.\n >  > \n\nI've written a function 'wapply' that applies a specified function over\nlocal x-regions of a set of x,y points as part of the 'gregmisc' library\nthat I provide for R (I would welcome help in making an S-Plus library).\nI'm attaching the function and its help page below.  It is not exactly\nequivalent to lowess because it doesn't actually weight the values, rather\nit just creates a sliding window.  Still, it may work for your purpose.  If\nnot, you might try taking the output from wapply and running lowess on\n*that*.\n\n  x <- rnorm(1000)\n  y <- rnorm(1000)\n\n  plot(x,y)\n  lines(wapply( x,y, mean, w=1/5), col=1 )\n  lines(wapply( x,y, function(x) quantile(x, 0.75), w=1/5 ), col=2)\n  lines(wapply( x,y, function(x) quantile(x, 0.25), w=1/5 ), col=3)\n\n-Greg\n\n*************************\n-- start of help page ---\n*************************\n\nwapply               package:gregmisc               R Documentation\n\nCompute the Value of a Functon Over a Local Region Of An X-Y Plot\n\nDescription:\n\n     This function allows various features of a plot to be over local\n     regions in the x-dimension. For example, setting `fun=mean' gives\n     a the local mean.  Setting `fun=function(x) sqrt(var(x))' give a\n     local estimate of the variance.\n\nUsage:\n\n     wapply(x, y, fun=mean, method=\"range\", width=1/10, n=50, ...)\n\nArguments:\n\n       x: vector of x values for (x,y) pairs \n\n       y: vector of y values for (x,y) pairs \n\n     fun: function to be applied \n\n  method: method of defining an x-neighborhood.  One of\n          \"width\",\"nobs\",\"range\", or \"fraction\".  See details.\n\n   width: width of an x-neighborhood. See details. \n\n       n: Number of equally spaced points at which to compute local\n          estimates. See details.\n\n     ...: arguments to be passed to `fun' \n\nDetails:\n\n     This function allows various features of a plot to be computed\n     over local regions in the x-dimension. For example, setting\n     `fun=mean' gives a the local mean.  Setting `fun=function(x)\n     sqrt(var(x))' give a local estimate of the variance.  \n\n     Two basic techniques are available for determing what points fall\n     within an x-neighborhood.  The first technique is selected by\n     setting `method=\"width\"' or `method=\"range\"'. Selects points that\n     are within the specified x-distance.  For  `method=\"width\"' the\n     `width' argument is an absolute distance in the x-dimension.  For\n     `method=\"range\"', the width is expressed as a fraction of the\n     x-range.  When either method is selected, computation of fun will\n     occur for x-neighborhoods centered at `n' equally spaced x values.\n\n     The second technique selects k neighboring points.  The (x,y)\n     pairs are sorted by the x-values and the nearest k/2 points with\n     higher x valus and the k/2 nearest points with lower x values are\n     included in the window.  When `method=\"nobs\"', `width' gives the\n     number of points to include in the window.  (Actually,\n     floor(k/2)*2 points will be included.)  When `method=\"fraction\"',\n     `width' specifies what fraction of the total number of points\n     should be included. The actual number of points included in each\n     window will be ( floor(n*frac/2)*2.\n\nValue:\n\n     Returns a list with components  \n\n      x : x location'\n\n      y : Result of applying `fun' to the window about each x location\n\nAuthor(s):\n\n     Gregory R. Warnes Gregory_R_Warnes\\@groton.pfizer.com\n\nExamples:\n\n     #show local mean and inner 2-sd interval to help diagnose changing mean\n     #or variance structure\n     x <- 1:1000\n     y <- rnorm(1000, mean=1, sd=1 + x/1000 )\n\n     plot(x,y)\n     lines(wapply(x,y,mean),col=\"red\")\n\n     CL <- function(x,sd) mean(x)+sd*sqrt(var(x))\n\n     lines(wapply(x,y,CL,sd= 1),col=\"blue\") \n     lines(wapply(x,y,CL,sd=-1),col=\"blue\") \n     lines(wapply(x,y,CL,sd= 2),col=\"green\")\n     lines(wapply(x,y,CL,sd=-2),col=\"green\")\n\n     #show local mean and inner 2-sd interval to help diagnose changing mean\n     #or variance structure\n     x <- 1:1000\n     y <- rnorm(1000, mean=x/1000, sd=1)\n\n     plot(x,y)\n     lines(wapply(x,y,mean),col=\"red\")\n\n     CL <- function(x,sd) mean(x)+sd*sqrt(var(x))\n\n     lines(wapply(x,y,CL,sd= 1,method=\"fraction\",width=1/20),col=\"blue\")\n     lines(wapply(x,y,CL,sd=-1,method=\"fraction\",width=1/20),col=\"blue\")\n     lines(wapply(x,y,CL,sd= 2,method=\"nobs\",width=250),col=\"green\")\n     lines(wapply(x,y,CL,sd=-2,method=\"nobs\",width=250),col=\"green\")\n\n****************************\n-- start of function code --\n****************************\n\"wapply\" _ function( x, y, fun=mean, method=\"range\",\n                    width=1/10, n=50, drop.na=F, ...)\n{\n  method <- match.arg(method, c(\"width\",\"range\",\"nobs\",\"fraction\"))\n\n  if(method == \"width\" || method == \"range\" )\n    {\n      if(method==\"range\")\n        width <- width * range(x)\n      \n      pts _ seq(min(x),max(x),length.out=n)\n      \n      result _ sapply( pts, function(pts,y,width,fun,XX,...)\n                      {\n                        low _ min((pts-width/2),max(XX))\n                        high _ max((pts+width/2), min(XX))\n                        return (fun(y[(XX>= low) & (XX<=high)],...))\n                      },\n                      y=y,\n                      width=width,\n                      fun=fun,\n                      XX = x,\n                      ...)\n      if(drop.na)\n        {\n          pts <- pts[!is.na(pts)]\n          result <- result[!is.na(result)]\n        }\n      \n      return(x=pts,y=result)\n    }\n  else # method==\"nobs\" || method==\"fraction\"\n    {\n      if( method==\"fraction\")\n        width <- floor(length(x) * width)\n      else # method=\"nobs\" \n        width <- min(n, length(x))\n      \n\n      ord <- order(x)\n      x  <- x[ord]\n      y  <- y[ord]\n\n      n  <- length(x)\n      center  <- 1:n\n      below <- sapply(center - width/2, function(XX) max(1,XX) )\n      above <- sapply(center + width/2, function(XX) min(n,XX) )\n\n      retval  <- list()\n      retval$x  <- x\n      retval$y  <- apply(cbind(below,above), 1,\n                         function(x) fun(y[x[1]:x[2]],...) )\n                         \n      if(drop.na)\n        {\n          retval$x <- retval$x[!is.na(retval$x)]\n          retval$y <- retval$y[!is.na(retval$y)]\n        }\n\n      return(retval)\n    }\n      \n}\n**************************\n-- end of function code --\n**************************\n\nLEGAL NOTICE\nUnless expressly stated otherwise, this message is confidential and may be \nprivileged. It is intended for the addressee(s) only. Access to this E-mail by \nanyone else is unauthorized. If you are not an addressee, any disclosure or \ncopying of the contents of this E-mail or any action taken (or not taken) in \nreliance on it is unauthorized and may be unlawful. If you are not an \naddressee, please inform the sender immediately.",
       "body_snippet": ">  ebellin at speakeasy.net wrote:\n [snip]\n >  > Does anyone know how to get the lowess function or some \n >  function like it\n >  generate a 25th quantile for binned values around the x \n >  axis poi",
-      "thread_id": "thread-c01212be28a0",
-      "thread_depth": 0,
+      "thread_id": "thread-7ada7349ccb1",
+      "thread_depth": 1,
       "month": "2001-12"
     },
     {
@@ -902,8 +918,8 @@
       ],
       "body_plain": "> that way,, I suppose you might try something like local quantile regression,\n> based on Koenker and Bassett's quantile regression methods, but that\n> probably is fairly hairy unless there is work on this that has been\n> published (help anyone?). \n\nLocal polynomial quantile regression has been looked at by P. Chaudhuri in\na 1991 Annals article (Annals of Statistics, 19, 760-777) and K. Yu and\nM.C. Jones in a 1998 JASA article (JASA, 93, 228-237). Quantile smoothing\nsplines are another solution; see, e.g., the article by R. Koenker, P.T.\nNg, and S. Portnoy in 1994 Biometrika (Biometrika, 81, 673-680).\n\n                    Jeff\n\n==============================================================================\nJeffrey S. Simonoff                            Phone:  (212) 998-0452\nProfessor of Statistics\nLeonard N. Stern School of Business            Fax:    (212) 995-4003\nNew York University\n44 West 4th Street, Rm. 8-54                   e-mail: jsimonof at stern.nyu.edu\nNew York, NY 10012-0258\nUSA                                    WWW: http://www.stern.nyu.edu/~jsimonof\n==============================================================================",
       "body_snippet": "> that way,, I suppose you might try something like local quantile regression,\n> based on Koenker and Bassett's quantile regression methods, but that\n> probably is fairly hairy unless there is work on",
-      "thread_id": "thread-0387278cdb1c",
-      "thread_depth": 1,
+      "thread_id": "thread-7ada7349ccb1",
+      "thread_depth": 2,
       "month": "2001-12"
     },
     {
@@ -914,12 +930,12 @@
       "date": "2001-12-05T20:52:32Z",
       "subject": "Re: behaviour of library function",
       "subject_clean": "behaviour of library function",
-      "in_reply_to": null,
+      "in_reply_to": "<F12D043C8E69D211B90A0010E36079C201E95CAD@mail.ilim.com>",
       "references": [],
       "body_plain": "The behavior that Glenn points out represents (IMHO) an obsolete\nconstruction used in the library() function, which accepts either a name\nor a character string as (synonymous) arguments.  Most such constructions\nare holdovers of much earlier versions of S, e.g. rm(myobject) which has\nbeen deprecated and replaced by remove(\"myobject\").  Besides being somewhat\ninconsistent with the standard S practice of using names to represent\nobjects (possibly in a data.frame), it also makes it difficult to select\na library whose name is in a variable, e.g. library(myname) attaches a library\ncalled \"myname\", not a library whose name is given by the character variable\nmyname.  The library() function does not even check that the argument is\neither a string or a name, hence the ungraceful handling of the error in \nGlenn's example.\n\n        Alan Zaslavsky\n\n> From: Glenn.Treacy at ilim.com\n> To: s-news at lists.biostat.wustl.edu\n> Subject: Re: [S] behaviour of library function\n> Date: Wed, 5 Dec 2001 15:36:09 -0000 \n> \n> Thank you to Professor Ripley and Samantha Low Choy who both pointed out\n> that my problem (see below) arises because S-Plus treats the underscore\n> between String and restored in the section argument as an assignment\n> operator.\n> \n>> I am using S+2000 on NT4 R3 and puzzled at the behaviour of the library\n>> function. I have two libraries, one called String and the other\n>> String_restored resident in a folder at c:\\Transfer. When I execute\n>> library(section=String_restored,first=F,lib.loc=\"c:\\\\Transfer\") I find that\n>> the library String has been attached not String_restored. If I remove the\n>> String library and run the same command I get an erro telling me that 'No\n>> section \"String\" in the library directories etc. etc.'. It seems that the\n>> underscore character is causing problems. The hypen character seems to cause\n>> the same problem. Can anyone explain why this is happening and what the\n>> rules are fo acceptable library names?",
       "body_snippet": "The behavior that Glenn points out represents (IMHO) an obsolete\nconstruction used in the library() function, which accepts either a name\nor a character string as (synonymous) arguments.  Most such co",
-      "thread_id": "thread-b52575c330e8",
-      "thread_depth": 0,
+      "thread_id": "thread-0c1f65dec3a4",
+      "thread_depth": 1,
       "month": "2001-12"
     },
     {
@@ -996,12 +1012,12 @@
       "date": "2001-12-06T19:17:28Z",
       "subject": "Re: Poisson glm with aggregated data.",
       "subject_clean": "Poisson glm with aggregated data.",
-      "in_reply_to": null,
+      "in_reply_to": "<OF6F06EAF8.381D45AE-ON85256B18.007425B4@spgdag.ca>",
       "references": [],
       "body_plain": "Hello S-users,\n\nI received only one reply to my posting regarding \"Poisson glm with\naggregated data\".  Thanks to Brian Ripley for his comments, very usefull as\nusual.  His reply follows with my original posting at the end.  As Prof.\nRipley suggested tightening the convergence criterion helped.  But the\ncoefficients still showed little differences, I guess that this is due to\nthe reduced variability in the aggregated data, although I thought that\nthis would only affect the standard errors?\n\nProf. Ripley questioned modeling the frequencies of claims directly rather\nthan passing the exposure as an offset to glm so the Poisson hypothesis\nwould be met more closely.  Here is my reply to him in a private mail.\n\nThe continuous variables used in the glm call have the following meanings.\n\n\"nsininct\" represents the number of claims in a cell.\n\"unsousi\" represents the exposure, the number of units exposed in a cell,\nusually number of policies-year; this number is adjusted        by the\nactuaries for trends, and other economical factors.\n\"unsous\" represents the raw exposure in a cell.\n\nAs far as representing the exposure through an offset, it is something I\nhave debated, with myself, quite a bit.  Coming from quite a different\nmodeling flavour (direct marketing) and being the only in house\nstatistician I decided to stick with the traditional ways acturies have\nbeen modeling frequency of claims; in particular I followed pretty closely\nJ.M. Brockman and T.S. Wright in their 1992 paper: \"Statistical Motor\nRating: Making Effective Use Of Your Data\", presented to the Institute of\nActuaries in April of 1992.  In this paper, without going to the details,\nthey do model the frequencies (number of claims / exposure) directly.  By\ncuriosity I tried to account for exposure through an offset as you\nsuggested; I did it with both data sets, the \"large\" one and the \"small\"\none.  The coefficients for the \"small\" data set were fairly close to what I\nhad obtained with both data sets modeling the frequencies directly, after I\ntightened the convergence criterion; but the Std. Error were extremely\nsmall and consequently the t-values just blew up in the thousands; for the\n\"large\" data set the coefficients were not as close to the ones obtained\nwhen using frequencies directly as dependent variable but the Std. Errors\nwere a little more reasonnable although pretty small.  I know that the\nt-values would be lower when we take over-dispersion into account, which I\nusually do but didn't do it for this little exercise; the dispersion would\nneed to be uncomfortably big to bring the very large t-values to more usual\nlevels?  As an example a variable with a t-value of -0.21216 modeling the\nfrequency directly now has a t-value of over 200?\n\nI would welcome any thoughts on this topic,\n\n---------------------- Envoyée par Gérald Jean/Assurances/SPGDAG/Desjardins\nle 2001/12/06 14:00 ---------------------------\n\nProf Brian Ripley <ripley at stats.ox.ac.uk>@lists.biostat.wustl.edu le\n2001/12/04 17:42:35\n\nEnvoyé par :   s-news-owner at lists.biostat.wustl.edu\n\nPour :    <Gerald.Jean at spgdag.ca>\ncc :  <s-news at wubios.wustl.edu>\nObjet :   Re: [S] Poisson glm with aggregated data.\n\nglm has a very sloppy default convergence criterion.  You need to tighten\nit, for example by epsilon = 1e-10, to get reproducible results.\n\nAlso, I think you should be using an offset and not dividing by unsousi,\nas it seems unlikely that nsininct / unsousi is Poisson.  Something like\n\nglm(nsininct ~ bmm + zonecong + offset(log(unsousi)), family = poisson(),\n    data = inc.all.agg)\n\nIt's not clear to me that what you have done does aggregate exactly: the\nsum of nsininct / unsousi * unsous is not the (sum of nsininct) /(sum of\nunsousi) * (sum of unsous) in general.\n\nOn Tue, 4 Dec 2001 Gerald.Jean at spgdag.ca wrote:\n\n> Hi S-users,\n>\n> S+6, on NT4\n>\n> I have a large, very large data set consisting of several factor\nvariables\n> and of four continuous variables.  The data comes from transactionnal\ndata\n> and the continuous variables are agrregated (sum) over the factors.  A\n> large model has been fitted to this data and as I needed to do further\nwork\n> with only a few of the factors I re-aggregated over those factors.  My\n> questions:\n>\n> Why is it that if I fit a two (in this example) factor model over the big\n> data set I get different coefficients than fitting the same model over\nthe\n> smaller data set?\n>\n> > inc.freq.glm.all <- glm(nsininct / unsousi ~ bmm + zonecong,\n> +                         family = poisson(link = log),\n> +                         data = inc.all.agg, weights = unsous)\n>\n> > inc.all.agg.2v <- aggregate(inc.all.agg[, c('unsous', 'unsousi',\n> +                                             'nsininct', 'en15incf')],\n> +                             by = list(bmm = inc.all.agg[, 'bmm'],\n> +                               zonecong = inc.all.agg[, 'zonecong']),\n> +                             FUN = sum)\n>\n> > inc.freq.glm.2v <- glm(nsininct / unsousi ~ bmm + zonecong,\n> +                        family = poisson(link = log),\n> +                        data = inc.all.agg.2v, weights = unsous)\n>\n> > ttt.merge <- merge(ttt.all, ttt.2v, by = 'row.names')\n> > row.names(ttt.merge) <- ttt.merge[, 1]\n> > ttt.merge <- ttt.merge[, -1]\n> > round(ttt.merge, 5)\n>\n>               Value.x Std..Error.x  t.value.x  Value.y Std..Error.y\nt.value.y\n>  (Intercept) -5.07729      0.01282 -395.94985 -5.07304      0.01291\n-393.05116\n> bmm Erreur    0.15913      0.03744    4.24999  0.14441      0.03781\n3.81901\n> bmm Mauvais   0.73437      0.05390   13.62538  0.73928      0.05371\n13.76433\n> bmm Montreal -0.36010      0.03419  -10.53170 -0.36659      0.03495\n-10.48868\n> bmm Moyen     0.40942      0.03096   13.22550  0.41195      0.03096\n13.30679\n>     zonecong -0.01763      0.08312   -0.21216 -0.00122      0.08401\n-0.01457\n>\n> I don't understand why the coefficients are not the same, I checked that\n> the sums over the factors are OK and they are.\n> By looking at the coefficients and the t-values it almost looks like \"bmm\n> Montreal\" and \"bmm Moyen\" have been inverted in the aggregation process?\n> The division by \"unsoui\" is not a typo, this variable is an adjusted\n> \"unsous\" for trends, inflation and other factors deemed appropriate by\n> actuaries.\n>\n> Thanks for any insights into this,\n>\n> Gérald Jean\n> Analyste-conseil (statistiques), Actuariat\n> télephone            : (418) 835-4900 poste (7639)\n> télecopieur          : (418) 835-6657\n> courrier électronique: gerald.jean at spgdag.ca\n>\n> \"In God we trust all others must bring data\"  W. Edwards Deming\n>\n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>\n\n--\nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595\n\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Hello S-users,\n\nI received only one reply to my posting regarding \"Poisson glm with\naggregated data\".  Thanks to Brian Ripley for his comments, very usefull as\nusual.  His reply follows with my origin",
-      "thread_id": "thread-01da5e75fd56",
-      "thread_depth": 0,
+      "thread_id": "thread-5de987829890",
+      "thread_depth": 1,
       "month": "2001-12"
     },
     {
@@ -1062,12 +1078,12 @@
       "date": "2001-12-07T13:51:30Z",
       "subject": "Re: NA's in string vector.",
       "subject_clean": "NA's in string vector.",
-      "in_reply_to": null,
+      "in_reply_to": "<AA8349D6EED3D4118D74001083CF311AB24F3C@actin.cytokinetics.com>",
       "references": [],
       "body_plain": "All:\n\nIn fact, on p. 204 the Green book explicitly states: \"string objects can\nhave missing values...; character vectors contain pointers, for which S does\nnot support the idea of NA.\"\n\nUnfortunately, it used to, AFAIK, so explicit casts of character to string\n-- x<-as(x,'string') -- may be necessary to prevent old code from breaking,\nI would guess. \n\nFinally, in SPlus 6 for Windows, anyway, the Help files (or paper manuals)\nare no help on this: there's no documentation at all for is.na<- and the\nentry for \"string\" says:\n\n\"Function string is not supported in this version. Its use is discouraged. \"\n\n>From which most of us would infer that we should NOT do the cast or that it\nmay not work.\n\nSo this seems like a fine mess to me. As always, I welcome further\nenlightenment.\n\nCheers,\nBert Gunter\nBiometrics Research RY 70-38\nMerck & Company\nP.O. Box 2000\nRahway, NJ 07065-0900\nPhone: (732) 594-7765\nmailto: bert_gunter at merck.com\n\n\"The business of the statistician is to catalyze the scientific learning\nprocess.\"      -- George E.P. Box\n\n-----Original Message-----\nFrom: Prof Brian D Ripley [mailto:ripley at stats.ox.ac.uk]\nSent: Friday, December 07, 2001 1:43 AM\nTo: Vadim Kutsyy\nCc: S-News (E-mail)\nSubject: Re: [S] NA's in string vector.\n\nOn Thu, 6 Dec 2001, Vadim Kutsyy wrote:\n\n> Is there a way to define NA's in string vector?\n>\n> > a<-c(\"a\",NA,\"b\")\n> > is.na(a)\n> [1] F F F\n> > a\n> [1] \"a\"  \"NA\" \"b\"\n> > a[2]<-NA\n> > is.na(a)\n> [1] F F F\n>\n> Splus converge all NA's to \"NA\", which make problem in data.frames.\n\nActually, that's a character vector, and for once the distinction matters.\nUnder S4, `string' is a separate class, and the way I know to do this is to\nuse the `string' class and is.na<-.  See the Green Book.\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595",
       "body_snippet": "All:\n\nIn fact, on p. 204 the Green book explicitly states: \"string objects can\nhave missing values...; character vectors contain pointers, for which S does\nnot support the idea of NA.\"\n\nUnfortunately,",
-      "thread_id": "thread-6f56e4516eb3",
-      "thread_depth": 0,
+      "thread_id": "thread-cdcd64d7f2f0",
+      "thread_depth": 1,
       "month": "2001-12"
     },
     {
@@ -1230,12 +1246,12 @@
       "date": "2001-12-07T17:59:10Z",
       "subject": "Re: SQL in S-PLUS",
       "subject_clean": "SQL in S-PLUS",
-      "in_reply_to": null,
+      "in_reply_to": "<01120717450403.30388@geri>",
       "references": [],
       "body_plain": "This is the standar S approach:\n\n> x <- data.frame( use.alcohol=c(T,F,T,T,T,F,F,F,T,T),\nalcohol.type=c(\"wine\",\"\",\"beer\",\"beer\",\"wine\",\"\",\"\",\"\",\"beer\",\"wine\")) \n> x\n   use.alcohol alcohol.type\n1         TRUE         wine\n2        FALSE             \n3         TRUE         beer\n4         TRUE         beer\n5         TRUE         wine\n6        FALSE             \n7        FALSE             \n8        FALSE             \n9         TRUE         beer\n10        TRUE         wine\n> x$alcohol.type[x$use.alcohol==F] <- NA\n> x\n   use.alcohol alcohol.type\n1         TRUE         wine\n2        FALSE           NA\n3         TRUE         beer\n4         TRUE         beer\n5         TRUE         wine\n6        FALSE           NA\n7        FALSE           NA\n8        FALSE           NA\n9         TRUE         beer\n10        TRUE         wine\n\n-Greg\n\n >  -----Original Message-----\n >  From: Heeringa W.J. [mailto:heeringa at let.rug.nl]\n >  Sent: Friday, December 07, 2001 11:45 AM\n >  To: s-news at lists.biostat.wustl.edu\n >  Subject: [S] SQL in S-PLUS\n >  \n >  \n >  Dear S-PLUS users,\n >  \n >  I would like to make conditional selections and changes in \n >  table, like what \n >  is done with SQL commands, and which is also very well \n >  possible in SPSS. For \n >  example:\n >  \n >  I have a table with information of 10 persons. For each \n >  person is in the \n >  first columm noted if he of she drinks alcohol: 1=yes and \n >  2=no. In the second \n >  column is noted what type of alcohol he or she drinks: \n >  1=wine, 2=beer, \n >  3=whiskey.\n >  \n >  Now I want to perform automatically the following action:\n >  \n >  For each person who drinks no alcohol, in the column for \n >  the type of alcohol \n >  the value must be set to 'system missing'. My question: how \n >  can this be \n >  automatically done? And: is some SQL-like selection and \n >  changement possible?\n >  \n >  --------------------------\n >  Wilbert Heeringa\n >  University of Groningen\n >  Faculty of Arts\n >  Humanities Computing\n >  \n >  ------------------------------------------------------------\n >  ---------\n >  This message was distributed by s-news at lists.biostat.wustl.edu.  To\n >  unsubscribe send e-mail to \n >  s-news-request at lists.biostat.wustl.edu with\n >  the BODY of the message:  unsubscribe s-news\n >  \n\nLEGAL NOTICE\nUnless expressly stated otherwise, this message is confidential and may be \nprivileged. It is intended for the addressee(s) only. Access to this E-mail by \nanyone else is unauthorized. If you are not an addressee, any disclosure or \ncopying of the contents of this E-mail or any action taken (or not taken) in \nreliance on it is unauthorized and may be unlawful. If you are not an \naddressee, please inform the sender immediately.",
       "body_snippet": "This is the standar S approach:\n\n> x <- data.frame( use.alcohol=c(T,F,T,T,T,F,F,F,T,T),\nalcohol.type=c(\"wine\",\"\",\"beer\",\"beer\",\"wine\",\"\",\"\",\"\",\"beer\",\"wine\")) \n> x\n   use.alcohol alcohol.type\n1       ",
-      "thread_id": "thread-ddc74b82cac5",
-      "thread_depth": 0,
+      "thread_id": "thread-1985d8dad4e9",
+      "thread_depth": 1,
       "month": "2001-12"
     },
     {
@@ -1246,12 +1262,12 @@
       "date": "2001-12-07T18:15:49Z",
       "subject": "Re: Quartiles",
       "subject_clean": "Quartiles",
-      "in_reply_to": null,
+      "in_reply_to": "<01120717360202.30388@geri>",
       "references": [],
       "body_plain": "And in SAS, Proc Univariate provides 5 algorithms (pctldef), the fourth\nproducing the same results as SPSS, but none of them producing the results\nin Splus.\n(As to the rightness or wrongness of SAS, I will leave that to your\ndiscretion)\n\n        Dr. H. Monder\n\n-----Original Message-----\nFrom: Dr. M.Sawada [mailto:msawada at uottawa.ca]\nSent: Friday, December 07, 2001 11:54 AM\nTo: 'Prof Brian Ripley'; 'Heeringa W.J.'\nCc: s-news at lists.biostat.wustl.edu\nSubject: Re: [S] Quartiles\n\nIncidentally, MS Excel uses the same quantile algorithm as S+ - and Bill\nGates is never wrong.\n\nDr. M.Sawada\nAssistant Professor, GIS\nUniversity of Ottawa\nDept. Geography\nP.O. Box 450 Stn. A\nOttawa, ON K1N 6N9\nTel: 613-562-5800 x1040\nFax: 613-562-5145\nEml: msawada at uottawa.ca \n \n\n-----Original Message-----\nFrom: s-news-owner at lists.biostat.wustl.edu\n[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Prof Brian\nRipley\nSent: Friday, December 07, 2001 11:32 AM\nTo: Heeringa W.J.\nCc: s-news at lists.biostat.wustl.edu\nSubject: Re: [S] Quartiles\n\nOn Fri, 7 Dec 2001, Heeringa W.J. wrote:\n\n> Dear S-PLUS users,\n>\n> Assume I have the following range:\n> 1 2 3 4 5 6\n>\n> Next I calculated the 1st Quartile, the median and the 3rd Quartile in\n\n> both, S-PLUS and SPSS:\n>\n> 1st Quartile : S-PLUS: 2.25 and SPSS: 1.75\n> median       : S-PLUS:  3.5 and SPSS: 3.5\n> 3rd Quartile: S-PLUS: 4.75 and SPSS: 5.25\n>\n> Or for this range:\n> 1 2 3 4 5 6 7 8\n>\n> the results are:\n>\n> 1st Quartile : S-PLUS: 2.75 and SPSS: 2.25\n> median       : S-PLUS:  4.5 and SPSS: 4.5\n> 3rd Quartile: S-PLUS: 6.25 and SPSS: 6.75\n>\n> So S-PLUS and SPSS give different results. Which results are correct? \n> And how can these results be explained?\n\nWhy don't you send a bug report to SPSS if they don't explain their\nresults?  If it's not in the on-line help it is a bug, but for S-PLUS it\n*is* there.\n\nThere are several slightly different definitions of quantiles (and hence\nquartiles), but ?quantile in S-PLUS tells you what it uses.\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595\n\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news\n\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "And in SAS, Proc Univariate provides 5 algorithms (pctldef), the fourth\nproducing the same results as SPSS, but none of them producing the results\nin Splus.\n(As to the rightness or wrongness of SAS, I",
-      "thread_id": "thread-050dcd83bde0",
-      "thread_depth": 0,
+      "thread_id": "thread-c5ad436d505f",
+      "thread_depth": 1,
       "month": "2001-12"
     },
     {
@@ -1284,8 +1300,8 @@
       ],
       "body_plain": "See Hyndman and Fan (1996), \"Sample quantiles in statistical\npackages,\"  American Statistician, Vol 50, number 4, pp-361-365.\n\nIf I recall correctly, they give about 9 different definitions of\nquantiles that have been proposed in the literature and a list of\ndesirable properties.  They show which definitions have which\nproperties.  As I recall, the method they recommend isn't in SAS,\nSPSS, or S-plus.  The default in SAS is one of the better ones.\n\nFunctions that compute quantiles in S-plus are (were not)\nconsistent (Here is an example using S-plus 2000.  It may have been\nfixed as there was discussion on this list a few years ago.):\n\n> x <- c(8,9,10,11,14,20)\n> quantile(x)\n   0%  25%  50%   75% 100% \n    8 9.25 10.5 13.25   20\n> summary(x)\n Min. 1st Qu. Median Mean 3rd Qu. Max. \n    8    9.25   10.5   12    13.2   20\n\nEd Malthouse\nDr. Edward C. Malthouse\nAssistant Professor\nIntegrated Marketing Communications Department\nMedill School of Journalism\n1908 Sheridan Road\nEvanston, IL  60208-1290\nTele:  847-467-3376\nFax:  847-491-5925\n\n> \n> And in SAS, Proc Univariate provides 5 algorithms (pctldef), the fourth\n> producing the same results as SPSS, but none of them producing the results\n> in Splus.\n> (As to the rightness or wrongness of SAS, I will leave that to your\n> discretion)\n> \n>       Dr. H. Monder\n> \n> -----Original Message-----\n> From: Dr. M.Sawada [mailto:msawada at uottawa.ca]\n> Sent: Friday, December 07, 2001 11:54 AM\n> To: 'Prof Brian Ripley'; 'Heeringa W.J.'\n> Cc: s-news at lists.biostat.wustl.edu\n> Subject: Re: [S] Quartiles\n> \n> \n> \n> Incidentally, MS Excel uses the same quantile algorithm as S+ - and Bill\n> Gates is never wrong.\n> \n> Dr. M.Sawada\n> Assistant Professor, GIS\n> University of Ottawa\n> Dept. Geography\n> P.O. Box 450 Stn. A\n> Ottawa, ON K1N 6N9\n> Tel: 613-562-5800 x1040\n> Fax: 613-562-5145\n> Eml: msawada at uottawa.ca \n>  \n> \n> -----Original Message-----\n> From: s-news-owner at lists.biostat.wustl.edu\n> [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Prof Brian\n> Ripley\n> Sent: Friday, December 07, 2001 11:32 AM\n> To: Heeringa W.J.\n> Cc: s-news at lists.biostat.wustl.edu\n> Subject: Re: [S] Quartiles\n> \n> \n> On Fri, 7 Dec 2001, Heeringa W.J. wrote:\n> \n> > Dear S-PLUS users,\n> >\n> > Assume I have the following range:\n> > 1 2 3 4 5 6\n> >\n> > Next I calculated the 1st Quartile, the median and the 3rd Quartile in\n> \n> > both, S-PLUS and SPSS:\n> >\n> > 1st Quartile : S-PLUS: 2.25 and SPSS: 1.75\n> > median       : S-PLUS:  3.5 and SPSS: 3.5\n> > 3rd Quartile: S-PLUS: 4.75 and SPSS: 5.25\n> >\n> > Or for this range:\n> > 1 2 3 4 5 6 7 8\n> >\n> > the results are:\n> >\n> > 1st Quartile : S-PLUS: 2.75 and SPSS: 2.25\n> > median       : S-PLUS:  4.5 and SPSS: 4.5\n> > 3rd Quartile: S-PLUS: 6.25 and SPSS: 6.75\n> >\n> > So S-PLUS and SPSS give different results. Which results are correct? \n> > And how can these results be explained?\n> \n> Why don't you send a bug report to SPSS if they don't explain their\n> results?  If it's not in the on-line help it is a bug, but for S-PLUS it\n> *is* there.\n> \n> There are several slightly different definitions of quantiles (and hence\n> quartiles), but ?quantile in S-PLUS tells you what it uses.\n> \n> -- \n> Brian D. Ripley,                  ripley at stats.ox.ac.uk\n> Professor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\n> University of Oxford,             Tel:  +44 1865 272861 (self)\n> 1 South Parks Road,                     +44 1865 272860 (secr)\n> Oxford OX1 3TG, UK                Fax:  +44 1865 272595\n> \n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n> \n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>",
       "body_snippet": "See Hyndman and Fan (1996), \"Sample quantiles in statistical\npackages,\"  American Statistician, Vol 50, number 4, pp-361-365.\n\nIf I recall correctly, they give about 9 different definitions of\nquantil",
-      "thread_id": "thread-050dcd83bde0",
-      "thread_depth": 1,
+      "thread_id": "thread-c5ad436d505f",
+      "thread_depth": 2,
       "month": "2001-12"
     },
     {
@@ -1302,8 +1318,8 @@
       ],
       "body_plain": "On Fri, 7 Dec 2001, Edward Malthouse wrote:\n\n> See Hyndman and Fan (1996), \"Sample quantiles in statistical\n> packages,\"  American Statistician, Vol 50, number 4, pp-361-365.\n>\n> If I recall correctly, they give about 9 different definitions of\n> quantiles that have been proposed in the literature and a list of\n> desirable properties.  They show which definitions have which\n> properties.  As I recall, the method they recommend isn't in SAS,\n> SPSS, or S-plus.  The default in SAS is one of the better ones.\n\nBetter for what? (Not that we were discussing SAS.)\n\n> Functions that compute quantiles in S-plus are (were not)\n> consistent (Here is an example using S-plus 2000.  It may have been\n> fixed as there was discussion on this list a few years ago.):\n>\n> > x <- c(8,9,10,11,14,20)\n> > quantile(x)\n>    0%  25%  50%   75% 100%\n>     8 9.25 10.5 13.25   20\n> > summary(x)\n>  Min. 1st Qu. Median Mean 3rd Qu. Max.\n>     8    9.25   10.5   12    13.2   20\n\nNope: they *were* and are consistent. They are printed to different\nnumbers of significant digits.  See\n\n> print(summary(x), digits=5)\n  Min. 1st Qu. Median  Mean 3rd Qu.  Max.\n  8.00  9.25   10.50  12.00 13.25   20.00\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595",
       "body_snippet": "On Fri, 7 Dec 2001, Edward Malthouse wrote:\n\n> See Hyndman and Fan (1996), \"Sample quantiles in statistical\n> packages,\"  American Statistician, Vol 50, number 4, pp-361-365.\n>\n> If I recall correctly",
-      "thread_id": "thread-050dcd83bde0",
-      "thread_depth": 2,
+      "thread_id": "thread-c5ad436d505f",
+      "thread_depth": 3,
       "month": "2001-12"
     },
     {
@@ -1320,8 +1336,8 @@
       ],
       "body_plain": "> \n> On Fri, 7 Dec 2001, Edward Malthouse wrote:\n> \n> > See Hyndman and Fan (1996), \"Sample quantiles in statistical\n> > packages,\"  American Statistician, Vol 50, number 4, pp-361-365.\n> >\n> > If I recall correctly, they give about 9 different definitions of\n> > quantiles that have been proposed in the literature and a list of\n> > desirable properties.  They show which definitions have which\n> > properties.  As I recall, the method they recommend isn't in SAS,\n> > SPSS, or S-plus.  The default in SAS is one of the better ones.\n> \n> Better for what? (Not that we were discussing SAS.)\n\nOn page 364 of the Hyndman and Fan they state\n\"Splus:  the quantile() command of Splus 3.1 uses [definition 7]\n(although S-PLUS(1991) states that [definition 5] is used).\"\nDefinition 5 satisfies all 6 of their desirable properties and is\nthey one the recommend while Definition 7 does not satisfy\nproperties 3 and 5.  \n\nThe default in proc univariate is PCTLDEF=5, which corresponds to\ndefinition 2 in Hyndman and Fan.  This one is not very good (my\nmemory was wrong).  PCTLDEF=4 corresponds to definition 6 in\nHyndman and Fan, which satisfies all but desirable property 3.\n\nDesirable Property 3 is\nFreq(X_k \\le \\hat{Q}_i(p)) = Freq(X_k \\ge \\hat{Q}_i(1-p))\nmeaning the number of cases that are <= the p quantile should equal\nthe number of cases that are >= the 1-p quantile.\n\nFYI:  on SPSS they state\n\"The frequencies commend of SPSS appears to use [definition 6],\nalthough this is nowhere documented.\"\n\n> \n> > Functions that compute quantiles in S-plus are (were not)\n> > consistent (Here is an example using S-plus 2000.  It may have been\n> > fixed as there was discussion on this list a few years ago.):\n> >\n> > > x <- c(8,9,10,11,14,20)\n> > > quantile(x)\n> >    0%  25%  50%   75% 100%\n> >     8 9.25 10.5 13.25   20\n> > > summary(x)\n> >  Min. 1st Qu. Median Mean 3rd Qu. Max.\n> >     8    9.25   10.5   12    13.2   20\n> \n> Nope: they *were* and are consistent. They are printed to different\n> numbers of significant digits.  See\n> \n> > print(summary(x), digits=5)\n>   Min. 1st Qu. Median  Mean 3rd Qu.  Max.\n>   8.00  9.25   10.50  12.00 13.25   20.00\n\nYou are correct.  It is the stem function that is inconsistent.\n\n> stem(x)\n\nN = 6   Median = 10.5\nQuartiles = 9, 14\n\nEd Malthouse\n\nDr. Edward C. Malthouse\nAssistant Professor\nIntegrated Marketing Communications Department\nMedill School of Journalism\n1908 Sheridan Road\nEvanston, IL  60208-1290\nTele:  847-467-3376\nFax:  847-491-5925",
       "body_snippet": "> \n> On Fri, 7 Dec 2001, Edward Malthouse wrote:\n> \n> > See Hyndman and Fan (1996), \"Sample quantiles in statistical\n> > packages,\"  American Statistician, Vol 50, number 4, pp-361-365.\n> >\n> > If I r",
-      "thread_id": "thread-050dcd83bde0",
-      "thread_depth": 3,
+      "thread_id": "thread-c5ad436d505f",
+      "thread_depth": 4,
       "month": "2001-12"
     },
     {
@@ -1338,8 +1354,8 @@
       ],
       "body_plain": "I neglected to tell what desirable property 5 in Hyndman and Fan was\nin my previous email (the Splus definition of quantiles does not\nsatisfy this one but the one that SPSS seems to use and PCTLDEF=4 in\nSAS do satisfy it):\n\nWhere \\hat{Q}_i^{-1}(x) (inverse of quantile definition i) is uniquely defined, \n\\hat{Q}_i^{-1}(X_{(1)}) > 0 and \\hat{Q}_i^{-1}(X_{(n)}) < 1\n\n\"Property P5 reflects the result that for a continuous distribution,\nwe expect there to be positive probability for values beyond the\nrange of the data.\"  (p. 362)\n\nEd Malthouse\n\nDr. Edward C. Malthouse\nAssistant Professor\nIntegrated Marketing Communications Department\nMedill School of Journalism\n1908 Sheridan Road\nEvanston, IL  60208-1290\nTele:  847-467-3376\nFax:  847-491-5925",
       "body_snippet": "I neglected to tell what desirable property 5 in Hyndman and Fan was\nin my previous email (the Splus definition of quantiles does not\nsatisfy this one but the one that SPSS seems to use and PCTLDEF=4 ",
-      "thread_id": "thread-050dcd83bde0",
-      "thread_depth": 3,
+      "thread_id": "thread-c5ad436d505f",
+      "thread_depth": 4,
       "month": "2001-12"
     },
     {
@@ -1586,12 +1602,12 @@
       "date": "2001-12-10T16:11:54Z",
       "subject": "Re: Quartiles",
       "subject_clean": "Quartiles",
-      "in_reply_to": null,
+      "in_reply_to": "<01120717360202.30388@geri>",
       "references": [],
       "body_plain": "There has been some discussion, initiated by W.J. Heeringa, on the \ndefinitions of quar(n)tiles used by various statistical packages.\nI have found the following reference useful in this regard, though by\nnow partially outdated:\n\nAuthor = {Frigge, Michael and Hoaglin, David C. and Iglewicz, Boris},\n        Title = {Some Implementations of the Boxplot},\n        Year = 1989,\n        Journal = {The American Statistician},\n        Volume = 43,\n        Pages = {50--54},\n        Keywords = {[Statistical Computing]; Exploratory data analysis;\n                   Outlier; Software; Graphics}\n\nBest,\n\nRick.\n\n--------------------------  statu variabilis  --------------------------------\nRick Chappell, Ph.D. <> Associate Professor, Dept. of Biostatistics\nUniversity of Wisconsin at Madison Medical School \n600 Highland Avenue, K6/430 <> Madison, WI  53792  USA\nchappell at stat.wisc.edu <> Work (608) 263-5572 <> FAX 263-1059 <> Home 233-3664",
       "body_snippet": "There has been some discussion, initiated by W.J. Heeringa, on the \ndefinitions of quar(n)tiles used by various statistical packages.\nI have found the following reference useful in this regard, though",
-      "thread_id": "thread-9f5e604f5624",
-      "thread_depth": 0,
+      "thread_id": "thread-c5ad436d505f",
+      "thread_depth": 1,
       "month": "2001-12"
     },
     {
@@ -1832,12 +1848,12 @@
       "date": "2001-12-12T00:38:48Z",
       "subject": "Re: BATCH in SP6, win2k",
       "subject_clean": "BATCH in SP6, win2k",
-      "in_reply_to": null,
+      "in_reply_to": "<AA8349D6EED3D4118D74001083CF311AB24F52@actin.cytokinetics.com>",
       "references": [],
       "body_plain": "Well, I missed it in the manual.\n\n>From Chuck Taylor:\n\nYes, run\n\n    Splus /BATCH run.q run.out /BATCH_PROMPTS no\n\nThis is documented in Chapter 18 of the Programmer's Guide.  You may\nalso want to try\n\n    Splus /BATCH run.q run.out /BATCH_PROMPTS progress:no,exitstatus:yes\n\n> ...  sqpe\n> doesn't understand /BATCH.\n\nTrue, but it does understand input redirection, Unix style.  I use\nCygWin Bash under Win2k to facilitate Unix-style operations, but I\nbelieve the following works with or without it:\n\n        Sqpe.exe < run.q > run.out\n\nYou may need to define the environment variables SHOME, S_PROJ, and\nS_CWD to make this work properly in your environment.\n\n> -----Original Message-----\n> \n> Is there a way to run BATCH under windows, so there would be no gui?\n> \n> running\n> \n> splus /BATCH run.q run.out\n> \n> bring up message window which show progress (useless is you \n> ask me).  sqpe\n> doesn't understand /BATCH.\n> \n> Thanks.\n> \n> ===================================================================\n> Vadim Kutsyy, PhD                             http://www.kutsyy.com\n> vkutsyy at cytokinetics.com                           vadim at kutsyy.com\n> Statistician                                      tel. 650-624-3218\n> Cytokinetics, Inc                                 fax. 650-624-3010\n> 280 East Grand Avenue\n> South San Francisco, CA 94080           http://www.cytokinetics.com\n> =================================================================== \n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>",
       "body_snippet": "Well, I missed it in the manual.\n\n>From Chuck Taylor:\n\nYes, run\n\n    Splus /BATCH run.q run.out /BATCH_PROMPTS no\n\nThis is documented in Chapter 18 of the Programmer's Guide.  You may\nalso want to try",
-      "thread_id": "thread-4673f3f3db4d",
-      "thread_depth": 0,
+      "thread_id": "thread-39aea9369f1d",
+      "thread_depth": 1,
       "month": "2001-12"
     },
     {
@@ -2162,12 +2178,12 @@
       "date": "2001-12-13T14:44:14Z",
       "subject": "Re: tapply()",
       "subject_clean": "tapply()",
-      "in_reply_to": null,
+      "in_reply_to": "<D7E1E71C0658D4118C9D00104B6D756D1A5AFB@amu01>",
       "references": [],
       "body_plain": "Winnie Lambert asks how to get tapply to report numbers for a fixed set\nof levels, i.e.,\n        temp <- tapply(x, hours, mean)\n        \nwhere \"hours\" has numbers from 1 to 24, but in certain data sets not all of\nthe hours of the day have a representative.\n\n To get all of the hours, use\n        temp <- tapply(x, factor(hours, levels=1:24), mean)\n                \nThis will result in a solution vector of length 24, containing NA for levels\nthat did not occur.\n        \n        \n                Terry Therneau",
       "body_snippet": "Winnie Lambert asks how to get tapply to report numbers for a fixed set\nof levels, i.e.,\n        temp <- tapply(x, hours, mean)\n        \nwhere \"hours\" has numbers from 1 to 24, but in certain data set",
-      "thread_id": "thread-e85f381cd1e8",
-      "thread_depth": 0,
+      "thread_id": "thread-7dc29542735e",
+      "thread_depth": 1,
       "month": "2001-12"
     },
     {
@@ -2588,12 +2604,12 @@
       "date": "2001-12-18T21:16:11Z",
       "subject": "Re: Replacing values of one matrix from another",
       "subject_clean": "Replacing values of one matrix from another",
-      "in_reply_to": null,
+      "in_reply_to": "<3B1DF09C9A08D3118D310008C7913C45076E0212@RLC00AEX006>",
       "references": [],
       "body_plain": "> Windows NT 4 and I am stuck with a problem. I want to replace values in a\n> matrix from values in a smaller one. I have:\n> \n> dataa\n> \n> tree  dbh     ht      tag\n> 1     12      7       0\n> 2     15      9       0\n> 3     18      12      0\n> 4     10      5       0\n> 5     21      14      0\n> \n> and\n> \n> subplot\n> \n> tree  tag\n> 1     1\n> 4     1\n> \n> and I want to have\n> \n> dataa\n> \n> tree  dbh     ht      tag\n> 1     12      7       1\n> 2     15      9       0\n> 3     18      12      0\n> 4     10      5       1\n> 5     21      14      0\n> \nYou could use matrix indexing.  Depending on how generalised you want\nthis, build on the following, which assumes subplot has only 2 columns,\nbut does not assume that dataa[, \"tree\"] is a complete sequence.\n\n> whichrow <- match(subplot[, 1], dataa[, dimnames(subplot)[[2]][1]])\n> whichcol <- which(dimnames(dataa)[[2]] == dimnames(subplot)[[2]][2])\n> nrow <- dim(subplot)[1]\n> indices <- matrix(c(whichrow, rep(whichcol, nrow)), nrow=nrow)\n> dataa[indices] <- subplot[, 2]\n\nHope this helps,\nRay Brownrigg <ray at mcs.vuw.ac.nz>       http://www.mcs.vuw.ac.nz/~ray",
       "body_snippet": "> Windows NT 4 and I am stuck with a problem. I want to replace values in a\n> matrix from values in a smaller one. I have:\n> \n> dataa\n> \n> tree  dbh     ht      tag\n> 1     12      7       0\n> 2     1",
-      "thread_id": "thread-7cdfd376b8d4",
-      "thread_depth": 0,
+      "thread_id": "thread-e1344212f94a",
+      "thread_depth": 1,
       "month": "2001-12"
     },
     {
@@ -2804,12 +2820,12 @@
       "date": "2001-12-19T23:57:49Z",
       "subject": "Re: Scanning large files - connections",
       "subject_clean": "Scanning large files - connections",
-      "in_reply_to": null,
+      "in_reply_to": "<745A64FABDC57D4E83A71D1B613687B258625F@apogon.bne.marine.csiro.au>",
       "references": [],
       "body_plain": "> -----Original Message-----\n> From: Nick.Ellis at csiro.au [mailto:Nick.Ellis at csiro.au]\n> \n> On the subject of connections, you can do Unix-style \n> preprocessing of a file\n> using a pipe  in Splus6. For instance this example strips out \n> double-quotes\n> from the .txt file before read.table gets to it.\n>  \n> con <- pipe(\"sed -e \\\"s/\\\\\\\\\\\"//g\\\" dredge.txt\")\n> dredge <- read.table(con,header=T,sep=\",\")\n> \n> It works on Windows too if you have the cygwin utilities installed.\n> \n\nI should add that I've only used pipes on Windows 2000. \n\nAs for Windows 9x, Brian Ripley says \"I've found such things flaky (in\nparticular reading from pipes) and that seems to be due to limitations of\npipes on Windows 9x.  They are implemented internally quite differently on\nNT-based systems.\"\n\nHas anyone else tried pipes on Windows 9x?\n\nNick Ellis",
       "body_snippet": "> -----Original Message-----\n> From: Nick.Ellis at csiro.au [mailto:Nick.Ellis at csiro.au]\n> \n> On the subject of connections, you can do Unix-style \n> preprocessing of a file\n> using a pipe  in Splu",
-      "thread_id": "thread-c93865fff0da",
-      "thread_depth": 0,
+      "thread_id": "thread-60997634d9c7",
+      "thread_depth": 1,
       "month": "2001-12"
     },
     {
@@ -2836,12 +2852,12 @@
       "date": "2001-12-20T13:54:06Z",
       "subject": "Re: Std. Error of coefficients in GAM Model",
       "subject_clean": "Std. Error of coefficients in GAM Model",
-      "in_reply_to": null,
+      "in_reply_to": "<E00C40157F955A349ADEF295D174A31A@m_walker.canoemail.com>",
       "references": [],
       "body_plain": "Hi,\nI really don't understand what you mean. Multicollinearity is a mathematical \nproblem, not statistical. If, as limit, X2=k*X1, the model matrix (X'X)^(-1) \nis not invertible, and the algorithm should fail or report not reliable \nresults (coeff and St.Err very HUGE). Also, if X2 is approx k*X1 you obtain \nestimates with huge coefficient of variation.\nThen the St.Err are \"correct\" for any design matrix X: \"they are well-able \nto understand the structure of your data\",\n\nThis is valid for any regression model;\nHope that helps you,\nbest,\nvito\n\n> Dear list,\n\n> I would like to know the impact of concurvity , the non-parametric\n> >analogue of\n\nmulticollinearity, on the standard error of coeffients when we use GAM. I\nwonder if  the standard errors produced by summary.glm in S-plus can be\nsmaller than the true standard errors of the estimated parameter. For \nexample,\n\nthe model is\n\nfit_ gam(mortality ~ lo(time) + pollution,  .......)\n\nwhere time and pollution are higly correlated.  Do I need to worry that the\nestimated standard errors are too small when multicolinearity exists?.\nCan standard errors from summary.glm lead one to conclude that the effect\nof pollution is statistically significant when in fact it is not?  If the \nstandard errors\nfrom summary.glm are not good estimates of the true standard errors, is \nthere\n\nany other way to get the correct standard errors?\n\nThank you very much.\n\n_________________________________________________________________\nScarica GRATUITAMENTE MSN Explorer dall'indirizzo \nhttp://explorer.msn.it/intl.asp.",
       "body_snippet": "Hi,\nI really don't understand what you mean. Multicollinearity is a mathematical \nproblem, not statistical. If, as limit, X2=k*X1, the model matrix (X'X)^(-1) \nis not invertible, and the algorithm sho",
-      "thread_id": "thread-ad6bf895f87b",
-      "thread_depth": 0,
+      "thread_id": "thread-0275e2176276",
+      "thread_depth": 1,
       "month": "2001-12"
     },
     {
@@ -2975,12 +2991,12 @@
       "date": "2001-12-23T17:27:11Z",
       "subject": "Re: string functions",
       "subject_clean": "string functions",
-      "in_reply_to": null,
+      "in_reply_to": "<15395.60425.907775.309480@delphioutpost.com>",
       "references": [],
       "body_plain": "Jeff:\n\nYou do not say what version of S-Plus you are using, but I'd guess 6.0 for\nLinus/Unix. In S-Plus 6.0 for Windows, I went to the Help> Contents\ntab,Character Data Operations> Concatenate Data... and at the botton of the\npaste() listing, found unpaste(), which is what you need. This took me one\nminute and seemed reasonable even though I did know the answer.\n\nAlas, however, unpaste is undocumented in SP2000 (although it's there) and\nmissing in earlier versions, I believe. splitString() is an undocumented S4\nconstruct to support the string class. However, Splus tells us in its\ndocumentation -- and David Smith has repeated on this list, I believe --\nthat string types are not fully supported (and may never be), so that\nsplitString() is risky.\n\nNevertheless, I would agree that the S6.0 documentation is rather poor and\nthat the Help files are quite problematic in their documentation of S4\nlanguage features. I would hope that cleaning this up has a high priority\nfor Insightful.\n\nCheers,\n\nBert Gunter\nBiometrics Research RY 70-38\nMerck & Company\nP.O. Box 2000\nRahway, NJ 07065-0900\nPhone: (732) 594-7765\nmailto: bert_gunter at merck.com\n\n\"The business of the statistician is to catalyze the scientific learning\nprocess.\"      -- George E.P. Box\n\n-----Original Message-----\nFrom: Jeff Mincy [mailto:jeff at delphioutpost.com]\nSent: Friday, December 21, 2001 9:12 PM\nTo: s-news at lists.biostat.wustl.edu\nSubject: [S] string functions\n\nDoes anybody have a reasonably complete list of string functions?\n\nThe reason that I ask is that I just spent 30 minutes trying to find a\nfunction to to turn \"foo:bar\" into list(\"foo\",\"bar\").  I eventually\nguessed both unpaste and splitString.  I found splitString with Emacs\nESS name completion after guessing 'split'.  Anyway, there has to be a\nbetter way to find these functions than trying to use the splus\nmanuals.\n\n-jeff\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Jeff:\n\nYou do not say what version of S-Plus you are using, but I'd guess 6.0 for\nLinus/Unix. In S-Plus 6.0 for Windows, I went to the Help> Contents\ntab,Character Data Operations> Concatenate Data...",
-      "thread_id": "thread-1c72b5946da5",
-      "thread_depth": 0,
+      "thread_id": "thread-e183a6b7d314",
+      "thread_depth": 1,
       "month": "2001-12"
     },
     {
@@ -3013,8 +3029,8 @@
       ],
       "body_plain": "From: \"Gunter, Bert\" <bert_gunter at merck.com>\n   Date: Sun, 23 Dec 2001 12:27:11 -0500\n   \n   You do not say what version of S-Plus you are using, but I'd guess 6.0 for\n   Linus/Unix. In S-Plus 6.0 for Windows, I went to the Help> Contents\n   tab,Character Data Operations> Concatenate Data... and at the botton of the\n   paste() listing, found unpaste(), which is what you need. This took me one\n   minute and seemed reasonable even though I did know the answer.\n   \nOops.  Yes - Splus 6.0 on unix.\n\nIn this version, the string unpaste is not mentioned with paste and\ndoes not occur anywhere under Splus/library.\n\n   Alas, however, unpaste is undocumented in SP2000 (although it's there) and\n   missing in earlier versions, I believe. splitString() is an undocumented S4\n   construct to support the string class. However, Splus tells us in its\n   documentation -- and David Smith has repeated on this list, I believe --\n   that string types are not fully supported (and may never be), so that\n   splitString() is risky.\n   \nI'm not sure that I understand exactly how unsupported strings are,\nbut some level of support is absolutely necessary.  The minimum level\nof string functions may already be implemented.\n\n   Nevertheless, I would agree that the S6.0 documentation is rather poor and\n   that the Help files are quite problematic in their documentation of S4\n   language features. I would hope that cleaning this up has a high priority\n   for Insightful.\n   \nSpecifically, I was looking for something like table 2.2 'elementary\nfunctions' and table 2.3 'summary functions' in the s-plus 6\nprogrammer's guide (for unix/linux).  Eg just a table of string\nfunctions and a brief description.\n\nI'll mail insightful.\n\n   \n   Does anybody have a reasonably complete list of string functions?\n   -jeff\n\n-jeff",
       "body_snippet": "From: \"Gunter, Bert\" <bert_gunter at merck.com>\n   Date: Sun, 23 Dec 2001 12:27:11 -0500\n   \n   You do not say what version of S-Plus you are using, but I'd guess 6.0 for\n   Linus/Unix. In S-Plus 6.0 ",
-      "thread_id": "thread-1c72b5946da5",
-      "thread_depth": 1,
+      "thread_id": "thread-e183a6b7d314",
+      "thread_depth": 2,
       "month": "2001-12"
     },
     {
@@ -3047,8 +3063,8 @@
       ],
       "body_plain": "Jeff's point can be generalized beyond string functions.  \n\nWhat has impressed me most about S-Plus is its depth.  Unlike most\nsoftware, S-Plus offers much more capability than is advertised.  Much\nis not documented, e.g. unpaste().  \n\nJeff's suggestion of offering lists of functions, perhaps with\ncaveats, could be extended to embrace ALL functions.\n\n********************************************************\n* William Carlisle Thacker                             *\n*                                                      *\n* Atlantic Oceanographic and Meteorological Laboratory *\n* 4301 Rickenbacker Causeway                           *\n* Miami, Florida 33149 USA                             *\n* Office:  (305) 361-4323                              *\n* Fax:     (305) 361-4392                              *\n********************************************************\n\nOn Mon, 24 Dec 2001, Jeff Mincy wrote:\n\n>    From: \"Gunter, Bert\" <bert_gunter at merck.com>\n>    Date: Sun, 23 Dec 2001 12:27:11 -0500\n>    \n>    You do not say what version of S-Plus you are using, but I'd guess 6.0 for\n>    Linus/Unix. In S-Plus 6.0 for Windows, I went to the Help> Contents\n>    tab,Character Data Operations> Concatenate Data... and at the botton of the\n>    paste() listing, found unpaste(), which is what you need. This took me one\n>    minute and seemed reasonable even though I did know the answer.\n>    \n> Oops.  Yes - Splus 6.0 on unix.\n> \n> In this version, the string unpaste is not mentioned with paste and\n> does not occur anywhere under Splus/library.\n> \n>    Alas, however, unpaste is undocumented in SP2000 (although it's there) and\n>    missing in earlier versions, I believe. splitString() is an undocumented S4\n>    construct to support the string class. However, Splus tells us in its\n>    documentation -- and David Smith has repeated on this list, I believe --\n>    that string types are not fully supported (and may never be), so that\n>    splitString() is risky.\n>    \n> I'm not sure that I understand exactly how unsupported strings are,\n> but some level of support is absolutely necessary.  The minimum level\n> of string functions may already be implemented.\n> \n>    Nevertheless, I would agree that the S6.0 documentation is rather poor and\n>    that the Help files are quite problematic in their documentation of S4\n>    language features. I would hope that cleaning this up has a high priority\n>    for Insightful.\n>    \n> Specifically, I was looking for something like table 2.2 'elementary\n> functions' and table 2.3 'summary functions' in the s-plus 6\n> programmer's guide (for unix/linux).  Eg just a table of string\n> functions and a brief description.\n> \n> I'll mail insightful.\n> \n>    \n>    Does anybody have a reasonably complete list of string functions?\n>    -jeff\n> \n> -jeff",
       "body_snippet": "Jeff's point can be generalized beyond string functions.  \n\nWhat has impressed me most about S-Plus is its depth.  Unlike most\nsoftware, S-Plus offers much more capability than is advertised.  Much\nis",
-      "thread_id": "thread-1c72b5946da5",
-      "thread_depth": 2,
+      "thread_id": "thread-e183a6b7d314",
+      "thread_depth": 3,
       "month": "2001-12"
     },
     {
@@ -3334,13 +3350,13 @@
     {
       "id": "thread-a4877e41cf79",
       "subject": "How to drop unused factor levels in Splus6 (again)?",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Byers, Bob",
         "Frank E Harrell Jr"
       ],
       "started": "2001-12-03T14:03:52Z",
-      "last_reply": "2001-12-03T16:39:27Z",
+      "last_reply": "2001-12-03T19:33:02Z",
       "root_message_id": "msg-a4877e41cf79"
     },
     {
@@ -3379,25 +3395,16 @@
       "root_message_id": "msg-e394cf3d65a9"
     },
     {
-      "id": "thread-6f56be7ecce3",
-      "subject": "How to drop unused factor levels in Splus6 (again)?",
-      "message_count": 1,
-      "participants": [
-        "Byers, Bob"
-      ],
-      "started": "2001-12-03T19:33:02Z",
-      "last_reply": "2001-12-03T19:33:02Z",
-      "root_message_id": "msg-6f56be7ecce3"
-    },
-    {
       "id": "thread-263a28dd3f52",
       "subject": "problems with dyn.load",
-      "message_count": 1,
+      "message_count": 4,
       "participants": [
-        "Andy Scott"
+        "Andreas Christmann",
+        "Andy Scott",
+        "Prof Brian Ripley"
       ],
       "started": "2001-12-04T12:40:16Z",
-      "last_reply": "2001-12-04T12:40:16Z",
+      "last_reply": "2001-12-04T15:57:12Z",
       "root_message_id": "msg-263a28dd3f52"
     },
     {
@@ -3410,29 +3417,6 @@
       "started": "2001-12-04T12:56:45Z",
       "last_reply": "2001-12-04T12:56:45Z",
       "root_message_id": "msg-a7c01916cca6"
-    },
-    {
-      "id": "thread-afd5ce7c5cc0",
-      "subject": "problems with dyn.load",
-      "message_count": 1,
-      "participants": [
-        "Andreas Christmann"
-      ],
-      "started": "2001-12-04T13:47:19Z",
-      "last_reply": "2001-12-04T13:47:19Z",
-      "root_message_id": "msg-afd5ce7c5cc0"
-    },
-    {
-      "id": "thread-3f3dad05a6cd",
-      "subject": "problems with dyn.load",
-      "message_count": 2,
-      "participants": [
-        "Andy Scott",
-        "Prof Brian Ripley"
-      ],
-      "started": "2001-12-04T15:50:33Z",
-      "last_reply": "2001-12-04T15:57:12Z",
-      "root_message_id": "msg-3f3dad05a6cd"
     },
     {
       "id": "thread-bfa8fe7a1964",
@@ -3459,48 +3443,44 @@
     {
       "id": "thread-83d36af2dd75",
       "subject": "A bug in Splus6",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Ravi Varadhan"
       ],
       "started": "2001-12-04T20:48:12Z",
-      "last_reply": "2001-12-04T20:48:12Z",
+      "last_reply": "2001-12-05T03:00:17Z",
       "root_message_id": "msg-83d36af2dd75"
     },
     {
       "id": "thread-7ada7349ccb1",
       "subject": "Modifying lowess to yield quantiles",
-      "message_count": 2,
+      "message_count": 11,
       "participants": [
+        "Andreas Christmann",
         "Anne York",
+        "Frank E Harrell Jr",
+        "Gunter, Bert",
+        "Jeff Simonoff",
+        "Liaw, Andy",
+        "Rick Ditmars",
+        "Warnes, Gregory R",
         "ebellin at speakeasy.net"
       ],
       "started": "2001-12-04T21:31:33Z",
-      "last_reply": "2001-12-05T15:36:30Z",
+      "last_reply": "2001-12-05T20:45:54Z",
       "root_message_id": "msg-7ada7349ccb1"
     },
     {
       "id": "thread-5de987829890",
       "subject": "Poisson glm with aggregated data.",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Gerald.Jean at spgdag.ca",
         "Prof Brian Ripley"
       ],
       "started": "2001-12-04T21:55:16Z",
-      "last_reply": "2001-12-04T22:42:35Z",
+      "last_reply": "2001-12-06T19:17:28Z",
       "root_message_id": "msg-5de987829890"
-    },
-    {
-      "id": "thread-a95a93601a02",
-      "subject": "A bug in Splus6",
-      "message_count": 1,
-      "participants": [
-        "Ravi Varadhan"
-      ],
-      "started": "2001-12-05T03:00:17Z",
-      "last_reply": "2001-12-05T03:00:17Z",
-      "root_message_id": "msg-a95a93601a02"
     },
     {
       "id": "thread-4c66977a7f78",
@@ -3513,6 +3493,17 @@
       "started": "2001-12-05T08:38:11Z",
       "last_reply": "2001-12-05T09:22:09Z",
       "root_message_id": "msg-4c66977a7f78"
+    },
+    {
+      "id": "thread-cad24bc8b2f0",
+      "subject": "FOR MULTIVARIATE DISTRIBUTION TESTING",
+      "message_count": 1,
+      "participants": [
+        "Kenan Gocer"
+      ],
+      "started": "2001-12-05T09:22:09Z",
+      "last_reply": "2001-12-05T09:22:09Z",
+      "root_message_id": "msg-cad24bc8b2f0"
     },
     {
       "id": "thread-f0b26a97725e",
@@ -3540,60 +3531,14 @@
     {
       "id": "thread-0c1f65dec3a4",
       "subject": "behaviour of library function",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Alan Zaslavsky",
         "Glenn.Treacy at ilim.com"
       ],
       "started": "2001-12-05T15:36:09Z",
-      "last_reply": "2001-12-05T15:36:09Z",
+      "last_reply": "2001-12-05T20:52:32Z",
       "root_message_id": "msg-0c1f65dec3a4"
-    },
-    {
-      "id": "thread-e3a2c2be94b7",
-      "subject": "Modifying lowess to yield quantiles",
-      "message_count": 3,
-      "participants": [
-        "Anne York",
-        "Frank E Harrell Jr",
-        "Liaw, Andy"
-      ],
-      "started": "2001-12-05T15:46:25Z",
-      "last_reply": "2001-12-05T17:54:15Z",
-      "root_message_id": "msg-e3a2c2be94b7"
-    },
-    {
-      "id": "thread-17b7d91fabdf",
-      "subject": "Modifying lowess to yield quantiles",
-      "message_count": 1,
-      "participants": [
-        "Andreas Christmann"
-      ],
-      "started": "2001-12-05T15:54:59Z",
-      "last_reply": "2001-12-05T15:54:59Z",
-      "root_message_id": "msg-17b7d91fabdf"
-    },
-    {
-      "id": "thread-0387278cdb1c",
-      "subject": "Modifying lowess to yield quantiles",
-      "message_count": 2,
-      "participants": [
-        "Gunter, Bert",
-        "Jeff Simonoff"
-      ],
-      "started": "2001-12-05T15:57:18Z",
-      "last_reply": "2001-12-05T20:45:54Z",
-      "root_message_id": "msg-0387278cdb1c"
-    },
-    {
-      "id": "thread-25bae96d1b8e",
-      "subject": "Modifying lowess to yield quantiles",
-      "message_count": 1,
-      "participants": [
-        "Rick Ditmars"
-      ],
-      "started": "2001-12-05T16:54:03Z",
-      "last_reply": "2001-12-05T16:54:03Z",
-      "root_message_id": "msg-25bae96d1b8e"
     },
     {
       "id": "thread-14b544a43dc8",
@@ -3623,28 +3568,6 @@
       "root_message_id": "msg-19ef26277705"
     },
     {
-      "id": "thread-a9ead56bd026",
-      "subject": "Modifying lowess to yield quantiles",
-      "message_count": 1,
-      "participants": [
-        "Gunter, Bert"
-      ],
-      "started": "2001-12-05T18:01:43Z",
-      "last_reply": "2001-12-05T18:01:43Z",
-      "root_message_id": "msg-a9ead56bd026"
-    },
-    {
-      "id": "thread-c01212be28a0",
-      "subject": "Modifying lowess to yield quantiles",
-      "message_count": 1,
-      "participants": [
-        "Warnes, Gregory R"
-      ],
-      "started": "2001-12-05T19:00:37Z",
-      "last_reply": "2001-12-05T19:00:37Z",
-      "root_message_id": "msg-c01212be28a0"
-    },
-    {
       "id": "thread-89a70ef438d9",
       "subject": "miss() missing data feature - missing on Unix",
       "message_count": 1,
@@ -3654,17 +3577,6 @@
       "started": "2001-12-05T19:29:07Z",
       "last_reply": "2001-12-05T19:29:07Z",
       "root_message_id": "msg-89a70ef438d9"
-    },
-    {
-      "id": "thread-b52575c330e8",
-      "subject": "behaviour of library function",
-      "message_count": 1,
-      "participants": [
-        "Alan Zaslavsky"
-      ],
-      "started": "2001-12-05T20:52:32Z",
-      "last_reply": "2001-12-05T20:52:32Z",
-      "root_message_id": "msg-b52575c330e8"
     },
     {
       "id": "thread-c9db096f210a",
@@ -3700,22 +3612,12 @@
       "root_message_id": "msg-5bfc8527fadb"
     },
     {
-      "id": "thread-01da5e75fd56",
-      "subject": "Poisson glm with aggregated data.",
-      "message_count": 1,
-      "participants": [
-        "Gerald.Jean at spgdag.ca"
-      ],
-      "started": "2001-12-06T19:17:28Z",
-      "last_reply": "2001-12-06T19:17:28Z",
-      "root_message_id": "msg-01da5e75fd56"
-    },
-    {
       "id": "thread-cdcd64d7f2f0",
       "subject": "NA's in string vector.",
-      "message_count": 3,
+      "message_count": 4,
       "participants": [
         "David Smith",
+        "Gunter, Bert",
         "Prof Brian D Ripley",
         "Vadim Kutsyy"
       ],
@@ -3733,17 +3635,6 @@
       "started": "2001-12-07T09:37:07Z",
       "last_reply": "2001-12-07T09:37:07Z",
       "root_message_id": "msg-7b69d3d163ac"
-    },
-    {
-      "id": "thread-6f56e4516eb3",
-      "subject": "NA's in string vector.",
-      "message_count": 1,
-      "participants": [
-        "Gunter, Bert"
-      ],
-      "started": "2001-12-07T13:51:30Z",
-      "last_reply": "2001-12-07T13:51:30Z",
-      "root_message_id": "msg-6f56e4516eb3"
     },
     {
       "id": "thread-54ada25e8d0e",
@@ -3782,51 +3673,31 @@
     {
       "id": "thread-c5ad436d505f",
       "subject": "Quartiles",
-      "message_count": 3,
+      "message_count": 9,
       "participants": [
         "Dr. M.Sawada",
+        "Edward Malthouse",
         "Heeringa W.J.",
-        "Prof Brian Ripley"
+        "Monder, Harvey",
+        "Prof Brian Ripley",
+        "Rick Chappell"
       ],
       "started": "2001-12-07T16:36:02Z",
-      "last_reply": "2001-12-07T16:53:54Z",
+      "last_reply": "2001-12-10T16:11:54Z",
       "root_message_id": "msg-c5ad436d505f"
     },
     {
       "id": "thread-1985d8dad4e9",
       "subject": "SQL in S-PLUS",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "David Smith",
-        "Heeringa W.J."
-      ],
-      "started": "2001-12-07T16:45:04Z",
-      "last_reply": "2001-12-07T17:41:32Z",
-      "root_message_id": "msg-1985d8dad4e9"
-    },
-    {
-      "id": "thread-ddc74b82cac5",
-      "subject": "SQL in S-PLUS",
-      "message_count": 1,
-      "participants": [
+        "Heeringa W.J.",
         "Warnes, Gregory R"
       ],
-      "started": "2001-12-07T17:59:10Z",
+      "started": "2001-12-07T16:45:04Z",
       "last_reply": "2001-12-07T17:59:10Z",
-      "root_message_id": "msg-ddc74b82cac5"
-    },
-    {
-      "id": "thread-050dcd83bde0",
-      "subject": "Quartiles",
-      "message_count": 5,
-      "participants": [
-        "Edward Malthouse",
-        "Monder, Harvey",
-        "Prof Brian Ripley"
-      ],
-      "started": "2001-12-07T18:15:49Z",
-      "last_reply": "2001-12-07T20:03:04Z",
-      "root_message_id": "msg-050dcd83bde0"
+      "root_message_id": "msg-1985d8dad4e9"
     },
     {
       "id": "thread-c79cdb5aa92d",
@@ -3929,17 +3800,6 @@
       "root_message_id": "msg-685c8a25bd62"
     },
     {
-      "id": "thread-9f5e604f5624",
-      "subject": "Quartiles",
-      "message_count": 1,
-      "participants": [
-        "Rick Chappell"
-      ],
-      "started": "2001-12-10T16:11:54Z",
-      "last_reply": "2001-12-10T16:11:54Z",
-      "root_message_id": "msg-9f5e604f5624"
-    },
-    {
       "id": "thread-41be75480fe6",
       "subject": "Summary:Writing scripts in S-PLUS 6 for Linux",
       "message_count": 1,
@@ -4033,12 +3893,12 @@
     {
       "id": "thread-39aea9369f1d",
       "subject": "BATCH in SP6, win2k",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Vadim Kutsyy"
       ],
       "started": "2001-12-11T22:23:33Z",
-      "last_reply": "2001-12-11T22:23:33Z",
+      "last_reply": "2001-12-12T00:38:48Z",
       "root_message_id": "msg-39aea9369f1d"
     },
     {
@@ -4063,17 +3923,6 @@
       "started": "2001-12-12T00:06:53Z",
       "last_reply": "2001-12-12T07:43:59Z",
       "root_message_id": "msg-6bb2b301d2ee"
-    },
-    {
-      "id": "thread-4673f3f3db4d",
-      "subject": "BATCH in SP6, win2k",
-      "message_count": 1,
-      "participants": [
-        "Vadim Kutsyy"
-      ],
-      "started": "2001-12-12T00:38:48Z",
-      "last_reply": "2001-12-12T00:38:48Z",
-      "root_message_id": "msg-4673f3f3db4d"
     },
     {
       "id": "thread-0fe5071cf48f",
@@ -4178,12 +4027,13 @@
     {
       "id": "thread-7dc29542735e",
       "subject": "tapply()",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Terry Therneau",
         "Winnie Lambert"
       ],
       "started": "2001-12-12T22:37:13Z",
-      "last_reply": "2001-12-12T22:37:13Z",
+      "last_reply": "2001-12-13T14:44:14Z",
       "root_message_id": "msg-7dc29542735e"
     },
     {
@@ -4243,17 +4093,6 @@
       "started": "2001-12-13T14:38:08Z",
       "last_reply": "2001-12-13T15:03:21Z",
       "root_message_id": "msg-622d6da5cfdc"
-    },
-    {
-      "id": "thread-e85f381cd1e8",
-      "subject": "tapply()",
-      "message_count": 1,
-      "participants": [
-        "Terry Therneau"
-      ],
-      "started": "2001-12-13T14:44:14Z",
-      "last_reply": "2001-12-13T14:44:14Z",
-      "root_message_id": "msg-e85f381cd1e8"
     },
     {
       "id": "thread-dc909743c649",
@@ -4436,13 +4275,14 @@
     {
       "id": "thread-e1344212f94a",
       "subject": "Replacing values of one matrix from another",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Dr. M.Sawada",
+        "Ray Brownrigg",
         "yves.claveau at mnr.gov.on.ca"
       ],
       "started": "2001-12-18T14:50:12Z",
-      "last_reply": "2001-12-18T16:53:59Z",
+      "last_reply": "2001-12-18T21:16:11Z",
       "root_message_id": "msg-e1344212f94a"
     },
     {
@@ -4488,17 +4328,6 @@
       "started": "2001-12-18T21:06:58Z",
       "last_reply": "2001-12-18T21:06:58Z",
       "root_message_id": "msg-676300cde06c"
-    },
-    {
-      "id": "thread-7cdfd376b8d4",
-      "subject": "Replacing values of one matrix from another",
-      "message_count": 1,
-      "participants": [
-        "Ray Brownrigg"
-      ],
-      "started": "2001-12-18T21:16:11Z",
-      "last_reply": "2001-12-18T21:16:11Z",
-      "root_message_id": "msg-7cdfd376b8d4"
     },
     {
       "id": "thread-bf52f52ebb32",
@@ -4548,12 +4377,12 @@
     {
       "id": "thread-60997634d9c7",
       "subject": "Scanning large files - connections",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Nick.Ellis at csiro.au"
       ],
       "started": "2001-12-19T01:35:34Z",
-      "last_reply": "2001-12-19T01:35:34Z",
+      "last_reply": "2001-12-19T23:57:49Z",
       "root_message_id": "msg-60997634d9c7"
     },
     {
@@ -4592,37 +4421,16 @@
       "root_message_id": "msg-e36051ada0bb"
     },
     {
-      "id": "thread-c93865fff0da",
-      "subject": "Scanning large files - connections",
-      "message_count": 1,
-      "participants": [
-        "Nick.Ellis at csiro.au"
-      ],
-      "started": "2001-12-19T23:57:49Z",
-      "last_reply": "2001-12-19T23:57:49Z",
-      "root_message_id": "msg-c93865fff0da"
-    },
-    {
       "id": "thread-0275e2176276",
       "subject": "Std. Error of coefficients in GAM Model",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Mike Walker"
-      ],
-      "started": "2001-12-20T01:56:26Z",
-      "last_reply": "2001-12-20T01:56:26Z",
-      "root_message_id": "msg-0275e2176276"
-    },
-    {
-      "id": "thread-ad6bf895f87b",
-      "subject": "Std. Error of coefficients in GAM Model",
-      "message_count": 1,
-      "participants": [
+        "Mike Walker",
         "vito muggeo"
       ],
-      "started": "2001-12-20T13:54:06Z",
+      "started": "2001-12-20T01:56:26Z",
       "last_reply": "2001-12-20T13:54:06Z",
-      "root_message_id": "msg-ad6bf895f87b"
+      "root_message_id": "msg-0275e2176276"
     },
     {
       "id": "thread-4e729a9797ed",
@@ -4683,26 +4491,15 @@
     {
       "id": "thread-e183a6b7d314",
       "subject": "string functions",
-      "message_count": 1,
-      "participants": [
-        "Jeff Mincy"
-      ],
-      "started": "2001-12-22T02:12:25Z",
-      "last_reply": "2001-12-22T02:12:25Z",
-      "root_message_id": "msg-e183a6b7d314"
-    },
-    {
-      "id": "thread-1c72b5946da5",
-      "subject": "string functions",
-      "message_count": 3,
+      "message_count": 4,
       "participants": [
         "Carlisle Thacker",
         "Gunter, Bert",
         "Jeff Mincy"
       ],
-      "started": "2001-12-23T17:27:11Z",
+      "started": "2001-12-22T02:12:25Z",
       "last_reply": "2001-12-26T14:37:13Z",
-      "root_message_id": "msg-1c72b5946da5"
+      "root_message_id": "msg-e183a6b7d314"
     },
     {
       "id": "thread-c438f55db6e6",

@@ -107,12 +107,12 @@
       "date": "2000-11-02T00:24:09Z",
       "subject": "Re: t-test for binary data",
       "subject_clean": "t-test for binary data",
-      "in_reply_to": null,
+      "in_reply_to": "<EDDJKGEMEENACAAA@mailcity.com>",
       "references": [],
       "body_plain": "At 05:12 2/11/00 +0800, Xao Ping wrote:\n>Dear All:\n>I have two samples of different lengths containing binary varaibles (1,0).\n>I need to figure out whether or not the probabilities of success  are \n>significally different in this samples. Which test should I apply?\n>Thank you\n>Xao Ping\n>R&R Farmakinetics\n>Taiwan\n\nIn fact if you just go ahead and do an ordinary t-test as if the data were\nnormally distributed you probably won't get a very different result from\nwhat you would get if you did the more conventional thing and used a\nchi-squared test.  Here is an example:\n\n> s1 <- rbinom(20, 1, 0.6)\n> s1\n [1] 1 1 0 1 0 0 1 0 1 0 1 0 1 0 0 0 0 1 1 1\n> s2 <- rbinom(30, 1, 0.5)\n> t.test(s1, s2)\n\n        Standard Two-Sample t-Test\n\ndata:  s1 and s2 \nt = -0.6871, df = 48, p-value = 0.4953 \nalternative hypothesis: true difference in means is not equal to 0 \n95 percent confidence interval:\n -0.39262  0.19262 \nsample estimates:\n mean of x mean of y \n       0.5       0.6\n\n---\n\nOK, now here is the more conventional way of going about things using a\nchi-squared test:\n\n---\n\n> m <- rbind(table(s1), table(s2))\n> m\n      0  1 \n[1,] 10 10\n[2,] 12 18\n> chisq.test(m)\n\n        Pearson's chi-square test with Yates' continuity correction\n\ndata:  m \nX-square = 0.1657, df = 1, p-value = 0.6839 \n\n---\n\nThat looks pretty different, but most of this is due to Yates' correction:\n\n---\n\n> chisq.test(m, correct = F)\n\n        Pearson's chi-square test without Yates' continuity correction\n\ndata:  m \nX-square = 0.487, df = 1, p-value = 0.4853 \n\n---\n\nThe p-value is very close to that for the t-test and even the statistics\nare numerically very close if you square the t-statistic:\n\n> (-0.6871)^2\n[1] 0.47211\n\nIn fact apart from the rather finnicky Yates' correction the differences\nare (a) the t-test uses a pooled estimate of variance whereas the\nchi-squared test lumps both samples together and (b) the t-test uses a\nt-value for the cutoff whereas the chi-squared test uses a squared normal\nvalue.\n\nI mention this because I find most people never notice the connexion and\nget very uptight about using normal theory approximations for cases where\nthe assumed normal distribution for observations is patently nonsense.\nCare IS needed, of course, but in many respects the assumption of normality\nis often not critical, (at least in univariate case).  What is usually much\nmore important is the assumption of low third and fourth cumulants, i.e.\nreasonable symmetry and no huge outliers.\n\nHere endeth the lesson for today...  :-)\n\nWell, not quite.  Notice that I say \"chi-squareD\" test, not \"chi-square\"\ntest.  I'm finnicky that way, too!\n\nBill Venables.\n--\nBill Venables, Statistician                         Tel. +61 7 3826 7251 \nCSIRO Marine Laboratories,                          Fax. +61 7 3826 7304\nCleveland, Qld, 4163                  Email: Bill.Venables at cmis.csiro.au\nAUSTRALIA                        http://www.cmis.csiro.au/bill.venables/",
       "body_snippet": "At 05:12 2/11/00 +0800, Xao Ping wrote:\n>Dear All:\n>I have two samples of different lengths containing binary varaibles (1,0).\n>I need to figure out whether or not the probabilities of success  are \n>",
-      "thread_id": "thread-f398a099c220",
-      "thread_depth": 0,
+      "thread_id": "thread-79d9fe7b0146",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -307,12 +307,12 @@
       "date": "2000-11-02T21:51:58Z",
       "subject": "Re: t-test for binary data",
       "subject_clean": "t-test for binary data",
-      "in_reply_to": null,
+      "in_reply_to": "<EDDJKGEMEENACAAA@mailcity.com>",
       "references": [],
       "body_plain": "In fact apart from the rather finnicky Yates' correction the\ndifferences\n        \n\nFinnicky!!\n\nGetting the size of the test correct and not a function of the nuisance\nparameter?\n(slightly different than being \"exact\")\n\nIf there is something to be finnicky about (at least in randomized studies)\nis that not it?\n\nTrust I have not started a non-productive conditionality debate\n(but I could not help commenting on this)\n\nKeith O'Rourke\nStatistician, Department of Surgery and Clinical Epidemiology Unit\nUniversity of Ottawa / Ottawa Hospital \nPhone (613) 798-5555 x6055\nFax (613) 761-5351\nWeb http://www.lri.ca/profiles/orourke.htm",
       "body_snippet": "In fact apart from the rather finnicky Yates' correction the\ndifferences\n        \n\nFinnicky!!\n\nGetting the size of the test correct and not a function of the nuisance\nparameter?\n(slightly different th",
-      "thread_id": "thread-66954dda3021",
-      "thread_depth": 0,
+      "thread_id": "thread-79d9fe7b0146",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -361,8 +361,8 @@
       ],
       "body_plain": "> \n>       In fact apart from the rather finnicky Yates' correction the\n> differences\n>       \n> \n> Finnicky!!\n> \n> Getting the size of the test correct and not a function of the nuisance\n> parameter?\n> (slightly different than being \"exact\")\n> \n> If there is something to be finnicky about (at least in randomized studies)\n> is that not it?\n> \n> Trust I have not started a non-productive conditionality debate\n> (but I could not help commenting on this)\n\nYes, finnicky.\n\nIf you have large samples it doesn't matter at all and if you have\nsmall samples you are in a spot of bother no matter what you do...\n:-)\n\nIt really is not worth starting that non-productive debate, though.\nIf you want to use Yates' correction (and I generally do, what the\nheck?) then go for it.\n\nBill Venables.\n-- \nBill Venables,      Statistician,     CMIS Environmetrics Project\nCSIRO Marine Labs, PO Box 120, Cleveland, Qld,  AUSTRALIA.   4163\nTel: +61 7 3826 7251           Email: Bill.Venables at cmis.csiro.au    \nFax: +61 7 3826 7304      http://www.cmis.csiro.au/bill.venables/",
       "body_snippet": "> \n>       In fact apart from the rather finnicky Yates' correction the\n> differences\n>       \n> \n> Finnicky!!\n> \n> Getting the size of the test correct and not a function of the nuisance\n> parameter?",
-      "thread_id": "thread-66954dda3021",
-      "thread_depth": 1,
+      "thread_id": "thread-79d9fe7b0146",
+      "thread_depth": 2,
       "month": "2000-11"
     },
     {
@@ -441,12 +441,12 @@
       "date": "2000-11-03T14:56:00Z",
       "subject": "2 questions",
       "subject_clean": "2 questions",
-      "in_reply_to": null,
+      "in_reply_to": "<00ed01c04594$3fdf77a0$51c8a8c0@invs.sante.fr>",
       "references": [],
       "body_plain": "Dear all,\n\n1) How can I get more decimals points ? S+ allows 17 \ndecimals. Is there a way to get more precision?\n\n2) Are there any \nfunctions to turn a symmetric matrix to a semi positive definite matrix? \n\nThanks for your help\n\n   O__  ---- Alain Le \nTertre\n  c/ /'_ --- Institut de Veille Sanitaire (InVS)\n(*) \\(*) \n--  12 rue du val d'Osne\n~~~~~~~~~~ - 94415 Saint Maurice \ncedex    FRANCE\nVoice: 33 1 41 79 67 50  Fax: 33 1 41 79 \n67 68\nemail: a.letertre at invs.sante.fr",
       "body_snippet": "Dear all,\n\n1) How can I get more decimals points ? S+ allows 17 \ndecimals. Is there a way to get more precision?\n\n2) Are there any \nfunctions to turn a symmetric matrix to a semi positive definite mat",
-      "thread_id": "thread-079acc9019df",
-      "thread_depth": 0,
+      "thread_id": "thread-1adfdbd503c8",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -753,12 +753,12 @@
       "date": "2000-11-07T08:14:23Z",
       "subject": "Re: naive question re imputation and prediction",
       "subject_clean": "naive question re imputation and prediction",
-      "in_reply_to": null,
+      "in_reply_to": "<5.0.0.25.0.20001106152920.00a65610@solander.bc.ca>",
       "references": [],
       "body_plain": "Multiple imputation seems the way to go in your case, as Prof. Harrell\nhas already pointed out. Besides  the references he gives, I think the\nbook by Schafer (\"Analysis  of Incomplete Multivariate Data\") is quite\nhelpful. S-Plus  functions implementing  the methods described  in the\nbook are available.\n\nAnother resource  that I find useful  (also  offering S-Plus functions\nfor multiple imputation) is http://www.multiple-imputation.com.\n\nft.\n-- \nFernando TUSELL                                 e-mail:\nDepartamento de Econometría y Estadística           etptupaf at bs.ehu.es \nFacultad de CC.EE. y Empresariales              Tel:  (+34)94.601.3733\nAvenida Lendakari Aguirre, 83                   Fax:  (+34)94.601.3754\nE-48015 BILBAO  (Spain)                         Secr: (+34)94.601.3740\nPGP: finger etptupaf at bsdx01.bs.ehu.es           http://agesi.bs.ehu.es\n----------------------------------------------------------------------",
       "body_snippet": "Multiple imputation seems the way to go in your case, as Prof. Harrell\nhas already pointed out. Besides  the references he gives, I think the\nbook by Schafer (\"Analysis  of Incomplete Multivariate Dat",
-      "thread_id": "thread-ca12c4b5902d",
-      "thread_depth": 0,
+      "thread_id": "thread-147597f4eee1",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -997,12 +997,12 @@
       "date": "2000-11-08T20:28:09Z",
       "subject": "RE: p-value in coxph",
       "subject_clean": "p-value in coxph",
-      "in_reply_to": null,
+      "in_reply_to": "<B549258FB2C5D3119EA600805F9F7239EACD09@uhnmail302>",
       "references": [],
       "body_plain": "Thank you to Prof Brian D Ripley, George Tomlinson and Leonid Gibiansky for\nthe valuable details on how S-plus rounds the print out.\n\nMelania\n\nMelania Pintilie\nOCI/PMH - Biostatistics\n610 University Ave.\nToronto, ON, M5G 2M9\nTel: (416) 946-4501 ext. 4886\nFax: (416) 946-2048\n\n        -----Original Message-----\n        From:   Prof Brian D Ripley [SMTP:ripley at stats.ox.ac.uk]\n        Sent:   Monday, November 06, 2000 3:49 PM\n        To:     Pintilie, Melania\n        Cc:     'S news'\n        Subject:        Re: [S] p-value in coxph\n\n        On Mon, 6 Nov 2000, Pintilie, Melania wrote:\n\n        > Hi,\n        > I have an example when the z-value and p-value from a coxph output\ndo not\n        > agree. The difference is very small but exists.\n        > \n        > I wonder if anyone encountered this problem: \n        > \n        > > fit\n        > Call:\n        > coxph(formula = Surv(ltime, lcens) ~ stg4 + stg3, data = npc)\n        > \n        > \n        >       coef exp(coef) se(coef)     z     p \n        > stg4 0.855      2.35    0.479 1.784 0.074\n        > stg3 0.473      1.61    0.581 0.814 0.420\n        > \n        > Likelihood ratio test=3.56  on 2 df, p=0.169  n= 92 \n        > \n        > BUT: \n        >  > 2*(1-pnorm(0.814))\n        > [1] 0.415645\n        > \n        > This p-value is different than one listed by the original output.\n\n        Only by rounding the output.  The code in S-PLUS 3.4 and 5.1 is \n\n                        tmp <- cbind(coef, exp(coef), se, coef/se, signif(1\n-\n        pchisq((coef/se)^2, 1), digits - 1))\n\n        What value do you have options(digits) set at?  If you have 7, \n        digits is 3 and so you have 2 significant figures.\n\n        I really think this arbitrary manipulation of precision in the\nsurvival\n        routines is crazy, but after ten years' of complaining have given up\non\n        it.\n\n        -- \n        Brian D. Ripley,                  ripley at stats.ox.ac.uk\n        Professor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\n        University of Oxford,             Tel:  +44 1865 272861 (self)\n        1 South Parks Road,                     +44 1865 272860 (secr)\n        Oxford OX1 3TG, UK                Fax:  +44 1865 272595\n\n        \n---------------------------------------------------------------------\n        This message was distributed by s-news at lists.biostat.wustl.edu.  To\n        unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu\nwith\n        the BODY of the message:  unsubscribe s-news",
       "body_snippet": "Thank you to Prof Brian D Ripley, George Tomlinson and Leonid Gibiansky for\nthe valuable details on how S-plus rounds the print out.\n\nMelania\n\nMelania Pintilie\nOCI/PMH - Biostatistics\n610 University A",
-      "thread_id": "thread-977839b2223d",
-      "thread_depth": 0,
+      "thread_id": "thread-40389b5d412a",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -1013,12 +1013,12 @@
       "date": "2000-11-08T21:08:28Z",
       "subject": "RE: p-value in coxph",
       "subject_clean": "p-value in coxph",
-      "in_reply_to": null,
+      "in_reply_to": "<B549258FB2C5D3119EA600805F9F7239EACD09@uhnmail302>",
       "references": [],
       "body_plain": "Given what I know about data, models, and assumptions, I find more than\n2 significant digits of printout for a p-value to be indefensible.  (I actually\nthink 1 digit is about the max).  \n\n   In coxph, the way that I trimmed the number of digits wasn't too wise;\nthe anomaly that you pointed out is the most non-intuitive of several issues.\nBrian is right, it should be changed.  In fact, it's been on my list for a\nlong while (I actually do listen to him -- on rare ocassions he's right :-),\nbut when I'll make the fix, in the face of dozens of other enhancements,\nis uncertain.\n\n  What I intend to do -- make the p-value printout always take up 5 characters\nof output, with \"<.001\" as the string for the small ones.  Apply the formatting\nrules only to the default output, so that those who want more digits can\ntype  (summary(fit))$table, to see it using \"standard\" Splus rules.\n\n        Terry T.",
       "body_snippet": "Given what I know about data, models, and assumptions, I find more than\n2 significant digits of printout for a p-value to be indefensible.  (I actually\nthink 1 digit is about the max).  \n\n   In coxph,",
-      "thread_id": "thread-05ae3f8724ea",
-      "thread_depth": 0,
+      "thread_id": "thread-40389b5d412a",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -1077,12 +1077,12 @@
       "date": "2000-11-09T13:21:02Z",
       "subject": "Re: Sampling from bivariate uniform distribution",
       "subject_clean": "Sampling from bivariate uniform distribution",
-      "in_reply_to": null,
+      "in_reply_to": "<27CD61B9B111D211B0DC0008C72435B7012A0A87@janbebeex1.janbe.jnj.com>",
       "references": [],
       "body_plain": "> From: \"Piotrovskij, Vladimir [JanBe]\" <VPIOTROV at janbe.jnj.com>\n> Date: Thu, 9 Nov 2000 14:15:49 +0100 \n> \n> Dear S+ users,\n> Is anybody aware of a function which samples from bivariate uniform\n> distribution? By analogy to the standard runif() the call may look as\n> follows:\n> rbvunif(n, xymin=0, xmax=1, ymax=1)\n\nIt's two independent uniform samples, so\n\nmatrix(runif(2*n), n, 2)\n\nis a sample from [0, 1] x [0, 1].  And so on.\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595",
       "body_snippet": "> From: \"Piotrovskij, Vladimir [JanBe]\" <VPIOTROV at janbe.jnj.com>\n> Date: Thu, 9 Nov 2000 14:15:49 +0100 \n> \n> Dear S+ users,\n> Is anybody aware of a function which samples from bivariate uniform\n> ",
-      "thread_id": "thread-21a97f222924",
-      "thread_depth": 0,
+      "thread_id": "thread-4b15457a105d",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -1143,12 +1143,12 @@
       "date": "2000-11-09T16:32:04Z",
       "subject": "RE: compressing objects",
       "subject_clean": "compressing objects",
-      "in_reply_to": null,
+      "in_reply_to": "<D7E1E71C0658D4118C9D00104B6D756D07F7E2@AMU01>",
       "references": [],
       "body_plain": "There are several possible ways of handling this.\n\nIf your Win 2000 system is running on an NTFS file system, you could enable\nWindows 2000 compression on the whole _Data directory (right-click on the\nfolder in explorer).  That would be the easiest.  If you don't want to\ncompress the whole directory, use object names that comply with the 8+3\n(nnnnnnnn.xxx) naming system.  Then you'll recognize which data objects\ncorrespond with which files.  You could then compress individual objects.\nThis will be transparent to S-Plus.\n\nIf you stick with 8+3 names, you could move specific objects to a compressed\nzip file and move them back when desired.  (This would be regardless of\nwhether you have an NTFS file system.)\n\nIf you have a zip drive, you could format it as NTFS and enable compression.\nYou could then create an S-plus data directory there and attach it to your\nsession.  Move some of the big objects over.  Re-create them in your working\ndirectory when you need them.\n\n  - Lane\n\n-----Original Message-----\nFrom: Winifred Lambert [mailto:winnie at ccb.ensco.com]\nSent: Thursday, November 09, 2000 11:16 AM\nTo: S-PLUS Newsgroup (E-mail)\nSubject: [S] compressing objects\n\nS-PLUS 2000 Windows 2000\n\nI have many objects, some of which are quite large, taking up alot of\nspace on my hard drive.  Is there any way of compressing the objects so\nthey don't take up so much space?  I will need to use all of them\neventually.  I would move some of them off onto a Zip drive, but the\nnames of the files containing the objects are bizarre (as you all know)\nand I don't know which files match which objects.  Any help on\ncompressing or moving object files around is appreciated.\n\n******************************************************\nWinifred C. Lambert, Senior Scientist/Meteorologist\nENSCO Inc.\nAerospace Sciences and Engineering Division\n1980 N Atlantic Ave, Suite 230\nCocoa Beach, FL 32931\nVOICE: 321.853.8130  FAX: 321.853.8415\nlambert.winifred at ensco.com\n\nAMU Quarterly Reports on the Web:\nhttp://technology.ksc.nasa.gov/WWWaccess/AMU/home.html\n******************************************************\n\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "There are several possible ways of handling this.\n\nIf your Win 2000 system is running on an NTFS file system, you could enable\nWindows 2000 compression on the whole _Data directory (right-click on the",
-      "thread_id": "thread-daf2ba527327",
-      "thread_depth": 0,
+      "thread_id": "thread-b426cdbf25bf",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -1159,12 +1159,12 @@
       "date": "2000-11-09T16:59:12Z",
       "subject": "RE: compressing objects",
       "subject_clean": "compressing objects",
-      "in_reply_to": null,
+      "in_reply_to": "<D7E1E71C0658D4118C9D00104B6D756D07F7E2@AMU01>",
       "references": [],
       "body_plain": "> If you have a zip drive, you could format it as NTFS and\nenable compression.\n                > You could then create an S-plus data directory there and\nattach it to your\n                > session.  Move some of the big objects over.  Re-create\nthem in your working\n                > directory when you need them.\n\n                It seems like formatting zip drive to NTFS can severely hurt\naccess speed, especially for writing. I had this problem with my Jaz drive.\nIomega support help explicitly \"does not recommend nor support NTFS format\"\non (Jaz) drives.\n\n                I should admit that I didn't do any systematic timing...\n\n                Vadim",
       "body_snippet": "> If you have a zip drive, you could format it as NTFS and\nenable compression.\n                > You could then create an S-plus data directory there and\nattach it to your\n                > session.  ",
-      "thread_id": "thread-4bd4401feaed",
-      "thread_depth": 0,
+      "thread_id": "thread-b426cdbf25bf",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -1430,12 +1430,12 @@
       "date": "2000-11-10T12:01:35Z",
       "subject": "Re: nonlinear model parameter estimation",
       "subject_clean": "nonlinear model parameter estimation",
-      "in_reply_to": null,
+      "in_reply_to": "<3A0842B2.2DC8A4EB@fishgame.state.ak.us>",
       "references": [],
       "body_plain": "Hi Shareef,\n\nwe (at the Danish Instiitute for FIsheries Research) use AD Model Builder as\nwell as S-plus (or R). For large problems with more than 30 parameters we\nwould never use the optimisation in S-plus or R directly, as all kinds of\nnumerical issues arise. We have used AD Model Builder for estimation in\nnon-linear fish stock assessment problems with up to 100 parameters.\nComputing time for fitting parameters in these models were up to 1 minute on\na 450 MHz PC with plenty of RAM. In our experience, that is about the best\nperformance one can get.\n\nWe often do the subsequent data analysis and graphics in R or S-plus, which\nworks really well. We interchange data between R and AD Model Builder using\nplain ASCII files, which is fast to program and robust. We are also trying\nto get the DLL mechanism up and running, where ADMB compiles to a DLL which\nthen works as integrated in R as an internal routine. This is quite a nifty\nidea, but do expect to mess a bit about with compiler specifics ;-)\n\nGood luck. Cheers,\n\nUffe",
       "body_snippet": "Hi Shareef,\n\nwe (at the Danish Instiitute for FIsheries Research) use AD Model Builder as\nwell as S-plus (or R). For large problems with more than 30 parameters we\nwould never use the optimisation in ",
-      "thread_id": "thread-2aba2c27bb74",
-      "thread_depth": 0,
+      "thread_id": "thread-693c43833456",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -1462,12 +1462,12 @@
       "date": "2000-11-10T14:59:41Z",
       "subject": "RE: Data analysis of Florida, USA voting patterns",
       "subject_clean": "Data analysis of Florida, USA voting patterns",
-      "in_reply_to": null,
+      "in_reply_to": "<v04210106b630bd563076@[128.115.153.6]>",
       "references": [],
       "body_plain": "I live in Florida and would like to remind everyone, lest rumors be\nspread, that the recount was mandated by Florida law due to the\ncloseness of the results - the difference was less than 1/2 of 1% of the\nvote.  This would happen regardless of if there were complaints or not.\nNov 17 is the deadline to receive absentee ballots by mail, and noone\nwill know until then, and maybe a few days later, what the results are.\nThe complaints being levied are a different issue - certainly related to\nthe recount but NOT the cause of it.  I apologize for the intrusion\nsince this is a stats newsgroup, but I felt that the comments below\nabout 'politics in Florida' and 'complaints' needed to be addressed so\nthat everyone in the US understands the real issue (apologies to those\nin other countries who don't give a hoot).\n\n> -----Original Message-----\n> From: Michael M. Meyer [mailto:mikem at salter-point.com]\n> Sent: Thursday, November 09, 2000 7:27 PM\n> To: Don MacQueen\n> Cc: s-news at wubios.wustl.edu\n> Subject: Re: [S] Data analysis of Florida, USA voting patterns\n> \n> \n> > There is an interactive plot of voting patterns in Florida \n> on the web \n> > that snews folks might find interesting. It's a nice example of \n> > interactive WWW graphics.\n> > \n> >    http://cuwu.editthispage.com/2000/11/08\n> > \n> > A little data analysis and some interpretations are at\n> >    http://madison.hss.cmu.edu/\n> > I think our colleagues in Florida, especially, might be \n> interested in \n> > looking at the interpretations.\n> > \n> \n> Unfortunately (or perhaps fortunately) outliers do happen.  If one\n> does a similar analysis of votes for Nader by State, then one gets\n> some very unusual looking answers.  If you do Nader by county, across\n> the country I will bet that there are some really outlying points.\n> Does this convince me there is a problem?\n> As with all good data analyses, the raw numbers are hard to use\n> without a lot of context. \n> \n> I don't know anything about local politics in Florida and I trust (and\n> even hope) that all the complaints are valid.  \n> However, in order to even start to convince me with data, I would want\n> to see thing like the vote that Perot got in 96 (as a potential\n> explanatory variable), the membership in the Reform party in that\n> county, etc. etc. \n> \n> \n> Mike Meyer, Salter Point Associates, Seattle WA\n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>",
       "body_snippet": "I live in Florida and would like to remind everyone, lest rumors be\nspread, that the recount was mandated by Florida law due to the\ncloseness of the results - the difference was less than 1/2 of 1% of",
-      "thread_id": "thread-64907ff94189",
-      "thread_depth": 0,
+      "thread_id": "thread-126e00a6113e",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -1526,12 +1526,12 @@
       "date": "2000-11-10T16:07:36Z",
       "subject": "Re: Data analysis of Florida, USA voting patterns",
       "subject_clean": "Data analysis of Florida, USA voting patterns",
-      "in_reply_to": null,
+      "in_reply_to": "<v04210106b630bd563076@[128.115.153.6]>",
       "references": [],
       "body_plain": "The following might be interest for those following press coverage of the\npossible role of statistics in this dispute.  (The printed version in the\nedition I receive contained additional comments by David Freedman, also\ndownplaying the potential of statistics in this highly charged situation.\nI would not follow Persi very far on the analogy to census undercount\nadjustment, since anything that would be done now on the elections would\nbe post hoc and supported by little research, which is different from\nthe census situation ... but that's another discussion!)\n--------------------------------------------------------------------------\nIN RESEARCH, RECOUNTS ARE NORM\nhttp://www.nytimes.com/2000/11/10/politics/10MATH.html\n\nNovember 10, 2000\nTHE SCIENCE OF COUNTING\nBy GINA KOLATA\n\nFirst George W. Bush led Al Gore by 1,784 votes in Florida. Then, an\nunofficial count by The Associated Press suggested his lead was slashed\nto less than half that. So, which number is right mathematically?\n\nStatisticians chuckled at the idea.\n\n\"There's always going to be an error,\" said Howard Wainer, a statistician\nat the Educational Testing Service in Princeton, N.J.  \"Every time you\ncount them, you're going to get a different answer.\"\n\nIn research, said Diana C. Mutz, a professor of political science at Ohio\nState University, scientists will repeat a process multiple times and\nchoose a number somewhere in the middle of their data as most likely to\nreflect the truth. But, she and others said, multiple recounts are\nprobably not desirable in the presidential election because they would\nadd to the delay and uncertainty, not to say the bickering. Whoever was\nlosing could argue for one more recount.\n\nEven if it were just a research question, Professor Mutz was not sure how\nmany counts would be needed to make her confident the Florida vote was as\naccurate as it could be. How many times she would count it \"depends on\nhow many graduate students I have,\" she joked.\n\nThen there is the problem of Palm Beach County, Fla., where residents\nsaid confusion over the ballot led more than 19,000 voters in a heavily\nDemocratic area to mark two candidates instead of one for president.\nTheir ballots were discarded as invalid. And, adding to the confusion,\nPatrick J. Buchanan won more than 3,000 votes in Palm Beach. Some\nDemocrats said many people accidentally voted for Mr. Buchanan when they\nmeant to vote for Mr. Gore. Isn't there a way to fix that? A statistical\nadjustment, perhaps?\n\nSorry, say the statisticians. Any adjustment would only make matters\nworse. Persi Diaconis, a statistician at Stanford University, said the\nsituation reminded him of attempts to adjust the census to correct for\nthe undercount, the people who were missed. The census recount turned out\nto be a nightmare, he said, with new errors introduced and even more\nsquabbling.\n\n\"The process really degenerates,\" Professor Diaconis said. \"It's not at\nall simple.\"\n      \nCopyright 2000 The New York Times Company",
       "body_snippet": "The following might be interest for those following press coverage of the\npossible role of statistics in this dispute.  (The printed version in the\nedition I receive contained additional comments by D",
-      "thread_id": "thread-f6d739c3f4e9",
-      "thread_depth": 0,
+      "thread_id": "thread-126e00a6113e",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -1542,12 +1542,12 @@
       "date": "2000-11-10T16:19:42Z",
       "subject": "Re: ask for help about \"correlation with missing data\"",
       "subject_clean": "ask for help about \"correlation with missing data\"",
-      "in_reply_to": null,
+      "in_reply_to": "<20001109223902.14496.qmail@web9405.mail.yahoo.com>",
       "references": [],
       "body_plain": "> From: QIANG YE <quinnye at yahoo.com>\n> Hi, does anybody has some function for \"correlation calculation with\n> missing data\" which has a general application. Or somebody has some paper\n> discussing that? I am now swamp in it.\n\nThe people at StatSci were working on a function to calculate correlation\ncoefficients under the Missing at Random assumption, as part of a library\nof functions for missing data imputation.  Perhaps they can tell us when\nthis will be available.\n\nFor general discussions, see Schafer, \"Analysis of Incomplete Multivariate\nData\" (chapter 5), or Little and Rubin, \"Statistical Analysis with Missing\nData\" (chapter 8)",
       "body_snippet": "> From: QIANG YE <quinnye at yahoo.com>\n> Hi, does anybody has some function for \"correlation calculation with\n> missing data\" which has a general application. Or somebody has some paper\n> discussing ",
-      "thread_id": "thread-c8e37941c660",
-      "thread_depth": 0,
+      "thread_id": "thread-d559a031d28f",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -1781,12 +1781,12 @@
       "date": "2000-11-10T20:16:24Z",
       "subject": "Data is/are",
       "subject_clean": "Data is/are",
-      "in_reply_to": null,
+      "in_reply_to": "<200011101934.OAA11753@nightingale.hcp.med.harvard.edu>",
       "references": [],
       "body_plain": "I hesitate to step into this debate, but while it's clear the Pluricans\nhave etymology on their side, the Singulacrats have usage (and a good\ndeal of history) on theirs. Some examples: \n\n- If etymology counted for everything, we'd still say \"My stamina aren't\nwhat they once were\", for instance. \n\n- One naturally regards \"data\" as an aggregate, where the whole is\nperceived more readily than the parts. Applying the singular seems\nappropriate when we primarily see a distinct entity rather than its\ncomponents. We say \"Sugar is sweet and sand is brown\", not \"Sugar are\nsweet and sand are brown\". And even though it would be grammatical, we\nrarely have need to say \"Sugars are sweet and sands are brown.\" \n\n- We've seen a simlilar historical shift with \"news\", as in this old\nnewspaper joke: Q. \"Any news?\" A. \"Not a single damn new.\"\n\nAlthough it's safer to stick to the plural in formal writing, it's\ndifficult to argue that people who use the singular are making a\ngrammatical error of the same order as, say, its/it's.\n\n-- \nKieran Healy, \nDepartment of Sociology, Princeton University      \nPrinceton, NJ 08544. kjhealy at princeton.edu",
       "body_snippet": "I hesitate to step into this debate, but while it's clear the Pluricans\nhave etymology on their side, the Singulacrats have usage (and a good\ndeal of history) on theirs. Some examples: \n\n- If etymolog",
-      "thread_id": "thread-8efbe12e8602",
-      "thread_depth": 0,
+      "thread_id": "thread-02a8ee2cd5c5",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -1917,12 +1917,12 @@
       "date": "2000-11-11T04:45:48Z",
       "subject": "Re: Sequential sums of squares from poly()",
       "subject_clean": "Sequential sums of squares from poly()",
-      "in_reply_to": null,
+      "in_reply_to": "<Pine.GSO.4.21.0011101041550.28726-100000@fisher.byu.edu>",
       "references": [],
       "body_plain": "At 10:46 10/11/00 -0700, Greg Snow wrote:\n\n>\n\n>If I fit a model like:\n\n>eth.fit <- lm( NOx ~ poly(E,8), data=Ethanol )\n\n>\n\n>then do a summary, it gives a t-test for each parameter, but if I do:A\n\n>anova(eth.fit), then it groups all 8 parameters and does 1 test of all the\n\n>parameters at the same time.  Is there a way to get the sequential sums of\n\n>squares for the 8 different parameters without entering each one\n\n>seperately in the formula?\n\n>\n\n>I know that since poly creates orthogonal polynomials the t-tests are\n\n>equivalent to the sequential tests, but I would like the sequential table\n\n>that comes from anova with one object, and the same would apply for a\n\n>matrix term that is not orthogonal.\n\nMultiple degrees-of-freedom factor terms in linear models can be split into components using the \"split\" option of summary.aov, but I don't know of any automatic way of splitting non-factor terms  sequentially into single degree-or-freedom terms like this.\n\nEssentially you have to pass on to the terms parser the information that you want the columns of the matrix to be treated as separate regressors.  There are, of course, fairly simple indirect ways of doing this and for your example above one way would be as follows:\n\n> names(ethanol)\n\n[1] \"NOx\" \"C\"   \"E\"  \n\n> attach(ethanol)\n\n> X <- data.frame(poly(E, 8))\n\n> names(X)\n\n[1] \"X1\" \"X2\" \"X3\" \"X4\" \"X5\" \"X6\" \"X7\" \"X8\"\n\n> eth <- cbind(ethanol, X)\n\n> fm <- aov(NOx ~ .-E-C, eth)\n\n> summary(fm)\n\nDf Sum of Sq  Mean Sq  F Value     Pr(F) \n\nX1  1   1.15491  1.15491  10.4594 0.0017822\n\nX2  1  85.75875 85.75875 776.6711 0.0000000\n\nX3  1   0.23803  0.23803   2.1557 0.1460154\n\nX4  1  13.20688 13.20688 119.6076 0.0000000\n\nX5  1   0.83221  0.83221   7.5369 0.0074813\n\nX6  1   1.31765  1.31765  11.9333 0.0008896\n\nX7  1   0.28614  0.28614   2.5914 0.1114356\n\nX8  1   0.10620  0.10620   0.9618 0.3297328\n\nResiduals 79   8.72305  0.11042                   \n\n> \n\nThere is the table you wanted, but I guess the answer to this question is really \"no, not easily\".\n\nBill Venables.\n\n--\n\nBill Venables, Statistician                         Tel. +61 7 3826 7251 \n\nCSIRO Marine Laboratories,                          Fax. +61 7 3826 7304\n\nCleveland, Qld, 4163                  Email: Bill.Venables at cmis.csiro.au\n\nAUSTRALIA                        http://www.cmis.csiro.au/bill.venables/",
       "body_snippet": "At 10:46 10/11/00 -0700, Greg Snow wrote:\n\n>\n\n>If I fit a model like:\n\n>eth.fit <- lm( NOx ~ poly(E,8), data=Ethanol )\n\n>\n\n>then do a summary, it gives a t-test for each parameter, but if I do:A\n\n>ano",
-      "thread_id": "thread-ec79bf36ed12",
-      "thread_depth": 0,
+      "thread_id": "thread-34c268fbc21d",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -1933,12 +1933,12 @@
       "date": "2000-11-11T05:59:08Z",
       "subject": "Re: Data is/are",
       "subject_clean": "Data is/are",
-      "in_reply_to": null,
+      "in_reply_to": "<200011101934.OAA11753@nightingale.hcp.med.harvard.edu>",
       "references": [],
       "body_plain": "The odd thing about living in Australia is that you sleep when most of the\nEnglish-speaking world is awake and conversely.  This was one of the\nmornings when I woke up to find that a grammar war had broken out and had\nbeen progress for much of the night, and it was started by none other than\nMadeline \"stirrer\" Bauer.  I had no idea she had such a devilish sense of\nfun...(well, maybe some idea).   I can't resist tossing in a couple of\ncomments, even if you have all gone to bed by now, worn out by battle fatigue.\n\nThis \"data is/are\" issue will never be settled, that much is clear.  The\nAustralian OXFORD dictionary, by the way, accepts both singular and plural\nfor \"data\" (which doesn't bother me greatly), but then it also accepts\n\"alternate\" and \"alternative\" as synonyms and that just about made me want\nto toss it away.  (Next it will be recognizing m/d/y as a legitimate form\nfor dates and not the mongrel bastard of a thing that it is.)\n\nWhether the word is singular or plural, when a statistician speaks of\n\"data\" it really is (or should be) a singular concept.  We think of data as\nthe full set of information on which an analysis is based, logically a\nseamless whole that has to be handled in toto, not as a collection of\nloosely linked entities from which pieces can be selected more-or-less at\nwill for analysis (as some clinets or even colleagues often want us to do).\n I think this is very important to keep in mind.  \n\nThe other point that stikes me as strange is the usage \"data analysis\".\nWhen we use a noun as an adjective in English it is usually (and as far as\nI am concerned, always) the singular form.  It's \"a horse doctor\" not \"a\nhorses doctor\" and \"a mouse plague\" not \"a mice plague\", even though\npresumably the doctor can tend more than one animal and one mouse does not\nmake much of a plague.  Does anyone want to change and start calling it\n\"datum analysis\"?  Might be fun.\n\nFor some reason I cannot help wincing, though, when people do mistakenly\nuse the plural Latin or Greek form when the singular is intended, available\nand in widespread use.  Examples that do it for me are \"strata\" and\n\"bacteria\" (Latin) and \"criteria\" and \"phenomena\" (Greek).  \"media\" is\nright on the border.   Precede any of these with the indefinite article,\n\"a\", in my hearing and I will get an almost uncontrollable urge to correct\nyou.  It has proved awkward and embarrassing at times.\n\nThere are good examples, though, of the plural Latin form  becoming a fully\nidiomatic singular form in English, such as \"stamina\" and \"agenda\".  In\nfact I think of the usage of \"agenda\" as pretty close to that of \"data\" in\nthe way it can function as singular or plural.  It is occasionally used in\na plural sense, and agendum is still in common usage for one item \"on\n(of?) the agenda\", but there are plenty of idioms where it is used with a\nsingular sense without raising any flak from the grammar squad.  In fact\nthis is the norm and there is even some evidence that \"agenda\" had already\nstarted to attract a singular sense even in Latin speaking times.\n\nI love this kind of stuff and I could go on and on, but I guess that's\nenough (at least for now...)\n\nBill Venables\n\nAt 15:16 10/11/00 -0500, Kieran Healy wrote:\n>I hesitate to step into this debate, but while it's clear the Pluricans\n>have etymology on their side, the Singulacrats have usage (and a good\n>deal of history) on theirs. Some examples: \n>\n>- If etymology counted for everything, we'd still say \"My stamina aren't\n>what they once were\", for instance. \n>\n>- One naturally regards \"data\" as an aggregate, where the whole is\n>perceived more readily than the parts. Applying the singular seems\n>appropriate when we primarily see a distinct entity rather than its\n>components. We say \"Sugar is sweet and sand is brown\", not \"Sugar are\n>sweet and sand are brown\". And even though it would be grammatical, we\n>rarely have need to say \"Sugars are sweet and sands are brown.\" \n>\n>- We've seen a simlilar historical shift with \"news\", as in this old\n>newspaper joke: Q. \"Any news?\" A. \"Not a single damn new.\"\n>\n>Although it's safer to stick to the plural in formal writing, it's\n>difficult to argue that people who use the singular are making a\n>grammatical error of the same order as, say, its/it's.\n>\n>-- \n>Kieran Healy, \n>Department of Sociology, Princeton University      \n>Princeton, NJ 08544. kjhealy at princeton.edu\n>---------------------------------------------------------------------\n>This message was distributed by s-news at lists.biostat.wustl.edu.  To\n>unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n>the BODY of the message:  unsubscribe s-news\n>\n>\n--\nBill Venables, Statistician                         Tel. +61 7 3826 7251 \nCSIRO Marine Laboratories,                          Fax. +61 7 3826 7304\nCleveland, Qld, 4163                  Email: Bill.Venables at cmis.csiro.au\nAUSTRALIA                        http://www.cmis.csiro.au/bill.venables/",
       "body_snippet": "The odd thing about living in Australia is that you sleep when most of the\nEnglish-speaking world is awake and conversely.  This was one of the\nmornings when I woke up to find that a grammar war had b",
-      "thread_id": "thread-e45436a1994c",
-      "thread_depth": 0,
+      "thread_id": "thread-02a8ee2cd5c5",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -1967,12 +1967,12 @@
       "date": "2000-11-11T07:25:25Z",
       "subject": "Re: stepwise, leaps and stepAIC",
       "subject_clean": "stepwise, leaps and stepAIC",
-      "in_reply_to": null,
+      "in_reply_to": "<D7E1E71C0658D4118C9D00104B6D756D07F827@AMU01>",
       "references": [],
       "body_plain": "At 18:09 10/11/00 -0500, Winifred Lambert wrote:\n>S-PLUS 2000 Windows 2000\n>\n>Okay, here's the deal.  \n\n\"The deal\"?  I'm stumped.\n\n>I have to automate the development of 276 linear\n>regression equations, or I will age beyond my years.  I am doing this in\n>blocks of 72 to keep things more organized.  I have ~200 potential\n>predictors to choose from for each equation.  In all my individual tests\n>I used stepwise() because the input is easy to provide and the output is\n>easy to understand.  It was easy to go through the 'which' object and\n>see which predictors were chosen and in what order, then slowly build a\n>linear regression model and test it on an independent (training) data\n>set.  I cut off the addition of new predictors when the change in\n>r-squared became less than 0.5% in lm(), which typically occurred after\n>4 or 5 predictors.\n>\n>leaps() and stepAIC() both look like promising prospects, but their\n>inputs do not look appealing.  I have the predictand and predictors in\n>one dataframe.  The call I gave to stepwise looked like\n>\n>>stepwise(DF[,2:200], DF[,1])\n>\n>where DF[,2:200] are the predictors in columns 2-200, and DF[,1] is the\n>predictand in column 1.  leaps() takes the same inputs with a few others\n>I will have to figure out before I add them.  stepAIC() requires a basic\n>model ('object' in help), and the 'scope' defining a range of models.\n>It would be highly inconvenient to type out the max model with ~200\n>possible predictors.\n>\n>I would like to know:\n>1.  What some of you think of leaps() (it wasn't highly touted in MASS)\n\nAccording to my help info, leaps can only take up 31 predictors, so it's\nnot available for your problem.\n\nleaps() performs a well-defined computation and I don't think we have any\nparticular objection to what it does.    You should not read too much into\nwhat is not in MASS: that just as often as not reflects space constraints. \n\n>2.  Is there a better way to define the max model in stepAIC()?\n\nIf your DF is a data frame, you could actually construct the formula\nwithout typing very much at all.  Here is a sketch of how you might go\nabout it:\n\nf.lower <- paste(names(DF)[1], \"~\", 1)\nf.upper <- paste(names(DF)[1], \"~\", paste(names(DF)[-1], collapse = \" + \"))\n\nf0 <- lm(f.lower, DF)\nf.step <- stepAIC(f0, list(upper = f.upper, lower = f.lower), trace = F)\n\nNote that in a couple of places here instead of a formula you can use a\ncharacter string that parses to a formula.  This is handy in this kind of\nsituation.\n\n>3.  Are there any other suggestions than those I've proposed here?\n\nstepAIC will in all probability be pretty slow, but if you can put your\ncomputations through a For() loop (as opposed to a for() loop) it might be\nmanageable.  AIC is known to be a pretty lenient criterion, too.  You might\nwant to tighten up the complexity penalty a bit (the \"k\" argument to\nstepAIC) if you want more parsimonious selection.\n\nWhat other techniques you might adopt depend very much on the context of\nwhat you are doing.  If you are just after a prediction equation it *could*\nbe the case that tree models do a pretty good job and after pruning they\nare usually pretty economical in the predictors they use.    Then again,\nthey could be terrible.  Partial least squares and the lasso are also often\nmooted as pretty good alternatives to explicit variable selection, but\nwhether they are suitable for your problem is something only you can say at\nthis stage.\n\n>\n>Thanks much.\n>\n>******************************************************\n>Winifred C. Lambert, Senior Scientist/Meteorologist\n>ENSCO Inc.\n>Aerospace Sciences and Engineering Division\n>1980 N Atlantic Ave, Suite 230\n>Cocoa Beach, FL 32931\n>VOICE: 321.853.8130  FAX: 321.853.8415\n>lambert.winifred at ensco.com\n>\n>AMU Quarterly Reports on the Web:\n>http://technology.ksc.nasa.gov/WWWaccess/AMU/home.html\n>******************************************************\n>\n>---------------------------------------------------------------------\n>This message was distributed by s-news at lists.biostat.wustl.edu.  To\n>unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n>the BODY of the message:  unsubscribe s-news\n>\n>\n--\nBill Venables, Statistician                         Tel. +61 7 3826 7251 \nCSIRO Marine Laboratories,                          Fax. +61 7 3826 7304\nCleveland, Qld, 4163                  Email: Bill.Venables at cmis.csiro.au\nAUSTRALIA                        http://www.cmis.csiro.au/bill.venables/",
       "body_snippet": "At 18:09 10/11/00 -0500, Winifred Lambert wrote:\n>S-PLUS 2000 Windows 2000\n>\n>Okay, here's the deal.  \n\n\"The deal\"?  I'm stumped.\n\n>I have to automate the development of 276 linear\n>regression equatio",
-      "thread_id": "thread-b252933651ca",
-      "thread_depth": 0,
+      "thread_id": "thread-e3fadcaed48f",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -2015,12 +2015,12 @@
       "date": "2000-11-12T03:51:00Z",
       "subject": "Re: Definition of BIC: factor of -2 or not?",
       "subject_clean": "Definition of BIC: factor of -2 or not?",
-      "in_reply_to": null,
+      "in_reply_to": "<p05001903b633960f835c@[10.0.1.3]>",
       "references": [],
       "body_plain": "At 19:40 11/11/00 -0500, Steve Buyske wrote:\n>I've noticed that S-Plus uses the definition of BIC as\n>(1)    -2 loglikelihood + (number of parameters)*log(sample size)\n>Others (like my sociologists co-author's idol) use\n>(2)    loglikelihood - 1/2 (number of parameters)*log(sample size)\n>\n>Obviously either will do as long as one is consistent, but is there \n>any compelling reason (historical, cultural, . . . ) to prefer one to \n>the other?\n>Put another way, what sort of people use (1) and what sort of people \n>use (2)? Number (2) matches Schwarz's use, so why does S-Plus use (1)?\n\nHere's a guess.  \n\n-2 log(likelihood) by itself is the quantity for which differences\nrepresent approximate chi-squared tests, so if you look at differences only\nthe first represents something closer to the sorts of quantities\nstatisticians are used to working with.  (Note that neither is uniquely\ndefined.  log(likelihood) is only defined up to an arbitrary additive\nconstant  and so only differences are meaningful.)\n\nNote, too, that many optimisation algorithms settle on minimisation as the\nparadigm rather than maximisation.  I don't really know why this is, but I\ncan't help suspecting that psychologically minimisation *seems* easier than\nmaximisation purely because of the way gravity tends subliminally to play a\npart in our thinking.  For the first definition you minimise BIC and for\nthe second you maximise it.  The second seems much harder going and the\nconsequences of slipping along the way much more serious...  :-)\n\nBill Venables.\n\n>\n>Steve Buyske\n>-- \n>Steve Buyske (rhymes with \"nice key\")       Statistics Dept\n>phone: 732.445.2690 fax: 732.445.3428       Rutgers University\n>buyske at stat.rutgers.edu                     110 Frelinghuysen Rd.\n>http://stat.rutgers.edu                     Piscataway, NJ 08854-8019\n>---------------------------------------------------------------------\n>This message was distributed by s-news at lists.biostat.wustl.edu.  To\n>unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n>the BODY of the message:  unsubscribe s-news\n>\n>\n--\nBill Venables, Statistician                         Tel. +61 7 3826 7251 \nCSIRO Marine Laboratories,                          Fax. +61 7 3826 7304\nCleveland, Qld, 4163                  Email: Bill.Venables at cmis.csiro.au\nAUSTRALIA                        http://www.cmis.csiro.au/bill.venables/",
       "body_snippet": "At 19:40 11/11/00 -0500, Steve Buyske wrote:\n>I've noticed that S-Plus uses the definition of BIC as\n>(1)    -2 loglikelihood + (number of parameters)*log(sample size)\n>Others (like my sociologists co",
-      "thread_id": "thread-7e7b74d58862",
-      "thread_depth": 0,
+      "thread_id": "thread-8dd928b1480b",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -2123,8 +2123,8 @@
       ],
       "body_plain": "According to Bill Venables:\n|> \n|> The odd thing about living in Australia is that you sleep when most of the\n|> English-speaking world is awake and conversely.  This was one of the\n\nIt's even more so for those living in New Zealand.  Like Bill, I enjoy\nthis stuff which is not often well discussed.  Even though it's not\nquiet a topic for this list, I'd like to put my oar in too.\n\n|> .... and it was started by none other than\n|> Madeline \"stirrer\" Bauer.  I had no idea she had such a devilish sense of\n|> fun...(well, maybe some idea).   \n\nIt's interesting that nobody bit when she stated that \"Data are\nplural.\"  Was it that devilish sense of fun?  I think so.  She\nundoubtedly would know that in English, only nouns, pronouns and verbs\ncan be plural.  Someone who was not joking would say:\n\n\"Data\" is a plural noun.\n\nOf course, there could be occasions when the data really are all nouns....\n\n|> This \"data is/are\" issue will never be settled, that much is clear.  The\n|> Australian OXFORD dictionary, by the way, accepts both singular and plural\n|> for \"data\" (which doesn't bother me greatly), but then it also accepts\n|> \"alternate\" and \"alternative\" as synonyms and that just about made me want\n|> to toss it away.  (Next it will be recognizing m/d/y as a legitimate form\n|> for dates and not the mongrel bastard of a thing that it is.)\n\n:-) Bill usually has something illuminating and entertaining to add to\na discussion.\n\n|> There are good examples, though, of the plural Latin form  becoming a fully\n|> idiomatic singular form in English, such as \"stamina\" and \"agenda\".  \n\nEnglish is also strongly influenced by what gave rise to the German\nlanguage.  The similarities and differences between German and English\nare interesting.  German, which is somewhat less mutable than English,\nmaintains characteristics that vanished from English centuries ago.\nSomeone more knowledgable than I could correct me on this, but from my\nunderstanding of German, \"information\" refers to what in English would\nbe called \"a piece of information\".  \"Information\" has a plural in\nGerman, not in English.  Somewhat similarly, politics can be referred\nto individually. One of your politics could be in agreement with your\nfoes but all the rest can be opposed.  Maybe the English of yore used\nto be more like that.  In any case, nowadays, politicians and\ngrammarians would nearly all agree that \"Politics is a dirty\nbusiness\".\n\n\"Data\" is something like \"information\" and \"politics\".  One part of me\nlikes to keep the language similar to how previous generations used\nit, but there are occasions when the changes are for the better.  To\nhave the word \"data\" come to refer to the collection rather than the\nindividual bits of information is not a bad change and loses nothing\nthat is an important distinction.\n\nLike Kieran Healy, I find it much easier to keep my shirt on with this\nlack of vocabulary or grammatical decorum than when I see/hear lack of\nknowledge of the difference between it's/its.\n\nI could make a long list before I got down to data is/are.  Some of\nthem include:\n\nmuch/many\nfewer/less\n\"you and I\" (in the accusative case)\n\"you and me\" (in the nominative case)\nalot/a lot\nto/too\nhacker/cracker\nadjective/adverb\nalternate/alternative\n\nOK.  I'll stop.\n\nbest\n\n-- \n*************************************************************\nPatrick Connolly\nHortResearch        \nMt Albert               It's better to do nothing than to waste time\nAuckland                                      ..... Viktoras Kulvinskas\nNew Zealand                          \nPh: +64-9 815 4200 x 7188\n*************************************************************",
       "body_snippet": "According to Bill Venables:\n|> \n|> The odd thing about living in Australia is that you sleep when most of the\n|> English-speaking world is awake and conversely.  This was one of the\n\nIt's even more so",
-      "thread_id": "thread-e45436a1994c",
-      "thread_depth": 1,
+      "thread_id": "thread-02a8ee2cd5c5",
+      "thread_depth": 2,
       "month": "2000-11"
     },
     {
@@ -2151,12 +2151,12 @@
       "date": "2000-11-13T11:26:50Z",
       "subject": "submatrices",
       "subject_clean": "submatrices",
-      "in_reply_to": null,
+      "in_reply_to": "<1A775853CEB4D411BCFB0050DA0DC1A6234E24@gwdcxc.rikz.rws.minvenw.nl>",
       "references": [],
       "body_plain": "Dear all, what a fantastically medium snews is! Last week I posted a\nquestion about calculating statistics for submatrices. The orginal question\nwas:\n\nI have a question about creating submatrices of a big matrix without using\n>loops. My main interest lies in doing statistics (just mean and number of\n>values without missing values) on submatrices. The big matrix consists on\n>measurements in blocks (e.g. depths within year and site) and I want to see\n>what happens when the blocks are made bigger. So e.g. we have a matrix of\n>8x8 and the first action  could be to investigate the behaviour of the 2x2\n>non overlapping matrices. The second step could be 4x4 and eventually we\n>have the whole matrix. Does anyone have some nice idea to make these\n'moving\n>windows' on matrices to work in splus. I do not see the solution in apply,\n>because this function is only applicable on the whole column or row.\n>\nI get answers for this problems from Carlisle Thacker, Bill Dunlap (twice),\nTim Hesterberg and Peter Acklam. The answers are all different and therefore\nI send them all for all whom interested in the same or related subject.\nAgain many thanks for your contribution.\n\n********************************************************\n* William Carlisle Thacker                             *\n********************************************************\nHave you tried flatteniing the matrix to a vector and combining it\ninto a dataframe with a \"which\" column, so you can use by() to build\nthe loops?\n\n# make sample matrix\na <- matrix(1:64,ncol=8)\n\n# make dataframe with columns indicating rows and columns of the matrix\nflat <- data.frame(matrix = as.vector(a),\n                      row = as.vector(row(a)), \n                      col = as.vector(col(a)))\n\n# add column with indicator of which rows correspond to which 2x2\nsubmatrices\n# note magic number 2:  2x2 submatrices\n# note magic number 4:  4x4 array of 2x2 submatrices\nflat$which <- floor((flat$row-1)/2) + 4*(floor((flat$col-1)/2)) + 1\n\n# make matrix of results from submatrices\n# note flat$row and flat$com are not used\nmatrix(unlist(by(flat,flat$which,function(data)mean(data$matrix))),ncol=4)\n\nA \"which\" column could be made for each different size of submatrices\n\n----------------------------------------------------------------------------\nBill Dunlap                                      22461 Mt Vernon-Big Lake Rd\n----------------------------------------------------------------------------\n-\nFor such small matrices is a loopy solution really too slow?  E.g.,\n\nblockApply <- function(x, blocksize, FUN, ...) {\n        if(is.character(FUN)) FUN <- get(FUN, mode = \"function\")\n        # in Splus5 use getFunction(FUN)\n        if(nrow(x) %% blocksize != 0 || ncol(x) %% blocksize)\n                stop(\"blocksize must divide nrow(x) and ncol(x)\")\n        val <- array(NA, c(dim(x)/blocksize))\n        iseq <- ( - blocksize + 1):0\n        for(i in 1:nrow(val)) {\n                iseq <- iseq + blocksize\n                jseq <- ( - blocksize + 1):0\n                for(j in 1:ncol(val)) {\n                        jseq <- jseq + blocksize\n                        val[i, j] <- FUN(x[iseq, jseq], ...)\n                }\n        }\n        val\n}\n\nOn my pretty slow Sun with Splus 4 this takes about 5 seconds to calculate\nthe 64*64 minima of the 4 by 4 blocks in a 256 by 256 matrix.\n\n> x<-matrix(sort(runif(256*256)), 256, 256)\n> unix.time(blockApply(x,blocksize=4,min)->m4)\n[1] 5.11000061 0.02999997 6.00000000 0.00000000 0.00000000\n\nOn this machine calling min(1) (or any other simple function)\n64^2 times takes 0.42 seconds.  The rest of the time is for\nmanipulating the subscript expressions, additions, and : operator.\n\nMore efficiencies are possible, but it would take a while to\nwrite the code.   The fastest would probably to use lapply()\nand to use single subscripts instead of matrix subscripts.  I'm\nnot sure if you would get much better times even with that\napproach.\n        \n----------------------------------------------------------------------------\nBill Dunlap   2nd approach                       22461 Mt Vernon-Big Lake Rd\n----------------------------------------------------------------------------\n-\n\nHere is a version of blockApply that uses lapply and tries to do\nmost of the calculations before the iterations begin.  For some\nsimple functions it trims a third the time off the straightforward\nversion but as the function to be iterated gets more complicated\nthe benefits diminish.  It is considerably less readable.\n\nblockApply2 <- function(x, blocksize, FUN, ...)\n{\n        if(is.character(FUN)) FUN <- get(FUN, mode = \"function\")\n        # in Splus5 use getFunction(FUN)\n        if(nrow(x) %% blocksize != 0 || ncol(x) %% blocksize)\n                stop(\"blocksize must divide nrow(x) and ncol(x)\")\n        nrv <- dim(x)[1]/blocksize\n        ncv <- dim(x)[2]/blocksize\n        iseq0 <- 1:blocksize\n        ijseq0 <- x[, iseq0]\n        ijseq0[] <- seq(len = length(ijseq0))\n        ijseq0 <- as.vector(ijseq0[1:blocksize,  ])\n        val <- unlist(lapply(0:(nrv * ncv - 1), function(ij, x, nrowv,\nnrowx, \n                ijseq0, blocksize, FUN, ...)\n        FUN(x[ijseq0 + ij %% nrowv * blocksize + ij %/% nrowv * blocksize * \n                nrowx], ...), x, nrv, dim(x)[1], ijseq0, blocksize, FUN,\n...))\n        dim(val) <- c(nrv, ncv)\n        val\n}\n\n========================================================\n| Tim Hesterberg       Research Scientist              |\n========================================================\n\nHere x is a 300x10 matrix, and the final result is a matrix of the\nsums of 2x2 non-overlapping matrices:\n\nx _ matrix(runif(300*10), 300)\ny _ matrix(fastColSums(x, 2, na.rm=T), ncol=10) # 10 = original # of columsn\nt(matrix(fastColSums(t(y), 2, na.rm=T), 5))     # 5 = 10/2\n\nTo get number of non-missing values, repeat but with `x'\nreplaced by `!is.na(x)'.  Then divide to get means.\nYou can adapt this for any number other than 2.\n\nThis uses `fastColSums', which is a fast version of `colSums'\n(which in turn is much faster than using `apply'), which has\nan optional argument `n' which is used here in place of the actual\nnumber of rows of the matrices.\n\nfastColSums <-\nfunction(x, n = numRows(x), na.rm = F)\n{\n  # Treat x as if it has n rows.\n  # Use C code from colSums\n  p <- length(x)/n\n  COPY <- c(F, F, F, T, F, F)\n  if(is.integer(x) || is.logical(x))\n    .C(\"S_colSums_long_NA\",\n      as.integer(n),\n      as.integer(p),\n      x,\n      answer = integer(p),\n      na.rm = as.integer(na.rm),\n      NAOK = T,\n      specialsok = T,\n      COPY = COPY[-5.])$answer\n  else .C(\"S_colSums_NA\",\n      as.integer(n),\n      as.integer(p),\n      as.double(x),\n      answer = double(p),\n      divide = FALSE,\n      na.rm = as.integer(na.rm),\n      NAOK = T,\n      specialsok = T,\n      COPY = COPY)$answer\n}\n---------------------------------\nNick Ellis\n----------------------------------\n\n> tst <- matrix(1:64,8,8)\n> tst\n     [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8]\n[1,]    1    9   17   25   33   41   49   57\n[2,]    2   10   18   26   34   42   50   58\n[3,]    3   11   19   27   35   43   51   59\n[4,]    4   12   20   28   36   44   52   60\n[5,]    5   13   21   29   37   45   53   61\n[6,]    6   14   22   30   38   46   54   62\n[7,]    7   15   23   31   39   47   55   63\n[8,]    8   16   24   32   40   48   56   64\n> grp2 <- rep(1:4,each=2)\n> gps2 <- outer(grp2,grp2,interaction)\n> matrix(gps2,8,8)\n      [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]  [,8]\n[1,] \"1.1\" \"1.1\" \"1.2\" \"1.2\" \"1.3\" \"1.3\" \"1.4\" \"1.4\"\n[2,] \"1.1\" \"1.1\" \"1.2\" \"1.2\" \"1.3\" \"1.3\" \"1.4\" \"1.4\"\n[3,] \"2.1\" \"2.1\" \"2.2\" \"2.2\" \"2.3\" \"2.3\" \"2.4\" \"2.4\"\n[4,] \"2.1\" \"2.1\" \"2.2\" \"2.2\" \"2.3\" \"2.3\" \"2.4\" \"2.4\"\n[5,] \"3.1\" \"3.1\" \"3.2\" \"3.2\" \"3.3\" \"3.3\" \"3.4\" \"3.4\"\n[6,] \"3.1\" \"3.1\" \"3.2\" \"3.2\" \"3.3\" \"3.3\" \"3.4\" \"3.4\"\n[7,] \"4.1\" \"4.1\" \"4.2\" \"4.2\" \"4.3\" \"4.3\" \"4.4\" \"4.4\"\n[8,] \"4.1\" \"4.1\" \"4.2\" \"4.2\" \"4.3\" \"4.3\" \"4.4\" \"4.4\"\n> tapply(tst,gps2,mean)\n 1.1 2.1 3.1  4.1  1.2  2.2  3.2  4.2  1.3  2.3  3.3  4.3  1.4  2.4  3.4\n4.4\n 5.5 7.5 9.5 11.5 21.5 23.5 25.5 27.5 37.5 39.5 41.5 43.5 53.5 55.5 57.5\n59.5\n> matrix(tapply(tst,gps2,mean),4,4)\n     [,1] [,2] [,3] [,4]\n[1,]  5.5 21.5 37.5 53.5\n[2,]  7.5 23.5 39.5 55.5\n[3,]  9.5 25.5 41.5 57.5\n[4,] 11.5 27.5 43.5 59.5\n\n---------------------------------------------------------------\nPeter J. Acklam\n---------------------------------------------------------------\n\nAssume x is an m-by-n matrix than can be divided into p-by-q\nblocks, and you want to perform som operation on each block,\nresulting in a scalar value (one for each block), resulting in an\nm/p-by-n/q matrix.  Then the following will convert x into an\nm/p*n/q-by-p*q matrix where each row contains the elements of each\nsubmatrix\n\n   m <- nrow(x)                         # number of rows\n   n <- ncol(x)                         # number of columns\n   dim(x) <- c(p, m/p, q, n/q)          # reshape the array\n   x <- aperm(x, c(2, 4, 1, 3))         # permute the dimensions\n   dim(x) <- c(m/p*n/q, p*q)            # reshape again\n\nNow you can easily perform any operation you like (mean, median,\nmax, min, etc.) on each row to get a m/p*n/q-by-1 vector.  For\ninstance, to compute the mean of each submatrix:\n\n   out <- x %*% rep(1/(p*q), p*q)\n\nOf course, for other operations, you might need a loop treating\neach row separately.  Finally, convert to the m/p-by-n/q matrix.\n\n   dim(out) <- c(m/p, n/q)\n\nThere, now you have computed the mean (assuming the example above)\nof each block.",
       "body_snippet": "Dear all, what a fantastically medium snews is! Last week I posted a\nquestion about calculating statistics for submatrices. The orginal question\nwas:\n\nI have a question about creating submatrices of a",
-      "thread_id": "thread-912d83adb758",
-      "thread_depth": 0,
+      "thread_id": "thread-4112eb2c106a",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -2231,12 +2231,12 @@
       "date": "2000-11-13T16:58:14Z",
       "subject": "Re: Data is/are",
       "subject_clean": "Data is/are",
-      "in_reply_to": null,
+      "in_reply_to": "<200011101934.OAA11753@nightingale.hcp.med.harvard.edu>",
       "references": [],
       "body_plain": "Just for fun, to add to the grammar war:  many of the doctors I talk to ask\nfor \"the data\" and mean \"summary statistics for the data\" or even \"a summary\nof an analysis of the data\".  I don't think this usage is in any of the\ndictionaries yet, but it seems to be fairly widespread.\n\n     Peter Wollan\n     wollan at mayo.edu",
       "body_snippet": "Just for fun, to add to the grammar war:  many of the doctors I talk to ask\nfor \"the data\" and mean \"summary statistics for the data\" or even \"a summary\nof an analysis of the data\".  I don't think thi",
-      "thread_id": "thread-8a741ed5413f",
-      "thread_depth": 0,
+      "thread_id": "thread-02a8ee2cd5c5",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -2299,12 +2299,12 @@
       "date": "2000-11-13T21:05:42Z",
       "subject": "RE: 95% ellipse region",
       "subject_clean": "95% ellipse region",
-      "in_reply_to": null,
+      "in_reply_to": "<80256996.006C0ECE.00@uksmtp01.ha.uk.sbphrd.com>",
       "references": [],
       "body_plain": "Try this function:\n\nellipse <- function(loc, cov, confidence = 0.95)\n{\n  A <- cov\n  detA <- A[1, 1] * A[2, 2] - A[1, 2]^2\n  dist <- sqrt(qchisq(confidence, 2))\n  ylimit <- sqrt(A[2, 2]) * dist\n  y <- seq( - ylimit, ylimit, 0.01 * ylimit)\n  sqrt.discr <- sqrt(detA/A[2, 2]^2 * (A[2, 2] * dist^2 - y^2))\n  sqrt.discr[c(1, length(sqrt.discr))] <- 0\n  b <- loc[1] + A[1, 2]/A[2, 2] * y\n  x1 <- b - sqrt.discr\n  x2 <- b + sqrt.discr\n  y <- loc[2] + y\n  return(rbind(cbind(x1, y), cbind(rev(x2), rev(y))))\n}\n\nUsage example:\n\nx <- 60 + 15 * rnorm( 200 )\ny <- 50 + .8 * x + 10 * rnorm( 200 )\nplot( x, y )\n\nlines( ellipse( c(mean(x),mean(y)), var(cbind(x,y)), .95 ),\n   col=2 )\n\nThe ellipse is based on the estimated covaraince matrix, though, so it may\nnot cover exactly 95% of the actual data.\n\n-----Original Message-----\nFrom: Jane_2_Xu at sbphrd.com [mailto:Jane_2_Xu at sbphrd.com]\nSent: Monday, November 13, 2000 2:40 PM\nTo: s-news at wubios.wustl.edu\nSubject: [S] 95% ellipse region\n\nHi All,\n\nI am thinking about uper-impose a 95% ellipse region on the\nnormal scatter plot (two variables, X vs. Y). The region should\ncover, say, 95% of the data points in the center. Dose anyone have\nexperience doing this? Your help will be greatly appreciated!\n\nJane\n\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Try this function:\n\nellipse <- function(loc, cov, confidence = 0.95)\n{\n  A <- cov\n  detA <- A[1, 1] * A[2, 2] - A[1, 2]^2\n  dist <- sqrt(qchisq(confidence, 2))\n  ylimit <- sqrt(A[2, 2]) * dist\n  y <- ",
-      "thread_id": "thread-c03cdf7aba88",
-      "thread_depth": 0,
+      "thread_id": "thread-44b3a9460cbb",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -2381,12 +2381,12 @@
       "date": "2000-11-14T11:06:19Z",
       "subject": "RE: scan",
       "subject_clean": "scan",
-      "in_reply_to": null,
+      "in_reply_to": "<NIEELJHCHBOJGFPONOHDGEGFCBAA.aspano@consodata.it>",
       "references": [],
       "body_plain": "> From: aspano at consodata.it\n> Date: Tue, 14 Nov 2000 11:46:19 -0800\n> \n> I am testing S+6\n> I can open the connection with file\n> > inCon <- file(\"dfile\", open=T)\n> > outCon <- file(\"outfile\", open=T)\n\nYou want to open inCon for reading, outCon for writing.\n\n> \n> then I can start a loop\n> > for (i in 1:n){\n> mydf <- scan(inCon, what=mydf.what, widths=mydf.widths)\n> #transform my data\n> > myOut <- myfun(mydf)\n> #and then write the otput line to the output connection\n> > \n> }\n> \n> I am not sure about what to loop on...\n> How does S+ undersytand that it has to move to the next line of the file at\n> each step of the loop?\n\nIt knows to read/write the file where it left off last time.  The file\nis open, just like in C code.  That's the great advantage of\nconnections.\n\nHere's a real example in 6.0\n\ncat(file=\"dfile\", rnorm(100), sep=\"\\n\")\ninCon <- file(\"dfile\", open=\"r\")\noutCon <- file(\"outfile\", open=\"w\")\nfor(i in 1:1e6) {\n  mydf <- scan(inCon, what=0, n = 1, sep=\"\\n\")\n  if(!length(mydf)) break\n  myOut <- c(i, mydf^2)\n  write(myOut, file=outCon)\n}\nclose(inCon)\nclose(outCon)\n\nIt really isn't hard if you read Chambers (1998).  The S-PLUS 6.0\non-line documentation is incomplete, though.\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595",
       "body_snippet": "> From: aspano at consodata.it\n> Date: Tue, 14 Nov 2000 11:46:19 -0800\n> \n> I am testing S+6\n> I can open the connection with file\n> > inCon <- file(\"dfile\", open=T)\n> > outCon <- file(\"outfile\", open",
-      "thread_id": "thread-0116ff40cfc6",
-      "thread_depth": 0,
+      "thread_id": "thread-c28212a48ed6",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -2547,12 +2547,12 @@
       "date": "2000-11-15T14:06:10Z",
       "subject": "Strange Problem",
       "subject_clean": "Strange Problem",
-      "in_reply_to": null,
+      "in_reply_to": "<3A12A35F.10402.75269@localhost>",
       "references": [],
       "body_plain": "Dear All,\n\nI have a similar problem as Frederieke has. Whenever I open\na new script/command window or graph window, 5-6 different\ntool vars called GPowerPoints come up togher. Would any one\nhelp me to eliminate this tool bars permanently??\n\nMany thanks,\nIn-Sun\n...",
       "body_snippet": "Dear All,\n\nI have a similar problem as Frederieke has. Whenever I open\na new script/command window or graph window, 5-6 different\ntool vars called GPowerPoints come up togher. Would any one\nhelp me to",
-      "thread_id": "thread-77f5313aa7de",
-      "thread_depth": 0,
+      "thread_id": "thread-37273f66fd7e",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -2563,12 +2563,12 @@
       "date": "2000-11-15T15:12:47Z",
       "subject": "job re-posting",
       "subject_clean": "job re-posting",
-      "in_reply_to": null,
+      "in_reply_to": "<1F6254B50D8FD211BC8900E0291B03B301B6772A@EXCHANG1>",
       "references": [],
       "body_plain": "> Below is a job posting at my institute that I would like to ecourage\n> interested parties to consider. \n> \n> It might be ideal for some one who would like to work in an applied area\n> for\n> a couple of years before undertaking a Phd. \n> \n> Perhaps someone might have a student who is considering such an option?\n> \n> Thanks in advance\n> \n> Keith O'Rourke\n> Statistician, Department of Surgery and Clinical Epidemiology Unit\n> University of Ottawa / Ottawa Hospital \n> Phone (613) 798-5555 x6055\n> Fax (613) 761-5351\n> Web http://www.lri.ca/profiles/orourke.htm\n> \n> \n> \n> > Clinical Epidemiology Unit, Loeb Health Research Institute\n> > Health Care Analyst\n> > \n> > The Loeb Health Research Institute is a non-profit organization\n> dedicated\n> > to bench-to-bedside research. It is affiliated with the University of\n> > Ottawa, and has a Clinical Epidemiology Unit (CEU) that is focussed on\n> the\n> > study of effective and efficient health care.  The CEU is seeking an\n> > individual for a one-year contract (renewable).\n> > \n> > Responsibilities include:\n> > *     Preparing linked datasets from clinical research database files.\n> > *     Producing reports, and statistical analyses using S Plus and other\n> > statistical software.\n> > *     Decision analytic modelling and computer simulation.\n> > *     Working collaboratively with a senior investigator on a portfolio\n> of\n> > cardiovascular economic evaluations.\n> > \n> > Requirements include:\n> > *     MSc in biostatistics, epidemiology, economics, health sciences or\n> a\n> > related field.\n> > *     Minimum 2 years experience with S Plus and other statistical\n> > software.\n> > *     Experience in a Windows environment.\n> > *     Good oral and written communication skills.\n> > *     Previous experience in the health care sector is preferred.\n> > \n> > Please submit your resume by 30 November 2000 to: \n> > \n> > Ms. D. Morris\n> > Clinical Epidemiology Unit (F649) \n> > Ottawa Hospital - Civic Campus\n> > 1053 Carling Avenue, \n> > Ottawa, Ontario K1Y 4E9  \n> > CANADA\n> > Fax: (613) 761-5351\n> > e-mail:  dmorris at lri.ca\n> > \n> > We thank all candidates for their interest, however, only candidates\n> > selected for interviews will be contacted.\n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news",
       "body_snippet": "> Below is a job posting at my institute that I would like to ecourage\n> interested parties to consider. \n> \n> It might be ideal for some one who would like to work in an applied area\n> for\n> a couple",
-      "thread_id": "thread-9b8d2a23b48c",
-      "thread_depth": 0,
+      "thread_id": "thread-08958c851a9f",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -2617,8 +2617,8 @@
       ],
       "body_plain": "Try to delete the _Prefs directory and start S+ again. This dir keeps all\nyour gui setting. When deleted S+ creates it again from fresh with a\nstandard  gui setting.\n\n-----Original Message-----\nFrom: s-news-owner at lists.biostat.wustl.edu\n[mailto:s-news-owner at lists.biostat.wustl.edu]On Behalf Of In-Sun Nam\nSent: Wednesday, November 15, 2000 6:06 AM\nTo: S-list\nSubject: [S] Strange Problem\n\nDear All,\n\nI have a similar problem as Frederieke has. Whenever I open\na new script/command window or graph window, 5-6 different\ntool vars called GPowerPoints come up togher. Would any one\nhelp me to eliminate this tool bars permanently??\n\nMany thanks,\nIn-Sun\n...\n\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Try to delete the _Prefs directory and start S+ again. This dir keeps all\nyour gui setting. When deleted S+ creates it again from fresh with a\nstandard  gui setting.\n\n-----Original Message-----\nFrom: ",
-      "thread_id": "thread-77f5313aa7de",
-      "thread_depth": 1,
+      "thread_id": "thread-37273f66fd7e",
+      "thread_depth": 2,
       "month": "2000-11"
     },
     {
@@ -2893,12 +2893,12 @@
       "date": "2000-11-17T16:09:02Z",
       "subject": "RE: simulation",
       "subject_clean": "simulation",
-      "in_reply_to": null,
+      "in_reply_to": "<Pine.GSO.4.05.10011161952360.15441-100000@lucia.acsu.buffalo.edu>",
       "references": [],
       "body_plain": "You might create a matrix, 100 by n:\n\nmat <- matrix (runif (100 * n), nrow = 100)\n\nthen apply a function to each row to compute the sum of those numbers under\n.01:\n\napply (mat, 1, function(x) sum (x < .01))\n\nI hope this helps,\n\nSam Buttrey\nbuttrey at nps.navy.mil\n\n-\nDaikwon Han wrote:\n\n> Dear all,\n>\n>  Can anyone help me to create 100 numbers from the below program ?\n> I'm doing simulation to pick up random numbers and calculate the change of\n> total values over time. The first thing I did is to pick up the 1000\n> numbers between 0 and 1 under the uniform distribution and add all the\n> values less than .01 as follows.\n>\n>  x<-runif(1000,0,1)\n>  x<-sum(as.numeric(x<.01))\n>\n>  Let's say, I got 9 as x value at the first trial, then I want to repeat\n> it 100 times so that I can get 100 different numbers.\n>  I've tried \"for(i in 1:100)\" and \"while(i<101)\" loop, but it doesn't work\n> well. I also tried matrix, append command, I only got the same number\n> repeated 100 times, probably the first one(same 100 numbers in the table).\n>\n>  My question is how to make a loop to keep each value at each trial(should\n> be 100 different numbers at 100 trials). Any help would be appreciated.\n>  Thank you.\n>\n> -----------------------------\n>  Daikwon Han, Ph.D Candidate\n>  Department of Geography\n>  SUNY at Buffalo\n>  Buffalo, NY 14226\n> -----------------------------\n>\n>\n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n\n--\nDr. M. Henry H. Stevens\nPostdoctoral Associate\nDepartment of Ecology, Evolution, & Natural Resources\n14 College Farm Road\nCook College, Rutgers University\nNew Brunswick, NJ 08901-8551\n\nemail: hstevens at rci.rutgers.edu\nphone: 732-932-9631\nfax: 732-932-8746\n\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "You might create a matrix, 100 by n:\n\nmat <- matrix (runif (100 * n), nrow = 100)\n\nthen apply a function to each row to compute the sum of those numbers under\n.01:\n\napply (mat, 1, function(x) sum (x <",
-      "thread_id": "thread-6f1b5b96c027",
-      "thread_depth": 0,
+      "thread_id": "thread-0ef97fe12210",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -2909,12 +2909,12 @@
       "date": "2000-11-17T16:17:13Z",
       "subject": "RE: simulation",
       "subject_clean": "simulation",
-      "in_reply_to": null,
+      "in_reply_to": "<Pine.GSO.4.05.10011161952360.15441-100000@lucia.acsu.buffalo.edu>",
       "references": [],
       "body_plain": "How about \n\nNtrials <- 100\ntrials <- sapply(1:Ntrials, function(trialnumber) sum(runif(1000,0,1) < .01)\n)\n\nThis is pretty quick on my machine, about 15 seconds for Ntrials = 10000.  \nThe tapply method which creates a large matrix of all the uniforms first \nmay be rather memory intensive;  this probably depends on your individual \nmachine setup though.\n\nRegards,  Andrew\n-------------------------------\nAndrew Sinclair, Research Group\nED&F Man Investment Products\nSugar Quay, Lower Thames St\nLondon, EC3R 6DU\nTel : 020 72852089\nEmail : asinclair at edfman.co.uk\n\n>-----Original Message-----\n>From: Daikwon Han [mailto:dhan at acsu.buffalo.edu]\n>Sent: Friday, November 17, 2000 1:01 AM\n>To: s-news at lists.biostat.wustl.edu\n>Subject: [S] simulation\n>\n>\n>\n>Dear all,\n>\n> Can anyone help me to create 100 numbers from the below program ?  \n>I'm doing simulation to pick up random numbers and calculate \n>the change of\n>total values over time. The first thing I did is to pick up the 1000\n>numbers between 0 and 1 under the uniform distribution and add all the \n>values less than .01 as follows.\n>\n> x<-runif(1000,0,1) \n> x<-sum(as.numeric(x<.01)) \n>\n> Let's say, I got 9 as x value at the first trial, then I want \n>to repeat\n>it 100 times so that I can get 100 different numbers. \n> I've tried \"for(i in 1:100)\" and \"while(i<101)\" loop, but it \n>doesn't work\n>well. I also tried matrix, append command, I only got the same number\n>repeated 100 times, probably the first one(same 100 numbers in \n>the table).\n> \n> My question is how to make a loop to keep each value at each \n>trial(should\n>be 100 different numbers at 100 trials). Any help would be appreciated.\n> Thank you.\n>\n>-----------------------------\n> Daikwon Han, Ph.D Candidate \n> Department of Geography\n> SUNY at Buffalo\n> Buffalo, NY 14226\n>-----------------------------\n> \n>\n>\n>\n>\n>\n>\n>---------------------------------------------------------------------\n>This message was distributed by s-news at lists.biostat.wustl.edu.  To\n>unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n>the BODY of the message:  unsubscribe s-news\n>\n**********************************************************************\nAny information in this communication which is confidential must not\nbe disclosed to others without our consent. Such consent is not required\nwhere the information is publicly available and intended for onward\ndistribution. If the information is confidential and if you are not the\nintended recipient, you are not authorised to and must not disclose,\ncopy, distribute, or retain this message or any part of it. You are\nrequested to return this message to the sender immediately.\n\nDue to the electronic nature of e-mail, there is a risk that the\ninformation contained in this message has been modified. \nConsequently E D & F Man can accept no responsibility or\nliability as to the completeness or accuracy of the information.\n\n**********************************************************************",
       "body_snippet": "How about \n\nNtrials <- 100\ntrials <- sapply(1:Ntrials, function(trialnumber) sum(runif(1000,0,1) < .01)\n)\n\nThis is pretty quick on my machine, about 15 seconds for Ntrials = 10000.  \nThe tapply method",
-      "thread_id": "thread-a7d1b133da1c",
-      "thread_depth": 0,
+      "thread_id": "thread-0ef97fe12210",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -3055,12 +3055,12 @@
       "date": "2000-11-18T20:39:26Z",
       "subject": "re:simulation",
       "subject_clean": "simulation",
-      "in_reply_to": null,
+      "in_reply_to": "<Pine.GSO.4.05.10011161952360.15441-100000@lucia.acsu.buffalo.edu>",
       "references": [],
       "body_plain": "Dear all:\n\n Thank you so much for all the replys regarding my question of how to\ngenerate a matrix from random sampling. I was very excited when I got \nmany responses in a day or so and it worked out !  I spent several days to\nthink about it because I'm a pretty new to this area, the solutions are\nvery simple. I've learned a lot from trial-and-errors actually. As a\nbeginner, I think s-programming is not so user-friendly. Whenever I have\nsome problems, it's hard to find some references or get some help. Once I\nget used it, it would be ok, I think.\n Since it turned out to be pretty simple, I don't feel that I need to post\nthe summary. There are so many ways to do it. I'd really appreciate all\nthe help from s-news subscribers, we can go on to the next step due to\nyour help.\n Have a good day !\n \n-----------------------------\n Daikwon Han, Ph.D Candidate \n Department of Geography\n SUNY at Buffalo\n Buffalo, NY 14226\n-----------------------------",
       "body_snippet": "Dear all:\n\n Thank you so much for all the replys regarding my question of how to\ngenerate a matrix from random sampling. I was very excited when I got \nmany responses in a day or so and it worked out ",
-      "thread_id": "thread-660c6281f49d",
-      "thread_depth": 0,
+      "thread_id": "thread-0ef97fe12210",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -3121,12 +3121,12 @@
       "date": "2000-11-20T16:06:47Z",
       "subject": "Re: stepwise regression",
       "subject_clean": "stepwise regression",
-      "in_reply_to": null,
+      "in_reply_to": "<Pine.GSO.4.05.10011181626550.27194-100000@eureka.stern.nyu.edu>",
       "references": [],
       "body_plain": "Thanks, I very much appreciated that discussion.  My question is \"what is \ndata mining anyway?\"  That is, I know in general what it is, but not how to \ndo it.  A collection of automatic techniques provides no automation without \nguidance on which ones to use.  I would really appreciate a pointer to a \ntext or other resource which would unify \"data mining\" to some degree and \nprovide guidance, at least  to someone with some experience in statistical \nmodeling.  (My particular applications are environmental, hydrologic, and \ngeographic.)",
       "body_snippet": "Thanks, I very much appreciated that discussion.  My question is \"what is \ndata mining anyway?\"  That is, I know in general what it is, but not how to \ndo it.  A collection of automatic techniques pro",
-      "thread_id": "thread-14bf9555b05d",
-      "thread_depth": 0,
+      "thread_id": "thread-7cb7b16f01ed",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -3187,12 +3187,12 @@
       "date": "2000-11-20T19:17:24Z",
       "subject": "Re: mahalanobis distance",
       "subject_clean": "mahalanobis distance",
-      "in_reply_to": null,
+      "in_reply_to": "<3A195401.8384A5FA@amc.uva.nl>",
       "references": [],
       "body_plain": "When I plot the mahalanobis distance with plot.mcd(cov.mcd(x)) the resulting\n\ndistances are a factor 10 smaller compared to doing:\n\nc<-cov.mcd(x)\n\nd<-mahalanobis(x,c$center,c$cov)\n\nHow should I interpret this?\n\nThe plot.mcd routine in S+ contains this piece of code to calculate MD ( =\n\"Mahalanobis Distance\" )\n     X <- mcd.obj$X\n     center <- mcd.obj$center\n     cov <- mcd.obj$cov\n     n <- nrow(as.matrix(X))\n     MD <- sqrt(mahalanobis(X, apply(X, 2, mean), n/(\n          n - 1) * cov.wt(X)$cov))\n     RD <- sqrt(mahalanobis(X, center, cov))\n\nX   is the original data set  and cov.wt(X)$cov  is the estimated covariance\nmatrix  NOT the robust cov. matrix  (a la Rouseeuw\net. al.).\n\nIn fact     RD^2 = d   ( = mahalanobis(x,c$center,c$cov).",
       "body_snippet": "When I plot the mahalanobis distance with plot.mcd(cov.mcd(x)) the resulting\n\ndistances are a factor 10 smaller compared to doing:\n\nc<-cov.mcd(x)\n\nd<-mahalanobis(x,c$center,c$cov)\n\nHow should I interp",
-      "thread_id": "thread-71918d35249b",
-      "thread_depth": 0,
+      "thread_id": "thread-4dad4436941e",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -3255,12 +3255,12 @@
       "date": "2000-11-20T21:28:20Z",
       "subject": "Re: Calculation of Kappa and Weighted Kappa",
       "subject_clean": "Calculation of Kappa and Weighted Kappa",
-      "in_reply_to": null,
+      "in_reply_to": "<74646CC0154BD41186C70090278D11DF6FDCCE@wh-ex-01.main.erlanger.org>",
       "references": [],
       "body_plain": "I am amazed by the prompt responses to my mail requesting the program routine for calculating kappa and weighted kappa in S-PLUS.  A BIG Thank You to  all of you who responded.   \n\nNeema\n\nI have listed the responses below:\n\n 1.     Chuck Cleland -\n\n  I have attached a file containing a kappa function I picked up long ago.  I can't remember where it came from.\n\n                                       <<skappa.q>>    \n\n***************************************************************************\n\n2.James L. Pratt, SONUS Pharmaceuticals, Inc.\n\nHere is a program written to cpmuted Weighted kappas for any size matrix.  I've sent it to MathSoft, hoping they'll add to future versions of S-Plus.  It doesn't compute 95% confidence intervals, but does compute/return asymptotic standard errors from which confidence intervals may be obatined (I've not looked into it).\n\nBelow is the basic function I've used to compute kappa statistics in my\n\nsituation.  It runs okay, but is slowed down by my call to crosstabs within\n\nkappa.counts function call to implicitly compute counts variable.  I think\n\nthe code coould be made to run more efficiently, but have not taken the time\n\nto do so.  Also, when one reviews Fleiss' book, will notice there are other\n\nweighting schemes.  The one used here is for linear weights.  Perhaps the\n\ncreation of the weight matrix w can be accomplished without for loops.\n\nkappa.counts<-function(counts,wt=T){\n\n        ##counts is a k-by-k contingency table\n\n        n.tot<-sum(counts)\n\n        k<-dim(counts)[1]\n\n        if(wt){\n\n                w<-matrix(1,nrow=k,ncol=k)\n\n                for (i in 1:(k-1)){\n\n                        for (j in (i+1):k){\n\n                                w[i,j]<-1-abs(i-j)/(k-1)\n\n                                w[j,i]<-w[i,j]\n\n                                }\n\n                        }\n\n                }\n\n        else {\n\n                w<-matrix(0,nrow=k,ncol=k)\n\n                for (i in 1:k) w[i,i]<-1\n\n        }\n\n        print(w) #w is weight matrix, identity matrix if wt=F\n\n        P<-counts/n.tot #k-by-k matrix of proportions Pij\n\n        Pi<-rowSums(P) #k-by-1 vector of marginal proportions Pi.\n\n        Pj<-colSums(P) #k-by-1 vector of marginal proportions P.j\n\n#observed proportion of agreement (weighted if needed)\n\n        po<-sum(P*w)\n\n# * is element-wise multiplication, %*% is linear algebra multiplication\n\n# t() is transpose function\n\n# expected proportion of agreement (weighted if needed)\n\n        pe<-sum((Pj%*%t(Pi))*w)\n\n        kappa<-(po-pe)/(1-pe)\n\n#outer(x,y,\"+\") creates outer-sum of two matrices x and y, similar to a\n\n#cross-product, adding elemtents rather than multiplying them\n\n# part 1 of numerator for variance estimate\n\n        var1<-sum(P*(w-matrix(outer(Pj%*%t(w),Pi%*%w,\n\n           FUN=\"+\"),ncol=k,byrow=F)*(1-kappa))^2)\n\n# part 2 of numerator for variance estimate\n\n        var2<-(kappa-pe*(1-kappa))^2\n\n#denominator for variance estiamte\n\n        den<-(n.tot*(1-pe)^2)\n\n#asymptotic se\n\n        ase<-sqrt((var1-var2)/den)\n\n# part 1 of numerator for variance estimate under null hyp\n\n        var1.0<-sum((Pj%*%t(Pi))*(w-matrix(outer(Pj%*%t(w),Pi%*%w,\n\n           FUN=\"+\"),ncol=k,byrow=T))^2)\n\n#asymptotic se under null hyp\n\n        ase.0<-sqrt((var1.0-pe^2)/den)\n\n        print(counts)\n\n        cbind(po,pe,kappa,var1,var2,den,ase,z.value=kappa/ase,\n\n                p.value=2*(1-pnorm(abs(kappa/ase))),ase.0,z.value.0=kappa/ase.0,\n\n                p.value.0=2*(1-pnorm(abs(kappa/ase.0))))\n\n}\n\nkappa.counts(crosstabs(~factor(NEA,levels=0:3)+factor(NEB,levels=0:3),\n\ndata=\"\">\n\n        drop.unused.levels=F,margin=list(\"N/Total\" = integer(0))))\n\nIt is important that the counts argument to kappa.counts be a square matrix.\n\nThis is why have chosen the drop.unused.levels=F in the call.\n\n***************************************************\n\n3.       recently found a kappa function in the archives.  It's quite nice, as it\n\ncalculates both weighted and unweighted kappas.  You can find the function\n\nat:\n\nhttp://www.biostat.wustl.edu/hyperlists/s-news/199810/msg00089.html\n\n<http://www.biostat.wustl.edu/hyperlists/s-news/199810/msg00089.html> \n\n  \n\nsally\n\n*******************************************************\n\n4. Not sure if this is what you want--it does the overall kappa and individual\n\n   stats but you would have to add weight assignments and CI.  The input\n\n   file is not a matrix, but a two column file with the raw data for\n\n   categories (it creates the matrix from the input file). In my case I was\n\n   looking at agreement between cover type recorded on the ground (column\n\n   1), and cover type recorded in an image classification (column 2).\n\n   Credit to Robin Reich at Colorado State, who wrote the code.\n\nSandra L. Haire\n\n   USGS-Biological Resources Division\n\n   \n\n\"kap\"<-\n\nfunction(data)\n\n{\n\n   data.tbl<-table(data[,1],data[,2])\n\n       rt <- matrix(apply(data.tbl, 1, sum), ncol = 1)\n\n      ct <- matrix(apply(data.tbl, 2, sum), nrow = 1)\n\n      gt <- sum(data.tbl)\n\n      dgt <- sum(diag(data.tbl))\n\n      pm <- rt %*% ct\n\n      kappa <- 1 - (gt * (gt - dgt))/(sum(pm) - sum(diag(pm)))\n\n   nr<-length(data.tbl[,1])\n\n   kap1<-matrix(0, ncol=1, nrow=nr)\n\n   overall<-dgt/gt\n\n   for(i in 1:nr) {\n\n     kap1[i]<-(gt*data.tbl[i,i]-rt[i]*ct[i])/(gt*rt[i]-rt[i]*ct[i])\n\n   }\n\n   cat(\"error matrix \\n\")\n\n   print(data.tbl)\n\n   cat(\"\\n\")\n\n   cat(\"\\n Overall accuracy \",round(overall,4), \"\\n\")\n\n        cat(\"\\n Overall Kappa is \", round(kappa, 4), \"\\n\")\n\n   cat(\"Individual Kappa Statistics \\n\")\n\n   kap1\n\n   }\n\n    \n\n                                     \n\nThe information or documents contained in this electronic mail message is intended to be privileged and confidential information only for the use of the individual or entity named herein or above. If you are not the intended recipient, you are hereby notified that any dissemination, distribution or copy of this message or document is strictly prohibited. If you have received this electronic mail transmission in error, notify the sender by reply e-mail and delete all copies from your system. Erlanger Health System is not responsible for errors in this electronic mail message. Any personal comments made do not necessarily reflect the views of Erlanger Health System.\n\nskappa.q\n\nDescription: Binary data",
       "body_snippet": "I am amazed by the prompt responses to my mail requesting the program routine for calculating kappa and weighted kappa in S-PLUS.  A BIG Thank You to  all of you who responded.   \n\nNeema\n\nI have liste",
-      "thread_id": "thread-725f620d4b47",
-      "thread_depth": 0,
+      "thread_id": "thread-1e970fbe4af1",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -3661,12 +3661,12 @@
       "date": "2000-11-28T13:14:22Z",
       "subject": "Re: loading libraries",
       "subject_clean": "loading libraries",
-      "in_reply_to": null,
+      "in_reply_to": "<3A23AB26.DDA3F280@rci.rutgers.edu>",
       "references": [],
       "body_plain": "> Date: Tue, 28 Nov 2000 07:55:03 -0500\n> From: \"Martin H. H. Stevens\" <hstevens at rci.rutgers.edu>\n> Subject: [S] loading libraries\n> \n> I have recently discovered the joys of the extra libraries in S-plus\n> (e.g., mass, hmisc), and I have been liberated! I, and I am sure\n> COUNTLESS others, are deeply indebted to the authors of these fabulous\n> tools.\n> \n> I would like to load some libraries every time I start s-plus. How do I\n> automate that?\n\nUse library(foo) commands in .First, or workspaces in S-PLUS 2000.\n(I guess you are using Windows, since only there will library(mass) work:\nit is really MASS.)\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595",
       "body_snippet": "> Date: Tue, 28 Nov 2000 07:55:03 -0500\n> From: \"Martin H. H. Stevens\" <hstevens at rci.rutgers.edu>\n> Subject: [S] loading libraries\n> \n> I have recently discovered the joys of the extra libraries in",
-      "thread_id": "thread-99d23081c755",
-      "thread_depth": 0,
+      "thread_id": "thread-1e7608f41235",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -3907,12 +3907,12 @@
       "date": "2000-11-29T17:47:51Z",
       "subject": "RE: Columns of data.frame converted from numeric to character .",
       "subject_clean": "Columns of data.frame converted from numeric to character .",
-      "in_reply_to": null,
+      "in_reply_to": "<15104802790BD411A2C100D0B73EA33CD73AA0@remailnt3-re01.westat.com>",
       "references": [],
       "body_plain": "Actually, it's a bit more interesting than that. The behavior you report is\nEXPECTED: Here's why:\n\n          z_data.frame(1:3,2:4)\n        > z\n          X1 X2 \n        1  1  2\n        2  2  3\n        3  3  4\n        > z[,2]_letters[1:3]\n        > z\n          X1 X2 \n        1  1  a\n        2  2  b\n        3  3  c\n        > apply(z,2,mode)\n                  X1          X2 \n         \"character\" \"character\"\n\n        #### This is what we expect because (I assume) apply() works on\narrays and therefore\n        ### must implicitly coerce everything to character to get an\narray,which must be of one mode\n        ### only.\n\n        #### However, what's going on here?\n\n        > lapply(z,mode)\n        $X1:\n        [1] \"numeric\"\n\n        $X2:\n        [1] \"numeric\"\n\n        ### One should have gotten \"numeric\" and \"character\", right?\n        ## Here's the reason:\n\n        > lapply(z,is.factor)\n        $X1:\n        [1] F\n\n        $X2:\n        [1] T\n\n        ### the data.frame constructor by default coerces character data to\na factor -- which is an\n        ### objects of mode \"numeric\" (integer actually) with a levels\nattribute which is \"character\".\n        ### Thus:\n\n        > lapply(z,levels)\n        $X1:\n        NULL\n\n        $X2:\n        [1] \"a\" \"b\" \"c\"\n\n        ### the array constructor that is implicitly called by the use of\napply coerced the factor to \"character\" and\n        ### then the whole array (both columns) to character to minimize\ninformation loss.\n\n        ## So everything is actually working as it's supposed to. If you\nwant to avoid the automatic factor coercion\n        ## you should do the following\n\n        > z_data.frame(1:3,4:6)\n\n        > z[,2]_I(letters[1:3])  ## Note the use of the identity function\nthat prevents auto coercion\n        > lapply(z,mode)\n        $X1:\n        [1] \"numeric\"\n\n        $X2:\n        [1] \"character\"\n\n        Cheers,\n\nBert Gunter\nBiometrics Research\nMerck & Company\nPO Box 200, Rahway, NJ 07065-0900\nPh: (732) 594-7765    Fax: 594-1565\n\n\"The business of the statistician is to catalyze the scientific learning\nprocess.\"    --  George E.P. Box",
       "body_snippet": "Actually, it's a bit more interesting than that. The behavior you report is\nEXPECTED: Here's why:\n\n          z_data.frame(1:3,2:4)\n        > z\n          X1 X2 \n        1  1  2\n        2  2  3\n        ",
-      "thread_id": "thread-6147f07e9c87",
-      "thread_depth": 0,
+      "thread_id": "thread-5725feb06130",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -4139,12 +4139,12 @@
       "date": "2000-11-30T13:19:33Z",
       "subject": "RE: Columns of data.frame ...",
       "subject_clean": "Columns of data.frame ...",
-      "in_reply_to": null,
+      "in_reply_to": "<200011292117.RAA11748@tanner.math.unb.ca>",
       "references": [],
       "body_plain": "Rolf et al:\n\nI believe I have an explanation for the following behavior that you\ndescribed: I intersperse my remarks with %% signs to delineate them:\n\n        %% ( Following quoted from Rolf Turner's posting )\n\n> I still think funny things are going on --- if there aren't bugs then\n> there are annoyingly misleading ``features''.\n> \n> Consider the following:\n> \n> # Create a silly data frame, and investigate the modes of\n> # its columns.\n> > junk <- data.frame(x=1:10,y=11:20,z=21:30)\n> > print(lapply(junk,mode))\n> \n> $x:\n> [1] \"numeric\"\n> \n> $y:\n> [1] \"numeric\"\n> \n> $z:\n> [1] \"numeric\"  # All is in harmony.\n> \n> # Now do the conversion to character, using the ``$'' syntax\n> # to refer to components:\n> > junk$z <- ifelse(junk$z<26,\"a\",\"b\")\n> > print(junk)\n> \n>     x  y z \n>  1  1 11 a\n>  2  2 12 a\n>  3  3 13 a\n>  4  4 14 a\n>  5  5 15 a\n>  6  6 16 b\n>  7  7 17 b\n>  8  8 18 b\n>  9  9 19 b\n> 10 10 20 b  # It looks like it worked.\n> \n> > print(lapply(junk,mode))\n> $x:\n> [1] \"numeric\"\n> \n> $y:\n> [1] \"numeric\"\n> \n> $z:\n> [1] \"character\" # We get character here, not numeric; apparently\n>                 # junk$z has ***not*** been coerced to a factor.\n> \n%%% Yes, the reason being that using the list syntax junk$z invokes list\nmethods that do not look at the dim attribute of junk and therefore do not\nconsider it a dataframe and therefore do not do automatic coercion.\n\n> # Restore ``junk'' to its orginal beauty:\n> > junk$z <- 21:30\n> > print(junk)\n>     x  y  z \n>  1  1 11 21\n>  2  2 12 22\n>  3  3 13 23\n>  4  4 14 24\n>  5  5 15 25\n>  6  6 16 26\n>  7  7 17 27\n>  8  8 18 28\n>  9  9 19 29\n> 10 10 20 30  # Ommmmmmmmmm.\n> \n> # Now do the conversion to character, using the [,'name'] syntax\n> # to refer to components:\n> > junk[,'z'] <- ifelse(junk$z<26,\"a\",\"b\")\n> > print(junk)\n>     x  y z \n>  1  1 11 a\n>  2  2 12 a\n>  3  3 13 a\n>  4  4 14 a\n>  5  5 15 a\n>  6  6 16 b\n>  7  7 17 b\n>  8  8 18 b\n>  9  9 19 b\n> 10 10 20 b # Same appearance as before ... but\n> \n> > print(lapply(junk,mode))\n> $x:\n> [1] \"numeric\"\n> \n> $y:\n> [1] \"numeric\"\n> \n> $z:\n> [1] \"numeric\"  # Here junk$z ***has*** been coerced to a factor.\n> \n> Why the difference?\n%%% Using the junk[,'z'] syntax now explicitly forces use of a dataframe\nmethod for the substitution, since the dim attribute of the list is\nexplicitly invoked. Hence the coercion is automatically done.\n\n> Whatever the reason, this business of coercing character to factor\n> in data frames is a real annoyance; it misleads and confuses and\n> disrupts and ought to be done away with.\n> \n        %%% I don't think so. Using the junk$z syntax explicitly asks that\nthe junk object be considered as a list without reference to its other\nattributes (like \"dim\") and that list operations, here list substitution, be\nused. Therefore you get a change to character mode.\n\n        Use of the junk{,'z'] syntax specifically asks that the \"dim\"\nattribute be considered and that dataframe methods, here dataframe\nsubstitution, be used. Hence the automatic coercion is done. The problem\nhere is the subtlety of object orientation -- the two syntaxes are NOT in\nfact equivalent for the reasons described, although we are perhaps\ninsufficiently warned about the difference. \n\n        The coercion to factors exacerbates the problem, of course, but\nthere are good reasons for doing this in many -- probably most -- cases. In\nany case, changing this automatic coercion would break a lot of code and\ntherefore is out of the question. You are always free to write your own\nversions of the functions that do not do this coercion.\n\n        S-Plus is a programming language, and like all programming languages\nhas subtle features/traps that programmers must heed. This example is one of\nthem. I think careful reflection shows that, annoying as it may seem, the\nbehavior that you have noted is entirely proper and consistent with the\nlanguages syntax and semantics and therefore is most certainly NOT a bug. As\nalways, those programmers who wish to take advantage of the power that these\nfeatures provide must also be cognicent of ALL the cosequences.\n\n        Thanks for bringing these issues to our attention and, in\nparticularly, forcing me to think about them carefully.\n\n        Cheers,\n\n> Bert Gunter\n> Biometrics Research RY 70-38\n> Merck & Company\n> P.O. Box 2000\n> Rahway, NJ 07065-0900\n> Phone: (732) 594-7765\n> mailto: bert_gunter at merck.com\n> \n> \"The business of the statistician is to catalyze the scientific learning\n> process.\"      -- George E.P. Box",
       "body_snippet": "Rolf et al:\n\nI believe I have an explanation for the following behavior that you\ndescribed: I intersperse my remarks with %% signs to delineate them:\n\n        %% ( Following quoted from Rolf Turner's ",
-      "thread_id": "thread-3136e7dae42f",
-      "thread_depth": 0,
+      "thread_id": "thread-e94999e837ce",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -4291,12 +4291,12 @@
       "date": "2000-11-30T20:51:06Z",
       "subject": "Re: (pas d'objet)",
       "subject_clean": "(pas d'objet)",
-      "in_reply_to": null,
+      "in_reply_to": "<3A269053.E9D302E7@ifremer.fr>",
       "references": [],
       "body_plain": "Sorry, correction:\n\nTry this:\na<-c(\"NA\",\"1\", \"NA\", \"5\", \"NA\", \"6\",\"8\",\"10\")\nx<-c(1:length(a))\n\n**z<-x[a==\"NA\"]**    NOT z<-z[a==\"NA\"]\n\nAt 06:37 PM 11/30/2000 +0100, Marion VERDOIT wrote:\n> Hello,\n> I have a vector\n> a<-c(\"NA\",\"1\", \"NA\", \"5\", \"NA\", \"6\",\"8\",\"10\")\n> I want the positions of the \"NA\"s in a, i.e.:\n> 1 3 5\n> I try\n> match(\"NA\", a), but it returns only the first position :\n> > 1\n> have you the solution?\n> Thank you\n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Sorry, correction:\n\nTry this:\na<-c(\"NA\",\"1\", \"NA\", \"5\", \"NA\", \"6\",\"8\",\"10\")\nx<-c(1:length(a))\n\n**z<-x[a==\"NA\"]**    NOT z<-z[a==\"NA\"]\n\nAt 06:37 PM 11/30/2000 +0100, Marion VERDOIT wrote:\n> Hello,\n> I ",
-      "thread_id": "thread-8645b28a1d0e",
-      "thread_depth": 0,
+      "thread_id": "thread-c672e74a7d44",
+      "thread_depth": 1,
       "month": "2000-11"
     },
     {
@@ -4376,24 +4376,15 @@
     {
       "id": "thread-79d9fe7b0146",
       "subject": "t-test for binary data",
-      "message_count": 1,
+      "message_count": 4,
       "participants": [
+        "Bill Venables",
+        "O'Rourke, Keith",
         "Xao Ping"
       ],
       "started": "2000-11-01T21:12:52Z",
-      "last_reply": "2000-11-01T21:12:52Z",
+      "last_reply": "2000-11-03T04:11:16Z",
       "root_message_id": "msg-79d9fe7b0146"
-    },
-    {
-      "id": "thread-f398a099c220",
-      "subject": "t-test for binary data",
-      "message_count": 1,
-      "participants": [
-        "Bill Venables"
-      ],
-      "started": "2000-11-02T00:24:09Z",
-      "last_reply": "2000-11-02T00:24:09Z",
-      "root_message_id": "msg-f398a099c220"
     },
     {
       "id": "thread-9bd6f6632d9d",
@@ -4476,18 +4467,6 @@
       "root_message_id": "msg-a74ddefb56d5"
     },
     {
-      "id": "thread-66954dda3021",
-      "subject": "t-test for binary data",
-      "message_count": 2,
-      "participants": [
-        "Bill Venables",
-        "O'Rourke, Keith"
-      ],
-      "started": "2000-11-02T21:51:58Z",
-      "last_reply": "2000-11-03T04:11:16Z",
-      "root_message_id": "msg-66954dda3021"
-    },
-    {
       "id": "thread-4aab323dfb47",
       "subject": "Fit a parametric PH model.",
       "message_count": 1,
@@ -4535,24 +4514,14 @@
     {
       "id": "thread-1adfdbd503c8",
       "subject": "2 questions",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Alain LE TERTRE"
-      ],
-      "started": "2000-11-03T12:46:35Z",
-      "last_reply": "2000-11-03T12:46:35Z",
-      "root_message_id": "msg-1adfdbd503c8"
-    },
-    {
-      "id": "thread-079acc9019df",
-      "subject": "2 questions",
-      "message_count": 1,
-      "participants": [
+        "Alain LE TERTRE",
         "Alain Le Tertre"
       ],
-      "started": "2000-11-03T14:56:00Z",
+      "started": "2000-11-03T12:46:35Z",
       "last_reply": "2000-11-03T14:56:00Z",
-      "root_message_id": "msg-079acc9019df"
+      "root_message_id": "msg-1adfdbd503c8"
     },
     {
       "id": "thread-839e310c1692",
@@ -4690,13 +4659,14 @@
     {
       "id": "thread-40389b5d412a",
       "subject": "p-value in coxph",
-      "message_count": 2,
+      "message_count": 4,
       "participants": [
         "Pintilie, Melania",
-        "Prof Brian D Ripley"
+        "Prof Brian D Ripley",
+        "Terry Therneau"
       ],
       "started": "2000-11-06T20:13:41Z",
-      "last_reply": "2000-11-06T20:49:18Z",
+      "last_reply": "2000-11-08T21:08:28Z",
       "root_message_id": "msg-40389b5d412a"
     },
     {
@@ -4713,25 +4683,15 @@
     {
       "id": "thread-147597f4eee1",
       "subject": "naive question re imputation and prediction",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
+        "F.Tusell",
         "Frank E Harrell Jr",
         "Todd Hatfield"
       ],
       "started": "2000-11-07T00:28:55Z",
-      "last_reply": "2000-11-07T01:01:48Z",
-      "root_message_id": "msg-147597f4eee1"
-    },
-    {
-      "id": "thread-ca12c4b5902d",
-      "subject": "naive question re imputation and prediction",
-      "message_count": 1,
-      "participants": [
-        "F.Tusell"
-      ],
-      "started": "2000-11-07T08:14:23Z",
       "last_reply": "2000-11-07T08:14:23Z",
-      "root_message_id": "msg-ca12c4b5902d"
+      "root_message_id": "msg-147597f4eee1"
     },
     {
       "id": "thread-ae7f67559e07",
@@ -4759,12 +4719,13 @@
     {
       "id": "thread-693c43833456",
       "subject": "nonlinear model parameter estimation",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Shareef Siddeek"
+        "Shareef Siddeek",
+        "Uffe Høgsbro Thygesen"
       ],
       "started": "2000-11-07T17:58:10Z",
-      "last_reply": "2000-11-07T17:58:10Z",
+      "last_reply": "2000-11-10T12:01:35Z",
       "root_message_id": "msg-693c43833456"
     },
     {
@@ -4825,13 +4786,13 @@
     {
       "id": "thread-4112eb2c106a",
       "subject": "submatrices",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Duin, R.N.M.",
         "Peter J. Acklam"
       ],
       "started": "2000-11-08T16:26:22Z",
-      "last_reply": "2000-11-10T00:45:52Z",
+      "last_reply": "2000-11-13T11:26:50Z",
       "root_message_id": "msg-4112eb2c106a"
     },
     {
@@ -4880,28 +4841,6 @@
       "root_message_id": "msg-d48714b8a080"
     },
     {
-      "id": "thread-977839b2223d",
-      "subject": "p-value in coxph",
-      "message_count": 1,
-      "participants": [
-        "Pintilie, Melania"
-      ],
-      "started": "2000-11-08T20:28:09Z",
-      "last_reply": "2000-11-08T20:28:09Z",
-      "root_message_id": "msg-977839b2223d"
-    },
-    {
-      "id": "thread-05ae3f8724ea",
-      "subject": "p-value in coxph",
-      "message_count": 1,
-      "participants": [
-        "Terry Therneau"
-      ],
-      "started": "2000-11-08T21:08:28Z",
-      "last_reply": "2000-11-08T21:08:28Z",
-      "root_message_id": "msg-05ae3f8724ea"
-    },
-    {
       "id": "thread-64f9c7dbcbd0",
       "subject": "CFP: ACM Transactions on Internet Technology (TOIT)",
       "message_count": 1,
@@ -4926,24 +4865,14 @@
     {
       "id": "thread-4b15457a105d",
       "subject": "Sampling from bivariate uniform distribution",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Piotrovskij, Vladimir [JanBe]"
-      ],
-      "started": "2000-11-09T13:15:49Z",
-      "last_reply": "2000-11-09T13:15:49Z",
-      "root_message_id": "msg-4b15457a105d"
-    },
-    {
-      "id": "thread-21a97f222924",
-      "subject": "Sampling from bivariate uniform distribution",
-      "message_count": 1,
-      "participants": [
+        "Piotrovskij, Vladimir [JanBe]",
         "Prof Brian Ripley"
       ],
-      "started": "2000-11-09T13:21:02Z",
+      "started": "2000-11-09T13:15:49Z",
       "last_reply": "2000-11-09T13:21:02Z",
-      "root_message_id": "msg-21a97f222924"
+      "root_message_id": "msg-4b15457a105d"
     },
     {
       "id": "thread-f98390417515",
@@ -4959,35 +4888,15 @@
     {
       "id": "thread-b426cdbf25bf",
       "subject": "compressing objects",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
+        "Bishop, Lane",
+        "Vadim Ogranovich",
         "Winifred Lambert"
       ],
       "started": "2000-11-09T16:16:04Z",
-      "last_reply": "2000-11-09T16:16:04Z",
-      "root_message_id": "msg-b426cdbf25bf"
-    },
-    {
-      "id": "thread-daf2ba527327",
-      "subject": "compressing objects",
-      "message_count": 1,
-      "participants": [
-        "Bishop, Lane"
-      ],
-      "started": "2000-11-09T16:32:04Z",
-      "last_reply": "2000-11-09T16:32:04Z",
-      "root_message_id": "msg-daf2ba527327"
-    },
-    {
-      "id": "thread-4bd4401feaed",
-      "subject": "compressing objects",
-      "message_count": 1,
-      "participants": [
-        "Vadim Ogranovich"
-      ],
-      "started": "2000-11-09T16:59:12Z",
       "last_reply": "2000-11-09T16:59:12Z",
-      "root_message_id": "msg-4bd4401feaed"
+      "root_message_id": "msg-b426cdbf25bf"
     },
     {
       "id": "thread-8f6e7a95b676",
@@ -5036,8 +4945,9 @@
     {
       "id": "thread-126e00a6113e",
       "subject": "Data analysis of Florida, USA voting patterns",
-      "message_count": 13,
+      "message_count": 15,
       "participants": [
+        "Alan Zaslavsky",
         "Bob Meeks",
         "Daniel Rie",
         "David M Smith",
@@ -5050,6 +4960,7 @@
         "Michael W. Trosset",
         "Prof Brian D Ripley",
         "Saikat DebRoy",
+        "Winifred Lambert",
         "gordon.harrington at uni.edu"
       ],
       "started": "2000-11-09T20:50:31Z",
@@ -5059,12 +4970,13 @@
     {
       "id": "thread-d559a031d28f",
       "subject": "ask for help about \"correlation with missing data\"",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Alan Zaslavsky",
         "QIANG YE"
       ],
       "started": "2000-11-09T22:39:02Z",
-      "last_reply": "2000-11-09T22:39:02Z",
+      "last_reply": "2000-11-10T16:19:42Z",
       "root_message_id": "msg-d559a031d28f"
     },
     {
@@ -5102,17 +5014,6 @@
       "root_message_id": "msg-29a36310f5c1"
     },
     {
-      "id": "thread-2aba2c27bb74",
-      "subject": "nonlinear model parameter estimation",
-      "message_count": 1,
-      "participants": [
-        "Uffe Høgsbro Thygesen"
-      ],
-      "started": "2000-11-10T12:01:35Z",
-      "last_reply": "2000-11-10T12:01:35Z",
-      "root_message_id": "msg-2aba2c27bb74"
-    },
-    {
       "id": "thread-3bc5894420f4",
       "subject": "Florida votes graphlet",
       "message_count": 1,
@@ -5122,17 +5023,6 @@
       "started": "2000-11-10T14:54:44Z",
       "last_reply": "2000-11-10T14:54:44Z",
       "root_message_id": "msg-3bc5894420f4"
-    },
-    {
-      "id": "thread-64907ff94189",
-      "subject": "Data analysis of Florida, USA voting patterns",
-      "message_count": 1,
-      "participants": [
-        "Winifred Lambert"
-      ],
-      "started": "2000-11-10T14:59:41Z",
-      "last_reply": "2000-11-10T14:59:41Z",
-      "root_message_id": "msg-64907ff94189"
     },
     {
       "id": "thread-69f47a0edddd",
@@ -5168,36 +5058,15 @@
       "root_message_id": "msg-ed30cd42dc4c"
     },
     {
-      "id": "thread-f6d739c3f4e9",
-      "subject": "Data analysis of Florida, USA voting patterns",
-      "message_count": 1,
-      "participants": [
-        "Alan Zaslavsky"
-      ],
-      "started": "2000-11-10T16:07:36Z",
-      "last_reply": "2000-11-10T16:07:36Z",
-      "root_message_id": "msg-f6d739c3f4e9"
-    },
-    {
-      "id": "thread-c8e37941c660",
-      "subject": "ask for help about \"correlation with missing data\"",
-      "message_count": 1,
-      "participants": [
-        "Alan Zaslavsky"
-      ],
-      "started": "2000-11-10T16:19:42Z",
-      "last_reply": "2000-11-10T16:19:42Z",
-      "root_message_id": "msg-c8e37941c660"
-    },
-    {
       "id": "thread-34c268fbc21d",
       "subject": "Sequential sums of squares from poly()",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Bill Venables",
         "Greg Snow"
       ],
       "started": "2000-11-10T17:46:59Z",
-      "last_reply": "2000-11-10T17:46:59Z",
+      "last_reply": "2000-11-11T04:45:48Z",
       "root_message_id": "msg-34c268fbc21d"
     },
     {
@@ -5225,13 +5094,17 @@
     {
       "id": "thread-02a8ee2cd5c5",
       "subject": "Data is/are",
-      "message_count": 2,
+      "message_count": 6,
       "participants": [
         "Alan Zaslavsky",
-        "Joseph F Lucke"
+        "Bill Venables",
+        "Joseph F Lucke",
+        "Kieran Healy",
+        "Patrick Connolly",
+        "Peter Wollan"
       ],
       "started": "2000-11-10T19:34:40Z",
-      "last_reply": "2000-11-10T20:33:15Z",
+      "last_reply": "2000-11-13T16:58:14Z",
       "root_message_id": "msg-02a8ee2cd5c5"
     },
     {
@@ -5259,17 +5132,6 @@
       "root_message_id": "msg-a97a927beb1b"
     },
     {
-      "id": "thread-8efbe12e8602",
-      "subject": "Data is/are",
-      "message_count": 1,
-      "participants": [
-        "Kieran Healy"
-      ],
-      "started": "2000-11-10T20:16:24Z",
-      "last_reply": "2000-11-10T20:16:24Z",
-      "root_message_id": "msg-8efbe12e8602"
-    },
-    {
       "id": "thread-897924d379dc",
       "subject": "Summary: Compressing Objects",
       "message_count": 1,
@@ -5294,48 +5156,15 @@
     {
       "id": "thread-e3fadcaed48f",
       "subject": "stepwise, leaps and stepAIC",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
+        "Bill Venables",
         "Prof Brian D Ripley",
         "Winifred Lambert"
       ],
       "started": "2000-11-10T23:09:02Z",
-      "last_reply": "2000-11-11T06:47:35Z",
-      "root_message_id": "msg-e3fadcaed48f"
-    },
-    {
-      "id": "thread-ec79bf36ed12",
-      "subject": "Sequential sums of squares from poly()",
-      "message_count": 1,
-      "participants": [
-        "Bill Venables"
-      ],
-      "started": "2000-11-11T04:45:48Z",
-      "last_reply": "2000-11-11T04:45:48Z",
-      "root_message_id": "msg-ec79bf36ed12"
-    },
-    {
-      "id": "thread-e45436a1994c",
-      "subject": "Data is/are",
-      "message_count": 2,
-      "participants": [
-        "Bill Venables",
-        "Patrick Connolly"
-      ],
-      "started": "2000-11-11T05:59:08Z",
-      "last_reply": "2000-11-12T23:09:39Z",
-      "root_message_id": "msg-e45436a1994c"
-    },
-    {
-      "id": "thread-b252933651ca",
-      "subject": "stepwise, leaps and stepAIC",
-      "message_count": 1,
-      "participants": [
-        "Bill Venables"
-      ],
-      "started": "2000-11-11T07:25:25Z",
       "last_reply": "2000-11-11T07:25:25Z",
-      "root_message_id": "msg-b252933651ca"
+      "root_message_id": "msg-e3fadcaed48f"
     },
     {
       "id": "thread-836091ee6c58",
@@ -5351,8 +5180,9 @@
     {
       "id": "thread-8dd928b1480b",
       "subject": "Definition of BIC: factor of -2 or not?",
-      "message_count": 3,
+      "message_count": 4,
       "participants": [
+        "Bill Venables",
         "Prof Brian D Ripley",
         "Renaud Lancelot",
         "Steve Buyske"
@@ -5360,17 +5190,6 @@
       "started": "2000-11-12T00:40:17Z",
       "last_reply": "2000-11-12T12:16:17Z",
       "root_message_id": "msg-8dd928b1480b"
-    },
-    {
-      "id": "thread-7e7b74d58862",
-      "subject": "Definition of BIC: factor of -2 or not?",
-      "message_count": 1,
-      "participants": [
-        "Bill Venables"
-      ],
-      "started": "2000-11-12T03:51:00Z",
-      "last_reply": "2000-11-12T03:51:00Z",
-      "root_message_id": "msg-7e7b74d58862"
     },
     {
       "id": "thread-20c9c99f322e",
@@ -5405,17 +5224,6 @@
       "started": "2000-11-13T06:39:49Z",
       "last_reply": "2000-11-13T06:39:49Z",
       "root_message_id": "msg-3400656678f7"
-    },
-    {
-      "id": "thread-912d83adb758",
-      "subject": "submatrices",
-      "message_count": 1,
-      "participants": [
-        "Duin, R.N.M."
-      ],
-      "started": "2000-11-13T11:26:50Z",
-      "last_reply": "2000-11-13T11:26:50Z",
-      "root_message_id": "msg-912d83adb758"
     },
     {
       "id": "thread-4f182db7489f",
@@ -5464,37 +5272,16 @@
       "root_message_id": "msg-11ce40430672"
     },
     {
-      "id": "thread-8a741ed5413f",
-      "subject": "Data is/are",
-      "message_count": 1,
-      "participants": [
-        "Peter Wollan"
-      ],
-      "started": "2000-11-13T16:58:14Z",
-      "last_reply": "2000-11-13T16:58:14Z",
-      "root_message_id": "msg-8a741ed5413f"
-    },
-    {
       "id": "thread-44b3a9460cbb",
       "subject": "95% ellipse region",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Bishop, Lane",
         "Jane_2_Xu at sbphrd.com"
       ],
       "started": "2000-11-13T19:40:18Z",
-      "last_reply": "2000-11-13T19:40:18Z",
-      "root_message_id": "msg-44b3a9460cbb"
-    },
-    {
-      "id": "thread-c03cdf7aba88",
-      "subject": "95% ellipse region",
-      "message_count": 1,
-      "participants": [
-        "Bishop, Lane"
-      ],
-      "started": "2000-11-13T21:05:42Z",
       "last_reply": "2000-11-13T21:05:42Z",
-      "root_message_id": "msg-c03cdf7aba88"
+      "root_message_id": "msg-44b3a9460cbb"
     },
     {
       "id": "thread-3113234f19bf",
@@ -5530,20 +5317,9 @@
       "root_message_id": "msg-d3b820f914d9"
     },
     {
-      "id": "thread-0116ff40cfc6",
-      "subject": "scan",
-      "message_count": 1,
-      "participants": [
-        "Prof Brian Ripley"
-      ],
-      "started": "2000-11-14T11:06:19Z",
-      "last_reply": "2000-11-14T11:06:19Z",
-      "root_message_id": "msg-0116ff40cfc6"
-    },
-    {
       "id": "thread-c28212a48ed6",
       "subject": "scan",
-      "message_count": 3,
+      "message_count": 4,
       "participants": [
         "Prof Brian Ripley",
         "aspano at consodata.it"
@@ -5566,12 +5342,12 @@
     {
       "id": "thread-08958c851a9f",
       "subject": "job re-posting",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "O'Rourke, Keith"
       ],
       "started": "2000-11-14T20:03:34Z",
-      "last_reply": "2000-11-14T20:03:34Z",
+      "last_reply": "2000-11-15T15:12:47Z",
       "root_message_id": "msg-08958c851a9f"
     },
     {
@@ -5601,36 +5377,15 @@
     {
       "id": "thread-37273f66fd7e",
       "subject": "strange problem",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
-        "F.ten.Kleij at eco.rug.nl"
-      ],
-      "started": "2000-11-15T13:53:20Z",
-      "last_reply": "2000-11-15T13:53:20Z",
-      "root_message_id": "msg-37273f66fd7e"
-    },
-    {
-      "id": "thread-77f5313aa7de",
-      "subject": "Strange Problem",
-      "message_count": 2,
-      "participants": [
+        "F.ten.Kleij at eco.rug.nl",
         "In-Sun Nam",
         "aspano at consodata.it"
       ],
-      "started": "2000-11-15T14:06:10Z",
+      "started": "2000-11-15T13:53:20Z",
       "last_reply": "2000-11-15T23:25:24Z",
-      "root_message_id": "msg-77f5313aa7de"
-    },
-    {
-      "id": "thread-9b8d2a23b48c",
-      "subject": "job re-posting",
-      "message_count": 1,
-      "participants": [
-        "O'Rourke, Keith"
-      ],
-      "started": "2000-11-15T15:12:47Z",
-      "last_reply": "2000-11-15T15:12:47Z",
-      "root_message_id": "msg-9b8d2a23b48c"
+      "root_message_id": "msg-37273f66fd7e"
     },
     {
       "id": "thread-0258931b9ad4",
@@ -5747,14 +5502,16 @@
     {
       "id": "thread-0ef97fe12210",
       "subject": "simulation",
-      "message_count": 3,
+      "message_count": 6,
       "participants": [
+        "ASinclair at edfman.co.uk",
+        "Buttrey, Samuel",
         "Daikwon Han",
         "Martin H. H. Stevens",
         "Wei Wang"
       ],
       "started": "2000-11-17T01:00:33Z",
-      "last_reply": "2000-11-17T14:18:54Z",
+      "last_reply": "2000-11-18T20:39:26Z",
       "root_message_id": "msg-0ef97fe12210"
     },
     {
@@ -5792,28 +5549,6 @@
       "root_message_id": "msg-f90589f139fb"
     },
     {
-      "id": "thread-6f1b5b96c027",
-      "subject": "simulation",
-      "message_count": 1,
-      "participants": [
-        "Buttrey, Samuel"
-      ],
-      "started": "2000-11-17T16:09:02Z",
-      "last_reply": "2000-11-17T16:09:02Z",
-      "root_message_id": "msg-6f1b5b96c027"
-    },
-    {
-      "id": "thread-a7d1b133da1c",
-      "subject": "simulation",
-      "message_count": 1,
-      "participants": [
-        "ASinclair at edfman.co.uk"
-      ],
-      "started": "2000-11-17T16:17:13Z",
-      "last_reply": "2000-11-17T16:17:13Z",
-      "root_message_id": "msg-a7d1b133da1c"
-    },
-    {
       "id": "thread-f9fee240738e",
       "subject": "Discrepancy between survfit() and kaplanMeier()",
       "message_count": 1,
@@ -5827,12 +5562,12 @@
     {
       "id": "thread-1e970fbe4af1",
       "subject": "Calculation of Kappa and Weighted Kappa",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "DoshiNJ at erlanger.org"
       ],
       "started": "2000-11-17T19:18:29Z",
-      "last_reply": "2000-11-17T19:18:29Z",
+      "last_reply": "2000-11-20T21:28:20Z",
       "root_message_id": "msg-1e970fbe4af1"
     },
     {
@@ -5892,25 +5627,15 @@
       "root_message_id": "msg-51a2bb5ec30d"
     },
     {
-      "id": "thread-660c6281f49d",
-      "subject": "simulation",
-      "message_count": 1,
-      "participants": [
-        "Daikwon Han"
-      ],
-      "started": "2000-11-18T20:39:26Z",
-      "last_reply": "2000-11-18T20:39:26Z",
-      "root_message_id": "msg-660c6281f49d"
-    },
-    {
       "id": "thread-7cb7b16f01ed",
       "subject": "stepwise regression",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Doug Moog",
         "Jeff Simonoff"
       ],
       "started": "2000-11-18T22:04:30Z",
-      "last_reply": "2000-11-18T22:04:30Z",
+      "last_reply": "2000-11-20T16:06:47Z",
       "root_message_id": "msg-7cb7b16f01ed"
     },
     {
@@ -5925,25 +5650,15 @@
       "root_message_id": "msg-9d4490f93b41"
     },
     {
-      "id": "thread-14bf9555b05d",
-      "subject": "stepwise regression",
-      "message_count": 1,
-      "participants": [
-        "Doug Moog"
-      ],
-      "started": "2000-11-20T16:06:47Z",
-      "last_reply": "2000-11-20T16:06:47Z",
-      "root_message_id": "msg-14bf9555b05d"
-    },
-    {
       "id": "thread-4dad4436941e",
       "subject": "mahalanobis distance",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Antoine van Kampen"
+        "Antoine van Kampen",
+        "kpadayachee at mmm.com"
       ],
       "started": "2000-11-20T16:40:33Z",
-      "last_reply": "2000-11-20T16:40:33Z",
+      "last_reply": "2000-11-20T19:17:24Z",
       "root_message_id": "msg-4dad4436941e"
     },
     {
@@ -5956,17 +5671,6 @@
       "started": "2000-11-20T17:53:40Z",
       "last_reply": "2000-11-20T17:53:40Z",
       "root_message_id": "msg-65cecd3dbc27"
-    },
-    {
-      "id": "thread-71918d35249b",
-      "subject": "mahalanobis distance",
-      "message_count": 1,
-      "participants": [
-        "kpadayachee at mmm.com"
-      ],
-      "started": "2000-11-20T19:17:24Z",
-      "last_reply": "2000-11-20T19:17:24Z",
-      "root_message_id": "msg-71918d35249b"
     },
     {
       "id": "thread-63b5b969a433",
@@ -5989,17 +5693,6 @@
       "started": "2000-11-20T20:20:05Z",
       "last_reply": "2000-11-20T20:56:14Z",
       "root_message_id": "msg-7a182dbf6cc5"
-    },
-    {
-      "id": "thread-725f620d4b47",
-      "subject": "Calculation of Kappa and Weighted Kappa",
-      "message_count": 1,
-      "participants": [
-        "DoshiNJ at erlanger.org"
-      ],
-      "started": "2000-11-20T21:28:20Z",
-      "last_reply": "2000-11-20T21:28:20Z",
-      "root_message_id": "msg-725f620d4b47"
     },
     {
       "id": "thread-6d889dc83d65",
@@ -6227,24 +5920,14 @@
     {
       "id": "thread-1e7608f41235",
       "subject": "loading libraries",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Martin H. H. Stevens"
-      ],
-      "started": "2000-11-28T12:55:03Z",
-      "last_reply": "2000-11-28T12:55:03Z",
-      "root_message_id": "msg-1e7608f41235"
-    },
-    {
-      "id": "thread-99d23081c755",
-      "subject": "loading libraries",
-      "message_count": 1,
-      "participants": [
+        "Martin H. H. Stevens",
         "Prof Brian Ripley"
       ],
-      "started": "2000-11-28T13:14:22Z",
+      "started": "2000-11-28T12:55:03Z",
       "last_reply": "2000-11-28T13:14:22Z",
-      "root_message_id": "msg-99d23081c755"
+      "root_message_id": "msg-1e7608f41235"
     },
     {
       "id": "thread-23061d0bef1c",
@@ -6362,24 +6045,14 @@
     {
       "id": "thread-5725feb06130",
       "subject": "Columns of data.frame converted from numeric to character.",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Barnali Das"
-      ],
-      "started": "2000-11-29T15:55:51Z",
-      "last_reply": "2000-11-29T15:55:51Z",
-      "root_message_id": "msg-5725feb06130"
-    },
-    {
-      "id": "thread-6147f07e9c87",
-      "subject": "Columns of data.frame converted from numeric to character .",
-      "message_count": 1,
-      "participants": [
+        "Barnali Das",
         "Gunter, Bert"
       ],
-      "started": "2000-11-29T17:47:51Z",
+      "started": "2000-11-29T15:55:51Z",
       "last_reply": "2000-11-29T17:47:51Z",
-      "root_message_id": "msg-6147f07e9c87"
+      "root_message_id": "msg-5725feb06130"
     },
     {
       "id": "thread-9b91d6f81fa1",
@@ -6419,13 +6092,14 @@
     {
       "id": "thread-e94999e837ce",
       "subject": "Columns of data.frame ...",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
+        "Gunter, Bert",
         "Patrick Connolly",
         "Rolf Turner"
       ],
       "started": "2000-11-29T21:17:45Z",
-      "last_reply": "2000-11-29T22:27:15Z",
+      "last_reply": "2000-11-30T13:19:33Z",
       "root_message_id": "msg-e94999e837ce"
     },
     {
@@ -6486,17 +6160,6 @@
       "root_message_id": "msg-d69fc3d611ac"
     },
     {
-      "id": "thread-3136e7dae42f",
-      "subject": "Columns of data.frame ...",
-      "message_count": 1,
-      "participants": [
-        "Gunter, Bert"
-      ],
-      "started": "2000-11-30T13:19:33Z",
-      "last_reply": "2000-11-30T13:19:33Z",
-      "root_message_id": "msg-3136e7dae42f"
-    },
-    {
       "id": "thread-5f082b4d8c19",
       "subject": "product of matrices over subscript",
       "message_count": 1,
@@ -6521,13 +6184,13 @@
     {
       "id": "thread-c672e74a7d44",
       "subject": "(pas d'objet)",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Marion VERDOIT",
         "Timothy J. Wade"
       ],
       "started": "2000-11-30T17:37:23Z",
-      "last_reply": "2000-11-30T20:09:43Z",
+      "last_reply": "2000-11-30T20:51:06Z",
       "root_message_id": "msg-c672e74a7d44"
     },
     {
@@ -6540,17 +6203,6 @@
       "started": "2000-11-30T19:14:07Z",
       "last_reply": "2000-11-30T19:14:07Z",
       "root_message_id": "msg-88c6e5e2b56c"
-    },
-    {
-      "id": "thread-8645b28a1d0e",
-      "subject": "(pas d'objet)",
-      "message_count": 1,
-      "participants": [
-        "Timothy J. Wade"
-      ],
-      "started": "2000-11-30T20:51:06Z",
-      "last_reply": "2000-11-30T20:51:06Z",
-      "root_message_id": "msg-8645b28a1d0e"
     },
     {
       "id": "thread-264e4768126e",
