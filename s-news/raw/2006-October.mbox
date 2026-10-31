@@ -1,0 +1,3921 @@
+From oyvfos at yahoo.no  Tue Oct  3 08:07:53 2006
+From: oyvfos at yahoo.no (=?utf-8?q?=C3=98yvind_Foshaug?=)
+Date: Tue, 03 Oct 2006 08:07:53 +0000
+Subject: student evaluation of finmetrics
+Message-ID: <20061003080753.76000.qmail@web25511.mail.ukl.yahoo.com>
+
+The S+ student version does not contain the finmetrics module. Is it possible to obtain the module somewhere for evaluation?
+
+ 
+
+Thanks,
+
+Oyvind Foshaug
+
+From martyncollins10 at yahoo.com  Thu Oct  5 15:05:25 2006
+From: martyncollins10 at yahoo.com (Martyn Colins)
+Date: Thu, 05 Oct 2006 08:05:25 -0700
+Subject: split() and rep() question
+Message-ID: <20061005150525.48017.qmail@web90311.mail.mud.yahoo.com>
+
+ 
+  Dear all,
+   
+  I have a matrix similar to this:
+   
+  [,1] [,2] [,3] 
+  [1,] 1 16 31
+  [2,] 2 17 32
+  [3,] 3 18 33
+  [4,] 4 19 34
+  [5,] 5 20 35
+  [6,] 6 21 36
+  [7,] 7 22 37
+  [8,] 8 23 38
+  [9,] 9 24 39
+  [10,] 10 25 40
+  [11,] 11 26 41
+  [12,] 12 27 42
+  [13,] 13 28 43
+  [14,] 14 29 44
+  [15,] 15 30 45
+   
+   
+  and I would like an efficient method to produce
+   
+  [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11] [,12] [,13] [,14] [,15] 
+  [1,] 1 2 3 4 5 16 17 18 19 20 31 32 33 34 35
+  [2,] 1 2 3 4 5 16 17 18 19 20 31 32 33 34 35
+  [3,] 1 2 3 4 5 16 17 18 19 20 31 32 33 34 35
+  [4,] 1 2 3 4 5 16 17 18 19 20 31 32 33 34 35
+  [5,] 1 2 3 4 5 16 17 18 19 20 31 32 33 34 35
+  [6,] 6 7 8 9 10 21 22 23 24 25 36 37 38 39 40
+  [7,] 6 7 8 9 10 21 22 23 24 25 36 37 38 39 40
+  [8,] 6 7 8 9 10 21 22 23 24 25 36 37
+ 38 39 40
+  [9,] 6 7 8 9 10 21 22 23 24 25 36 37 38 39 40
+  [10,] 6 7 8 9 10 21 22 23 24 25 36 37 38 39 40
+  [11,] 11 12 13 14 15 26 27 28 29 40 41 42 43 44 45
+  [12,] 11 12 13 14 15 26 27 28 29 40 41 42 43 44 45
+  [13,] 11 12 13 14 15 26 27 28 29 40 41 42 43 44 45
+  [14,] 11 12 13 14 15 26 27 28 29 40 41 42 43 44 45
+  [15,] 11 12 13 14 15 26 27 28 29 40 41 42 43 44 45
+   
+  Does anyone know how to do this? Been trying various ways to split the matrix using split() and rep() but can't seem to do it.
+   
+  Thanks in advance for your help.
+   
+  Best,
+  Martyn
+ 
+		Talk is cheap. Use Yahoo! Messenger to make PC-to-Phone calls.  Great rates starting at 1¢/min.
+
+From pburns at pburns.seanet.com  Thu Oct  5 16:49:00 2006
+From: pburns at pburns.seanet.com (Patrick Burns)
+Date: Thu, 05 Oct 2006 17:49:00 +0100
+Subject: Re: split() and rep() question
+In-Reply-To: <20061005150525.48017.qmail@web90311.mail.mud.yahoo.com>
+References: <20061005150525.48017.qmail@web90311.mail.mud.yahoo.com>
+Message-ID: <4525377C.5030001@pburns.seanet.com>
+
+I think this gets you to where you want to be:
+
+orig <- matrix(1:45, 15,3)
+intermed <- do.call('rbind', split(orig, rep(1:3, each=5)))
+final <- intermed[rep(1:3, each=5),]
+
+Patrick Burns
+patrick at burns-stat.com
++44 (0)20 8525 0696
+http://www.burns-stat.com
+(home of S Poetry and "A Guide for the Unwilling S User")
+
+Martyn Colins wrote:
+
+>
+> Dear all,
+>
+> I have a matrix similar to this:
+>
+> [,1] [,2] [,3]
+>
+> [1,] 1 16 31
+> [2,] 2 17 32
+> [3,] 3 18 33
+> [4,] 4 19 34
+> [5,] 5 20 35
+> [6,] 6 21 36
+> [7,] 7 22 37
+> [8,] 8 23 38
+> [9,] 9 24 39
+> [10,] 10 25 40
+> [11,] 11 26 41
+> [12,] 12 27 42
+> [13,] 13 28 43
+> [14,] 14 29 44
+> [15,] 15 30 45
+>
+>
+> and I would like an efficient method to produce
+>
+> [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11] [,12] [,13]
+> [,14] [,15]
+>
+> [1,] 1 2 3 4 5 16 17 18 19 20 31 32 33 34 35
+> [2,] 1 2 3 4 5 16 17 18 19 20 31 32 33 34 35
+> [3,] 1 2 3 4 5 16 17 18 19 20 31 32 33 34 35
+> [4,] 1 2 3 4 5 16 17 18 19 20 31 32 33 34 35
+> [5,] 1 2 3 4 5 16 17 18 19 20 31 32 33 34 35
+> [6,] 6 7 8 9 10 21 22 23 24 25 36 37 38 39 40
+> [7,] 6 7 8 9 10 21 22 23 24 25 36 37 38 39 40
+> [8,] 6 7 8 9 10 21 22 23 24 25 36 37 38 39 40
+> [9,] 6 7 8 9 10 21 22 23 24 25 36 37 38 39 40
+> [10,] 6 7 8 9 10 21 22 23 24 25 36 37 38 39 40
+> [11,] 11 12 13 14 15 26 27 28 29 40 41 42 43 44 45
+> [12,] 11 12 13 14 15 26 27 28 29 40 41 42 43 44 45
+> [13,] 11 12 13 14 15 26 27 28 29 40 41 42 43 44 45
+> [14,] 11 12 13 14 15 26 27 28 29 40 41 42 43 44 45
+> [15,] 11 12 13 14 15 26 27 28 29 40 41 42 43 44 45
+>
+> Does anyone know how to do this? Been trying various ways to split the
+> matrix using split() and rep() but can't seem to do it.
+>
+> Thanks in advance for your help.
+>
+> Best,
+>
+> Martyn
+>
+> ------------------------------------------------------------------------
+> Talk is cheap. Use Yahoo! Messenger to make PC-to-Phone calls. Great
+> rates starting at 1¢/min.
+> <http://us.rd.yahoo.com/mail_us/taglines/postman7/*http://us.rd.yahoo.com/evt=39666/*http://messenger.yahoo.com>
+
+From ebellin at optonline.net  Thu Oct  5 17:30:48 2006
+From: ebellin at optonline.net
+Date: Thu, 05 Oct 2006 17:30:48 +0000
+Subject: competing risk software
+Message-ID: <f38cd63317ff5.45254148@optonline.net>
+
+ competing risk software has been developed in R cmprsk.
+
+ Has anyone ported it over to Splus?  I would like to undertake 
+ analyses with survival data with multiple outcomes as described in 
+ Pintilie's recent book Competing Risks: A practical perspective.
+
+ Eran Bellin
+
+From p.murrell at auckland.ac.nz  Fri Oct  6 02:07:05 2006
+From: p.murrell at auckland.ac.nz (Paul Murrell)
+Date: Fri, 06 Oct 2006 15:07:05 +1300
+Subject: DSC final call
+Message-ID: <4525BA49.6010505@stat.auckland.ac.nz>
+
+Hi
+
+This is a final call for abstracts;  the deadline for submitting
+abstracts is October 15 2006.
+Please forward and circulate to other interested parties.
+[apologies for any cross-posting]
+
+DSC 2007, a conference on systems and environments for statistical
+computing, will take place in Auckland, New Zealand on February 15 & 16,
+2007.
+
+We invite abstracts on the development of software systems and computing
+environments for interactive statistics.  The workshop will focus on,
+but is not limited to, open source statistical computing.
+
+The deadline for early registration for the conference is
+December 1st (2006-12-01)
+Please visit the conference web page at
+http://www.stat.auckland.ac.nz/dsc-2007/
+and send abstracts (one page) to dsc2007 at stat.auckland.ac.nz
+
+Paul
+(on behalf of the Organising Committee)
+-- 
+Dr Paul Murrell
+Department of Statistics
+The University of Auckland
+Private Bag 92019
+Auckland
+New Zealand
+64 9 3737599 x85392
+paul at stat.auckland.ac.nz
+http://www.stat.auckland.ac.nz/~paul/
+
+From conrvhgv at az.vub.ac.be  Sun Oct  8 10:38:54 2006
+From: conrvhgv at az.vub.ac.be (vincent vinh-hung)
+Date: Sun, 08 Oct 2006 12:38:54 +0200
+Subject: Summary (RE: select rows which have at least a given number of duplicates)
+In-Reply-To: <OF4761BAA4.578BB4C6-ON862571F8.00579FAE-862571F8.0058158B@usgs.gov>
+References: <OF4761BAA4.578BB4C6-ON862571F8.00579FAE-862571F8.0058158B@usgs.gov>
+Message-ID: <200610081025.k98APmC2027583@pluto.az.vub.ac.be>
+
+Many thanks to David Lorenz who suggested do.call
+Bill Dunlap who suggested table() more general than tabulate.
+David Pollard's web site also provided an example
+adaptable as:
+m$Y[match(m$X,names(table(m$X)[table(m$X)>2]),nomatch=0)>0]
+With thanks,
+Vincent
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu 
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of David L Lorenz
+Sent: Friday, September 29, 2006 6:02 PM
+To: vincent vinh-hung
+Cc: s-news at lists.biostat.wustl.edu; s-news-owner at lists.biostat.wustl.edu
+Subject: Re: [S] select rows which have at least a given number of duplicates
+
+Vincent, 
+  The tabulate() function will convert anything to factors and process those 
+data correctly. It is the subsetting [m$X] that must be
+integer. 
+  You can use the by() function and do.call("rbind", ) to do what you want: 
+
+do.call("rbind", by(m, m$X, function(x) if(nrow(x) > 2) x else NULL)) 
+
+  Take a look at the documentation for the functions to see what they do. 
+Dave 
+
+"vincent vinh-hung" <conrvhgv at az.vub.ac.be> 
+Sent by: s-news-owner at lists.biostat.wustl.edu 
+
+09/29/2006 08:23 AM To
+<s-news at lists.biostat.wustl.edu> 
+cc
+Subject
+[S] select rows which have at least a given number of duplicates
+
+        
+
+I would like to select rows from a table that 
+have at least, say, 3 duplicates.
+
+> m <- as.data.frame(c(1,1,4,3,2,3,1))
+> m$Y <-c("a","b","c","d","e","f","g")
+> names(m) <- c("X","Y")
+> m
+ X Y 
+1 1 a
+2 1 b
+3 4 c
+4 3 d
+5 2 e
+6 3 f
+7 1 g
+
+Command tabulate seems to do the job:
+> m[tabulate(m$X)[m$X]>2,]
+ X Y 
+1 1 a
+2 1 b
+7 1 g
+
+But tabulate is limited to integers.
+Are there other ways that could be applied to reals
+or to text?
+
+Thanks in advance for any suggestion.
+
+Vincent Vinh-Hung
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From bjain at bslindia.com  Mon Oct  9 09:53:15 2006
+From: bjain at bslindia.com (Bikash Jain)
+Date: Mon, 09 Oct 2006 15:23:15 +0530
+Subject: For loop
+Message-ID: <00eb01c6eb88$bd8530a0$3b22a8c0@binarypdc.local>
+
+Hi,
+
+I have generated 100 random numbers from the poisson distribution using the
+following command :
+
+rpois(100, 3)
+
+[1] 1 2 4 5 3 2 4 4 3 4 3 7 4 2 3 6 2 3 3 8 5 2 4 6 1 2 3 6 5 3 3 4 5 0 3 1
+6 1 1 8 0 0 1 3 5 4 3 2 2 2 2 7 2 2 4 5 5 5 4 3 2 1 3 3 5 1 3 3 2 5 2 4 5 3
+3 9 2 4 1 3 4 3 3 2 3 3 1 2 1 5 4 3 6 2 3 1 1
+[98] 3 3 3
+
+I want to use the for loop to calculate the sum of first 12 numbers (i.e 1
+to 12)  followed by the sum of another 12 numbers (13 to 25) and so on from
+the above numbers generated. Please let me know the commands to write the
+for loop for the same.
+
+Thank you and Best Regards,
+
+Bikash Jain
+Manager-Technical
+Binary Semantics Limited
+Plot No. 38, Electronic City
+Sector-18
+Gurgaon-122015
+Haryana, India
+
+Phone : +91-124-2397660  Xtn: 239
+Cell : 9818250173
+Web : http://www.binarysemantics.com
+
+From petr.pikal at precheza.cz  Mon Oct  9 11:36:56 2006
+From: petr.pikal at precheza.cz (Petr Pikal)
+Date: Mon, 09 Oct 2006 13:36:56 +0200
+Subject: Re: For loop
+In-Reply-To: <00eb01c6eb88$bd8530a0$3b22a8c0@binarypdc.local>
+References: <00eb01c6eb88$bd8530a0$3b22a8c0@binarypdc.local>
+Message-ID: <452A5078.30301.18D4D3A@localhost>
+
+Hi
+Well, I would prefer tapply so I will let **you** construct for loop 
+for the calculation.
+
+x <- rpois(100, 3)
+y <- rep(1:ceiling(length(x)/12),each=12)
+tapply(x,y[1:100],sum)
+ 1  2  3  4  5  6  7  8  9 
+38 37 40 29 36 31 47 46 16 
+
+HTH
+Petr
+
+On 9 Oct 2006 at 15:23, Bikash Jain wrote:
+
+Send reply to:          "Bikash Jain" <bjain at bslindia.com>
+From:                   "Bikash Jain" <bjain at bslindia.com>
+To:                     <s-news at lists.biostat.wustl.edu>, 
+<s-news at wubios.wustl.edu>
+Subject:                [S] For loop
+Date sent:              Mon, 9 Oct 2006 15:23:15 +0530
+
+> Hi,
+> 
+> I have generated 100 random numbers from the poisson distribution
+> using the following command :
+> 
+> rpois(100, 3)
+> 
+> [1] 1 2 4 5 3 2 4 4 3 4 3 7 4 2 3 6 2 3 3 8 5 2 4 6 1 2 3 6 5 3 3 4 5
+> 0 3 1 6 1 1 8 0 0 1 3 5 4 3 2 2 2 2 7 2 2 4 5 5 5 4 3 2 1 3 3 5 1 3 3
+> 2 5 2 4 5 3 3 9 2 4 1 3 4 3 3 2 3 3 1 2 1 5 4 3 6 2 3 1 1 [98] 3 3 3
+> 
+> I want to use the for loop to calculate the sum of first 12 numbers
+> (i.e 1 to 12)  followed by the sum of another 12 numbers (13 to 25)
+> and so on from the above numbers generated. Please let me know the
+> commands to write the for loop for the same.
+> 
+> Thank you and Best Regards,
+> 
+> Bikash Jain
+> Manager-Technical
+> Binary Semantics Limited
+> Plot No. 38, Electronic City
+> Sector-18
+> Gurgaon-122015
+> Haryana, India
+> 
+> Phone : +91-124-2397660  Xtn: 239
+> Cell : 9818250173
+> Web : http://www.binarysemantics.com
+> 
+> 
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+
+Petr Pikal
+petr.pikal at precheza.cz
+
+From bjain at bslindia.com  Mon Oct  9 12:00:00 2006
+From: bjain at bslindia.com (Bikash Jain)
+Date: Mon, 09 Oct 2006 17:30:00 +0530
+Subject: Best Fitted Distribution
+Message-ID: <013401c6eb9a$728be6e0$3b22a8c0@binarypdc.local>
+
+Hi,
+
+ 
+
+I'm using Environmental Stats module to fit a best 
+distribution to a single column of data using KS method.  Based on the 
+p.value I get the best distribution. My question is what commands do I 
+write to automaticaaly get the best distribution based on p value. Here in 
+this example I'm manually looking for the best distribution based on the p 
+value.(Beta Distribution) . Once the distribution has been identified I'm 
+generating a random numbers from that distribution using the 
+parameters.
+
+# FIT WEIBULL DISTRIBUTION USING K.S METHOD AND OBTAIN THE 
+P-VALUE
+fit.weibull<-ks.gof(indata$Loss.AM.Lakhs,distribution="weibull")
+summary(fit.weibull)
+p.weibull<-fit.weibull$p.value
+statistic.weibull<-fit.weibull$statistic
+fit.weibull$distribution
+plot.gof(fit.weibull,plot.type="Observed 
+Distribution Overlaid with Fitted 
+Distribution")
+plot.gof(fit.weibull,plot.type="Observed CDF Overlaid with 
+Fitted CDF")
+plot.gof(fit.weibull, plot.type="Result")
+
+# FIT LOGNORMAL DISTRIBUTION USING K.S METHOD 
+AND OBTAIN THE 
+P-VALUE
+fit.lognormal<-ks.gof(indata$Loss.AM.Lakhs,distribution="lnorm")
+summary(fit.lognormal)
+p.lognormal<-fit.lognormal$p.value
+statistic<-fit.lognormal$statistic
+plot.gof(fit.lognormal,plot.type="Observed 
+Distribution Overlaid with Fitted 
+Distribution")
+plot.gof(fit.lognormal,plot.type="Observed CDF Overlaid with 
+Fitted CDF")
+plot.gof(fit.lognormal,plot.type="Result")
+
+# FIT PARETO DISTRIBUTION USING K.S METHOD AND 
+OBTAIN THE 
+P-VALUE
+fit.pareto<-ks.gof(indata$Loss.AM.Lakhs,distribution="pareto")
+summary(fit.pareto)
+p.pareto<-fit.pareto$p.value
+statistic<-fit.pareto$statistic
+plot.gof(fit.pareto,plot.type="Observed 
+Distribution Overlaid with Fitted 
+Distribution")
+plot.gof(fit.pareto,plot.type="Observed CDF Overlaid with 
+Fitted CDF")
+plot.gof(fit.pareto,plot.type="Result")
+
+# FIT BETA DISTRIBUTION USING K.S METHOD AND 
+OBTAIN THE 
+P-VALUE
+fit.beta<-ks.gof(indata$Loss.AM.Lakhs/1000,distribution="beta")
+summary(fit.beta)
+p.beta<-fit.beta$p.value
+statistic<-fit.beta$statistic
+#plot.gof(fit.beta,plot.type="Observed 
+Distribution Overlaid with Fitted 
+Distribution")
+#plot.gof(fit.beta,plot.type="Observed CDF Overlaid with 
+Fitted CDF")
+plot.gof(fit.beta,plot.type="Result")
+
+# FIND THE BEST DISTRIBUTION BASED ON 
+P-VALUE
+mydata 
+<-c(p.weibull,p.lognormal,p.pareto,p.beta)
+sort(mydata)[length(mydata):1]
+max(mydata)
+
+# 
+OBTAIN THE PARAMETERS OF BEST (BETA DISTRIBUTION)
+a 
+<-fit.beta$distribution.parameters
+
+ 
+
+# GENERATE b No. OF RANDOM NUMBERS FROM BETA 
+DIST
+
+dat <- rbeta(b[i], shape1=a[1], 
+shape2=a[2])
+
+dat1<-dat*1000
+
+ 
+
+Thank you in advance.
+
+ 
+
+Best Regards,
+
+Bikash Jain
+Manager-Technical
+Binary 
+Semantics Limited
+Plot No. 38, Electronic 
+City
+Sector-18
+Gurgaon-122015
+Haryana, India
+
+ 
+
+Phone : +91-124-2397660  Xtn: 239
+Cell : 
+9818250173
+Web : http://www.binarysemantics.com
+ 
+
+From f.harrell at vanderbilt.edu  Mon Oct  9 13:05:39 2006
+From: f.harrell at vanderbilt.edu (Frank E Harrell Jr)
+Date: Mon, 09 Oct 2006 08:05:39 -0500
+Subject: Re: Best Fitted Distribution
+In-Reply-To: <013401c6eb9a$728be6e0$3b22a8c0@binarypdc.local>
+References: <013401c6eb9a$728be6e0$3b22a8c0@binarypdc.local>
+Message-ID: <452A4923.7020505@vanderbilt.edu>
+
+Bikash Jain wrote:
+> Hi,
+>
+> I'm using Environmental Stats module to fit a best distribution to a
+> single column of data using KS method.  Based on the p.value I get the
+> best distribution. My question is what commands do I write to
+> automaticaaly get the best distribution based on p value. Here in this
+> example I'm manually looking for the best distribution based on the p
+> value.(Beta Distribution) . Once the distribution has been identified
+> I'm generating a random numbers from that distribution using the parameters.
+>
+>
+> # FIT WEIBULL DISTRIBUTION USING K.S METHOD AND OBTAIN THE P-VALUE
+> fit.weibull<-ks.gof(indata$Loss.AM.Lakhs,distribution="weibull")
+> summary(fit.weibull)
+> p.weibull<-fit.weibull$p.value
+> statistic.weibull<-fit.weibull$statistic
+> fit.weibull$distribution
+> plot.gof(fit.weibull,plot.type="Observed Distribution Overlaid with
+> Fitted Distribution")
+>
+> plot.gof(fit.weibull,plot.type="Observed CDF Overlaid with Fitted CDF")
+> plot.gof(fit.weibull, plot.type="Result")
+>
+> # FIT LOGNORMAL DISTRIBUTION USING K.S METHOD AND OBTAIN THE P-VALUE
+> fit.lognormal<-ks.gof(indata$Loss.AM.Lakhs,distribution="lnorm")
+> summary(fit.lognormal)
+> p.lognormal<-fit.lognormal$p.value
+> statistic<-fit.lognormal$statistic
+> plot.gof(fit.lognormal,plot.type="Observed Distribution Overlaid with
+> Fitted Distribution")
+>
+> plot.gof(fit.lognormal,plot.type="Observed CDF Overlaid with Fitted CDF")
+> plot.gof(fit.lognormal,plot.type="Result")
+>
+> # FIT PARETO DISTRIBUTION USING K.S METHOD AND OBTAIN THE P-VALUE
+> fit.pareto<-ks.gof(indata$Loss.AM.Lakhs,distribution="pareto")
+> summary(fit.pareto)
+> p.pareto<-fit.pareto$p.value
+> statistic<-fit.pareto$statistic
+> plot.gof(fit.pareto,plot.type="Observed Distribution Overlaid with
+> Fitted Distribution")
+>
+> plot.gof(fit.pareto,plot.type="Observed CDF Overlaid with Fitted CDF")
+> plot.gof(fit.pareto,plot.type="Result")
+>
+> # FIT BETA DISTRIBUTION USING K.S METHOD AND OBTAIN THE P-VALUE
+> fit.beta<-ks.gof(indata$Loss.AM.Lakhs/1000,distribution="beta")
+> summary(fit.beta)
+> p.beta<-fit.beta$p.value
+> statistic<-fit.beta$statistic
+> #plot.gof(fit.beta,plot.type="Observed Distribution Overlaid with Fitted
+> Distribution")
+>
+> #plot.gof(fit.beta,plot.type="Observed CDF Overlaid with Fitted CDF")
+> plot.gof(fit.beta,plot.type="Result")
+>
+> # FIND THE BEST DISTRIBUTION BASED ON P-VALUE
+> mydata <-c(p.weibull,p.lognormal,p.pareto,p.beta)
+> sort(mydata)[length(mydata):1]
+> max(mydata)
+>
+> # OBTAIN THE PARAMETERS OF BEST (BETA DISTRIBUTION)
+> a <-fit.beta$distribution.parameters
+>
+> # GENERATE b No. OF RANDOM NUMBERS FROM BETA DIST
+>
+> dat <- rbeta(b[i], shape1=a[1], shape2=a[2])
+> dat1<-dat*1000
+>
+> Thank you in advance.
+>
+> Best Regards,
+>
+> Bikash Jain
+
+Any method that uses the empirical CDF or Kaplan-Meier estimator as the 
+standard will inherit the imprecision of the ECDF, making one wonder why 
+fitting a curve will help.  P-values from this approach will be too low. 
+ Model uncertainty is being covered up.
+
+Frank Harrell
+
+> Manager-Technical
+> Binary Semantics Limited
+> Plot No. 38, Electronic City
+> Sector-18
+> Gurgaon-122015
+> Haryana, India
+>
+> Phone : +91-124-2397660  Xtn: 239
+>
+> Cell : 9818250173
+> Web : http://www.binarysemantics.com
+>
+
+--
+Frank E Harrell Jr   Professor and Chair           School of Medicine
+                     Department of Biostatistics   Vanderbilt University
+
+From lambert.winnie at ensco.com  Mon Oct  9 14:13:37 2006
+From: lambert.winnie at ensco.com (Lambert.Winnie)
+Date: Mon, 09 Oct 2006 10:13:37 -0400
+Subject: Re: For loop
+Message-ID: <094DD411AC3FC44F9EE6364008FECFEF0338B125@mb-exch.ensco.win>
+
+I second that...S-Plus is designed to work on chunks of data at a time -
+for loops are usually unnecessary and are monster hogs on memory in
+S-Plus. Avoid them as much as possible!
+
+Win
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Petr Pikal
+Sent: Monday, October 09, 2006 7:37 AM
+To: Bikash Jain; s-news at lists.biostat.wustl.edu; s-news at wubios.wustl.edu
+Subject: Re: [S] For loop
+
+Hi
+Well, I would prefer tapply so I will let **you** construct for loop 
+for the calculation.
+
+x <- rpois(100, 3)
+y <- rep(1:ceiling(length(x)/12),each=12)
+tapply(x,y[1:100],sum)
+ 1  2  3  4  5  6  7  8  9 
+38 37 40 29 36 31 47 46 16 
+
+HTH
+Petr
+
+On 9 Oct 2006 at 15:23, Bikash Jain wrote:
+
+Send reply to:          "Bikash Jain" <bjain at bslindia.com>
+From:                   "Bikash Jain" <bjain at bslindia.com>
+To:                     <s-news at lists.biostat.wustl.edu>,
+<s-news at wubios.wustl.edu>
+Subject:                [S] For loop
+Date sent:              Mon, 9 Oct 2006 15:23:15 +0530
+
+> Hi,
+> 
+> I have generated 100 random numbers from the poisson distribution
+> using the following command :
+> 
+> rpois(100, 3)
+> 
+> [1] 1 2 4 5 3 2 4 4 3 4 3 7 4 2 3 6 2 3 3 8 5 2 4 6 1 2 3 6 5 3 3 4 5
+> 0 3 1 6 1 1 8 0 0 1 3 5 4 3 2 2 2 2 7 2 2 4 5 5 5 4 3 2 1 3 3 5 1 3 3
+> 2 5 2 4 5 3 3 9 2 4 1 3 4 3 3 2 3 3 1 2 1 5 4 3 6 2 3 1 1 [98] 3 3 3
+> 
+> I want to use the for loop to calculate the sum of first 12 numbers
+> (i.e 1 to 12)  followed by the sum of another 12 numbers (13 to 25)
+> and so on from the above numbers generated. Please let me know the
+> commands to write the for loop for the same.
+> 
+> Thank you and Best Regards,
+> 
+> Bikash Jain
+> Manager-Technical
+> Binary Semantics Limited
+> Plot No. 38, Electronic City
+> Sector-18
+> Gurgaon-122015
+> Haryana, India
+> 
+> Phone : +91-124-2397660  Xtn: 239
+> Cell : 9818250173
+> Web : http://www.binarysemantics.com
+> 
+> 
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+
+Petr Pikal
+petr.pikal at precheza.cz
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+The information contained in this email message is intended only for the use of 
+the individuals to whom it is addressed and may contain information that is 
+privileged and sensitive. If the reader of this message is not the intended 
+recipient, you are hereby notified that any dissemination, distribution or 
+copying of this communication is strictly prohibited. If you have received this 
+communication in error, please notify the sender immediately by email at the 
+above referenced address. Thank you.
+
+From f.harrell at vanderbilt.edu  Mon Oct  9 18:52:08 2006
+From: f.harrell at vanderbilt.edu (Frank E Harrell Jr)
+Date: Mon, 09 Oct 2006 13:52:08 -0500
+Subject: Re: Best Fitted Distribution
+In-Reply-To: <452A8FB5.70801@bfro.uni-lj.si>
+References: <452A8FB5.70801@bfro.uni-lj.si>
+Message-ID: <452A9A58.4050004@vanderbilt.edu>
+
+Gregor Gorjanc wrote:
+> Frank E Harrell Jr <f.harrell <at> vanderbilt.edu> writes:
+> > > Bikash Jain wrote:
+> > > > > Hi,
+> > > > >
+> > > > > I'm using Environmental Stats module to fit a best distribution
+> > > > > to a single column of data using KS method.  Based on the
+> > > > > p.value I get the
+>
+> [...]
+> > > Any method that uses the empirical CDF or Kaplan-Meier estimator as
+> > >  the standard will inherit the imprecision of the ECDF, making one
+> > > wonder why fitting a curve will help.  P-values from this approach
+> > >
+> > > will be too low. Model uncertainty is being covered up.
+>
+>
+> All fine comments, but what can we actually use instead?
+
+If you don't know which distribution family to fit, you might as well go 
+nonparametric.  Alternatively, use a rich enough family, estimate all 
+the parameters, and pay for the variance due to these parameters.  As 
+Greenland said (Biometrics 2000)
+
+models need to be complex to capture uncertainty about the 
+relations...an honest
+
+uncertainty assessment requires parameters for all effects that we
+know may be present.  This advice is implicit in an antiparsimony
+principle often attributed to L. J. Savage 'All models should be as
+big as an elephant (see Draper, 1995)
+--
+Frank E Harrell Jr   Professor and Chair           School of Medicine
+                     Department of Biostatistics   Vanderbilt University
+
+From paulmatthias.diderichsen at abbott.com  Tue Oct 10 13:40:12 2006
+From: paulmatthias.diderichsen at abbott.com (Paul Matthias Diderichsen)
+Date: Tue, 10 Oct 2006 15:40:12 +0200
+Subject: QQ plot x-axis values
+Message-ID: <OF673FDE2F.B05943D2-ONC1257203.004A5093-C1257203.004B1789@abbott.com>
+
+Dear S-plus users.
+
+I learned more or less all I know about
+Q-Q plots by reading http://en.wikipedia.org/wiki/Qq_plot and related ressources
+on the web. I think that I now understand more or less how these beasts
+work.
+
+Of course, there's still one issue:
+There seems to be a discrepancy between what wikipedia says and what S-plus
+does.
+
+> a<-data.frame(NORM=rnorm(3))
+
+# a$NORM could be any 3 values since
+I'm only interested in x below...
+
+> qqmath(~NORM,data="">
+
+[1] -0.9674216  0.0000000  0.9674216
+
+> qnorm(c(1/6,3/6,5/6))
+
+[1] -0.9674216  0.0000000  0.9674216
+
+versus: "k/(n + 1)-quantiles of
+the comparison distributon (e.g. the normal distribution) on the horizontal
+axis (for k = 1, ..., n)"
+
+In the example above, I create a qqplot
+with three points. As I understand wikipedia, these should be (on the x-axis)
+at the 1/4, 2/4, and 3/4 quantiles of the normal distribution. However,
+instead they are at the 1/6, 3/6, and 5/6 quantiles.
+
+I'd appreciate it a lot, if anybody
+can explain to me what is "right". (Of course: Gurus - feel free
+to correct/add to the wikipedia entry in case it's not accurate!)
+
+Kind regards and TIA - PMD.
+
+============================================================================================================================
+
+The information contained in this communication is confidential, may be subject to legal privileges, may constitute inside information, and is intended only for the use of the addressee.  It is the property of Abbott Laboratories or its relevant affiliate.  Unauthorized use, disclosure or copying of this communication or any part thereof is strictly prohibited and may be unlawful.  If you have received this communication in error, please notify Abbott Laboratories immediately by return e-mail and destroy this communication and all copies thereof, including all attachments.
+
+=============================================================================================================================
+
+From paulmatthias.diderichsen at abbott.com  Tue Oct 10 13:57:09 2006
+From: paulmatthias.diderichsen at abbott.com (Paul Matthias Diderichsen)
+Date: Tue, 10 Oct 2006 15:57:09 +0200
+Subject: Re: QQ plot x-axis values ['Watchdog': checked]
+In-Reply-To: <OF673FDE2F.B05943D2-ONC1257203.004A5093-C1257203.004B1789@abbott.com>
+References: <OF673FDE2F.B05943D2-ONC1257203.004A5093-C1257203.004B1789@abbott.com>
+Message-ID: <OFC4C90050.37AAF9AF-ONC1257203.004C4655-C1257203.004CA4AD@abbott.com>
+
+Dear S-plus users again.
+
+s-news-owner at lists.biostat.wustl.edu wrote on 10.10.2006
+15:40:12:
+
+> Of course, there's still one issue: There seems to be a discrepancy
+
+> between what wikipedia says and what S-plus does. 
+
+Apparently, S-plus selects the midpoint of n intervals
+between 0 and 1 for it's horizontal values in qqmath. Of course, for n->infinity
+the sets used by S-plus and wikipedia converge. But which one is "most
+right" for finite/small n?
+
+Thanks again, PMD.
+
+============================================================================================================================
+
+The information contained in this communication is confidential, may be subject to legal privileges, may constitute inside information, and is intended only for the use of the addressee.  It is the property of Abbott Laboratories or its relevant affiliate.  Unauthorized use, disclosure or copying of this communication or any part thereof is strictly prohibited and may be unlawful.  If you have received this communication in error, please notify Abbott Laboratories immediately by return e-mail and destroy this communication and all copies thereof, including all attachments.
+
+=============================================================================================================================
+
+From Li.Timothy at bls.gov  Tue Oct 10 14:22:14 2006
+From: Li.Timothy at bls.gov (Li, Timothy - BLS)
+Date: Tue, 10 Oct 2006 10:22:14 -0400
+Subject: Re: QQ plot x-axis values ['Watchdog': checked]
+In-Reply-To: <OFC4C90050.37AAF9AF-ONC1257203.004C4655-C1257203.004CA4AD@abbott.com>
+References: <OFC4C90050.37AAF9AF-ONC1257203.004C4655-C1257203.004CA4AD@abbott.com>
+Message-ID: <C3C1925D945BF844911C8EEA752666AE031F290C@psbexmb2.psb.bls.gov>
+
+S-plus appears to be using the formula (k-0.375)/(n+0.25) that is 
+advocated elsewhere on the internet. See http://www.tau.ac.il/cc/pages/docs/sas8/stat/chap55/sect44.htm
+
+ 
+
+and
+
+ 
+
+http://www.okstate.edu/sas/v8/saspdf/qc/chap10.pdf#search=%22construction%20of%20q-q%20plot%22
+
+ 
+
+Tim
+
+From: s-news-owner at lists.biostat.wustl.edu 
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Paul Matthias 
+Diderichsen
+Sent: Tuesday, October 10, 2006 9:57 AM
+To: Paul 
+Matthias Diderichsen
+Cc: s-news at lists.biostat.wustl.edu; 
+s-news-owner at lists.biostat.wustl.edu
+Subject: Re: [S] QQ plot x-axis 
+values ['Watchdog': checked]
+
+Dear S-plus users again. 
+
+s-news-owner at lists.biostat.wustl.edu wrote on 
+10.10.2006 15:40:12:
+> Of course, there's still one issue: There seems to 
+be a discrepancy 
+> between what wikipedia says and what S-plus does. 
+
+Apparently, S-plus selects the midpoint of 
+n intervals between 0 and 1 for it's horizontal values in qqmath. Of course, for 
+n->infinity the sets used by S-plus and wikipedia converge. But which one is 
+"most right" for finite/small n? 
+
+Thanks 
+again, PMD. 
+============================================================================================================================
+The 
+information contained in this communication is confidential, may be subject to 
+legal privileges, may constitute inside information, and is intended only for 
+the use of the addressee. It is the property of Abbott Laboratories or its 
+relevant affiliate. Unauthorized use, disclosure or copying of this 
+communication or any part thereof is strictly prohibited and may be unlawful. If 
+you have received this communication in error, please notify Abbott Laboratories 
+immediately by return e-mail and destroy this communication and all copies 
+thereof, including all attachments.
+=============================================================================================================================
+
+From hanthony at insightful.com  Tue Oct 10 22:50:19 2006
+From: hanthony at insightful.com (Heather Anthony)
+Date: Tue, 10 Oct 2006 15:50:19 -0700
+Subject: COURSE: Upcoming S-PLUS courses and Web casts from Insightful Corporation
+In-Reply-To: <5386D894248D32458B1D9B5638A07448071E7B@sewinexch00.insightful.com>
+References: <5386D894248D32458B1D9B5638A07448071E7B@sewinexch00.insightful.com>
+Message-ID: <5386D894248D32458B1D9B5638A074480720E1@sewinexch00.insightful.com>
+
+Here is some information about upcoming courses from Insightful's training
+department that may be of interest to s-news subscribers.  
+Additional information is available at the links provided. Please direct any
+enquiries to me <hanthony at insightful.com>
+
+# Heather Anthony/Insightful Corporation Training Coordinator
+
+Insightful Training -- Featured Courses!       
+============================
+
+Statistical Learning and Data Mining II: Tools for Tall and Wide Data
+Presented by T. Hastie and R. Tibshirani of Stanford University
+October 12-13, Philadelphia, PA
+http://www-stat.stanford.edu/%7Ehastie/sldm.html
+
+This two-day course gives a detailed overview of statistical models for data
+mining, inference and prediction. 
+With the rapid developments in internet technology, genomics, financial risk
+modeling, and other high-tech 
+industries, we rely increasingly more on data analysis and statistical models
+to exploit the vast amounts of 
+data at our fingertips.
+
+UPCOMING WEB CASTS
+============================
+
+Best Practices in Data Mining, Part 1
+October, 12, 2006
+http://www.insightful.com/news_events/webcasts/2006/10datamining/default.asp
+
+Clinical PK Graphical and Tabular Reporting using S-PLUS
+October, 24, 2006
+http://www.insightful.com/news_events/webcasts/2006/10pkreporting/default.asp
+
+OTHER UPCOMING COURSES
+============================
+ 
+G101: S-PLUS Graphical User Interface Jumpstart   
+November 7, San Francisco, CA
+http://www.insightful.com/services/course.asp?CID=32
+
+C102: S-PLUS Essentials Command Line  
+November 8-10, San Francisco, CA
+http://www.insightful.com/services/course.asp?CID=10
+
+Statistical Modeling in S-PLUS
+November 13-15, San Francisco, CA
+http://www.insightful.com/services/course.asp?CID=11
+
+C201: S-PLUS Programming
+November 16-17, San Francisco, CA
+http://www.insightful.com/services/course.asp?CID=41
+
+Register NOW! http://www.insightful.com/services/register.asp
+
+For a complete 2006 training schedule go to:
+http://www.insightful.com/services/schedule.asp
+
+-- 
+Heather Anthony <hanthony at insightful.com>
+Training Coordinator, Insightful Corp, Seattle WA
+Tel: +1 (206) 802 2223
+Fax: +1 (206) 283 8691
+
+Insightful Corporation (www.insightful.com) provides analytical solutions for
+text and data using S-PLUS, Insightful Miner, InFact and consulting services.
+
+From paulmatthias.diderichsen at abbott.com  Wed Oct 11 13:55:16 2006
+From: paulmatthias.diderichsen at abbott.com (Paul Matthias Diderichsen)
+Date: Wed, 11 Oct 2006 15:55:16 +0200
+Subject: Solved: Re: QQ plot x-axis values
+In-Reply-To: <20061010163736.A21804@postal.insightful.com>
+References: <20061010163736.A21804@postal.insightful.com>
+Message-ID: <OF26153430.485EDD6E-ONC1257204.004C3F2D-C1257204.004C7940@abbott.com>
+
+Dear Timothy and Stephen,
+
+s-news-owner at lists.biostat.wustl.edu wrote on 11.10.2006
+01:37:36:
+
+> > There seems to be a discrepancy 
+
+> > between what wikipedia says and what S-plus does.
+
+Tim:
+
+> > S-plus appears to be using the formula (k-0.375)/(n+0.25)
+that is
+
+> > advocated elsewhere on the internet. See
+
+> > http://www.tau.ac.il/cc/pages/docs/sas8/stat/chap55/sect44.htm
+
+> > http://www.okstate.edu/sas/v8/saspdf/qc/chap10.pdf#search=%
+
+> 22construction%20of%20q-q%20plot%22
+
+Stephen:
+
+> By default, S-PLUS uses the f(i) = (i-0.5)/n
+formula.  This is described
+
+> in Cleveland, W. (1993) Visualizing Data
+
+Thanks a lot guys, for helping me out!
+
+Kind regards, PMD.
+
+============================================================================================================================
+
+The information contained in this communication is confidential, may be subject to legal privileges, may constitute inside information, and is intended only for the use of the addressee.  It is the property of Abbott Laboratories or its relevant affiliate.  Unauthorized use, disclosure or copying of this communication or any part thereof is strictly prohibited and may be unlawful.  If you have received this communication in error, please notify Abbott Laboratories immediately by return e-mail and destroy this communication and all copies thereof, including all attachments.
+
+=============================================================================================================================
+
+From parkhurs at imap.iu.edu  Wed Oct 11 19:36:51 2006
+From: parkhurs at imap.iu.edu (David Parkhurst)
+Date: Wed, 11 Oct 2006 15:36:51 -0400
+Subject: Factor order in trellis plots
+Message-ID: <452D47D3.4050606@imap.iu.edu>
+
+I'm using s-plus Enterprise Developer Version 7.0.6  for Microsoft 
+Windows : 2005.
+
+I have a trellis plot with two columns (for N,Y in one factor) and five 
+rows (for A,B,C,D,E in the other factor).  The rows come out with E on 
+top and A on the bottom.  A reviewer of our paper objected to that, and 
+wants us to have A on top, down to E at the bottom.
+
+How can I make that happen?
+
+Thanks.
+David Parkhurst
+
+From sundar.dorai-raj at pdf.com  Wed Oct 11 19:40:05 2006
+From: sundar.dorai-raj at pdf.com (Sundar Dorai-Raj)
+Date: Wed, 11 Oct 2006 14:40:05 -0500
+Subject: Re: Factor order in trellis plots
+In-Reply-To: <452D47D3.4050606@imap.iu.edu>
+References: <452D47D3.4050606@imap.iu.edu>
+Message-ID: <452D4895.6060102@pdf.com>
+
+David Parkhurst said the following on 10/11/2006 2:36 PM:
+> I'm using s-plus Enterprise Developer Version 7.0.6  for Microsoft
+> Windows : 2005.
+>
+>
+> I have a trellis plot with two columns (for N,Y in one factor) and five
+> rows (for A,B,C,D,E in the other factor).  The rows come out with E on
+> top and A on the bottom.  A reviewer of our paper objected to that, and
+> wants us to have A on top, down to E at the bottom.
+>
+>
+> How can I make that happen?
+>
+> Thanks.
+> David Parkhurst
+
+Hi, David,
+
+Try adding table=TRUE to your call.
+
+HTH,
+
+--sundar
+
+From parkhurs at imap.iu.edu  Wed Oct 11 23:01:36 2006
+From: parkhurs at imap.iu.edu (David Parkhurst)
+Date: Wed, 11 Oct 2006 19:01:36 -0400
+Subject: Factor order in trellis plots --- summary
+Message-ID: <452D77D0.2040700@imap.iu.edu>
+
+I asked:
+I have a trellis plot with two columns (for N,Y in one factor) and five 
+rows (for A,B,C,D,E in the other factor).  The rows come out with E on 
+top and A on the bottom.  A reviewer of our paper objected to that, and 
+wants us to have A on top, down to E at the bottom.
+
+How can I make that happen?
+
+Thanks to Sundar Dorai-Raj, Brad Biggerstaff, and Bill Dunlap for their 
+replies.
+
+Adding as.table=TRUE to the call worked fine.  I suspect that using 
+levels=c("E","D","C","B","A") would have worked too, but I didn't try it.
+
+Thanks again.
+Dave
+
+From elvis at xlsolutions-corp.com  Thu Oct 12 18:53:47 2006
+From: elvis at xlsolutions-corp.com
+Date: Thu, 12 Oct 2006 11:53:47 -0700
+Subject: Nov-Dec Courses: (1) Prof Frank Harrell *** Regression Modeling Strategies in R/Splus, (2) R/Splus Advanced Programming, (3) R/Splus Fundamentals and Programming Techniques
+Message-ID: <20061012115347.9f08cc34deb45d78e54b3b5664e21546.6330f8e807.wbe@email.secureserver.net>
+
+XLSolutions Corporation (www.xlsolutions-corp.com) is proud to announce
+November - December courses: 
+  
+(1) Regression Modeling Strategies in R/Splus --- by Prof Frank Harrell 
+  
+                    http://www.xlsolutions-corp.com/Rstats2.htm 
+                           
+                        *** Chicago, November 16-17, 2006 *** 
+                        *** San Francisco, November 30-Dec 1, 2006 *** 
+                        *** Seattle, December 7-8, 2006 *** 
+  
+(2) R/Splus Advanced Programming  --- by the R Development Core Team
+Guru! 
+  
+                   http://www.xlsolutions-corp.com/Radv.htm 
+  
+                     *** Seattle / TBD *** 
+  
+(3) R/Splus Fundamentals and Programming Techniques  
+           
+                  http://www.xlsolutions-corp.com/Rfund.htm 
+  
+                    *** San Francisco / December 14-15, 2006 *** 
+                    *** Boston / December 18-19, 2006
+  
+Ask for group discount and reserve your seat Now - Earlybird Rates 
+Payment due after the class! Email Sue Turner:  sue at xlsolutions-corp.com
+
+  
+Email us for group discounts: sue at xlsolutions-corp.com
+Phone:  206 686 1578 
+  
+Visit us: www.xlsolutions-corp.com/training.htm 
+  
+Please let us know if you and your colleagues are interested in this
+class to take advantage of group discount. Register now to secure your
+seat! 
+  
+Cheers, 
+  
+Elvis Miller, PhD 
+Manager Training 
+XLSolutions Corporation 
+206 686 1578 
+www.xlsolutions-corp.com/training.htm 
+elvis at xlsolutions-corp.com
+
+From sasprog474 at yahoo.com  Fri Oct 13 00:01:35 2006
+From: sasprog474 at yahoo.com (Greg Tarpinian)
+Date: Thu, 12 Oct 2006 17:01:35 -0700
+Subject: 4PL model fitting
+Message-ID: <20061013000135.76770.qmail@web58407.mail.re3.yahoo.com>
+
+WinXP, Splus7.
+
+All,
+
+I have been using the SSfpl and SSlogis self-starting functions
+in the nlme library to fit 4PL and restricted 4PL models.  I need
+to adapt these routines to fit the alternative model
+
+   f(x) = A + (B-A)/(1 + abs(x/EC50)^C)
+
+My Question:  How do I obtain good starting values for this alternative
+model?
+
+(The pseudo-code found on pages 517 - 520 of "Mixed Effects Models in
+S and Splus" is not applicable to my problem because it deals with
+f(x)=A+(B-A)/(1+exp(EC50-x)/C)) which is not the same function.)
+
+Many thanks,
+
+      Greg
+
+__________________________________________________
+Do You Yahoo!?
+Tired of spam?  Yahoo! Mail has the best spam protection around 
+http://mail.yahoo.com 
+
+From parkhurs at imap.iu.edu  Wed Oct 18 00:16:56 2006
+From: parkhurs at imap.iu.edu (David Parkhurst)
+Date: Tue, 17 Oct 2006 20:16:56 -0400
+Subject: Trellis xyplot with error bars in both directions (and then some)
+Message-ID: <45357278.9040407@imap.iu.edu>
+
+I'm using s-plus Enterprise Developer Version 7.0.6  for Microsoft Windows :
+2005.
+
+I have a data frame of the form:
+
+fac1 fac2 x1mean x1SE y1mean y1SE x2mean x2SE y2mean y2SE
+A    N
+A    Y
+B    N
+B    Y
+C    N                  numerical values
+C    Y
+D    N
+D    Y
+E    N
+E    Y
+
+I'd like to create a trellis plot, with five rows (fac1) by two columns
+(fac2).  In each panel of the trellis, I want a point at x1mean, y1mean 
+(with a circle, say), and a point at x2mean,y2mean (with a square).  The 
+hard part, for me, is that I'd also like to put +- standard error bars 
+for both variables (horizontal ones for the x's, vertical ones for the y's).
+
+Can all this be done with standard splus (or R) trellis commands?
+
+Thanks for any help.
+
+David Parkhurst
+
+From parkhurs at imap.iu.edu  Wed Oct 18 01:28:45 2006
+From: parkhurs at imap.iu.edu (David Parkhurst)
+Date: Tue, 17 Oct 2006 21:28:45 -0400
+Subject: (5x2)x2 Trellis layout
+Message-ID: <4535834D.8010604@imap.iu.edu>
+
+I'm using s-plus Enterprise Developer Version 7.0.6  for Microsoft 
+Windows : 2005.
+
+I have some data to plot using xyplot.  They were produced by a 5x2x2 
+factorial design.  How can I cause the trellis to have a 5x4 layout, 
+with the leftmost two columns being the 5x2 for the first value of the 
+third factor, and the rightmost two columns being the 5x2 for the second 
+value of the third factor?
+
+Thanks for any help.
+
+David Parkhurst
+
+From rmh at temple.edu  Wed Oct 18 03:17:27 2006
+From: rmh at temple.edu (Richard M. Heiberger)
+Date: Tue, 17 Oct 2006 23:17:27 -0400
+Subject: Re: (5x2)x2 Trellis layout
+Message-ID: <20061017231727.BKN51360@po-d.temple.edu>
+
+## two-way error bars
+
+tmp <- data.frame(x1.mean=1:6, x1.sd=(7:12),
+                  y1.mean=1:6, y1.sd=(7:12),
+                  x2.mean=13:18, x2.sd=(7:12),
+                  y2.mean=13:18, y2.sd=(7:12),
+                  n=21:26,
+                  a=c(1:3,1:3), b=c(1,1,1,2,2,2))
+
+tmp1 <- tmp[,c(1,2,3,4, 9,10,11)]
+names(tmp1)[1:4] <- c("x.mean","x.sd","y.mean","y.sd")
+
+tmp2 <- as.list(tmp[,c(5,6,7,8, 9,10,11)])
+names(tmp2) <- NULL
+
+tmp.data <- rbind(tmp1,tmp2)
+tmp.data$group <- c(1,1,1,1,1,1, 2,2,2,2,2,2)
+tmp.data
+
+xyplot(y.mean ~ x.mean | a*b, groups=group, data=tmp.data,
+       critical.dist=qt, conf=.95,
+       panel=function(x, y, subscripts, groups, critical.dist, conf, ...) {
+         panel.superpose(x, y, subscripts, groups, ...)
+         tds <- tmp.data[subscripts,]
+         critical <- critical.dist(1-(1-conf)/2, tds$n-1)
+         segments(x1=tds$x.mean - critical*tds$x.sd/sqrt(tds$n),
+                  x2=tds$x.mean + critical*tds$x.sd/sqrt(tds$n),
+                  y1=tds$y.mean, y2=tds$y.mean)
+         segments(y1=tds$y.mean - critical*tds$y.sd/sqrt(tds$n),
+                  y2=tds$y.mean + critical*tds$y.sd/sqrt(tds$n),
+                  x1=tds$x.mean, x2=tds$x.mean)
+       })
+
+## I have some data to plot using xyplot.  They were produced by a 5x2x2 
+## factorial design.  How can I cause the trellis to have a 5x4 layout, 
+## with the leftmost two columns being the 5x2 for the first value of the 
+## third factor, and the rightmost two columns being the 5x2 for the second 
+## value of the third factor?
+
+tmp <- data.frame(x=rnorm(20), y=rnorm(20),
+                  fac.design(c(5,2,2), letters[1:3]))
+xyplot(y ~ x | b*c*a, data=tmp, layout=c(4,5),
+       between=list(x=c(0,1,0)),
+       par.strip.text=list(cex=1))
+
+From Inman.Brant at mayo.edu  Wed Oct 18 22:21:19 2006
+From: Inman.Brant at mayo.edu (Inman, Brant A. M.D.)
+Date: Wed, 18 Oct 2006 17:21:19 -0500
+Subject: Importing SPSS files
+Message-ID: <6021CA6EF4C8374084D4F5A141F1CBBB2537DC@msgebe23.mfad.mfroot.org>
+
+I am running R 2.3.1 and SPSS 14.0.1 on a Windows XP computer.  When I import SPSS .sav datafiles into R using either the "spss.get" function of the Hmisc library or the "read.spss" function of the foreign library, my variable names are truncated to 8 characters. Since I find that my longer variable names are more meaningful and therfore easier to work with, I would like to know if there is a way to stop R from truncating my SPSS variable names during the import process.
+
+Thank you.
+
+_________________________________________________
+
+Dr. Brant A. Inman,  MD FRCSC
+
+Urologic Oncology Fellow, Mayo Clinic College of Medicine
+
+200 First Street SW
+
+Rochester, MN   55905
+
+Phone: (507) 284-1330
+
+Fax:    (507) 284-4951
+
+Email:  inman.brant at mayo.edu
+
+_________________________________________________
+
+From tristan.lorino at lcpc.fr  Thu Oct 19 08:16:46 2006
+From: tristan.lorino at lcpc.fr (Tristan Lorino)
+Date: Thu, 19 Oct 2006 10:16:46 +0200
+Subject: Problem with NA, by and sapply
+Message-ID: <1462944313.20061019101646@lcpc.fr>
+
+Hi, I have a problem with sapply, by and NA's. Here is an example...
+
+> x_data.frame(IdS=c(1,1,1,2,2,2),
++ Age=c(1,3,4,2,4,6),
++ CFT=c(.2,.5,.7,.3,.5,.6))
+> tau_.6
+> x
+  IdS Age CFT 
+1   1   1 0.2
+2   1   3 0.5
+3   1   4 0.7
+4   2   2 0.3
+5   2   4 0.5
+6   2   6 0.6
+
+IdS is a coding variable for subject (here only 2 subjects, but in the final
+file there is about 5,000 subjects), tau is a threshold  (varying from
+.1 to .9 by .1).
+I would like a file with the IdS variable and, for each value of IdS, two ages 
+(Age1
+and Age2) defined as following :
+   1.1 Age1= age at which max(CFT | CFT<= to tau) is reached;
+   2.1 Age2 = age at which min(CFT | CFT >= tau) is reached;
+   3.1 if undefined, NA.
+
+For tau=.6, I would like to have:
+  IdS Age1     Age2
+1   1   3      4
+2   2   6      6
+
+For tau=.1, I would like to have:
+  IdS Age1     Age2
+1   1   NA      1
+2   2   NA      2
+
+For tau=.7, I would like to have:
+  IdS Age1     Age2
+1   1   4      4
+2   2   6      NA
+
+If I write:
+>apply(by(x,x$IdS, function(x) 
+>x[x$CFT==max(x[x$CFT<=tau,"CFT"]),"Age"]),function(x) x,simplify=T)
+>sapply(by(x,x$IdS, function(x) 
+>x[x$CFT==min(x[x$CFT>=tau,"CFT"]),"Age"]),function(x) x,simplify=T)
+it works well, except when NA's coming:
+
+for tau=.6 (OK) :
+> sapply(by(x, x$IdS, function(x)
+x[x$CFT == max(x[x$CFT <= tau, "CFT"]), "Age"]), function(x)
+x, simplify = T)
+[1] 3 6
+> sapply(by(x, x$IdS, function(x)
+x[x$CFT == min(x[x$CFT >= tau, "CFT"]), c("Age")]), function(x)
+x, simplify = T)
+[1] 4 6
+
+for tau=.7:
+> sapply(by(x, x$IdS, function(x)
+x[x$CFT == max(x[x$CFT <= tau, "CFT"]), c("Age")]), function(x)
+x, simplify = T)
+[1] 4 6
+> sapply(by(x, x$IdS, function(x)
+x[x$CFT == min(x[x$CFT >= tau, "CFT"]), c("Age")]), function(x)
+x, simplify = T)
+[[1]]:
+[1] 4
+
+[[2]]:
+[1] NA NA NA
+
+I need to avoid loops, because of the 5,000 subjects (and sometimes 10
+observations per subject) and the 9 thresholds...
+
+Thank you,
+Tristan
+
+-- 
+Laboratoire Central des Ponts et Chaussées
+[Division ESAR ? Section AGR]
+Route de Bouaye BP 4129
+44341 Bouguenais Cedex
+France
+Tél 33 (0)2 40 84 56 18
+Fax 33 (0)2 40 84 59 92
+
+From Ita.Cirovic-Donev at hypo-alpe-adria.com  Thu Oct 19 13:42:43 2006
+From: Ita.Cirovic-Donev at hypo-alpe-adria.com
+Date: Thu, 19 Oct 2006 15:42:43 +0200
+Subject: sort()
+Message-ID: <OF691F05F8.1CC08FEC-ONC125720C.004B3533-C125720C.004B5286@arz.co.at>
+
+In R I can write sort(x,decreasing=TRUE)...what is the equivalent in S-Plus
+for a decreasing sort.
+
+Thanks,
+
+Ita
+
+Razmjena informacija s HYPO ALPE-ADRIA-BANK d.d. putem e-maila je bez
+jamstava. Zakljucivanje pravnih poslova putem ovog medija nije dozvoljeno.
+Ovaj e-mail moze sadrzavati povjerljive i/ili povlastene informacije. Ako
+ste ga primili greskom, molimo Vas da nas o tome odmah obavijestite tako
+sto cete na njega odgovoriti, a zatim vas molimo da ga izbrisete iz vaseg
+sustava. Ovime vas obavjestavamo da je svako otkrivanje, kopiranje,
+distribuiranje ili poduzimanje bilo kakvih aktivnosti u vezi s njegovim
+sadrzajem strogo zabranjeno i moze biti nezakonito.
+
+The exchange of messages with HYPO ALPE-ADRIA-BANK d.d. via e-mail is not
+binding. Declarations regarding legal transactions must not be exchanged
+via this medium. The information contained in this e-mail message is
+confidential and intended exclusively for the addressee. Persons receiving
+this e-mail message who are not the named addressee (or his/her co-workers,
+or persons authorized to take delivery) must not use, forward or reproduce
+its  contents. If you have received this e-mail message by mistake, please
+contact us immediately and delete this email message beyond retrieval.
+
+From Pierre.Ilouga at evotec.com  Thu Oct 19 13:48:17 2006
+From: Pierre.Ilouga at evotec.com (Ilouga, Pierre)
+Date: Thu, 19 Oct 2006 15:48:17 +0200
+Subject: Re: sort()
+In-Reply-To: <OF691F05F8.1CC08FEC-ONC125720C.004B3533-C125720C.004B5286@arz.co.at>
+References: <OF691F05F8.1CC08FEC-ONC125720C.004B3533-C125720C.004B5286@arz.co.at>
+Message-ID: <FFFAF1D3BF67514C9E5E26895DC1B55901182F@ge-ham-sma01.germany.evotecoai.com>
+
+x[rev(order(x))]
+
+Dr. Pierre Ilouga
+Screening Operations/Discovery Informatics
+EVOTEC AG
+Schnackenburgallee 114
+22525 Hamburg
+Germany
+
+pierre.ilouga at evotec.com
+www.evotec.com
+                    
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of
+Ita.Cirovic-Donev at hypo-alpe-adria.com
+Sent: Thursday, October 19, 2006 15:43
+To: s-news at lists.biostat.wustl.edu
+Subject: [S] sort()
+
+In R I can write sort(x,decreasing=TRUE)...what is the equivalent in
+S-Plus
+for a decreasing sort.
+
+Thanks,
+
+Ita
+
+Razmjena informacija s HYPO ALPE-ADRIA-BANK d.d. putem e-maila je bez
+jamstava. Zakljucivanje pravnih poslova putem ovog medija nije
+dozvoljeno.
+Ovaj e-mail moze sadrzavati povjerljive i/ili povlastene informacije.
+Ako
+ste ga primili greskom, molimo Vas da nas o tome odmah obavijestite tako
+sto cete na njega odgovoriti, a zatim vas molimo da ga izbrisete iz
+vaseg
+sustava. Ovime vas obavjestavamo da je svako otkrivanje, kopiranje,
+distribuiranje ili poduzimanje bilo kakvih aktivnosti u vezi s njegovim
+sadrzajem strogo zabranjeno i moze biti nezakonito.
+
+The exchange of messages with HYPO ALPE-ADRIA-BANK d.d. via e-mail is
+not
+binding. Declarations regarding legal transactions must not be exchanged
+via this medium. The information contained in this e-mail message is
+confidential and intended exclusively for the addressee. Persons
+receiving
+this e-mail message who are not the named addressee (or his/her
+co-workers,
+or persons authorized to take delivery) must not use, forward or
+reproduce
+its  contents. If you have received this e-mail message by mistake,
+please
+contact us immediately and delete this email message beyond retrieval.
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From gerald.jean at dgag.ca  Thu Oct 19 13:48:57 2006
+From: gerald.jean at dgag.ca
+Date: Thu, 19 Oct 2006 09:48:57 -0400
+Subject: =?utf-8?b?UsOpZi4gOiBzb3J0KCk=?=
+Message-ID: <OF36B04ABB.5B954C28-ON8525720C.004BD0F0@spgdag.ca>
+
+rev(sort(x))
+
+Gérald Jean
+Conseiller senior en statistiques, Actuariat
+télephone            : (418) 835-4900 poste (7639)
+télecopieur          : (418) 835-6657
+courrier électronique: gerald.jean at dgag.ca
+
+"In God we trust, all others must bring data"  W. Edwards Deming
+
+Le message ci-dessus, ainsi que les documents l'accompagnant, sont destinés 
+uniquement aux personnes identifiées et peuvent contenir des informations
+privilégiées, confidentielles ou ne pouvant être divulguées. Si vous avez reçu 
+ce message par erreur, veuillez le détruire.
+
+This communication (and/or the attachments) is intended for named recipients 
+only and may contain privileged or confidential information which is not
+to be disclosed. If you received this communication by mistake please destroy 
+all copies.
+
+From tristan.lorino at lcpc.fr  Thu Oct 19 14:53:22 2006
+From: tristan.lorino at lcpc.fr (Tristan Lorino)
+Date: Thu, 19 Oct 2006 16:53:22 +0200
+Subject: Error message with survReg
+Message-ID: <112217096.20061019165322@lcpc.fr>
+
+Hi (again)...
+
+I get an error message with survReg (S-Plus 7):
+
+> survReg(Surv(cens04[, 2], cens04[, 3], type = "interval2") ~ cov04[, 2], dist 
+> = "weibull", na.action = na.exclude)
+Problem in survReg(Surv(cens04[, 2], cens04[, 3], type = "interval2")
+~ cov04[, ..: Invalid survival times for this distribution
+
+All my 5,316 times are good (i.e. cens04[,2] <= cens04[,3])... I tried
+to find the error: the compilation is OK for the first 1,250 rows...
+an error occures between line 1,250 and line 1,260:
+
+survReg(Surv(cens04[1250:1260, 2], cens04[1250:1260, 3], type =
+"interval2") ~ cov04[1250:1260, 2], dist = "weibull", na.action =
+        na.exclude)
+Problem in .C("S_coxph_wtest",: subroutine S_coxph_wtest: Missing values in 
+argument 3
+
+The problematic data are at the end of the mail... If anyone has an
+idea, it would be great...
+
+Thank you,
+Tristan Lorino
+
+> cens04[1250:1260,  ]
+       IdS cg04 cd04 
+1250 19176    3    6
+1251 19177    3    9
+1252 19178    3    6
+1253 19179    3    6
+1254 19180    3    6
+1255 19181    3    6
+1256 19182    6    6
+1257 19183    6    6
+1258 19184    6    6
+1259 19185    3    6
+1260 19186    3    6
+> cov04[1250:1260,  ]
+     Granulo MJAPL 
+1250      10  1083
+1251      10  1083
+1252      10  1083
+1253      10  1083
+1254      10  1083
+1255      10  1083
+1256      10   943
+1257      10   943
+1258      10   943
+1259      10  1083
+1260      10  1083
+
+-- 
+Laboratoire Central des Ponts et Chaussées
+[Division ESAR ? Section AGR]
+Route de Bouaye BP 4129
+44341 Bouguenais Cedex
+France
+Tél 33 (0)2 40 84 56 18
+Fax 33 (0)2 40 84 59 92
+
+From tristan.lorino at lcpc.fr  Fri Oct 20 07:49:00 2006
+From: tristan.lorino at lcpc.fr (Tristan Lorino)
+Date: Fri, 20 Oct 2006 09:49:00 +0200
+Subject: Distribution in survReg
+Message-ID: <722178337.20061020094900@lcpc.fr>
+
+Hi,
+
+The problem with survReg comes from the distribution. In this case, the survReg
+procedure accepts only gaussian and logistic distributions ; the
+others (particularly the weibull distribution) leads to an "Invalid
+survival times for this distribution"...
+In which case does this problem occur? I don't understand why the same
+data (type="interval2") can be fitted by one distribution and not the
+other...
+
+Thank you for your help,
+Tristan Lorino
+
+-- 
+Laboratoire Central des Ponts et Chaussées
+[Division ESAR ? Section AGR]
+Route de Bouaye BP 4129
+44341 Bouguenais Cedex
+France
+Tél 33 (0)2 40 84 56 18
+Fax 33 (0)2 40 84 59 92
+
+From michel.piot at bfe.admin.ch  Fri Oct 20 09:17:55 2006
+From: michel.piot at bfe.admin.ch
+Date: Fri, 20 Oct 2006 11:17:55 +0200
+Subject: trelllis
+Message-ID: <84C86421F5132D409B67D6BDA6A6A904E4AFC1@sbem35exc1004.efd.intra.admin.ch>
+
+Hi!
+
+I want to draw a trellisPlot with plot.type="stackbar". Furthermore I
+would like to change the color of the stackbars. Unfortunately when I
+try to solve the problem with
+
+trellis.device()
+color <- trellis.par.get("stackbar")
+color$fill.col[1] <- 3
+trellis.par.set("stackbar", color)
+
+I get the error message:
+
+Problem in trellis.par.set("stackbar", color): different length in each
+components 
+Use traceback() to see the call stack
+
+I even have the same problem when I'm using
+
+color <- trellis.par.get("stackbar") trellis.par.set("stackbar", color)
+
+which seems quite strange to me.
+
+Does anybody know this problem and can help me? I'm using S-Plus 6.2.
+
+Thanks
+
+Michel Piot
+
+From yang_eric9 at yahoo.com  Sun Oct 22 14:04:15 2006
+From: yang_eric9 at yahoo.com (Eric yang)
+Date: Sun, 22 Oct 2006 07:04:15 -0700
+Subject: for loop question
+Message-ID: <20061022140415.40304.qmail@web33903.mail.mud.yahoo.com>
+
+Dear all,
+
+Here's an example of what I would like to do without
+using a for-loop. 
+
+I have the following data
+
+my.data <- matrix(c(sample(20, size=10, F), sample(4,
+size=10, T), rnorm(10, 5, 1), rnorm(10, 20, 4),
+rnorm(10, 10, 2), rnorm(10, 10,3)), 
+        ncol=6)
+
+> my.data
+      [,1] [,2]     [,3]     [,4]      [,5]      [,6] 
+ [1,]    6    2 3.858922 29.48057  8.027945 14.362423
+ [2,]    5    1 4.885107 22.78082  8.182446  3.066463
+ [3,]   11    3 5.732712 12.55876 11.152502 12.060518
+ [4,]   16    4 4.226750 15.90435  8.963558 13.354798
+ [5,]   10    1 5.110561 15.68133  7.045130  9.726243
+ [6,]    7    3 4.554621 15.95656 10.694539  6.580981
+ [7,]    9    2 4.508211 23.41050  9.322254  9.989812
+ [8,]    3    4 5.977006 22.99636 10.081296 12.683619
+ [9,]    4    4 4.127606 20.87818  9.620855 11.915763
+[10,]   13    2 6.308710 15.11741  7.739558  6.820841
+
+I would like to populate a bigger matrix with this
+information such that the 1st column refers to the row
+of the new matrix and the 2nd column refers to the
+column sequence. The data is contained in columns 3 to
+6. If column 2 contains a 1 then the data is put into
+columns 1, 5, 9, 13 of the new matrix, if  column 2
+contains a 2 then the data is put into columns 2, 6,
+10, 14 of the new matrix - similarly for 3 and 4 in
+column 2. 
+
+The for-loop is as follows:
+
+new.matrix <- matrix(0, 20, 16)
+
+for(i in 1:4) {
+   data <- which(my.data[,2]==i)
+   row <- my.data[data, 1]
+   col <- seq(i, by=4, length=4) 
+   new.matrix[row, col] <- my.data[data, 3:6]
+}
+
+Can this be done without the need for a for-loop? 
+
+Thanks in advance for any help.
+
+Regards,
+Eric
+
+__________________________________________________
+Do You Yahoo!?
+Tired of spam?  Yahoo! Mail has the best spam protection around 
+http://mail.yahoo.com 
+
+From michel.piot at bfe.admin.ch  Mon Oct 23 05:34:35 2006
+From: michel.piot at bfe.admin.ch
+Date: Mon, 23 Oct 2006 07:34:35 +0200
+Subject: Re: trelllis
+In-Reply-To: <Pine.GSO.4.56.0610201021140.10592@durian.statsci.com>
+References: <Pine.GSO.4.56.0610201021140.10592@durian.statsci.com>
+Message-ID: <84C86421F5132D409B67D6BDA6A6A904E4AFC8@sbem35exc1004.efd.intra.admin.ch>
+
+Thanks to Bill Dunlap and Bin Wang
+
+Michel Piot
+
+> I want to draw a trellisPlot with plot.type="stackbar". 
+> Furthermore I would like to change the color of the stackbars. 
+> Unfortunately when I try to solve the problem with
+
+> trellis.device()
+> color <- trellis.par.get("stackbar")
+> color$fill.col[1] <- 3
+> trellis.par.set("stackbar", color)
+>
+> I get the error message:
+> Problem in trellis.par.set("stackbar", color): different length in 
+> each components Use traceback() to see the call stack
+
+It looks like this already has been fixed for the version
+of Splus, but you can work around the problem by doing
+     color$width <- rep(color$width, length(color$angle))
+before passing your 'color' to trellis.par.set().  
+
+From Inman.Brant at mayo.edu  Mon Oct 23 18:44:44 2006
+From: Inman.Brant at mayo.edu (Inman, Brant A. M.D.)
+Date: Mon, 23 Oct 2006 13:44:44 -0500
+Subject: Problem with importing data
+Message-ID: <6021CA6EF4C8374084D4F5A141F1CBBB2537FD@msgebe23.mfad.mfroot.org>
+
+I am using S-Plus professional developper 7.0.6 for Windows XP.  I recently tried using the GUI to import data and I got the following error message.  Does anyone have an idea how to solve this?
+
+Brant Inman
+
+Mayo Clinic College of Medicine
+
+-------
+
+The property name 'impdatdlg.ReturnValue' is not recognized.
+
+The property name 'impdatdlg.PageOne' is not recognized.
+
+The property name 'impdatdlg.PageTwo' is not recognized.
+
+The property name 'impdatdlg.PageThree' is not recognized.
+
+The property name 'impdatdlg.PageFour' is not recognized.
+
+The property name 'impdatdlg.ReturnValue' is not recognized.
+
+The property name 'impdatdlg.FileName' is not recognized.
+
+The property name 'impdatdlg.FileTypes' is not recognized.
+
+The property name 'impdatdlg.TargetDataFrame' is not recognized.
+
+The property name 'impdatdlg.ImportAsBigData' is not recognized.
+
+The property name 'impdatdlg.TargetStartCol' is not recognized.
+
+The property name 'impdatdlg.TargetInsertOverwrite' is not recognized.
+
+The property name 'impdatdlg.NameRowAuto' is not recognized.
+
+The property name 'impdatdlg.NameColAuto' is not recognized.
+
+The property name 'impdatdlg.StartCol' is not recognized.
+
+The property name 'impdatdlg.EndCol' is not recognized.
+
+The property name 'impdatdlg.StartRow' is not recognized.
+
+The property name 'impdatdlg.EndRow' is not recognized.
+
+The property name 'impdatdlg.PageNumberAuto' is not recognized.
+
+The property name 'impdatdlg.StringsAsFactors' is not recognized.
+
+The property name 'impdatdlg.SortFactorLevels' is not recognized.
+
+The property name 'impdatdlg.LabelsAsNumbers' is not recognized.
+
+The property name 'impdatdlg.CenturyCutoffYear' is not recognized.
+
+The property name 'impdatdlg.ASCIIFormatString' is not recognized.
+
+The property name 'impdatdlg.ASCIIDelimiters' is not recognized.
+
+The property name 'impdatdlg.KeepOrDropListItems' is not recognized.
+
+The property name 'impdatdlg.FilterExpression' is not recognized.
+
+The property name 'impdatdlg.ASCIISeparateDelimiters' is not recognized.
+
+The property name 'impdatdlg.ASCIIDateInFormat' is not recognized.
+
+The property name 'impdatdlg.ASCIITimeInFormat' is not recognized.
+
+The property name 'impdatdlg.ASCIIDecimalPoint' is not recognized.
+
+The property name 'impdatdlg.ASCIIThousandsSeparator' is not recognized.
+
+The property name 'impdatdlg.MissingValueString' is not recognized.
+
+The property name 'impdatdlg.LookMaxLinesString' is not recognized.
+
+The property name 'impdatdlg.MaxLineWidth' is not recognized.
+
+The property name 'impdatdlg.SubsetNone' is not recognized.
+
+The property name 'impdatdlg.SubsetRandomSample' is not recognized.
+
+The property name 'impdatdlg.SubsetRandomSampleValue' is not recognized.
+
+The property name 'impdatdlg.SubsetSampleNthRow' is not recognized.
+
+The property name 'impdatdlg.SubsetSampleNthRowValue' is not recognized.
+
+The property name 'impdatdlg.SubsetKeepExpression' is not recognized.
+
+There is an unrecognized property in the ArgumentList at Index #0.
+
+There is an unrecognized property in the ArgumentList at Index #1.
+
+There is an unrecognized property in the ArgumentList at Index #2.
+
+There is an unrecognized property in the ArgumentList at Index #3.
+
+There is an unrecognized property in the ArgumentList at Index #4.
+
+There is an unrecognized property in the ArgumentList at Index #5.
+
+There is an unrecognized property in the ArgumentList at Index #6.
+
+There is an unrecognized property in the ArgumentList at Index #7.
+
+There is an unrecognized property in the ArgumentList at Index #8.
+
+There is an unrecognized property in the ArgumentList at Index #9.
+
+There is an unrecognized property in the ArgumentList at Index #10.
+
+There is an unrecognized property in the ArgumentList at Index #11.
+
+There is an unrecognized property in the ArgumentList at Index #12.
+
+There is an unrecognized property in the ArgumentList at Index #13.
+
+There is an unrecognized property in the ArgumentList at Index #14.
+
+There is an unrecognized property in the ArgumentList at Index #15.
+
+There is an unrecognized property in the ArgumentList at Index #16.
+
+There is an unrecognized property in the ArgumentList at Index #17.
+
+There is an unrecognized property in the ArgumentList at Index #18.
+
+There is an unrecognized property in the ArgumentList at Index #19.
+
+There is an unrecognized property in the ArgumentList at Index #20.
+
+There is an unrecognized property in the ArgumentList at Index #21.
+
+There is an unrecognized property in the ArgumentList at Index #22.
+
+There is an unrecognized property in the ArgumentList at Index #23.
+
+There is an unrecognized property in the ArgumentList at Index #24.
+
+There is an unrecognized property in the ArgumentList at Index #25.
+
+There is an unrecognized property in the ArgumentList at Index #26.
+
+There is an unrecognized property in the ArgumentList at Index #27.
+
+There is an unrecognized property in the ArgumentList at Index #28.
+
+There is an unrecognized property in the ArgumentList at Index #29.
+
+There is an unrecognized property in the ArgumentList at Index #30.
+
+There is an unrecognized property in the ArgumentList at Index #31.
+
+There is an unrecognized property in the ArgumentList at Index #32.
+
+There is an unrecognized property in the ArgumentList at Index #33.
+
+There is an unrecognized property in the ArgumentList at Index #34.
+
+There is an unrecognized property in the ArgumentList at Index #35.
+
+Problem in S.ipc.execute.function(S.gui.get.connect..: .C("S_AddGUIErrorString", "The object '$$impdatdlg.FilterListDescAndExt' cannot be found. Please check to make sure that the object's complete path name has been specified correctly.
+
+.C("S_AddGUIErrorString", "ERROR: In the function 'GetPropertyValue', the specified object (an Property) 'impdatdlg.FilterListDescAndExt' does not exist. 
+
+Use traceback() to see the call stack
+
+From Inman.Brant at mayo.edu  Mon Oct 23 20:36:21 2006
+From: Inman.Brant at mayo.edu (Inman, Brant A. M.D.)
+Date: Mon, 23 Oct 2006 15:36:21 -0500
+Subject: Additional details: Problem with import data
+Message-ID: <6021CA6EF4C8374084D4F5A141F1CBBB253806@msgebe23.mfad.mfroot.org>
+
+My previous posting did not contain enough detail, so I am supplying it here to clarify.
+
+I am trying to import data using the S-Plus 7.0 GUI menu system.  When I select " File > Import Data > From File", 3 unusual things happen:
+
+1) The usual file import window does not open.
+
+2) A new file import window opens that I do not recognize. (see attached pdf) 
+
+3) A very long error message appears in the message window (this was previously posted).
+
+This error seems independent of file size and type because it occurs PRIOR to me selecting a specific file from the menu system (in fact, I cannot even select a file because this window does not appear).  After the problem began, I tried updating to S-Plus 7.0.6, which occurred successfully, but this did not solve the problem.
+
+I have just noticed similar problems with the following menus:
+
+-"File > Load Library"
+
+-"File > Export Data"
+
+-"File > Load Module"
+
+I cannot recall ever having made changes to the S-Plus settings.
+
+I hope these clarifications help!
+
+Brant Inman
+
+Mayo Clinic College of Medicine
+
+From Inman.Brant at mayo.edu  Mon Oct 23 20:57:06 2006
+From: Inman.Brant at mayo.edu (Inman, Brant A. M.D.)
+Date: Mon, 23 Oct 2006 15:57:06 -0500
+Subject: FW: Additional details: Problem with import data
+Message-ID: <6021CA6EF4C8374084D4F5A141F1CBBB25380A@msgebe23.mfad.mfroot.org>
+
+ 
+
+I 
+received 3 speedy replies, all diagnosing the same problem:  a corrupt 
+.prefs folder.  I proceeding to delete the folder in the manner described 
+by Keith Nieford below.  This completely solved the 
+problem.
+
+ 
+
+Brant
+
+ 
+
+From: Nieforth, Keith 
+[mailto:keith.nieforth at roche.com] 
+Sent: Monday, October 23, 2006 3:40 
+PM
+To: Inman, Brant A. M.D.
+Subject: RE: [S] Additional 
+details: Problem with import data
+
+It 
+sounds like you need to delete your preferences as they have become corrupt. 
+ See below:
+
+ 
+
+The strange dialog box is 
+the result of a corrupt .Prefs directory.  Below are instructions for 
+resolving this problem.
+
+----------------------------------
+
+With S-PLUS closed, delete 
+your .prefs directory, the default location is:
+
+ 
+
+c:\Program 
+Files\Insightful\splus62\users\<login name>\.prefs
+
+ 
+
+This directory stores your 
+user preferences, such as graph colors, default options, etc.  When you 
+restart S-PLUS, the defaults will be restored in this directory.  When 
+restarting S-PLUS you will receive a message that .data and/or .prefs cannot be 
+found.  Click OK to create the default.  Just the default .prefs will 
+be created.
+
+-----------------------------------
+
+I hope this helps!  
+
+ 
+
+Keith
+
+ 
+
+ 
+
+-----Original 
+Message-----
+From: 
+s-news-owner at lists.biostat.wustl.edu 
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Inman, Brant A. 
+M.D.
+Sent: Monday, October 23, 
+2006 4:36 PM
+To: 
+s-news at lists.biostat.wustl.edu
+Subject: [S] Additional details: Problem 
+with import data
+
+ 
+
+My previous posting did not 
+contain enough detail, so I am supplying it here to clarify. 
+
+I am trying to import data 
+using the S-Plus 7.0 GUI menu system.  When I select " File > Import 
+Data > From File", 3 unusual things happen:
+
+1) The usual file import 
+window does not open. 
+2) A new file import window 
+opens that I do not recognize. (see attached pdf) 
+3) A very long error message 
+appears in the message window (this was previously posted). 
+
+This error seems independent 
+of file size and type because it occurs PRIOR to me selecting a specific file 
+from the menu system (in fact, I cannot even select a file because this window 
+does not appear).  After the problem began, I tried updating to S-Plus 
+7.0.6, which occurred successfully, but this did not solve the 
+problem.
+
+I have just noticed similar 
+problems with the following menus: 
+-"File > 
+Load Library" 
+-"File > Export 
+Data" 
+-"File > Load 
+Module" 
+
+I cannot recall ever having 
+made changes to the S-Plus settings. 
+
+I hope these clarifications 
+help! 
+
+Brant Inman 
+
+Mayo Clinic College of 
+Medicine 
+
+From s-luppescu at uchicago.edu  Tue Oct 24 17:15:19 2006
+From: s-luppescu at uchicago.edu (Stuart Luppescu)
+Date: Tue, 24 Oct 2006 12:15:19 -0500
+Subject: Convert variable to dummies
+Message-ID: <453E4A27.3000105@uchicago.edu>
+
+Hello, I want to convert a variable x that has values {0, 1, 2, 3, 4} 
+into four dummies such that dummy1 is 1 if x has the value 1, dummy2 is 
+1 if x has the value 2, etc. I made an n x 4 matrix of zeros and then 
+tried to do
+the.matrix[,x] <- 1, but this makes all rows and columns 1. I can do it 
+in a for loop like this, I suppose:
+
+for(i in 1:length(x)) the.matrix[i,x] <- x[i]
+but this seems very clumsy and un-S-like. Is there an elegant way to do 
+this that takes advantage of the vectorization in S?
+
+Thanks.
+
+--
+Stuart Luppescu -=-=- s-luppescu <AT> uchicago <DOT> edu
+CCSR at U of C ,.;-*^*-;.,  ccsr.uchicago.edu
+    (^_^)/    $B:MJ8$HCRF`H~$NIc(B
+Thank God I'm an atheist!
+
+From Michael.Slattery at epa.state.oh.us  Wed Oct 25 11:05:13 2006
+From: Michael.Slattery at epa.state.oh.us (Michael Slattery)
+Date: Wed, 25 Oct 2006 07:05:13 -0400
+Subject: first instance extraction
+Message-ID: <453F0CA9.C718.0085.0@epa.state.oh.us>
+
+Hello all, 
+
+I am trying to understand how to extract the first instance of a dataframe record, in which the index may appear any number of times (at least once),  into a dataframe which then contains the _first_ record of each index (and subsequent data). The dataframe has mixed data types, and the index for extraction can either be a factor or a character, i.e., 
+
+ 
+
+index      data1     data2    data3
+
+ 
+
+char1      ...         ....        ...
+
+char1
+
+char1
+
+char2
+
+char2
+
+char3
+
+char3
+
+char3
+
+char3
+
+char3
+
+char4
+
+ 
+
+ 
+
+On S-Plus 7.0 Pro, Windows XP Pro
+
+thanks all !!
+
+ 
+
+ 
+
+Michael W. Slattery
+Geologist, Ohio EPA
+122 S. Front Street
+Lazarus Government Center
+Columbus OH 43215
+michael.slattery at epa.state.oh.us
+614-728-1221 (Ph)
+614-644-2909 (Fax)
+
+From lorenz at usgs.gov  Wed Oct 25 12:31:20 2006
+From: lorenz at usgs.gov (David L Lorenz)
+Date: Wed, 25 Oct 2006 07:31:20 -0500
+Subject: Re: first instance extraction
+In-Reply-To: <453F0CA9.C718.0085.0@epa.state.oh.us>
+References: <453F0CA9.C718.0085.0@epa.state.oh.us>
+Message-ID: <OF6CE84598.6428EED1-ON86257212.004490E3-86257212.0044C975@usgs.gov>
+
+Michael,
+
+  Check the documentation for the
+duplicated() function. It will return a vector indicating which entries
+are repeats of a previous entry, therefore !duplicated() returns a vector
+of the first instance of a value.
+
+Dave
+
+"Michael Slattery"
+<Michael.Slattery at epa.state.oh.us> 
+
+Sent by: s-news-owner at lists.biostat.wustl.edu
+10/25/2006 06:05 AM
+
+To
+
+<s-news at wubios.wustl.edu>
+
+cc
+
+Subject
+
+[S] first instance extraction
+
+Hello all, 
+
+I am trying to understand how to extract the first instance
+of a dataframe record, in which the index may appear any number of times
+(at least once),  into a dataframe which then contains the _first_
+record of each index (and subsequent data). The dataframe has mixed data
+types, and the index for extraction can either be a factor or a character,
+i.e., 
+
+ 
+
+index      data1     data2  
+ data3
+
+ 
+
+char1      ...        
+....        ...
+
+char1
+
+char1
+
+char2
+
+char2
+
+char3
+
+char3
+
+char3
+
+char3
+
+char3
+
+char4
+
+ 
+
+ 
+
+On S-Plus 7.0 Pro, Windows XP Pro
+
+thanks all !!
+
+ 
+
+ 
+
+Michael W. Slattery
+
+Geologist, Ohio EPA
+
+122 S. Front Street
+
+Lazarus Government Center
+
+Columbus OH 43215
+
+michael.slattery at epa.state.oh.us
+
+614-728-1221 (Ph)
+
+614-644-2909 (Fax)
+
+From gerald.jean at dgag.ca  Wed Oct 25 14:11:41 2006
+From: gerald.jean at dgag.ca
+Date: Wed, 25 Oct 2006 10:11:41 -0400
+Subject: =?utf-8?q?R=C3=A9f=2E_=3A_Convert_variable_to_dummies?=
+Message-ID: <OFCF2365BC.28848792-ON85257212.004DBA23@spgdag.ca>
+
+Hello Stuart,
+
+here is a way using "model.matrix", the "-1" is to remove the intercept.
+
+ttt <- data.frame(ttt = factor(sample(0:4, 100, replace = T)))
+names(ttt)
+model.matrix(~ ttt, data = ttt)[, -1]
+
+Have fun,
+
+Gérald Jean
+Conseiller senior en statistiques, Actuariat
+télephone            : (418) 835-4900 poste (7639)
+télecopieur          : (418) 835-6657
+courrier électronique: gerald.jean at dgag.ca
+
+"In God we trust, all others must bring data"  W. Edwards Deming
+
+Le message ci-dessus, ainsi que les documents l'accompagnant, sont destinés 
+uniquement aux personnes identifiées et peuvent contenir des informations
+privilégiées, confidentielles ou ne pouvant être divulguées. Si vous avez reçu 
+ce message par erreur, veuillez le détruire.
+
+This communication (and/or the attachments) is intended for named recipients 
+only and may contain privileged or confidential information which is not
+to be disclosed. If you received this communication by mistake please destroy 
+all copies.
+
+From jkrobert at bcm.tmc.edu  Wed Oct 25 15:46:56 2006
+From: jkrobert at bcm.tmc.edu (Roberts, J. Kyle)
+Date: Wed, 25 Oct 2006 10:46:56 -0500
+Subject: STATA "collapse" function
+In-Reply-To: <81dc1548.ad25523a.81a0a00@po-d.temple.edu>
+References: <81dc1548.ad25523a.81a0a00@po-d.temple.edu>
+Message-ID: <3FC0430478C30B4A9AF0AFF7863418F130EEDA@BCMEVS6.ad.bcm.edu>
+
+ 
+Dear All,
+
+I am looking for a function in S-PLUS that works like "collapse" in STATA.  
+Specifically, I am trying to create some level-2 and level-3 datasets for use 
+in HLM from a single dataset that I analyzed as a 3-level model in S-PLUS.  I 
+tried collapse.groupedData, but I'm not getting exactly what I want.
+In STATA, the function might look like:
+
+collapse (mean)  meanses size sector pracad disclim himinty, by(id)
+
+Thanks,
+Kyle
+
+***************************************
+J. Kyle Roberts, Ph.D.
+Baylor College of Medicine
+Center for Educational Outreach
+One Baylor Plaza, MS:  BCM411
+Houston, TX   77030-3411
+713-798-6672 - 713-798-8201 Fax
+jkrobert at bcm.edu
+***************************************
+
+From ccleland at optonline.net  Wed Oct 25 15:56:47 2006
+From: ccleland at optonline.net (Chuck Cleland)
+Date: Wed, 25 Oct 2006 11:56:47 -0400
+Subject: Re: STATA "collapse" function
+In-Reply-To: <3FC0430478C30B4A9AF0AFF7863418F130EEDA@BCMEVS6.ad.bcm.edu>
+References: <3FC0430478C30B4A9AF0AFF7863418F130EEDA@BCMEVS6.ad.bcm.edu>
+Message-ID: <453F893F.6060707@optonline.net>
+
+Roberts, J. Kyle wrote:
+>  
+> Dear All,
+> 
+> I am looking for a function in S-PLUS that works like "collapse" in STATA.  
+> Specifically, I am trying to create some level-2 and level-3 datasets for use 
+> in HLM from a single dataset that I analyzed as a 3-level model in S-PLUS.  I 
+> tried collapse.groupedData, but I'm not getting exactly what I want.
+> In STATA, the function might look like:
+> 
+> collapse (mean)  meanses size sector pracad disclim himinty, by(id)
+
+Have a look at aggregate().  Something like:
+
+aggregate(mydf, by = "id", FUN = mean)
+
+where mydf is a data frame with the id variable and the variables to be
+collapsed (aggregated) using the mean function.
+
+> Thanks,
+> Kyle
+> 
+> ***************************************
+> J. Kyle Roberts, Ph.D.
+> Baylor College of Medicine
+> Center for Educational Outreach
+> One Baylor Plaza, MS:  BCM411
+> Houston, TX   77030-3411
+> 713-798-6672 - 713-798-8201 Fax
+> jkrobert at bcm.edu
+> ***************************************
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+
+-- 
+Chuck Cleland, Ph.D.
+NDRI, Inc.
+71 West 23rd Street, 8th floor
+New York, NY 10010
+tel: (212) 845-4495 (Tu, Th)
+tel: (732) 512-0171 (M, W, F)
+fax: (917) 438-0894
+
+From ccleland at optonline.net  Wed Oct 25 15:59:24 2006
+From: ccleland at optonline.net (Chuck Cleland)
+Date: Wed, 25 Oct 2006 11:59:24 -0400
+Subject: Re: STATA "collapse" function
+In-Reply-To: <453F893F.6060707@optonline.net>
+References: <3FC0430478C30B4A9AF0AFF7863418F130EEDA@BCMEVS6.ad.bcm.edu> <453F893F.6060707@optonline.net>
+Message-ID: <453F89DC.5000709@optonline.net>
+
+Chuck Cleland wrote:
+> Roberts, J. Kyle wrote:
+>>  
+>> Dear All,
+>>
+>> I am looking for a function in S-PLUS that works like "collapse" in STATA.  
+>> Specifically, I am trying to create some level-2 and level-3 datasets for 
+>> use in HLM from a single dataset that I analyzed as a 3-level model in 
+>> S-PLUS.  I tried collapse.groupedData, but I'm not getting exactly what I 
+>> want.
+>> In STATA, the function might look like:
+>>
+>> collapse (mean)  meanses size sector pracad disclim himinty, by(id)
+> 
+> Have a look at aggregate().  Something like:
+> 
+> aggregate(mydf, by = "id", FUN = mean)
+
+I should read the help page myself ...
+
+aggregate(mydf, list(id=mydf$id), mean)
+
+> where mydf is a data frame with the id variable and the variables to be
+> collapsed (aggregated) using the mean function.
+> 
+>> Thanks,
+>> Kyle
+>>
+>> ***************************************
+>> J. Kyle Roberts, Ph.D.
+>> Baylor College of Medicine
+>> Center for Educational Outreach
+>> One Baylor Plaza, MS:  BCM411
+>> Houston, TX   77030-3411
+>> 713-798-6672 - 713-798-8201 Fax
+>> jkrobert at bcm.edu
+>> ***************************************
+>> --------------------------------------------------------------------
+>> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+>> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+>> the BODY of the message:  unsubscribe s-news
+> 
+
+-- 
+Chuck Cleland, Ph.D.
+NDRI, Inc.
+71 West 23rd Street, 8th floor
+New York, NY 10010
+tel: (212) 845-4495 (Tu, Th)
+tel: (732) 512-0171 (M, W, F)
+fax: (917) 438-0894
+
+From Mike.Prager at noaa.gov  Wed Oct 25 16:27:12 2006
+From: Mike.Prager at noaa.gov (Michael H. Prager)
+Date: Wed, 25 Oct 2006 12:27:12 -0400
+Subject: X2R: S-compatible output routines from C, ADMB, Fortran to R
+Message-ID: <453F9060.4060903@noaa.gov>
+
+Note: Although the software announced here was written to work
+with R, we have done some testing under S-PLUS and believe it to
+be compatible with S-PLUS as well. We know of no reason it should
+NOT be compatible.  We use "S" below to include both dialects.
+
+We announce the availability of three related software libraries:
+C2R, ADMB2R, and For2R (together, X2R). Each contains output
+routines to simplify transfer of complicated data structures from
+models written in a compiled language to S. The user's data can
+be written as a structured ASCII file which, when read by S with
+a single dget() function call, will become an S data object of
+type list. The list, of course, may contain components such as
+data frames, matrices, and other lists.
+
+These are NOT libraries of S functions; rather they are subroutine
+libraries to be used with programmers' own modeling codes.
+
+Languages supported are Fortran 95 (with For2R), C and C++ (with
+C2R) and AD Model Builder (with ADMB2R). Source code and users'
+manuals are supplied.
+
+This work has been tested and used by the authors. However, any
+software may contain bugs, and these works are classified by NOAA
+as "Experimental Products." Although the software is supplied
+with no warranty whatsoever, bug reports, suggestions, and
+extensions are solicited (send to Prager or Martin). The authors
+will attempt to fix all bugs promptly and to add requested
+features.
+
+Software is now available at CRAN, http://cran.r-project.org/ ,
+and is expected to propagate to mirrors shortly. Look under
+"Software / Other" for the current X2R distribution.
+
+Michael H. Prager - mike.prager at noaa.gov
+Andi Stephens
+Southeast Fisheries Science Center
+National Marine Fisheries Service, NOAA
+101 Pivers Island Road
+Beaufort, North Carolina 28516 USA
+
+Jennifer L. Martin - jennifer.martin at noaa.gov
+Northeast Fisheries Science Center
+National Marine Fisheries Service, NOAA
+166 Water Street
+Woods Hole, Massachusetts 02543 USA
+
+PLEASE NOTE: Use of product names (commercial or otherwise) does
+not imply endorsement or recommendation by any U.S. government
+agency, nor by the authors in their government capacities. S-PLUS
+is a commercial product, released by Insightful Corporation, and
+its use requires purchasing a license. AD Model Builder is a
+commercial product, released by Otter Research, and its use
+requires purchasing a license.
+
+From Inman.Brant at mayo.edu  Wed Oct 25 22:02:01 2006
+From: Inman.Brant at mayo.edu (Inman, Brant A. M.D.)
+Date: Wed, 25 Oct 2006 17:02:01 -0500
+Subject: Running script in S-Plus
+Message-ID: <6021CA6EF4C8374084D4F5A141F1CBBB253842@msgebe23.mfad.mfroot.org>
+
+In the R environment, I use "control-R" to run a single line of code (i.e. not the entire script file), something that I find most convenient.  In the S-Plus 7.0.6 for Windows environment that I use, this feature does not appear to be present.  The S-Plus User's Guide suggests highlighting the text and then clicking the "run" button, which works but is much more time consuming and requires using the mouse. 
+
+Does anyone know of an S-Plus hot key to run a single line of code from a script file without the need for highlighting the line?
+
+Brant Inman 
+
+From lli at efs.mq.edu.au  Wed Oct 25 23:23:53 2006
+From: lli at efs.mq.edu.au (Ling Li)
+Date: Thu, 26 Oct 2006 09:23:53 +1000
+Subject: Re: Running script in S-Plus
+Message-ID: <s5407eae.041@mail.efs.mq.edu.au>
+
+You may simply press F10. HTH.
+
+Ling Li
+
+>>> "Inman, Brant A.   M.D." <Inman.Brant at mayo.edu> 10/26/06 8:02 am
+>>>
+
+In the R environment, I use "control-R" to run a single line of code
+(i.e. not the entire script file), something that I find most
+convenient.  In the S-Plus 7.0.6 for Windows environment that I use,
+this feature does not appear to be present.  The S-Plus User's Guide
+suggests highlighting the text and then clicking the "run" button,
+which
+works but is much more time consuming and requires using the mouse. 
+
+Does anyone know of an S-Plus hot key to run a single line of code
+from
+a script file without the need for highlighting the line?
+
+Brant Inman 
+
+From Ita.Cirovic-Donev at hypo-alpe-adria.com  Thu Oct 26 11:39:07 2006
+From: Ita.Cirovic-Donev at hypo-alpe-adria.com
+Date: Thu, 26 Oct 2006 13:39:07 +0200
+Subject: logit interpretation
+Message-ID: <OF322AD1C3.6AD66A03-ONC1257213.00310633-C1257213.003FED4F@arz.co.at>
+
+I have the following output from the logistic regression:
+
+             Coef   S.E. Wald Z      P
+Intercept -2.5159 0.3073  -8.19 0.0000
+     P4.t -0.4595 0.2080  -2.21 0.0272
+     P5.t -0.6054 0.2363  -2.56 0.0104
+     L5.t  0.9877 0.3665   2.70 0.0070
+    L12.t -1.6130 0.2577  -6.26 0.0000
+    L17.t -3.4368 0.2876 -11.95 0.0000
+     A1.t  0.4639 0.1906   2.43 0.0149
+     A7.t  1.1285 0.2482   4.55 0.0000
+  LEV21.t  1.1970 0.1887   6.34 0.0000
+  LEV23.t -1.7330 0.2511  -6.90 0.0000
+
+these are financial variables, rank transformed prior to runing logistic
+regression. My question is about the intercept. Is it normal for it to be
+so large as compared to other variables. thanks
+
+Ita
+
+Razmjena informacija s HYPO ALPE-ADRIA-BANK d.d. putem e-maila je bez
+jamstava. Zakljucivanje pravnih poslova putem ovog medija nije dozvoljeno.
+Ovaj e-mail moze sadrzavati povjerljive i/ili povlastene informacije. Ako
+ste ga primili greskom, molimo Vas da nas o tome odmah obavijestite tako
+sto cete na njega odgovoriti, a zatim vas molimo da ga izbrisete iz vaseg
+sustava. Ovime vas obavjestavamo da je svako otkrivanje, kopiranje,
+distribuiranje ili poduzimanje bilo kakvih aktivnosti u vezi s njegovim
+sadrzajem strogo zabranjeno i moze biti nezakonito.
+
+The exchange of messages with HYPO ALPE-ADRIA-BANK d.d. via e-mail is not
+binding. Declarations regarding legal transactions must not be exchanged
+via this medium. The information contained in this e-mail message is
+confidential and intended exclusively for the addressee. Persons receiving
+this e-mail message who are not the named addressee (or his/her co-workers,
+or persons authorized to take delivery) must not use, forward or reproduce
+its  contents. If you have received this e-mail message by mistake, please
+contact us immediately and delete this email message beyond retrieval.
+
+From f.harrell at vanderbilt.edu  Thu Oct 26 12:59:14 2006
+From: f.harrell at vanderbilt.edu (Frank E Harrell Jr)
+Date: Thu, 26 Oct 2006 07:59:14 -0500
+Subject: Re: logit interpretation
+In-Reply-To: <OF322AD1C3.6AD66A03-ONC1257213.00310633-C1257213.003FED4F@arz.co.at>
+References: <OF322AD1C3.6AD66A03-ONC1257213.00310633-C1257213.003FED4F@arz.co.at>
+Message-ID: <4540B122.2090300@vanderbilt.edu>
+
+Ita.Cirovic-Donev at hypo-alpe-adria.com wrote:
+> I have the following output from the logistic regression:
+>
+>              Coef   S.E. Wald Z      P
+> Intercept -2.5159 0.3073  -8.19 0.0000
+>      P4.t -0.4595 0.2080  -2.21 0.0272
+>      P5.t -0.6054 0.2363  -2.56 0.0104
+>      L5.t  0.9877 0.3665   2.70 0.0070
+>     L12.t -1.6130 0.2577  -6.26 0.0000
+>     L17.t -3.4368 0.2876 -11.95 0.0000
+>      A1.t  0.4639 0.1906   2.43 0.0149
+>      A7.t  1.1285 0.2482   4.55 0.0000
+>   LEV21.t  1.1970 0.1887   6.34 0.0000
+>   LEV23.t -1.7330 0.2511  -6.90 0.0000
+>
+> these are financial variables, rank transformed prior to runing logistic
+> regression. My question is about the intercept. Is it normal for it to be
+> so large as compared to other variables. thanks
+>
+>
+> Ita
+Why would you expect the variables to act on the log odds in a way that 
+is linear on the ranks?  If you are concerned about linearity, then 
+regression splines may be the answer.  If you are concerned about 
+robustness then curtailing the regression spline fits to extrapolate in 
+a flat fashion will deal with overly influential observations.  You will 
+have difficulty getting predicted values when covariates are ranked.
+
+Frank
+--
+Frank E Harrell Jr   Professor and Chair           School of Medicine
+                     Department of Biostatistics   Vanderbilt University
+
+From STEPHANIE.MATHER at huskymail.uconn.edu  Thu Oct 26 13:30:57 2006
+From: STEPHANIE.MATHER at huskymail.uconn.edu (Stephanie A Mather)
+Date: Thu, 26 Oct 2006 09:30:57 -0400
+Subject: tree model goodness of fit/general tree model questions
+Message-ID: <9dcfbf9da4b3.9da4b39dcfbf@huskymail.uconn.edu>
+
+Hello all - 
+I am using S-Plus 7.0 for windows to develop a regression tree as a means to 
+stratify my predictor variables in a way so that they best predict my 
+continuous response variable for my dissertation.  I have little 
+S-Plus/Statistics background, so I apologize in advance.  Here are a few 
+questions I have:
+
+1.  Is there some value on the summary output that gives goodness-of-fit of the 
+output tree model?
+
+2.  What exactly is deviance/residual mean deviance with respect to tree 
+models?  From what I understand, res. mean deviance is the squared difference 
+between observed and predicted values, which would mean a lower res. mean 
+deviance is a better model, is this correct?
+
+3.  I understand nodes split where the y-values are statistically different - 
+is this at 95% confidence?  Can this be adjusted?
+
+4.  Is there any way to compare tree models to determine which is best to use?
+
+Any help/suggestions would be very very greatly appreciated - thank you in 
+advance!
+
+-Stephanie
+
+Stephanie Mather
+Graduate Research Assistant
+University of Connecticut
+Dept of Civil & Enviro. Engineering
+261 Glenbrook Rd, Unit 2037
+Storrs, CT 06269-2037
+
+From lchihara at carleton.edu  Thu Oct 26 18:18:24 2006
+From: lchihara at carleton.edu (Laura Chihara)
+Date: Thu, 26 Oct 2006 13:18:24 -0500
+Subject: timeDate
+Message-ID: <4540FBF0.6040108@carleton.edu>
+
+How do you truncate the time portion from
+a timeDate object.For example, for observations of
+times such as 3/20/2006 10:21:50.000
+I just want the date 3/20/2006
+I want to use table to count the number of occurrences
+of 3/20/2006, 3/21/2006, etc.
+
+More generally, how do you extract other parts of the
+date - say I want a variable that just keeps
+the months (I want to see how many times
+March occurs, April occurs, etc.)
+
+Thanks!
+
+-- Laura Chihara
+
+*******************************************
+Laura Chihara
+Associate Professor    507-646-4065 (office)
+Dept of Mathematics    507-646-4312 (fax)
+Carleton College
+1 North College Street
+Northfield MN 55057
+
+From sichong.chen at postgrad.manchester.ac.uk  Thu Oct 26 20:03:52 2006
+From: sichong.chen at postgrad.manchester.ac.uk (Chen,Sichong)
+Date: Fri, 27 Oct 2006 04:03:52 +0800
+Subject: Matrix minus A Vector
+Message-ID: <20061026200404.339B413731F@mailgate.biostat.wustl.edu>
+
+Dear Users
+
+I have a matrix (4x3)
+4       5       6       
+2       4       5       
+2       4       6       
+6       5       5       
+3       8       9       
+
+And a vector   (1x3)
+2       4       3       
+
+I would like to use the first column of the matrix minus the first number of
+the vector "2", then the second column of the matrix minus the second number
+of the vector "4" and so on.
+
+The final result of a matrix is supposed to be:
+2       1       3       
+0       0       2       
+0       0       3       
+4       1       2       
+1       4       6       
+
+I know the stupid way is to calculate one column by one column, but I think
+there must be some quicker and smarter way to do it.
+
+Many thanks,
+Regards,
+Sichong
+SPlus 7.0 & FinMetrics 2.0 User
+Windows XP
+
+From christos at nuverabio.com  Thu Oct 26 20:15:22 2006
+From: christos at nuverabio.com (Christos Hatzis)
+Date: Thu, 26 Oct 2006 16:15:22 -0400
+Subject: Re: Matrix minus A Vector
+In-Reply-To: <20061026200404.339B413731F@mailgate.biostat.wustl.edu>
+References: <20061026200404.339B413731F@mailgate.biostat.wustl.edu>
+Message-ID: <004101c6f93b$778bdfc0$0e010a0a@headquarters.silicoinsights>
+
+You can try this:
+
+ones <- matrix(1,4,3)
+B <- t(t(ones) * c(2,4,3))
+
+A-B
+should give you the desired result, where A is your original matrix.
+
+-Christos  
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Chen,Sichong
+Sent: Thursday, October 26, 2006 4:04 PM
+To: s-news at lists.biostat.wustl.edu
+Subject: [S] Matrix minus A Vector
+
+Dear Users
+
+I have a matrix (4x3)
+4       5       6       
+2       4       5       
+2       4       6       
+6       5       5       
+3       8       9       
+
+And a vector   (1x3)
+2       4       3       
+
+I would like to use the first column of the matrix minus the first number of
+the vector "2", then the second column of the matrix minus the second number
+of the vector "4" and so on.
+
+The final result of a matrix is supposed to be:
+2       1       3       
+0       0       2       
+0       0       3       
+4       1       2       
+1       4       6       
+
+I know the stupid way is to calculate one column by one column, but I think
+there must be some quicker and smarter way to do it.
+
+Many thanks,
+Regards,
+Sichong
+SPlus 7.0 & FinMetrics 2.0 User
+Windows XP
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with the
+BODY of the message:  unsubscribe s-news
+
+From manuela.huso at oregonstate.edu  Thu Oct 26 20:59:46 2006
+From: manuela.huso at oregonstate.edu (Huso, Manuela)
+Date: Thu, 26 Oct 2006 13:59:46 -0700
+Subject: Re: Matrix minus A Vector
+In-Reply-To: <20061026200404.339B413731F@mailgate.biostat.wustl.edu>
+References: <20061026200404.339B413731F@mailgate.biostat.wustl.edu>
+Message-ID: <4D5DA98A54374044B7CC3F40A157B98BE7781A@thuja>
+
+If X is your original matrix, and V is the vector of values you want to
+subtract from each column, then
+
+X-rep(V,each=dim(X)[1])  
+
+will work.
+
+>::<>::<>::<>::<>::<>::<>::<>::<>::<>::<
+Manuela Huso
+Consulting Statistician
+Department of Forest Science
+201H Richardson Hall
+Oregon State University
+Corvallis, OR   97331
+ph: 541.737.6232
+fx: 541.737.1393
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Chen,Sichong
+Sent: Thursday, October 26, 2006 1:04 PM
+To: s-news at lists.biostat.wustl.edu
+Subject: [S] Matrix minus A Vector
+
+Dear Users
+
+I have a matrix (4x3)
+4       5       6       
+2       4       5       
+2       4       6       
+6       5       5       
+3       8       9       
+
+And a vector   (1x3)
+2       4       3       
+
+I would like to use the first column of the matrix minus the first
+number of the vector "2", then the second column of the matrix minus the
+second number of the vector "4" and so on.
+
+The final result of a matrix is supposed to be:
+2       1       3       
+0       0       2       
+0       0       3       
+4       1       2       
+1       4       6       
+
+I know the stupid way is to calculate one column by one column, but I
+think there must be some quicker and smarter way to do it.
+
+Many thanks,
+Regards,
+Sichong
+SPlus 7.0 & FinMetrics 2.0 User
+Windows XP
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From Greg.Snow at intermountainmail.org  Thu Oct 26 21:35:24 2006
+From: Greg.Snow at intermountainmail.org (Greg Snow)
+Date: Thu, 26 Oct 2006 15:35:24 -0600
+Subject: Re: Matrix minus A Vector
+Message-ID: <07E228A5BE53C24CAD490193A7381BBB65DE36@LP-EXCHVS07.CO.IHC.COM>
+
+Look at the sweep function. 
+
+-- 
+Gregory (Greg) L. Snow Ph.D.
+Statistical Data Center
+Intermountain Healthcare
+greg.snow at intermountainmail.org
+(801) 408-8111
+ 
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Chen,Sichong
+Sent: Thursday, October 26, 2006 2:04 PM
+To: s-news at lists.biostat.wustl.edu
+Subject: [S] Matrix minus A Vector
+
+Dear Users
+
+I have a matrix (4x3)
+4       5       6       
+2       4       5       
+2       4       6       
+6       5       5       
+3       8       9       
+
+And a vector   (1x3)
+2       4       3       
+
+I would like to use the first column of the matrix minus the first
+number of the vector "2", then the second column of the matrix minus the
+second number of the vector "4" and so on.
+
+The final result of a matrix is supposed to be:
+2       1       3       
+0       0       2       
+0       0       3       
+4       1       2       
+1       4       6       
+
+I know the stupid way is to calculate one column by one column, but I
+think there must be some quicker and smarter way to do it.
+
+Many thanks,
+Regards,
+Sichong
+SPlus 7.0 & FinMetrics 2.0 User
+Windows XP
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From timh at insightful.com  Thu Oct 26 22:05:37 2006
+From: timh at insightful.com (Tim Hesterberg)
+Date: Thu, 26 Oct 2006 15:05:37 -0700
+Subject: Re: Matrix minus A Vector
+In-Reply-To: <20061026200404.339B413731F@mailgate.biostat.wustl.edu>
+References: <20061026200404.339B413731F@mailgate.biostat.wustl.edu>
+Message-ID: <SEWINEXCH00DJkhYUjA000006bb@sewinexch00.insightful.com>
+
+A similar question came up on R-help (/ rather than -), and the number
+of different proposals was amazing:
+
+x/matrix(v, nrow(x), ncol(x), byrow = TRUE))
+sweep(x, 2, v, "/")
+x / rep(v, each = nrow(x))
+x / outer(rep(1, nrow(x)), v)
+x %*% diag(1/v)
+t(apply(x, 1, function(x) x/v))
+x/rep(v, each=nrow(x))
+t(apply(x, 1, "/", v))
+library(reshape); iapply(x, 1, "/", v)  # R only
+t(t(x)/v)
+scale(x, center = FALSE, v)  # not previously suggested
+
+Some of these are terribly inefficient.  The best is generally
+        x / rep(v, each = nrow(x))
+
+Even that is slower than need be -- you really shouldn't need to
+replicate v.  On my to-do list is to create colMinus, colTimes,
+colDivide, colPlus, so you could do e.g.
+        colMinus(x, colMeans(x))
+and have the calculations be done in C.
+
+Tim Hesterberg
+
+>Dear Users
+>
+>I have a matrix (4x3)
+>4      5       6       
+>2      4       5       
+>2      4       6       
+>6      5       5       
+>3      8       9       
+>
+>And a vector   (1x3)
+>2      4       3       
+>
+>I would like to use the first column of the matrix minus the first number of
+>the vector "2", then the second column of the matrix minus the second number
+>of the vector "4" and so on.
+>
+>The final result of a matrix is supposed to be:
+>2      1       3       
+>0      0       2       
+>0      0       3       
+>4      1       2       
+>1      4       6       
+>
+>I know the stupid way is to calculate one column by one column, but I think
+>there must be some quicker and smarter way to do it.
+>
+>Many thanks,
+>Regards,
+>Sichong
+>SPlus 7.0 & FinMetrics 2.0 User
+>Windows XP
+>
+>
+>
+>--------------------------------------------------------------------
+>This message was distributed by s-news at lists.biostat.wustl.edu.  To
+>unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+>the BODY of the message:  unsubscribe s-news
+
+From sichong.chen at postgrad.manchester.ac.uk  Thu Oct 26 22:07:13 2006
+From: sichong.chen at postgrad.manchester.ac.uk (Chen,Sichong)
+Date: Fri, 27 Oct 2006 06:07:13 +0800
+Subject: Re: Matrix minus A Vector
+In-Reply-To: <20061026200404.339B413731F@mailgate.biostat.wustl.edu>
+References: <20061026200404.339B413731F@mailgate.biostat.wustl.edu>
+Message-ID: <20061026220724.B51D2136ECF@mailgate.biostat.wustl.edu>
+
+Hi,
+
+Thank all. I have several replies. I summarize here.
+
+The sweep function is quite good. The margin should be 2, for column
+calculation.
+
+Or create a new matrix.
+
+A=matrix(0,nrow=5,ncol=3)     ## Or make A the matrix you have
+B=matrix(c(2,4,3),ncol=ncol(A),nrow=nrow(A),byrow=T)
+
+B
+A-B
+
+Regards,
+
+CSC
+SPlus 7.0 & FinMetrics 2.0 User
+Windows XP
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Chen,Sichong
+Sent: Friday, October 27, 2006 4:04 AM
+To: s-news at lists.biostat.wustl.edu
+Subject: [S] Matrix minus A Vector
+
+Dear Users
+
+I have a matrix (4x3)
+4       5       6       
+2       4       5       
+2       4       6       
+6       5       5       
+3       8       9       
+
+And a vector   (1x3)
+2       4       3       
+
+I would like to use the first column of the matrix minus the first number of
+the vector "2", then the second column of the matrix minus the second number
+of the vector "4" and so on.
+
+The final result of a matrix is supposed to be:
+2       1       3       
+0       0       2       
+0       0       3       
+4       1       2       
+1       4       6       
+
+I know the stupid way is to calculate one column by one column, but I think
+there must be some quicker and smarter way to do it.
+
+Many thanks,
+Regards,
+Sichong
+SPlus 7.0 & FinMetrics 2.0 User
+Windows XP
+
+Sichong Chen
+PhD of Finance
+Manchester Business School
+University of Manchester
+Oxford Road
+Manchester
+United Kingdom
+M13 9PL 
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Chen,Sichong
+Sent: Friday, October 27, 2006 4:04 AM
+To: s-news at lists.biostat.wustl.edu
+Subject: [S] Matrix minus A Vector
+
+Dear Users
+
+I have a matrix (4x3)
+4       5       6       
+2       4       5       
+2       4       6       
+6       5       5       
+3       8       9       
+
+And a vector   (1x3)
+2       4       3       
+
+I would like to use the first column of the matrix minus the first number of
+the vector "2", then the second column of the matrix minus the second number
+of the vector "4" and so on.
+
+The final result of a matrix is supposed to be:
+2       1       3       
+0       0       2       
+0       0       3       
+4       1       2       
+1       4       6       
+
+I know the stupid way is to calculate one column by one column, but I think
+there must be some quicker and smarter way to do it.
+
+Many thanks,
+Regards,
+Sichong
+SPlus 7.0 & FinMetrics 2.0 User
+Windows XP
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From lorenz at usgs.gov  Fri Oct 27 12:58:00 2006
+From: lorenz at usgs.gov (David L Lorenz)
+Date: Fri, 27 Oct 2006 07:58:00 -0500
+Subject: Re: timeDate
+In-Reply-To: <4540FBF0.6040108@carleton.edu>
+References: <4540FBF0.6040108@carleton.edu>
+Message-ID: <OF340C80F7.FED86338-ON86257214.00458AA4-86257214.00473A65@usgs.gov>
+
+Laura,
+
+  TimeDate objects store the date
+and the integer number of days since 1/1/1960 and time as the integer number
+of milliseconds since midnight. So there really are two parts to your question.
+
+  The first (truncating the data)
+is important if you wanted to merge observations based on the day or table
+the occurrences on each day. To really truncate the data, you can use the
+trunc() function.
+
+  The second is for presentation.
+To change how dates are displayed, you need to change the format slot.
+For example, if you had a vector of timeDate data called Junk, then to
+see only the month/day/year:
+
+Junk@format <- "%m/%d/%Y"
+
+  There are several functions that
+extract information from timeDate data. The months() function will create
+a factor vector of the months.
+
+Dave
+
+Laura Chihara <lchihara at carleton.edu>
+
+Sent by: s-news-owner at lists.biostat.wustl.edu
+10/26/2006 01:18 PM
+
+To
+
+s-news at lists.biostat.wustl.edu
+
+cc
+
+Subject
+
+[S] timeDate
+
+How do you truncate the time portion from
+
+a timeDate object.For example, for observations of
+
+times such as 3/20/2006 10:21:50.000
+
+I just want the date 3/20/2006
+
+I want to use table to count the number of occurrences
+
+of 3/20/2006, 3/21/2006, etc.
+
+More generally, how do you extract other parts of the
+
+date - say I want a variable that just keeps
+
+the months (I want to see how many times
+
+March occurs, April occurs, etc.)
+
+Thanks!
+
+-- Laura Chihara
+
+*******************************************
+
+Laura Chihara
+
+Associate Professor    507-646-4065 (office)
+
+Dept of Mathematics    507-646-4312 (fax)
+
+Carleton College
+
+1 North College Street
+
+Northfield MN 55057
+
+--------------------------------------------------------------------
+
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+
+the BODY of the message:  unsubscribe s-news
+
+From Zheng_Jenny at Allergan.com  Fri Oct 27 18:33:40 2006
+From: Zheng_Jenny at Allergan.com (Zheng_Jenny)
+Date: Fri, 27 Oct 2006 11:33:40 -0700
+Subject: data manipulation
+Message-ID: <D475C767BF2F6D438FD30E3984FCBB11028A8E95@irmail121.irvine.allergan.com>
+
+Hi, everyone,
+
+Would anyone help me with the problem below? 
+
+ 
+
+I have a dataset x including ID, Time, DV and ID2.
+
+ 
+
+I can use 
+
+x$DV[x$Time==0]_0
+to make DV=0 when Time is 0 but when I was trying to use command “x$ID2[x$Time==0]_"zero"”
+to make ID2==zero when Time is 0, I received the following message”
+
+ 
+
+Warning
+messages:
+
+ 
+replacement values not all in levels(x): NA's generated in: .A0[x$Time ==
+
+  
+0]  <-  "zero"
+
+ 
+
+Why
+is that? How can I do what I want to do? What would be effective command to
+change DV=0 when time is 0,2 and 4. Thanks in advance.
+
+ 
+
+ 
+
+ 
+
+Jenny
+
+ 
+
+ 
+
+x_data.frame(ID=seq(1,10,1),Time=rep(c(0,1,2,3,4),2),DV=rnorm(10,0,1),ID2=rep(sample(letters,5),2))
+
+x$DV[x$Time==0]_0
+
+x$ID2[x$Time==0]_"zero"
+
+Warning
+messages:
+
+ 
+replacement values not all in levels(x): NA's generated in: .A0[x$Time ==
+
+  
+0]  <-  "zero"
+
+ 
+
+ 
+
+ 
+
+From lorenz at usgs.gov  Fri Oct 27 18:58:26 2006
+From: lorenz at usgs.gov (David L Lorenz)
+Date: Fri, 27 Oct 2006 13:58:26 -0500
+Subject: Re: data manipulation
+In-Reply-To: <D475C767BF2F6D438FD30E3984FCBB11028A8E95@irmail121.irvine.allergan.com>
+References: <D475C767BF2F6D438FD30E3984FCBB11028A8E95@irmail121.irvine.allergan.com>
+Message-ID: <OFED54EC58.DBC1BBFE-ON86257214.00679D2E-86257214.0068399C@usgs.gov>
+
+Jenny,
+
+  You are getting the error because
+ID2 is a factor and there is no level "zero." You have 2 choices:
+1 redo the ID2 column and add a level "zero" or convert ID2 to
+character.
+
+  Note that you can prevent automatic
+conversion of character to factor by specifying stringsAsFactors=F
+as an argument in data.fame(). You
+can also set that as a global option, but probably do not want to.
+
+Dave
+
+"Zheng_Jenny"
+<Zheng_Jenny at Allergan.com> 
+
+Sent by: s-news-owner at lists.biostat.wustl.edu
+10/27/2006 01:33 PM
+
+To
+
+<s-news at lists.biostat.wustl.edu>
+
+cc
+
+Subject
+
+[S] data manipulation
+
+Hi, everyone,
+
+Would anyone help me with the problem below?
+
+ 
+
+I have a dataset x including ID, Time, DV
+and ID2.
+
+ 
+
+I can use 
+
+x$DV[x$Time==0]_0 to make DV=0 when
+Time is 0 but when I was trying to use command “x$ID2[x$Time==0]_"zero"”
+to make ID2==zero when Time is 0, I received the following message”
+
+ 
+
+Warning messages:
+
+  replacement values not all in
+levels(x): NA's generated in: .A0[x$Time ==
+
+   0]  <-  "zero"
+
+ 
+
+Why is that? How can I do what I want
+to do? What would be effective command to change DV=0 when time is 0,2
+and 4. Thanks in advance.
+
+ 
+
+ 
+
+ 
+
+Jenny
+
+ 
+
+ 
+
+x_data.frame(ID=seq(1,10,1),Time=rep(c(0,1,2,3,4),2),DV=rnorm(10,0,1),ID2=rep(sample(letters,5),2))
+
+x$DV[x$Time==0]_0
+
+x$ID2[x$Time==0]_"zero"
+
+Warning messages:
+
+  replacement values not all in
+levels(x): NA's generated in: .A0[x$Time ==
+
+   0]  <-  "zero"
+
+ 
+
+ 
+
+ 
+
+From therneau at mayo.edu  Fri Oct 27 19:36:36 2006
+From: therneau at mayo.edu (Terry Therneau)
+Date: Fri, 27 Oct 2006 14:36:36 -0500
+Subject: Re: Error message with survReg
+Message-ID: <200610271936.k9RJaai13369@hsrnfs-101.mayo.edu>
+
+Tristan Lorino asked
+
+I get an error message with survReg (S-Plus 7):
+
+> survReg(Surv(cens04[, 2], cens04[, 3], type = "interval2") ~ cov04[, 2], dist 
+= "weibull", na.action = na.exclude)
+Problem in survReg(Surv(cens04[, 2], cens04[, 3], type = "interval2")
+~ cov04[, ..: Invalid survival times for this distribution
+
+  The error message is clear --- there is an invalid survival time for this
+distribution.  I would guess that it is one for which time1 < time2 <=0.
+The weibull distribution does not allow a censor or death exactly at the
+left endpoint of the distribution, ie on or before day 0.
+
+Then you subset the data set to a smaller group, and got a different error
+message:
+
+survReg(Surv(time1, time2, type='interval2' ~ x,
+         dist = "weibull", na.action =
+        na.exclude, subset=(1250:1260))
+Problem in .C("S_coxph_wtest",: subroutine S_coxph_wtest: Missing values in 
+
+ The subset you gave have almost identical event times:
+        IdS time1  time2
+1250 19176    3    6
+1251 19177    3    9
+1252 19178    3    6
+1253 19179    3    6
+1254 19180    3    6
+1255 19181    3    6
+1256 19182    6    6
+1257 19183    6    6
+1258 19184    6    6
+1259 19185    3    6
+1260 19186    3    6
+
+ This is a real bug in survreg, but one I may not get to soon.  The nearly
+identical times led to a first estimate of the standard error of approx 0,
+which in turn led to values like exp(1200) = Inf.  This in turn cascades into
+missing values a few lines later.  The problem is in the code that tries to
+guess a reasonable starting value for the iterations.
+  There are other things on my queue, this error has not come up before in
+over 10 years of distribution, and I don't expect to see it again.  But -- the
+next time I am updating survreg I will try to work around the zero variance.
+
+        Terry Therneau
+
+From sichong.chen at postgrad.manchester.ac.uk  Sun Oct 29 16:47:05 2006
+From: sichong.chen at postgrad.manchester.ac.uk (Chen,Sichong)
+Date: Mon, 30 Oct 2006 00:47:05 +0800
+Subject: OLS Regression Every Month
+Message-ID: <20061029164718.6636913727B@mailgate.biostat.wustl.edu>
+
+Dear Users
+
+I have to do OLS every month for two series, which are both daily data. So I
+am supposed to do the regression for 84 times for 7 years data. Since it is
+supposed to do month, I can not use rollOLS function, which fix the rolling
+window. So I refer to aggregateSeries function and use to use these script
+to execute the program.
+
+ols.month = function (x)
+{
+
+        tmp     = seriesData(x)
+        tmp1    = tmp[,1]
+        tmp2    = tmp[,2]
+        tmp.ols= OLS(tmp1~tmp2)
+        ols.beta = tmp.ols$coef[2]
+        ols.r    = summary(tmp.ols)$rsq
+        ans               = concat(ols.beta, ols.r)
+
+}
+
+tmp.result =
+aggregateSeries(tmp,by="months",FUN=ols.month,colnames=c("beta","R-square"))
+
+where x is a time series object and has two vectors. The ols.month runs well
+for a time series object. But when it is used in aggregateSeries, it always
+shows
+
+"Problem in object@data: Class "matrix" has no "data" slot"
+
+I don't know what is going on. Could someone help me with this?
+
+Regards,
+
+Sichong
+SPLUS 7.0 and FinMetrics 2.0
+
+From mw.heymans at vumc.nl  Mon Oct 30 07:46:48 2006
+From: mw.heymans at vumc.nl (Heymans, MW)
+Date: Mon, 30 Oct 2006 08:46:48 +0100
+Subject: combining lists
+Message-ID: <B8CF0F16EE1E1B42854D9ACCEB606864023FA66A@vumc-mb01.vumc.nl>
+
+Dear list, 
+
+I have this problem, please your advice. 
+
+I have list A that contains two matrix elements: 
+
+[[1]]
+
+a b
+
+[1,] 2 1
+
+[2,] 3 2
+
+[3,] 3 2 
+
+[[2]]
+
+c d
+
+[1,] 3 5
+
+[2,] 3 1
+
+[3,] 2 3 
+
+and list B, that also contains 2 matrices: 
+
+[[1]]
+
+e f g
+
+[1,] 1 20 30
+
+[2,] 2 40 50
+
+[3,] 3 60 70
+
+[4,] 4 80 90
+
+[5,] 5 100 110 
+
+[[2]]
+
+h i j
+
+[1,] 1 10 20
+
+[2,] 2 20 30
+
+[3,] 3 30 40
+
+[4,] 4 40 50
+
+[5,] 5 50 60 
+
+Now I want to match each column of list A with each row of list B in such a way that element 1 of list A corresponds to element 1 of list B (and element 2 of A with 2 of B). 
+
+So, in total there will be 4 new matrices, 1 for each column of list A. For example, for column a of list A the new matrix will be: 
+
+2 40 50 
+
+3 60 70 
+
+3 60 70 
+
+thanks! 
+
+Martijn 
+
+VUmc 
+
+Amsterdam 
+
+From cj5815 at yahoo.com  Mon Oct 30 20:04:33 2006
+From: cj5815 at yahoo.com (Joe Cerniglia)
+Date: Mon, 30 Oct 2006 12:04:33 -0800
+Subject: c code & splus
+Message-ID: <20061030200433.95354.qmail@web50405.mail.yahoo.com>
+
+All,
+
+I  have a question about using c and splus.
+
+To compile my c code I am using cygwin gcc. 
+
+gcc -c mh2.c
+gcc -shared -o mh2.dll mh2.o
+
+#
+# splus code
+
+mh2 <- function(m,start){
+out <- numeric(m)
+out[1] <- start
+.C("mh2",
+    m=as.integer(m), norms=as.double(rnorm(m)),
+    unifs=as.double(runif(m)), out=as.double(out),
+    cand=as.double(numeric(m)),
+accept=as.double(numeric(m)))
+}
+
+#
+# I GET THE FOLLOWING ERRORS IN SPLUS
+dll.load("C:\\temp\\mh2.dll")  # S-PLUS/
+
+> dll.load("C:\\temp\\mh2.dll")
+[1] -2
+
+dyn.open("C:\\temp\\mh2.dll")  # S-PLUS/
+> dyn.open("C:\\temp\\mh2.dll")
+Warning messages:
+  "C:\temp\mh2.dll" can't be opened as a DLL; check
+how it was loaded in: dyn.open("C:\\temp\\mh2.dll")
+
+temp <- mh2(3000, 3)
+plot(density(temp$out))1
+
+Thanks in advance.
+
+Joe
+
+ 
+__________________________________________________________________________________________
+Check out the New Yahoo! Mail - Fire up a more powerful email and get things 
+done faster. 
+(http://advision.webevents.yahoo.com/mailbeta) 
+
+From f.harrell at vanderbilt.edu  Tue Oct 31 12:55:36 2006
+From: f.harrell at vanderbilt.edu (Frank E Harrell Jr)
+Date: Tue, 31 Oct 2006 06:55:36 -0600
+Subject: Re: rcorrp.cens: error message
+In-Reply-To: <24BB4881-EF9F-43F5-8238-FC1FCFCBBBD9@mac.com>
+References: <24BB4881-EF9F-43F5-8238-FC1FCFCBBBD9@mac.com>
+Message-ID: <454747C8.7020700@vanderbilt.edu>
+
+Maggie Cheang wrote:
+> Dear all,
+> I am trying to get U-statistics on two predictors.
+> But when I run the rcorrp.cens function, there is an error and below is
+> my script and the error message.
+>
+> i really appreciate if someone can shed light on this.
+>
+>  > lp1 <- predict(hm01, type='lp')
+>  > lp2 <- predict(hm02, type='lp')
+>  >
+>  > rcorrp.cens(lp1,lp2, Surv(SURVYRS, BRDEATH == 1), data = mydata)
+> Error in rcorrp.cens(lp1, lp2, Surv(SURVYRS, BRDEATH == 1), data =
+> mydata) :
+>     unused argument(s) (data = list(BSERIES = c(6, 15, 16, 18, 21, 22,
+> 23, 26, 27, 29, 32, 33, 34, 36, 37, 41, 45, 46, 47, 48, 53, 54, 56, 58,
+> 59, 60, 61, 62, 65, 68, 70, 71, 73, 74, 81, 83, 84, 86, 87, 88, 91, 100,
+> 101, 111, 114, 115, 117, 118, 119, 124, 127, 131, 134, 135, 137, 138,
+> 143, 146, 154, 156, 157, 158, 160, 162, 168, 169, 173, 178, 179, 181,
+> 183, 186, 188, 192, 193, 194, 195, 196, 198, 199, 201, 205, 207, 208,
+> 213, 214, 218, 219, 223, 224, 225, 226, 230, 233, 238, 239, 244, 247,
+> 248, 257, 258, 262, 264,
+>
+>
+> when I didn't put data = mydata, it said object: "SURVYRS" not found.
+> But I had run the hm01, hm02 (which is the cph(Surv(SURVYRS, BRDEATH ==
+> 1) using SURVYRS and it work
+>
+>
+> Thanks a million,
+> Maggie
+> mcheang at mac.com
+
+The error message tells all.  rcorrp.cens does not take a data argument. 
+ You will need either to attach the data frame containing SURVYRS and 
+BRDEATH or prefix those variables with the data frame and $.  I usually 
+do the following:
+
+S <- Surv(mydata$SURVYRS, mydata$BRDEATH==1)
+# if BRDEATH is 0 or 1 just say mydata$BRDEATH
+rcorrp.cens(x1, x2, S)
+
+Frank
+
+--
+Frank E Harrell Jr   Professor and Chair           School of Medicine
+                     Department of Biostatistics   Vanderbilt University
+
+From Greg.Snow at intermountainmail.org  Tue Oct 31 16:01:57 2006
+From: Greg.Snow at intermountainmail.org (Greg Snow)
+Date: Tue, 31 Oct 2006 09:01:57 -0700
+Subject: Re: c code & splus
+Message-ID: <07E228A5BE53C24CAD490193A7381BBB65E0E6@LP-EXCHVS07.CO.IHC.COM>
+
+Change the compiler commands to:
+
+gcc -mno-cygwin -c mh2.c
+gcc -mno-cygwin -shared -o mh2.dll mh2.o
+
+And see if that fixes the problem.
+
+Just out of curiosity, where did you get the instructions that you are
+following?  The code that you have tried so far looks nearly identical
+to something I wrote a few years ago, is it still floating around out
+there?
+
+-- 
+Gregory (Greg) L. Snow Ph.D.
+Statistical Data Center
+Intermountain Healthcare
+greg.snow at intermountainmail.org
+(801) 408-8111
+ 
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Joe Cerniglia
+Sent: Monday, October 30, 2006 1:05 PM
+To: s-news at lists.biostat.wustl.edu
+Subject: [S] c code & splus
+
+All,
+
+I  have a question about using c and splus.
+
+To compile my c code I am using cygwin gcc. 
+
+gcc -c mh2.c
+gcc -shared -o mh2.dll mh2.o
+
+#
+# splus code
+
+mh2 <- function(m,start){
+out <- numeric(m)
+out[1] <- start
+.C("mh2",
+    m=as.integer(m), norms=as.double(rnorm(m)),
+    unifs=as.double(runif(m)), out=as.double(out),
+    cand=as.double(numeric(m)),
+accept=as.double(numeric(m)))
+}
+
+#
+# I GET THE FOLLOWING ERRORS IN SPLUS
+dll.load("C:\\temp\\mh2.dll")  # S-PLUS/
+
+> dll.load("C:\\temp\\mh2.dll")
+[1] -2
+
+dyn.open("C:\\temp\\mh2.dll")  # S-PLUS/
+> dyn.open("C:\\temp\\mh2.dll")
+Warning messages:
+  "C:\temp\mh2.dll" can't be opened as a DLL; check how it was loaded
+in: dyn.open("C:\\temp\\mh2.dll")
+
+temp <- mh2(3000, 3)
+plot(density(temp$out))1
+
+Thanks in advance.
+
+Joe
+
+ 
+________________________________________________________________________
+__________________
+Check out the New Yahoo! Mail - Fire up a more powerful email and get
+things done faster. 
+(http://advision.webevents.yahoo.com/mailbeta) 
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From Yingfu.Xie at sekon.slu.se  Tue Oct 31 16:39:56 2006
+From: Yingfu.Xie at sekon.slu.se (Yingfu Xie)
+Date: Tue, 31 Oct 2006 17:39:56 +0100
+Subject: Re: c code & splus
+In-Reply-To: <20061030200433.95354.qmail@web50405.mail.yahoo.com>
+References: <20061030200433.95354.qmail@web50405.mail.yahoo.com>
+Message-ID: <CA871298CD1882459F7859BD08DC06E4C53176@slumail.ad.slu.se>
+
+Hello,
+
+Are you following the guide from book 'S programming' by Venables &
+Ripley?  I just want to remind you that, according to the on-line update
+of this book, the cygwin gcc compiler are no longer supported by S-plus.
+Instead, you can use MinGW compiler. That works well.
+By the way, I had the same experience before and was corrected by Prof.
+Ripley.
+
+HTH,
+Yingfu
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Joe Cerniglia
+Sent: den 30 oktober 2006 21:05
+To: s-news at lists.biostat.wustl.edu
+Subject: [S] c code & splus
+
+All,
+
+I  have a question about using c and splus.
+
+To compile my c code I am using cygwin gcc. 
+
+gcc -c mh2.c
+gcc -shared -o mh2.dll mh2.o
+
+#
+# splus code
+
+mh2 <- function(m,start){
+out <- numeric(m)
+out[1] <- start
+.C("mh2",
+    m=as.integer(m), norms=as.double(rnorm(m)),
+    unifs=as.double(runif(m)), out=as.double(out),
+    cand=as.double(numeric(m)),
+accept=as.double(numeric(m)))
+}
+
+#
+# I GET THE FOLLOWING ERRORS IN SPLUS
+dll.load("C:\\temp\\mh2.dll")  # S-PLUS/
+
+> dll.load("C:\\temp\\mh2.dll")
+[1] -2
+
+dyn.open("C:\\temp\\mh2.dll")  # S-PLUS/
+> dyn.open("C:\\temp\\mh2.dll")
+Warning messages:
+  "C:\temp\mh2.dll" can't be opened as a DLL; check
+how it was loaded in: dyn.open("C:\\temp\\mh2.dll")
+
+temp <- mh2(3000, 3)
+plot(density(temp$out))1
+
+Thanks in advance.
+
+Joe
+
+ 
+________________________________________________________________________
+__________________
+Check out the New Yahoo! Mail - Fire up a more powerful email and get
+things done faster. 
+(http://advision.webevents.yahoo.com/mailbeta) 
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+###########################################
+
+This message has been scanned by F-Secure Anti-Virus for Microsoft Exchange.
+For more information, connect to http://www.f-secure.com/
+
+From VNagarajan at tiaa-cref.org  Tue Oct 31 21:19:53 2006
+From: VNagarajan at tiaa-cref.org (Nagarajan, Venkatesh)
+Date: Tue, 31 Oct 2006 14:19:53 -0700
+Subject: reading in dates in the header.
+Message-ID: <B921860A554B624D8C1DC248C352BBF70477A45B@DENPDMSXMB03.ad.tiaa-cref.org>
+
+Input file
+
+Test.csv
+
+ 
+
+"row.names","7/31/1997","8/29/1997","9/30/1997"
+
+"499963",1,2,3
+
+"499964",4,5,6
+
+"422891",10,11,12.2
+
+ 
+
+Splus code
+
+a =
+read.table("test.csv", sep=",", header=TRUE, row.names=1); 
+
+write.table(a,
+"a.csv", sep=",", dimnames.write=TRUE);
+
+ 
+
+ 
+
+Output file
+
+row.names,.7.31.1997.,.8.29.1997.,.9.30.1997.
+
+"499963",1,2,3
+
+"499964",4,5,6
+
+"422891",10,11,12.2
+
+ 
+
+What am I doing wrong
+here? Why are the dates not transferred properly to the output file? 
+
+ 
+
+Thanks
+
+Venkat
+
+ 
+
+ 
+
+**************************************************************
+
+This message, including any attachments, contains confidential information intended for a specific individual and purpose, and is protected by law.  If you are not the intended recipient, please contact sender immediately by reply e-mail and destroy all copies.  You are hereby notified that any disclosure, copying, or distribution of this message, or the taking of any action based on it, is strictly prohibited.
+
+TIAA-CREF
+
+**************************************************************
+

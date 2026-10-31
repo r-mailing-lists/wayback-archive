@@ -1,0 +1,5837 @@
+From martyncollins10 at yahoo.com  Tue Aug  1 13:17:07 2006
+From: martyncollins10 at yahoo.com (Martyn Colins)
+Date: Tue, 01 Aug 2006 06:17:07 -0700
+Subject: using tapply to filter a variable
+Message-ID: <20060801131707.95346.qmail@web55708.mail.re3.yahoo.com>
+
+ 
+  I have a question related to the tapply function. If I have the following data.frame:
+   
+  w <- data.frame(y1 =1:10, y2=as.factor(rep(LETTERS[1:5],2)), y3=as.factor(rep(c("level1", "level2"),5)), y4=c(rep(c("sub1", "sub2", "sub3"), 3), "sub3"))
+   
+  and I want to sum w$y1 for w$y2 and w$y3 when w$y4 is equal to "sub1" - I tried this
+  tapply(w$y1, list(w$y2, w$y3, w$y4=="sub1"), sum)
+   
+  However, I get 2 tables (FALSE and TRUE) like this
+  > tapply(w$y1, list(w$y2, w$y3, w$y4 == "sub1"), sum)
+  , , FALSE
+  level1 level2
+ 
+  A NA 6
+  B NA 2
+  C 3 8
+  D 9 NA
+  E 5 10
+  , , TRUE
+  level1 level2 
+  A 1 NA
+  B 7 NA
+  C NA NA
+  D NA 4
+  E NA NA
+   
+  How do I get the table for "sub1"  without performing the "sum" operation for when w$y4 is not equal to "sub1", i.e. I want the TRUE table without calculating the FALSE table as I'm performing a computation intensive operation?
+   
+  Thanks in advance for any
+ help.
+   
+  Martyn 
+ 
+		Yahoo! Music Unlimited - Access over 1 million songs.
+Try it free. 
+
+From MichaelCamilleri at branz.co.nz  Tue Aug  1 22:07:56 2006
+From: MichaelCamilleri at branz.co.nz (Michael Camilleri)
+Date: Wed, 02 Aug 2006 10:07:56 +1200
+Subject: Re: automate writing formulas
+In-Reply-To: <44CE2AEA.9000100@vanderbilt.edu>
+References: <44CE2AEA.9000100@vanderbilt.edu>
+Message-ID: <A23B682083FD8248ADFE1317C82CBD6701978931@exchange.branznt.org.nz>
+
+I have dealt with similar issues when I have several hundred potential
+variables to choose from, of which only a few are of interest to a
+particular model. The issue for me is having a process that easily lets
+me screen the variables I am interested in, (usually less then 20), and
+a semi-automated process saves a lot of hassle rewriting formulas and
+making sure the variable names are spelt correctly. Most of my models
+end up having 0-5 terms only.
+
+I developed a neat bit of code that adds terms to a model using the
+step() function (works with lm or glm, and maybe others), using a
+wildcard search on the variable names of the model data frame. I've
+included it for anyone to use or adapt if they wish. This is much
+quicker for screening variables then having to write out exact formulas
+for the step() or add1() functions.
+
+It uses the oldGrep() function for wildcard searching of variable names,
+and this may not work on all platforms. Easy enough to change to your
+usual method of wildcard searching. Also uses the paste() function which
+might work differently on the various platforms.
+
+This function does not do away with the need to check and compare
+various possible model configurations, and to apply some serious thought
+to what the model should be. It can be particularly dangerous when you
+have a lot of missing data, or categorical variables that have only a
+few cases in one category. Both these types of data sets can easily end
+up fitting a model to the extremes of only one or two variables, or
+explaining more variation by removing observations. In cases like this
+the order in which you screen variables can have a big impact on the
+final model, which is often a sign of trouble.
+
+Michael
+
+********************************************* 
+Michael Camilleri
+Building Physicist
+Mailto:MichaelCamilleri at branz.co.nz
+BRANZ Ltd.               Ph:  (+64 4) 237 1170
+Private Bag 50-908      Fax: (+64 4) 237 1171
+Porirua City 5240,      DDI: (+64 4) 237 1174
+New Zealand       Web: www.branz.co.nz/main.php?page=HEEP
+
+Usage:
+test.model_lm(Energy~Temperature,EnergyData,na=na.omit)
+test.model_auto.model(test.model,'Solar*')
+# Will screen all variables starting with 'Solar' using step()
+
+ auto.model<-
+function(model, addTerms, display = T)
+{
+# addTerms are search terms, using the oldGrep() wildcard format        
+# terms that are character data are converted to factors
+# These will be added and tested one at a time
+        model.call <- model$call
+        dataName <- as.character(model.call$data)
+        data <- get(dataName)
+        addTerms <- names(data)[oldGrep(addTerms, names(data))]
+        if(length(addTerms) == 0) {
+                warning("No terms to add\n")
+                return(model)
+        }
+        print(addTerms)
+        for(i in addTerms) {
+                print(i)
+                if(class(data[, i]) == "character")
+                        model <- step(model, scope = list(upper =
+as.formula(paste("~ .+ factor(", i, ")",
+                                sep = ""))))
+                else model <- step(model, scope = list(upper =
+as.formula(paste("~ .+", i, sep = ""))))
+        }
+        if(display) {
+                if(length(coefficients(model)) <= 1)
+                        print("Model only has an intercept term")
+                else {
+                        print(summary(model, cor = F))
+                        print(drop1(model))
+                        par(mfcol = c(3, 1))
+                        plot(model, which = c(1, 3, 6))
+                }
+        }
+        return(model)
+}
+
+From f.harrell at vanderbilt.edu  Wed Aug  2 11:48:16 2006
+From: f.harrell at vanderbilt.edu (Frank E Harrell Jr)
+Date: Wed, 02 Aug 2006 06:48:16 -0500
+Subject: Re: automate writing formulas
+In-Reply-To: <A23B682083FD8248ADFE1317C82CBD6701978931@exchange.branznt.org.nz>
+References: <A23B682083FD8248ADFE1317C82CBD6701978931@exchange.branznt.org.nz>
+Message-ID: <44D09100.8060609@vanderbilt.edu>
+
+Michael Camilleri wrote:
+> I have dealt with similar issues when I have several hundred potential
+> variables to choose from, of which only a few are of interest to a
+> particular model. The issue for me is having a process that easily lets
+> me screen the variables I am interested in, (usually less then 20), and
+> a semi-automated process saves a lot of hassle rewriting formulas and
+> making sure the variable names are spelt correctly. Most of my models
+> end up having 0-5 terms only.
+
+I would be surprised if that process validates, unless your data are 
+mechanistic and not stochastic.
+
+Frank Harrell
+
+> I developed a neat bit of code that adds terms to a model using the
+> step() function (works with lm or glm, and maybe others), using a
+> wildcard search on the variable names of the model data frame. I've
+> included it for anyone to use or adapt if they wish. This is much
+> quicker for screening variables then having to write out exact formulas
+> for the step() or add1() functions.
+>
+> It uses the oldGrep() function for wildcard searching of variable names,
+> and this may not work on all platforms. Easy enough to change to your
+> usual method of wildcard searching. Also uses the paste() function which
+> might work differently on the various platforms.
+>
+> This function does not do away with the need to check and compare
+> various possible model configurations, and to apply some serious thought
+> to what the model should be. It can be particularly dangerous when you
+> have a lot of missing data, or categorical variables that have only a
+> few cases in one category. Both these types of data sets can easily end
+> up fitting a model to the extremes of only one or two variables, or
+> explaining more variation by removing observations. In cases like this
+> the order in which you screen variables can have a big impact on the
+> final model, which is often a sign of trouble.
+>
+> Michael
+>
+> *********************************************
+> Michael Camilleri
+>
+> Building Physicist
+> Mailto:MichaelCamilleri at branz.co.nz
+> BRANZ Ltd.               Ph:  (+64 4) 237 1170
+> Private Bag 50-908      Fax: (+64 4) 237 1171
+> Porirua City 5240,      DDI: (+64 4) 237 1174
+> New Zealand       Web: www.branz.co.nz/main.php?page=HEEP
+>
+>
+> Usage:
+> test.model_lm(Energy~Temperature,EnergyData,na=na.omit)
+> test.model_auto.model(test.model,'Solar*')
+> # Will screen all variables starting with 'Solar' using step()
+>
+>  auto.model<-
+> function(model, addTerms, display = T)
+> {
+> # addTerms are search terms, using the oldGrep() wildcard format
+> # terms that are character data are converted to factors
+> # These will be added and tested one at a time
+>         model.call <- model$call
+>         dataName <- as.character(model.call$data)
+>         data <- get(dataName)
+>         addTerms <- names(data)[oldGrep(addTerms, names(data))]
+>         if(length(addTerms) == 0) {
+>                 warning("No terms to add\n")
+>                 return(model)
+>         }
+>         print(addTerms)
+>         for(i in addTerms) {
+>                 print(i)
+>                 if(class(data[, i]) == "character")
+>                         model <- step(model, scope = list(upper =
+> as.formula(paste("~ .+ factor(", i, ")",
+>                                 sep = ""))))
+>                 else model <- step(model, scope = list(upper =
+> as.formula(paste("~ .+", i, sep = ""))))
+>         }
+>         if(display) {
+>                 if(length(coefficients(model)) <= 1)
+>                         print("Model only has an intercept term")
+>                 else {
+>                         print(summary(model, cor = F))
+>                         print(drop1(model))
+>                         par(mfcol = c(3, 1))
+>                         plot(model, which = c(1, 3, 6))
+>                 }
+>         }
+>         return(model)
+> }
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+
+--
+Frank E Harrell Jr   Professor and Chair           School of Medicine
+                     Department of Biostatistics   Vanderbilt University
+
+From martyncollins10 at yahoo.com  Wed Aug  2 12:34:15 2006
+From: martyncollins10 at yahoo.com (Martyn Colins)
+Date: Wed, 02 Aug 2006 05:34:15 -0700
+Subject: using split() and lapply instead of tapply
+Message-ID: <20060802123415.3611.qmail@web55710.mail.re3.yahoo.com>
+
+ 
+  Does anyone know how to use the commands split() and lapply() to do the following: suppose I have the following data.frame
+   
+  w <- data.frame(y1 =1:10, y2=as.factor(rep(LETTERS[1:5],2)), 
+ y3=as.factor(rep(c("level1", "level2"),5)), y4=c(rep(c("sub1", "sub2", 
+ "sub3"), 3), "sub3"))
+
+  this is the output that i'm after
+  > tapply(w$y1, list(w$y2, w$y3), sum)
+  level1 level2 
+A      1      6
+B      7      2
+C      3      8
+D      9      4
+E      5     10
+   
+  I would like to do this using the split and lapply commands as these are more efficient than tapply.
+  I can split w on one
+ variable
+  w2 <- split(w, w$y2)
+  but how do I split on both variables to produce the equivalent output?
+   
+  Thanks in advance for any help.
+   
+  Regards,
+  Martyn
+
+ 
+		Groups are talking. We´re listening. Check out the handy changes to Yahoo! Groups. 
+
+From jwlbright at yahoo.com  Wed Aug  2 17:42:07 2006
+From: jwlbright at yahoo.com (Jewel Bright)
+Date: Wed, 02 Aug 2006 10:42:07 -0700
+Subject: extremi of stochastic processes
+Message-ID: <20060802174207.85897.qmail@web38702.mail.mud.yahoo.com>
+
+My question, I believe, is a simple one for professionals in statistics/random processes. 
+  Suppose I have a stochastic process described by the Ito SDE. Let's for simplicity assume that it is an Ornstein-Ulenbeck Process
+  dx(t)=-kx(t)dt+bdW(t)
+  I need to study a discrete process associated with the extrema of this process.
+  In particular, I need to know the distribution of spacings between these extrema. 
+  Note, I am not asking here about any kind of data manipulation or estimation work. 
+  I am asking about theory. 
+   
+  Can anybody advise me any book/papers or other sources which are dealing with this kind of problems? Or correct key words/established name of theory which studies this subject?
+  Thanks
+  Jewel
+     
+ __________________________________________________
+Do You Yahoo!?
+Tired of spam?  Yahoo!
+ Mail has the best spam protection around 
+http://mail.yahoo.com 
+
+From jkawczak at uncc.edu  Wed Aug  2 18:13:41 2006
+From: jkawczak at uncc.edu (Janusz Kawczak)
+Date: Wed, 02 Aug 2006 14:13:41 -0400
+Subject: Re: extremi of stochastic processes
+In-Reply-To: <20060802174207.85897.qmail@web38702.mail.mud.yahoo.com>
+References: <20060802174207.85897.qmail@web38702.mail.mud.yahoo.com>
+Message-ID: <Pine.GSO.4.55.0608021410290.1164@is-sm1.uncc.edu>
+
+You can start with Berman, S.M., Sojourns and Extremes of Stochastic
+Processes, The Wadworth and Brooks, Probability Series, 1992. Also, look
+for keywords: Crossings of a Level, Rice's Formulae, Rice Series, to begin
+with.
+
+- Janusz
+
+On Wed, 2 Aug 2006, Jewel Bright wrote:
+
+> My question, I believe, is a simple one for professionals in 
+> statistics/random processes.
+>   Suppose I have a stochastic process described by the Ito SDE. Let's for 
+> simplicity assume that it is an Ornstein-Ulenbeck Process
+>   dx(t)=-kx(t)dt+bdW(t)
+>   I need to study a discrete process associated with the extrema of this 
+> process.
+>   In particular, I need to know the distribution of spacings between these 
+> extrema.
+>   Note, I am not asking here about any kind of data manipulation or 
+> estimation work.
+>   I am asking about theory.
+>
+>   Can anybody advise me any book/papers or other sources which are dealing 
+> with this kind of problems? Or correct key words/established name of theory 
+> which studies this subject?
+>   Thanks
+>   Jewel
+>
+>
+>  __________________________________________________
+> Do You Yahoo!?
+> Tired of spam?  Yahoo! Mail has the best spam protection around
+> http://mail.yahoo.com
+
+From elvis at xlsolutions-corp.com  Wed Aug  2 20:20:23 2006
+From: elvis at xlsolutions-corp.com
+Date: Wed, 02 Aug 2006 13:20:23 -0700
+Subject: Course***Dr Frank Harrell's Regression Modeling Strategies in R/Splus course *** September 2006 near you (San Francisco, Washington DC, Atlanta)
+Message-ID: <20060802132023.9f08cc34deb45d78e54b3b5664e21546.2b5a771801.wbe@email.secureserver.net>
+
+XLSolutions Corporation (www.xlsolutions-corp.com) is very proud
+to announce Dr Frank Harrell's Regression Modeling Strategies in
+R/Splus this September 2006. http://xlsolutions-corp.com/Rstats2.htm
+
+ 
+
+*** San Francisco, CA  / August 31st  - September 1st, 2006
+***
+
+*** Atlanta, GA  / September 18th - 19th, 2006 ***
+
+*** Washington, DC /  September 28th - 29th, 2006 ***
+
+ 
+
+Please ask for group discount and reserve your seat Now - Earlybird
+Rates.
+Note that payment is due after the class! Email Sue
+Turner:  sue at xlsolutions-corp.com
+
+ 
+
+http://xlsolutions-corp.com/Rstats2.htm
+
+ 
+
+This two-day course is designed for persons interested in
+multivariable regression analysis of univariate responses, in
+developing, validating, and graphically describing multivariable
+predictive models. The first part of the course presents the following
+elements of multivariable predictive modeling for a single response
+variable: using regression splines to relax linearity assumptions,
+perils of variable selection and overfitting, where to spend degrees of
+freedom, shrinkage, imputation of missing data, data reduction, and
+interaction surfaces. Then a default overall modeling strategy will be
+described. This is followed by methods for graphically understanding
+models (e.g., using nomograms) and using re-sampling to estimate a
+model's likely performance on new data. Then the freely available
+S-Plus Design library will be overviewed. Design facilitates most of
+the steps of the modeling process. Next, statistical methods related to
+binary logistic models will be covered. Three of the following case
+studies will be presented: an exploration of voting tendencies over
+U.S. counties in the 1992 presidential election, an interactive
+exploration of the survival status of Titanic passengers, an
+interactive case study in developing a survival time model, and a case
+study in Cox regression. In the hands-on computer lab students will
+develop, validate, and graphically describe multivariable regression
+models themselves. This short course will also survey the advantages of
+modeling in randomized trials. The methods covered in this course will
+apply to almost any regression model, including ordinary least squares,
+logistic regression models, and survival models. 
+
+ 
+
+Course Outline: http://xlsolutions-corp.com/Rstats2.htm
+
+ 
+
+- Planning for Modeling, Covariable Adjustment.  
+- Notation
+for Regression Models, Interpreting Model Parameters.  
+-
+Relaxing Linearity Assumption for Continuous Predictors; Splines for
+Estimating Shape of Regression Function and Determining Predictor
+Transformations, Cubic Spline Functions, Advantages of Splines over
+Other Methods.  
+- Tests of Association, Assessment of Model
+Fit; Regression Assumptions Modeling and Testing Interactions. 
+
+- Missing Data; Strategies for Developing Imputation Algorithms ,
+software for Fitting Models and Adjusting Variances for Multiple
+Imputation.  
+- Multivariable Modeling Strategy;
+Pre-Specification of Predictor Complexity ,Variable Selection
+,Overfitting and Limits on Number of Predictors, Shrinkage, Data
+Reduction.  
+- Resampling, Validating, Describing, and
+Simplifying the Model; The Bootstrap, Model Validation , Graphically
+Describing the Fitted Model, Simplifying the Model by Approximating
+It.  
+- Design library  
+- Binary Logistic Regression,
+Interactive Case Study: Binary Logistic Model for Survival of Titanic
+Passengers.  
+- Interactive Case Study: Development of a
+Long-Term Survival Model for Critically Ill Patients.  
+- Cox
+Proportional Hazards Model, Case Study in Cox Regression.  
+-
+Case Study using Least Squares Multiple Regression: Voting Patterns in
+U.S. Counties.  
+
+ 
+
+Email us for group discounts.
+Email Sue Turner: sue at xlsolutions-corp.com
+Phone:
+206-686-1578
+Visit us: http://xlsolutions-corp.com/Rstats2.htm
+Please let us know if you and your
+colleagues are interested in this
+class to take advantage of group
+discount. Register now to secure
+your
+seat!
+ 
+Cheers,
+Elvis Miller, PhD
+Manager
+Training.
+XLSolutions Corporation
+206 686 1578
+www.xlsolutions-corp.com
+elvis@xlsolutions-
+
+ 
+
+From spencer.graves at pdf.com  Thu Aug  3 10:13:08 2006
+From: spencer.graves at pdf.com (Spencer Graves)
+Date: Thu, 03 Aug 2006 03:13:08 -0700
+Subject: Re: splus LME vs. SAS repeated measures anova?
+In-Reply-To: <67249fb50607271909r39682d2cx835d4b316e2e215a@mail.gmail.com>
+References: <67249fb50607271909r39682d2cx835d4b316e2e215a@mail.gmail.com>
+Message-ID: <44D1CC34.2060909@pdf.com>
+
+	  Have you tried the "Centre for Multilevel Modelling" at the 
+University of Bristol (www.mlwin.com)?  This web site includes a 
+benchmark set of data sets and separate reviews of capabilities of 
+different "MLM" software with answers and timing.  I found no unified 
+comparison table, but the information required to construct your own 
+seems to be there.
+
+	  I have not used SAS in many years, but from what I've heard, I 
+believe the output will be quite similar in most but not all cases.
+
+	  If you have access to SAS, could you please try the following silly 
+little test case for me:
+
+tstDF <- data.frame(group=letters[1:5], y=1:5)
+fitOops <- lme(y~1, data=tstDF, random=~1|group)
+VarCorr(fitOops)
+var(tstDF$y)
+
+          In S-Plus 6.2 and R 2.3.1 (with nlme 3.1-75), I get the following:
+        
+> VarCorr(fitOops)
+group = pdLogChol(1)
+            Variance  StdDev
+(Intercept) 2.1917808 1.4804664
+Residual    0.3082192 0.5551749
+> var(tstDF$y)
+[1] 2.5
+
+	  Using lmer (with lme4 0.995-2 and Matrix 0.995-12), I get the 
+following:
+
+fitOops4 <- lmer(y~1+(1|group), data=tstDF)
+ Groups   Name        Variance Std.Dev.
+ group    (Intercept) 1.81818  1.34840
+ Residual             0.68182  0.82572
+
+	  This is, of course, silly, because there are zero degrees of freedom 
+to distinguish "group" from Residual.  It is comforting that the sum of 
+the variances sum to the variance of "y", though the split between 
+"group" and Residual is different.  However, I would prefer to have the 
+multilevel software catch this case and optionally return an error or 
+drop the redundant group with a warning.
+
+          Hope this helps.
+          Spencer Graves
+
+Neung-Hwan Oh wrote:
+> Hi.
+>
+> Is there someone who has used both S-Plus lme and SAS repeated measures
+> anova?  Is there a good reference which compared the both methods?  I am
+> wondering whether the output would be exactly the same for an analysis
+> with repeated measures.
+>
+> Thanks in advance.
+>
+> NH
+
+From kamiltoth at yahoo.com  Thu Aug  3 14:12:08 2006
+From: kamiltoth at yahoo.com (Kamil Toth)
+Date: Thu, 03 Aug 2006 07:12:08 -0700
+Subject: automate writing formulas
+Message-ID: <20060803141208.42148.qmail@web35802.mail.mud.yahoo.com>
+
+Folks:
+  Many thanks to Arthur Nadas, Michael Camilleri, Frank E Harrell Jr, Patrick Burns, Douglas Bates, Thierry Onkelinx, and Alan Hochberg for help with my request 
+  "automate writing formulas." Most of the responses were variations of the same idea best formulated in the Arthur's message,
+  as.formula(paste("F~",paste("x",1:10,"+",sep="",collapse=""),"x11",sep=""))
+  I have also enjoyed a high-minded philosophical dispute which was sparked by my seemingly trifle question. We have learned important things about usefulness of computers, about what to compute, what not to compute, and what damn fools can possibly do if they are not properly schooled on what are computers actually for. I believe that majority of people with philosophical and mentorial tick tried to imagine who the hell this stupid guy is, who is trying to fit linear model with 1000 variables. The best this idea was expressed by Dr. Seneca who said, directly
+ aiming at me, "What fools these mortals be" (Thank you, Alan).
+   
+  Thank you all for useful discussion. For those who was a kind of outraged with my stupidity, I would like to reveal my secret. My problem had nothing to do with statistics. I have translated the problem into statistical language in such a way that a person with statistical background could easily digest it. Simply, I wanted to piggyback some of the "lm" functionality and to create a very fast (and very dirty) solution of a purely computational task. I did not plan to spend more than a couple of hours on this "project", that's why I did not want to go into troubles of FORTRAN programming. Inability to write a lengthy formula was a kind of an unexpected and annoying impediment. Also, the number 1000 has been selected to be a synonym for "many". How many does not matter. Just sooooooooooooooooooooo many that the idea to write it manually would be unacceptable because it is very
+ looooooooooooooooooooooooooong. The question I have asked was not how to do lm-ing. My question was how to write formulas. Thanks again to Arthur who was very fast to answer my question, directly to the point and without attempts to lecture on unrelated topics. 
+   
+  By the way, for those with statistical background only: please be aware that optimization in the parameter space of dimension 12,000,000 is not something unusual and utterly outrageous in the modern world. Even in terribly nonlinear problems, even in "assimilation", not just "fitting", mode.
+  Thanks again for valuable help.
+  Kamil. 
+ 
+		Groups are talking. We´re listening. Check out the handy changes to Yahoo! Groups. 
+
+From alan.hochberg at prosanos.com  Thu Aug  3 14:41:54 2006
+From: alan.hochberg at prosanos.com (Alan Hochberg)
+Date: Thu, 03 Aug 2006 10:41:54 -0400
+Subject: Re: automate writing formulas: No insult intended....
+In-Reply-To: <20060803141208.42148.qmail@web35802.mail.mud.yahoo.com>
+References: <20060803141208.42148.qmail@web35802.mail.mud.yahoo.com>
+Message-ID: <20060803144159.362531005B71@mailgate.biostat.wustl.edu>
+
+Dear Kamil,
+
+ 
+
+Let me apologize publicly if you feel
+personally insulted.  If I was warning you away from doing something I
+thought might be ill-advised, it’s only because I’d done it myself
+in the past, and regretted it!  The purpose of this list is to enjoy the
+benefits of our collected experience.  I’d like to think that if I
+wrote to this list and asked about the R/S syntax for fitting data to a series
+of exponentials with unknown decay rates, that at least a few of my colleagues
+on here would ask, “Are you sure you want to try that?”
+
+ 
+
+As Acton
+points out, there are lots of good reasons to let a computer bang away at a
+large system of equations.  (He mentions X-ray crystallography as another field
+where this approach is—or at least was—commonplace.)
+
+ 
+
+Alan
+
+From jenndu31 at yahoo.com  Fri Aug  4 15:40:52 2006
+From: jenndu31 at yahoo.com (Jennifer Duoph)
+Date: Fri, 04 Aug 2006 08:40:52 -0700
+Subject: Consultant Biostatistician needed in New Jersey Area
+Message-ID: <20060804154052.49174.qmail@web53509.mail.yahoo.com>
+
+Experienced consultants biostatisticians are needed for pharmaceuticalcompanies in the New Jersey area.  Need industry experience and good at SAS or S-Plus. For those interested persons who want knowmore detailed information for those positions, please send an email toclintrialstat at yahoo.comThank youClinTrialStat Tel: 908-938-8330 
+		Yahoo! Music Unlimited - Access over 1 million songs.
+Try it free. 
+
+From kimmerer at sfsu.edu  Fri Aug  4 18:53:59 2006
+From: kimmerer at sfsu.edu (Wim Kimmerer)
+Date: Fri, 04 Aug 2006 11:53:59 -0700
+Subject: Goodness of fit for negative binomial
+Message-ID: <7.0.0.16.2.20060804112421.022e1950@sfsu.edu>
+
+Hello S-newsers.  I am trying to fit some data to a negative binomial 
+distribution: I have ~70 sets of count data and want to fit each set 
+separately, mainly to determine the extent to which the zeros are in 
+excess of expectations, but also to assure myself that the NB is the 
+correct distribution to describe these data, which should be 
+distributed as an overdispersed Poisson (with the possible exception 
+of extra zeros).
+
+(Note re NB: There are two ways of formulating it, one appropriate to 
+Bernoulli trials and the other to continuous distributions.  The 
+parameter names used in the various formulations are different, and I 
+have not found a place where these are explained very well.  For 
+example, rnbinom (Splus) has r and p, and rnegbin (MASS) has mu and 
+theta.  Unlike r, theta can take non-integer values.)
+
+I calculated the parameter mu (the mean) and calculated theta using 
+theta.ml (MASS).  However, the ks.gof function using negbinom has 
+ONLY the discrete formulation, so that can't be used.  It is easy 
+enough to calculate the expected distribution from these parameters 
+and then run the Kolmogorov-Smirnov test, but I have read that this 
+test should be used against an expected distribution with KNOWN 
+parameters, not with parameters calculated from the data.
+
+So given that I have to get the parameters from the data, is my only 
+choice for testing goodness of fit to simulate?  If so, I assume I 
+could simply calculate the KS statistic repeatedly using samples from 
+the NB distribution with the estimated parameters and see whether my 
+sample KS statistic falls within 95% of the values.  Is there a 
+better way to do this?
+
+Thanks....
+
+======================
+Dr. Wim Kimmerer
+Research Professor of Biology
+Romberg Tiburon Center
+San Francisco State University
+3152 Paradise Drive
+Tiburon CA 94920
+Ph. (415) 435-7143
+Fax (415) 435-7120
+http://online.sfsu.edu/~kimmerer/ 
+
+From abhijit.sarkar at iitb.ac.in  Sat Aug  5 00:15:01 2006
+From: abhijit.sarkar at iitb.ac.in (Abhijit Sarkar)
+Date: Sat, 05 Aug 2006 05:45:01 +0530
+Subject: problem in deriving unconditional std dev (asymp.sd) in garch
+Message-ID: <2369.10.108.40.27.1154736901.squirrel@gpo.iitb.ac.in>
+
+Hi!
+
+Why does the
+>estimated.eqn$asymp.sd
+command for deriving unconditional std dev of GARCH residuals returns
+1[NA] whenever exogeneous explanatory variables are included in the
+conditional variance equation?
+
+eg. command including exogeneous explanatory variables in conditional
+variance equation, returning an NA:
+
+>private.egarch<-garch(private~1, x=ytmfin, z=sigma.ytmfin,
++ series.start=2, x.start=2, z.start=2, ~egarch(1,1),leverage=T)
+>usd=private.egarch$asymp.sd
+>usd
+[1]NA
+
+but once you drop z (ie. the exogoneous explanatory variable in
+conditional volatility equation), the problem disappears:
+
+>private.egarch.noZ<-garch(private~1, x=ytmfin,
++ series.start=2, x.start=2, ~egarch(1,1),leverage=T)
+> usd.noZ = private.egarch.noZ$asymp.sd
+> usd.noZ
+[1] 0.0374903
+
+I was basically trying to estimate the news impact curve. The above
+problem persists with tgarch and pgarch also (...and garch too).
+
+-- 
+Abhijit Sarkar
+UGC-SRF (Economics)
+Dept. of Humanities and Social Sciences
+IIT Bombay
+Powai, Mumbai,
+Maharashtra, India, 400076
+
+From sichong.chen at postgrad.manchester.ac.uk  Sat Aug  5 22:42:00 2006
+From: sichong.chen at postgrad.manchester.ac.uk (Chen,Sichong)
+Date: Sun, 06 Aug 2006 06:42:00 +0800
+Subject: Save several regression outputs in One Object
+Message-ID: <20060805224226.10DA4100966B@mailgate.biostat.wustl.edu>
+
+Dear Users
+
+I have a question regarding on how to save several regression outputs in one
+object.
+
+I have a loop, which will do regression for 50 times and so it will have 50
+outputs for the regression results. I want to create an object. Every time,
+the output is save in this object. So at the end, I don't have to have 50
+objects for the results, only this object will give me what I need.
+Previously, what I did is very simple. I only need a residual or coefficient
+for the regressions. I just create a matrix and use cbind function to
+combine the results together as long as the result is a vector and have the
+same length. But this time it is a little different, I want to save,
+coefficients, t-stats, p-value and R-square all. So the job is quite
+difficult for me.
+
+I am thinking to create a list object. But I really don't know how to put
+this function into a loop and get the answer quickly. 
+
+I am also thinking about to use object array, if the result to save each
+time has the same dimension. But again, I don't know how to use it in loop
+either. Any suggestion is appreciated.
+
+Best regards,
+Sichong Chen
+PhD of Finance
+Manchester Business School
+University of Manchester
+Oxford Road
+Manchester
+United Kingdom
+M13 9PL 
+
+From Daniel_J_Celta at fpl.com  Sun Aug  6 17:02:55 2006
+From: Daniel_J_Celta at fpl.com
+Date: Sun, 06 Aug 2006 13:02:55 -0400
+Subject: Re: Save several regression outputs in One Object
+Message-ID: <OF1E7784E6.F844CC72-ON852571C2.005C1B98-852571C2.005DA7A1@fpl.com>
+
+Chen
+You would need to use an "lapply" where you pass to the function the inputs
+for the regression.
+The "lapply" will return a list where each object of the list is a fitted
+regression model.
+
+For example:
+
+RgList _
+  lapply(list("DepVar1", "DepVar2"),
+      function(DepVar, Data, ...)  {
+            assign("DepVar", DepVar, where = 0)
+            lm(DepVar ~ ExpVar1 + ExpVar2, Data, ...)
+      }, Data = Data)
+
+RgList is now a list were each object is an lm model.
+Hope this helps
+
+Daniel J Celta
+Project Valuation - Special Valuations
+561 691 7653
+
+                                                                                
+                                                                  
+                      "Chen,Sichong"                                            
+                                                                  
+                      <sichong.chen at postgrad.manche        To:       
+s-news at lists.biostat.wustl.edu                                               
+                      ster.ac.uk>                          cc:                  
+                                                                  
+                      Sent by:                             Subject:  [S] Save 
+several regression outputs in One Object                            
+                      s-news-owner at lists.biostat.wu                             
+                                                                  
+                      stl.edu                                                   
+                                                                  
+                                                                                
+                                                                  
+                                                                                
+                                                                  
+                      08/05/2006 06:42 PM                                       
+                                                                  
+                                                                                
+                                                                  
+                                                                                
+                                                                  
+
+Dear Users
+
+I have a question regarding on how to save several regression outputs in
+one
+object.
+
+I have a loop, which will do regression for 50 times and so it will have 50
+outputs for the regression results. I want to create an object. Every time,
+the output is save in this object. So at the end, I don't have to have 50
+objects for the results, only this object will give me what I need.
+Previously, what I did is very simple. I only need a residual or
+coefficient
+for the regressions. I just create a matrix and use cbind function to
+combine the results together as long as the result is a vector and have the
+same length. But this time it is a little different, I want to save,
+coefficients, t-stats, p-value and R-square all. So the job is quite
+difficult for me.
+
+I am thinking to create a list object. But I really don't know how to put
+this function into a loop and get the answer quickly.
+
+I am also thinking about to use object array, if the result to save each
+time has the same dimension. But again, I don't know how to use it in loop
+either. Any suggestion is appreciated.
+
+Best regards,
+Sichong Chen
+PhD of Finance
+Manchester Business School
+University of Manchester
+Oxford Road
+Manchester
+United Kingdom
+M13 9PL
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From ripley at stats.ox.ac.uk  Mon Aug  7 09:08:56 2006
+From: ripley at stats.ox.ac.uk (Prof Brian Ripley)
+Date: Mon, 07 Aug 2006 10:08:56 +0100
+Subject: Re: Goodness of fit for negative binomial
+In-Reply-To: <7.0.0.16.2.20060804112421.022e1950@sfsu.edu>
+References: <7.0.0.16.2.20060804112421.022e1950@sfsu.edu>
+Message-ID: <Pine.LNX.4.64.0608070958100.27502@gannet.stats.ox.ac.uk>
+
+On Fri, 4 Aug 2006, Wim Kimmerer wrote:
+
+> Hello S-newsers.  I am trying to fit some data to a negative binomial
+> distribution: I have ~70 sets of count data and want to fit each set
+> separately, mainly to determine the extent to which the zeros are in excess of
+> expectations, but also to assure myself that the NB is the correct
+> distribution to describe these data, which should be distributed as an
+> overdispersed Poisson (with the possible exception of extra zeros).
+> 
+> (Note re NB: There are two ways of formulating it, one appropriate to
+> Bernoulli trials and the other to continuous distributions.  The parameter
+> names used in the various formulations are different, and I have not found a
+> place where these are explained very well.  For example, rnbinom (Splus) has r
+> and p, and rnegbin (MASS) has mu and theta.  Unlike r, theta can take
+> non-integer values.)
+
+It is not just the names that differ: the parametrizations also do.
+For explanations that I find far superior to yours see MASS (the book) 
+and the R help page for dnbinom.
+
+> I calculated the parameter mu (the mean) and calculated theta using theta.ml
+> (MASS).  However, the ks.gof function using negbinom has ONLY the discrete
+> formulation, so that can't be used.  It is easy enough to calculate the
+> expected distribution from these parameters and then run the
+> Kolmogorov-Smirnov test, but I have read that this test should be used against
+> an expected distribution with KNOWN parameters, not with parameters calculated
+> from the data.
+> 
+> So given that I have to get the parameters from the data, is my only choice
+> for testing goodness of fit to simulate?  If so, I assume I could simply
+> calculate the KS statistic repeatedly using samples from the NB distribution
+> with the estimated parameters and see whether my sample KS statistic falls
+> within 95% of the values.  Is there a better way to do this?
+
+For any discrete distribution with estimated parameters, the distribution 
+of the Kolmogorov-Smirnov test is approximate.  The theory applies to a 
+completely known continuous distribution.  I would have thought a grouped 
+chi-squared test would be more appropriate, and for that the asymptotic 
+theory is well understood.  (Indeed, ?ks.gof says the same.)  This is 
+particularly appropriate if you are interested in the proportions of 
+zeros.
+
+-- 
+Brian D. Ripley,                  ripley at stats.ox.ac.uk
+Professor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/
+University of Oxford,             Tel:  +44 1865 272861 (self)
+1 South Parks Road,                     +44 1865 272866 (PA)
+Oxford OX1 3TG, UK                Fax:  +44 1865 272595
+
+From sanniolanrewajuk at yahoo.com  Mon Aug  7 16:29:43 2006
+From: sanniolanrewajuk at yahoo.com (olanrewaju sanni)
+Date: Mon, 07 Aug 2006 09:29:43 -0700
+Subject: Graph
+Message-ID: <20060807162944.95785.qmail@web53903.mail.yahoo.com>
+
+Dear subscribers,
+Can anyone tell me the command on how to plot a graph
+having two y-axis using s-plus.
+Yours
+Lanre
+
+__________________________________________________
+Do You Yahoo!?
+Tired of spam?  Yahoo! Mail has the best spam protection around 
+http://mail.yahoo.com 
+
+From hanthony at insightful.com  Mon Aug  7 20:28:19 2006
+From: hanthony at insightful.com (Heather Anthony)
+Date: Mon, 07 Aug 2006 13:28:19 -0700
+Subject: COURSE: Upcoming S-PLUS courses, events and web casts from Insightful Corporation
+In-Reply-To: <5386D894248D32458B1D9B5638A07448E3A1@sewinexch00.insightful.com>
+References: <5386D894248D32458B1D9B5638A07448E3A1@sewinexch00.insightful.com>
+Message-ID: <5386D894248D32458B1D9B5638A07448E46B@sewinexch00.insightful.com>
+
+Here is some information about upcoming courses from Insightful's training
+department that may be of interest to s-news subscribers.  
+Additional information is available at the links provided. Please direct any
+enquiries to me <hanthony at insightful.com>
+
+# Heather Anthony/Insightful Corporation Training Coordinator
+
+Insightful Training -- Featured Courses!       
+
+Introduction to S-PLUS for Life Sciences
+August 29-30, Edison, NJ -
+http://www.insightful.com/services/course.asp?CID=47 
+
+Advanced Programming Methods in S-PLUS presented by Tim Hesterberg
+October 9-10, New York, NY -
+http://www.insightful.com/services/course.asp?CID=37
+
+Bootstrap Methods and Permutation Tests presented by Tim Hesterberg
+October 11-12, New York, NY -
+http://www.insightful.com/services/course.asp?CID=38
+
+Statistical Learning and Data Mining II: Tools for Tall and Wide Data
+Presented by T. Hastie and R. Tibshirani of Stanford University
+October 12-13, Philadelphia, PA -
+http://www-stat.stanford.edu/%7Ehastie/sldm.html
+
+Upcoming Events and Web Casts:       
+
+JSM - Joint Statistical Meetings
+August 6-10, Seattle, WA -
+http://www.elabs3.com/ct.html?rtr=on&s=it3,qlid,2knr,fu6t,7qto,fide,7n2p
+
+Web cast: Modern Portfolio Management & Interactive Reporting
+August 8 -
+http://www.elabs3.com/ct.html?rtr=on&s=it3,qlid,2knr,l6v,divd,fide,7n2p
+
+Web cast: Using Analytics to Uncover the Cause Instead of Just Treating the
+Symptoms
+August 9 -
+http://www.elabs3.com/ct.html?rtr=on&s=it3,qlid,2knr,c87l,cw6v,fide,7n2p
+
+Web cast: S-PLUS Tools for Microarray Analysis: S+ArrayAnalyzer and More
+August 21 -
+http://www.elabs3.com/ct.html?rtr=on&s=it3,qlid,2knr,j0bn,hd4z,fide,7n2p
+
+OTHER UPCOMING COURSES
+======================
+G101: S-PLUS Graphical User Interface Jumpstart   
+September 12, Kirkland, WA
+http://www.insightful.com/services/course.asp?CID=32
+
+C102: S-PLUS Essentials Command Line  
+September 13-15, Kirkland, WA
+http://www.insightful.com/services/course.asp?CID=10 
+ 
+G101: S-PLUS Graphical User Interface Jumpstart   
+September 19, Boston, MA
+http://www.insightful.com/services/course.asp?CID=32
+
+C102: S-PLUS Essentials Command Line  
+September 20-22, Boston, MA
+http://www.insightful.com/services/course.asp?CID=10
+
+Statistical Modeling in S-PLUS
+September 25-27, Boston, MA
+http://www.insightful.com/services/course.asp?CID=11
+
+C201: S-PLUS Programming
+September 28-29, Boston, MA
+http://www.insightful.com/services/course.asp?CID=41
+
+Register NOW! http://www.insightful.com/services/register.asp
+
+For a complete 2006 training schedule go to:
+http://www.insightful.com/services/schedule.asp
+
+-- 
+Heather Anthony <hanthony at insightful.com>
+Training Coordinator, Insightful Corp, Seattle WA
+Tel: +1 (206) 802 2223
+Fax: +1 (206) 283 8691
+
+Insightful Corporation (www.insightful.com) provides analytical solutions for
+text and data using S-PLUS, Insightful Miner, InFact and consulting services.
+
+From david.jessop at ubs.com  Tue Aug  8 13:05:38 2006
+From: david.jessop at ubs.com
+Date: Tue, 08 Aug 2006 14:05:38 +0100
+Subject: Looking for a S-PLUS contractor
+In-Reply-To: <20060808102004.261F4124B4E@smtp.biostat.wustl.edu>
+References: <20060808102004.261F4124B4E@smtp.biostat.wustl.edu>
+Message-ID: <D86B416F551CBA489FDED1567D11805103BBD871@NLDNC105PEX1.ubsw.net>
+
+Hi,
+
+We are looking for a contractor to work for us for 3 to 6 months.  The
+primary aim of the role would be to both tidy up our existing S-PLUS
+code and to help develop a library of routines for our global team to
+use.  The role would be based in the City in London.
+
+If you would like more information then please get in touch. 
+
+Regards,
+
+David Jessop
+
+_____________________________________________________
+
+David Jessop               UBS Investment Research
+Global Head of Quantitative & Derivatives Research
+
++44 20 7567 9882
+
+Visit our website at http://www.ubs.com
+
+This message contains confidential information and is intended only
+for the individual named.  If you are not the named addressee you
+should not disseminate, distribute or copy this e-mail.  Please
+notify the sender immediately by e-mail if you have received this
+e-mail by mistake and delete this e-mail from your system.
+
+E-mail transmission cannot be guaranteed to be secure or error-free
+as information could be intercepted, corrupted, lost, destroyed,
+arrive late or incomplete, or contain viruses.  The sender therefore
+does not accept liability for any errors or omissions in the contents
+of this message which arise as a result of e-mail transmission.  If
+verification is required please request a hard-copy version.  This
+message is provided for informational purposes and should not be
+construed as a solicitation or offer to buy or sell any securities or
+related financial instruments.
+
+From elvis at xlsolutions-corp.com  Tue Aug  8 15:28:34 2006
+From: elvis at xlsolutions-corp.com
+Date: Tue, 08 Aug 2006 08:28:34 -0700
+Subject: Call for Beta Testers: R+ (read R plus) for Solaris and Linux:
+Message-ID: <20060808082834.9f08cc34deb45d78e54b3b5664e21546.89dfcf305f.wbe@email.secureserver.net>
+
+Code-named R+Team, our commercially supported R group is looking
+for
+beta testers for R+ on  Solaris and R+ on Linux. We'd love
+to get your
+feedback for our  R+Professional version that has
+additional
+functionalities for enterprise support.
+
+The sooner
+we get your feedback and inputs, the faster we'll make
+changes for
+the final release!
+
+To participate in our beta test program,
+please email
+dsmith at xlsolutions-corp.com with your name,
+organization and area of
+interest or go
+online
+www.xlsolutions-corp.com/contact.htm
+
+The windows
+(Vista) version of R+ is also into development with a
+great
+graphical user interface, and we'll be calling for beta
+testers this
+fall or after Vista release. If you want to beta test
+the vista
+version, please email Jennifer McDonald,
+jen at xlsolutions-corp.com.
+
+We look forward to hearing your
+comments and inputs on R+ ... please
+feel free to suggest a final
+name for our commercially supported R.
+
+Drew Smith
+R+ Group
+Manager
+206 686
+1578
+dsmith at xlsolutions-corp.com
+www.xlsolutions-corp.com 
+
+From j.burgueno at cgiar.org  Tue Aug  8 17:57:10 2006
+From: j.burgueno at cgiar.org (Burgueno, Juan (CIMMYT))
+Date: Tue, 08 Aug 2006 11:57:10 -0600
+Subject: FW: Impact evaluation
+Message-ID: <926E436FA902164CBDDE9E75BDB166720B5144@cimmytadc.CIMMYT.CGIARAD.ORG>
+
+I´m 
+trying to evaluate the impact of a public program. 
+
+ 
+
+Anybody know if 
+there is a Splus program to estimate the parameters ATT and ATE according to 
+Heckman, Tobias and Vytlacil (2001)?
+
+ 
+
+Thanks
+
+ 
+
+ 
+
+Juan 
+Burgueño
+
+From gerald.jean at dgag.ca  Tue Aug  8 18:37:25 2006
+From: gerald.jean at dgag.ca
+Date: Tue, 08 Aug 2006 14:37:25 -0400
+Subject: Trellis.device(postscript)
+Message-ID: <OF3E8E9A5D.9B95EC47-ON852571C4.00641347@spgdag.ca>
+
+Hello there,
+
+I am playing with the trellis postcript device for several hours now and I
+can't get it to work the way I wish it would.
+
+I have a function I have been using for several years without problems.
+When the required device is postcript the function was starting the
+postcript device with:
+
+PsColors <- ps.colors.rgb[c("black", "red", "DarkGreen", "blue",
+"magenta1",                                   "DarkOrange1",
+"MidnightBlue","firebrick1", "yellow",
+"maroon", "cornsilk", "BlueViolet"), ]
+ps.options(colors = PsColors, background = ps.colors.rgb[c("gray85"),],
+           tempfile = paste(LaTeX.dir, projet, "-", i, "##.EPS", sep = ""),
+           setfont = ps.setfont.latin1, font = 1)
+postscript(onefile = F, print.it = F, append = F, horizontal = F)
+
+then the function is plotting four graphs, three dot plots and a histogram,
+per input variable.  Works fine.  Then, after complaints from collegues, I
+tried to increase the dot size of the dot plots as following:
+
+      dot.symbol <- trellis.par.get("dot.symbol")
+      dot.symbol$cex <- dot.size    # an input argument to the function,
+1.25 by default
+      trellis.par.set("dot.symbol", dot.symbol)
+
+I get an error from "trellis.par.set":
+
+Problem in trellis.par.set: No data to interpret as logical value: if(p[i]
+!= q[i]) stop("inconsistent component names")
+Use traceback() to see the call stack
+Warning in par(old.par): Graphics error: Figure specified in inches too
+large (in zzfigz)
+Warning in par(old.par): Graphics error: Plot specified in inches too large
+(in zzpltz)
+Graphics error: Plot specified in inches too large (in zzpltz)
+Error during wrapup: needed atomic data, got an object of class "function"
+
+Seeing this and sort of following the sparse documentation of the help page
+for trellis.device I tried to directly open the trellis.device for
+PostScript output as follows:
+
+        trellis.device(postscript, color = PsColors,
+                       background = ps.colors.rgb[c("gray85"),],
+        tempfile = paste(LaTeX.dir, projet, "-", i, "##.EPS", sep = ""),
+                   setfont = ps.setfont.latin1, font = 1,
+        onefile = F, print.it = F, append = F, horizontal = F)
+
+This time no problem adjusting the size of the dots as I wish BUT
+impossible to get the colors I want.  All other arguments seem to be passed
+correctly to the postcript device but the "color" and "background"
+arguments?  Any idea of what is happening?
+
+Thanks for any insights,
+
+Gérald Jean
+Conseiller senior en statistiques, Actuariat
+télephone            : (418) 835-4900 poste (7639)
+télecopieur          : (418) 835-6657
+courrier électronique: gerald.jean at dgag.ca
+
+"In God we trust, all others must bring data"  W. Edwards Deming
+
+Le message ci-dessus, ainsi que les documents l'accompagnant, sont destinés
+uniquement aux personnes identifiées et peuvent contenir des informations
+privilégiées, confidentielles ou ne pouvant être divulguées. Si vous avez
+reçu ce message par erreur, veuillez le détruire.
+
+This communication (and/or the attachments) is intended for named
+recipients only and may contain privileged or confidential information
+which is not to be disclosed. If you received this communication by mistake
+please destroy all copies.
+
+From chatfb01 at student.uwa.edu.au  Wed Aug  9 06:02:19 2006
+From: chatfb01 at student.uwa.edu.au (Brenton Chatfield)
+Date: Wed, 09 Aug 2006 14:02:19 +0800
+Subject: Choosing the best model
+Message-ID: <002101c6bb79$5f5f35f0$172c5f82@segs.uwa.edu.au>
+
+Greetings to you all,
+
+ 
+
+I am looking for advice on how to select the
+‘best’ of multiple models.
+
+I have trawled the archives, but have not had any joy.
+
+ 
+
+I am using S-plus 6.2 with Windows XP and looking at species
+presence absence data.
+
+I have used GLMs and GAMs to investigate which environmental
+variables are influencing distribution.
+
+I am also comparing whether a simple or more detailed
+classification of habitat
+
+ (1 of the predictor variables) provides better model
+fits.
+
+ 
+
+For each species, I have 4 models, 
+
+- 2 GLMs (1 using simple habitat
+classification and 1 using detailed classification) and 
+
+- 2 GAMs (simple habitat and
+detailed habitat).  
+
+ 
+
+Each final model is selected using backward stepwise, with
+AIC for variable selection.
+
+ 
+
+While I understand that D squared (1 – residual
+deviance/null deviance)
+
+ should not be used to compare models based on binomial
+distribution 
+
+(because it does not follow the Chi squared distribution), I
+have taken the view that
+
+ these 4 models are nested and so I have calculated D
+squared and Adjusted D squared values
+
+ for them and have been using this to compare the 4
+models – please correct me on this if it is not the case.
+
+ 
+
+ At present I am just eye balling these values to see
+which model explains more deviation,
+
+but was hoping that someone could suggest a more rigorous
+way of determining which model is best?
+
+ 
+
+Any thoughts or suggested reading would be appreciated.
+
+ 
+
+Look forward to comments.
+
+ 
+
+Brenton
+
+ 
+
+ 
+
+Brenton Chatfield
+
+PhD Candidate
+
+UWA
+& Coastal CRC
+
+School of Earth and Geographical Sciences 
+
+University of Western Australia (M004)
+
+35 Stirling Highway
+
+Crawley WA 6009
+
+ 
+
+Email: chatfb01 at student.uwa.edu.au
+
+Telephone: +61 8
+6488 4235
+
+Fax:      
++61 8 6488 1037 
+
+ 
+
+From mcheang at mac.com  Wed Aug  9 07:29:15 2006
+From: mcheang at mac.com (Maggie Cheang)
+Date: Wed, 09 Aug 2006 00:29:15 -0700
+Subject: comparing two hazard ratios reported from two Cox models
+Message-ID: <93F487F0-1E47-4CE1-B6EF-CB44AACB5AD4@mac.com>
+
+Dear all,
+I would appreciate your insight on this.
+I am comparing two variables (X, Y) to see which one is better to  
+identify the "bad" actors from the "good actors".
+The two variables are highly correlated, that's the criteria that  
+they are using are very similar, with two elements different.
+I had built two separate cox models, including other covariates, one  
+with variable x and one with variable Y.
+so now i have one hazard ratio for X+ vs X-, and one hazard ratio for  
+Y+ vs Y-.
+Is there a way that I can program in S-plus to compare how  
+significantly does it improve using variable X instead of Y? such as  
+comparing the two hazard ratio? I can calculate the abosulte increase  
+of survival, but it would be awesome if I can say the difference is  
+"significantly" better with a p-value reported.
+
+Your help and inputs are very appreciated
+yours,
+Maggie
+mcheang at mac.com
+
+From f.harrell at vanderbilt.edu  Wed Aug  9 14:45:53 2006
+From: f.harrell at vanderbilt.edu (Frank E Harrell Jr)
+Date: Wed, 09 Aug 2006 09:45:53 -0500
+Subject: Re: Choosing the best model
+In-Reply-To: <002101c6bb79$5f5f35f0$172c5f82@segs.uwa.edu.au>
+References: <002101c6bb79$5f5f35f0$172c5f82@segs.uwa.edu.au>
+Message-ID: <44D9F521.70109@vanderbilt.edu>
+
+Brenton Chatfield wrote:
+> Greetings to you all,
+>
+>
+>
+>
+> I am looking for advice on how to select the ‘best’ of multiple models.
+>
+> I have trawled the archives, but have not had any joy.
+>
+>
+>
+> I am using S-plus 6.2 with Windows XP and looking at species presence
+> absence data.
+>
+>
+> I have used GLMs and GAMs to investigate which environmental variables
+> are influencing distribution.
+>
+>
+> I am also comparing whether a simple or more detailed classification of
+> habitat
+>
+>
+>  (1 of the predictor variables) provides better model fits.
+>
+>
+>
+>
+> For each species, I have 4 models,
+>
+> - 2 GLMs (1 using simple habitat classification and 1 using detailed
+> classification) and
+>
+>
+> - 2 GAMs (simple habitat and detailed habitat).
+>
+>
+>
+> Each final model is selected using backward stepwise, with AIC for
+> variable selection.
+>
+>
+>
+>
+>
+> While I understand that D squared (1 – residual deviance/null deviance)
+>
+>  should not be used to compare models based on binomial distribution
+>
+> (because it does not follow the Chi squared distribution), I have taken
+> the view that
+>
+>
+>  these 4 models are nested and so I have calculated D squared and
+> Adjusted D squared values
+>
+>
+>  for them and have been using this to compare the 4 models – please
+> correct me on this if it is not the case.
+>
+>
+>
+>
+>  At present I am just eye balling these values to see which model
+> explains more deviation,
+>
+>
+> but was hoping that someone could suggest a more rigorous way of
+> determining which model is best?
+>
+>
+>
+>
+>
+> Any thoughts or suggested reading would be appreciated.
+>
+>
+>
+>
+> Look forward to comments.
+>
+>
+>
+>
+> Brenton
+>
+>
+>
+>
+>
+>
+> Brenton Chatfield
+>
+> PhD Candidate
+>
+> UWA & Coastal CRC
+>
+> School of Earth and Geographical Sciences
+>
+> University of Western Australia (M004)
+>
+> 35 Stirling Highway
+>
+> Crawley WA 6009
+>
+>
+>
+>
+> Email: chatfb01 at student.uwa.edu.au
+>
+> Telephone: +61 8 6488 4235
+>
+> Fax:       +61 8 6488 1037
+>
+>
+
+Most indexes are not corrected for 'data mining' (e.g. variable 
+selection) so there is a good chance they will give you a misleading 
+picture.  For example if one model was drastically more overfit than 
+another, it may seem to be better but may not predict better on new 
+data.  Also you haven't explained why you need to eliminate variables 
+from your original list.  Without simultaneous shrinkage (as with the 
+lasso) this may not be a good idea.  A better approach is to fit a full 
+flexible model (using e.g. regression splines) and to penalize it down 
+to what the data will support, if any penalization is needed.  The need 
+for penalization (shrinkage) will depend on the amount of information in 
+your data (e.g., effective sample size) and the complexity of the 
+postulated model.
+
+--
+Frank E Harrell Jr   Professor and Chair           School of Medicine
+                     Department of Biostatistics   Vanderbilt University
+
+From elvis at xlsolutions-corp.com  Wed Aug  9 16:47:37 2006
+From: elvis at xlsolutions-corp.com
+Date: Wed, 09 Aug 2006 09:47:37 -0700
+Subject: (3) Courses & R/Splus Advanced Programming in New York City ***September 11-12 ***by the R Development Core Tean Guru
+Message-ID: <20060809094737.9f08cc34deb45d78e54b3b5664e21546.5e7942ac7f.wbe@email.secureserver.net>
+
+XLSolutions Corporation (www.xlsolutions-corp.com) is proud to
+announce our*** R/S Advanced Programming ***course in New York City on
+September 11-12 by the R Development Core Team Guru! 
+
+(1)
+R/Splus Advanced Programming 
+ 
+       
+                   
+  *** New York City / September 11-12, 2006
+***
+
+             
+http://www.xlsolutions-corp.com/Radv.htm 
+
+(2) R/Splus
+Fundamentals and Programming Techniques 
+       
+                   
+*** Boston / TBD ***
+
+                           
+*** Raleigh / September 12-13, 2006 ***
+
+             
+http://www.xlsolutions-corp.com/Rfund.htm
+
+ 
+
+(3) Regression Modeling Strategies in R/Splus
+
+ 
+
+                   
+http://xlsolutions-corp.com/Rstats2.htm
+
+ 
+
+                           
+*** Washington DC, September 28-29, 2006 ***
+
+Ask for group discount and reserve your seat Now - Earlybird
+Rates.
+Payment due after the class! Email Sue Turner:
+ sue at xlsolutions-corp.com
+
+(1) R/Splus Advanced
+Programming  
+ 
+Course Outline:
+
+- Overview of
+R/S fundamentals: Syntax and Semantics
+- Class and Inheritance in
+R/S-Plus
+- Concepts, Construction and good use of language
+objects
+- Coercion and efficiency
+- Object-oriented programming
+in R and S-Plus
+- Advanced manipulation tools: Parse, Deparse,
+Substitute, etc.
+- How to fully take advantage of Vectorization
+-
+Generic and Method Functions
+- Search path, databases and frames
+Visibility
+- Working with large objects
+- Handling Properly
+Recursion and iterative calculations
+- Managing loops; For (S-Plus)
+and for() loops
+- Consequences of Lazy Evaluation
+- Efficient
+Code practices for large computations
+- Memory management and
+Resource monitoring
+- Writing R/S-Plus functions to call compiled
+code
+- Writing and debugging compiled code for R/S-Plus system
+-
+Connecting R/S-Plus to External Data Sources
+- Understanding the
+structure of model fitting functions in R/S-Plus
+- Designing and
+Packaging efficiently a new model function 
+
+It'll also deal with
+lots of S-Plus efficiency issues and any special
+topics from
+participants is welcome.
+
+(2) R/Splus Fundamentals and
+Programming Techniques 
+           
+            
+Course outline.
+
+-
+An Overview of R and S
+- Data Manipulation and Graphics
+- Using
+Lattice Graphics
+- A Comparison of R and S-Plus
+- How can R
+Complement SAS?
+- Writing Functions
+- Avoiding Loops
+-
+Vectorization
+- Statistical Modeling
+- Project Management
+-
+Techniques for Effective use of R and S
+- Enhancing Plots
+- Using
+High-level Plotting Functions
+- Building and Distributing Packages
+(libraries)
+- Connecting; ODBC, Rweb, Orca via sockets and via
+Rjava
+
+Email us for group discounts.
+Email Sue Turner:
+sue at xlsolutions-corp.com
+Phone: 206-686-1578
+Visit us:
+www.xlsolutions-corp.com/training.htm
+Please let us know if you and
+your colleagues are interested in this
+class to take advantage of
+group discount. Register now to secure
+your
+seat!
+
+Cheers,
+Elvis Miller, PhD
+Manager
+Training.
+XLSolutions Corporation
+206 686
+1578
+www.xlsolutions-corp.com
+elvis@xlsolutions- 
+
+2
+Courses - (1) R/Splus Advanced Programming (2) R/Splus
+Fundamentals
+
+From Inman.Brant at mayo.edu  Wed Aug  9 21:18:20 2006
+From: Inman.Brant at mayo.edu (Inman, Brant A. M.D.)
+Date: Wed, 09 Aug 2006 16:18:20 -0500
+Subject: Sample size for logistic regression with multiple covariates
+Message-ID: <4B7BAAA18A11954BB15D4070D91E69130220F425@excsrv75.mayo.edu>
+
+I am designing a mouse experiment for testing a new treatment for bladder cancer. The idea is to evaluate treatment effectiveness and treatment by gene interactions. The variables are:
+
+Outcome (Y): binary (0/1); presence/absence of tumor
+
+Covariate1 (X1):  categorical (0/1/2);  genotype of mouse (XX, X0, 00)
+
+Covariate2 (X2):  binary (0/1); presence/absence of treatment
+
+I am having trouble calculating the sample size for this experiment.  Does anyone know of an S-Plus or R function that has been written to calculate sample size for a multiple logistic regression situation?
+
+_________________________________________________
+
+Dr. Brant A. Inman,  MD FRCSC
+
+Urologic Oncology Fellow, Mayo Clinic College of Medicine
+
+200 First Street SW
+
+Rochester, MN   55905
+
+Phone: (507) 284-1330
+
+Fax:    (507) 284-4951
+
+Email:  inman.brant at mayo.edu
+
+_________________________________________________
+
+From Daniel_J_Celta at fpl.com  Wed Aug  9 22:46:36 2006
+From: Daniel_J_Celta at fpl.com
+Date: Wed, 09 Aug 2006 18:46:36 -0400
+Subject: Re: Sample size for logistic regression with multiple covariates
+Message-ID: <OF878EB998.F9283456-ON852571C5.007C19C0-852571C5.007D1F07@fpl.com>
+
+Inman,
+I would try to think of the problem from a slightly different perspective.
+I would try to design an experiment under a factorial framework.
+You can think of a n^k design where k = the number of independent variables
+and n = the number of levels.
+Once there, you could think of doing a full factorial or a fractional
+factorial design depending on the interactions you think are most
+important.
+There is a function in Splus "fac.design" that would help you defining the
+experiments in preparation for the analysis.
+I hope this helps
+
+Daniel J Celta
+Project Valuation - Special Valuations
+561 691 7653
+
+                                                                                
+                                                              
+                      "Inman, Brant A.   M.D."                                  
+                                                              
+                      <Inman.Brant at mayo.edu>           To:       
+"'s-news at lists.biostat.wustl.edu'" <s-news at lists.biostat.wustl.edu>          
+                      Sent by:                         cc:                      
+                                                              
+                      s-news-owner at lists.biosta        Subject:  [S] Sample 
+size for logistic regression with multiple covariates             
+                      t.wustl.edu                                               
+                                                              
+                                                                                
+                                                              
+                                                                                
+                                                              
+                      08/09/2006 05:18 PM                                       
+                                                              
+                                                                                
+                                                              
+                                                                                
+                                                              
+
+I am designing a mouse experiment for testing a new treatment for bladder
+cancer. The idea is to evaluate treatment effectiveness and treatment by
+gene interactions. The variables are:
+
+Outcome (Y): binary (0/1); presence/absence of tumor
+Covariate1 (X1):  categorical (0/1/2);  genotype of mouse (XX, X0, 00)
+Covariate2 (X2):  binary (0/1); presence/absence of treatment
+
+I am having trouble calculating the sample size for this experiment.  Does
+anyone know of an S-Plus or R function that has been written to calculate
+sample size for a multiple logistic regression situation?
+
+_________________________________________________
+Dr. Brant A. Inman,  MD FRCSC
+Urologic Oncology Fellow, Mayo Clinic College of Medicine
+200 First Street SW
+Rochester, MN   55905
+Phone: (507) 284-1330
+Fax:    (507) 284-4951
+Email:  inman.brant at mayo.edu
+_________________________________________________
+
+From claus.andersen at risoe.dk  Thu Aug 10 18:15:18 2006
+From: claus.andersen at risoe.dk
+Date: Thu, 10 Aug 2006 20:15:18 +0200
+Subject: Integrate - tolerance "crosstalk" for nested calls
+Message-ID: <EDACC01C29FF09419FB7939B9FA9D94B636F86@EXCHG-VS1.risoe.dk>
+
+Dear S-plus list,
+
+I have come
+across a problem with the function "integrate". 
+
+As demonstrated
+in the example below the tolerance level in one call 
+
+to integrate can
+be affected by another (nested) call to the same 
+
+function. I have
+been in contact with S-plus support at Insightful 
+
+and I got the
+following reply: 
+
+ 
+
+"Yes, I can
+reproduce this behavior. It shouldn't be like that. It's a bug
+
+relating to
+object in the global scope that is retained when abs.tol or
+
+rel.tol are being
+used. I am forwarding this to our headquarters.
+
+ 
+
+I have been unable
+to fix the problem myself. I have tried, for example, 
+
+to work with two
+versions of integrate: the original plus a copy where I 
+
+renamed all (named)
+arguments in integrate  - just to try to avoid partiel 
+
+matching problems
+as reported by others on this list. I have also tried 
+
+to rename some of
+the key variables and functions within integrate. 
+
+ 
+
+Essentially,  I
+cannot identify where the assignment to the "object in 
+
+the global scope"
+takes place. Any help with this matter will be 
+
+greatly
+appreciated. 
+
+ 
+
+- Claus
+
+ 
+
+System: S-plus
+7.0 on PC with windows XP
+
+ 
+
+#-------------------------------------------------------
+
+# EXAMPLE
+
+#-------------------------------------------------------
+
+# Integrate
+tolerance "crosstalk"
+
+ 
+
+func.plain <-
+function(x){
+
+sin(1/x)
+
+}
+
+ 
+
+func2 <-
+function(x){
+
+junk <-
+integrate(function(tttt){tttt^4},1,2)
+
+sin(1/x)
+
+}
+
+ 
+
+func3 <-
+function(x){
+
+junk <-
+integrate(function(tttt){tttt^4},1,2, abs.tol=1000, rel.tol=1)
+
+sin(1/x)
+
+}
+
+ 
+
+F1 <-
+integrate(func.plain,0.01,1)[1:4]
+
+F2 <-
+integrate(func2     ,0.01,1)[1:4]
+
+F3 <-
+integrate(func3     ,0.01,1)[1:4]
+
+F4 <-
+integrate(func.plain,0.01,1)[1:4]
+
+rbind(F1,F2,F3,F4)
+
+ 
+
+# Output:
+
+#    integral
+abs.error subdivisions message 
+
+#F1 0.5039819
+0.0000822048 14 normal termination
+
+#F2 0.5039819
+0.0000822048 14 normal termination
+
+#F3 0.5273663
+0.2707368     2 normal termination
+
+#F4 0.5039819
+0.0000822048 14 normal termination
+
+ 
+
+# PROBLEM: F3 is
+different from F1, F2 and F4
+
+# Q: Why? 
+
+# A: Because
+func3 includes a call to integrate with new
+
+# parameters for
+abs.tol and rel.tol 
+
+#-------------------------------------------------------
+
+ 
+
+           
+
+----------------------------------------
+
+Claus E. Andersen
+
+Risoe National
+Laboratory
+
+Radiation
+Research Department
+
+Building 201
+
+DK-4000 Roskilde,
+Denmark
+
+Phone: +45 4677
+4912 (direct)
+
+Fax: +45 4677
+4959
+
+e-mail:
+claus.andersen at risoe.dk <mailto:claus.andersen at risoe.dk> 
+
+web: http://www.risoe.dk/nuk/nuk-clan.htm
+
+-----------------------------------------
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+From jwlbright at yahoo.com  Fri Aug 11 14:27:08 2006
+From: jwlbright at yahoo.com (Jewel Bright)
+Date: Fri, 11 Aug 2006 07:27:08 -0700
+Subject: multivariate uniform
+Message-ID: <20060811142708.34387.qmail@web38705.mail.mud.yahoo.com>
+
+Is their such a thing like multivariate UNIFORM distribution?
+  I mean the multivariate distrubution which is marginally uniform in  [0,1]
+  for all the components and having a prescribed correlation matrix (non-diagonal)? 
+  How to generate such a thing? For a time being I would probably be satisfied if all the cross correlations are identical.
+   
+  Thank you
+   
+  Jewel Bright
+ 
+	
+		Do you Yahoo!?
+ Everyone is raving about the  all-new Yahoo! Mail Beta.
+
+From Xiaochen.Sun at brunel.ac.uk  Fri Aug 11 16:14:37 2006
+From: Xiaochen.Sun at brunel.ac.uk (Xiaochen Sun)
+Date: Fri, 11 Aug 2006 17:14:37 +0100
+Subject: Workshop on Portfolio Optimisation & Stochastic Programming
+Message-ID: <4053699F3E4AD04BA536A5F6BB81A2CFF91F07@UXEXMBU116.academic.windsor>
+
+(Apologies for any cross-listings!)
+
+Business Applications of Optimisation, Stochastic Programming & Portfolio 
+Planning:
+
+?Introduction to Optimisation and its Applications: Linear & Integer 
+Programming - Embedded DSS using SCRIPTING and COM Objects,
+16 - 17 October, CARISMA, Brunel University, West London
+
+?Decision Making under Uncertainty: Stochastic Programming, 18 - 19 October, 
+CARISMA, Brunel University, West London
+
+?Financial Planning Using Integer Quadratic Programming,
+20 October, CARISMA, Brunel University, West London
+
+Dear Colleague,
+
+We are pleased to announce the above workshops, which are organised by CARISMA, 
+Brunel University, OptiRisk Systems and UNICOM Seminars.
+
+The workshop series is specially designed to provide insight into the 
+discipline of optimisation for a wide range of individuals such as OR 
+professionals, quantitative analysts, risk analysts, DSS application 
+developers, consultants, and academic researchers.
+
+The courses will take you through all the steps of an optimisation project 
+using powerful optimisation tools such as AMPL Modelling System, CPLEX, FortMP, 
+FortSP and SPInE. They are most comprehensive and cover the latest developments 
+in the field, with plenty of hands-on examples, which help you develop 
+stochastic programming applications for your sector, be it financial planning, 
+portfolio selection, supply chain, or energy systems planning.
+
+Guest Presentation:
+?Scenario Generation ? Hidden Markov Model
+Enza Messina, University of Milan, Italy
+?Sloving Integer Stochastic Programming
+Suvrajeet Sen, University of Arizona, USA
+
+For further details please go to www.unicom.co.uk/optimise, either download 
+brochure or email mapgxcs at brunel.ac.uk for a PDF filer.
+
+We look forward to welcoming you to the workshops; please also make your 
+colleagues aware of it. Thank you.
+
+Best regards
+CARISMA
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Michael(Xiaochen) Sun
+CARISMA, www.carisma.brunel.ac.uk 
+Centre for the Analysis of Risk and Optimisation Modelling Application;
+School of Computing, Information Systems and Mathematics 
+Brunel University 
+Middlesex 
+Uxbridge, UB8 3PH 
+United Kingdom 
+* xiaochen.sun at brunel.ac.uk 
+http://people.brunel.ac.uk/~mapgxcs 
+http://mam3xs.blogspot.com/
+((+44) (0)1895 265625
+((+44) (0)7841873292
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+From sanniolanrewajuk at yahoo.com  Mon Aug 14 10:16:33 2006
+From: sanniolanrewajuk at yahoo.com (olanrewaju sanni)
+Date: Mon, 14 Aug 2006 03:16:33 -0700
+Subject: yield curve estimation
+Message-ID: <20060814101633.57154.qmail@web53902.mail.yahoo.com>
+
+Dear subscribers,
+How can I use s-plus command to calculate the spot and
+forward of a bond with coupon rate using s-plus7.0
+version.
+For example:
+maturity   coupon rate  price  yield-to-maturity
+0.5          0.0        96.15     0.080
+1.0          0.0        92.19     0.083
+1.5          0.085      99.45     0.0890
+2.0          0.09       99.64     0.0920
+2.5          0.11       103.49    0.0940
+Thanks for usual contribution.
+Lanre Sanni
+
+__________________________________________________
+Do You Yahoo!?
+Tired of spam?  Yahoo! Mail has the best spam protection around 
+http://mail.yahoo.com 
+
+From martyncollins10 at yahoo.com  Mon Aug 14 11:35:06 2006
+From: martyncollins10 at yahoo.com (Martyn Colins)
+Date: Mon, 14 Aug 2006 04:35:06 -0700
+Subject: PCA - correlation matrix question
+Message-ID: <20060814113506.62230.qmail@web55707.mail.re3.yahoo.com>
+
+ 
+  Dear all,
+   
+  Suppose I define the following correlation matrix:
+   
+  my.matrix <- matrix(1, 20, 20)
+  my.matrix[row(my.matrix) > col(my.matrix)]  <- c(
+ 0.5, 0.2, 0.1, rep(0.2, 2), 0.15, 0.3, 0.2, 0.3, rep(0.2, 2), rep(0.1, 2), 0.2, rep(0.4, 2), 0, rep(0.2, 2),0.1, 0, 0.2, 0.15, rep(0.1, 3), 0.3, rep(0.15, 2), rep(0, 2), 0.15, rep(0.4, 2), 0, 0.15, 0, 0.2, 0.3, 0, 0.1, rep(0, 2) , 0.1, rep(0, 2), 0.5, 0.2, rep(0, 5), 0.2, 0.3, rep(0.1, 7), 0.3, rep(0.1, 7), rep(0.4, (16*15)/2))
+ 
+my.matrix[row(my.matrix)<col(my.matrix)] <- t(my.matrix)[row(my.matrix)<col(my.matrix)]
+   
+   
+  Then I calculate the eigenvectors associated with this correlation
+ matrix:
+   
+  my.pca.vec <- eigen(my.matrix, symmetric=T)$vectors
+   
+  Check to see whether the eigenvectors are independent:
+  
+round(crossprod(my.pca.vec),12) 
+  This produces the identity matrix as expected. This should be the same as:
+   
+  round(cor(my.pca.vec), 12)
+   
+  However, this doesn't produce the identity matrix - some of the off-diagonal terms are non-zero.
+   
+  Is this supposed to happen?
+   
+  Thanks in advance for any
+ help.
+   
+  Regards,
+  Martyn
+ 
+		Do you Yahoo!?
+ 
+Get on board. You're invited to try the new Yahoo! Mail Beta.
+
+From jan.beran at uni-konstanz.de  Mon Aug 14 17:56:35 2006
+From: jan.beran at uni-konstanz.de (Jan Beran)
+Date: Mon, 14 Aug 2006 19:56:35 +0200
+Subject: position for PhD stundent
+Message-ID: <1155578195.44e0b9538e8a4@webmail.uni-konstanz.de>
+
+                Position for a PhD student 
+
+in the Department of Mathematics and Statistics (Professor Jan Beran), 
+University of Konstanz, as part of the DFG-research group FOR 518
+("Price, liquidity and credit risks: measurement and distribution").
+
+Starting September 1, 2006, or a date to be agreed. The position is 
+funded for 3 years. 
+
+Profile of candidates: Diploma or MA/MS in mathematics, statistics or 
+mathematical Finance with strong background in mathematical 
+statistics. Interest in research in mathematical statistics.
+
+Applications with CV, transcripts and references should be sent by e-
+mail to Professor Jan Beran (jan.beran at uni-konstanz.de; Department of 
+Mathematics and Statistics, University of Konstanz, 78457 Konstanz, 
+Germany). 
+
+From dataanalytics at earthlink.net  Tue Aug 15 11:24:27 2006
+From: dataanalytics at earthlink.net (Walter R. Paczkowski)
+Date: Tue, 15 Aug 2006 07:24:27 -0400
+Subject: creating a square matrix from a vector
+Message-ID: <7.0.1.0.2.20060815071816.03408310@earthlink.net>
+
+Good morning,
+
+I have a vector of, say, 6 numbers (1:6) that represents the upper
+triangle of a square matrix that has 0 on the main diagonal.  I want
+to create that matrix.  So, if my vector is 1:6, I want
+
+0  1  2  3
+
+1  0  4  5
+
+2  4  0  6
+
+3  5  6  0
+
+How can I do this easily?  Any suggestions?  The actual vector
+for my project has 325 elements so typing it in is not an
+option.
+
+Thanks for any help.
+
+Walt Paczkowski
+
+_________________________________
+
+Walter R. Paczkowski, Ph.D.
+
+Data Analytics Corp.
+
+44 Hamilton Lane
+
+Plainsboro, NJ  08536
+
+(V) 609-936-8999
+
+(F) 609-936-3733
+
+From lorenz at usgs.gov  Tue Aug 15 12:43:21 2006
+From: lorenz at usgs.gov (David L Lorenz)
+Date: Tue, 15 Aug 2006 07:43:21 -0500
+Subject: Re: creating a square matrix from a vector
+Message-ID: <OF16D0A6EB.9309915B-ON862571CB.0045E2F9-862571CB.0045E30A@usgs.gov>
+
+Walt,
+  The lower.tri() function references the lower triangle of a square matrix. To generate your example matrix:
+mat <- matrix(0, nrow=4, ncol=4)
+mat[lower.tri(mat)] <- 1:6
+mat <- mat + t(mat)
+ 
+  If you have a general problem, then you can use the quadratic equation to determine the number of rows and columns from the length of the vector. For a vector of length 325, the matrix must be 26 by 26.
+Dave
+
+-----s-news-owner at lists.biostat.wustl.edu wrote: -----
+
+> To: s-news at lists.biostat.wustl.edu
+> From: "Walter R. Paczkowski" <dataanalytics at earthlink.net>
+> Sent by: s-news-owner at lists.biostat.wustl.edu
+> Date: 08/15/2006 06:24AM
+> Subject: [S] creating a square matrix from a vector
+>
+> Good morning,
+>
+> I have a vector of, say, 6 numbers (1:6) that represents the upper triangle of a square matrix that has 0 on the main diagonal.  I want to create that matrix.  So, if my vector is 1:6, I want
+>
+> 0  1  2  3
+> 1  0  4  5
+> 2  4  0  6
+> 3  5  6  0
+>
+> How can I do this easily?  Any suggestions?  The actual vector for my project has 325 elements so typing it in is not an option.
+>
+> Thanks for any help.
+>
+> Walt Paczkowski
+> _________________________________
+>
+> Walter R. Paczkowski, Ph.D.
+> Data Analytics Corp.
+> 44 Hamilton Lane
+> Plainsboro, NJ  08536
+> (V) 609-936-8999
+> (F) 609-936-3733
+
+From tillard at cirad.fr  Tue Aug 15 21:00:19 2006
+From: tillard at cirad.fr (Emmanuel Tillard)
+Date: Tue, 15 Aug 2006 23:00:19 +0200
+Subject: different linear predictors from coxph and coxme
+Message-ID: <44E235E3.7040302@cirad.fr>
+
+Hello S-PLUS user's
+I am using S-PLUS 7.0 with Windows XP (Professional developer)
+I am trying to compare 2 survival models using the functions coxph (with 
+a gaussian frailty term) and coxme
+The results obtained from the two models are quite similar (coefficients 
+and frailty)
+
+However, i am surprised to see that the linear predictors are different
+
+#an example
+fit.coxme <- coxme(Surv(time, status) ~ rx, data=rats, random= ~1|litter)
+fit.coxph <- coxph(Surv(time, status) ~ rx + frailty(litter, 
+dist="gaussian"), data=rats)
+
+fit.coxme$coef$fixed
+fit.coxph$coef
+
+fit.coxme$frail
+fit.coxph$frail
+
+fit.coxme$linear.predictor
+fit.coxph$linear.predictors
+
+Could somebody explain me why there is a difference in linear predictors 
+and how to switch from one type to the other ?
+
+Any help would be very appreciated
+Regards
+
+--
+Emmanuel Tillard
+Veterinaire
+CIRAD-EMVT
+Unite de recherche 18
+
+UMR868 Elevage des Ruminants en Regions Chaudes (ERRC)
+Campus ENSA-INRA
+2 place Viala
+34060 Montpellier cedex 1
+
+tel:    0499612265 (fixe)
+        0633850598 (gsm)
+fax:    0467545694
+e-mail: tillard at cirad.fr
+
+From paulmatthias.diderichsen at abbott.com  Wed Aug 16 09:53:40 2006
+From: paulmatthias.diderichsen at abbott.com (Paul Matthias Diderichsen)
+Date: Wed, 16 Aug 2006 11:53:40 +0200
+Subject: axes tick labels
+Message-ID: <OF5C4A68DA.C275AD2B-ONC12571CC.0035B029-C12571CC.00365988@abbott.com>
+
+Dear S-plus Gurus,
+
+somebody asked me to do a xyplot of
+some data versus time. No problem, I said. Then, they told me that the
+ticks and labels along the time axis (abscissa) were to be multiples of
+24 (hours). No problem, I repeated, anticipating none. But - alas - it
+did turn out to be a problem.
+
+Please let me know if you have any ideas
+how to accomplish this - dirty workarounds are accepted. ;-) Also please
+tell me, if you are relatively sure that this can not be done. More generally,
+I am looking for a solution similar to matlab's XTick=[vector of positions
+on the axes where ticks are to appear] and XTickLabels={array of strings}.
+
+Thanks a lot, Paul M. Diderichsen.
+
+============================================================================================================================
+
+The information contained in this communication is confidential, may be subject to legal privileges, may constitute inside information, and is intended only for the use of the addressee.  It is the property of Abbott Laboratories or its relevant affiliate.  Unauthorized use, disclosure or copying of this communication or any part thereof is strictly prohibited and may be unlawful.  If you have received this communication in error, please notify Abbott Laboratories immediately by return e-mail and destroy this communication and all copies thereof, including all attachments.
+
+=============================================================================================================================
+
+From paulmatthias.diderichsen at abbott.com  Wed Aug 16 10:05:26 2006
+From: paulmatthias.diderichsen at abbott.com (Paul Matthias Diderichsen)
+Date: Wed, 16 Aug 2006 12:05:26 +0200
+Subject: Fw: axes tick labels ['Watchdog': checked]
+Message-ID: <OF4F994168.2FF6634A-ONC12571CC.003706CA-C12571CC.00376D48@abbott.com>
+
+Let me share with the newsgroup the
+solution that I received per email:
+
+Is this what you want?
+df=data.frame(response=rnorm(100),time=1:100)
+
+xyplot(response~time,df,scales=list(x=list(at=seq(0,96,24),labels=paste(seq(0,96,24),"hr",sep=''))))
+
+Thanks you very much - this was exactly
+what was needed! (I did actually read the section about scales in the trellis.args
+manual before posting to the newsgroup. However, I was apparently too dim
+to get it... ;-) )
+
+PMD
+
+----- Weitergeleitet von
+Paul Matthias Diderichsen/LUDWIGSHAFEN/GPRD/ABBOTT am 16.08.2006 12:01
+-----
+
+"XXX" <xxx at xxx.com>
+
+16.08.2006 11:55
+
+An
+
+"Paul Matthias Diderichsen"
+<paulmatthias.diderichsen at abbott.com>
+
+Kopie
+
+Thema
+
+RE: [S] axes tick labels ['Watchdog':
+checked]
+
+Is this what you want?
+df=data.frame(response=rnorm(100),time=1:100)
+
+xyplot(response~time,df,scales=list(x=list(at=seq(0,96,24),labels=paste(seq(0,96,24),"hr",sep=''))))
+good luck, 
+
+XXX
+-----Original Message-----
+
+From: s-news-owner at lists.biostat.wustl.edu [mailto:s-news-owner at lists.biostat.wustl.edu]On
+Behalf Of Paul Matthias Diderichsen
+
+Sent: Wednesday, August 16, 2006 11:54 AM
+
+To: s-news at lists.biostat.wustl.edu
+
+Subject: [S] axes tick labels
+
+Dear S-plus Gurus, 
+
+somebody asked me to do a xyplot of some data versus time. No problem,
+I said. Then, they told me that the ticks and labels along the time axis
+(abscissa) were to be multiples of 24 (hours). No problem, I repeated,
+anticipating none. But - alas - it did turn out to be a problem.
+
+Please let me know if you have any ideas how to accomplish this - dirty
+workarounds are accepted. ;-) Also please tell me, if you are relatively
+sure that this can not be done. More generally, I am looking for a solution
+similar to matlab's XTick=[vector of positions on the axes where ticks
+are to appear] and XTickLabels={array of strings}.
+
+Thanks a lot, Paul M. Diderichsen. 
+
+============================================================================================================================
+
+The information contained in this communication is confidential, may be
+subject to legal privileges, may constitute inside information, and is
+intended only for the use of the addressee. It is the property of Abbott
+Laboratories or its relevant affiliate. Unauthorized use, disclosure or
+copying of this communication or any part thereof is strictly prohibited
+and may be unlawful. If you have received this communication in error,
+please notify Abbott Laboratories immediately by return e-mail and destroy
+this communication and all copies thereof, including all attachments.
+
+=============================================================================================================================
+
+============================================================================================================================
+
+The information contained in this communication is confidential, may be subject to legal privileges, may constitute inside information, and is intended only for the use of the addressee.  It is the property of Abbott Laboratories or its relevant affiliate.  Unauthorized use, disclosure or copying of this communication or any part thereof is strictly prohibited and may be unlawful.  If you have received this communication in error, please notify Abbott Laboratories immediately by return e-mail and destroy this communication and all copies thereof, including all attachments.
+
+=============================================================================================================================
+
+From ccleland at optonline.net  Wed Aug 16 10:13:46 2006
+From: ccleland at optonline.net (Chuck Cleland)
+Date: Wed, 16 Aug 2006 06:13:46 -0400
+Subject: Re: axes tick labels
+In-Reply-To: <OF5C4A68DA.C275AD2B-ONC12571CC.0035B029-C12571CC.00365988@abbott.com>
+References: <OF5C4A68DA.C275AD2B-ONC12571CC.0035B029-C12571CC.00365988@abbott.com>
+Message-ID: <44E2EFDA.5040804@optonline.net>
+
+Paul Matthias Diderichsen wrote:
+> Dear S-plus Gurus,
+> somebody asked me to do a xyplot of some data versus time. No problem, I
+> said. Then, they told me that the ticks and labels along the time axis
+> (abscissa) were to be multiples of 24 (hours). No problem, I repeated,
+> anticipating none. But - alas - it did turn out to be a problem.
+> 
+> Please let me know if you have any ideas how to accomplish this - dirty
+> workarounds are accepted. ;-) Also please tell me, if you are relatively
+> sure that this can not be done. More generally, I am looking for a
+> solution similar to matlab's XTick=[vector of positions on the axes
+> where ticks are to appear] and XTickLabels={array of strings}.
+
+See the scales argument on ?trellis.args.  For example:
+
+library(trellis)
+X <- runif(20)
+Y <- rnorm(20)
+
+xyplot(Y ~ X, scales=list(x = list(at = seq(0,1,.1), labels=LETTERS[1:11])))
+
+-- 
+Chuck Cleland, Ph.D.
+NDRI, Inc.
+71 West 23rd Street, 8th floor
+New York, NY 10010
+tel: (212) 845-4495 (Tu, Th)
+tel: (732) 512-0171 (M, W, F)
+fax: (917) 438-0894
+
+From cleeth at usgs.gov  Wed Aug 16 12:30:08 2006
+From: cleeth at usgs.gov (David C Leeth)
+Date: Wed, 16 Aug 2006 08:30:08 -0400
+Subject: Re: Fw: axes tick labels ['Watchdog': checked]
+In-Reply-To: <OF4F994168.2FF6634A-ONC12571CC.003706CA-C12571CC.00376D48@abbott.com>
+References: <OF4F994168.2FF6634A-ONC12571CC.003706CA-C12571CC.00376D48@abbott.com>
+Message-ID: <OF4D552887.5EB260B6-ON852571CC.00446767-852571CC.0044ADDB@usgs.gov>
+
+Paul,
+
+Don't feel like the Lone Ranger.  Even after 7 years of use, I too seem too
+dim to get many of the subtleties of the language.  Thank goodness for all
+the bright people who read and reply to the list.
+
+Chris
+
+Chris Leeth
+U.S. Geological Survey (WRD)
+Atlanta, GA
+W:  770-903-9120
+C:   770-826-2385
+
+                                                                           
+             Paul Matthias                                                 
+             Diderichsen                                                   
+             <paulmatthias.did                                          To 
+             erichsen at abbott.c         s-news at lists.biostat.wustl.edu      
+             om>                                                        cc 
+             Sent by:                                                      
+             s-news-owner@list                                     Subject 
+             s.biostat.wustl.e         Fw: [S] axes tick labels            
+             du                        ['Watchdog': checked]               
+                                                                           
+                                                                           
+             08/16/2006 06:05                                              
+             AM                                                            
+                                                                           
+                                                                           
+
+Let me share with the newsgroup the solution that I received per email:
+
+Is this what you want?
+
+df=data.frame(response=rnorm(100),time=1:100)
+xyplot(response~time,df,scales=list(x=list(at=seq(0,96,24),labels=paste(seq(0,96,24),"hr",sep=''))))
+
+Thanks you very much - this was exactly what was needed! (I did actually
+read the section about scales in the trellis.args manual before posting to
+the newsgroup. However, I was apparently too dim to get it... ;-) )
+
+PMD
+----- Weitergeleitet von Paul Matthias Diderichsen/LUDWIGSHAFEN/GPRD/ABBOTT
+am 16.08.2006 12:01 -----
+                                                                           
+ "XXX" <xxx at xxx.com>                                                       
+                                                                           
+                                                                           
+ 16.08.2006 11:55                                                       An 
+                                   "Paul Matthias Diderichsen"             
+                                   <paulmatthias.diderichsen at abbott.com>   
+                                                                     Kopie 
+                                                                           
+                                                                     Thema 
+                                   RE: [S] axes tick labels ['Watchdog':   
+                                   checked]                                
+                                                                           
+                                                                           
+                                                                           
+                                                                           
+                                                                           
+                                                                           
+                                                                           
+
+Is this what you want?
+
+df=data.frame(response=rnorm(100),time=1:100)
+xyplot(response~time,df,scales=list(x=list(at=seq(0,96,24),labels=paste(seq(0,96,24),"hr",sep=''))))
+
+good luck,
+XXX
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu]On Behalf Of Paul Matthias
+Diderichsen
+Sent: Wednesday, August 16, 2006 11:54 AM
+To: s-news at lists.biostat.wustl.edu
+Subject: [S] axes tick labels
+
+Dear S-plus Gurus,
+somebody asked me to do a xyplot of some data versus time. No problem, I
+said. Then, they told me that the ticks and labels along the time axis
+(abscissa) were to be multiples of 24 (hours). No problem, I repeated,
+anticipating none. But - alas - it did turn out to be a problem.
+
+Please let me know if you have any ideas how to accomplish this - dirty
+workarounds are accepted. ;-) Also please tell me, if you are relatively
+sure that this can not be done. More generally, I am looking for a solution
+similar to matlab's XTick=[vector of positions on the axes where ticks are
+to appear] and XTickLabels={array of strings}.
+
+Thanks a lot, Paul M. Diderichsen.
+============================================================================================================================
+
+The information contained in this communication is confidential, may be
+subject to legal privileges, may constitute inside information, and is
+intended only for the use of the addressee. It is the property of Abbott
+Laboratories or its relevant affiliate. Unauthorized use, disclosure or
+copying of this communication or any part thereof is strictly prohibited
+and may be unlawful. If you have received this communication in error,
+please notify Abbott Laboratories immediately by return e-mail and destroy
+this communication and all copies thereof, including all attachments.
+=============================================================================================================================
+
+============================================================================================================================
+
+The information contained in this communication is confidential, may be
+subject to legal privileges, may constitute inside information, and is
+intended only for the use of the addressee. It is the property of Abbott
+Laboratories or its relevant affiliate. Unauthorized use, disclosure or
+copying of this communication or any part thereof is strictly prohibited
+and may be unlawful. If you have received this communication in error,
+please notify Abbott Laboratories immediately by return e-mail and destroy
+this communication and all copies thereof, including all attachments.
+=============================================================================================================================
+
+From kamiltoth at yahoo.com  Wed Aug 16 18:48:04 2006
+From: kamiltoth at yahoo.com (Kamil Toth)
+Date: Wed, 16 Aug 2006 11:48:04 -0700
+Subject: compare BIG lists
+Message-ID: <20060816184804.869.qmail@web35808.mail.mud.yahoo.com>
+
+People:
+   
+  An easy question for S-PLUS gurus:
+  Suppose that I have two data sets: DT1 &DT2. Both are very big (~80 Meg) and both structured identically, i.e., they are lists containing data arrays, descriptors, sublists, and even methods to visualize stuff. They  are largely identical but still contain some differences. Is that possible in S-PLUS to find those differences automatically, without much of a manual work?
+   
+  thank you
+   
+  Kamil Toth
+ 
+		Do you Yahoo!?
+ 
+Get on board. You're invited to try the new Yahoo! Mail Beta.
+
+From Andrew.Loach at icbc.com  Wed Aug 16 22:46:56 2006
+From: Andrew.Loach at icbc.com (Loach, Andrew)
+Date: Wed, 16 Aug 2006 15:46:56 -0700
+Subject: heteroskedastic-consistent p-values
+Message-ID: <B818EBFE412CF44A9DB921B28C17789F8DD823@EX01VS299.icbc.net>
+
+Hi there,
+
+I'm working with linear models in S-Plus 7 on Windows XP, and have come
+across a need to compute heteroskedastic-consistent P-values to test the
+variables included in the model, as I am not completely confident that
+the p-values provided by the summary.lm function are to be relied on.
+
+Would someone be able to provide information on how to compute p-values
+based on White's HC0, HC2, or HC3 within S-Plus?
+
+Thanks,
+
+Andrew Loach, ACAS
+ICBC Corporate Actuarial Dept.
+604-982-4347
+
+The views expressed here are the personal opinions of Andrew Loach and
+do not represent the opinions or views of ICBC.
+
+From p.murrell at auckland.ac.nz  Thu Aug 17 23:25:05 2006
+From: p.murrell at auckland.ac.nz (Paul Murrell)
+Date: Fri, 18 Aug 2006 11:25:05 +1200
+Subject: DSC 2007
+Message-ID: <44E4FAD1.1070102@stat.auckland.ac.nz>
+
+Hi
+
+This is a second call for abstracts.
+Please forward and circulate to other interested parties.
+[apologies for any cross-posting]
+
+DSC 2007, a conference on systems and environments for statistical
+computing, will take place in Auckland, New Zealand on February 15 & 16,
+2007.
+
+We invite abstracts on the development of software systems and computing
+environments for interactive statistics.  The workshop will focus on,
+but is not limited to, open source statistical computing.
+
+The deadline for submitting abstracts is 2006-10-15 (October 15th).
+Please visit the conference web page at
+http://www.stat.auckland.ac.nz/dsc-2007/
+and send abstracts (one page) to dsc2007 at stat.auckland.ac.nz
+
+Paul
+(on behalf of the Organising Committee)
+-- 
+Dr Paul Murrell
+Department of Statistics
+The University of Auckland
+Private Bag 92019
+Auckland
+New Zealand
+64 9 3737599 x85392
+paul at stat.auckland.ac.nz
+http://www.stat.auckland.ac.nz/~paul/
+
+From kamiltoth at yahoo.com  Fri Aug 18 16:08:47 2006
+From: kamiltoth at yahoo.com (Kamil Toth)
+Date: Fri, 18 Aug 2006 09:08:47 -0700
+Subject: compare BIG lists
+Message-ID: <20060818160848.76617.qmail@web35802.mail.mud.yahoo.com>
+
+Many thanks to Thomas Jagger, Henrik Nielsen and Manolo Pacheco for hep with my request regarding comparison of big data sets. As it turns out (thank you, Tom)
+  the function "all.equal" solves all the problems in a momernt, even with really huge and copmplex data sets.
+   
+  Kamil
+ 
+		Do you Yahoo!?
+ Next-gen email? Have it all with the  all-new Yahoo! Mail Beta.
+
+From dataanalytics at earthlink.net  Fri Aug 18 17:18:03 2006
+From: dataanalytics at earthlink.net (Walter R. Paczkowski)
+Date: Fri, 18 Aug 2006 13:18:03 -0400
+Subject: reversing a scale
+Message-ID: <7.0.1.0.2.20060818131329.034347e8@earthlink.net>
+
+Hi,
+
+I'm looking for a simple way to convert a scale such as 1, 2, 3, 4, 5 to
+5, 4, 3, 2, 1.  In other words, I want to map
+
+1 --> 5
+
+2 --> 4
+
+3 --> 3
+
+4 --> 2
+
+5 --> 1
+
+So if I have a vector (5, 1, 3, 4, 2, 1, 1, 5), I want to map it to a new
+vector (1, 5, 3, 2, 4, 5, 5, 1).  I've been using ifelse statements
+which works but if my scale is, say, 1:100, then I have 100 nested
+statements - that's not good.  Any suggestions?
+
+Thanks,
+
+Walt Paczkowski
+
+_________________________________
+
+Walter R. Paczkowski, Ph.D.
+
+Data Analytics Corp.
+
+44 Hamilton Lane
+
+Plainsboro, NJ  08536
+
+(V) 609-936-8999
+
+(F) 609-936-3733
+
+From ccleland at optonline.net  Fri Aug 18 17:33:11 2006
+From: ccleland at optonline.net (Chuck Cleland)
+Date: Fri, 18 Aug 2006 13:33:11 -0400
+Subject: Re: reversing a scale
+In-Reply-To: <7.0.1.0.2.20060818131329.034347e8@earthlink.net>
+References: <7.0.1.0.2.20060818131329.034347e8@earthlink.net>
+Message-ID: <44E5F9D7.5050809@optonline.net>
+
+Walter R. Paczkowski wrote:
+> Hi,
+> 
+> I'm looking for a simple way to convert a scale such as 1, 2, 3, 4, 5 to
+> 5, 4, 3, 2, 1.  In other words, I want to map
+> 
+> 1 --> 5
+> 2 --> 4
+> 3 --> 3
+> 4 --> 2
+> 5 --> 1
+> 
+> So if I have a vector (5, 1, 3, 4, 2, 1, 1, 5), I want to map it to a
+> new vector (1, 5, 3, 2, 4, 5, 5, 1).  I've been using ifelse statements
+> which works but if my scale is, say, 1:100, then I have 100 nested
+> statements - that's not good.  Any suggestions?
+
+How about this?
+
+X1 <- sample(1:5, 10, replace=TRUE)
+X2 <- sample(1:100, 10, replace=TRUE)
+X1rev <- 6 - X1
+X2rev <- 101 - X2
+
+> Thanks,
+> 
+> Walt Paczkowski
+> 
+> _________________________________
+> 
+> Walter R. Paczkowski, Ph.D.
+> Data Analytics Corp.
+> 44 Hamilton Lane
+> Plainsboro, NJ  08536
+> (V) 609-936-8999
+> (F) 609-936-3733
+
+-- 
+Chuck Cleland, Ph.D.
+NDRI, Inc.
+71 West 23rd Street, 8th floor
+New York, NY 10010
+tel: (212) 845-4495 (Tu, Th)
+tel: (732) 512-0171 (M, W, F)
+fax: (917) 438-0894
+
+From sundar.dorai-raj at pdf.com  Fri Aug 18 17:34:16 2006
+From: sundar.dorai-raj at pdf.com (Sundar Dorai-Raj)
+Date: Fri, 18 Aug 2006 12:34:16 -0500
+Subject: Re: reversing a scale
+In-Reply-To: <7.0.1.0.2.20060818131329.034347e8@earthlink.net>
+References: <7.0.1.0.2.20060818131329.034347e8@earthlink.net>
+Message-ID: <44E5FA18.50209@pdf.com>
+
+How about:
+
+x <- c(5, 1, 3, 4, 2, 1, 1, 5)
+y <- 6 - x
+
+--sundar
+
+Walter R. Paczkowski wrote:
+> Hi,
+>
+> I'm looking for a simple way to convert a scale such as 1, 2, 3, 4, 5 to
+> 5, 4, 3, 2, 1.  In other words, I want to map
+>
+>
+> 1 --> 5
+> 2 --> 4
+> 3 --> 3
+> 4 --> 2
+> 5 --> 1
+>
+> So if I have a vector (5, 1, 3, 4, 2, 1, 1, 5), I want to map it to a
+> new vector (1, 5, 3, 2, 4, 5, 5, 1).  I've been using ifelse statements
+> which works but if my scale is, say, 1:100, then I have 100 nested
+> statements - that's not good.  Any suggestions?
+>
+>
+> Thanks,
+>
+> Walt Paczkowski
+>
+> _________________________________
+>
+> Walter R. Paczkowski, Ph.D.
+> Data Analytics Corp.
+> 44 Hamilton Lane
+> Plainsboro, NJ  08536
+> (V) 609-936-8999
+> (F) 609-936-3733
+
+From dataanalytics at earthlink.net  Fri Aug 18 17:45:23 2006
+From: dataanalytics at earthlink.net (Walter R. Paczkowski)
+Date: Fri, 18 Aug 2006 13:45:23 -0400
+Subject: reversing a scale
+Message-ID: <7.0.1.0.2.20060818134236.033499d8@earthlink.net>
+
+I am amazed how many responses I got and so quickly.  The solution is 
+very simple.  A number of people responded with
+
+max(x) - x + 1
+
+This is just what I need.  Thanks all.
+
+Walt
+
+From David.Huffer at csosa.gov  Fri Aug 18 19:20:12 2006
+From: David.Huffer at csosa.gov (David Huffer)
+Date: Fri, 18 Aug 2006 15:20:12 -0400
+Subject: Origin for dates
+Message-ID: <3C0F89000A5E6240B0B6FA31ADA6031C01EF7622@dc0633ma07.csosa.gov>
+
+I see in the S+ language reference that the default origin for object of
+class chron is 1/1/1970, but for a dates object the default is 1/1/1960.
+Is this right? 
+
+--
+Thanks!
+David
+
+From eugenedalt at yahoo.com  Sat Aug 19 14:01:39 2006
+From: eugenedalt at yahoo.com (eugene dalt)
+Date: Sat, 19 Aug 2006 07:01:39 -0700
+Subject: lapply?
+In-Reply-To: <7.0.1.0.2.20060818134236.033499d8@earthlink.net>
+References: <7.0.1.0.2.20060818134236.033499d8@earthlink.net>
+Message-ID: <20060819140139.90116.qmail@web30004.mail.mud.yahoo.com>
+
+Hi folks,
+
+I would like to know if the following loop can be
+rewritten with lapply
+
+list1 <- as.list(0)
+
+testv <- c(4,6,7,8)
+
+for( i in 1:4){
+
+list1[[i]] <- rep(5,testv[i])
+
+}
+
+Thanks in Advance. - Eugene
+
+__________________________________________________
+Do You Yahoo!?
+Tired of spam?  Yahoo! Mail has the best spam protection around 
+http://mail.yahoo.com 
+
+From Daniel_J_Celta at fpl.com  Sat Aug 19 19:10:05 2006
+From: Daniel_J_Celta at fpl.com
+Date: Sat, 19 Aug 2006 15:10:05 -0400
+Subject: Re: lapply?
+Message-ID: <OFCFDA9B08.179474D2-ON852571CF.00690D68-852571CF.00694C78@fpl.com>
+
+Eugene,
+Try
+
+> lapply(c(4,6,7,8), function(x) rep(5, x))
+
+I think this would do what you are trying to do.
+
+Daniel J Celta
+Project Valuation - Special Valuations
+561 691 7653
+
+                                                                                
+                                                              
+                      "eugene dalt"                                             
+                                                              
+                      <eugenedalt at yahoo.com>           To:       
+s-news at lists.biostat.wustl.edu, r-help at stat.math.ethz.ch                     
+                      Sent by:                         cc:                      
+                                                              
+                      s-news-owner at lists.biosta        Subject:  [S] lapply?    
+                                                              
+                      t.wustl.edu                                               
+                                                              
+                                                                                
+                                                              
+                                                                                
+                                                              
+                      08/19/2006 10:01 AM                                       
+                                                              
+                                                                                
+                                                              
+                                                                                
+                                                              
+
+Hi folks,
+
+I would like to know if the following loop can be
+rewritten with lapply
+
+list1 <- as.list(0)
+
+testv <- c(4,6,7,8)
+
+for( i in 1:4){
+
+list1[[i]] <- rep(5,testv[i])
+
+}
+
+Thanks in Advance. - Eugene
+
+__________________________________________________
+Do You Yahoo!?
+Tired of spam?  Yahoo! Mail has the best spam protection around
+http://mail.yahoo.com
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From nkoper at yahoo.com  Mon Aug 21 19:59:52 2006
+From: nkoper at yahoo.com (Nicola Koper)
+Date: Mon, 21 Aug 2006 12:59:52 -0700
+Subject: calculating upper and lower CL using lme and glme
+Message-ID: <20060821195952.74064.qmail@web36215.mail.mud.yahoo.com>
+
+Hi everyone,
+
+I want to use the standard errors associated with
+parameter estimates provided by lme and glme
+(correlatedData library) to calculate upper and lower
+90% confidence limits for the parameter estimates, but
+I"m not sure how to do so with mixed models... e.g.
+calculating the t-value (@ alpha=0.1) to use in the
+calculation.
+
+I'm using Splus 6.2.
+
+Thanks alot,
+Nicky
+
+************************************************************
+
+Dr. Nicola Koper
+Assistant Professor
+Natural Resources Institute
+University of Manitoba
+
+__________________________________________________
+Do You Yahoo!?
+Tired of spam?  Yahoo! Mail has the best spam protection around 
+http://mail.yahoo.com 
+
+From khan at cshl.edu  Mon Aug 21 20:22:36 2006
+From: khan at cshl.edu (Khan, Sohail)
+Date: Mon, 21 Aug 2006 16:22:36 -0400
+Subject: replacing values in a data frame
+Message-ID: <C8696843AE995F4EA4CDC3E2B83482A9018790BD@mailbox02.cshl.edu>
+
+Dear list,
+
+I have a large data frame with several numerical columns, I would like to 
+replace all the values < 20 to NAs.
+How could I do this?  Thanks for your suggestions.
+
+Sohail 
+
+From phlasky at earthlink.net  Mon Aug 21 20:27:52 2006
+From: phlasky at earthlink.net (Paul Lasky)
+Date: Mon, 21 Aug 2006 13:27:52 -0700
+Subject: Multivariate Normal Samples with Correlation among Rows
+Message-ID: <44EA1748.7030405@earthlink.net>
+
+I have a n X m matrix M  that  is positive definite ( positive det of 
+the associated covar matrix). The columns index subjects and rows are 
+index time.  I wish to random sample from the matrix assuming a 
+multivariate normal model, BUT I  wish to take into account the time 
+correlation, i.e. cor( t ( M ) ).
+
+How do I do this, or is it even possible ?  I know that ns  random 
+vectors are available  from a  standard-type multivariate normal model  
+by rmvnorm( ns,  colMeans( M ),  var( M ) )
+
+ Paul H. Lasky
+ P & B Consultants
+
+--
+No virus found in this outgoing message.
+Checked by AVG Free Edition.
+Version: 7.1.394 / Virus Database: 268.11.3/423 - Release Date: 8/18/2006
+
+From kamiltoth at yahoo.com  Tue Aug 22 01:12:04 2006
+From: kamiltoth at yahoo.com (Kamil Toth)
+Date: Mon, 21 Aug 2006 18:12:04 -0700
+Subject: dual-core
+Message-ID: <20060822011204.99806.qmail@web35810.mail.mud.yahoo.com>
+
+Folks:
+  I need an advise from somebody well versed in computers. I have bought a new laptop, Dell Inspiron 9400. This is a pretty powerful dual core  machine. I found it much faster than my previous Toshiba-Centrino, and of course I feel good about that. But what I have noticed is that each of the processors works only 50% of its time, that means that I have no advantage of its "dual-coreness" when I work in s-plus. Is that possible to somehow take more from a dual core machine? Maybe there is some kind of settings in S-PLUS or in OS?
+  thank you
+   
+  Kamil
+
+ 
+	
+		Get your own web address for just $1.99/1st yr. We'll help. Yahoo! Small Business.
+
+From petr.pikal at precheza.cz  Tue Aug 22 07:40:58 2006
+From: petr.pikal at precheza.cz (Petr Pikal)
+Date: Tue, 22 Aug 2006 09:40:58 +0200
+Subject: Re: replacing values in a data frame
+In-Reply-To: <C8696843AE995F4EA4CDC3E2B83482A9018790BD@mailbox02.cshl.edu>
+References: <C8696843AE995F4EA4CDC3E2B83482A9018790BD@mailbox02.cshl.edu>
+Message-ID: <44EAD12A.3472.112E41@localhost>
+
+Hi
+
+data.frame[data.frame<20] <- NA
+
+works In R so maybe it work in S+ too.
+
+HTH
+Petr
+
+On 21 Aug 2006 at 16:22, Khan, Sohail wrote:
+
+Subject:                [S] replacing values in a data frame
+Date sent:              Mon, 21 Aug 2006 16:22:36 -0400
+From:                   "Khan, Sohail" <khan at cshl.edu>
+To:                     <s-news at lists.biostat.wustl.edu>
+
+> Dear list,
+> 
+> I have a large data frame with several numerical columns, I would like
+> to replace all the values < 20 to NAs. How could I do this?  Thanks
+> for your suggestions.
+> 
+> Sohail 
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+
+Petr Pikal
+petr.pikal at precheza.cz
+
+From rob at robertcampbell.co.uk  Tue Aug 22 12:42:05 2006
+From: rob at robertcampbell.co.uk (Rob Campbell)
+Date: Tue, 22 Aug 2006 13:42:05 +0100
+Subject: Re: dual-core
+In-Reply-To: <20060822011204.99806.qmail@web35810.mail.mud.yahoo.com>
+References: <20060822011204.99806.qmail@web35810.mail.mud.yahoo.com>
+Message-ID: <44EAFB9D.4080008@robertcampbell.co.uk>
+
+Kamil Toth wrote:
+> Folks:
+> I need an advise from somebody well versed in computers. I have bought a
+> new laptop, Dell Inspiron 9400. This is a pretty powerful dual core
+> machine. I found it much faster than my previous Toshiba-Centrino, and
+> of course I feel good about that. But what I have noticed is that each
+> of the processors works only 50% of its time, that means that I have no
+> advantage of its "dual-coreness" when I work in s-plus. Is that possible
+> to somehow take more from a dual core machine? Maybe there is some kind
+> of settings in S-PLUS or in OS?
+>
+> thank you
+
+I'm pretty sure that S-Plus will only make use of one core at a time. A 
+program has to be specifically written such that it will take advantage 
+of multiple cores and for most software this is currently not the case.
+
+For some software applications, such as Matlab, you could run two 
+instances of the program (one on each core) share work between these 
+using custom-written code. However, unless you're running some serious 
+number-crunching this won't be worth your while. I think S-Plus will 
+only run on one core at a time. They might be doing something cheeky 
+like asking for a separate licence for each core, though. Nothing would 
+surprise me.
+
+The main advantage of your dual core is that you can have one core fully 
+loaded crunching in SPlus, whilst the other is largely idle--allowing 
+you to work on other applications normally. For this to work well (at 
+all?) your OS needs to support this.
+
+http://www.webopedia.com/DidYouKnow/Hardware_Software/2005/dual_core.asp
+
+--
+    Rob Campbell   -   Research Scientist
+
+   Autistic Bacteriophage Research Group:
+"We provide hope for disadvantaged `phages"
+
+   www.autisticBacteriophage.notlong.com
+
+               Oxford
+
+   ~  www.robertcampbell.co.uk  ~
+
+                  *
+
+From jjames at mango-solutions.com  Tue Aug 22 12:59:13 2006
+From: jjames at mango-solutions.com (John James)
+Date: Tue, 22 Aug 2006 13:59:13 +0100
+Subject: Re: dual-core
+In-Reply-To: <44EAFB9D.4080008@robertcampbell.co.uk>
+References: <44EAFB9D.4080008@robertcampbell.co.uk>
+Message-ID: <001001c6c5ea$c4d880a0$170aa8c0@mango.com>
+
+You need to set the /MULTIPLEINSTANCES flag on the splus.exe command line.
+
+I have a dual core T2500 and can run multiple sessions of S-PLUS
+concurrently.
+
+With 7.0.6 S-PLUS on XPSP2 S-PLUS also attempts to launch on a different
+processor each time. You will need a license that will permit concurrent
+sessions, but it does not require any more tokens.
+
+John James
+Mango Solutions
+
+-----Original Message-----
+From: Rob Campbell [mailto:rob at robertcampbell.co.uk] 
+Sent: 22 August 2006 13:42
+To: Kamil Toth
+Cc: s-news at lists.biostat.wustl.edu
+Subject: Re: [S] dual-core
+
+Kamil Toth wrote:
+> Folks:
+> I need an advise from somebody well versed in computers. I have bought a 
+> new laptop, Dell Inspiron 9400. This is a pretty powerful dual core  
+> machine. I found it much faster than my previous Toshiba-Centrino, and 
+> of course I feel good about that. But what I have noticed is that each 
+> of the processors works only 50% of its time, that means that I have no 
+> advantage of its "dual-coreness" when I work in s-plus. Is that possible 
+> to somehow take more from a dual core machine? Maybe there is some kind 
+> of settings in S-PLUS or in OS?
+> thank you
+
+I'm pretty sure that S-Plus will only make use of one core at a time. A 
+program has to be specifically written such that it will take advantage 
+of multiple cores and for most software this is currently not the case.
+
+For some software applications, such as Matlab, you could run two 
+instances of the program (one on each core) share work between these 
+using custom-written code. However, unless you're running some serious 
+number-crunching this won't be worth your while. I think S-Plus will 
+only run on one core at a time. They might be doing something cheeky 
+like asking for a separate licence for each core, though. Nothing would 
+surprise me.
+
+The main advantage of your dual core is that you can have one core fully 
+loaded crunching in SPlus, whilst the other is largely idle--allowing 
+you to work on other applications normally. For this to work well (at 
+all?) your OS needs to support this.
+
+http://www.webopedia.com/DidYouKnow/Hardware_Software/2005/dual_core.asp
+
+-- 
+     Rob Campbell   -   Research Scientist
+
+    Autistic Bacteriophage Research Group:
+"We provide hope for disadvantaged `phages"
+
+    www.autisticBacteriophage.notlong.com
+
+                Oxford
+
+    ~  www.robertcampbell.co.uk  ~
+
+                   *
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From rob at robertcampbell.co.uk  Tue Aug 22 13:09:28 2006
+From: rob at robertcampbell.co.uk (Rob Campbell)
+Date: Tue, 22 Aug 2006 14:09:28 +0100
+Subject: Re: dual-core
+In-Reply-To: <001001c6c5ea$c4d880a0$170aa8c0@mango.com>
+References: <001001c6c5ea$c4d880a0$170aa8c0@mango.com>
+Message-ID: <44EB0208.3000009@robertcampbell.co.uk>
+
+> With 7.0.6 S-PLUS on XPSP2 S-PLUS also attempts to launch on a different
+> processor each time. You will need a license that will permit concurrent
+> sessions, but it does not require any more tokens.
+Really? I as initially asked for a token top-up but this went away after 
+a couple of phone calls.
+
+--
+    Rob Campbell   -   Research Scientist
+
+   Autistic Bacteriophage Research Group:
+"We provide hope for disadvantaged `phages"
+
+   www.autisticBacteriophage.notlong.com
+
+               Oxford
+
+   ~  www.robertcampbell.co.uk  ~
+
+                  *
+
+From gerald.jean at dgag.ca  Tue Aug 22 15:14:48 2006
+From: gerald.jean at dgag.ca
+Date: Tue, 22 Aug 2006 11:14:48 -0400
+Subject: Searching special characters in vector of strings.
+Message-ID: <OFF69A2976.4481FE11-ON852571D2.00530F1B@spgdag.ca>
+
+Hello everyone,
+
+how can I search for a string like
+
+" 2+ sin en 3 ans"
+
+in a vector of character strings as:
+
+[1] "nbsinst 0  sin en 3 ansnewzv Eleve" "nbsinst 1  sin en 3 ansnewzv
+Eleve"
+[3] "nbsinst 2+ sin en 3 ansnewzv Eleve" "nbsinst 0  sin en 3 ansnewzv
+Basse"
+[5] "nbsinst 1  sin en 3 ansnewzv Basse" "nbsinst 2+ sin en 3 ansnewzv
+Basse"
+[7] "nbsinst 0  sin en 3 ansnewzv Moyen" "nbsinst 1  sin en 3 ansnewzv
+Moyen"
+[9] "nbsinst 2+ sin en 3 ansnewzv Moyen"
+
+I know that I could use something like "\+" in regexpr but I would like to
+be able to do the search generally using the same code for searching, for
+example, for
+
+" 1  sin en 3 ans"
+
+in the same vector. The search is part of a function and the function is
+used extensively and, unfortunately, it bums when there is special
+characters in the pattern to search for and / or in the vector of strings
+to search in.
+
+Thanks,
+
+Gérald Jean
+Conseiller senior en statistiques, Actuariat
+télephone            : (418) 835-4900 poste (7639)
+télecopieur          : (418) 835-6657
+courrier électronique: gerald.jean at dgag.ca
+
+"In God we trust, all others must bring data"  W. Edwards Deming
+
+Le message ci-dessus, ainsi que les documents l'accompagnant, sont destinés 
+uniquement aux personnes identifiées et peuvent contenir des informations
+privilégiées, confidentielles ou ne pouvant être divulguées. Si vous avez reçu 
+ce message par erreur, veuillez le détruire.
+
+This communication (and/or the attachments) is intended for named recipients 
+only and may contain privileged or confidential information which is not
+to be disclosed. If you received this communication by mistake please destroy 
+all copies.
+
+From dimitris.rizopoulos at med.kuleuven.be  Tue Aug 22 15:38:11 2006
+From: dimitris.rizopoulos at med.kuleuven.be (Dimitris Rizopoulos)
+Date: Tue, 22 Aug 2006 17:38:11 +0200
+Subject: Re: Searching special characters in vector of strings.
+References: <OFF69A2976.4481FE11-ON852571D2.00530F1B@spgdag.ca>
+Message-ID: <025e01c6c600$f9c75e10$0540210a@www.domain>
+
+probably you're looking for something like:
+
+x <- c("nbsinst 0  sin en 3 ansnewzv Eleve", "nbsinst 1  sin en 3 
+ansnewzv Eleve",
+ "nbsinst 2+ sin en 3 ansnewzv Eleve", "nbsinst 0  sin en 3 ansnewzv 
+Basse",
+ "nbsinst 1  sin en 3 ansnewzv Basse", "nbsinst 2+ sin en 3 ansnewzv 
+Basse",
+ "nbsinst 0  sin en 3 ansnewzv Moyen", "nbsinst 1  sin en 3 ansnewzv 
+Moyen",
+
+ "nbsinst 2+ sin en 3 ansnewzv Moyen")
+
+grep("2\\+ sin en 3 ans", x)
+grep("1  sin en 3 ans", x)
+
+I hope it helps.
+
+Best,
+Dimitris
+
+----
+Dimitris Rizopoulos
+Ph.D. Student
+Biostatistical Centre
+School of Public Health
+Catholic University of Leuven
+
+Address: Kapucijnenvoer 35, Leuven, Belgium
+Tel: +32/(0)16/336899
+Fax: +32/(0)16/337015
+Web: http://med.kuleuven.be/biostat/
+    http://www.student.kuleuven.be/~m0390867/dimitris.htm
+
+----- Original Message ----- 
+From: <gerald.jean at dgag.ca>
+
+To: <s-news at wubios.wustl.edu>
+Sent: Tuesday, August 22, 2006 5:14 PM
+Subject: [S] Searching special characters in vector of strings.
+
+Hello everyone,
+
+how can I search for a string like
+
+" 2+ sin en 3 ans"
+
+in a vector of character strings as:
+
+[1] "nbsinst 0  sin en 3 ansnewzv Eleve" "nbsinst 1  sin en 3 ansnewzv
+Eleve"
+[3] "nbsinst 2+ sin en 3 ansnewzv Eleve" "nbsinst 0  sin en 3 ansnewzv
+Basse"
+[5] "nbsinst 1  sin en 3 ansnewzv Basse" "nbsinst 2+ sin en 3 ansnewzv
+Basse"
+[7] "nbsinst 0  sin en 3 ansnewzv Moyen" "nbsinst 1  sin en 3 ansnewzv
+Moyen"
+[9] "nbsinst 2+ sin en 3 ansnewzv Moyen"
+
+I know that I could use something like "\+" in regexpr but I would 
+like to
+be able to do the search generally using the same code for searching, 
+for
+
+example, for
+
+" 1  sin en 3 ans"
+
+in the same vector. The search is part of a function and the function 
+is
+
+used extensively and, unfortunately, it bums when there is special
+characters in the pattern to search for and / or in the vector of 
+strings
+
+to search in.
+
+Thanks,
+
+Gérald Jean
+Conseiller senior en statistiques, Actuariat
+télephone            : (418) 835-4900 poste (7639)
+télecopieur          : (418) 835-6657
+courrier électronique: gerald.jean at dgag.ca
+
+"In God we trust, all others must bring data"  W. Edwards Deming
+
+Le message ci-dessus, ainsi que les documents l'accompagnant, sont 
+destinés uniquement aux personnes identifiées et peuvent contenir des 
+informations
+privilégiées, confidentielles ou ne pouvant être divulguées. Si vous 
+avez reçu ce message par erreur, veuillez le détruire.
+
+This communication (and/or the attachments) is intended for named 
+recipients only and may contain privileged or confidential information 
+which is not
+to be disclosed. If you received this communication by mistake please 
+destroy all copies.
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+Disclaimer: http://www.kuleuven.be/cwis/email_disclaimer.htm
+
+From christian.davies at citigroup.com  Tue Aug 22 15:52:58 2006
+From: christian.davies at citigroup.com (Davies, Christian [CIR])
+Date: Tue, 22 Aug 2006 16:52:58 +0100
+Subject: Job Opportunity - Citigroup Quantitative Equity Research
+Message-ID: <F057CE4D66779741AD3FD9BAE835ACFE0935CA8E@exukmb23.eur.nsroot.net>
+
+The Quantitative Equity Research group in London provides quantitative
+solutions for active and passive equity portfolio managers in every step
+of the investment process. The team is looking to expand their product
+mix and looking for a quantitative analyst who will be mainly
+responsible for product/model building and infrastructure development.
+The analyst is expected to maintain some of the already existing models
+as well as enhance and develop new products in the areas of absolute and
+relative risk modelling, portfolio construction and trading strategies.
+
+The ideal candidate will have approximately 2 to 3 years experience in
+financial markets, excellent programming skills in either S+ or R, with
+the ability to create a user-friendly infrastructure for delivering
+existing products to clients. Knowledge of industry data sources such as
+Factset, Datastream and Bloomberg is also preferred. The candidate must
+also be a team player, have good communication skills and be
+self-motivated with the capability to work in a flat team structure and
+under limited supervision. Additionally the candidate must be highly
+numerical and a good problem solver with ideally a first degree in IT,
+Mathematics or Engineering and an MSc in Finance and/or practical
+knowledge in quantitative equity portfolio management. 
+ 
+To apply, please email a resume and letter of application to
+Christian.Davies at Citigroup.com by Friday September 1st 2006.
+
+From martyncollins10 at yahoo.com  Tue Aug 22 16:08:15 2006
+From: martyncollins10 at yahoo.com (Martyn Colins)
+Date: Tue, 22 Aug 2006 09:08:15 -0700
+Subject: obtaining design matrix from correlation matrix
+Message-ID: <20060822160815.79331.qmail@web55702.mail.re3.yahoo.com>
+
+Dear all,
+   
+  I would like to know how to calculate in S+, how to obtain a solution for the design matrix of my data given I have a symmetric correlation matrix C.
+  Is it true that if I have a symmetric correlation matrix C - that the design matrix (which is upper triangular is:
+  C= t(X) %*%X   ?
+   
+  Best, 
+   
+  Martyn
+ 
+		Talk is cheap. Use Yahoo! Messenger to make PC-to-Phone calls.  Great rates starting at 1¢/min.
+
+From mam3xs at gmail.com  Tue Aug 22 22:21:34 2006
+From: mam3xs at gmail.com (Michael Sun)
+Date: Tue, 22 Aug 2006 23:21:34 +0100
+Subject: changing data order
+In-Reply-To: <fe005e260608221516g47dee323le3588fb0c154b1be@mail.gmail.com>
+References: <fe005e260608221516g47dee323le3588fb0c154b1be@mail.gmail.com>
+Message-ID: <fe005e260608221521u5f4ce43ap9d61aa7c14df3ed3@mail.gmail.com>
+
+Hi folks,
+
+I got time series data in .xls with the order from: to :
+
+31/07/2006, xxx,xxx,xxx,xxx,xxxx
+
+...
+
+....
+
+...
+
+...
+
+I wonder how could I change it from descending to asceding with S+ as:
+
+20/11/2001, xxx,xxx,xxx,xxx,xxxx
+
+...
+
+...
+
+...
+
+...
+
+31/07/2006, xxx,xxx,xxx,xxx,xxxx
+
+Many thanks
+
+Regards
+mam
+
+From JPhilipMiller at WUstl.edu  Wed Aug 23 02:06:21 2006
+From: JPhilipMiller at WUstl.edu (J. Philip Miller)
+Date: Tue, 22 Aug 2006 21:06:21 -0500
+Subject: FW: How to show the probabilities in Rpart tree graph?
+Message-ID: <003001c6c658$bb05f7b0$6901a8c0@shlomowin>
+
+Note that I am posting this for a user that is having trouble subscribing.
+Please reply to him, not me.
+
+-phil
+
+-----Original Message-----
+From: Li, Xiaoxi [mailto:Li.Xiaoxi at principal.com] 
+Sent: Tuesday, August 22, 2006 20:47 PM
+To: J. Philip Miller
+Subject: How to show the probabilities in Rpart tree graph?
+
+Hi Phil,
+
+Can I ask you a question? Here is my situation:
+
+I fitted my data into Rpart to generate a Classification tree, and then
+I printed out the Rpart objective, or best.tree. As you can see in the
+attachment, with the < print(best.tree) command we can see the "yprob"
+column. 
+
+ 
+I want to show the "yprob" or the Probabilities information in the final
+tree graph. However, when I use the following command 
+> plot(best.tree);text(best.tree,label="yprob",use.n=T,splits=T), it
+generated the following error message: 
+
+Error in text.rpart(best.tree1M, use.n = T, splits = T, label =
+"yprob"): 
+Label must be a column label of the frame component of the tree
+
+As you can see, the tree does have a column "(yprob)" after I input the
+print(best.tree) command such as (0.500000 0.500000) and (0.5525950
+0.4474050). 
+
+Can you help me solve the problem and show me how to get the
+probabilities or the "yprob" column content into the final tree? 
+
+Thank you for all your help.
+
+Xiaoxi
+
+-----
+Please see the detailed problem. Thank you.
+
+>> printcp(best.tree1M)
+
+Classification tree:
+ 
+rpart(formula = OP1M ~ .,data = dat, method = "class", parms =list(split
+= "gini"))
+
+Variables actually used in tree construction:
+[1] F_5YE F_PCF ....
+
+Root node error: 8645/17551 = 0.49256
+
+n=17551 (489 observations deleted due to missing)
+     CP nsplit rel error  xerror      xstd
+1 0.0253326      0   1.00000 1.00000 0.0076614
+2 0.0135338      1   0.97467 0.99445 0.0076607
+3 0.0045113      2   0.96113 0.98427 0.0076587
+........
+
+> print(best.tree)
+n=17530 (510 observations deleted due to missing)
+
+node),  split,  n,  loss,    yval,   (yprob)
+
+* denotes terminal node
+
+1) root 17530 8765.0000 1 (0.5000000 0.5000000)  
+     2) Q_1PE< 1.5 2817 1252.5980 0 (0.5525950 0.4474050) *
+
+     3) Q_1PE>=1.5 14713 7217.9020 1 (0.4900036 0.5099964)  
+       6) H_SGG< 1.5 2800 1244.0990 0 (0.5529161 0.4470839)  
+        12) F_PCF< 3.5 1699  655.5158 0 (0.6092234 0.3907766) *
+.........
+
+> plot(best.tree);text(best.tree,label="yprob",use.n=T,splits=T)
+
+Error in text.rpart(best.tree1M, use.n = T, splits = T, label = "yprob")
+: 
+Label must be a column label of the frame component of the tree
+
+-----Original Message-----
+From: J. Philip Miller [mailto:JPhilipMiller at WUstl.edu] 
+Sent: Tuesday, August 22, 2006 8:37 PM
+To: Li, Xiaoxi
+Subject: RE: Majordomo results: 6CF5-A6F8-04DB
+
+This suggests that you did not first subscribe to the list.  Only after
+you
+have subscribed can you set the options for your subscription.
+
+-phil
+
+J. Philip Miller, Professor of Biostatistics
+Division of Biostatistics
+Washington University School of Medicine
+Director of Biostatistics Core, Siteman Cancer Center
+Mail: Campus Box 8067, 660 S. Euclid Ave
+St. Louis, MO 63110
+Physical Address: 3349 Barnard
+Phone: 314-362-3617, 314-362-3728 (fax)
+email: jphilipmiller at wustl.edu 
+web: http://www.biostat.wustl.edu/~phil
+
+-
+
+The materials contained in this e-mail are private and confidential and
+are
+the property of the sender. If you are not the intended recipient, be
+advised that any unauthorized use, disclosure, copying, distribution, or
+the
+taking of any action in reliance on the contents of this information is
+strictly prohibited. If you have received this e-mail transmission in
+error,
+please immediately notify the sender.
+
+ 
+
+-----Original Message-----
+From: Li, Xiaoxi [mailto:Li.Xiaoxi at principal.com] 
+Sent: Tuesday, August 22, 2006 17:52 PM
+To: J. Philip Miller
+Subject: RE: Majordomo results: 6CF5-A6F8-04DB
+
+Thank for your reply, Phil. Attached is the error message.
+
+Xiaoxi
+
+>>>> accept
+Token 6CF5-A6F8-04DB has been accepted for the following command:
+  Command:  set s-news digest "Li, Xiaoxi" <Li.Xiaoxi at principal.com>
+  From:     "Li, Xiaoxi" <Li.Xiaoxi at principal.com>
+  Date:     Tue Aug 22 16:38:47 2006
+  Session:  024e537b9e6170d9252174ba154bcf09fa81213a
+
+The results of the command are:
+
+"Li, Xiaoxi" <Li.Xiaoxi at principal.com> is not subscribed to the s-news
+list.
+
+-----Original Message-----
+From: J. Philip Miller [mailto:JPhilipMiller at WUSTL.edu] 
+Sent: Tuesday, August 22, 2006 5:04 PM
+To: Li, Xiaoxi
+Subject: RE: Majordomo results: 6CF5-A6F8-04DB
+
+What error messages are you receiving?
+
+Are you following the instructions on www.biostat.wustl.edu/s-news?
+
+-phil
+
+J. Philip Miller, Professor of Biostatistics
+Division of Biostatistics
+Washington University School of Medicine
+Director of Biostatistics Core, Siteman Cancer Center
+Mail: Campus Box 8067, 660 S. Euclid Ave
+St. Louis, MO 63110
+Physical Address: 3349 Barnard
+Phone: 314-362-3617, 314-362-3728 (fax)
+email: jphilipmiller at wustl.edu 
+web: http://www.biostat.wustl.edu/~phil
+
+-
+
+The materials contained in this e-mail are private and confidential and
+are
+the property of the sender. If you are not the intended recipient, be
+advised that any unauthorized use, disclosure, copying, distribution, or
+the
+taking of any action in reliance on the contents of this information is
+strictly prohibited. If you have received this e-mail transmission in
+error,
+please immediately notify the sender.
+
+-----Original Message-----
+From: Li, Xiaoxi [mailto:Li.Xiaoxi at principal.com] 
+Sent: Tuesday, August 22, 2006 4:44 PM
+To: s-news-owner at lists.biostat.wustl.edu
+Subject: FW: Majordomo results: 6CF5-A6F8-04DB
+
+Dear Sir or Madam,
+
+Could you please put me on the mailing list with my email address of
+li.xiaoxi at principal.com. I tried to subscribe the mailing list online
+for three times, but failed. Thank you for your help.
+
+Best regards,
+Xiaoxi Li
+
+-----Original Message-----
+From: mj2-owner at lists.biostat.wustl.edu
+[mailto:mj2-owner at lists.biostat.wustl.edu] 
+Sent: Tuesday, August 22, 2006 4:41 PM
+To: Li, Xiaoxi
+Subject: Majordomo results: 6CF5-A6F8-04DB
+
+>>>> accept
+Token 6CF5-A6F8-04DB has been accepted for the following command:
+  Command:  set s-news digest "Li, Xiaoxi" <Li.Xiaoxi at principal.com>
+  From:     "Li, Xiaoxi" <Li.Xiaoxi at principal.com>
+  Date:     Tue Aug 22 16:38:47 2006
+  Session:  024e537b9e6170d9252174ba154bcf09fa81213a
+
+The results of the command are:
+
+"Li, Xiaoxi" <Li.Xiaoxi at principal.com> is not subscribed to the s-news
+list.
+
+****  
+
+>>>> end
+End of commands.  No more commands will be processed.
+
+Valid commands processed: 1
+0 succeeded, 0 stalled, and 1 failed.
+
+Use the following command: 
+  sessioninfo 61ead35dfa5bf87c0ac15cadc29cf1043d97c3ce
+to see technical information about this session.
+
+-----Message Disclaimer-----
+
+This e-mail message is intended only for the use of the individual or
+entity to which it is addressed, and may contain information that is
+privileged, confidential and exempt from disclosure under applicable law.
+If you are not the intended recipient, any dissemination, distribution or
+copying of this communication is strictly prohibited. If you have
+received this communication in error, please notify us immediately by
+reply email to Connect at principal.com and delete or destroy all copies of
+the original message and attachments thereto. Email sent to or from the
+Principal Financial Group or any of its member companies may be retained
+as required by law or regulation.
+
+Nothing in this message is intended to constitute an Electronic signature
+for purposes of the Uniform Electronic Transactions Act (UETA) or the
+Electronic Signatures in Global and National Commerce Act ("E-Sign")
+unless a specific statement to the contrary is included in this message.
+
+While this communication may be used to promote or market a transaction
+or an idea that is discussed in the publication, it is intended to provide
+general information about the subject matter covered and is provided with
+the understanding that The Principal is not rendering legal, accounting,
+or tax advice. It is not a marketed opinion and may not be used to avoid
+penalties under the Internal Revenue Code. You should consult with
+appropriate counsel or other advisors on all matters pertaining to legal,
+tax, or accounting obligations and requirements.
+
+From John.F.Walter at noaa.gov  Wed Aug 23 04:56:09 2006
+From: John.F.Walter at noaa.gov (John Walter)
+Date: Wed, 23 Aug 2006 00:56:09 -0400
+Subject: R function 'Voronoi.mosaic' to S
+Message-ID: <44EBDFE9.1010505@noaa.gov>
+
+I am trying to use convert the function voronoi.mosaic from the R 
+Tripack package to S and am encountering some problems that appear to be 
+related to calling the Fortran. I am using SPLUS 7.0 on Windows XP 
+professional Service pack 2 and R 2.3.0.
+
+When I try to run this in SPLUS:
+vm.test<-voronoi.mosaic(x=runif(20), y=runif(20))
+
+I get the following error message:
+
+Problem in .Fortran("trmesh",: "trmesh_" is not a symbol in the load 
+table, while calling subroutine trmesh
+
+Use traceback() to see the call stack
+
+If anyone can help diagnose this problem I would greatly appreciate it.
+
+Thanks.
+
+John
+
+For reference the function 'voronoi.mosaic' is as follows:
+
+voronoi.mosaic<-
+function (x, y = NULL, duplicate = "error")
+{
+   dummy.node <- function(x0, y0, x1, y1, x2, y2, d) {
+       dx <- x2 - x1
+       dy <- y2 - y1
+       nx <- -dy
+       ny <- dx
+       rx <- (x1 + x2)/2 - x0
+       ry <- (y1 + y2)/2 - y0
+       lr <- sqrt(rx^2 + ry^2)
+       ln <- sqrt(nx^2 + ny^2)
+       if (lr > ln) {
+           vx <- rx/lr
+           vy <- ry/lr
+           if (in.convex.hull(ret$tri, x0, y0))
+               d <- d
+           else d <- -d
+       }
+       else {
+           vx <- nx/ln
+           vy <- ny/ln
+           eps <- 1e-07
+           if (in.convex.hull(ret$tri, (x1 + x2)/2 + eps * vx,
+               (y1 + y2)/2 + eps * vy))
+               d <- -d
+           else d <- d
+       }
+       list(x = x0 + d * vx, y = y0 + d * vy)
+   }
+   tri.obj <- tri.mesh(x = x, y = y, duplicate = duplicate)
+   nt <- summary(tri.obj)$nt
+   tmptri <- matrix(0, 9, 2 * nt)
+   lccc <- matrix(0, 4, nt)
+   storage.mode(lccc) <- "double"
+   iccc <- matrix(0, 6, nt)
+   storage.mode(iccc) <- "integer"
+   ans <- .Fortran("voronoi", as.integer(tri.obj$nc), 
+as.integer(tri.obj$lc),
+
+       as.integer(tri.obj$n), as.double(tri.obj$x), as.double(tri.obj$y),
+       as.integer(tri.obj$tlist), as.integer(tri.obj$tlptr),
+       as.integer(tri.obj$tlend), as.integer(nt), lccc = as.double(lccc),
+       iccc = as.integer(iccc), lct = integer(tri.obj$nc), 
+as.integer(tmptri),
+
+       ier = as.integer(0), PACKAGE = "tripack")
+   lccc <- matrix(ans$lccc, nt, 4, byrow = TRUE)
+   iccc <- matrix(ans$iccc, nt, 6, byrow = TRUE)
+   ret <- list(x = lccc[, 1], y = lccc[, 2], node = (lccc[,
+       3] > 0), area = lccc[, 3], ratio = lccc[, 4], n1 = iccc[,
+       1], n2 = iccc[, 2], n3 = iccc[, 3], p1 = iccc[, 4], p2 = iccc[,
+       5], p3 = iccc[, 6], tri = tri.obj)
+   ret$dummy.x <- integer(0)
+   ret$dummy.y <- integer(0)
+   dummy.cnt <- 0
+   dmax <- max(diff(range(ret$x)), diff(range(ret$y)))
+   n <- length(ret$x)
+   for (i in 1:n) {
+       if (ret$node[i]) {
+           tns <- sort(c(ret$n1[i], ret$n2[i], ret$n3[i]))
+           tn1 <- tns[1]
+           tn2 <- tns[2]
+           tn3 <- tns[3]
+           if (any(tns == 0)) {
+               if (tns[2] != 0) {
+                 tr <- c(ret$p1[i], ret$p2[i], ret$p3[i])
+                 ns <- tr[on.convex.hull(ret$tri, ret$tri$x[tr],
+                   ret$tri$y[tr])]
+                 if (length(ns) == 2) {
+                   i1 <- ns[1]
+                   i2 <- ns[2]
+                   pn <- dummy.node(ret$x[i], ret$y[i], ret$tri$x[i1],
+                     ret$tri$y[i1], ret$tri$x[i2], ret$tri$y[i2],
+                     dmax)
+                   dummy.cnt <- dummy.cnt + 1
+                   ret$dummy.x[dummy.cnt] <- pn$x
+                   ret$dummy.y[dummy.cnt] <- pn$y
+                   if (ret$n1[i] == 0)
+                     ret$n1[i] <- -dummy.cnt
+                   if (ret$n2[i] == 0)
+                     ret$n2[i] <- -dummy.cnt
+                   if (ret$n3[i] == 0)
+                     ret$n3[i] <- -dummy.cnt
+                 }
+               }
+               else {
+                 tr <- c(ret$p1[i], ret$p2[i], ret$p3[i])
+                 edge <- list(from = tr[c(1, 2, 3)], to = tr[c(2,
+                   3, 1)])
+                 mx <- ret$tri$x[edge$from] - ret$tri$x[edge$to]/2
+                 my <- ret$tri$y[edge$from] - ret$tri$y[edge$to]/2
+                 eonb <- on.convex.hull(ret$tri, mx, my)
+                 for (id in 1:3) {
+                   if (eonb[id]) {
+                     pn <- dummy.node(ret$x[i], ret$y[i], 
+ret$tri$x[edge$from[id]],
+
+                       ret$tri$y[edge$from[id]], ret$tri$x[edge$to[id]],
+                       ret$tri$y[edge$to[id]], dmax)
+                     dummy.cnt <- dummy.cnt + 1
+                     ret$dummy.x[dummy.cnt] <- pn$x
+                     ret$dummy.y[dummy.cnt] <- pn$y
+                     if (ret$n1[i] == 0)
+                       ret$n1[i] <- -dummy.cnt
+                     if (ret$n2[i] == 0)
+                       ret$n2[i] <- -dummy.cnt
+                     if (ret$n3[i] == 0)
+                       ret$n3[i] <- -dummy.cnt
+                   }
+                 }
+               }
+           }
+       }
+       else {
+           tmp <- 0
+       }
+   }
+   ret$call <- match.call()
+   class(ret) <- "voronoi"
+   ret
+}
+
+--
+John F. Walter III, Ph.D.
+Rosenstiel School of Marine and
+Atmospheric Sciences
+4600 Rickenbacker Causeway
+Miami, Florida  33149
+Phone: 305-365-4114
+Fax: 305-365-4104
+Cell: 804-815-0881
+email: john.f.walter at noaa.gov
+
+From gerald.jean at dgag.ca  Wed Aug 23 13:21:21 2006
+From: gerald.jean at dgag.ca
+Date: Wed, 23 Aug 2006 09:21:21 -0400
+Subject: Summary: Searching special characters in vector of strings.
+Message-ID: <OF853D7ED7.1821BE4E-ON852571D3.0048AFCC@spgdag.ca>
+
+Thanks to Tim Keighley, Dimitris Rizopoulos and Tony Plate for there
+responses.
+
+Dimitris suggested the use of "grep", this is OK but I was hoping to find
+something more general where I wouldn't have to test for each special
+character separately.
+
+Tim suggested the use of "regMatch", I wasn't aware of this function, thank
+you Tim.  I haven't explore this avenue yet but, for my purpose, it might
+just do the job.
+
+Tony supplied a function which is very general and would test for all
+special characters, and this for three different protocols.  Thanks Tony.
+
+Thanks again to all,
+
+Gérald Jean
+Conseiller senior en statistiques, Actuariat
+télephone            : (418) 835-4900 poste (7639)
+télecopieur          : (418) 835-6657
+courrier électronique: gerald.jean at dgag.ca
+
+"In God we trust, all others must bring data"  W. Edwards Deming
+
+Le message ci-dessus, ainsi que les documents l'accompagnant, sont destinés 
+uniquement aux personnes identifiées et peuvent contenir des informations
+privilégiées, confidentielles ou ne pouvant être divulguées. Si vous avez reçu 
+ce message par erreur, veuillez le détruire.
+
+This communication (and/or the attachments) is intended for named recipients 
+only and may contain privileged or confidential information which is not
+to be disclosed. If you received this communication by mistake please destroy 
+all copies.
+
+From elinder at cisunix.unh.edu  Wed Aug 23 18:21:23 2006
+From: elinder at cisunix.unh.edu (Ernst Linder)
+Date: Wed, 23 Aug 2006 14:21:23 -0400
+Subject: Live On line Fall Semester course on Spatial Statistics using S R and Winbugs
+Message-ID: <44EC9CA3.5000204@cisunix.unh.edu>
+
+Dear list users:  This might be of interest to some of you.
+
+**************************************************************************************
+Announcement:  live - on - line course on Spatial Statistics using S and R and 
+Winbugs
+**************************************************************************************
+
+This course is offered as a regular 3 credit course by the
+Department of Mathematics and Statistics,
+University of New Hamphsire, USA.
+
+Class Times:  Tuesdays and Thursdays 11:10 am - 12:30 pm EST  (USA)
+
+August 29 - December 10  2006
+
+You can access the course on any computer that is connected to
+the internet.
+Notice: Only available under the MS Windows operating system.
+
+If interested send my e-mail and I will send you the syllabus.
+
+Scroll down for additional information on how to register and
+how to get started with the distance education software.
+
+Official Course Information:
+
+MATH 969 01 11860
+Top/Spatial Statistics  3 credits
+T R 1110-1230 PM MUB DL
+Instructor:  E Linder
+
+Best regards,
+Ernst Linder.
+
+**********************************************************************
+REGISTERING FOR A UNH DISTANCE EDUCATION COURSE
+**********************************************************************
+1. Send e-mail to the instructor and ask for permission
+
+2. Go to UNH Continuing Education : www.learn.unh.edu
+    You may register by phone, in-person, fax, or mail.
+    Follow the "Register > Credit Courses" links for information.
+    If you have taken a UNH credit course before, you may also
+    register by e-mail via the "MyUNH" login.
+
+3. 2006 Tuition if course is taken for credit:
+     1-11 credits in courses numbered 200-799:
+     $251 per credit, NH residents
+     $277 per credit, nonresidents
+
+     1-8 credits in courses numbered 800-999:
+     $292 per credit, NH residents
+     $322 per credit, nonresidents
+     Plus    Registration Fee $20
+             Technology Fee: 1-4 credits $13.50
+
+4. 2006 Tuition if Course is taken as "Audit"
+     $100 per credit
+     (You will need to ask the instructor for permission
+     before or during the first week of classes)
+     Plus: Registration Fee $20
+
+***************************************************************
+GETTING STARTED WITH LEARNLINC DISTANCE EDUCATION SOFTWARE
+***************************************************************
+
+Prior to the first class we suggest that you view a class tutorial at
+    http://at.unh.edu/tlc/learnlinc/tutorial.html
+This tutorial demonstrates various aspects of taking a LearnLinc based course.
+In order to view the tutorial and to participate in the online course you need
+create a LearnLinc user account, register for the LearnLinc course, and download
+the LearnLinc software.
+
+1.  CREATING A NEW USER ACCOUNT
+
+To create a new user account on Learnlinc, go to this website:
+http://learnlinc.unh.edu/
+When you submit your account information your homepage will be displayed.
+The top line will say “your name”  home page …
+
+2.  REGISTERING FOR A COURSE ON THE DISTANCE LEARNING SERVER
+     (Note this unrelated to registering and paying for the course
+      with UNH's Registrar's office)
+
+Select  "Learnlinc Catalog"
+On the catalog page select the desired course by clicking on the square box to 
+the
+left of the course.  Then click on "Register" at the top of the catalog list.
+This will register you for the LearnLinc course.
+The course registration page will refresh.
+
+Now select the course you just registered for.  The course page will be 
+displayed and
+your name appear under the list of students.
+
+3.  DOWNLOADING THE LEARNLINC SOFTWARE
+
+Select  Download from the top of the page.  This page shows two versions of 
+LearnLinc.
+Download the Standard Classroom (2Mb) version and install it.
+Logout, check if you can log in as a regular user, and logout again.
+
+Now view the tutorial posted at  http://at.unh.edu/tlc/learnlinc/tutorial.html
+
+If you have further questions you may visit the following websites.
+
+For more details on Learnlinc see the following website:
+http://at.unh.edu/tlc/learnlinc/about.html
+
+For system requirements see http://at.unh.edu/tlc/learnlinc/requirements.html
+
+For frequently asked questions go to  
+http://at.unh.edu/tlc/learnlinc/student_faq.html
+
+If you need further assistance do not hesitate to contact us
+
+--
+****************************************************************
+Ernst Linder                               elinder at unh.edu
+Department of Mathematics and Statistics     603 - 862- 2687
+University of New Hampshire            Fax:  603 - 862 - 4096
+Durham, NH 03824                www.math.unh.edu/~elinder
+****************************************************************
+
+From Raghu.Krishnamachari at leggmasonasia.com.sg  Thu Aug 24 02:52:47 2006
+From: Raghu.Krishnamachari at leggmasonasia.com.sg (Krishnamachari, Raghuraman)
+Date: Wed, 23 Aug 2006 19:52:47 -0700
+Subject: plot histogram of a distribution
+Message-ID: <46FE375EF87BAC42B69E493F296F4ACC02D13ED1@singx01.wam.westernasset.local>
+
+Dear 
+all,
+
+ 
+
+I am new to this 
+list and splus. I am trying to plot a histogram of a distribution using 
+"histogram".
+
+The issue is i am 
+unable to call this in a loop with different Factors 
+variables.
+
+ 
+
+> 
+factor.names
+[1] "Tobin.Q" "EBITDA"  "FCF" 
+
+ 
+
+> 
+factor.cols
+[1] "Tobin.Q" "EBITDA"  "FCF"  
+
+ 
+
+=================================
+
+for(i in 1:length(factor.cols)) {
+ 
+ f.name<-factor.names[i]
+
+histogram(~ f.name | 
+Country, data="" = 
+10,type="count")
+}
+====================================
+
+ 
+
+when i replace 
+f.name with the numeric column names like FCF,EBITDA individually, the above function works. But how to pass these values in a 
+loop.
+
+ 
+
+histogram(~ FCF | Country, 
+data="" = 10,type="count") 
+-- works 
+
+ 
+
+whereas
+
+ 
+
+histogram(~ "FCF" | 
+Country, data="" = 
+10,type="count")
+
+-- gives different 
+results.
+
+ 
+
+ 
+
+Hope someone throw light on 
+this.
+
+ 
+
+thanks,
+
+ 
+
+Raghu.
+
+**********************************************************************
+
+E-mail sent through the Internet is not secure. Legg Mason Asset Management (Asia) Pte Ltd [Co. Reg. No. 200007692R] therefore recommends that you do not utilize electronic mail to send to us any confidential or sensitive information, including account numbers and personal identification numbers. Delivery, and/or timely delivery of Internet electronic mail is not guaranteed. Legg Mason Asset Management (Asia) Pte Ltd therefore recommends that you do not send time-sensitive or action-oriented messages to us via electronic mail. 
+
+**********************************************************************
+
+From spencer.graves at pdf.com  Thu Aug 24 04:13:23 2006
+From: spencer.graves at pdf.com (Spencer Graves)
+Date: Wed, 23 Aug 2006 21:13:23 -0700
+Subject: Re: calculating upper and lower CL using lme and glme
+In-Reply-To: <20060821195952.74064.qmail@web36215.mail.mud.yahoo.com>
+References: <20060821195952.74064.qmail@web36215.mail.mud.yahoo.com>
+Message-ID: <44ED2763.7030501@pdf.com>
+
+     Have you considered "intervals"?  The help file for 
+'intervals.lme' includes an example with default 95% confidence 
+intervals, but the 'levels' argument can be used to change that. 
+
+     Hope this helps. 
+     Spencer Graves
+p.s.  Are you familiar with Pinheiro and Bates (2000) Mixed-Effects 
+Models in S and S-Plus (Springer)?  This book provides excellent 
+documentation for 'lme' and related functions as well as a solid 
+discussion of the relevant theory. 
+
+Nicola Koper wrote:
+> Hi everyone,
+>
+> I want to use the standard errors associated with
+> parameter estimates provided by lme and glme
+> (correlatedData library) to calculate upper and lower
+> 90% confidence limits for the parameter estimates, but
+> I"m not sure how to do so with mixed models... e.g.
+> calculating the t-value (@ alpha=0.1) to use in the
+> calculation.
+>
+> I'm using Splus 6.2.
+>
+> Thanks alot,
+> Nicky
+>
+> ************************************************************
+>
+> Dr. Nicola Koper
+> Assistant Professor
+> Natural Resources Institute
+> University of Manitoba
+>
+> __________________________________________________
+> Do You Yahoo!?
+> Tired of spam?  Yahoo! Mail has the best spam protection around
+> http://mail.yahoo.com
+> --------------------------------------------------------------------
+>
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+>
+
+From lorenz at usgs.gov  Thu Aug 24 12:32:42 2006
+From: lorenz at usgs.gov (David L Lorenz)
+Date: Thu, 24 Aug 2006 07:32:42 -0500
+Subject: Re: plot histogram of a distribution
+In-Reply-To: <46FE375EF87BAC42B69E493F296F4ACC02D13ED1@singx01.wam.westernasset.local>
+References: <46FE375EF87BAC42B69E493F296F4ACC02D13ED1@singx01.wam.westernasset.local>
+Message-ID: <OF0688B545.B0BFBACA-ON862571D4.00442A29-862571D4.0044E992@usgs.gov>
+
+Raghu,
+
+  If you look at the formula in
+your for loop, you will see that it has exactly the same appearance as
+the one that works. That means the routines that evaluate the formula see
+the same thing and are looking at a column named f.name in the data set
+and not a column named FCF. You know that f.name is a variable that represents
+that column, but the routine that evaluates the formula does not.
+
+  For cases like this, you can
+use the as.formula() function. Try this:
+
+histogram(as.formula(paste("~",
+f.name, "| Country")), data=""
+= 10,type="count")
+
+  I do not see where Country comes
+from if you select only the column f.name from data!
+
+Dave
+
+"Krishnamachari, Raghuraman"
+<Raghu.Krishnamachari at leggmasonasia.com.sg> 
+
+Sent by: s-news-owner at lists.biostat.wustl.edu
+08/23/2006 09:52 PM
+
+To
+
+<s-news at lists.biostat.wustl.edu>
+
+cc
+
+Subject
+
+[S] plot histogram of a distribution
+
+Dear all,
+
+ 
+
+I am new to this list and splus. I am trying
+to plot a histogram of a distribution using "histogram".
+
+The issue is i am unable to call this in
+a loop with different Factors variables.
+
+ 
+
+> factor.names
+
+[1] "Tobin.Q" "EBITDA"  "FCF" 
+
+ 
+
+> factor.cols
+
+[1] "Tobin.Q" "EBITDA"  "FCF"  
+
+ 
+
+=================================
+
+for(i in 1:length(factor.cols)) {
+
+ 
+
+ f.name<-factor.names[i]
+
+histogram(~ f.name | Country, data=""
+= 10,type="count")
+
+}
+
+====================================
+
+ 
+
+when i replace f.name with the numeric column
+names like FCF,EBITDA individually, the above function works. But how to
+pass these values in a loop.
+
+ 
+
+histogram(~ FCF | Country, data=""
+= 10,type="count") -- works 
+
+ 
+
+whereas
+
+ 
+
+histogram(~ "FCF" | Country, data=""
+= 10,type="count")
+
+-- gives different results.
+
+ 
+
+ 
+
+Hope someone throw light on this.
+
+ 
+
+thanks,
+
+ 
+
+Raghu.
+
+**********************************************************************
+
+E-mail sent through the Internet is not secure. Legg Mason Asset Management
+(Asia) Pte Ltd [Co. Reg. No. 200007692R] therefore recommends that you
+do not utilize electronic mail to send to us any confidential or sensitive
+information, including account numbers and personal identification numbers.
+Delivery, and/or timely delivery of Internet electronic mail is not guaranteed.
+Legg Mason Asset Management (Asia) Pte Ltd therefore recommends that you
+do not send time-sensitive or action-oriented messages to us via electronic
+mail. 
+
+**********************************************************************
+
+From Raghu.Krishnamachari at leggmasonasia.com.sg  Thu Aug 24 12:47:14 2006
+From: Raghu.Krishnamachari at leggmasonasia.com.sg (Krishnamachari, Raghuraman)
+Date: Thu, 24 Aug 2006 05:47:14 -0700
+Subject: Re: plot histogram of a distribution
+Message-ID: <46FE375EF87BAC42B69E493F296F4ACC02D13FD7@singx01.wam.westernasset.local>
+
+Thanks a lot Dave.. It works.
+
+ 
+
+But how to print the graphs in different pages of the same 
+sheet.
+
+i find that its overwriting in the same 
+page.
+
+ 
+
+From: David L Lorenz [mailto:lorenz at usgs.gov] 
+
+Sent: Thursday, August 24, 2006 8:33 PM
+To: Krishnamachari, 
+Raghuraman
+Cc: s-news at lists.biostat.wustl.edu; 
+s-news-owner at lists.biostat.wustl.edu
+Subject: Re: [S] plot histogram 
+of a distribution
+
+Raghu, 
+  If you look at the formula in your for loop, you 
+will see that it has exactly the same appearance as the one that works. That 
+means the routines that evaluate the formula see the same thing and are looking 
+at a column named f.name in the data set and not a column named FCF. You know 
+that f.name is a variable that represents that column, but the routine that evaluates the formula does not. 
+  
+For cases like this, you can use the as.formula() function. Try this: 
+
+histogram(as.formula(paste("~", f.name, "| 
+Country")), data="" = 
+10,type="count") 
+
+  I do not see 
+where Country comes from if you select only the column f.name from data! 
+
+Dave 
+
+  
+  
+    "Krishnamachari,       Raghuraman" <Raghu.Krishnamachari at leggmasonasia.com.sg> 
+      
+Sent by: 
+      s-news-owner at lists.biostat.wustl.edu 
+      08/23/2006 09:52 PM 
+
+    
+      
+        
+        
+          
+            To
+
+          <s-news at lists.biostat.wustl.edu> 
+        
+          
+            cc
+
+          
+        
+          
+            Subject
+
+          [S] plot histogram of a 
+            distribution
+
+      
+        
+        
+          
+          
+
+Dear all, 
+  
+I am new to this list and splus. I am trying to plot a histogram of a 
+distribution using "histogram". 
+The issue is 
+i am unable to call this in a loop with different Factors variables. 
+  
+> 
+factor.names
+[1] "Tobin.Q" "EBITDA"  "FCF" 
+  
+> factor.cols
+[1] 
+"Tobin.Q" "EBITDA"  "FCF"   
+  
+
+================================= 
+for(i in 1:length(factor.cols)) 
+{
+
+f.name<-factor.names[i] 
+histogram(~ f.name | Country, 
+data="" = 
+10,type="count")
+}
+==================================== 
+  
+when i replace f.name with the 
+numeric column names like FCF,EBITDA individually, the above function works. But 
+how to pass these values in a loop. 
+  
+histogram(~ FCF | Country, 
+data="" = 10,type="count") 
+-- works 
+  
+whereas 
+  
+histogram(~ "FCF" | Country, 
+data="" = 
+10,type="count") 
+-- gives different 
+results. 
+  
+  
+
+Hope someone throw light on this. 
+  
+thanks, 
+  
+Raghu. 
+
+**********************************************************************
+E-mail 
+sent through the Internet is not secure. Legg Mason Asset Management (Asia) Pte 
+Ltd [Co. Reg. No. 200007692R] therefore recommends that you do not utilize electronic mail to send to us any confidential or sensitive information, including account numbers and personal identification numbers. Delivery, and/or 
+timely delivery of Internet electronic mail is not guaranteed. Legg Mason Asset 
+Management (Asia) Pte Ltd therefore recommends that you do not send 
+time-sensitive or action-oriented messages to us via electronic mail. 
+
+********************************************************************** 
+
+**********************************************************************
+
+E-mail sent through the Internet is not secure. Legg Mason Asset Management (Asia) Pte Ltd [Co. Reg. No. 200007692R] therefore recommends that you do not utilize electronic mail to send to us any confidential or sensitive information, including account numbers and personal identification numbers. Delivery, and/or timely delivery of Internet electronic mail is not guaranteed. Legg Mason Asset Management (Asia) Pte Ltd therefore recommends that you do not send time-sensitive or action-oriented messages to us via electronic mail. 
+
+**********************************************************************
+
+From Paternostro.Amy at epamail.epa.gov  Thu Aug 24 13:46:54 2006
+From: Paternostro.Amy at epamail.epa.gov
+Date: Thu, 24 Aug 2006 09:46:54 -0400
+Subject: nonlinear regression
+Message-ID: <OFF29EFAE3.541A6C3C-ON852571D4.004B40A5-852571D4.004BB435@epamail.epa.gov>
+
+I am currently running a script in S-PLUS 2000 on a Windows platform
+using the canned S-PLUS nonlinear regression function nls. I was
+wondering if anyone on the list has had any experience creating their
+own nonlinear regression function using something other than least
+squares? I am particularly interested in utilizing a Poisson family in
+my calculations.
+
+Thanks,
+Amy Paternostro
+
+From hatfield at solander.bc.ca  Thu Aug 24 15:55:35 2006
+From: hatfield at solander.bc.ca (Todd Hatfield)
+Date: Thu, 24 Aug 2006 08:55:35 -0700
+Subject: representing seasonal tendencies with yearday
+Message-ID: <010601c6c795$bfc87dc0$6400a8c0@LAMPREY>
+
+I am trying to represent seasonal tendencies of low flow events in
+streamflow data.  I have used days of the year (1:365) to describe the day
+on which the lowest flow occurs.  Within years there are often ties, and
+they are often in winter, such that I may get 364,365,1,2 as the vector of
+yeardays.  Taking the mean or the median of these is 183, which is clearly
+not what I want, since it represents a date in summer.  The same problem
+exists among years, since the low flow may be on day 365 in one year and day
+1 in another year.  Is there a simple way to make these circular, such that
+yearday 365 is next to yearday 1?
+
+I'm using Splus 6.2, Win XP
+
+Many thanks,  Todd Hatfield
+
+From Li.Xiaoxi at principal.com  Thu Aug 24 18:21:54 2006
+From: Li.Xiaoxi at principal.com (Li, Xiaoxi)
+Date: Thu, 24 Aug 2006 13:21:54 -0500
+Subject: How to show the probabilities in Rpart tree graph?
+Message-ID: <B89C5B3C26FDEF4CA2BCBFAFC411AF824839F9@PFGDSMMBX015.principalusa.corp.principal.com>
+
+Hi all,
+
+ 
+
+I have a problem needed your help. Here is my situation:
+
+ 
+
+I fitted my data into Rpart to generate a Classification tree, and then
+I printed out the Rpart objective, or best.tree. As you can see in the
+attachment, with the < print(best.tree) command we can see the
+"yprob" column. 
+
+ 
+
+ 
+
+I want to show the "yprob" or the Probabilities information
+in the final tree graph. However, when I use the following command 
+
+>
+plot(best.tree);text(best.tree,label="yprob",use.n=T,splits=T), it
+generated the following error message: 
+
+ 
+
+Error in text.rpart(best.tree1M, use.n = T, splits = T, label =
+"yprob"): 
+
+Label must be a column label of the frame component of the tree
+
+ 
+
+As you can see, the tree does have a column "(yprob)" after I
+input the print(best.tree) command such as (0.500000 0.500000) and (0.5525950
+0.4474050). 
+
+ 
+
+Can any one help me solve the problem and show me how to get the
+probabilities or the "yprob" column content into the final tree? 
+
+ 
+
+Thank you for all your help.
+
+ 
+
+Xiaoxi
+
+ 
+
+-----
+
+Please see the detailed problem. Thank you.
+
+ 
+
+>> printcp(best.tree1M)
+
+ 
+
+Classification tree:
+
+ 
+
+rpart(formula = OP1M ~ .,data = "" method = "class", parms
+=list(split = "gini"))
+
+ 
+
+Variables actually used in tree construction:
+
+[1] F_5YE F_PCF ....
+
+ 
+
+Root node error: 8645/17551 = 0.49256
+
+ 
+
+n=17551 (489 observations deleted due to missing)
+
+     CP nsplit rel error 
+xerror      xstd
+
+1 0.0253326      0   1.00000 1.00000
+0.0076614
+
+2 0.0135338      1   0.97467 0.99445
+0.0076607
+
+3 0.0045113      2   0.96113 0.98427
+0.0076587
+
+........
+
+ 
+
+> print(best.tree)
+
+n=17530 (510 observations deleted due to missing)
+
+ 
+
+node),  split,  n,  loss,   
+yval,   (yprob)
+
+ 
+
+* denotes terminal node
+
+ 
+
+1) root 17530 8765.0000 1 (0.5000000 0.5000000)  
+
+     2) Q_1PE< 1.5 2817 1252.5980 0 (0.5525950
+0.4474050) *
+
+ 
+
+     3) Q_1PE>=1.5 14713 7217.9020 1 (0.4900036
+0.5099964)  
+
+       6) H_SGG< 1.5 2800 1244.0990 0
+(0.5529161 0.4470839)  
+
+        12) F_PCF< 3.5 1699 
+655.5158 0 (0.6092234 0.3907766) *
+
+.........
+
+ 
+
+> plot(best.tree);text(best.tree,label="yprob",use.n=T,splits=T)
+
+ 
+
+Error in text.rpart(best.tree1M, use.n = T, splits = T, label =
+"yprob") : 
+
+Label must be a column label of the frame component of the tree
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+end
+
+-----Message Disclaimer-----
+
+This e-mail message is intended only for the use of the individual or
+entity to which it is addressed, and may contain information that is
+privileged, confidential and exempt from disclosure under applicable law.
+If you are not the intended recipient, any dissemination, distribution or
+copying of this communication is strictly prohibited. If you have
+received this communication in error, please notify us immediately by
+reply email to Connect at principal.com and delete or destroy all copies of
+the original message and attachments thereto. Email sent to or from the
+Principal Financial Group or any of its member companies may be retained
+as required by law or regulation.
+
+Nothing in this message is intended to constitute an Electronic signature
+for purposes of the Uniform Electronic Transactions Act (UETA) or the
+Electronic Signatures in Global and National Commerce Act ("E-Sign")
+unless a specific statement to the contrary is included in this message.
+
+While this communication may be used to promote or market a transaction
+or an idea that is discussed in the publication, it is intended to provide
+general information about the subject matter covered and is provided with
+the understanding that The Principal is not rendering legal, accounting,
+or tax advice. It is not a marketed opinion and may not be used to avoid
+penalties under the Internal Revenue Code. You should consult with
+appropriate counsel or other advisors on all matters pertaining to legal,
+tax, or accounting obligations and requirements.
+
+From bill.shipley at usherbrooke.ca  Thu Aug 24 20:59:57 2006
+From: bill.shipley at usherbrooke.ca (Bill Shipley)
+Date: Thu, 24 Aug 2006 16:59:57 -0400
+Subject: superscripts using mtext
+Message-ID: <000801c6c7c0$4276d490$bb1ad284@BIO041>
+
+Hello.  I am using the mtext() function to place text in the outer margin of
+a multifigure display.  I want to the mtext character spring to include a
+superscript character (i.e. cm^2 with the "2" as a superscript).  Can
+someone explain how this can be done?
+
+Bill Shipley
+North American Editor, Annals of Botany
+Editor, "Population and Community Biology" series, Springer Publishing
+Département de biologie, Université de Sherbrooke,
+Sherbrooke (Québec) J1K 2R1 CANADA
+Bill.Shipley at USherbrooke.ca
+http://pages.usherbrooke.ca/jshipley/recherche/
+ 
+
+From David.Huffer at csosa.gov  Fri Aug 25 15:00:12 2006
+From: David.Huffer at csosa.gov (David Huffer)
+Date: Fri, 25 Aug 2006 11:00:12 -0400
+Subject: Text editor
+Message-ID: <3C0F89000A5E6240B0B6FA31ADA6031C01EF764B@dc0633ma07.csosa.gov>
+
+I have been unable to use something other than notepad for the text
+editor.  I changed options for editor but not pager to winedt.exe.
+However, I either need a way to set the start-in path for winedt to
+something like:
+        paste(database.object(1, meta = 0), file, sep = "\\", collapse =
+"")
+Or be able to send a macro in the the command to edit in winedt as
+somelike like:
+        WinEdt.exe [|SetFolder( "paste(database.object(1, meta = 0),
+file, sep = '\\', collapse = '')");|].
+Does anyone have any guidance here?
+
+--
+Thanks!
+David
+
+From kingroi at hotmail.com  Sat Aug 26 09:03:06 2006
+From: kingroi at hotmail.com (paul king)
+Date: Sat, 26 Aug 2006 09:03:06 +0000
+Subject: Key() and par(mfrow)
+Message-ID: <BAY107-W7EFC756E531E10342BE18B03A0@phx.gbl>
+
+Hi folks,
+
+ 
+
+I am using par(mfrow=c(3,2)) to plot 5 plots on a single page and was hoping to add the legend on top of the page using key() but it won't put the legend of top of the page. It keeps putting on bottom right. 
+
+ 
+
+Any help welcome!
+
+ 
+
+Thanks - PK
+
+ 
+
+ 
+
+Search from any Web page with powerful protection. Get the FREE Windows Live Toolbar Today! Try it now!
+
+From ezivot at u.washington.edu  Sat Aug 26 21:56:51 2006
+From: ezivot at u.washington.edu (Eric Zivot)
+Date: Sat, 26 Aug 2006 14:56:51 -0700
+Subject: Re: problem in deriving unconditional std dev (asymp.sd) in garch
+In-Reply-To: <2369.10.108.40.27.1154736901.squirrel@gpo.iitb.ac.in>
+References: <2369.10.108.40.27.1154736901.squirrel@gpo.iitb.ac.in>
+Message-ID: <001501c6c95a$89f0d820$6401a8c0@zivotd800>
+
+The problem is that, with exogenous variables in the variance equation, the
+asymptotic standard deviation of the residuals depends, in general, on the
+stationary marginal distribution of the exogenous variables. However, if the
+exogenous variables are deterministic function that are used, for example,
+to account for outliers or level shifts in variance, then the formula for
+the asymptotic variance can be easily modified. 
+
+You can always try to compute the unconditional variance yourself. For
+example, for the GARCH(1,1) with variance equation
+
+Sigma(t)^2 = w + alpha*e(t-1)^2 + beta*sigma(t-1)^2
+
+the unconditional variance is simply
+
+w/(1 - alpha - beta)
+
+With a stationary exogenous variable x(t), the variance equation becomes
+
+Sigma(t)^2 = w + delta*x(t-1) + alpha*e(t-1)^2 + beta*sigma(t-1)^2
+
+And the unconditional variance is
+
+(w + delta*E[x])/(1 - alpha - beta)
+
+Hope this helps. ez
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Abhijit Sarkar
+Sent: Friday, August 04, 2006 4:15 PM
+To: s-news at lists.biostat.wustl.edu
+Subject: [S] problem in deriving unconditional std dev (asymp.sd) in garch
+
+Hi!
+
+Why does the
+>estimated.eqn$asymp.sd
+command for deriving unconditional std dev of GARCH residuals returns
+1[NA] whenever exogeneous explanatory variables are included in the
+conditional variance equation?
+
+eg. command including exogeneous explanatory variables in conditional
+variance equation, returning an NA:
+
+>private.egarch<-garch(private~1, x=ytmfin, z=sigma.ytmfin,
++ series.start=2, x.start=2, z.start=2, ~egarch(1,1),leverage=T)
+>usd=private.egarch$asymp.sd
+>usd
+[1]NA
+
+but once you drop z (ie. the exogoneous explanatory variable in
+conditional volatility equation), the problem disappears:
+
+>private.egarch.noZ<-garch(private~1, x=ytmfin,
++ series.start=2, x.start=2, ~egarch(1,1),leverage=T)
+> usd.noZ = private.egarch.noZ$asymp.sd
+> usd.noZ
+[1] 0.0374903
+
+I was basically trying to estimate the news impact curve. The above
+problem persists with tgarch and pgarch also (...and garch too).
+
+-- 
+Abhijit Sarkar
+UGC-SRF (Economics)
+Dept. of Humanities and Social Sciences
+IIT Bombay
+Powai, Mumbai,
+Maharashtra, India, 400076
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From fdf at francone.com  Sun Aug 27 16:01:36 2006
+From: fdf at francone.com (Frank Francone)
+Date: Sun, 27 Aug 2006 10:01:36 -0600
+Subject: Problem finding a data frame created by bd.coerce
+Message-ID: <11295B1CA9F56D4785A8438124AFD839022C4E@asp4.networkingco.local>
+
+I use SPLUS 7.0, enterprise. Windows Professional.
+
+ 
+
+I have created the following script. It is pretty simple. It
+queries a bigdata object for points bearing a particular line number. It gets
+the coordinates of a particular point from that line and then queries the big
+data object for all points within a given radius from those coordinates—it
+places them into a bigdata object called pts.
+
+ 
+
+The problem arises after I coerce the bigdata object into a
+dataframe called pts.df so I can toss it into guiPlot. Here was my original
+script:
+
+ 
+
+SCRIPT FILE 1
+
+plotAreaAroundLineNPoint = function(db,lnnum,ptnum,rad)
+
+  {selStmnt=c("Select * from theDB where
+LineNumber =",lnnum)
+
+   lineSQL = paste(selStmnt,collapse= "
+")
+
+   aLine = bd.sql(lineSQL,theDB=db) 
+
+   xloc = aLine[ptnum,"X"]
+
+   yloc = aLine[ptnum,"Y"]
+
+   selStmnt = c("Select * from theDB where
+(X-",xloc,")*(X-",xloc,")+(Y-",yloc,")*(Y-",yloc,")
+< ",rad," * ",rad)
+
+   ptsSQL = paste(selStmnt,collapse="")
+
+   pts = bd.sql(ptsSQL,theDB=db)
+
+   pts.df = bd.coerce(pts)
+
+   guiPlot("Scatter",
+Columns="X,Y,SigVal03,LineNumber",DataSet="pts.df")
+
+ 
+
+   }
+
+ 
+
+plotAreaAroundLineNPoint(All.Ord,4039,60,10)
+
+ 
+
+ERROR
+
+SPlus reports that the object pts.df is not found. 
+
+ 
+
+I concluded last night that the bd.coerce statement
+executing with out error but that, for some reason, pts.df is not being found
+thereafter.
+
+ 
+
+As I am new to guiPlot, I thought it might be the DataSet=”pts.df”
+parameter. So I rewrote the file to just return pts.df as the result of the
+function.
+
+ 
+
+SCRIPT FILE 2
+
+plotAreaAroundLineNPoint = function(db,lnnum,ptnum,rad)
+
+  {selStmnt=c("Select * from theDB where
+LineNumber =",lnnum)
+
+   lineSQL = paste(selStmnt,collapse= "
+")
+
+   aLine = bd.sql(lineSQL,theDB=db) 
+
+   xloc = aLine[ptnum,"X"]
+
+   yloc = aLine[ptnum,"Y"]
+
+   selStmnt = c("Select * from theDB where
+(X-",xloc,")*(X-",xloc,")+(Y-",yloc,")*(Y-",yloc,")
+< ",rad," * ",rad)
+
+   ptsSQL = paste(selStmnt,collapse="")
+
+   pts = bd.sql(ptsSQL,theDB=db)
+
+   pts.df = bd.coerce(pts)
+
+   pts.df
+
+ 
+
+   }
+
+ 
+
+plotAreaAroundLineNPoint(All.Ord,4039,60,10)
+
+ 
+
+ERROR
+
+Same error occurs. 
+
+ 
+
+And, I should see pts.df in the commands window after I
+execute this function but I do not.
+
+ 
+
+Any thoughts would be greatly appreciated.
+
+ 
+
+Frank
+
+ 
+
+From cbirrell at uow.edu.au  Mon Aug 28 03:19:07 2006
+From: cbirrell at uow.edu.au (Carole Birrell)
+Date: Mon, 28 Aug 2006 13:19:07 +1000
+Subject: Hessian Matrix
+Message-ID: <44F260AB.503@uow.edu.au>
+
+Dear SPLUS users,
+I am using the SPlus version 7.0 Finmetrics and in particular the SsfFit 
+function.  This function has obviously changed from version 6.2 , and 
+now seems to check for a Hessian matrix which is not invertible.
+
+I am simulating data from a multivariate basic structural model and then 
+attempting to estimate the parameters for this model.
+I am now getting warnings saying that  "Hessian failed to invert. in: 
+SsfFit(all9, Augmentdata, "EstAugSV", trace = T)".
+
+Do I need to alter the precision somewhere, if so how do I do that?
+If not, do you have any advice as to what I should do?
+
+regards,
+Carole Birrell
+University of Wollongong.
+
+From parkhurs at imap.iu.edu  Mon Aug 28 13:42:29 2006
+From: parkhurs at imap.iu.edu (David Parkhurst)
+Date: Mon, 28 Aug 2006 09:42:29 -0400
+Subject: panel function works in R, not s-plus
+Message-ID: <44F2F2C5.2030608@imap.iu.edu>
+
+The following code, modified from the R help page for pairs(), works in 
+R, but in the s-plus Enterprise Developer Version 7.0.6  for Microsoft 
+Windows, I get the error message that follows it.  How can I get these 
+same effects in s-plus?  (The effects are pairs plots with lowess curves 
+in the lower triangle, and numerical correlation coefficients in the 
+upper triangle.)
+
+Here's the code:
+
+panel.cor <- function(x, y, digits=2, prefix="", cex.cor)
+{
+    usr <- par("usr"); on.exit(par(usr))
+    par(usr = c(0, 1, 0, 1))
+    r <- (cor(x, y))  # abs
+    txt <- format(c(r, 0.123456789), digits=digits)[1]
+    txt <- paste(prefix, txt, sep="")
+    if(missing(cex.cor)) cex <- 0.95/strwidth(txt)
+    text(0.5, 0.5, txt) #, cex = cex * r)
+}
+pairs(the.data, lower.panel=panel.smooth, upper.panel=panel.cor)
+
+and here is the error message:
+
+Problem in pairs.data.frame(for.pairs, lower.panel = panel.smooth, 
+upp..: Can't pass data of mode "function" to old-S function
+
+Thanks for any help you can provide
+
+David Parkhurst
+
+From rmh at temple.edu  Mon Aug 28 16:17:57 2006
+From: rmh at temple.edu (Richard M. Heiberger)
+Date: Mon, 28 Aug 2006 12:17:57 -0400
+Subject: Re: panel function works in R, not s-plus
+Message-ID: <20060828121757.BGU85911@po-d.temple.edu>
+
+The way to get control of the panel behavior in S-Plus is
+to determine from the inside of the panel function which row and
+column you are in and then make the decision.
+
+Take a look at the function panel.interaction2wt in file
+hh/splus.library/interaction.trellis.s in the HH library
+           http://springeronline.com/0-387-40270-5
+to see how I did it there.
+
+Rich
+
+From ezivot at u.washington.edu  Mon Aug 28 16:34:37 2006
+From: ezivot at u.washington.edu (Eric Zivot)
+Date: Mon, 28 Aug 2006 09:34:37 -0700
+Subject: Re: Hessian Matrix
+In-Reply-To: <44F260AB.503@uow.edu.au>
+References: <44F260AB.503@uow.edu.au>
+Message-ID: <200608281634.k7SGYcMQ022695@smtp.washington.edu>
+
+ This happens with basic structural models if some of the variances are very
+close to zero. The problem is that the precision of the numerical hessian is
+limited (e.g. 2 or 3 decimals). Very often this problem can be avoided if
+you rescale your data (e.g. if you have data in logs, try multiplying the
+logged data by 100). Also, with basic structural models you will improve the
+numerical stability of the estimation if you concentrate out one of the
+variance parameters. This trick was introduced by Harvey and is utilized in
+the STAMP pagkage. See my example of estimating and AR(1) model in the state
+space chapter of the 2nd Edition of Modeling Financial Time Series (the
+example in the first edition contained a small error). Finally, you may also
+get better estimates if you use the outer product gradient version of the ML
+covariance.
+
+I have started a tutorial on basic structural models on the additions page
+of the MFTS 2nd Edition web page
+
+http://faculty.washington.edu/ezivot/MFTS2ndEditionAdditions.htm
+
+. I will be updating this with more hints on estimation sometime this month.
+
+ez
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Carole Birrell
+Sent: Sunday, August 27, 2006 8:19 PM
+To: Splus Mailing list
+Subject: [S] Hessian Matrix
+
+Dear SPLUS users,
+I am using the SPlus version 7.0 Finmetrics and in particular the SsfFit
+function.  This function has obviously changed from version 6.2 , and now
+seems to check for a Hessian matrix which is not invertible.
+
+I am simulating data from a multivariate basic structural model and then
+attempting to estimate the parameters for this model.
+I am now getting warnings saying that  "Hessian failed to invert. in: 
+SsfFit(all9, Augmentdata, "EstAugSV", trace = T)".
+
+Do I need to alter the precision somewhere, if so how do I do that?
+If not, do you have any advice as to what I should do?
+
+regards,
+Carole Birrell
+University of Wollongong.
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with the
+BODY of the message:  unsubscribe s-news
+
+From yang_eric9 at yahoo.com  Mon Aug 28 17:52:45 2006
+From: yang_eric9 at yahoo.com (Eric yang)
+Date: Mon, 28 Aug 2006 10:52:45 -0700
+Subject: Finding ole automation objects
+Message-ID: <20060828175245.9800.qmail@web33904.mail.mud.yahoo.com>
+
+Dear members,
+   
+  I occasionally use ole automation objects - but sometimes forget to release the objects before exiting my S-Plus session. I would like to put a bit of code in my .Last() function that finds all the ole objects that haven't been released and releases them before exiting. Does anyone have something that would do the trick?
+   
+  Many thanks in advance for any help.
+   
+  Regards,
+  Eric
+ 
+	
+		Get your own web address for just $1.99/1st yr. We'll help. Yahoo! Small Business.
+
+From mam3xs at gmail.com  Mon Aug 28 22:34:48 2006
+From: mam3xs at gmail.com (Michael Sun)
+Date: Mon, 28 Aug 2006 23:34:48 +0100
+Subject: About shape.plot
+Message-ID: <fe005e260608281534o42cb55f7i94095fcc734362c8@mail.gmail.com>
+
+Dear List,
+
+I could not run function "shape.plot"(for example "shape.plot(uti.gas[,2])") on Finmetrics with S+ 6.2 Pro. 
+Is this can be run only on S+ 7?
+
+Cheers
+Mc
+
+From ezivot at u.washington.edu  Mon Aug 28 22:54:08 2006
+From: ezivot at u.washington.edu (Eric Zivot)
+Date: Mon, 28 Aug 2006 15:54:08 -0700
+Subject: Re: About shape.plot
+In-Reply-To: <fe005e260608281534o42cb55f7i94095fcc734362c8@mail.gmail.com>
+References: <fe005e260608281534o42cb55f7i94095fcc734362c8@mail.gmail.com>
+Message-ID: <001401c6caf4$ded834a0$7e12fc0a@zivotd800>
+
+The following worked fine for me on splus
+6.1 for windows and FM 1.
+
+ 
+
+> shape(uti.gas[,2])
+
+> shape.plot(uti.gas[,2], from=0.90,
+to=0.98)
+
+ 
+
+What happened when you ran the shape.plot
+function?
+
+ 
+
+-----Original Message-----
+
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On
+Behalf Of Michael Sun
+
+Sent: Monday, August
+ 28, 2006 2:35 PM
+
+To: s-news at lists.biostat.wustl.edu
+
+Subject: [S] About shape.plot
+
+ 
+
+Dear
+List,
+
+I could not run function "shape.plot"(for example
+"shape.plot(uti.gas[,2])") on Finmetrics with S+ 6.2 Pro. 
+
+Is this can be run only on S+ 7?
+
+Cheers
+
+Mc
+
+From Raghu.Krishnamachari at leggmasonasia.com.sg  Tue Aug 29 08:12:55 2006
+From: Raghu.Krishnamachari at leggmasonasia.com.sg (Krishnamachari, Raghuraman)
+Date: Tue, 29 Aug 2006 01:12:55 -0700
+Subject: Re: plot histogram of a distribution
+Message-ID: <46FE375EF87BAC42B69E493F296F4ACC02D143FE@singx01.wam.westernasset.local>
+
+the below for loop works well, but when i try to wrap 
+it inside a function, the f.name[i] is not getting passed 
+correctly.
+
+ 
+
+Fngraphs<-function(data,factor.names) 
+{
+
+for(i in 1:length(factor.cols)) {
+ f.name<-factor.names[i] 
+ t1<-histogram(as.formula(paste("~", 
+f.name[i], "| Country")), data="" = 
+10,type="count")
+ print(t1) 
+}
+}
+
+ 
+
+Any workaround for this??
+
+From: Krishnamachari, Raghuraman 
+
+Sent: Thursday, August 24, 2006 8:47 PM
+To: 'David L Lorenz'
+Cc: s-news at lists.biostat.wustl.edu; 
+s-news-owner at lists.biostat.wustl.edu
+Subject: RE: [S] plot histogram 
+of a distribution
+
+Thanks a lot Dave.. It works.
+
+ 
+
+But how to print the graphs in different pages of the same 
+sheet.
+
+i find that its overwriting in the same 
+page.
+
+ 
+
+From: David L Lorenz [mailto:lorenz at usgs.gov] 
+
+Sent: Thursday, August 24, 2006 8:33 PM
+To: Krishnamachari, 
+Raghuraman
+Cc: s-news at lists.biostat.wustl.edu; 
+s-news-owner at lists.biostat.wustl.edu
+Subject: Re: [S] plot histogram 
+of a distribution
+
+Raghu, 
+  If you look at the formula in your for loop, you 
+will see that it has exactly the same appearance as the one that works. That 
+means the routines that evaluate the formula see the same thing and are looking 
+at a column named f.name in the data set and not a column named FCF. You know 
+that f.name is a variable that represents that column, but the routine that evaluates the formula does not. 
+  
+For cases like this, you can use the as.formula() function. Try this: 
+
+histogram(as.formula(paste("~", f.name, "| 
+Country")), data="" = 
+10,type="count") 
+
+  I do not see 
+where Country comes from if you select only the column f.name from data! 
+
+Dave 
+
+  
+  
+    "Krishnamachari,       Raghuraman" <Raghu.Krishnamachari at leggmasonasia.com.sg> 
+      
+Sent by: 
+      s-news-owner at lists.biostat.wustl.edu 
+      08/23/2006 09:52 PM 
+
+    
+      
+        
+        
+          
+            To
+
+          <s-news at lists.biostat.wustl.edu> 
+        
+          
+            cc
+
+          
+        
+          
+            Subject
+
+          [S] plot histogram of a 
+            distribution
+
+      
+        
+        
+          
+          
+
+Dear all, 
+  
+I am new to this list and splus. I am trying to plot a 
+histogram of a distribution using "histogram". 
+The issue is i am unable to call this in a loop with different Factors 
+variables. 
+  
+> factor.names
+[1] "Tobin.Q" "EBITDA"  "FCF" 
+  
+> factor.cols
+[1] 
+"Tobin.Q" "EBITDA"  "FCF"   
+  
+
+================================= 
+for(i in 1:length(factor.cols)) 
+{
+
+f.name<-factor.names[i] 
+histogram(~ f.name | Country, 
+data="" = 
+10,type="count")
+}
+==================================== 
+  
+when i replace f.name with the 
+numeric column names like FCF,EBITDA individually, the above function works. But 
+how to pass these values in a loop. 
+  
+histogram(~ FCF | Country, 
+data="" = 10,type="count") 
+-- works 
+  
+whereas 
+  
+histogram(~ "FCF" | Country, 
+data="" = 
+10,type="count") 
+-- gives different 
+results. 
+  
+  
+
+Hope someone throw light on this. 
+  
+thanks, 
+  
+Raghu. 
+
+**********************************************************************
+E-mail 
+sent through the Internet is not secure. Legg Mason Asset Management (Asia) Pte 
+Ltd [Co. Reg. No. 200007692R] therefore recommends that you do not utilize electronic mail to send to us any confidential or sensitive information, including account numbers and personal identification numbers. Delivery, and/or 
+timely delivery of Internet electronic mail is not guaranteed. Legg Mason Asset 
+Management (Asia) Pte Ltd therefore recommends that you do not send 
+time-sensitive or action-oriented messages to us via electronic mail. 
+
+********************************************************************** 
+
+**********************************************************************
+
+E-mail sent through the Internet is not secure. Legg Mason Asset Management (Asia) Pte Ltd [Co. Reg. No. 200007692R] therefore recommends that you do not utilize electronic mail to send to us any confidential or sensitive information, including account numbers and personal identification numbers. Delivery, and/or timely delivery of Internet electronic mail is not guaranteed. Legg Mason Asset Management (Asia) Pte Ltd therefore recommends that you do not send time-sensitive or action-oriented messages to us via electronic mail. 
+
+**********************************************************************
+
+From cmoyer at fs.fed.us  Wed Aug 30 05:33:41 2006
+From: cmoyer at fs.fed.us (Chris Moyer)
+Date: Tue, 29 Aug 2006 22:33:41 -0700
+Subject: sigma symbol
+Message-ID: <OF6936359B.1EBDE292-ON882571DA.001DEC0D-882571DA.001E8CD1@fs.fed.us>
+
+Hello-
+
+It's late and I cannot find a solution to my problem anywhere. Can anyone
+tell me how to display the Greek symbol sigma on a barplot using text(),
+i.e., how to reference the character in the font set? I can successfully
+use the GUI to insert the character I want, but I am writing a plotting
+function and would like a "cleaner" solution. Through GUI I can use the
+following string:
+
+guiCreate( "CommentDate", ..., paste("\\\"Symbol\"s\\\"Arial\"[2]=", ...)
+
+Thanks in advance for any help.
+
+Chris Moyer
+AREMP Field Operations Supervisor
+Aquatic and Riparian Effectiveness Monitoring Program
+Phone: 541.750.7017
+Cell: 541.231.8934 (NEW)
+Fax: 541.750.7234
+
+From giancarlo.dal-brun at st.com  Wed Aug 30 17:22:55 2006
+From: giancarlo.dal-brun at st.com (Giancarlo DAL BRUN)
+Date: Wed, 30 Aug 2006 19:22:55 +0200
+Subject: histogram trellis panel colors
+References: <OF6936359B.1EBDE292-ON882571DA.001DEC0D-882571DA.001E8CD1@fs.fed.us>
+Message-ID: <44F5C96F.3F1236C5@st.com>
+
+Hello all,
+
+I am using trellis panels in order to have several histograms in different
+panels, for example with the following:
+
+histogram( ~ height | voice.part, data = singer, nint = 17, endpoints =
+c(59.5, 76.5), layout = c(2,4), aspect = 1, xlab = "Height (inches)")
+
+I am not able to give a different color to the histogram of each panel.
+Is there a way to do this?
+Is it possible to have the reference id of the single panel in order to
+assign the color?
+
+Thanks in advance.
+
+Giancarlo Dal Brun
+
+--
+Giancarlo Dal Brun
+Data Analysis and Information System - FTM Advanced R&D
+STMicroelectronics - Via C. Olivetti 2 20041 Agrate Brianza (Milano), Italy
+Phone: +39 039 6035603   Mobile: +39 348 9995522   Fax: +39 039 6035055
+
+From andrew_white at hmsa.com  Thu Aug 31 01:07:58 2006
+From: andrew_white at hmsa.com (Andrew White)
+Date: Wed, 30 Aug 2006 15:07:58 -1000
+Subject: S-Plus 7 Pro GUI - how to resize the Object Explorer Window - and make it stick!!
+Message-ID: <DD819BD2CA346149AB9A639B2108C64E1FB3B4@HON10036.corp.hmsa.com>
+
+I am generally more favorable to the S-Plus Windows version
+7 Professional GUI (than to the R GUI) ..
+
+But the Object Explorer Window
+is displayed at the same fixed size each time S-Plus 7 is started. 
+
+And this Object Explorer Window is always placed in front of (and covering) the Command Line
+Window.
+
+ 
+
+If I resize the Object Explorer Window and the Command Line
+Window, then save the window settings and then quit, and then start up again,
+the Command Line window shows the new window size setting, but the Object
+Explorer reverts to its large size and supercedes (shows on top of) the Command
+Line Window !
+
+ 
+
+Has anyone discovered how
+to reset the size of the Object Explorer Window so that it stays
+that way next time S-Plus is invoked?
+
+ 
+
+Andy White
+
+Andrew N. White, Ph.D. - Manager Research Unit
+
+Ph. 808-948-5344 - Email: andrew_white at hmsa.com
+
+ 
+
+Financial Reporting, Analysis & Medical Economics Dept.
+
+Hawaii Medical Service Association 
+
+- Blue Cross Blue Shield of Hawaii -
+
+An Independent Licensee of the Blue Cross and Blue Shield
+Association
+
+818 Keeaumoku Street, Honolulu, HI 96814
+
+ 
+
+This
+electronic message is not an offer to contract, the acceptance of an offer to
+contract, or in any other way intended to contractually obligate HMSA; neither
+is it intended to change the terms of any existing contract unless specifically
+so stated.  --- The information contained in this electronic message (or
+attached hereto) is intended only for the individual or entity to which it is
+addressed and may contain information that is confidential and protected by
+law.  If you are not the intended recipient of this e-mail, you are
+cautioned that use of its contents in any way is prohibited and may be
+unlawful.  If you have received this communication in error, please notify
+the sender immediately by e-mail or telephone and return the original message
+by e-mail to the sender or to postmaster at hmsa.com.  We will reimburse you
+for any cost you incur in notifying us of the errant e-mail.  Thank you.
+
+ 
+
+From david.thompson at mnr.gov.on.ca  Thu Aug 31 14:14:38 2006
+From: david.thompson at mnr.gov.on.ca (Thompson, David (MNR))
+Date: Thu, 31 Aug 2006 10:14:38 -0400
+Subject: Re: S-Plus 7 Pro GUI - how to resize the Object Explorer Window - and make it stick!!
+Message-ID: <327C2434A3DA2D4CB61554D644BAE48B06415AAF@LRCPSSMBMXMB001.lrc.ad.gov.on.ca>
+
+-----Original Message-----
+From: Andrew White [mailto:andrew_white at hmsa.com] 
+Sent: August 30, 2006 09:08 PM
+To: s-news at lists.biostat.wustl.edu
+Subject: S-Plus 7 Pro GUI - how to resize the Object Explorer Window -
+and make it stick!!
+
+. . .
+Has anyone discovered how to reset the size of the Object Explorer
+Window so that it stays that way next time S-Plus is invoked?
+
+Andy White
+. . .
+
+-----Reply-----
+Andy,
+
+Select the child window that you wish to modify,
+select the Options menu, then click on the
+'Save Window Size/Properties as Default' item.
+
+The catch with the Object Explorer is the if you have
+a folder in the OE left pane selected this menu item
+will be 'Save Folder as Default'. If you have anything
+in the OE right pane selected the menu item will
+change to 'Save Selected Object as Default'.
+
+You must ensure that nothing within the OE window
+is selected, then the last item in the Options menu
+changes to the one you are expecting, i.e.,
+'Save Window Size/Properties as Default'.
+
+This is achieved by clicking on any white space
+in the OE left pane so that the right pane goes blank.
+
+DaveT.
+*********************************
+Silviculture Data Analyst
+Ontario Forest Research Institute
+Ontario Ministry of Natural Resources
+Sault Ste. Marie, Ontario, Canada
+david.john.thompson at ontario.ca
+david.thompson at mnr.gov.on.ca
+*********************************
+
+From timh at insightful.com  Thu Aug 31 18:18:05 2006
+From: timh at insightful.com (Tim Hesterberg)
+Date: Thu, 31 Aug 2006 11:18:05 -0700
+Subject: Re: multivariate uniform
+In-Reply-To: <20060811142708.34387.qmail@web38705.mail.mud.yahoo.com>
+References: <20060811142708.34387.qmail@web38705.mail.mud.yahoo.com>
+Message-ID: <SEWINEXCH00bJXncnm500000037@sewinexch00.insightful.com>
+
+You can generate correlated multivariate normal with arbitrary correlations,
+then transform each dimension from normal to uniform using pnorm.
+Note that the correlation of the uniforms is somewhat smaller than
+the correlation of the corresponding normal variates.  You can adjust the
+correlation of the normals upward to get the output correlation you want.
+
+More generally, look at the literature on copulas.  Alexander
+McNeil has created a library with a variety of copulas
+        http://www.math.ethz.ch/~mcneil/book/QRMlib.html
+to accompany his book "Quantitative Risk Management: Concepts,
+Techniques and Tools".
+
+Tim Hesterberg
+
+>Is their such a thing like multivariate UNIFORM distribution?
+>  I mean the multivariate distrubution which is marginally uniform in  [0,1]
+>  for all the components and having a prescribed correlation matrix 
+> (non-diagonal)? 
+>  How to generate such a thing? For a time being I would probably be satisfied 
+> if all the cross correlations are identical.
+>   
+>  Thank you
+>   
+>  Jewel Bright
+
+========================================================
+| Tim Hesterberg       Research Scientist              |
+| timh at insightful.com  Insightful Corp.                |
+| (206)802-2319        1700 Westlake Ave. N, Suite 500 |
+| (206)283-8691 (fax)  Seattle, WA 98109-3044, U.S.A.  |
+|                      www.insightful.com/Hesterberg   |
+========================================================
+Download the S+Resample library from www.insightful.com/downloads/libraries
+
+From hanthony at insightful.com  Thu Aug 31 20:35:29 2006
+From: hanthony at insightful.com (Heather Anthony)
+Date: Thu, 31 Aug 2006 13:35:29 -0700
+Subject: COURSE: Upcoming S-PLUS courses and Web casts from Insightful Corporation
+Message-ID: <5386D894248D32458B1D9B5638A07448071E7B@sewinexch00.insightful.com>
+
+Here is some information about upcoming courses from Insightful's training
+department that may be of interest to s-news subscribers.  
+Additional information is available at the links provided. Please direct any
+enquiries to me <hanthony at insightful.com>
+
+# Heather Anthony/Insightful Corporation Training Coordinator
+
+Insightful Training -- Featured Courses!       
+============================
+Advanced Programming Methods in S-PLUS presented by Tim Hesterberg
+October 9-10, New York, NY
+http://www.insightful.com/services/course.asp?CID=37
+
+Bootstrap Methods and Permutation Tests presented by Tim Hesterberg
+October 11-12, New York, NY
+http://www.insightful.com/services/course.asp?CID=38
+
+Statistical Learning and Data Mining II: Tools for Tall and Wide Data
+Presented by T. Hastie and R. Tibshirani of Stanford University
+October 12-13, Philadelphia, PA
+http://www-stat.stanford.edu/%7Ehastie/sldm.html
+
+UPCOMING WEB CASTS
+============================
+Leveraging Customer Lifetime Value to Increase Return On Marketing Investment
+September 20, 2006
+http://www.insightful.com/news_events/webcasts/2006/09romi/default.asp
+
+The Benefits of Dynamic Analytics Reporting
+September 21, 2006  
+http://www.insightful.com/news_events/webcasts/2006/09idrs/default.asp
+
+Best Practices in Data Mining
+October, 12, 2006
+http://www.insightful.com/news_events/webcasts/2006/10datamining/default.asp
+
+OTHER UPCOMING COURSES
+============================
+ 
+G101: S-PLUS Graphical User Interface Jumpstart   
+September 19, Boston, MA
+http://www.insightful.com/services/course.asp?CID=32
+
+C102: S-PLUS Essentials Command Line  
+September 20-22, Boston, MA
+http://www.insightful.com/services/course.asp?CID=10
+
+Statistical Modeling in S-PLUS
+September 25-27, Boston, MA
+http://www.insightful.com/services/course.asp?CID=11
+
+C201: S-PLUS Programming
+September 28-29, Boston, MA
+http://www.insightful.com/services/course.asp?CID=41
+
+G101: S-PLUS Graphical User Interface Jumpstart   
+October 17, New York, NY
+http://www.insightful.com/services/course.asp?CID=32
+
+C102: S-PLUS Essentials Command Line  
+October 18-20, New York, NY
+http://www.insightful.com/services/course.asp?CID=10
+
+Statistical Modeling in S-PLUS
+October 23-25, New York, NY
+http://www.insightful.com/services/course.asp?CID=11
+
+C201: S-PLUS Programming
+October 26-27, New York, NY
+http://www.insightful.com/services/course.asp?CID=41
+
+Register NOW! http://www.insightful.com/services/register.asp
+
+For a complete 2006 training schedule go to:
+http://www.insightful.com/services/schedule.asp
+
+-- 
+Heather Anthony <hanthony at insightful.com>
+Training Coordinator, Insightful Corp, Seattle WA
+Tel: +1 (206) 802 2223
+Fax: +1 (206) 283 8691
+
+Insightful Corporation (www.insightful.com) provides analytical solutions for
+text and data using S-PLUS, Insightful Miner, InFact and consulting services.
+
+From timh at insightful.com  Thu Aug 31 22:20:24 2006
+From: timh at insightful.com (Tim Hesterberg)
+Date: Thu, 31 Aug 2006 15:20:24 -0700
+Subject: Re: Key() and par(mfrow)
+In-Reply-To: <BAY107-W7EFC756E531E10342BE18B03A0@phx.gbl>
+References: <BAY107-W7EFC756E531E10342BE18B03A0@phx.gbl>
+Message-ID: <SEWINEXCH00XAoirK6U00000050@sewinexch00.insightful.com>
+
+>I am using par(mfrow=c(3,2)) to plot 5 plots on a single page and was
+>hoping to add the legend on top of the page using key() but it won't
+>put the legend of top of the page. It keeps putting on bottom right.
+
+key() doesn't have an "outer" argument like mtext, but it doesn't check
+that x and y are within the plot region, so you should be able to get it
+to work.
+
+Idea 1 (quick and dirty):
+Specify x and y, use trial and error.  For example, this puts a key outside
+the plot region of the active plot
+
+par(mfrow=c(3,2))
+plot(1:1)
+plot(1:2)
+plot(1:3)
+plot(1:4)
+plot(1:5)
+key(text="normal")
+key(x = 6.5, y = 8, text="y=8, x=6.5")
+
+Idea 2 (more elegant):
+The "Blue book" chapter 10 (The New S Language
+Richard A. Becker, John M. Chambers, and Allan R. Wilks
+Wadsworth & Brooks/Cole, Pacific Grove, CA (1988))
+describes low-level control over graphics.  You could do your plots,
+then reset axes prior to calling key.  Here's a quick example:
+
+par(mfrow=c(3,2), oma = c(0,0,1,0))
+plot(1:1)
+plot(1:2)
+plot(1:3)
+plot(1:4)
+plot(1:5)
+par(mfrow=c(1,1), mar = rep(0,4))
+key(corner=c(.5,1), text="at top")
+
+If you want to place the key outside the plot region using the
+"corner" argument, create a copy of key(), and change the call to
+approx() near the top to allow linear extrapolation:
+        lambda <- approx(0:1, c(1, 99)/100, corner, rule=3)$y
+
+Tim Hesterberg
+
+========================================================
+| Tim Hesterberg       Research Scientist              |
+| timh at insightful.com  Insightful Corp.                |
+| (206)802-2319        1700 Westlake Ave. N, Suite 500 |
+| (206)283-8691 (fax)  Seattle, WA 98109-3044, U.S.A.  |
+|                      www.insightful.com/Hesterberg   |
+========================================================
+Download the S+Resample library from www.insightful.com/downloads/libraries
+
+From MichaelCamilleri at branz.co.nz  Fri Sep  1 02:12:31 2006
+From: MichaelCamilleri at branz.co.nz (Michael Camilleri)
+Date: Fri, 01 Sep 2006 14:12:31 +1200
+Subject: Re: S-Plus 7 Pro GUI - how to resize the Object Explorer Window - and make it stick!!
+In-Reply-To: <DD819BD2CA346149AB9A639B2108C64E1FB3B4@HON10036.corp.hmsa.com>
+References: <DD819BD2CA346149AB9A639B2108C64E1FB3B4@HON10036.corp.hmsa.com>
+Message-ID: <A23B682083FD8248ADFE1317C82CBD6701AF9424@exchange.branznt.org.nz>
+
+OK, not an easy thing to do. Hopefully this makes
+sense
+
+ 
+
+If you open a browser
+from a file you can open it maximized by using the following command:
+
+guiOpen("ObjectBrowser",
+FileName = "C:\\Documents and Settings\\... .sbf ",  Show =
+"Maximized")
+
+ 
+
+If you automatically open the commands window on
+startup and have set in you Options/Command Line/Options tab to “Keep Window
+Focus” then the previous command should open the browser,
+maximize all windows, leaving the commands window maximized on top. That might
+be all you need to do.
+
+ 
+
+You can turn the “Keep Window Focus” off
+if you don’t like to work like that with the command:
+
+guiSetOption(
+option.name="KeepCommandsFocus", value.string="F" )
+
+but you will need to reset it to T when you close S+
+by putting a command in the .Last() function.
+
+ 
+
+If you need to toggle the commands window open or
+close used this command, however when you reopen it, it will appear last on
+your list of open windows.
+
+ 
+
+guiExecuteBuiltIn("$$SPlusMenuBar$No_Documents$Window$Commands_Window")
+
+ 
+
+This command will set/reset the startup status of
+the command line.
+
+guiSetOption( option.name="StartupCommandLine",
+value.string="F" )
+
+ 
+
+There is also a guiOpenView command which should let
+you change the status on the fly, but I have not been able to get it to work
+yet.
+
+ 
+
+With a bit of mucking about with these commands you
+should be able to get S+ to do what you want. The commands window is a special
+S+ object so is not able to be manipulated with the usual GUI commands guiOpen,
+guiClose etc.
+
+ 
+
+Michael
+
+ 
+
+********************************************* 
+
+Michael Camilleri
+
+Building Physicist
+
+Mailto:MichaelCamilleri at branz.co.nz
+
+BRANZ Ltd.               Ph: 
+(+64 4) 237 1170
+
+Private Bag 50-908      Fax: (+64 4) 237
+1171
+
+Porirua City 5240,      DDI:
+(+64 4) 237 1174
+
+New
+  Zealand       Web: www.branz.co.nz/main.php?page=HEEP
+

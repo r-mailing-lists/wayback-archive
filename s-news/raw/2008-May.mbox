@@ -1,0 +1,168 @@
+From johnpitchard at googlemail.com  Fri May 16 14:11:06 2008
+From: johnpitchard at googlemail.com (John Pitchard)
+Date: Fri, 16 May 2008 15:11:06 +0100
+Subject: logistic transformation using nlminb
+Message-ID: <ee4b1650805160711j282851ds7c604330250b3a27@mail.gmail.com>
+
+Dear all,
+
+I want to find the optimal values of a vector, x (with 6 elements)
+say, satisfying the following conditions:
+
+1. for all x>=0
+2. sum(x)=1
+3. x[5]<=0.5 and x[6]<=0.5
+
+For the minimisation I'm using nlminb and to satisfy the first 2
+conditions the logistic transformation is used with box constraints
+for condition 3. However, I don't seem to be able to get the values x
+that i'm expecting from fitting a simpler model. For example,
+
+set.seed(0)
+# creating a correlation matrix
+corr <- diag(5)
+corr[lower.tri(corr)] <- 0.5
+corr[upper.tri(corr)] <- 0.5
+
+# Data for the minimisation
+mat <- rmvnorm(10000, mean=c(3, 2.75, 2.8, 3, 2.9), sd=c(0.1,
+0.1,0.12, 0.15, 0.10), cov=corr)
+
+# here is the simple optimisation function that allows the 5th
+element to be potentially negative
+
+obj.funA <- function(opt, mat) {
+      opt <- c(opt, 1-sum(opt))
+      LinearComb <- mat%*%opt
+ obj <- -min(LinearComb)
+ obj
+}
+
+# I want to put an upper boundary constraint on the first variable -
+not being greater than 0.35 and the rest being between 0 and 1
+
+opt <- nlminb(rep(0,4), lower=rep(0,4), upper=c(0.35, 1, 1, 1) ,
+obj.funA, mat=mat)
+opt.x <- opt$parameters
+opt.x <- c(opt.x, 1-sum(opt.x))
+opt.x
+
+# Result
+[1] 0.34999902 0.06475651 0.00000000 0.16561760 0.41962686
+
+However, I don't get the same result from the logistic transformation
+
+obj.funB <- function(opt, mat) {
+ opt <- c(opt, 0)
+ opt <- exp(opt)/sum(exp(opt))
+      LinearComb <- mat%*%opt
+ obj <- -min(LinearComb)
+ obj
+}
+
+opt <- nlminb(rep(0,4), upper=c(log(0.35), NA, NA, NA), obj.funB, mat=mat)
+opt.x <- opt$parameters
+opt.x <- c(opt.x, 0)
+opt.x <- exp(opt.x)/sum(exp(opt.x))
+opt.x
+
+# Result
+[1] 2.355325e-001 6.339398e-009 1.202751e-004 9.139718e-002 6.729500e-001
+
+I don't know how to obtain the same answer for both optimisations. In
+reality, my own optimisation typically gives negative values for the standard
+minimisation- so I have no choice but to use a more advanced method.
+Also, there appears to be a dependency between the first and the last,
+i.e. 2.355325e-001/6.729500e-001 =0.35
+
+Does anyone know why the logistic doesn't give the same answer as the
+simpler method?
+
+Any help is much appreciated.
+
+Regards,
+John
+
+From wht_crl at yahoo.com  Fri May 16 21:16:39 2008
+From: wht_crl at yahoo.com (carol white)
+Date: Fri, 16 May 2008 14:16:39 -0700
+Subject: sample function
+Message-ID: <748564.69242.qm@web62005.mail.re1.yahoo.com>
+
+Hi,
+I use sample function in a for loop to get a new random indexing but I don't know why, I get the same indexes in different iterations of for. 
+
+I have a script that uses for loop calling crossval function (the same definition as crossval in bootstrap package) defined in another script. Both scripts are loaded into R by source function. When I reach 
+o <- sample (1:n) where n is the length of a vector, for ex 10
+print(o)
+I always get the same indexes at the same position
+  3  7  5  6 10  9  2  1  8  4
+
+note that i don't change the value of o anywhere in the program. only, at a new iteration, o gets initialized.
+
+but when I use sample(1:n) in R environement, random sampling works perfectly.
+
+Best 
+
+carol
+-------------------------------------------
+for (i in 1:5)
+        new.lst = crossval(data, y, s, 3)
+     
+ 
+crossval <- function (x, y, s, ngroup)
+{ 
+ 
+   call <- match.call()
+    x <- as.matrix(x)
+    n <- length(y)
+   
+    if (ngroup < 2) {
+        stop("ngroup should be greater than or equal to 2")
+    } 
+    if (ngroup > n) {
+        stop("ngroup should be less than or equal to the number of observations") 
+    } 
+    if (ngroup == n) {
+        groups <- 1:n
+        leave.out <- 1
+    }
+
+    if (ngroup < n) {
+        leave.out <- trunc(n/ngroup)
+        o <-
+ sample(1:n)
+print(o)
+        groups <- vector("list", ngroup)
+        for (j in 1:(ngroup - 1)) {
+            jj <- (1 + (j - 1) * leave.out)
+            groups[[j]] <- (o[jj:(jj + leave.out - 1)])
+        }
+        groups[[ngroup]] <- o[(1 + (ngroup - 1) * leave.out):n] 
+    }
+.....
+ 
+
+      
+
+From blasarmien at yahoo.com.mx  Sun May 18 22:13:21 2008
+From: blasarmien at yahoo.com.mx (Blas Armien)
+Date: Sun, 18 May 2008 15:13:21 -0700
+Subject: Calculate CI of rate (person time)
+Message-ID: <821619.89924.qm@web53405.mail.re2.yahoo.com>
+
+Hi. I would like to know if you have a command to calculate the confidence intervals of the rate (Person Time) and to compare and to determine statistical differents between two rates.
+
+ 
+
+Any help is much appreciated.
+
+Regards,
+
+Blas
+
+      
+Yahoo! Deportes Beta
+¡No te pierdas lo último sobre el torneo clausura  2008!
+ Entérate aquí http://deportes.yahoo.com
+

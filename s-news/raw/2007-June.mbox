@@ -1,0 +1,2466 @@
+From f.harrell at vanderbilt.edu  Fri Jun  1 12:24:43 2007
+From: f.harrell at vanderbilt.edu (Frank E Harrell Jr)
+Date: Fri, 01 Jun 2007 07:24:43 -0500
+Subject: Re: Hmisc multiple imputation with owner glm family
+In-Reply-To: <56A80768E1273C42B9C60D53285D501501A15D75@phoceo07.aphm.ap-hm.fr>
+References: <56A80768E1273C42B9C60D53285D501501A15D75@phoceo07.aphm.ap-hm.fr>
+Message-ID: <4660100B.4040806@vanderbilt.edu>
+
+GIORGI Roch wrote:
+> Professor Harrel,
+>
+> I've sent this email to the SPLUS list and I had no answer. Any help will be
+> appreciate.
+>
+> Sincerely,
+>
+> Roch
+
+The pertinent code inside fit.mult.impute is
+
+    f <- if(missing(subset)) fitter(formula, data=completed.data, ...)
+         else fitter(formula, data=completed.data[subset,], ...)
+
+The family argument should be part of the ...
+
+So I don't understand why glm is not seeing family.    Make sure that 
+your special family argument works correctly in calling glm outside of 
+fit.mult.impute.
+
+Frank
+
+> --------------------
+>
+>
+> I'm using Hmisc package to do multiple imputation.
+> I have to use glm method but with a family that is not yet part of S-PLUS. I created my own family but I don't know how to call it when I use Hmisc's fit.mult.impute.
+>
+>
+> I tried this:
+> mi <- aregImpute(~Y + sex + age1 + age2 + X1, n.impute=5, data=MCAR)
+> fit <- fit.mult.impute(Y ~ sex + age1 + age2 + X1, family="MyFamily",
+> fitter=glm, xtrans=mi, data=MCAR)
+>
+> but I have the impression that the family used is not MyFamily
+> fit$family gives:
+>        name           link      variance
+>  "Gaussian" "Identity: mu" "Constant: 1"
+>
+>
+> I am using Splus6.2 and Hmisc 3.3-2.
+>
+>
+>
+> _____________________________________________________
+>   Roch GIORGI, MD, PhD
+>   Service de Santé Publique et d'Information Médicale
+>   Hôpital de la Timone
+>   264, rue St Pierre
+>   13385 Marseille cedex 5
+>   Tel: +33 (0)491 384 949
+>   Fax: +33 (0)491 385 749
+>   email: roch.giorgi at ap-hm.fr
+>   Web: http://cybertim.timone.univ-mrs.fr/
+
+--
+Frank E Harrell Jr   Professor and Chair           School of Medicine
+                     Department of Biostatistics   Vanderbilt University
+
+From DougB at psbc.org  Fri Jun  1 23:48:59 2007
+From: DougB at psbc.org (Doug Bolgiano)
+Date: Fri, 01 Jun 2007 16:48:59 -0700
+Subject: substitution in call to lme
+In-Reply-To: <20070528102006.BB45C127BA4@smtp.biostat.wustl.edu>
+References: <20070528102006.BB45C127BA4@smtp.biostat.wustl.edu>
+Message-ID: <D177B3E9AC59494BB99CB3DB025402C601B8D646@Central-EX1.PSBC.ORG>
+
+I'm trying to write a function that allows me to automate the fitting of
+a series of lmes.  The data that I want to fit is in a S data frame with
+the dependent variable, fixed effects and random effects all being
+variables in the data frame.  
+
+The model can be written   y = X1b1 + X2b2 + Zu + e.  For my purposes,
+X1 doesn't change, but I want to vary X2 (in a predictable fashion) over
+subsets of the variables in the data frame.  
+
+Here's my (non-functioning) function.  Apparently arguments are being
+evaluated incorrectly.  Any suggestions would be appreciated.  
+
+multLME <- function(data.fr,dep,fxdRet,fxdChg,grps)
+{
+        nf <- length(fxdChg)
+        LMEs <- vector("list",nf)
+        rndm <- paste("~ 1 | ",substitute(grps))
+        dfrm <- paste(substitute(data.fr))
+        for(i in 1:nf) {
+                colChg <- fxdChg[i]
+                fxd <- paste(substitute(dep), " ~  ",
+substitute(fxdRet), " + ", colChg)
+                LMEs[i] <- do.call("lme", list(fixed = fxd, data = dfrm,
+random = rndm, na.action = na.exclude))
+        }
+        return(LMEs)
+}
+
+Thanks,
+
+Doug Bolgiano
+Biostatistician
+Puget Sound Blood Center
+Seattle,  WA    98104
+
+*****************************************************************
+This e-mail and any attachments may contain confidential and
+privileged information. It has been scanned for viruses.  If you
+are not the intended recipient, please notify the sender
+immediately by return e-mail, delete this e-mail and destroy any
+copies. Any dissemination, use, review, disclosure, or
+distribution of this information by a person other than the
+intended recipient is unauthorized and may be illegal.
+*****************************************************************
+
+From wiiat at kis-lab.com  Sat Jun  2 15:41:30 2007
+From: wiiat at kis-lab.com (Jia Hu)
+Date: Sun, 03 Jun 2007 00:41:30 +0900
+Subject: [IAT 2007] Deadline Extended: June 16, 2007!
+Message-ID: <20070602153950.4D3DA5C4F1@mailgate.biostat.wustl.edu>
+
+[Apologies if you receive this more than once]
+
+Dear Colleague,
+
+In response to many requests for an extension,
+we are pleased to extend the paper submission deadline
+for IAT 2007 to ** June 16, 2007 **.
+
+Submission can be done online at:
+http://www.cs.sjsu.edu/wi07/iat/
+
+We look forward to receiving your submissions soon.
+
+With best regards,
+
+Tsau Young (T.Y.) Lin
+PC chair of WI-IAT'07
+
+#####################################################################
+         IEEE/WIC/ACM Intelligent Agent Technology 2007
+                  CALL FOR PAPERS
+#####################################################################
+
+2007 IEEE/WIC/ACM International Conference on
+Intelligent Agent Technology (IAT'07)
+
+Silicon Valley, USA, November 2-5, 2007
+Official: http://www.cs.sjsu.edu/wi07/iat/
+Mirror:   http://www.maebashi-it.org/wi07/iat/
+(to be collocated with WI'07, BIBM'07 and GrC'07)
+
+Sponsored By
+IEEE Computer Society
+Web Intelligence Consortium (WIC)
+Association for Computing Machinery (ACM)
+
+#####################################################################
+# Conference Chair
+#    Andrei Broder, VP, Yahoo Fellow, Yahoo! Research
+#
+# Program Chair and Co-Chairs   
+#    T.Y. Lin,            San Jose State University/UC Berkeley, USA
+#    Jeffrey M. Bradshaw, UWF/Institute for Human and Machine Cognition, USA
+#    Matthias Klusch,     German Research Center for AI, Germany
+#    Chengqi Zhang,       University of Technology, Sydney, Australia
+#
+# Organizing Chair      
+#    Howard Ho, Manager, IBM Almaden Research Center 
+# 
+# IAT-WI Joint Keynote Speakers (Tentative)
+# 
+# Vinton G. Cerf, Turing Award Winner, 
+#                 VP and Chief Internet Evangelist, Google 
+# Richard M. Karp, Turing Award Winner,
+#                 University of California Berkeley
+# Anant Jhingran, VP and CTO, IBM Silicon Valley Laboratory 
+#
+# (More IAT Invited Speakers will be announced)
+#
+# (Papers Due: ** June 1 **, 2007)
+# Accepted papers will be published in the conference proceedings 
+# by the IEEE Computer Society Press, which are indexed by EI.
+######################################################################
+
+The 2007 IEEE/WIC/ACM International Conference on Intelligent Agent
+Technology (IAT'07) will be jointly held with the 2007 IEEE/WIC/ACM
+International Conference on Web Intelligence (WI'07), the 2007 IEEE
+International Conference on Bioinformatics and Biomedicine (BIBM'07),
+and the 2007 IEEE International Conference on Granular Computing
+(GrC'07) for providing synergism among the four research areas.  It
+will provide opportunities for technical collaboration beyond that of
+previous conferences. The four conferences will have a joint opening,
+keynote, reception, and banquet. Attendees only need to register for
+one conference and can attend workshops, sessions and tutorials across
+the four conferences.  We are also planning a joint panel and joint
+paper sessions that discuss common problems in the four areas.
+
+IAT 2007 provides a leading international forum to bring together
+researchers and practitioners from diverse fields, such as computer
+science, information technology, business, education, human factors,
+systems engineering, and robotics, to (1) examine the design
+principles and performance characteristics of various approaches in
+intelligent agent technology, and (2) increase the cross-fertilization
+of ideas on the development of autonomous agents and multi-agent
+systems among different domains. By encouraging idea-sharing and
+discussions on the underlying logical, cognitive, physical, and
+sociological foundations as well as the enabling technologies of
+intelligent agents, IAT 2007 will foster the development of novel
+paradigms and advanced solutions in agent-based computing.
+
++++++++++++
+Highlights
++++++++++++
+
+The conference will be held in Silicon Valley, California. Many
+high-tech companies and three distinguished universities (Stanford, UC
+Berkely and UCSC) are just around the corner. The highlight of the
+conference is that a unique forum consisting of a half-day demo
+session and free discussion will be organized to link industries and
+academics. Leading IT companies like IBM, Google, and Yahoo etc will
+present at the conference.
+
+The area now known as Silicon Valley has been a center of
+technological development since the 1950's. The name Silicon Valley
+stems from the early 1970's, when the area had become the center for
+many semiconductor companies. While still hosting semiconductor and
+microprocessor companies, the region now hosts the headquarters of
+high tech companies of every kind, including many of the best known
+and most prestigious names in personal computers, Web search, Internet
+auctions, networking, storage, databases, etc.
+
++++++++++++++++++++
+Topics of Interest
++++++++++++++++++++
+
+The topics and areas include, but not limited to:
+
+* Autonomy-Oriented Computing (AOC)
+  - Agent-Based Complex Systems Modeling and Development
+  - Agent-Based Simulation
+  - Autonomy-Oriented Modeling and Computation Methods
+  - Behavioral Self-Organization
+  - Complex Behavior Characterization and Engineering
+  - Emergent Behavior
+  - Hard Computational Problem Solving
+  - Nature-Inspired Paradigms
+  - Self-Organized Criticality
+  - Self-Organized Intelligence
+  - Swarm Intelligence
+
+* Autonomous Knowledge and Information Agents
+  - Agent-Based Distributed Data Mining
+  - Agent-Based Knowledge Discovery And Sharing
+  - Autonomous Information Services
+  - Distributed Knowledge Systems
+  - Emergent Natural Law Discovery in Multi-Agent Systems
+  - Evolution of Knowledge Networks
+  - Human-Agent Interaction
+  - Information Filtering Agents
+  - Knowledge Aggregation
+  - Knowledge Discovery
+  - Ontology-Based Information Services
+
+* Agent Systems Modeling and Methodology
+  - Agent Interaction Protocols
+  - Cognitive Architectures
+  - Cognitive Modeling of Agents
+  - Emotional Modeling
+  - Fault-Tolerance in Multi-Agent Systems
+  - Formal Framework for Multi-Agent Systems
+  - Information Exchanges in Multi-Agent Systems
+  - Learning and Self-Adaptation in Multi-Agent Systems
+  - Mobile Agent Languages and Protocols
+  - Multi-Agent Autonomic Architectures
+  - Multi-Agent Coordination Techniques
+  - Multi-Agent Planning and Re-Planning
+  - Peer-to-Peer Models for Multi-Agent Systems
+  - Reinforcement Learning
+  - Social Interactions in Multi-Agent Systems
+  - Task-Based Agent Context
+  - Task-Oriented Agents
+
+* Distributed Problem Solving
+  - Agent-Based Grid Computing
+  - Agent Networks in Distributed Problem Solving
+  - Collective Group Behavior
+  - Coordination and Cooperation
+  - Distributed Intelligence
+  - Distributed Search
+  - Dynamics of Agent Groups and Populations
+  - Efficiency and Complexity Issues
+  - Market-Based Computing
+  - Problem-Solving in Dynamic Environments
+ 
+* Autonomous Auctions and Negotiation
+  - Agent-Based Marketplaces
+  - Auction Markets
+  - Combinatorial Auctions
+  - Hybrid Negotiation
+  - Integrative Negotiation
+  - Mediating Agents
+  - Pricing Agents
+  - Thin Double Auctions
+
+* Applications
+  - Agent-Based Assistants
+  - Agent-Based Virtual Enterprise
+  - Embodied Agents and Agent-Based Systems Applications
+  - Interface Agents
+  - Knowledge and Data Intensive Systems
+  - Perceptive Animated Interfaces
+  - Scalability
+  - Social Simulation
+  - Socially Situated Planning
+  - Software and Pervasive Agents
+  - Tools and Standards
+  - Ubiquitous Systems and E-Technology Agents
+  - Ubiquitous Software Services
+  - Virtual Humans
+  - XML-Based Agent Systems
+
+++++++++++++++++++++++++++++++++++++
+On-Line Submissions and Publication
+++++++++++++++++++++++++++++++++++++
+
+High-quality papers in all IAT related areas are solicited. 
+Paper submissions should be limited to a maximum of 7 pages in the
+IEEE 2-column format, the same as the camera-ready format (see the
+Author Guidelines of last year at
+http://www.computer.org/portal/pages/cscps/cps/final/iat06.xml). 
+All submitted papers will be reviewed by the Program Committee on 
+the basis of technical quality,  relevance, significance, and clarity. 
+
+Note that IAT'07 will accept ONLY on-line submissions, containing
+PDF versions. Please use the Submission Form on the IAT'07
+website to submit your paper. Accepted papers will be published in the
+conference proceedings by the IEEE Computer Society Press that are
+indexed by EI.
+
+Submissions accepted as regular papers will be allocated 7 pages in the
+proceedings and accorded oral presentation times in the main conference. 
+Submissions accepted as short papers will be allocated 4
+pages in the proceedings and will have a shorter presentation time at
+the conference than regular papers.
+
+All co-authors will be notified at all time, for the submission,
+notification, and confirmation on the attendance. Submitting a paper
+to the conference and workshops means that, if the paper is accepted,
+at least one author should attend the conference to present the
+paper. The acceptance list and no-show list will be openly published
+on-line. For no-show authors, their affiliations will receive a
+notification.
+
+A selected number of IAT'07 accepted papers will be expanded and
+revised for inclusion in Web Intelligence and Agent Systems: An
+International Journal (http://wi-consortium.org/journal.html) and in
+Annual Review of Intelligent Informatics
+(http://www.wi-consortium.org/annual.html)
+
+More detailed instructions and the On-Line Submission Form can be
+found from the IAT'07 homepage: http://www.cs.sjsu.edu/wi07/iat/.
+
++++++++++++++++++++++++++
+IAT'07 Best Paper Awards 
++++++++++++++++++++++++++
+
+The best paper awards will be conferred at the conference on the
+authors of (1) the best research paper and (2) the best application
+paper. Application-oriented submissions will be considered for the
+best application paper award.
+
+The full author list and paper title will be announced on the 
+Web Intelligence Consortium homepage:
+http://wi-consortium.org/html/wicawards.html
+
+++++++++++++++++++++
+Industry/Demo-Track
+++++++++++++++++++++
+
+We solicit Industry/Demo-Track papers by the following methods.
+
+(1) Industry papers of 4 pages can be submitted on the same schedule as
+    the research track.
+(2) Separate 2 page demo proposals can submitted at a later schedule.
+(3) Full regular paper submissions can include a demo option.
+    That is, a full paper submissions will be asked to
+    specify if they would like to give a demonstration; choice of
+    demonstrations (while utilizing information from the regular reviewing
+    process) will be selected based on value as a demonstration.
+
+For options (1) and (2), please find more detailed instructions at
+the homepage: http://www.cs.sjsu.edu/wi07/wi/
+
+We are planning to arrange the Industry/Demo track in the afternoon of
+November 3 (before and during the conference reception), jointly with
+the IAT'07 Demo sessions. Leading IT companies in Silicon Valley 
+will be invited to attend this track.
+
+++++++++++
+Workshops
+++++++++++
+
+As an important part of the conference, the workshop program will
+focus on new research challenges and initiatives. All papers accepted
+for workshops will be included in the Workshop Proceedings published
+by the IEEE Computer Society Press that are indexed by EI, and will be
+available at the workshops. Detailed information is available at the
+conference homepage.
+
+Note: we will not have a separate workshop registration fee
+(i.e., only one conference registration covers everything).
+
+----------------------
+WI-IAT 2007 Workshops:
+----------------------
+
+Title: Educating the Web-Generation (Edu4WebGen 2007)
+Organisers: Elisabeth Heinemann
+Email: elisabeth.heinemann at googlemail.com 
+Web page: http://www.effactory.com/Edu4WebGen/
+
+Title: Collective Intelligence on Semantic Web (CISW 2007)
+Organisers: Geun Sik Jo; Jason J. Jung; Ngoc Thanh Nguyen
+Email: gsjo at inha.ac.kr; j2jung at intelligent.pe.kr; thanh at pwr.wroc.pl
+Web page: http://intelligent.pe.kr/CISW07/
+
+Title: New Computing Paradigms for Web Intelligence and Brain Informatics 
+(WImBI 2007)
+Organisers: Dr. Yuefeng Li; Dr. Yulin Qin, Prof. Dieter Fensel
+Email: y2.li at qut.edu.au; dieter.fensel at deri.org
+Web page: http://www.maebashi-it.org/wimbi07/WImBI2007.htm
+
+Title: Web Personalization and Recommender Systems (WPRS 2007)
+Organisers: Yue Xu
+Email: yue.xu at qut.edu.au 
+Web page: http://www.wprs07.fit.qut.edu.au/
+
+Title: Service Composition & SWS Challenge (SerComp & SWS Challenge 2007)
+Organisers: M. Brian Blake; Dumitru Roman; Charles Petrie
+Email: blakeb at cs.georgetown.edu; dumitru.roman at deri.org
+Web page: http://events.deri.at/sercomp2007/
+
+Title: Biomedicine Applications of Web technologies (BMWT 2007)
+Organisers: Chun-Nan Hsu; Vincent Shin-Mu Tseng; Wen-Hsiang Lu
+Email: chunnan at iis.sinica.edu.tw; tsengsm at mail.ncku.edu.tw; 
+whlu at mail.ncku.edu.tw
+Web page: http://chunnan.iis.sinica.edu.tw/BMWT2007.html
+
+Title: Intelligent Web Interaction (IWI 2007)
+1st Organiser: Prof. Seiji YAMADA
+Email: seiji at nii.ac.jp
+Web site: http://ymd.ex.nii.ac.jp/ws/iwi/07/
+
+Title: Cyberinfrastucture for e-Science (CyIneS 2007)
+Organisers: Prof. Vasant Honavar; A/prof. Kei Cheung
+Email: honavar at cs.iastate.edu; kei.cheung at yale.edu 
+Web page: http://www.cild.iastate.edu/events/CyIneS2007/
+
+Title: Social Media Analysis (SMA 2007)
+Organisers: Chun-hung Li, William K. Cheung, Quoping Qiu
+Email: sma at comp.hkbu.edu.hk
+Web page: http://www.comp.hkbu.edu.hk/~sma/
+
+Title: Web Security, Integrity, Privacy and Trust (WSIPT 2007)
+Organisers: Dr. Yiuming Cheung, Prof. Michael Chau, and Prof. Yong Zhang
+Email: ymc at Comp.HKBU.Edu.HK; mchau at business.hku.hk; zhangyong076 at gmail.com
+Web page: http://isec.hitsz.edu.cn/wsipt07/
+
+Title: Communication between Human and Artificial Agents (CHAA 2007)
+Organisers: Christel Kemke
+Email: ckemke at cs.umanitoba.ca
+Web page: http://www.cs.umanitoba.ca/~ckemke/CHAA-07/
+
+Title: Rational, Robust, and Secure Negotiations in Multi-Agent Systems (RRS 
+2007)
+Organisers: Takayuki Ito
+Email: ito.takayuki at nitech.ac.jp
+Web page:  http://www-itolab.mta.nitech.ac.jp/RRS2007/
+
+Title: P2P Computing and Autonomous Agents (P2PAA 2007)
+Organisers: Tarek Helmy, Khaled Ragab
+Email: helmy at ccse.kfupm.edu.sa; helmy at kfupm.edu.sa
+Web Page: http://www.ccse.kfupm.edu.sa/~helmy/P2PAA2007_WI.html
+
+Title: (Multi-)Agent Systems in E-Business: Concepts, Technologies and 
+Applications (MASeB 2007)
+Organisers: Costin Badica; Maria Ganzha; Marcin Paprzycki
+Email: badica_costin at software.ucv.ro; ganzha at euh-e.edu.pl; 
+marcin.parzycki at swps.edu.pl
+Web page: http://software.ucv.ro/~badica_costin/maseb2007/
+
+Title: Agent & Data Mining Interaction (ADMI 2007)
+Organisers: Pericles A. Mitkas, Longbing Cao, Vladimir Gorodetsky, Justin Zhan
+Email: mitkas at eng.auth.gr; lbcao at it.uts.edu.au
+Web page: http://issel.ee.auth.gr/ADMI 
+
+For more information, please visit the conference website at
+http://www.maebashi-it.org/wi07/iat/?index=workshop.
+
+++++++++++
+Tutorials
+++++++++++
+
+IAT'07 also welcomes Tutorial proposals. IAT'07 will include
+tutorials providing in-depth background on subjects that are of broad
+interest to the intelligent agent community. Both short (2 hours) and
+long (half day) tutorials will be considered. The tutorials will be
+part of the main conference technical program. Detailed information
+is available at the conference homepage.
+
+Note: we will not have a separate tutorials registration fee
+(i.e., only one conference registration covers everything).
+
+++++++++++++++++
+Important Dates
+++++++++++++++++
+
+Workshop proposal submission:           March 20, 2007
+Electronic submission of full papers:   ** June 1, 2007 **
+Tutorial proposal submission:           June 15, 2007
+Notification of paper acceptance:       July 22, 2007
+Camera-ready copies of accepted papers: August 17, 2007
+Conference:                             November 2-5, 2007 
+
+++++++++++++++++++++++++
+Conference Organization
+++++++++++++++++++++++++
+
+Conference Chair:
+  * Andrei Broder, Yahoo! Research, USA
+
+Program Chair:
+  * Tsau Young (T.Y.) Lin, San Jose State University/UC Berkeley, USA
+
+IAT Program Co-Chairs:
+  * Jeffrey M. Bradshaw, UWF/Institute for Human and Machine Cognition, USA
+  * Matthias Klusch, German Research Center for AI, Germany
+  * Chengqi Zhang, University of Technology, Sydney, Australia
+
+IAT Program Vice Co-chairs
+
+  * Longbing cao        University of Technology Sydney                         
+Australia  
+  * Joseph A. Giampapa  Carnegie Mellon University                              
+USA  
+  * Maria Gini          University of Minnesota                                 
+USA  
+  * Vladimir Gorodetsky St. Petersburg Institute for Informatics and Automation 
+Russia  
+  * Alessio Lomuscio    Imperial College London                                 
+UK  
+  * Zbigniew Ras        University of North Carolina                            
+USA  
+  * Marius C. Silaghi   Florida Institute of Technology                         
+USA  
+  * Makoto Yokoo        Kyushu University                                       
+Japan  
+
+WI Program Co-Chairs:
+  * Laura Haas, IBM Almaden Research Center, USA
+  * Janusz Kacprzyk, Polish Academy of Science, Poland
+  * Rajeev Motwani, Stanford University, USA
+
+WI Program Vice Co-chairs
+
+  * Ajith Abraham         Yonsei University                       South Korea  
+  * Peter Brusilovsky     University of Pittsburgh                USA  
+  * Ashish Goel           Stanford University                     USA  
+  * Ramanathan V. Guha    Google                                  USA  
+  * Jane Yung-jen Hsu     National Taiwan University              Taiwan  
+  * Ravi Kumar            Yahoo! Research                         USA  
+  * Jie Lu                University of Technology Sydney         Australia  
+  * Tsuyoshi Murata       Tokyo Institute of Technology           Japan  
+  * York Sure             Institute AIFB, University of Karlsruhe Germany  
+  * Pang-Ning Tan         Michigan State University               USA  
+  * Bhavani Thuraisingham University of Texas at Dallas           USA  
+  * Mohammed Zaki         Rensselaer Polytechnic Institute        USA  
+
+Organizing Chair:
+  * Howard Ho, IBM Almaden Research Center, USA
+
+Workshop Co-Chairs:
+  * Vijay Raghavan, University of Louisiana, USA
+  * Yuefeng Li, Queensland University of Technology, Australia
+
+Tutorial Chair:
+  * Pawan Lingras, Saint Mary's University, Canada
+
+Industry/Demo-Track Chair:
+  * Jianchang Mao, Yahoo! Inc., USA
+
+Local Accommodations Co-Chairs:
+  * David Scot Taylor, San Jose State University, USA
+  * Tom Qi Zhang, Google, USA
+
+Publicity Chair: 
+  * James Wang, Clemson University, USA (chair)
+Publicity Co-Chairs: 
+  * Martine De Cock, Ghent University, Belgium 
+  * Jia Hu, International WIC Institute, China
+  * Debajyoti Mukhopadhyay, West Bengal University of Technology, India
+
+IEEE-CS-TCII Chair:
+ * Ning Zhong, Maebashi Institute of Technology, Japan
+
+ACM-SIGART Chair
+ * Maria Gini, University of Minnesota, USA
+
+WIC Co-Chairs/Directors:
+ * Ning Zhong, Maebashi Institute of Technology, Japan
+ * Jiming Liu, University of Windsor, Canada
+
+WIC Advisory Board: 
+ * Edward A. Feigenbaum, Stanford University, USA
+ * Setsuo Ohsuga, Waseda University, Japan
+ * Benjamin Wah, University of Illinois, Urbana-Champaign, USA
+ * Philip Yu, IBM Thomas J. Watson Research Center, USA
+ * L.A. Zadeh, University of California Berkeley, USA
+
+WIC Tech. Committee & WI/IAT Steering Committee:
+ * Jeffrey Bradshaw, UWF/Institute for Human and Machine Cognition, USA
+ * Nick Cercone, York University, Canada
+ * Dieter Fensel, University of Innsbruck/Digital Enterprise Research 
+Institute, Austria
+ * Georg Gottlob, Oxford University, UK
+ * Lakhmi Jain, University of South Australia, Australia
+ * Jianchang Mao, Yahoo! Inc., USA
+ * Pierre Morizet-Mahoudeaux, Compiegne University of Technology, France
+ * Hiroshi Motoda, Osaka University, Japan
+ * Toyoaki Nishida, Kyoto University, Japan
+ * Andrzej Skowron, Warsaw University, Poland
+ * Jinglong Wu, Kagawa University, Japan
+ * Xindong Wu, University of Vermont, USA
+ * Yiyu Yao, University of Regina, Canada
+
+Webmaster:
+ * Albert Sutojo, San Jose State University, USA
+
+Abbreviation: 
+IAT 2007, IAT2007, IAT'2007, IAT'07, IAT07, IAT 07, IAT-07, IAT-2007
+
+*** Contact Information ***
+
+Jia Hu
+International WIC Institute, China
+E-mail: hujia at kis-lab.com
+
+From Alan.Herschtal at petermac.org  Mon Jun  4 01:23:43 2007
+From: Alan.Herschtal at petermac.org (Herschtal Alan)
+Date: Mon, 04 Jun 2007 11:23:43 +1000
+Subject: Time management in S-Plus
+Message-ID: <EBF85749A3E4944EBD55E1C4C49DB53B026A33D6@PMC-EMAIL.petermac.org.au>
+
+I am trying to run many iterations of a simulation in S-plus, and am finding that the time taken per iteration increases almost exponentially. I have tried to write the code as efficiently as I can, with minimal use of for loops, vector arithmetic wherever possible, and reusing datasets where feasible. I understand that this phenomenon has something to do with the paging in S-plus's memory management system. Is there any way to keep the execution time constant ?
+
+Thanks, 
+
+Alan Herschtal
+
+Biostatistician
+
+Centre for Biostatistics and Clinical Trials
+
+Peter MacCallum Cancer Centre
+
+Ph: 9656 3639
+
+From Bill.Venables at csiro.au  Mon Jun  4 06:51:56 2007
+From: Bill.Venables at csiro.au
+Date: Mon, 04 Jun 2007 16:51:56 +1000
+Subject: Re: Time management in S-Plus
+References: <EBF85749A3E4944EBD55E1C4C49DB53B026A33D6@PMC-EMAIL.petermac.org.au>
+Message-ID: <B998A44C8986644EA8029CFE6396A924B67C0E@exqld2-bne.nexus.csiro.au>
+
+ 
+
+How are you doing the 
+iterations?  Are you using a for-loop or are you using a batch script with 
+the loop unrolled into explicit code?  I have found that the latter can be 
+very effective for large calculations.  The technique is essentially to get 
+S-PLUS itself to do the unrolling by language manipulatons, sink the result to a 
+file and then use the file as a batch script.  
+
+ 
+
+Bill Venables.
+
+>
+>
+>   From: s-news-owner at lists.biostat.wustl.edu
+>   [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Herschtal
+>   Alan
+> Sent: Monday, 4 June 2007 11:24 AM
+> To:
+>   s-news at lists.biostat.wustl.edu
+> Subject: [S] Time management in
+>   S-Plus
+>
+>
+>
+>
+>
+>
+>   I am trying to run many iterations of a simulation
+>   in S-plus, and am finding that the time taken per iteration increases almost
+>   exponentially. I have tried to write the code as efficiently as I can, with
+>   minimal use of for loops, vector arithmetic wherever possible, and reusing
+>   datasets where feasible. I understand that this phenomenon has something to do
+>   with the paging in S-plus's memory management system. Is there any way to keep
+>   the execution time constant ?
+>
+>   Thanks,
+>
+>
+>
+>   Alan
+>   Herschtal
+> Biostatistician
+> Centre for Biostatistics and
+>   Clinical Trials
+> Peter MacCallum Cancer Centre
+> Ph: 9656 3639
+
+From MichaelCamilleri at branz.co.nz  Mon Jun  4 21:09:47 2007
+From: MichaelCamilleri at branz.co.nz (Michael Camilleri)
+Date: Tue, 05 Jun 2007 09:09:47 +1200
+Subject: Re: Time management in S-Plus
+In-Reply-To: <EBF85749A3E4944EBD55E1C4C49DB53B026A33D6@PMC-EMAIL.petermac.org.au>
+References: <EBF85749A3E4944EBD55E1C4C49DB53B026A33D6@PMC-EMAIL.petermac.org.au>
+Message-ID: <A23B682083FD8248ADFE1317C82CBD670290328A@exchange.branznt.org.nz>
+
+S+ has a few other traps when you are
+dealing with large processing jobs.
+
+ 
+
+One which I discovered is that S+ 7 for
+windows has a limit of 1,000 objects in the Restore Data Objects. If you are
+creating a new object in a chapter with each iteration then after 1,000 objects
+S+ will dramatically slow down and basically grind to a halt, no matter how
+small the objects are, and no matter how much RAM you have. Avoid this kind of
+assignment. If you need to create new objects with each iteration then create a
+list object with the required number of elements, and assign the objects to the
+list instead.
+
+ 
+
+This is all to do with the automatic Restore
+Data Objects. If you create a brand
+new chapter with undo specifically turned off it won’t do it, but as soon
+as you re-open the chapter it starts restoring objects again.
+
+ 
+
+Personally I don’t like the data
+restore feature. Early versions of S+ didn’t have it, and you just got
+used to saving scripts and backing up important objects (which is good
+analysis/programming practice). When S+ became a “Windows”
+application we got the undo and a pile of other useless features.
+
+ 
+
+Michael
+
+ 
+
+ 
+  
+  
+
+  
+ 
+
+ 
+  
+   
+
+  
+ 
+
+ 
+  
+  MICHAEL CAMILLERI BSc, MSc, PhD
+
+  
+ 
+
+ 
+  
+  BUILDING PHYSICIST
+
+  
+ 
+
+ 
+  
+  
+  T +64 4 237 1170
+
+  
+
+  
+  DDI +64 4 237 1174
+
+  
+
+  
+ 
+
+ 
+  
+  PRIVATE BAG 50908
+
+  
+ 
+
+ 
+  
+  PORIRUA CITY 5240
+
+  
+ 
+
+ 
+  
+  WWW.BRANZ.CO.NZ
+
+  
+ 
+
+ 
+
+From: Herschtal Alan
+[mailto:Alan.Herschtal at petermac.org] 
+
+Sent: Monday, 4 June 2007 1:24
+p.m.
+
+To: s-news at lists.biostat.wustl.edu
+
+Subject: Time management in S-Plus
+
+ 
+
+ 
+
+I
+am trying to run many iterations of a simulation in S-plus, and am finding that
+the time taken per iteration increases almost exponentially. I have tried to
+write the code as efficiently as I can, with minimal use of for loops, vector
+arithmetic wherever possible, and reusing datasets where feasible. I understand
+that this phenomenon has something to do with the paging in S-plus's memory
+management system. Is there any way to keep the execution time constant ?
+
+Thanks,
+
+ 
+
+Alan Herschtal
+
+Biostatistician 
+
+Centre for Biostatistics and Clinical
+Trials 
+
+Peter MacCallum Cancer Centre
+
+Ph: 9656 3639 
+
+From bkb5 at cdc.gov  Tue Jun  5 14:30:07 2007
+From: bkb5 at cdc.gov (Biggerstaff, Brad J. (CDC/CCID/NCZVED))
+Date: Tue, 05 Jun 2007 08:30:07 -0600
+Subject: Re: Time management in S-Plus
+References: <EBF85749A3E4944EBD55E1C4C49DB53B026A33D6@PMC-EMAIL.petermac.org.au> <A23B682083FD8248ADFE1317C82CBD670290328A@exchange.branznt.org.nz>
+Message-ID: <7E6C5EBC0D0DB8448A56A8BEEC632A900999D39D@m-ncid-3.ncid.cdc.gov>
+
+As the S-Plus manual suggests regarding such slow-downs, I 
+recently re-coded some for-loops using lapply, and double-loops can be done with 
+nested lapplys.  There was dramatic improvement (hours to minutes), and 
+printing of iterations (with, say, print(i)) showed the lack of slow-down with 
+the lapply version.  An example is given in the manual, while another is 
+
+ 
+
+NTests <- vector(length=nSim, mode="list")
+
+for(i in 1:nSim) 
+
+       
+NTests[[i]] <- vector(length=nSchemes, mode="list")
+
+#
+
+#OLD and SLOW
+#for(i in 1:nSim){
+
+#      for(j in 
+1:nSchemes){
+
+#             
+# Number of pools tested, either ID (1) or MP (PoolSize)
+
+#             
+# and add the number of ID tests for positive MPs (re-test of 
+MP-samples)
+
+#             
+NTests[[i]][[j]] <- NSim[[i]] %/% ifelse(schemes[[i]][[j]],1,PoolSize) 
++
+
+#                                               
+ifelse(schemes[[i]][[j]],0,(sum(PoolsSim[[i]][[j]]) * 
+PoolSize))
+
+#      }
+
+#}
+
+ 
+
+# much 
+faster...
+
+NTests <- lapply(1:nSim, function(i, pos, n, schemes, nschemes, pool.size, ntests){
+
+                                  
+x <- ntests[[i]]
+
+                                  
+x <- lapply(1:nschemes, function(j, i, sch, pos, n, pool.size){
+
+                                                
+n[[i]] %/% (pool.size^(1-sch[[i]][[j]])) +
+
+                                                       
+(sum(pos[[i]][[j]])*pool.size)^(1-sch[[i]][[j]])
+
+                                         
+ }, i=i, sch=schemes, pos=pos, n=n, pool.size=pool.size)
+
+                                  
+x
+
+            
+}, pos=PoolsSim, n=NSim, schemes=sch, nschemes=nSchemes, pool.size=PoolSize, ntests=NTests)
+
+ 
+
+Passing some of the arguments (the ones sub-scripted) 
+as lists is key, so re-formuating into lists may be needed if original objects 
+do not inherit from list.
+
+ 
+
+Brad
+
+Brad Biggerstaff, Ph.D. 
+
+Mathematical Statistician 
+Division of Vector-Borne Infectious Diseases 
+
+National Center for Infectious Diseases 
+Centers for Disease Control and 
+Prevention 
+P.O. Box 2087 
+Fort Collins, Colorado  80522-2087 
+
+(970) 221-6473 ... BBiggerstaff at cdc.gov 
+
+From: s-news-owner at lists.biostat.wustl.edu 
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Michael 
+Camilleri
+Sent: Monday, June 04, 2007 3:10 PM
+To: Herschtal 
+Alan; s-news at lists.biostat.wustl.edu
+Subject: Re: [S] Time management 
+in S-Plus
+
+S+ has a few other 
+traps when you are dealing with large processing 
+jobs.
+
+ 
+
+One which I discovered 
+is that S+ 7 for windows has a limit of 1,000 objects in the Restore Data 
+Objects. If you are creating a new object in a chapter with each iteration then 
+after 1,000 objects S+ will dramatically slow down and basically grind to a 
+halt, no matter how small the objects are, and no matter how much RAM you have. 
+Avoid this kind of assignment. If you need to create new objects with each 
+iteration then create a list object with the required number of elements, and 
+assign the objects to the list instead.
+
+ 
+
+This is all to do with 
+the automatic Restore Data Objects. If you create a brand new chapter with undo specifically turned off 
+it won’t do it, but as soon as you re-open the chapter it starts restoring 
+objects again.
+
+ 
+
+Personally I don’t like 
+the data restore feature. Early versions of S+ didn’t have it, and you just got 
+used to saving scripts and backing up important objects (which is good 
+analysis/programming practice). When S+ became a “Windows” application we got 
+the undo and a pile of other useless features.
+
+ 
+
+Michael
+
+ 
+
+  
+  
+    
+      
+
+  
+    
+       
+
+  
+    
+      MICHAEL 
+      CAMILLERI BSc, MSc, PhD
+
+  
+    
+      BUILDING 
+      PHYSICIST
+
+  
+    
+      
+      T 
+      +64 4 237 1170
+
+      
+      DDI +64 4 237 
+      1174
+
+  
+    
+      PRIVATE 
+      BAG 50908
+
+  
+    
+      PORIRUA 
+      CITY 
+      5240
+
+  
+    
+      WWW.BRANZ.CO.NZ
+
+ 
+
+From: Herschtal 
+Alan [mailto:Alan.Herschtal at petermac.org] 
+Sent: Monday, 4 June 2007 1:24 
+p.m.
+To: 
+s-news at lists.biostat.wustl.edu
+Subject: Time management in 
+S-Plus
+
+ 
+
+ 
+
+I 
+am trying to run many iterations of a simulation in S-plus, and am finding that 
+the time taken per iteration increases almost exponentially. I have tried to 
+write the code as efficiently as I can, with minimal use of for loops, vector 
+arithmetic wherever possible, and reusing datasets where feasible. I understand 
+that this phenomenon has something to do with the paging in S-plus's memory 
+management system. Is there any way to keep the execution time constant 
+?
+
+Thanks, 
+
+ 
+
+Alan 
+Herschtal 
+Biostatistician 
+
+Centre 
+for Biostatistics and Clinical Trials 
+Peter 
+MacCallum Cancer Centre 
+Ph: 
+9656 3639 
+
+From tlumley at u.washington.edu  Wed Jun  6 06:29:34 2007
+From: tlumley at u.washington.edu (Thomas Lumley)
+Date: Tue, 05 Jun 2007 23:29:34 -0700
+Subject: Re: Survey design in S+8
+In-Reply-To: <E1HvjKB-00028I-RD@elasmtp-spurfowl.atl.sa.earthlink.net>
+References: <E1HvjKB-00028I-RD@elasmtp-spurfowl.atl.sa.earthlink.net>
+Message-ID: <Pine.LNX.4.64.0706052326140.5851@homer24.u.washington.edu>
+
+I don't have access to S-PLUS 8 at the moment, but it may be that the 
+'survey' port to S-PLUS isn't recognising the ~1 and that you need ~id for 
+some identifier. That is, you need to create a variable that has a unique 
+level for each record and specify it in the id formula.
+
+        -thomas
+
+On Tue, 5 Jun 2007, Walter R. Paczkowski wrote:
+
+> Hi,
+>
+> I just loaded my new copy of 8.0 on Windows XP.  I wanted to run a small
+> function I had written in R using the survey package to do a raking of
+> survey data.  The function works perfectly under R.  In S, however, I get
+> an error message:
+>
+>         Problem: Length of 1 (variable 1) is 1 != length of others (3560)
+>         Use traceback() to see the call stack
+>
+> Does anyone know what this means?  This is for an SRS, nothing fancy.
+> The problem is with the svydesign function which I specify as
+>
+>
+>          svydesign(ids = ~1, data = x)
+>
+> where x is a dataframe with dimension 3560 by 3.  Again, this worked
+> perfectly in R.  Any insight?
+>
+> Thanks,
+>
+> Walt Paczkowski
+>
+> _________________________________
+>
+> Walter R. Paczkowski, Ph.D.
+> Data Analytics Corp.
+> 44 Hamilton Lane
+> Plainsboro, NJ  08536
+> (V) 609-936-8999
+> (F) 609-936-3733
+
+Thomas Lumley                   Assoc. Professor, Biostatistics
+tlumley at u.washington.edu        University of Washington, Seattle
+
+From aboyoun at insightful.com  Wed Jun  6 08:48:41 2007
+From: aboyoun at insightful.com (Patrick Aboyoun)
+Date: Wed, 06 Jun 2007 01:48:41 -0700
+Subject: Re: Survey design in S+8
+Message-ID: <B432BC2DFDD5614A8E280F20393FABBC12CEB9@sewinexch00.insightful.com>
+
+Walter,
+Thomas's workaround will solve your problem. When I created an S-PLUS port of
+Thomas's survey package, I encountered some subtle differences between R and
+S-PLUS. Although I was able to resolve most of them, the handling of ~1
+escaped me. I'll make a note to myself to give this another try in future
+updates.
+ 
+Cheers,
+Patrick
+
+  
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+<s-news-owner at lists.biostat.wustl.edu>
+To: Walter R. Paczkowski <dataanalytics at earthlink.net>
+CC: s-news at lists.biostat.wustl.edu <s-news at lists.biostat.wustl.edu>
+Sent: Tue Jun 05 23:29:34 2007
+Subject: Re: [S] Survey design in S+8
+
+I don't have access to S-PLUS 8 at the moment, but it may be that the 
+'survey' port to S-PLUS isn't recognising the ~1 and that you need ~id for 
+some identifier. That is, you need to create a variable that has a unique 
+level for each record and specify it in the id formula.
+
+        -thomas
+
+On Tue, 5 Jun 2007, Walter R. Paczkowski wrote:
+
+> Hi,
+> 
+> I just loaded my new copy of 8.0 on Windows XP.  I wanted to run a small
+> function I had written in R using the survey package to do a raking of
+> survey data.  The function works perfectly under R.  In S, however, I get
+> an error message:
+>
+>         Problem: Length of 1 (variable 1) is 1 != length of others (3560)
+>         Use traceback() to see the call stack
+> 
+> Does anyone know what this means?  This is for an SRS, nothing fancy. 
+> The problem is with the svydesign function which I specify as
+>
+>          svydesign(ids = ~1, data = x)
+> 
+> where x is a dataframe with dimension 3560 by 3.  Again, this worked
+> perfectly in R.  Any insight?
+> 
+> Thanks,
+> 
+> Walt Paczkowski
+> 
+> _________________________________
+> 
+> Walter R. Paczkowski, Ph.D.
+> Data Analytics Corp.
+> 44 Hamilton Lane
+> Plainsboro, NJ  08536
+> (V) 609-936-8999
+> (F) 609-936-3733
+> 
+>
+
+Thomas Lumley                   Assoc. Professor, Biostatistics
+tlumley at u.washington.edu        University of Washington, Seattle
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From elvis at xlsolutions-corp.com  Wed Jun  6 15:15:48 2007
+From: elvis at xlsolutions-corp.com (elvis Miller)
+Date: Wed, 06 Jun 2007 08:15:48 -0700
+Subject: Courses: Traditional and Modern Approaches to Statistical Modelling with R by Dr Bill Venables. in Raleigh and Washington DC
+Message-ID: <20070606081548.aa8924c5d28ca71e2a043bb294e795eb.a95aa39cbd.wbe@email.secureserver.net>
+
+Greetings!
+
+ 
+
+We've added Raleigh***July 09-10 as a second US destination for Dr Venables'  "Traditional and Modern Approaches to Statistical Modelling with R" course.
+
+ 
+
+We still have seats for the following July courses:
+
+ 
+
+(1) Traditional and Modern Approaches to Statistical Modelling with R by Dr Bill Venables. 
+
+*** Raleigh, NC 7/9/2007 7/10/2007 *** 
+
+*** Washington, DC 7/12/2007 7/13/2007 *** 
+
+ 
+
+(2) R/S Fundamentals and Programming Techniques 
+
+*** Boston / July 16-17, 2007   ***
+
+(3) Data Mining: Practical Tools and Techniques in R/Splus  
+
+*** Las Vegas 6/28/2007 6/29/2007 ***
+
+ 
+
+Payment due AFTER the class
+ Email us for group discounts. 
+ Email Sue Turner: sue at xlsolutions-corp.com 
+ Phone: 206-686-1578 
+ Visit us: www.xlsolutions-corp.com/courselist.htm 
+ Please let us know if you and your colleagues are interested in this 
+ class to take advantage of group discount. Register now to secure your 
+ seat! 
+ 
+ Cheers, 
+ Elvis Miller, PhD 
+ Manager Training. 
+ XLSolutions Corporation 
+ 206 686 1578 
+ www.xlsolutions-corp.com 
+
+From email.lzg at gmail.com  Fri Jun  8 05:49:50 2007
+From: email.lzg at gmail.com (Liu Zhigang)
+Date: Fri, 08 Jun 2007 13:49:50 +0800
+Subject: hedge funds data
+In-Reply-To: <551c2c780706072248n2b93e9c0l328aab3b1744a9e4@mail.gmail.com>
+References: <551c2c780706072248n2b93e9c0l328aab3b1744a9e4@mail.gmail.com>
+Message-ID: <551c2c780706072249m78d72f52i4ac8fff5fef1f237@mail.gmail.com>
+
+---------- Forwarded message ----------
+From: Liu Zhigang <email.lzg at gmail.com>
+Date: 2007-6-8 下午1:48
+
+Subject: hedge funds data
+To: r-sig-finance at stat.math.ethz.ch
+
+Hello, 
+
+anyone can tell me where I can find and download  hedge funds data, such as return rate and performance ratios.
+
+Thanks.
+
+ 
+
+Liu Zhigang
+
+Jilin Univeristy, China
+
+From wht_crl at yahoo.com  Sat Jun  9 15:23:23 2007
+From: wht_crl at yahoo.com (carol white)
+Date: Sat, 09 Jun 2007 08:23:23 -0700
+Subject: penalized cox regression function without stratification
+Message-ID: <525527.85682.qm@web62015.mail.re1.yahoo.com>
+
+Hi,
+What is the function to calculate penalized cox regression? frailtyPenal in frailtypack R package imposes max 2 strata. I want to use a function that reduces my variables without stratifying them in advance.
+
+Look forward to your reply
+
+carol
+ 
+
+No need to miss a message. Get email on-the-go 
+with Yahoo! Mail for Mobile. Get started.
+
+From roch.giorgi at mail.ap-hm.fr  Wed Jun 13 06:49:22 2007
+From: roch.giorgi at mail.ap-hm.fr (GIORGI Roch)
+Date: Wed, 13 Jun 2007 08:49:22 +0200
+Subject: User-defined GLM link function
+Message-ID: <56A80768E1273C42B9C60D53285D50150153C7CC@phoceo07.aphm.ap-hm.fr>
+
+Dear all,
+
+I have to write my own family (a modification of a poisson family) in R in 
+order to perform glm analysis and something is vague for me.
+
+My link function is: 
+        linkfun <- function(mu, dce=expected.dc) log(mu - dce)
+The inverse of the link fnuction is: 
+        linkinv <- function(eta, dce=expected.dc) exp(eta)+dce
+The variance is the same as this of a possion family: 
+        variance <- function(mu) mu
+
+My question concern the mu.eta parameter. It is the same think that the "deriv" 
+paramter for the make.family in SPLUS? I don't understand clearly what it mean 
+and what is for this family.
+
+Any help will be so much appreciate,
+
+Thanks
+
+Roch
+
+_____________________________________________________
+  Roch GIORGI, MD, PhD
+  Service de Santé Publique et d'Information Médicale
+  Hôpital de la Timone
+  264, rue St Pierre 
+  13385 Marseille cedex 5 
+  Tel: +33 (0)491 384 949
+  Fax: +33 (0)491 385 749 
+  email: roch.giorgi at ap-hm.fr 
+  Web: http://cybertim.timone.univ-mrs.fr/
+
+From Glenn.Treacy at ILIM.COM  Thu Jun 14 15:25:20 2007
+From: Glenn.Treacy at ILIM.COM (Treacy, Glenn)
+Date: Thu, 14 Jun 2007 16:25:20 +0100
+Subject: Problem attaching database
+Message-ID: <D2637554EF7FEA449790DEA8E29A55B80217F390@serv4000.europa.internal>
+
+Hi,
+
+I am using S+6.2 on Windows NT and have a problem that has stumped me. I have a series of databases attached during my S+ sessions. I need to detach and reattach a certain database and in the last few days when I detach the database by the command
+
+Detach(3)
+
+and then reattach the database using
+
+Attach("c:/database1", where=3)
+
+The search() command shows me that the database is called "c:/database1/.Data/__Meta" and objects(3) shows me that it is empty. Can anyone help me or point me in the right direction? If someone could explain the role of the __Meta sub directory that might help me.
+
+Thanks in anticipation,
+
+Glenn Treacy
+
+Irish Life Investment Managers winner of the Investment Management KPMG Financial Services Excellence Award 2007
+
+ 
+
+**********************************************************************************
+
+Irish Life Investment Managers Limited is authorised by the Financial Regulator under Section 10 of the Investment Intermediaries Act, 1995.  Irish Life Investment Managers Limited Registered Office: Beresford Court, Beresford Place, Dublin 1.  Registered in Ireland Number 116000
+
+ 
+
+While Irish Life Investment Managers uses reasonable efforts to ensure that the information contained in this email is current, accurate and complete at the date of publication, no representations or warranties are made (express or implied) as to the reliability, accuracy or completeness of such information. Irish Life Investment Managers therefore cannot be held liable for any loss arising directly or indirectly from the use of, or any action taken in reliance on, any information contained in this email. 
+
+ 
+
+This material is for information only and does not constitute an offer or recommendation to buy or sell any investment, or subscribe to any investment management or advisory service. It is intended for the use of institutional and other professional investors. Past performance is not indicative of future results. The value of funds we manage may fall as well as rise.
+
+ 
+
+This email and any files transmitted with it are confidential and intended solely for the use of the individual or entity to whom they are addressed. If you have received this email in error please notify the system manager. This footnote also confirms that this email message has been swept for the presence of computer viruses.
+
+**********************************************************************************
+
+ 
+
+From elvis at xlsolutions-corp.com  Thu Jun 14 19:21:47 2007
+From: elvis at xlsolutions-corp.com (elvis Miller)
+Date: Thu, 14 Jun 2007 12:21:47 -0700
+Subject: Course: 2-day Short R/S-Plus at JSM - Salt Lake City July - August 2007
+Message-ID: <20070614122146.aa8924c5d28ca71e2a043bb294e795eb.ba0029479f.wbe@email.secureserver.net>
+
+Greetings!
+ 
+XLSolutions Will schedule a series of 2-day R/S-plus courses during JSM
+in Salt Lake City. Please email us your interest and dates that work 
+best for you from  July 26th - August 3rd.
+ 
+www.xlsolutions-corp.com/courselist.htm 
+ 
+Payment due AFTER the class
+ Email us for group discounts. 
+ Email Sue Turner: sue at xlsolutions-corp.com 
+ Phone: 206-686-1578 
+ Visit us: www.xlsolutions-corp.com/courselist.htm 
+ Please let us know if you and your colleagues are interested in these
+ classes to take advantage of group discount. Register now to secure
+your 
+ seat! 
+ 
+ Cheers, 
+ Elvis Miller, PhD 
+ Manager Training. 
+ XLSolutions Corporation 
+ 206 686 1578 
+ www.xlsolutions-corp.com
+
+From Debabrata.Midya at commerce.nsw.gov.au  Fri Jun 15 00:34:53 2007
+From: Debabrata.Midya at commerce.nsw.gov.au (Debabrata Midya)
+Date: Fri, 15 Jun 2007 10:34:53 +1000
+Subject: Problem in loading library randonForest
+Message-ID: <46726B4D020000D0000108D4@out-gwia.dpws.nsw.gov.au>
+
+Hi S-PLUS users!
+
+Thanks in advance.
+
+I am using S-PLUS 7.0 for Windows (Enterprise Developer).
+
+I have downloaded randonForest package (Windows Binary) from
+csan.insightful.com and extracted all the files into
+\INSIGHTFUL\splus70\library\randomForest directory.
+
+But I have received the following error message while loading the
+package using File / Load Library. I have noticed that S.dll is in the
+directory \INSIGHTFUL\splus70\library\randomForest.
+
+C:\PROGRAM FILES\INSIGHTFUL\splus70\library\randomForest\S.dll: The
+specified
+        procedure could not be found.
+
+Any solution please.
+
+Regards,
+
+Debabrata Midya
+(Deb)
+
+NSW Department of Commerce
+Policy Support Services
+Level 11
+McKell Building
+2-24 Rawson Place
+Sydney NSW 2000
+Australia
+
+******************************************************************************
+
+This email message, including any attached files, is confidential and intended 
+solely for the use of the individual or entity to whom it is addressed. 
+
+The NSW Department of Commerce prohibits the right to publish, 
+copy, distribute or disclose any information contained in this email, 
+or its attachments, by any party other than the intended recipient. 
+If you have received this email in error please notify the sender and delete it 
+from your system.
+
+No employee or agent is authorised to conclude any binding 
+agreement on behalf of the NSW Department of Commerce by email. The views or 
+opinions presented in this email are solely those of the author and do not 
+necessarily represent those of the Department, 
+except where the sender expressly, and with authority, states them to be the 
+views of NSW Department of Commerce.  
+
+The NSW Department of Commerce accepts no liability for any loss or damage 
+arising from the use of this email and recommends that the recipient check this 
+email and any attached files for the presence of viruses. 
+
+******************************************************************************
+
+From Bill.Venables at csiro.au  Fri Jun 15 00:47:39 2007
+From: Bill.Venables at csiro.au
+Date: Fri, 15 Jun 2007 10:47:39 +1000
+Subject: Re: Problem in loading library randonForest
+References: <46726B4D020000D0000108D4@out-gwia.dpws.nsw.gov.au>
+Message-ID: <B998A44C8986644EA8029CFE6396A924B67DC5@exqld2-bne.nexus.csiro.au>
+
+Hi Deb,
+
+I think you missed the fine print at the top of CSAN:
+
+"Note: The S-PLUS package system is a new feature in S-PLUS 8.0. It is
+not likely that any of the packages from CSAN will work in versions of
+S-PLUS prior to S-PLUS 8.0."
+
+Bummer, eh?
+
+Bill Venables
+CSIRO Laboratories
+PO Box 120, Cleveland, 4163
+AUSTRALIA
+Office Phone (email preferred): +61 7 3826 7251
+Fax (if absolutely necessary):  +61 7 3826 7304
+Mobile:                (I don't have one!)
+Home Phone:                     +61 7 3286 7700
+mailto:Bill.Venables at csiro.au
+http://www.cmis.csiro.au/bill.venables/ 
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Debabrata
+Midya
+Sent: Friday, 15 June 2007 10:35 AM
+To: s-news at lists.biostat.wustl.edu
+Subject: [S] Problem in loading library randonForest
+
+Hi S-PLUS users!
+
+Thanks in advance.
+
+I am using S-PLUS 7.0 for Windows (Enterprise Developer).
+
+I have downloaded randonForest package (Windows Binary) from
+csan.insightful.com and extracted all the files into
+\INSIGHTFUL\splus70\library\randomForest directory.
+
+But I have received the following error message while loading the
+package using File / Load Library. I have noticed that S.dll is in the
+directory \INSIGHTFUL\splus70\library\randomForest.
+
+C:\PROGRAM FILES\INSIGHTFUL\splus70\library\randomForest\S.dll: The
+specified
+        procedure could not be found.
+
+Any solution please.
+
+Regards,
+
+Debabrata Midya
+(Deb)
+
+NSW Department of Commerce
+Policy Support Services
+Level 11
+McKell Building
+2-24 Rawson Place
+Sydney NSW 2000
+Australia
+
+************************************************************************
+******
+
+This email message, including any attached files, is confidential and
+intended solely for the use of the individual or entity to whom it is
+addressed. 
+
+The NSW Department of Commerce prohibits the right to publish, 
+copy, distribute or disclose any information contained in this email, 
+or its attachments, by any party other than the intended recipient. 
+If you have received this email in error please notify the sender and
+delete it from your system.
+
+No employee or agent is authorised to conclude any binding 
+agreement on behalf of the NSW Department of Commerce by email. The
+views or opinions presented in this email are solely those of the author
+and do not necessarily represent those of the Department, 
+except where the sender expressly, and with authority, states them to be
+the views of NSW Department of Commerce.  
+
+The NSW Department of Commerce accepts no liability for any loss or
+damage arising from the use of this email and recommends that the
+recipient check this email and any attached files for the presence of
+viruses. 
+
+************************************************************************
+******
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From xiaochen.sun at gmail.com  Fri Jun 15 15:09:38 2007
+From: xiaochen.sun at gmail.com (Michael Sun)
+Date: Fri, 15 Jun 2007 16:09:38 +0100
+Subject: Program Trading Techniques and Financial Models for Hedge Funds: 3rd Annual CARISMA Seminar
+Message-ID: <8141d43c0706150809r46c25f0fvad57a1a0615d3e30@mail.gmail.com>
+
+Program Trading
+Techniques and Financial Models for Hedge Funds: 3rd Annual CARISMA Seminar
+
+26 – 27 June 2007, London
+
+Related
+workshops:
+
+Robust Portfolio
+     Optimisation - Daniel Bienstock, Columbia University,
+     25 June - Half Day(AM) 
+
+Structuring
+     Step-up CDOs: an Optimization Approach (including models and software
+     demonstration) - Stanislav Uryasev, University of Florida,
+     and Gautam Mitra, CARISMA & OptiRisk Systems
+
+     25 June - Half Day(AM) 
+
+Great
+     Investors and Hedge Fund Managers: Their Methods and Evaluation -  William T Ziemba, University of British
+       Columbia, 25 June - Half Day (PM)
+
+Financial
+     Innovation - Dilip Madan, University
+      of Maryland, and
+     Marek Musiela, BNP Paribas, 28 June 2007, FULL DAY
+
+Algorithmic
+     Decision Making Framework – Roberto Malamut, SAC Capital Advisors,
+     with guest presentation by Ekaterina Kochieva, CARISMA, 28 June Half Day (AM)
+
+http://www.optirisk-systems.com/newsandevents/ptrading.asp 
+
+From DNADave at Insightful.Com  Sat Jun 16 18:20:12 2007
+From: DNADave at Insightful.Com (David Henderson)
+Date: Sat, 16 Jun 2007 11:20:12 -0700
+Subject: Re: Problem in loading library randonForest
+In-Reply-To: <D8C95B444AD6EE4AAD638D818A9CFD347CFAE3@RINNYCSE000.rth.ad.rothschild.com>
+References: <D8C95B444AD6EE4AAD638D818A9CFD347CFAE3@RINNYCSE000.rth.ad.rothschild.com>
+Message-ID: <1182018013.27272.6.camel@minime.insightful.com>
+
+Forwarded on behalf of Terry Christiani, Director of Marketing
+Communications at Insightful:
+
+I would like to respond to Roger Bos' post and offer a simple
+clarification. 
+ 
+Insightful does not require customers who own Enterprise Developer with
+current maintenance to request the software update to the latest
+release. Every US Enterprise Developer customer with current maintenance
+was shipped 8.0 within 10 business days of release. The European process
+has taken longer as shipments have been staggered across our various
+offices in the region. 
+ 
+We are, however, asking people with Professional Developer on current
+maintenance to upgrade for free to the Enterprise Developer version.  We
+are waiving the software upgrade fee so people can get access to
+technology such as the packaging system (which provides greater
+compatibility between R and S-PLUS), the debugger and profiler. 
+ 
+As the Director of Marketing Communications, I apologize for any
+confusion about the difference between our update process and the
+upgrade program.  I hope to clear up any remaining questions in order to
+ensure that those who wish to take advantage of the free upgrade are not
+discouraged from doing so through a misunderstanding of our program. 
+ 
+Please feel free to contact me directly (tchristi at insightful.com) with
+any questions regarding our upgrade program or you can visit our website
+at: http://www.insightful.com/upgrade/default.asp in order to review the
+details of the program at your convenience.  All of us at Insightful are
+grateful for your continuing support of our software and look forward to
+another 20 years of serving the needs of the statistics community. 
+ 
+Best regards, 
+
+Terry Christiani
+Director of Marketing Communications
+Direct: 206-283-8802 ext. 356
+Fax: 206-283-6310
+terry.christiani at insightful.com
+www.insightful.com
+
+Please join us in Atlantic City this October 9-12 for Insightful Impact
+2007! To find conference details and register for you and your
+colleagues to attend, please visit:
+http://www.insightful.com/news_events/impact2007/default.asp
+
+On Fri, 2007-06-15 at 08:51 -0400, Bos, Roger wrote:
+> The good news is that S-Plus 8.0 is out.  The bad news is that they are
+> taking a really long time to ship it to people, not to mention that they
+> make you request it instead of shipping it to customers automatically. 
+> 
+> -----Original Message-----
+> From: s-news-owner at lists.biostat.wustl.edu
+> [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of
+> Bill.Venables at csiro.au
+> Sent: Thursday, June 14, 2007 8:48 PM
+> To: Debabrata.Midya at commerce.nsw.gov.au; s-news at lists.biostat.wustl.edu
+> Subject: Re: [S] Problem in loading library randonForest
+> 
+> Hi Deb,
+> 
+> I think you missed the fine print at the top of CSAN:
+> 
+> "Note: The S-PLUS package system is a new feature in S-PLUS 8.0. It is
+> not likely that any of the packages from CSAN will work in versions of
+> S-PLUS prior to S-PLUS 8.0."
+> 
+> Bummer, eh?
+> 
+> 
+> Bill Venables
+> CSIRO Laboratories
+> PO Box 120, Cleveland, 4163
+> AUSTRALIA
+> Office Phone (email preferred): +61 7 3826 7251 Fax (if absolutely
+> necessary):  +61 7 3826 7304
+> Mobile:                (I don't have one!)
+> Home Phone:                     +61 7 3286 7700
+> mailto:Bill.Venables at csiro.au
+> http://www.cmis.csiro.au/bill.venables/ 
+> 
+> -----Original Message-----
+> From: s-news-owner at lists.biostat.wustl.edu
+> [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Debabrata
+> Midya
+> Sent: Friday, 15 June 2007 10:35 AM
+> To: s-news at lists.biostat.wustl.edu
+> Subject: [S] Problem in loading library randonForest
+> 
+> Hi S-PLUS users!
+> 
+> Thanks in advance.
+> 
+> I am using S-PLUS 7.0 for Windows (Enterprise Developer).
+> 
+> I have downloaded randonForest package (Windows Binary) from
+> csan.insightful.com and extracted all the files into
+> \INSIGHTFUL\splus70\library\randomForest directory.
+> 
+> But I have received the following error message while loading the
+> package using File / Load Library. I have noticed that S.dll is in the
+> directory \INSIGHTFUL\splus70\library\randomForest.
+> 
+> C:\PROGRAM FILES\INSIGHTFUL\splus70\library\randomForest\S.dll: The
+> specified
+>       procedure could not be found.
+> 
+> Any solution please.
+> 
+> Regards,
+> 
+> Debabrata Midya
+> (Deb)
+> 
+> NSW Department of Commerce
+> Policy Support Services
+> Level 11
+> McKell Building
+> 2-24 Rawson Place
+> Sydney NSW 2000
+> Australia
+> 
+> 
+> ************************************************************************
+> ******
+> 
+> This email message, including any attached files, is confidential and
+> intended solely for the use of the individual or entity to whom it is
+> addressed. 
+> 
+> The NSW Department of Commerce prohibits the right to publish, copy,
+> distribute or disclose any information contained in this email, or its
+> attachments, by any party other than the intended recipient. 
+> If you have received this email in error please notify the sender and
+> delete it from your system.
+> 
+> No employee or agent is authorised to conclude any binding agreement on
+> behalf of the NSW Department of Commerce by email. The views or opinions
+> presented in this email are solely those of the author and do not
+> necessarily represent those of the Department, except where the sender
+> expressly, and with authority, states them to be the views of NSW
+> Department of Commerce.  
+> 
+> The NSW Department of Commerce accepts no liability for any loss or
+> damage arising from the use of this email and recommends that the
+> recipient check this email and any attached files for the presence of
+> viruses. 
+> 
+> ************************************************************************
+> ******
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+> 
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+> 
+> ********************************************************************** * 
+> This message is for the named person's use only. It may 
+> contain confidential, proprietary or legally privileged 
+> information. No right to confidential or privileged treatment 
+> of this message is waived or lost by any error in 
+> transmission. If you have received this message in error, 
+> please immediately notify the sender by e-mail, 
+> delete the message and all copies from your system and destroy 
+> any hard copies. You must not, directly or indirectly, use, 
+> disclose, distribute, print or copy any part of this message 
+> if you are not the intended recipient. 
+> **********************************************************************
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+-- 
+David A. Henderson, Ph.D. 
+Research Scientist 
+Insightful Corporation 
+1700 Westlake Avenue North, Suite 500 
+Seattle, WA 98109-3044 
+Tel: 206-802-2307 
+Fax: 206-283-8691 
+DNADave at Insightful.Com 
+http://www.insightful.com 
+
+From wht_crl at yahoo.com  Sun Jun 17 08:33:09 2007
+From: wht_crl at yahoo.com (carol white)
+Date: Sun, 17 Jun 2007 01:33:09 -0700
+Subject: application of ridge to all predictors
+Message-ID: <409930.9464.qm@web62014.mail.re1.yahoo.com>
+
+Hi,
+It might be a primitive question but how do you specify all predictors in ridge function?
+suppose that I have 100 predictors and I want to apply ridge to all 100 variables. instead of putting the name of all variables separated by "," (see 2nd code line below),  which notation should I use so that ridge would be applied to all variables?
+
+usage of ridge function
+ridge(..., theta, df=nvar/2, eps=0.1, scale=TRUE)fit1 <- coxph(Surv(futime, fustat) ~ rx + ridge(age, ecog.ps, theta=1),              ovarian) 
+      Luggage? GPS? Comic books? 
+
+Check out fitting  gifts for grads at Yahoo! Search.
+
+From MichaelCamilleri at branz.co.nz  Sun Jun 17 21:21:52 2007
+From: MichaelCamilleri at branz.co.nz (Michael Camilleri)
+Date: Mon, 18 Jun 2007 09:21:52 +1200
+Subject: Re: Problem attaching database
+In-Reply-To: <D2637554EF7FEA449790DEA8E29A55B80217F390@serv4000.europa.internal>
+References: <D2637554EF7FEA449790DEA8E29A55B80217F390@serv4000.europa.internal>
+Message-ID: <A23B682083FD8248ADFE1317C82CBD6702956EDD@exchange.branznt.org.nz>
+
+The Meta folder of the database is
+where S+ stores information about GUI objects, and similar things. You usually
+do not have to do anything with this folder and you should not try.
+
+ 
+
+Not sure why it is getting attached. You could try attach(‘c:/database1/.Data’,
+where = 3) and see if that works. (S+ 6.2 had a where argument for attach –
+it is now pos=3)
+
+ 
+
+Michael
+
+From wiiat at kis-lab.com  Tue Jun 19 08:36:37 2007
+From: wiiat at kis-lab.com (Jia Hu)
+Date: Tue, 19 Jun 2007 17:36:37 +0900
+Subject: Final Call for Tutorial: IEEE/WIC/ACM WI-IAT'07
+Message-ID: <20070619083631.C518E13720E@mailgate.biostat.wustl.edu>
+
+ [Apologies if you receive this more than once]
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+          2007 IEEE/WIC/ACM International Conference on 
+  Web Intelligence and Intelligent Agent Technology (WI-IAT 2007)
+           Silicon Valley, USA, November 2-5, 2007                   
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+                         ++++++++++++++++++
+                         Call for Tutorials
+                         ++++++++++++++++++
+
+ The 2007 IEEE/WIC/ACM International Joint Conference on
+ Web Intelligence (WI'07) and Intelligent Agent Technology (IAT'07)
+ takes place on November 2-5, 2007, in Silicon Valley, the center
+ of high tech and web technology.
+
+ The IEEE/WIC/ACM 2007 joint conference is organized by San Jose
+ State University, and sponsored by IEEE Computer Society
+ Technical Committee on Intelligent Informatics (TCII), Web
+ Intelligence Consortium (WIC), and ACM-SIGART. 
+
+ Homepage: 
+  http://www.cs.sjsu.edu/wi07/wi/?index=tutorial
+  and
+  http://www.cs.sjsu.edu/wi07/iat/?index=tutorial
+            
+ WI 2007 and IAT 2007 will include tutorials providing in-depth
+ background on subjects that are of broad interest to the intelligent
+ agent community. Both short (2 hours) and long (half day) tutorials
+ will be considered.
+
+ The following is a *non-exclusive* list of preferred topic areas
+ for tutorial proposals:
+
+ Web Intelligence:
+
+ - Intelligent/Semantic Web Services
+ - Intelligent Wireless Web and Ubiquitous Computing
+ - Rules and Inference Engines for the Web
+ - Semantic Web Concepts and Techniques for Security and Trust
+ - Service-Oriented Computing
+ - Social Networks and Social Intelligence
+ - e-learning and e-science
+ - Web Intelligence and Education
+
+Intelligent Agent Technology:
+
+ - Agent-Based Modeling and Simulation
+ - Agent Technologies in e-Business Systems
+ - Agent-Mediated Knowledge Management
+ - Peer-to-Peer Models for Multi-Agent Systems
+ - Agent-Based Grid Computing
+
+ Submission Details:
+
+ Proposals for tutorials should consist of an outline and
+ background information on the presenter(s). The tutorial
+ outline should be limited to 2 pages and contain the
+ following information:
+
+    1. Title and abstract of the tutorial
+    2. Proposed duration: 2 hours or half-day
+    3. Intended audience: to whom is the tutorial of interest
+    4. Prerequisite knowledge: what the attendees should
+       already know
+    5. Detailed outline
+
+ The background information on the presenter(s) should be
+ limited to 1-2 pages and contain:
+
+    1. Names, affiliations, homepages and contact details
+    2. Short biographies
+    3. Information about previous tutorials given by the same
+       presenters (title, location, number of attendees, etc.)
+
+ Tutorial materials such as handouts and slides should be included
+ if already available, but are not required for submission.
+
+ Please send your proposal to pawan at cs.smu.ca or Pawan.Lingras at smu.ca
+
+ Important Dates:
+
+       July  1, 2007  Tutorial submissions
+       July 10, 2007  Acceptance notices
+     October 1, 2007  Camera-ready copy of tutorial handouts
+  November 2-5, 2007  WI-IAT'07 tutorials
+
+ Tutorial Chair:
+
+   Pawan Lingras, Saint Mary's University, Canada
+   Email: pawan at cs.smu.ca or Pawan.Lingras at smu.ca
+
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+From vincent.duval at boehringer-ingelheim.com  Wed Jun 20 08:32:03 2007
+From: vincent.duval at boehringer-ingelheim.com
+Date: Wed, 20 Jun 2007 10:32:03 +0200
+Subject: Time differences calculations
+Message-ID: <033BC9FB402D2B4CBBBE829F25FEDBE90123C717@bibexm02.eu.boehringer.com>
+
+Dear
+S-plus users, 
+
+I have a problem computing time differences using S-plus. 
+
+I have dates that are given using the following format: 20080620.00, where the
+4 first digits represent the year, the next 2 ones the month and the last 2
+ones the day. I would need to compute time differences between two vectors of
+this given format. 
+
+I
+tried around trying to change this format into any type of time series without
+any success. 
+
+Could some one provide me with some useful suggestion and/or tip to know where
+to look? 
+
+I am using S-plus 7 under Windows XP 
+
+Thanks for your help, 
+
+Vincent 
+
+ 
+
+From maeve.harrison9 at mail.dcu.ie  Wed Jun 20 13:14:44 2007
+From: maeve.harrison9 at mail.dcu.ie
+Date: Wed, 20 Jun 2007 14:14:44 +0100
+Subject: Removing extra white space
+Message-ID: <462C66080003E0BE@hawk.dcu.ie>
+
+Hi
+
+I am using S-Plus 6.2 on Windows NT and I am trying to remove extra white
+spaces from a string.
+I have used the strip.blanks() method to remove leading and trailing white
+space, but I also want a function that will remove extra interior white spaces,
+where "name    with        spaces" would be changed to "name with spaces",
+with only one space between the words.
+
+Thanks in anticipation for any help,
+Maeve
+
+From lorenz at usgs.gov  Wed Jun 20 13:49:27 2007
+From: lorenz at usgs.gov (David L Lorenz)
+Date: Wed, 20 Jun 2007 08:49:27 -0500
+Subject: Re: Removing extra white space
+In-Reply-To: <462C66080003E0BE@hawk.dcu.ie>
+References: <462C66080003E0BE@hawk.dcu.ie>
+Message-ID: <OFFE550159.01650873-ON86257300.004B7937-86257300.004BF04C@usgs.gov>
+
+Maeve,
+
+  The Hmisc library has a function
+that will replace multiple interior spaces with a single space. The function
+is sedit().
+
+sedit("name    with  
+     spaces", '  ', ' ') # replace all occurrences
+of double space with a single space
+
+[1] "name with spaces"
+
+  It is not clear for the documentation
+that this will work, but it does.
+
+Dave
+
+maeve.harrison9 at mail.dcu.ie
+
+Sent by: s-news-owner at lists.biostat.wustl.edu
+06/20/2007 08:14 AM
+
+To
+
+s-news at lists.biostat.wustl.edu
+
+cc
+
+Subject
+
+[S] Removing extra white space
+
+Hi
+
+I am using S-Plus 6.2 on Windows NT and I am trying to remove extra white
+
+spaces from a string.
+
+I have used the strip.blanks() method to remove leading and trailing white
+
+space, but I also want a function that will remove extra interior white
+spaces,
+
+where "name    with        spaces"
+would be changed to "name with spaces",
+
+with only one space between the words.
+
+Thanks in anticipation for any help,
+
+Maeve
+
+--------------------------------------------------------------------
+
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+
+the BODY of the message:  unsubscribe s-news
+
+From MichaelCamilleri at branz.co.nz  Wed Jun 20 21:29:38 2007
+From: MichaelCamilleri at branz.co.nz (Michael Camilleri)
+Date: Thu, 21 Jun 2007 09:29:38 +1200
+Subject: Re: Time differences calculations
+In-Reply-To: <033BC9FB402D2B4CBBBE829F25FEDBE90123C717@bibexm02.eu.boehringer.com>
+References: <033BC9FB402D2B4CBBBE829F25FEDBE90123C717@bibexm02.eu.boehringer.com>
+Message-ID: <A23B682083FD8248ADFE1317C82CBD67029A2CDA@exchange.branznt.org.nz>
+
+When you are using time data you should
+use one of the S+ time and date formats. You can use the old chron() and related
+functions to create julian dates. You can use the ts and rts times series
+objects. You can also use the newer TimeSeries objects.
+
+ 
+
+The easiest thing to do would be to
+convert your dates to a numeric value using the chron functions (you may have
+to load the library using library(chron))
+
+ 
+
+20080620.00
+
+ 
+
+julian(as.numeric(substring(“20080620.00”,5,6)),as.numeric(substring(“20080620.00”,7,8)),as.numeric(substring(“20080620.00”,1,4))
+
+ 
+
+If you have a regular time series you could use the rts function,
+although a rts object is quite different from a data frame.
+
+ 
+
+The timeDate function can also do it, although it is more complex than
+just reformatting your dates, and has time zones and other stuff buried in it
+which has the potential to foul things up. You may be able to get the in.format
+working on your string directly, but it may not work with the format you have
+choosen.
+
+ 
+
+timeDate(charvec, in.format=<<see below>>, format=<<see below>>, zone=<<see below>>, 
+
+         julian, ms,
+in.origin=c(month=1, day=1, year=1960))
+
+ 
+
+ 
+
+In short, S+ handles dates most easily as a numeric value, a ts object,
+or a timeDate object. Which you find easiest is up to you. I have found the
+numeric respresentation of chron the easiest to work with overall.
+
+Michael
+
+From iwkduds at liacc.up.pt  Thu May 24 11:07:54 2007
+From: iwkduds at liacc.up.pt (IWKDUDS)
+Date: Thu, 24 May 2007 12:07:54 +0100
+Subject: Call for Papers - Knowledge Discovery Ubiquitous Data Streams
+Message-ID: <200706221054.10756.iwkduds@liacc.up.pt>
+
+*** Apologies for cross-posting ***
+
+Knowledge Discovery from Ubiquitous Data Streams
+=================================
+Workshop in conjunction with ECML-PKDD 2007
+
+17 September 2007 - Warsaw, Poland
+
+Web Page:
+http://www.niaad.liacc.up.pt/~iwkduds/
+
+Important Dates
+===========
+* Paper submission deadline: June 30th, 2007
+* Notification of acceptance/rejection: July 21st, 2007
+* Camera-ready deadline: July 28th, 2007
+
+Goals
+====
+The goal of this workshop is to promote an interdisciplinary forum for
+researchers who deal with sequential learning, anytime learning,
+real-time learning, online learning, etc. from ubiquitous and
+distributed data streams. Distributed Learning from Data Streams is a
+recent and increasing research area with challenging applications and
+contributions from fields like Data Bases, Data Mining, Machine
+Learning, and Visualization.  
+
+Motivation 
+==========
+Advances in miniaturization and sensor technology lead to
+sensor networks, collecting detailed spatio-temporal data about the
+environment. How to learn from these distributed continuous streaming
+data? Which are the main characteristics of a learning algorithm
+acting in sensor networks? What are the relevant issues, challenges,
+and research opportunities?  Which emerging applications?  The goal of
+this workshop is to convene researchers (from both academia and
+industry) who deal with decision rules, decision trees, association
+rules, clustering, filtering, preprocessing, post processing, feature
+selection, visualization techniques, etc. from distributed data
+streams and related themes. Special emphasis in constrained algorithms
+designed to handle limited bandwidth, limited computing and storage
+capabilities, limited battery power, and specific
+network-communication protocols.
+
+Topics
+====
+A data stream is an ordered sequence of instances that can be read only once 
+or a small number of times using limited computing and storage capabilities. 
+Topics include but are not restricted to:
+
+* Distributed Data Stream Models
+* Learning in Ubiquitous environments
+* Learning from Sensor Networks
+* Learning from Social Networks
+* Clustering from Distributed Data Streams
+* Decision Trees from Distributed Data Streams
+* Association Rules from Data Streams
+* Visualisation Techniques for Distributed Data Streams
+* Incremental on-line Learning Algorithms
+* Single-Pass and Scalable Algorithms
+* Real-Time and Real-World Applications using Stream data
+* Adaptive mining techniques in data streams
+* Resource-aware distributed data stream mining
+* Theoretical frameworks for distributed data stream mining
+
+Submitting Information
+===============
+* Papers should be in PDF format
+* Papers should be at most 10 pages long
+* All papers should be formatted in the LNCS style of the Springer
+* Papers should be submitted electronically by email to the program chairs:
+  jgama at fep.up.pt
+  Mohamed.Gaber at csiro.au
+
+From Debabrata.Midya at commerce.nsw.gov.au  Mon Jun 25 05:03:28 2007
+From: Debabrata.Midya at commerce.nsw.gov.au (Debabrata Midya)
+Date: Mon, 25 Jun 2007 15:03:28 +1000
+Subject: Reading Unstructured Data
+Message-ID: <467FD940020000D000010F14@out-gwia.dpws.nsw.gov.au>
+
+Hi S-PLUS users!
+
+Thanks in advance.
+
+I am using S-PLUS 7.0 for Windows (Enterprise Developer).
+
+I am looking for libraries or functions to read unstructured data (such
+as text, csv, xml, word document, pdf files containing text documents). 
+
+Any solution please.
+
+Regards,
+
+Debabrata Midya
+(Deb)
+
+NSW Department of Commerce
+Policy Support Services
+Level 11
+McKell Building
+2-24 Rawson Place
+Sydney NSW 2000
+Australia
+
+******************************************************************************
+
+This email message, including any attached files, is confidential and intended 
+solely for the use of the individual or entity to whom it is addressed. 
+
+The NSW Department of Commerce prohibits the right to publish, 
+copy, distribute or disclose any information contained in this email, 
+or its attachments, by any party other than the intended recipient. 
+If you have received this email in error please notify the sender and delete it 
+from your system.
+
+No employee or agent is authorised to conclude any binding 
+agreement on behalf of the NSW Department of Commerce by email. The views or 
+opinions presented in this email are solely those of the author and do not 
+necessarily represent those of the Department, 
+except where the sender expressly, and with authority, states them to be the 
+views of NSW Department of Commerce.  
+
+The NSW Department of Commerce accepts no liability for any loss or damage 
+arising from the use of this email and recommends that the recipient check this 
+email and any attached files for the presence of viruses. 
+
+******************************************************************************
+
+From courses at zanybooks.com  Wed Jun 27 15:39:10 2007
+From: courses at zanybooks.com
+Date: Wed, 27 Jun 2007 08:39:10 -0700
+Subject: online courses July 2007
+Message-ID: <20070627083910.b21645f2bceb2bcc4cba8e709837b1d9.897db84aa2.wbe@email.secureserver.net>
+
+Modeling with R.  http://statisticsonline.info/mwithR.htm  Three lessons
+in three weeks. 13 July - 6 Aug  2007.  $324. ($254 for students,
+faculty, and research workers at academic institutions.) OLS, EIV, QR,
+and CART plus validation. Early Bird (by 6 July) discount of $50.
+ 
+Not interested in statistics?  Check out the fiction at
+http://zanybooks.com
+ 
+Statistics Through Applications.
+http://statisticsonline.info/intro01.htm   An easy introduction to the
+basic concepts of statistics. Three lessons in three Weeks.  25 July-17
+Aug 2007. $295 or $245 if you register before July 8th. Students,
+faculty and research workers at academic institutions are eligible for a
+further discount. 
+ 
+Applications of Bootstrap and Permutation Methods in the Pharmaceutical
+and Medical Device Industries.
+http://statisticsonline.info/application.htm Three lessons in three
+weeks.  10 Aug-31 Aug, 2007.  $324.  ($254 for students, faculty, and
+research workers at academic institutions.)  Early Bird (before 30 July)
+discount of $50.
+ 
+For more details on these and other interactive online statistics
+courses, go to http://statisticsonline.info.
+ 
+
+From David.John.Thompson at ontario.ca  Thu Jun 28 18:01:49 2007
+From: David.John.Thompson at ontario.ca (Thompson, David (MNR))
+Date: Thu, 28 Jun 2007 14:01:49 -0400
+Subject: YADMQ - Yet Another Data Manipulation Question
+Message-ID: <ECF21B71808ECF4F8918C57EDBEE121DD1585A@CTSPITDCEMMVX11.cihs.ad.gov.on.ca>
+
+Hello,
+
+I have 54 plots (oplt) each containing 10 sub-plots (rplt) within which
+stem counts were made for each species found in five height classes. The
+data are organized (and I use the term very loosely ;-}) with a species
+column (sp1-sp5) for each of the five height class columns (hc1-hc5). I
+would like to pool the species codes into a single column (spp) with the
+associated stem counts remaining in the hc1-hc5 columns but aligned in
+the proper rows. This will expand the existing number of rows. Also,
+there is ABSOLUTELY NO form of order in how each element was entered.
+And there are many blank cells as only species found in each height
+class at each location were recorded.
+
+A sample of the two data arrangements are included below. Suggestions?
+Also, would it be possible to generate a solution that would work in
+both S and R?
+
+Many thanks in advance, DaveT.
+
+olddat <- data.frame(
+rbind( c(1, 1, 'Or', 2, 'Iw', 4, 'Iw', 2, 'Iw', 2, 'He', 2, NA),
+        c(1, 1, 'Iw', 2, 'Be', 2, NA, NA, NA, NA, 'Mh', 2, NA),
+        c(1, 1, 'Mh', 3, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+        c(1, 2, 'Be', 2, 'Iw', 4, 'Iw', 4, 'Iw', 1, 'He', 2, NA),
+        c(1, 2, 'Mh', 3, 'Mh', 2, NA, NA, NA, NA, 'Mh', 1, NA),
+        c(1, 2, 'Iw', 4, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+        c(1, 2, 'Or', 1, NA, NA, NA, NA, NA, NA, NA, NA, NA)))
+names(olddat) <- c('oplt', 'rplt', 'sp1', 'hc1', 'sp2', 'hc2', 'sp3',
+'hc3', 'sp4', 'hc4', 'sp5', 'hc5', 'com')
+
+newdat <- data.frame(rbind( c(1, 1, 'Or', 2, NA, NA, NA, NA, NA),
+        c(1, 1, 'Iw', 2, 4, 2, 2, NA, NA),
+        c(1, 1, 'Mh', 3, NA, NA, NA, 2, NA),
+        c(1, 1, 'Be', NA, 2, NA, NA, NA, NA),
+        c(1, 1, 'He', NA, NA, NA, NA, 2, NA),
+        c(1, 2, 'Be', 2, NA, NA, NA, NA, NA),
+        c(1, 2, 'Mh', 3, 2, NA, NA, 1, NA),
+        c(1, 2, 'Iw', 4, 4, 4, 1, NA, NA),
+        c(1, 2, 'Or', 1, NA, NA, NA, NA, NA),
+        c(1, 2, 'He', NA, NA, NA, NA, 2, NA)))
+names(newdat) <- c('oplt', 'rplt', 'spp', 'hc1', 'hc2', 'hc3', 'hc4',
+'hc5', 'com')
+
+> olddat
+  oplt rplt sp1 hc1  sp2  hc2  sp3  hc3  sp4  hc4  sp5  hc5  com
+1    1    1  Or   2   Iw    4   Iw    2   Iw    2   He    2 <NA>
+2    1    1  Iw   2   Be    2 <NA> <NA> <NA> <NA>   Mh    2 <NA>
+3    1    1  Mh   3 <NA> <NA> <NA> <NA> <NA> <NA> <NA> <NA> <NA>
+4    1    2  Be   2   Iw    4   Iw    4   Iw    1   He    2 <NA>
+5    1    2  Mh   3   Mh    2 <NA> <NA> <NA> <NA>   Mh    1 <NA>
+6    1    2  Iw   4 <NA> <NA> <NA> <NA> <NA> <NA> <NA> <NA> <NA>
+7    1    2  Or   1 <NA> <NA> <NA> <NA> <NA> <NA> <NA> <NA> <NA>
+> newdat
+   oplt rplt spp  hc1  hc2  hc3  hc4  hc5  com
+1     1    1  Or    2 <NA> <NA> <NA> <NA> <NA>
+2     1    1  Iw    2    4    2    2 <NA> <NA>
+3     1    1  Mh    3 <NA> <NA> <NA>    2 <NA>
+4     1    1  Be <NA>    2 <NA> <NA> <NA> <NA>
+5     1    1  He <NA> <NA> <NA> <NA>    2 <NA>
+6     1    2  Be    2 <NA> <NA> <NA> <NA> <NA>
+7     1    2  Mh    3    2 <NA> <NA>    1 <NA>
+8     1    2  Iw    4    4    4    1 <NA> <NA>
+9     1    2  Or    1 <NA> <NA> <NA> <NA> <NA>
+10    1    2  He <NA> <NA> <NA> <NA>    2 <NA>
+
+*************************************
+Silviculture Data Analyst
+Ontario Forest Research Institute
+Ontario Ministry of Natural Resources
+david.john.thompson at ontario.ca
+http://ofri.mnr.gov.on.ca
+*************************************
+
+From elvis at xlsolutions-corp.com  Thu Jun 28 18:48:06 2007
+From: elvis at xlsolutions-corp.com
+Date: Thu, 28 Jun 2007 11:48:06 -0700
+Subject: Course in Boston** R/Splus Fundamentals and Programming Techniques
+Message-ID: <20070628114806.9f08cc34deb45d78e54b3b5664e21546.3d686fdacc.wbe@email.secureserver.net>
+
+XLSolutions Corporation (www.xlsolutions-corp.com) is making a last call
+for our July 2007 "R/S-plus Fundamentals and Programming Techniques" : 
+
+www.xlsolutions-corp.com/Rfund.htm
+
+In Boston ***   July 16 - 17, 2007
+
+Reserve your seat now at the early bird rates! Payment due AFTER
+the class
+
+Course Description:
+
+This two-day beginner to intermediate R/S-plus course focuses on a
+broad spectrum of topics, from reading raw data to a comparison of R
+and S. We will learn the essentials of data manipulation, graphical
+visualization and R/S-plus programming. We will explore statistical
+data analysis tools,including graphics with data sets. How to enhance
+your plots, build your own packages (librairies) and connect via
+ODBC,etc.
+We will perform some statistical modeling and fit linear regression
+models. Participants are encouraged to bring data for interactive
+sessions
+
+With the following outline:
+
+- An Overview of R and S
+- Data Manipulation and Graphics
+- Using Lattice Graphics
+- A Comparison of R and S-Plus
+- How can R Complement SAS?
+- Writing Functions
+- Avoiding Loops
+- Vectorization
+- Statistical Modeling
+- Project Management
+- Techniques for Effective use of R and S
+- Enhancing Plots
+- Using High-level Plotting Functions
+- Building and Distributing Packages (libraries)
+- Connecting; ODBC, Rweb, Orca via sockets and via Rjava
+
+Email us for group discounts.
+Email Sue Turner: sue at xlsolutions-corp.com
+Phone: 206-686-1578
+Visit us: www.xlsolutions-corp.com/courselist.htm
+
+Please let us know if you and your colleagues are interested in this
+classto take advantage of group discount. Register now to secure your
+seat!
+
+Interested in R/Splus Advanced course? email us.
+
+Cheers,
+Elvis Miller, PhD
+Manager Training.
+XLSolutions Corporation
+206 686 1578
+www.xlsolutions-corp.com
+elvis at xlsolutions-corp.com
+

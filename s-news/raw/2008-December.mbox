@@ -1,0 +1,477 @@
+From elvis at xlsolutions-corp.com  Wed Dec 24 16:09:01 2008
+From: elvis at xlsolutions-corp.com (elvis Miller)
+Date: Wed, 24 Dec 2008 09:09:01 -0700
+Subject: 2009 Courses***R/S-PLUS Advanced & Fundamentals - January 2009. Also check out our New&Emerging Courses.
+Message-ID: <20081224090901.aa8924c5d28ca71e2a043bb294e795eb.0397bc9bb9.wbe@email.secureserver.net>
+
+Happy Holidays!
+
+We've updated our courses lists to add New&Emerging Courses for 2009. 
+
+------------------------------USAR2009 is on April 26-29-------------
+ (1) R/S-PLUS Fundamentals and Programming Techniques
+http://www.xlsolutions-corp.com/coursedetail.asp?id=30
+
+********* San Francisco  ********** January 26-27, 2009
+********* New York       ********** January 26-27, 2009
+
+ (2) R/S System: Advanced Programming 
+http://www.xlsolutions-corp.com/coursedetail.asp?id=16
+
+********* San Francisco  ********** January 29-30, 2009
+********* Boston         ********** January 29-30, 2009
+
+Ask for group discount and reserve your seat Now - Earlybird Rates.
+Payment due after the class! Email Sue Turner:  sue at xlsolutions-corp.com
+
+ http://www.xlsolutions-corp.com/rplus
+
+(3) New&Emerging Courses
+
+a-Applied Survival Analysis for Business Intelligence Using R/R-PLUS  
+b-Advanced Clustering Techniques in R/R-PLUS 
+c-Advanced Analytics for Business Intelligence Using R/R-PLUS 
+d-Modeling Financial Time Series in R and S/PLUS
+
+Email us for group discounts.
+Email Sue Turner: sue at xlsolutions-corp.com
+Phone: 206-686-1578
+
+Please let us know if you and your colleagues are interested in this
+class to take advantage of group discount. Register now to secure your
+seat!
+
+Cheers,
+Elvis Miller, PhD
+Manager Training.
+XLSolutions Corporation
+206 686 1578
+www.xlsolutions-corp.com
+elvis at xlsolutions-corp.com
+
+From lawrence-hunsicker at uiowa.edu  Thu Dec 25 14:35:36 2008
+From: lawrence-hunsicker at uiowa.edu (Hunsicker, Lawrence)
+Date: Thu, 25 Dec 2008 08:35:36 -0600
+Subject: Re: How to create a "summary" data frame
+Message-ID: <2B80F69A8A189D48B0E668B0BBC6BA4201E01110@HC-MAIL13.healthcare.uiowa.edu>
+
+Good morning and Merry Christmas to all:
+
+And thanks to Steve Su, Alan Hochberg, and Chris Barker for help with my question above.
+
+Steve’s solution, using “tapply”, seems the most straight forward, though one can probably get to the same place using “by”.  The problem with “by” is that when its output is combined into a data frame, it is entered as a series of columns, not rows – even when delisted as suggested by Alan.  “tapply” works nicely to give a column vector that works well with “cbind.”  I am pretty sure that one could use “t(by(x))” but I didn’t actually check that out.
+
+One other caution.  One has to be sure that the names column is entered in “cbind” as an integer, not as character.  Else the other columns are coerced to character.  At least one program that works nicely is given below:
+
+test <- tapply(working7$Scr.missing, working7$Center, function(x) sum(x==0)/length(x))
+
+test1 <- tapply(working7$Scr.missing, working7$Center, function(x) length(x))
+
+test2 <- data.frame(cbind(as.integer(names(test)), test, test1))
+
+names(test2) <- c("Center", "PctScrMeas", "NumAtCtr")
+
+Again, thanks to Steve, Alan, and Chris, and Merry Christmas to everyone.
+
+Larry Hunsicker
+
+From lawrence-hunsicker at uiowa.edu  Fri Dec 26 20:57:45 2008
+From: lawrence-hunsicker at uiowa.edu (Hunsicker, Lawrence)
+Date: Fri, 26 Dec 2008 14:57:45 -0600
+Subject: Writing a function taking a data.frame column name as a parameter
+Message-ID: <2B80F69A8A189D48B0E668B0BBC6BA4201E01111@HC-MAIL13.healthcare.uiowa.edu>
+
+Hi again, folks, and happy Boxing Day to all:
+
+I have written a script that works:
+
+temp <- working7[!is.na(working7$Sexe),]
+
+any.glmm<-glmmPQL(fixed = anyCVD ~ Sexe
+
+        , random = ~1|Region/Pays/Center, family = binomial(link=logit), data = temp)
+
+list("Sexe", anova(any.glmm), any.glmm$coefficients$fixed)
+
+I now want to automate this script to run with a number of columns in a data frame with over 100 columns.  It would be nice to set this up as a function that I could apply with sapply.   I have tried to define the function as follows:
+
+testfx <- function(x) {
+
+temp <- working7[!is.na(working7$x),]
+
+any.glmm<-glmmPQL(fixed = anyCVD ~ x
+
+                , random = ~1|Region/Pays/Center, family = binomial(link=logit), data = "">
+
+list(x, anova(any.glmm), any.glmm$coefficients$fixed)
+
+This compiles.  But when I try to run the functio entering a column name in the place of x 9e.g., testfx(“Sexe”), it always abends with the message:
+
+Ethnie.glmm <- testfx("Ethnie")
+
+Problem in testfx("Ethnie"): Length of anyCVD (variable 1) is 0 != length of others (10)
+
+Same if I enter the column name  unquoted, or use an index.  
+
+What am I doing wrong?  How does one enter a column name (or column number) as a parameter in a self-defined function?
+
+As always, many thanks to anyone that can help me here.
+
+Larry Hunsicker
+
+From TimHesterberg at gmail.com  Sat Dec 27 05:56:14 2008
+From: TimHesterberg at gmail.com (Tim Hesterberg)
+Date: Fri, 26 Dec 2008 21:56:14 -0800
+Subject: Re: Writing a function taking a data.frame column name as a parameter
+In-Reply-To: <2B80F69A8A189D48B0E668B0BBC6BA4201E01111@HC-MAIL13.healthcare.uiowa.edu>
+References: <2B80F69A8A189D48B0E668B0BBC6BA4201E01111@HC-MAIL13.healthcare.uiowa.edu>
+Message-ID: <uzliicgap.fsf@gmail.com>
+
+First,
+  working7$x
+is NULL, because working7 doesn't have a variable named "x".
+Instead use:
+  working7[[x]]
+
+Later, your formula
+  anyCVD ~ x
+won't do what you want, again because the data frame doesn't have
+a variable named "x".  To replace "x" with the
+variable name, you could
+(a) use substitute()
+(b) create a text version of the call to glmmPQL using paste(),
+    followed by eval(parse(the text version))
+Neither of these is straightforward.  Here is a short
+example using eval and parse:
+  eval(parse(text = "3+2")[[1]])
+
+Finally, if glmmPQL is a typical modeling function, you
+will probably run into scoping problems.  At bottom is my stock
+response to scoping questions.
+
+Tim Hesterberg
+
+>Hi again, folks, and happy Boxing Day to all:
+>
+>I have written a script that works:
+>
+>temp <- working7[!is.na(working7$Sexe),]
+>any.glmm<-glmmPQL(fixed = anyCVD ~ Sexe
+>       , random = ~1|Region/Pays/Center, family = binomial(link=logit),
+>data = temp)
+>list("Sexe", anova(any.glmm), any.glmm$coefficients$fixed)
+>
+>I now want to automate this script to run with a number of columns in a
+>data frame with over 100 columns.  It would be nice to set this up as a
+>function that I could apply with sapply.   I have tried to define the
+>function as follows:
+>
+>testfx <- function(x) {
+>temp <- working7[!is.na(working7$x),]
+>any.glmm<-glmmPQL(fixed = anyCVD ~ x
+>               , random = ~1|Region/Pays/Center, family =
+>binomial(link=logit), data = temp)
+>list(x, anova(any.glmm), any.glmm$coefficients$fixed)
+>
+>This compiles.  But when I try to run the functio entering a column name
+>in the place of x 9e.g., testfx("Sexe"), it always abends with the
+>message:
+>
+>Ethnie.glmm <- testfx("Ethnie")
+>Problem in testfx("Ethnie"): Length of anyCVD (variable 1) is 0 !=
+>length of others (10)
+>
+>Same if I enter the column name  unquoted, or use an index.  
+>
+>What am I doing wrong?  How does one enter a column name (or column
+>number) as a parameter in a self-defined function?
+>
+>As always, many thanks to anyone that can help me here.
+>
+>Larry Hunsicker
+
+In S-PLUS, objects defined inside a function are local to that
+function.  If you get an 'Object "nameOfObject" not found' message,
+you've run into this.
+
+For example, here the variable 'a' in 'Parent' is local:
+    rm(a) # make sure there is no copy
+    Parent <- function(x){
+      a <- x
+      Child()
+    }
+    Child <- function(){
+      a
+    }
+    Parent(7)  # Fails, 'Object "a" not found'
+
+You may get unexpected results if there is a copy of the object lying around:
+    a <- -999  # suppose this value was created previously and not removed
+    Parent(7)  # The result is -999, not 7.
+
+Here are two workarounds:
+(1) 'Child' could use
+        get("a", frame = sys.parent())
+to get the copy of "a" from its parent function.
+
+(2) 'Parent' could save a copy in a globally-visible location:
+    Parent <- function(x){
+      a <- x
+      assign("a", a, frame=1)
+      Child()
+    }
+
+The problem occurs most often when you write a "Parent" function that
+calls a statistical modeling function like 'lm'.  In this case
+workaround (2) is appropriate.
+
+--------------------------------------------------
+Background and details:
+
+The objects associated with a function are stored in its "frame".
+There are also two global frames, stored in memory.  S-PLUS also
+searches on global databases, stored on disk.  Hence, when 'Child'
+asks for an object, the search path is:
+
+frame 3         Child's frame
+(frame 2)           (Parent's frame -- is not visible to Child)
+frame 1         "expression frame" (global)
+frame 0         "session frame" (global)
+database 1      working database, objects you create are stored here
+database 2...   other databases - "splus", "stat", etc.
+
+`Child' looks for objects in 
+(1) it's own frame
+    (any objects already defined inside Child)
+(2) frame 1
+    (the "expression frame", a temporary frame in memory -- this lasts
+    until the current top-level command finishes)
+(3) frame 0
+    (the "session frame", a temporary frame in memory that persists
+    between commands but disappears when you exit S-PLUS)
+(4) databases
+
+'Child' does not look in anywhere between frame 1 and it's own frame.
+In other words, if you define something inside 'Parent', it is invisible
+to 'Child'.
+
+In the above example, 'Parent' has frame 2 and 'Child' has frame 3.
+If `Child' in turn calls `Grandchild', that would be in frame 4.
+
+A frame is essentially a list of objects that a function has
+defined for its own use (but frame 0 and frame 1 are for global use).
+For example, after "a <- x", then Parent's frame contains 'a' and 'x'.
+Use assign() if you want to create a copy of 'a' somewhere else,
+either in memory (frame 0 or higher) or on disk (databases).
+
+The rules about where objects are searched for are known as "scoping
+rules".  For additional information, see
+* S-PLUS Programmer's Guide, section "Matching Names and Values",
+* Becker, Chambers & Wilks "The New S Language" (the "blue book") pp 118-121
+* Venables & Ripley "S Programming" pp 54-65.
+
+From lawrence-hunsicker at uiowa.edu  Sun Dec 28 00:43:45 2008
+From: lawrence-hunsicker at uiowa.edu (Hunsicker, Lawrence)
+Date: Sat, 27 Dec 2008 18:43:45 -0600
+Subject: Re: Writing a function taking a data.frame column name as a parameter
+Message-ID: <2B80F69A8A189D48B0E668B0BBC6BA4201E01115@HC-MAIL13.healthcare.uiowa.edu>
+
+Thanks, all of those that responded above.  I learned a lot from this exercise – about [[x]] to get the contents of a list rather than the list itself (which I knew but had forgotten), about “as.formula” which is the magic that turns a pasted piece of text into something that looks to S-plus like a formula, and finally, that a parameter name has to be standing alone to have the passed value substituted into it.  My basic problem is that I was trying to get the passed parameter substituted for the x in something like “my.data.frame$x.”  
+
+While there are probably several of the suggestions that I could probably have gotten to work, I return the following two:
+
+>From Alan Hockberg:
+
+testanyCVD1 <- function(x) {
+
+temp <- working7[!is.na(working7[[x]]),]
+
+any.glmm<-glmmPQL(fixed = as.formula(paste("anyCVD ~ ",names(temp)[x],sep=''))
+
+        , random = ~1|Region/Pays/Center, family = binomial(link=logit),data="" = F, niter=15)
+
+list(names(temp)[x], anova(any.glmm), any.glmm$coefficients$fixed)
+
+}
+
+Here it was the delisting operator in line 2, and the “as.formula” function in line 3 that got the function working.  
+
+>From Andreas Kraus, maybe not quite as elegant but really simple and convenient:
+
+testanyCVD <- function(x) {
+
+temp <- working7[!is.na(working7[[x]]),]
+
+temp$x <- temp[[x]]
+
+any.glmm<-glmmPQL(fixed = anyCVD ~ x
+
+        , random = ~1|Region/Pays/Center, family = binomial(link=logit),data="" = F, niter=15)
+
+list(names(temp)[x], anova(any.glmm), any.glmm$coefficients$fixed)
+
+}
+
+He suggested creating a new column in “temp” named x, as in line 3 above, again using the delisting operator.  Now the function works right because temp$x exists, and in fact is identical to the column originally indexed by x.
+
+Thanks to all of you.  This got me a function that works correctly.  But as you will note in my next message, I still don’t have the scope stuff understood properly.  I can’t get the sapply function to do what I am trying to do.
+
+Larry Hunsicker
+
+From lawrence-hunsicker at uiowa.edu  Sun Dec 28 01:09:43 2008
+From: lawrence-hunsicker at uiowa.edu (Hunsicker, Lawrence)
+Date: Sat, 27 Dec 2008 19:09:43 -0600
+Subject: sapply to automate doing a series ofparallel analyses
+Message-ID: <2B80F69A8A189D48B0E668B0BBC6BA4201E01116@HC-MAIL13.healthcare.uiowa.edu>
+
+So here I am back to the trough for help.  You guys are really teaching me how to program S-Plus, and I appreciate the help.
+
+So I now have a function named testScrMiss, which does a mixed model logistic regression to test which other values in a data set predict whether a serum creatinine determination was obtained.  (You all know the function from my last messages.)
+
+The function now works fine, with a single integer parameter indexing the specific column that I want to test.  I’d now like to run this function on a long list of columns – indexed by c(5:7,11:12,15:16,20,27:29,32:33,38:42,45,50,55:64,72,77:93,99:100,107) to be specific.  So I try:
+
+list1 <- c(5:7,11:12,15:16,20,27:29,32:33,38:42,45,50,55:64,72,77:93,99:100,107)
+
+sapply(list1, testScrMiss)
+
+Aaarrrrgghh!  I get the following error:
+
+Problem in FUN(...X.sub.i....): Length of x (variable 2) is 5 != length of others (24151) 
+
+Use traceback() to see the call stack
+
+So I use traceback to see if I can figure out why S-Plus thinks that some variable is length 5.  This turns out to be the number of columns in my original data.frame that I reference in the function – the dependent and independent variable in the fixed formula and the three nested levels in the random formula.  
+
+Now if I run a familiar function like sqrt (remembering that I have a column of integer indices), 
+
+list1 <- c(5:7,11:12,15:16,20,27:29,32:33,38:42,45,50,55:64,72,77:93,99:100,107)
+
+sapply(list1, sqrt)
+
+I get the expected outcome – a list of the square roots of my original list.  
+
+Now I am suspecting that the latter works because the function sqrt is polymorphic, with different functions for a single integer and for a list of integers.  But I have been flailing around, trying lots of different ways to get this thing to work, and I have not succeeded yet.  So I am again asking for help.
+
+Meanwhile I am going back to Tim Hesterbereg’s comments on scoping problems to see I can understand what is going on.
+
+Again, thanks to all for your repeated help.
+
+Larry Hunsicker
+
+From ssu at george.org.au  Sun Dec 28 03:30:13 2008
+From: ssu at george.org.au (Steve Su)
+Date: Sun, 28 Dec 2008 14:30:13 +1100
+Subject: Re: Writing a function taking a data.frame column name as a parameter
+References: <2B80F69A8A189D48B0E668B0BBC6BA4201E01115@HC-MAIL13.healthcare.uiowa.edu>
+Message-ID: <4C48EA78C9061E4E924E0C1A3A929A6B50FB11@mail-syd-01.iih.usyd.edu.au>
+
+Probably a lot easier just to do:
+
+# Fuel example
+
+lm.function<-function(x){
+
+fuel.frame<-select.cols(fuel.frame,x)
+
+return(summary(lm(Fuel ~ . , data="">
+
+# Model Fuel with Weight and Disp
+
+lm.function(c("Weight","Disp","Fuel"))
+
+# Model Fuel with Weight only
+
+lm.function(c("Weight","Fuel"))
+
+Steve
+
+-----Original Message-----
+
+From: s-news-owner at lists.biostat.wustl.edu on behalf of Hunsicker, Lawrence
+
+Sent: Sun 28/12/2008 11:43
+
+To: s-news at lists.biostat.wustl.edu
+
+Subject: Re: [S]  Writing a function taking a data.frame column name as a parameter
+
+Thanks, all of those that responded above.  I learned a lot from this
+
+exercise - about [[x]] to get the contents of a list rather than the
+
+list itself (which I knew but had forgotten), about "as.formula" which
+
+is the magic that turns a pasted piece of text into something that looks
+
+to S-plus like a formula, and finally, that a parameter name has to be
+
+standing alone to have the passed value substituted into it.  My basic
+
+problem is that I was trying to get the passed parameter substituted for
+
+the x in something like "my.data.frame$x." 
+
+While there are probably several of the suggestions that I could
+
+probably have gotten to work, I return the following two:
+
+>From Alan Hockberg:
+
+testanyCVD1 <- function(x) {
+
+temp <- working7[!is.na(working7[[x]]),]
+
+any.glmm<-glmmPQL(fixed = as.formula(paste("anyCVD ~
+
+",names(temp)[x],sep=''))
+
+        , random = ~1|Region/Pays/Center, family =
+
+binomial(link=logit),data="" = F, niter=15)
+
+list(names(temp)[x], anova(any.glmm), any.glmm$coefficients$fixed)
+
+}
+
+Here it was the delisting operator in line 2, and the "as.formula"
+
+function in line 3 that got the function working. 
+
+>From Andreas Kraus, maybe not quite as elegant but really simple and
+
+convenient:
+
+testanyCVD <- function(x) {
+
+temp <- working7[!is.na(working7[[x]]),]
+
+temp$x <- temp[[x]]
+
+any.glmm<-glmmPQL(fixed = anyCVD ~ x
+
+        , random = ~1|Region/Pays/Center, family =
+
+binomial(link=logit),data="" = F, niter=15)
+
+list(names(temp)[x], anova(any.glmm), any.glmm$coefficients$fixed)
+
+}
+
+He suggested creating a new column in "temp" named x, as in line 3
+
+above, again using the delisting operator.  Now the function works right
+
+because temp$x exists, and in fact is identical to the column originally
+
+indexed by x.
+
+Thanks to all of you.  This got me a function that works correctly.  But
+
+as you will note in my next message, I still don't have the scope stuff
+
+understood properly.  I can't get the sapply function to do what I am
+
+trying to do.
+
+Larry Hunsicker
+

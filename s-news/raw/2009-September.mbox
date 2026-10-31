@@ -1,0 +1,4387 @@
+From Pierre.Ilouga at evotec.com  Fri Sep  4 14:47:14 2009
+From: Pierre.Ilouga at evotec.com (Ilouga, Pierre)
+Date: Fri, 04 Sep 2009 16:47:14 +0200
+Subject: exportData in Splus 8
+Message-ID: <98BC938D4C400844A6AC00C6952BD5230EE6D4@Pegasus.germany.evotecoai.com>
+
+Dear all,
+
+I’m migrating from Splus 6 (32 bit system) to Splus 8 (64 bit system).  Calling the exportData-function under Splus 8 results in too many digits as demonstrated by the following simple example:
+
+x <- sqrt(1:3); x <- round(cbind(x, x), digits = 3)
+
+> x
+
+      [,1]  [,2] 
+
+[1,] 1.000 1.000
+
+[2,] 1.414 1.414
+
+[3,] 1.732 1.732
+
+write.table(x, file = "test8.wrt.txt", sep = "\t", dimnames.write = F, na = "")   yields the expected result, namely 
+
+cat test8.wrt.txt
+
+1       1
+
+1.414   1.414
+
+1.732   1.732
+
+BUT 
+
+exportData(x, file = "test8.txt", quote = F, type = "ASCII", colNames = F,  rowNames = F, delimiter = "\t")   yields 
+
+cat test8.txt
+
+1       1
+
+1.4139999999999999      1.4139999999999999
+
+1.732   1.732
+
+Questions: a) What is the reason for this behavior?  b) How can I force exportData to produce the same output (number of digits) as write.table? options(digits = 3) didn’t seem to help.
+
+Many thanks in advance.
+
+PI
+
+Dr. Pierre Ilouga
+
+Screening Operations/Discovery Informatics
+
+EVOTEC AG
+
+Schnackenburgallee 114
+
+22525 Hamburg
+
+Germany
+
+pierre.ilouga at evotec.com
+
+www.evotec.com
+
+S-PLUS : Copyright (c) 1988, 2007 Insightful Corp.
+
+S : Copyright Insightful Corp.
+
+Version 8.0.4  for Linux 2.4.21-37.EL, 64-bit : 2007 
+
+Working data will be in .Data
+
+Evotec AG Hamburg. 
+Amtsgericht Hamburg HRB 68223
+Vorstand: Dr. Werner Lanthaler, Dr. Klaus 
+Maleck und Dr. Mario Polywka
+Aufsichtsratsvorsitzender: Dr. Flemming 
+Ørnskov
+
+From Kim.Elmore at noaa.gov  Fri Sep  4 16:45:07 2009
+From: Kim.Elmore at noaa.gov (Kim Elmore)
+Date: Fri, 04 Sep 2009 11:45:07 -0500
+Subject: Re: exportData in Splus 8
+In-Reply-To: <98BC938D4C400844A6AC00C6952BD5230EE6D4@Pegasus.germany.evotecoai.com>
+References: <98BC938D4C400844A6AC00C6952BD5230EE6D4@Pegasus.germany.evotecoai.com>
+Message-ID: <4AA14413.70107@noaa.gov>
+
+Is S-Plus 8 64 bit, or does it merely *run* on a 64 bit platform? I 
+thought S-Plus 8 was a 32 bit application.
+
+Regardless I believe that S-Plus always retains all available digits in 
+any of the dataExport or data.dump functions. If you intent is ti export 
+data from S-Plus 6 and import it into S-Plus 8, perhaps you would be 
+better served by data.dump.
+
+Kim Elmore
+
+Ilouga, Pierre wrote:
+> Dear all,
+>
+> I’m migrating from Splus 6 (32 bit system) to Splus 8 (64 bit system).
+> Calling the exportData-function under Splus 8 results in too many
+> digits as demonstrated by the following simple example:
+>
+>
+> x <- sqrt(1:3); x <- round(cbind(x, x), digits = 3)
+>
+> > x
+>
+> [,1] [,2]
+>
+> [1,] 1.000 1.000
+>
+> [2,] 1.414 1.414
+>
+> [3,] 1.732 1.732
+>
+> write.table(x, file = "test8.wrt.txt", sep = "\t", dimnames.write = F,
+> na = "") yields the expected result, namely
+>
+>
+> cat test8.wrt.txt
+>
+> 1 1
+>
+> 1.414 1.414
+>
+> 1.732 1.732
+>
+>
+> BUT
+>
+> exportData(x, file = "test8.txt", quote = F, type = "ASCII", colNames
+> = F, rowNames = F, delimiter = "\t") yields
+>
+>
+> cat test8.txt
+>
+> 1 1
+>
+> 1.4139999999999999 1.4139999999999999
+>
+> 1.732 1.732
+>
+> Questions: a) What is the reason for this behavior? b) How can I force
+> exportData to produce the same output (number of digits) as
+> write.table? options(digits = 3) didn’t seem to help.
+>
+>
+> Many thanks in advance.
+>
+> PI
+>
+> Dr. Pierre Ilouga
+>
+> Screening Operations/Discovery Informatics
+>
+> EVOTEC AG
+>
+> Schnackenburgallee 114
+>
+> 22525 Hamburg
+>
+> Germany
+>
+> pierre.ilouga at evotec.com
+>
+> www.evotec.com
+>
+> S-PLUS : Copyright (c) 1988, 2007 Insightful Corp.
+>
+> S : Copyright Insightful Corp.
+>
+> Version 8.0.4 for Linux 2.4.21-37.EL, 64-bit : 2007
+>
+> Working data will be in .Data
+>
+> Evotec AG Hamburg. Amtsgericht Hamburg HRB 68223
+> Vorstand: Dr. Werner Lanthaler, Dr. Klaus Maleck und Dr. Mario Polywka
+> Aufsichtsratsvorsitzender: Dr. Flemming Ørnskov
+
+--
+Kim Elmore, Ph.D. (PP SEL/MEL/Glider, N5OP, 2nd Class Radiotelegraph, GROL)
+"All weather is divided into three parts: Yes, No and Maybe. The greatest of these 
+is maybe." -- The original Latin appears to be garbled.
+
+From gerald.jean at dgag.ca  Fri Sep  4 17:40:55 2009
+From: gerald.jean at dgag.ca
+Date: Fri, 04 Sep 2009 13:40:55 -0400
+Subject: RE exportData in Splus 8
+In-Reply-To: <98BC938D4C400844A6AC00C6952BD5230EE6D4@Pegasus.germany.evotecoai.com>
+References: <98BC938D4C400844A6AC00C6952BD5230EE6D4@Pegasus.germany.evotecoai.com>
+Message-ID: <OF8A245A94.ACDE9FAD-ON85257627.00605CBB-85257627.0061218D@dgag.ca>
+
+Hello Pierre,
+
+I also run a 64-bit version of Splus (8.1), on a 64-bit Linux box,
+
+s-news-owner at lists.biostat.wustl.edu a écrit sur 2009/09/04 10:47:14 :
+
+> Dear all,
+> I’m migrating from Splus 6 (32 bit system) to Splus 8 (64 bit system).
+> Calling the exportData-function under Splus 8 results in too many
+> digits as demonstrated by the following simple example:
+> x <- sqrt(1:3); x <- round(cbind(x, x), digits = 3)
+> > x
+>       [,1]  [,2]
+> [1,] 1.000 1.000
+> [2,] 1.414 1.414
+> [3,] 1.732 1.732
+> write.table(x, file = "test8.wrt.txt", sep = "\t", dimnames.write =
+> F, na = "")   yields the expected result, namely
+> cat test8.wrt.txt
+> 1       1
+> 1.414   1.414
+> 1.732   1.732
+>
+> BUT
+> exportData(x, file = "test8.txt", quote = F, type = "ASCII", colNames =
+F,
+> rowNames = F, delimiter = "\t")   yields
+> cat test8.txt
+> 1       1
+> 1.4139999999999999      1.4139999999999999
+> 1.732   1.732
+> Questions: a) What is the reason for this behavior?
+
+Unfortunately I can't answer this one!
+
+> b) How can I force
+> exportData to produce the same output (number of digits) as write.
+> table? options(digits = 3) didn’t seem to help.
+
+If you use the "format" argument of "exportData" you could get pretty much
+what you want, e.g.
+
+> x <- sqrt(1:3)
+> x <- cbind(x, x)
+> x
+            x        x
+[1,] 1.000000 1.000000
+[2,] 1.414214 1.414214
+[3,] 1.732051 1.732051
+> exportData(data = x,
++            file = "test.txt",
++            type = "FASCII", format = "%6.3,%6.3")
+
+will yield:
+
+ 1.000 1.000
+ 1.414 1.414
+ 1.732 1.732
+
+Hoping this helps,
+
+Gérald Jean
+Conseiller senior en statistiques,
+VP Planification et Développement des Marchés,
+Desjardins Groupe d'Assurances Générales
+télephone            : (418) 835-4900 poste (7639)
+télecopieur          : (418) 835-6657
+courrier électronique: gerald.jean at dgag.ca
+
+"In God we trust, all others must bring data"  W. Edwards Deming
+> Many thanks in advance.
+> PI
+> Dr. Pierre Ilouga
+> Screening Operations/Discovery Informatics
+> EVOTEC AG
+> Schnackenburgallee 114
+> 22525 Hamburg
+> Germany
+> pierre.ilouga at evotec.com
+> www.evotec.com
+> S-PLUS : Copyright (c) 1988, 2007 Insightful Corp.
+> S : Copyright Insightful Corp.
+> Version 8.0.4  for Linux 2.4.21-37.EL, 64-bit : 2007
+> Working data will be in .Data
+> Evotec AG Hamburg. Amtsgericht Hamburg HRB 68223
+> Vorstand: Dr. Werner Lanthaler, Dr. Klaus Maleck und Dr. Mario Polywka
+> Aufsichtsratsvorsitzender: Dr. Flemming Ørnskov
+
+Le message ci-dessus, ainsi que les documents l'accompagnant, sont destinés
+uniquement aux personnes identifiées et peuvent contenir des informations
+privilégiées, confidentielles ou ne pouvant être divulguées. Si vous avez
+reçu ce message par erreur, veuillez le détruire.
+
+This communication ( and/or the attachments ) is intended for named
+recipients only and may contain privileged or confidential information
+which is not to be disclosed. If you received this communication by mistake
+please destroy all copies.
+
+Faites bonne impression et imprimez seulement au besoin !
+Think green before you print !
+
+Le message ci-dessus, ainsi que les documents l'accompagnant, sont destinés 
+uniquement aux personnes identifiées et peuvent contenir des informations 
+privilégiées, confidentielles ou ne pouvant être divulguées. Si vous avez reçu 
+ce message par erreur, veuillez le détruire.
+
+This communication (and/or the attachments) is intended for named recipients 
+only and may contain privileged or confidential information which is not to be 
+disclosed. If you received this communication by mistake please destroy all 
+copies.
+
+From wic-office at wi-consortium.org  Sat Sep  5 02:06:33 2009
+From: wic-office at wi-consortium.org
+Date: Sat, 05 Sep 2009 11:06:33 +0900
+Subject: AMT-BI'09 Call for Posters/Participation
+Message-ID: <20090905020633.3517.qmail@earth.azu.com>
+
+[Apologies if you receive this more than once]
+
+####################################################################
+     Active Media Technology 2009 & Brain Informatics 2009
+
+          CALL FOR POSTERS and CALL FOR PARTICIPATION
+####################################################################
+
+2009 International Conference on Active Media Technology (AMT 2009)
+2009 International Conference on Brain Informatics (BI 2009)
+
+October 22-24, 2009, Beijing, China
+
+Homepage: http://www.wici-lab.org/amtbi09/
+Mirror page: http://www.iwici.org/amtbi09/
+
+Co-organized by Web Intelligence Consortium (WIC) and 
+IEEE Task Force on Brain Informatics (IEEE TF-BI)
+
+------------------------------------------------
+On-line registration (and more information) at
+http://www.wici-lab.org/amtbi09/
+
+Posters Due: *** 30 September 2009 ***
+
+Special discount (or free) registration is available
+for students and poster session presenters 
+************************************************
+
+You are invited to join Active Media Technology 2009 and Brain
+Informatics 2009.
+
+Active Media Technology is a new area of intelligent information
+technology and computer science that emphasizes the proactive,
+seamless roles of interfaces and systems as well as new media in all
+aspects of digital life. An AMT based system offers services to enable
+the rapid design, implementation and support of customized solutions.
+
+Brain Informatics has recently emerged as an interdisciplinary
+research field that focuses on studying the mechanisms underlying the
+human information processing system (HIPS).  BI lies in the interplay
+between the studies of human brain and the research of informatics.
+
+The two conferences will have a joint opening, keynote, reception, and
+banquet. Attendees only need to register for one conference and can
+attend keynotes, sessions, workshop, posters across the two conferences.
+
+============================
+***** Call for Posters *****
+============================
+
+AMT-BI'09 also welcomes Posters submissions.  
+AMT-BI'09 Posters session will provide researchers and practitioners
+in active media technology and brain informatics an exciting and
+highly interactive way to explore new ideas and results.
+All areas of the AMT/BI conference are of interest to the Posters and Demos.
+
+The proposal of a poster must include the following information:
+
+- Authors (name, affiliation, email, address, phone and fax)
+- The corresponding author with her/his email address
+- Title
+- Keywords
+- The category of the submission (AMT or BI) 
+
+The proposals of posters must be submitted online at the conference websites.
+The deadline for proposals submission is *** 30 September 2009 ***.
+
+Special discount (or free) registration is available
+for students and poster session presenters 
+
+AMT-BI 2009 Keynote Speakers
+============================
+
+Using Neural Imaging to Inform the Instruction of Mathematics
+Professor John Anderson
+Department of Psychology, Carnegie Mellon University
+http://act-r.psy.cmu.edu/people/ja/
+
+Distributed Human-Machine Systems: Progress and Prospects
+Dr. Jeffrey M. Bradshaw
+Florida Institute for Human and Machine Cognition (IHMC)
+http://www.ihmc.us/users/jbradshaw
+
+Large Scale Reasoning on the Semantic Web:
+what to do when success is becoming a problem
+Professor Frank van Harmelen
+AI Department, Vrije Universiteit Amsterdam
+http://www.cs.vu.nl/~frankh
+
+How Midazolam Can Help Us Understand Human Memory:  
+3 Illustrations and a Proposal for a New Methodology
+Professor Lynne Reder
+Department of Psychology, Carnegie Mellon University
+http://memory.psy.cmu.edu/
+
+Research on Brain-like Computer
+Professor Zhongzhi Shi
+Key Laboratory of Intelligent Information Processing
+Institute of Computing Technology, Chinese Academy of Sciences
+http://www.intsci.ac.cn/en/shizz/
+
+A Framework for Machine Learning with Ambiguous Objects
+Professor Zhi-Hua Zhou   
+National Key Laboratory for Novel Software Technology
+Nanjing University, China
+http://cs.nju.edu.cn/zhouzh/ 
+
+AMT-BI 2009 Special Sessions
+============================
+
+In addition to sessions for presenting accepted papers, 
+we have the following special sessions:
+
+Special Session on Information Processing Meets Brain Sciences
+--------------------------------------------------------------
+
+Data Compression and Data Selection in Human Vision
+Zhaoping Li (University College London, UK)
+
+Do Brain Networks Correlate with Intelligence?
+Tianzi Jiang (Institute of Automation, Chinese Academy of Sciences, China)
+
+How Were Intelligence and Language Created in Human Brain
+Setsuo Ohsuga (University of Tokyo, Japan)
+
+Affective Learning with an EEG Approach
+Bin Hu (Birmingham City University, UK, and  
+        Lanzhou Unviersity, China)
+
+Some Web Intelligence Oriented Brain Informatics Studies
+Yulin Qin (Beijing University of Technology, China, and 
+           Carnegie Mellon University, USA)
+
+Special Session on Conversational Informatics
+---------------------------------------------
+
+Implementing a Multi-user Tour Guide system with an Embodied 
+Conversational Agent
+Aleksandra Cerekovic, Hsuan-Huang Huang, Takuya Furukawa, Yuji Yamaoka,
+Igor Pandzic, Toyoaki Nishida, and Yukiko Nakano
+
+Actively Adaptive Agent for Human-Agent Collaborative Task
+Yong Xu, Yoshimasa Ohmoto, Kazuhiro Ueda, Takanori Komatsu, Takeshi
+Okadome, Koji Kamei, Shogo Okada, Yasuyuki Sumi, and Toyoaki Nishida
+
+Low-Overhead 3D Items Drawing Engine for Communicating Situated Knowledge
+Loic Merckel and Toyoaki Nishida
+
+A Method to Detect Lies in Free Communication using Diverse
+Nonverbal Information: Towards an Attentive Agent
+Yoshimasa Ohmoto, Kazuhiro Ueda, and Takehiko Ohno
+
+An Integrative Agent Model for Adaptive Human-Aware Presentation
+of Information During Demanding Tasks
+Andy van der Mee, Nataliya Mogles, and Jan Treur
+
+Special Session on Human-Web Interaction
+----------------------------------------
+
+Consumer Decision Making in Knowledge-Based Recommendation
+Monika Mandl, Alexander Felfernig, and Monika Schubert
+
+Incremental Learning of Triadic PLSA for Collaborative Filtering 
+Hu Wu and Yongji Wang
+
+Interactive Storyboard: Animated Story Creation on Touch Interfaces 
+Kun Yu, Hao Wang, Chang Liu, and Jianwei Niu
+
+Comparative Evaluation of Reliabilities on Semantic Search
+Functions: Auto-complete and Entity-centric Unified Search 
+Hanmin Jung, Mi-Kyoung Lee, Beom-Jong You, and Do-Wan Kim
+
+Integrated Recommender Systems Based on Ontology and Usage Mining
+Liang Wei
+
+AMT-BI 2009 Workshop
+====================
+
+WICI Workshop/Posters on Web Intelligence Meets Brain Informatics
+
+Conference Site
+===============
+The conference will take place at the Grand Gongda Jianguo Hotel 
+(Beijing Gongda Jianguo Fandian - 4-stars hotel) is located inside 
+Beijing University of Technology within close proximity of 
+the central business district and only a five-minute walk 
+from the 2008 Beijing Olympic badminton and eurythmics venue. 
+We will give a special discount price for BI-AMT'09 attendees.
+(400 RMB/1 single room, 450 RMB/1 double room (2 persons use), 
+including Tax, Breakfast, etc.)
+The hotel reservation information is available at the AMT-BI'09 homepages.
+
+-----------------
+Co-sponsored by 
+Beijing University of Technology (BJUT)
+Chinese Society of Radiology
+National Natural Science Foundation of China (NSFC)
+State Administration of Foreign Experts Affairs, PRC
+Shanghai Psytech Electronic Technology Co. Ltd
+Shenzhen Hanix United, Inc. Beijing Branch
+Beijing JinShangQi Net System Integration Co. Ltd
+Springer Lecture Notes in Computer Science (LNCS/LNAI)
+
+*** Contact Information ***
+
+Email: Jia Hu  hujia0601 at gmail.com
+       Jiajin Huang  hjj at emails.bjut.edu.cn
+
+From simona.costanzo at ubs.com  Mon Sep  7 10:24:00 2009
+From: simona.costanzo at ubs.com
+Date: Mon, 07 Sep 2009 11:24:00 +0100
+Subject: Kendall tau-b
+Message-ID: <18C1822E7E505D47AC7D5D6A2DFBC4DC052B503E@NLDNC102PEX1.ubsw.net>
+
+Hi All,
+
+Could anyone please point me to some code in Splus for kendall tau-b, that is kendall tau including correction for ties. (The function cor.test in Splus does not correct for ties). 
+
+Many thanks. 
+
+Kind regards,
+
+Simona
+
+______________________________
+
+Simona Costanzo
+
+UBS IB Risk Methodology 
+
+100 Liverpool Street, London EC2M 2RH
+
+Tel.: +44 (0)20 7567 8089
+
+Internal extension: 19 31 78089 
+
+ 
+
+Visit our website at http://www.ubs.com
+
+This message contains confidential information and is intended only 
+for the individual named.  If you are not the named addressee you 
+should not disseminate, distribute or copy this e-mail.  Please 
+notify the sender immediately by e-mail if you have received this 
+e-mail by mistake and delete this e-mail from your system.
+        
+E-mails are not encrypted and cannot be guaranteed to be secure or 
+error-free as information could be intercepted, corrupted, lost, 
+destroyed, arrive late or incomplete, or contain viruses.  The sender 
+therefore does not accept liability for any errors or omissions in the 
+contents of this message which arise as a result of e-mail transmission.  
+If verification is required please request a hard-copy version.  This 
+message is provided for informational purposes and should not be 
+construed as a solicitation or offer to buy or sell any securities 
+or related financial instruments.
+
+UBS Limited is a company registered in England & Wales under company
+number 2035362, whose registered office is at 1 Finsbury Avenue,
+London, EC2M 2PP, United Kingdom.
+
+UBS AG (London Branch) is registered as a branch of a foreign company
+under number BR004507, whose registered office is at
+1 Finsbury Avenue, London, EC2M 2PP, United Kingdom.
+
+UBS Clearing and Execution Services Limited is a company registered
+in England & Wales under company number 03123037, whose registered
+office is at 1 Finsbury Avenue, London, EC2M 2PP, United Kingdom.
+ 
+UBS reserves the right to retain all messages. Messages are protected
+and accessed only in legally justified cases.
+
+From r.verwer at nin.knaw.nl  Mon Sep  7 14:53:23 2009
+From: r.verwer at nin.knaw.nl (Ronald WH Verwer)
+Date: Mon, 07 Sep 2009 16:53:23 +0200
+Subject: Re: Kendall tau-b
+Message-ID: <4AA53A83.13626.1EBF705@r.verwer.nin.knaw.nl>
+
+Simona,
+
+In the helpfile for cor.test a reference to Conover is made. On p 
+256-257 Conover illustrates the Kendall tau with an example 
+containing ties. So, it can be expected that S+ allows for ties 
+when using Kendall.
+
+Best wishes,
+
+Ronald W.H. Verwer
+Netherlands Institute for Neuroscience
+an institute of the Royal Netherlands
+Academy of Arts and Sciences
+Meibergdreef 47
+1105 BA Amsterdam
+The Netherlands
+tel: 020-5665518
+fax: 020-5666121
+email: r.verwer at nin.knaw.nl
+web-site:www1.nin.knaw.nl/~verwer
+
+From simona.costanzo at ubs.com  Mon Sep  7 15:50:46 2009
+From: simona.costanzo at ubs.com
+Date: Mon, 07 Sep 2009 16:50:46 +0100
+Subject: Re: Kendall tau-b
+In-Reply-To: <4AA53A83.13626.1EBF705@r.verwer.nin.knaw.nl>
+References: <4AA53A83.13626.1EBF705@r.verwer.nin.knaw.nl>
+Message-ID: <18C1822E7E505D47AC7D5D6A2DFBC4DC052B51FF@NLDNC102PEX1.ubsw.net>
+
+Many Thanks Ronald,
+
+Possibly it does include some type of correction, but I am unsure of the
+formulation. It is not tau-b, I have compared calcualtion of Tau with
+SAS, R and Stata, and results are not the same when there are ties.
+
+Kind regards,
+
+Simona
+
+ 
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Ronald WH
+Verwer
+Sent: 07 September 2009 15:53
+To: s-news at lists.biostat.wustl.edu
+Subject: Re: [S] Kendall tau-b
+
+Simona,
+
+In the helpfile for cor.test a reference to Conover is made. On p
+256-257 Conover illustrates the Kendall tau with an example containing
+ties. So, it can be expected that S+ allows for ties when using Kendall.
+
+Best wishes,
+
+Ronald W.H. Verwer
+Netherlands Institute for Neuroscience
+an institute of the Royal Netherlands
+Academy of Arts and Sciences
+Meibergdreef 47
+1105 BA Amsterdam
+The Netherlands
+tel: 020-5665518
+fax: 020-5666121
+email: r.verwer at nin.knaw.nl
+web-site:www1.nin.knaw.nl/~verwer
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+Visit our website at http://www.ubs.com
+
+This message contains confidential information and is intended only
+for the individual named.  If you are not the named addressee you
+should not disseminate, distribute or copy this e-mail.  Please
+notify the sender immediately by e-mail if you have received this
+e-mail by mistake and delete this e-mail from your system.
+
+E-mails are not encrypted and cannot be guaranteed to be secure or
+error-free as information could be intercepted, corrupted, lost,
+destroyed, arrive late or incomplete, or contain viruses.  The sender
+therefore does not accept liability for any errors or omissions in the
+contents of this message which arise as a result of e-mail transmission.
+If verification is required please request a hard-copy version.  This
+message is provided for informational purposes and should not be
+construed as a solicitation or offer to buy or sell any securities
+or related financial instruments.
+
+UBS Limited is a company registered in England & Wales under company
+number 2035362, whose registered office is at 1 Finsbury Avenue,
+London, EC2M 2PP, United Kingdom.
+
+UBS AG (London Branch) is registered as a branch of a foreign company
+under number BR004507, whose registered office is at
+1 Finsbury Avenue, London, EC2M 2PP, United Kingdom.
+
+UBS Clearing and Execution Services Limited is a company registered
+in England & Wales under company number 03123037, whose registered
+office is at 1 Finsbury Avenue, London, EC2M 2PP, United Kingdom.
+
+UBS reserves the right to retain all messages. Messages are protected
+and accessed only in legally justified cases.
+
+From r.verwer at nin.knaw.nl  Tue Sep  8 06:36:04 2009
+From: r.verwer at nin.knaw.nl (Ronald WH Verwer)
+Date: Tue, 08 Sep 2009 08:36:04 +0200
+Subject: Re: Kendall tau-b
+In-Reply-To: <18C1822E7E505D47AC7D5D6A2DFBC4DC052B51FF@NLDNC102PEX1.ubsw.net>
+References: <4AA53A83.13626.1EBF705@r.verwer.nin.knaw.nl> <18C1822E7E505D47AC7D5D6A2DFBC4DC052B51FF@NLDNC102PEX1.ubsw.net>
+Message-ID: <4AA61774.27682.22BD27@r.verwer.nin.knaw.nl>
+
+Dear Simona,
+
+I have performed S+ Kendall with the example of Conover:
+> X <- c(68,70,71,71,72,77,77,86,87,88,91,91)
+> Y <- c(64,65,77,80,72,65,76,88,72,81,90,96)
+> cor.test(X,Y, method="k")
+
+        Kendall's rank correlation tau 
+
+data:  X and Y 
+normal-z = 2.567, p-value = 0.0103 
+alternative hypothesis:  tau is not equal to 0 
+sample estimates:
+       tau 
+ 0.5606061
+
+Conover gives: 0.5606.
+
+If you wish to check the program:
+
+> cor.test
+function(x, y, alternative = "two.sided", method = "pearson")
+{
+        stop.on.bdObject(x)
+        stop.on.bdObject(y)
+        if(is(x, "series"))
+                x <- as.matrix(x@data)
+        if(is(y, "series"))
+                y <- as.matrix(y@data)
+        vark <- function(x, y)
+        {
+                # variance of K for Kendall's tau
+                ties.x <- as.double(rle(sort(x))$lengths)
+                ties.y <- as.double(rle(sort(y))$lengths)
+                n <- as.double(length(x))
+                t1 <- n * (n - 1) * (2 * n + 5)
+                t2 <- sum(ties.x * (ties.x - 1) * (2 * ties.x + 5))
+                t3 <- sum(ties.y * (ties.y - 1) * (2 * ties.y + 5))
+                v1 <- (t1 - t2 - t3)/18
+                t1 <- sum(ties.x * (ties.x - 1) * (ties.x - 2))
+                t2 <- sum(ties.y * (ties.y - 1) * (ties.y - 2))
+                v2 <- (t1 * t2)/(9 * n * (n - 1) * (n - 2))
+                t1 <- sum(ties.x * (ties.x - 1)) * sum(ties.y * 
+(ties.y - 1))
+                v3 <- t1/(2 * n * (n - 1))
+                v1 + v2 + v3
+......
+
+                if(imeth == 2) {
+                        # a fast, efficient way to compute 
+concordant pairs:
+                        concordant.sum <- 
+sum(unlist(lapply(seq(along = x), function(i, x, y)
+                        sum(sign((x[i] - x[1:i]) * (y[i] - y[1:i]))), x, 
+y)))
+                        # Kendall's tau:
+                        coef <- (2 * concordant.sum)/(n * (n - 1))
+                        attr(coef, "names") <- "tau"
+                        #stddv <- sqrt((n * (n - 1) * (2 * n + 
+5))/18)
+                        stat <- concordant.sum/sqrt(vark(x, y))
+                        # z statistic
+                        attr(stat, "names") <- "normal-z"
+.......
+
+I hope this helps,
+
+Kind regards,
+
+Ronald
+
+> 
+
+On 7 Sep 2009 at 16:50, simona.costanzo at ubs.com wrote:
+
+> Many Thanks Ronald,
+> 
+> Possibly it does include some type of correction, but I am unsure of the
+> formulation. It is not tau-b, I have compared calcualtion of Tau with
+> SAS, R and Stata, and results are not the same when there are ties.
+> 
+> Kind regards,
+> 
+> Simona
+> 
+>  
+> 
+> -----Original Message-----
+> From: s-news-owner at lists.biostat.wustl.edu
+> [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Ronald WH
+> Verwer
+> Sent: 07 September 2009 15:53
+> To: s-news at lists.biostat.wustl.edu
+> Subject: Re: [S] Kendall tau-b
+> 
+> Simona,
+> 
+> In the helpfile for cor.test a reference to Conover is made. On p
+> 256-257 Conover illustrates the Kendall tau with an example containing
+> ties. So, it can be expected that S+ allows for ties when using Kendall.
+> 
+> Best wishes,
+> 
+> 
+> 
+> Ronald W.H. Verwer
+> Netherlands Institute for Neuroscience
+> an institute of the Royal Netherlands
+> Academy of Arts and Sciences
+> Meibergdreef 47
+> 1105 BA Amsterdam
+> The Netherlands
+> tel: 020-5665518
+> fax: 020-5666121
+> email: r.verwer at nin.knaw.nl
+> web-site:www1.nin.knaw.nl/~verwer
+> 
+> 
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+> Visit our website at http://www.ubs.com
+> 
+> This message contains confidential information and is intended only
+> for the individual named.  If you are not the named addressee you
+> should not disseminate, distribute or copy this e-mail.  Please
+> notify the sender immediately by e-mail if you have received this
+> e-mail by mistake and delete this e-mail from your system.
+> 
+> E-mails are not encrypted and cannot be guaranteed to be secure or
+> error-free as information could be intercepted, corrupted, lost,
+> destroyed, arrive late or incomplete, or contain viruses.  The sender
+> therefore does not accept liability for any errors or omissions in the
+> contents of this message which arise as a result of e-mail transmission.
+> If verification is required please request a hard-copy version.  This
+> message is provided for informational purposes and should not be
+> construed as a solicitation or offer to buy or sell any securities
+> or related financial instruments.
+> 
+> UBS Limited is a company registered in England & Wales under company
+> number 2035362, whose registered office is at 1 Finsbury Avenue,
+> London, EC2M 2PP, United Kingdom.
+> 
+> UBS AG (London Branch) is registered as a branch of a foreign company
+> under number BR004507, whose registered office is at
+> 1 Finsbury Avenue, London, EC2M 2PP, United Kingdom.
+> 
+> UBS Clearing and Execution Services Limited is a company registered
+> in England & Wales under company number 03123037, whose registered
+> office is at 1 Finsbury Avenue, London, EC2M 2PP, United Kingdom.
+> 
+> UBS reserves the right to retain all messages. Messages are protected
+> and accessed only in legally justified cases.
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+
+Ronald W.H. Verwer
+Netherlands Institute for Neuroscience
+an institute of the Royal Netherlands
+Academy of Arts and Sciences
+Meibergdreef 47
+1105 BA Amsterdam
+The Netherlands
+tel: 020-5665518
+fax: 020-5666121
+email: r.verwer at nin.knaw.nl
+web-site:www1.nin.knaw.nl/~verwer
+
+From verkerk at candiensten.nl  Tue Sep  8 14:29:36 2009
+From: verkerk at candiensten.nl (Dick Verkerk)
+Date: Tue, 08 Sep 2009 16:29:36 +0200
+Subject: Pharmacokinetic and pharmacodynamic modeling and simulation
+Message-ID: <4AA66A50.7060009@candiensten.nl>
+
+  Pharmacokinetic and pharmacodynamic modeling and simulation
+  By Dr. Jan Freijer
+  September 24, 2009
+  Amsterdam, The Netherlands
+
+  http://www.can.nl/events/details.php?id=57
+
+  This course is aimed at users of R or S-PLUS in the bio-pharmaceutical
+  sciences who would like to use R for clinical trial simulations.
+
+  topics include
+
+  Working with packages in R
+  - MASS
+  - odesolve
+
+  Random generation from univariate distributions
+  - density, distribution function, quantile function and random generation
+  - various distributions
+
+  Random generation from multivariate distributions
+  - normal distribution
+  - working with the covariance matrix
+  - simulating PK and PK-PD model parameters
+
+  Solving differential equations
+  - solving differential equations in R
+  - testing the numerical solution versus analytical solution
+  - PK models for single dose oral or IV administration
+  - PK models for multiple dose oral or IV administration
+  - implementing PD models
+
+  Clinical trial simulations
+  - combining the structural model with the random effects model
+  - uncertainty versus variability
+  - example: two compartment PK model with indirect response model
+
+  Location:  Amsterdam
+  Date    :  September 24
+  Time    :  10:00h.-16:30h.
+  Price   :  EURO 395,- excluding VAT
+
+  Register:
+  - phone : +31-(0)20-560-8400
+  - Email : paulus at can.nl
+  - Web   : http://www.can.nl/events/details.php?id=57
+
+  There is a maximum of 12 participants.
+
+  You may register by replying to this email and provide us with the
+  following information.
+
+  Name       :                      M / F
+  Title      :
+  Department :
+  Institute  :
+  Address    :
+  City       :
+  Zip        :
+  Telephone  :
+  Fax        :
+  Email      :
+
+  Please let us know if you have any questions.
+
+  Please feel free to send this message on to your colleagues and friends
+  for whom it might be interesting!!
+
+  Kind regards,
+
+  Dick Verkerk
+
+  _________________________
+
+  CANdiensten, Nieuwpoortkade 23-25, NL-1055 RX Amsterdam
+  tel: +31 20 5608410 fax: +31 20 5608448 verkerk at candiensten.nl
+  _________________________
+  Your Partner in Mathematics and Statistics!
+
+From lorenz at usgs.gov  Tue Sep  8 16:01:34 2009
+From: lorenz at usgs.gov (David L Lorenz)
+Date: Tue, 08 Sep 2009 11:01:34 -0500
+Subject: Re: Kendall tau-b
+In-Reply-To: <4AA61774.27682.22BD27@r.verwer.nin.knaw.nl>
+References: <4AA53A83.13626.1EBF705@r.verwer.nin.knaw.nl> <18C1822E7E505D47AC7D5D6A2DFBC4DC052B51FF@NLDNC102PEX1.ubsw.net> <4AA61774.27682.22BD27@r.verwer.nin.knaw.nl>
+Message-ID: <OF8929BA52.3522859C-ON8625762B.0057B907-8625762B.005808F1@usgs.gov>
+
+Ronald,
+
+  The value of tau that is reported
+is tau, not tau-b, which accounts for ties. The p-value is adjusted for
+ties as you suggest.
+
+  For your example, the number
+of positive values is 49, the number of negative values is 12, and the
+number of ties is 5. So tau is (49 - 12)/ (12 * 11 / 2) = 37/ 66 = .5606061.
+the value for tau-b would be slightly larger, about 0.58.
+
+Dave
+
+From:
+"Ronald WH Verwer" <r.verwer at nin.knaw.nl>
+
+To:
+simona.costanzo at ubs.com, s-news at lists.biostat.wustl.edu
+
+Date:
+09/08/2009 01:36 AM
+
+Subject:
+Re: [S] Kendall tau-b
+
+Sent by:
+s-news-owner at lists.biostat.wustl.edu
+
+Dear Simona,
+
+I have performed S+ Kendall with the example of Conover:
+
+> X <- c(68,70,71,71,72,77,77,86,87,88,91,91)
+
+> Y <- c(64,65,77,80,72,65,76,88,72,81,90,96)
+
+> cor.test(X,Y, method="k")
+
+                
+Kendall's rank correlation tau 
+
+data:  X and Y 
+
+normal-z = 2.567, p-value = 0.0103 
+
+alternative hypothesis:  tau is not equal to 0 
+
+sample estimates:
+
+       tau 
+
+ 0.5606061
+
+Conover gives: 0.5606.
+
+If you wish to check the program:
+
+> cor.test
+
+function(x, y, alternative = "two.sided", method = "pearson")
+
+{
+
+                
+stop.on.bdObject(x)
+
+                
+stop.on.bdObject(y)
+
+                
+if(is(x, "series"))
+
+                
+                 x
+<- as.matrix(x@data)
+
+                
+if(is(y, "series"))
+
+                
+                 y
+<- as.matrix(y@data)
+
+                
+vark <- function(x, y)
+
+                
+{
+
+                
+                 #
+variance of K for Kendall's tau
+
+                
+                 ties.x
+<- as.double(rle(sort(x))$lengths)
+
+                
+                 ties.y
+<- as.double(rle(sort(y))$lengths)
+
+                
+                 n
+<- as.double(length(x))
+
+                
+                 t1
+<- n * (n - 1) * (2 * n + 5)
+
+                
+                 t2
+<- sum(ties.x * (ties.x - 1) * (2 * ties.x + 5))
+
+                
+                 t3
+<- sum(ties.y * (ties.y - 1) * (2 * ties.y + 5))
+
+                
+                 v1
+<- (t1 - t2 - t3)/18
+
+                
+                 t1
+<- sum(ties.x * (ties.x - 1) * (ties.x - 2))
+
+                
+                 t2
+<- sum(ties.y * (ties.y - 1) * (ties.y - 2))
+
+                
+                 v2
+<- (t1 * t2)/(9 * n * (n - 1) * (n - 2))
+
+                
+                 t1
+<- sum(ties.x * (ties.x - 1)) * sum(ties.y * 
+
+(ties.y - 1))
+
+                
+                 v3
+<- t1/(2 * n * (n - 1))
+
+                
+                 v1
++ v2 + v3
+
+......
+
+                
+                 if(imeth
+== 2) {
+
+                
+                 
+               
+# a fast, efficient way to compute 
+
+concordant pairs:
+
+                
+                 
+               
+concordant.sum <- 
+
+sum(unlist(lapply(seq(along = x), function(i, x, y)
+
+                
+                 
+               
+sum(sign((x[i] - x[1:i]) * (y[i] - y[1:i]))), x, 
+
+y)))
+
+                
+                 
+               
+# Kendall's tau:
+
+                
+                 
+               
+coef <- (2 * concordant.sum)/(n * (n - 1))
+
+                
+                 
+               
+attr(coef, "names") <- "tau"
+
+                
+                 
+               
+#stddv <- sqrt((n * (n - 1) * (2 * n + 
+
+5))/18)
+
+                
+                 
+               
+stat <- concordant.sum/sqrt(vark(x, y))
+
+                
+                 
+               
+# z statistic
+
+                
+                 
+               
+attr(stat, "names") <- "normal-z"
+
+.......
+
+I hope this helps,
+
+Kind regards,
+
+Ronald
+
+> 
+
+On 7 Sep 2009 at 16:50, simona.costanzo at ubs.com wrote:
+
+> Many Thanks Ronald,
+
+> 
+
+> Possibly it does include some type of correction, but I am unsure
+of the
+
+> formulation. It is not tau-b, I have compared calcualtion of Tau with
+
+> SAS, R and Stata, and results are not the same when there are ties.
+
+> 
+
+> Kind regards,
+
+> 
+
+> Simona
+
+> 
+
+>  
+
+> 
+
+> -----Original Message-----
+
+> From: s-news-owner at lists.biostat.wustl.edu
+
+> [mailto:s-news-owner at lists.biostat.wustl.edu]
+On Behalf Of Ronald WH
+
+> Verwer
+
+> Sent: 07 September 2009 15:53
+
+> To: s-news at lists.biostat.wustl.edu
+
+> Subject: Re: [S] Kendall tau-b
+
+> 
+
+> Simona,
+
+> 
+
+> In the helpfile for cor.test a reference to Conover is made. On p
+
+> 256-257 Conover illustrates the Kendall tau with an example containing
+
+> ties. So, it can be expected that S+ allows for ties when using Kendall.
+
+> 
+
+> Best wishes,
+
+> 
+
+> 
+
+> 
+
+> Ronald W.H. Verwer
+
+> Netherlands Institute for Neuroscience
+
+> an institute of the Royal Netherlands
+
+> Academy of Arts and Sciences
+
+> Meibergdreef 47
+
+> 1105 BA Amsterdam
+
+> The Netherlands
+
+> tel: 020-5665518
+
+> fax: 020-5666121
+
+> email: r.verwer at nin.knaw.nl
+
+> web-site:www1.nin.knaw.nl/~verwer
+
+> 
+
+> 
+
+> --------------------------------------------------------------------
+
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu
+with
+
+> the BODY of the message:  unsubscribe s-news
+
+> Visit our website at http://www.ubs.com
+
+> 
+
+> This message contains confidential information and is intended only
+
+> for the individual named.  If you are not the named addressee
+you
+
+> should not disseminate, distribute or copy this e-mail.  Please
+
+> notify the sender immediately by e-mail if you have received this
+
+> e-mail by mistake and delete this e-mail from your system.
+
+> 
+
+> E-mails are not encrypted and cannot be guaranteed to be secure or
+
+> error-free as information could be intercepted, corrupted, lost,
+
+> destroyed, arrive late or incomplete, or contain viruses.  The
+sender
+
+> therefore does not accept liability for any errors or omissions in
+the
+
+> contents of this message which arise as a result of e-mail transmission.
+
+> If verification is required please request a hard-copy version.  This
+
+> message is provided for informational purposes and should not be
+
+> construed as a solicitation or offer to buy or sell any securities
+
+> or related financial instruments.
+
+> 
+
+> UBS Limited is a company registered in England & Wales under company
+
+> number 2035362, whose registered office is at 1 Finsbury Avenue,
+
+> London, EC2M 2PP, United Kingdom.
+
+> 
+
+> UBS AG (London Branch) is registered as a branch of a foreign company
+
+> under number BR004507, whose registered office is at
+
+> 1 Finsbury Avenue, London, EC2M 2PP, United Kingdom.
+
+> 
+
+> UBS Clearing and Execution Services Limited is a company registered
+
+> in England & Wales under company number 03123037, whose registered
+
+> office is at 1 Finsbury Avenue, London, EC2M 2PP, United Kingdom.
+
+> 
+
+> UBS reserves the right to retain all messages. Messages are protected
+
+> and accessed only in legally justified cases.
+
+> --------------------------------------------------------------------
+
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu
+with
+
+> the BODY of the message:  unsubscribe s-news
+
+Ronald W.H. Verwer
+
+Netherlands Institute for Neuroscience
+
+an institute of the Royal Netherlands
+
+Academy of Arts and Sciences
+
+Meibergdreef 47
+
+1105 BA Amsterdam
+
+The Netherlands
+
+tel: 020-5665518
+
+fax: 020-5666121
+
+email: r.verwer at nin.knaw.nl
+
+web-site:www1.nin.knaw.nl/~verwer
+
+--------------------------------------------------------------------
+
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+
+the BODY of the message:  unsubscribe s-news
+
+From lawrence-hunsicker at uiowa.edu  Tue Sep  8 22:38:39 2009
+From: lawrence-hunsicker at uiowa.edu (Hunsicker, Lawrence)
+Date: Tue, 08 Sep 2009 17:38:39 -0500
+Subject: Questions about the cmprsk package
+Message-ID: <2B80F69A8A189D48B0E668B0BBC6BA4203E7634C@HC-MAIL13.healthcare.uiowa.edu>
+
+Good afternoon, folks:
+
+I have a question about the use of the cmprsk package.  Note that this package was developed for the R platform, but it has been ported to the S platform.  
+
+So I guess that my first question is whether there is an R-news list similar to the S-news list where I should also pose this question?
+
+To understand my question, it might help to know what I am trying to do.  I am looking at the impact of a liver organ allocation policy change in UNOS Region 8, comparing various outcomes in the two years before the policy change (era 1) to the two years following the policy change (era 2), using the data from UNOS Regions 6 and 7 as time controls.  Patients on the liver transplant waiting list may have been listed prior to the start of era 1 and may continue on the list up to and into era 2.  
+
+My question:
+
+The functions request a vector ftime (failure/censor times) and a vector fstatus (event and censoring indicators).  Is there a way to engineer a Surv(start, stop, event) counting process approach so that I can accommodate the patients that are listed prior to the start of era1, (i.e, where start > 0)?
+
+Thanks in advance for any help that any of you can give me.
+
+L. G. Hunsicker, M.D.
+
+Professor, Internal Medicine
+
+U. Iowa College of Medicine
+
+Phone:  (319) 356-4763
+
+Fax:  (319) 356-7488
+
+lawrence-hunsicker at uiowa.edu
+
+From ktdavis at u.washington.edu  Tue Sep  8 23:07:43 2009
+From: ktdavis at u.washington.edu (Katie Odem-Davis)
+Date: Tue, 08 Sep 2009 16:07:43 -0700
+Subject: Re: Questions about the cmprsk package
+In-Reply-To: <2B80F69A8A189D48B0E668B0BBC6BA4203E7634C@HC-MAIL13.healthcare.uiowa.edu>
+References: <2B80F69A8A189D48B0E668B0BBC6BA4203E7634C@HC-MAIL13.healthcare.uiowa.edu>
+Message-ID: <Pine.LNX.4.43.0909081607430.22358@hymn14.u.washington.edu>
+
+Dr. Hunsicker:
+
+There are multiple lists for support with the R platform.  Here is a link to a 
+page with more information about these lists:
+
+http://www.r-project.org/mail.html
+
+Good luck!
+Katie
+
+On Tue, 8 Sep 2009, Hunsicker, Lawrence wrote:
+
+> Good afternoon, folks:
+>
+> I have a question about the use of the cmprsk package.  Note that this
+> package was developed for the R platform, but it has been ported to the
+> S platform.
+>
+> So I guess that my first question is whether there is an R-news list
+> similar to the S-news list where I should also pose this question?
+>
+> To understand my question, it might help to know what I am trying to do.
+> I am looking at the impact of a liver organ allocation policy change in
+> UNOS Region 8, comparing various outcomes in the two years before the
+> policy change (era 1) to the two years following the policy change (era
+> 2), using the data from UNOS Regions 6 and 7 as time controls.  Patients
+> on the liver transplant waiting list may have been listed prior to the
+> start of era 1 and may continue on the list up to and into era 2.
+>
+> My question:
+>
+> The functions request a vector ftime (failure/censor times) and a vector
+> fstatus (event and censoring indicators).  Is there a way to engineer a
+> Surv(start, stop, event) counting process approach so that I can
+> accommodate the patients that are listed prior to the start of era1,
+> (i.e, where start > 0)?
+>
+> Thanks in advance for any help that any of you can give me.
+>
+> L. G. Hunsicker, M.D.
+> Professor, Internal Medicine
+> U. Iowa College of Medicine
+> Phone:  (319) 356-4763
+> Fax:  (319) 356-7488
+> lawrence-hunsicker at uiowa.edu
+
+From r.verwer at nin.knaw.nl  Wed Sep  9 07:25:37 2009
+From: r.verwer at nin.knaw.nl (Ronald WH Verwer)
+Date: Wed, 09 Sep 2009 09:25:37 +0200
+Subject: Re: Kendall tau-b
+In-Reply-To: <OF8929BA52.3522859C-ON8625762B.0057B907-8625762B.005808F1@usgs.gov>
+References: <4AA53A83.13626.1EBF705@r.verwer.nin.knaw.nl> <4AA61774.27682.22BD27@r.verwer.nin.knaw.nl> <OF8929BA52.3522859C-ON8625762B.0057B907-8625762B.005808F1@usgs.gov>
+Message-ID: <4AA77493.25393.2EAC56@r.verwer.nin.knaw.nl>
+
+Dave,
+
+Thank you for pointing out that Conover and S+ ignore ties when 
+calculating tau, but that the p-values are indeed corrected (as also 
+appears from the vark-function).
+
+Kind regards,
+
+Ronald
+
+Ronald W.H. Verwer
+Netherlands Institute for Neuroscience
+an institute of the Royal Netherlands
+Academy of Arts and Sciences
+Meibergdreef 47
+1105 BA Amsterdam
+The Netherlands
+tel: 020-5665518
+fax: 020-5666121
+email: r.verwer at nin.knaw.nl
+web-site:www1.nin.knaw.nl/~verwer
+
+From lawrence-hunsicker at uiowa.edu  Wed Sep  9 21:37:40 2009
+From: lawrence-hunsicker at uiowa.edu (Hunsicker, Lawrence)
+Date: Wed, 09 Sep 2009 16:37:40 -0500
+Subject: Plotting cumulative incidence plots for competing risks
+Message-ID: <2B80F69A8A189D48B0E668B0BBC6BA4203E76ABB@HC-MAIL13.healthcare.uiowa.edu>
+
+Good evening, folks:
+
+It has been suggested to me that the most recent version of Terry Therneau’s R package “survival” permits generation of cumulative incidence plots for a competing risks model.  The R package “survival” appears to be the same (more or less) as the survival functions in S-Plus.  Is this possible using S-Plus functions?  If so, can someone point to some documentation that tells me how to do this?
+
+Or should I just do this in R?
+
+Many thanks in advance to anyone that can help me with this issue.
+
+L. G. Hunsicker, M.D.
+
+Professor, Internal Medicine
+
+U. Iowa College of Medicine
+
+Phone:  (319) 356-4763
+
+Fax:  (319) 356-7488
+
+lawrence-hunsicker at uiowa.edu
+
+From therneau at mayo.edu  Wed Sep  9 23:09:29 2009
+From: therneau at mayo.edu (Terry Therneau)
+Date: Wed, 09 Sep 2009 18:09:29 -0500
+Subject: Re: Plotting cumulative incidence plots for competing risks
+In-Reply-To: <2B80F69A8A189D48B0E668B0BBC6BA4203E76ABB@HC-MAIL13.healthcare.uiowa.edu>
+References: <2B80F69A8A189D48B0E668B0BBC6BA4203E76ABB@HC-MAIL13.healthcare.uiowa.edu>
+Message-ID: <1252537769.17589.9.camel@punchbuggy>
+
+Larry,
+   Less that a year ago I starting keeping the survival code on R-forge
+(r-forge.r-project.com), partly as a way to grow toward a wider
+collaboration.  One consequence is that my updates now appear fairly
+rapidly in R, the addition of CI curves to survfit is quite recent --
+within the last 3 months I believe.  
+   I don't know what the Splus plans are for update frequency.  The code
+base on Rforge is still, as best I can make it, distribution agnostic
+since we still use Splus as well as R.  (And based on long standing
+agreement Splus retains the right to include what I author.)
+
+        Terry Therneau
+
+From courses at zanybooks.com  Sat Sep 12 01:25:38 2009
+From: courses at zanybooks.com
+Date: Fri, 11 Sep 2009 18:25:38 -0700
+Subject: How does one address Mac files?
+Message-ID: <20090911182538.b21645f2bceb2bcc4cba8e709837b1d9.ce29ea995e.wbe@email.secureserver.net>
+
+  
+
+How does one address Mac files? That is, how should one rewrite the PC command
+
+ 
+
+wdata=read.table("c:\Rdata\wdata09.csv",sep=",", header=T)
+
+ 
+
+D
+
+ 
+
+From courses at statcourse.com  Mon Sep 14 18:40:17 2009
+From: courses at statcourse.com
+Date: Mon, 14 Sep 2009 11:40:17 -0700
+Subject: Statistics Courses online and interactive
+Message-ID: <20090914114017.5a62eba552c1ae6b94526da164128382.dde12f0e9c.wbe@email01.secureserver.net>
+
+Learn Statistics Through Applications.  An easy introduction to the basic concepts of statistics. Three lessons in three Weeks.  7 October  to 28 October 2009.   $199. Early Bird discount of $25 before 29 September 2009.  
+
+Modeling with R.  Three lessons in three weeks. 7 October  to 28 October 2009.   OLS, EIV, QR, and CART plus validation. $300. Early Bird (by 29th September) discount of $75.  A further $50 discount for students, faculty, and research workers at academic institutions.
+
+ 
+
+ 
+
+How would you test for correlation greater than 0.8?   What's a confidence interval for the 40th percentile?  Take 
+
+Applications of Bootstrap, CART and Permutation Methods from 7 October  to 28 October 2009.  $324.  ($254 for students, faculty, and research workers at academic institutions, and the self-employed.)  Plus Early Bird discount of $50 if you register before 29 September 2009. 
+
+ 
+
+  Write courses at statcourse.com to obtain discounts.  Or, see http://statcourse.com
+
+From Kim.Elmore at noaa.gov  Wed Sep 16 17:13:54 2009
+From: Kim.Elmore at noaa.gov (Kim Elmore)
+Date: Wed, 16 Sep 2009 12:13:54 -0500
+Subject: Problem invoking MASS lda and S-Plus discrim
+Message-ID: <4AB11CD2.8050507@noaa.gov>
+
+I'm running S-Plus 8.1.1 on a Windows XP box.
+
+I can't seem to get the MASS lda function to work. As a test, I used the 
+built-in data set "crabs" as follows:
+
+lda(sex ~ FL + RW + CL + CW + BD. data = crabs)
+
+I get back
+
+Problem: Object "sex" not found
+Use traceback() to see the call stack
+
+Examining traceback() doesn't tell me much, other than S-Plus doesn't 
+recognize any parts of the data frame "crabs." But what really puzzles 
+me is that the same thing happens when I type
+
+discrim(sex ~ FL + RW + CL + CW + BD. data = crabs)
+
+I've tried deleting my .Prefs directory and starting over, but that 
+doesn't help. the same thing happens under S-Plus 8.0.4. I haven't tried 
+going back any further.
+
+Can anyone tell me what gives?
+
+Kim Elmore
+
+--
+Kim Elmore, Ph.D. (PP SEL/MEL/Glider, N5OP, 2nd Class Radiotelegraph, GROL)
+"All weather is divided into three parts: Yes, No and Maybe. The greatest of these 
+is maybe." -- The original Latin appears to be garbled.
+
+From mandans_p at yahoo.com  Wed Sep 16 17:43:59 2009
+From: mandans_p at yahoo.com (Mandans)
+Date: Wed, 16 Sep 2009 10:43:59 -0700
+Subject: a good webiste:http://www.electrondiscountshop.com
+Message-ID: <804578.54333.qm@web56008.mail.re3.yahoo.com>
+
+Dear friend:
+      how are you doing lately?i would like to introduce a good company who 
+trades mainly in electornic products. such as motorcycles, laptops, mobile 
+phones, digial cameras, LCD TV, x box, PS3, GPS, MP3 / 4, etc.
+Now the company is under sales promotion,all the products are sold nearly at 
+its cost.
+They provide the best service and original products of
+good quality, moreover ,the price is a surprising happiness to you!
+It is realy a good chance for shopping.just grasp the opportunity,Now or never!
+http://www.electrondiscountshop.com
+
+      
+
+From wdunlap at tibco.com  Wed Sep 16 17:44:30 2009
+From: wdunlap at tibco.com (William Dunlap)
+Date: Wed, 16 Sep 2009 10:44:30 -0700
+Subject: Re: Problem invoking MASS lda and S-Plus discrim
+In-Reply-To: <4AB11CD2.8050507@noaa.gov>
+References: <4AB11CD2.8050507@noaa.gov>
+Message-ID: <77EB52C6DD32BA4D87471DCD70C8D70001CE58D3@NA-PA-VBE03.na.tibco.com>
+
+> -----Original Message-----
+> From: s-news-owner at lists.biostat.wustl.edu 
+> [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Kim Elmore
+> Sent: Wednesday, September 16, 2009 10:14 AM
+> To: S-News
+> Subject: [S] Problem invoking MASS lda and S-Plus discrim
+> 
+> I'm running S-Plus 8.1.1 on a Windows XP box.
+> 
+> I can't seem to get the MASS lda function to work. As a test, 
+> I used the 
+> built-in data set "crabs" as follows:
+> 
+> lda(sex ~ FL + RW + CL + CW + BD. data = crabs)
+
+The first problem is the period after the 'BD' instead of
+a comma.  (Currently, S+ allows spaces in object
+names so 'BD. data' is parsed a a name.  I think it
+would be better if it were treated as an error.)  That
+fixes your problem below with discrim but not with
+lda.
+
+lda's second problem is that its help file lies about the
+names of its arguments.  The first 2 are called 'x' and 'y'
+but if x is a formula object then y is expected to a data.frame
+(like the usual data argument).  If you change 'data=crabs'
+to just 'crabs' or 'y=crabs' it will work:
+
+> lda(sex ~ FL + RW + CL + CW + BD, crabs)
+Call:
+lda(sex ~ FL + RW + CL + CW + BD, crabs)
+
+Prior probabilities of groups:
+   F   M
+ 0.5 0.5
+
+Group means:
+      FL     RW     CL     CW     BD
+F 15.432 13.487 31.360 35.830 13.724
+M 15.734 11.990 32.851 36.999 14.337
+
+Coefficients of linear discriminants:
+           LD1
+FL -0.17509926
+RW -1.61455655
+CL  0.90033985
+CW -0.27294518
+BD  0.08261892
+
+Bill Dunlap
+TIBCO Software Inc - Spotfire Division
+wdunlap tibco.com  
+
+> 
+> I get back
+> 
+> Problem: Object "sex" not found
+> Use traceback() to see the call stack
+> 
+> Examining traceback() doesn't tell me much, other than S-Plus doesn't 
+> recognize any parts of the data frame "crabs." But what 
+> really puzzles 
+> me is that the same thing happens when I type
+> 
+> discrim(sex ~ FL + RW + CL + CW + BD. data = crabs)
+> 
+> I've tried deleting my .Prefs directory and starting over, but that 
+> doesn't help. the same thing happens under S-Plus 8.0.4. I 
+> haven't tried 
+> going back any further.
+> Can anyone tell me what gives?
+> 
+> Kim Elmore
+> 
+> -- 
+> Kim Elmore, Ph.D. (PP SEL/MEL/Glider, N5OP, 2nd Class 
+> Radiotelegraph, GROL)
+> "All weather is divided into three parts: Yes, No and Maybe. 
+> The greatest of these is maybe." -- The original Latin 
+> appears to be garbled.
+> 
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+> 
+
+From Kim.Elmore at noaa.gov  Wed Sep 16 21:22:30 2009
+From: Kim.Elmore at noaa.gov (Kim Elmore)
+Date: Wed, 16 Sep 2009 16:22:30 -0500
+Subject: Re: Problem invoking MASS lda and S-Plus discrim
+In-Reply-To: <77EB52C6DD32BA4D87471DCD70C8D70001CE58D3@NA-PA-VBE03.na.tibco.com>
+References: <4AB11CD2.8050507@noaa.gov> <77EB52C6DD32BA4D87471DCD70C8D70001CE58D3@NA-PA-VBE03.na.tibco.com>
+Message-ID: <4AB15716.4000408@noaa.gov>
+
+Thanks again, Bill!
+
+Yes, the period should be a comma. I should have seen that.
+
+Kim Elmore
+
+William Dunlap wrote:
+> > -----Original Message-----
+> > From: s-news-owner at lists.biostat.wustl.edu
+> > [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Kim Elmore
+> >
+> > Sent: Wednesday, September 16, 2009 10:14 AM
+> > To: S-News
+> > Subject: [S] Problem invoking MASS lda and S-Plus discrim
+> >
+> > I'm running S-Plus 8.1.1 on a Windows XP box.
+> >
+> > I can't seem to get the MASS lda function to work. As a test,
+> > I used the
+> > built-in data set "crabs" as follows:
+> >
+> >
+> > lda(sex ~ FL + RW + CL + CW + BD. data = crabs)
+> >
+>
+>
+> The first problem is the period after the 'BD' instead of
+> a comma.  (Currently, S+ allows spaces in object
+> names so 'BD. data' is parsed a a name.  I think it
+> would be better if it were treated as an error.)  That
+> fixes your problem below with discrim but not with
+> lda.
+>
+> lda's second problem is that its help file lies about the
+> names of its arguments.  The first 2 are called 'x' and 'y'
+> but if x is a formula object then y is expected to a data.frame
+> (like the usual data argument).  If you change 'data=crabs'
+> to just 'crabs' or 'y=crabs' it will work:
+>
+>
+> > lda(sex ~ FL + RW + CL + CW + BD, crabs)
+> >
+>
+> Call:
+> lda(sex ~ FL + RW + CL + CW + BD, crabs)
+>
+> Prior probabilities of groups:
+>    F   M
+>  0.5 0.5
+>
+> Group means:
+>       FL     RW     CL     CW     BD
+> F 15.432 13.487 31.360 35.830 13.724
+> M 15.734 11.990 32.851 36.999 14.337
+>
+> Coefficients of linear discriminants:
+>            LD1
+> FL -0.17509926
+> RW -1.61455655
+> CL  0.90033985
+> CW -0.27294518
+> BD  0.08261892
+>
+> Bill Dunlap
+> TIBCO Software Inc - Spotfire Division
+> wdunlap tibco.com
+>
+>
+> > I get back
+> >
+> > Problem: Object "sex" not found
+> > Use traceback() to see the call stack
+> >
+> > Examining traceback() doesn't tell me much, other than S-Plus doesn't
+> > recognize any parts of the data frame "crabs." But what
+> > really puzzles
+> > me is that the same thing happens when I type
+> >
+> >
+> > discrim(sex ~ FL + RW + CL + CW + BD. data = crabs)
+> >
+> > I've tried deleting my .Prefs directory and starting over, but that
+> > doesn't help. the same thing happens under S-Plus 8.0.4. I
+> > haven't tried
+> > going back any further.
+> >
+> > Can anyone tell me what gives?
+> >
+> > Kim Elmore
+> >
+> > --
+> > Kim Elmore, Ph.D. (PP SEL/MEL/Glider, N5OP, 2nd Class
+> > Radiotelegraph, GROL)
+> > "All weather is divided into three parts: Yes, No and Maybe.
+> > The greatest of these is maybe." -- The original Latin
+> > appears to be garbled.
+> >
+> >
+> > --------------------------------------------------------------------
+> > This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> > unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> > the BODY of the message:  unsubscribe s-news
+> >
+> >
+
+--
+Kim Elmore, Ph.D. (PP SEL/MEL/Glider, N5OP, 2nd Class Radiotelegraph, GROL)
+"All weather is divided into three parts: Yes, No and Maybe. The greatest of these 
+is maybe." -- The original Latin appears to be garbled.
+
+From Kim.Elmore at noaa.gov  Wed Sep 16 21:38:47 2009
+From: Kim.Elmore at noaa.gov (Kim Elmore)
+Date: Wed, 16 Sep 2009 16:38:47 -0500
+Subject: Table and order of rows and columns
+Message-ID: <4AB15AE7.6030206@noaa.gov>
+
+I have data frames of predictions and observation of three factors. Call 
+these A, B, and c. I've built scoring functions that depend on table() 
+returning a contingency table such that column n and row n are always 
+for the same observed and predicted factor.  For example, I want table 
+to return:
+
+  a    b   c
+a  I   J   K
+b  L  M  N
+c  O  P   Q
+
+where I through Q are integers.
+
+Table provides what I want *almost* all the time. But now I've hit a 
+case where the rows and columns do not coincide. For example:
+
+  a   b   c
+b  L   M   N
+c  O   P   Q
+a   I   J   K
+
+What can I do (or use) that will reliably match the order of the rows 
+and columns?
+
+Kim Elmore
+
+--
+Kim Elmore, Ph.D. (PP SEL/MEL/Glider, N5OP, 2nd Class Radiotelegraph, GROL)
+"All weather is divided into three parts: Yes, No and Maybe. The greatest of these 
+is maybe." -- The original Latin appears to be garbled.
+
+From Kim.Elmore at noaa.gov  Wed Sep 16 22:28:56 2009
+From: Kim.Elmore at noaa.gov (Kim Elmore)
+Date: Wed, 16 Sep 2009 17:28:56 -0500
+Subject: Re: Table and order of rows and columns
+In-Reply-To: <5B833E900330354F9FDA984D06F92428067B289F@ca-exchange.corp.pharsight.com>
+References: <4AB15AE7.6030206@noaa.gov> <5B833E900330354F9FDA984D06F92428067B289F@ca-exchange.corp.pharsight.com>
+Message-ID: <4AB166A8.3080902@noaa.gov>
+
+Samer Mouksassi sent me in the right direction. Many thanks!
+
+I've never seen this before, but playing with it, I got what I want.
+
+Imagine a data frame, df, with "prediction" and "observation". If I
+want table() to provide what I want, I need to do the following:
+
+ordered(df$prediction) <- c("a","b","c")
+ordered(df$observation) <- c("a","b","c")
+
+Then table behaves as I wish. I was unaware that factors have an 
+inherent order, but I'm wiser now.
+
+Kim Elmore
+
+Samer Mouksassi wrote:
+> Uses ordered factors instead of factors
+> Functions to look at are
+> ordered()
+>
+> as.ordered()
+> reorder.factor()
+>
+> e.g below
+>
+>
+>
+>
+> > table(singer$voice.part,singer$voice.part)
+> >
+>
+>           Bass 2 Bass 1 Tenor 2 Tenor 1 Alto 2 Alto 1 Soprano 2 Soprano
+> 1
+>    Bass 2     26      0       0       0      0      0         0
+>
+> 0
+>    Bass 1      0     39       0       0      0      0         0
+> 0
+>   Tenor 2      0      0      21       0      0      0         0
+> 0
+>   Tenor 1      0      0       0      21      0      0         0
+> 0
+>    Alto 2      0      0       0       0     27      0         0
+> 0
+>    Alto 1      0      0       0       0      0     35         0
+> 0
+> Soprano 2      0      0       0       0      0      0        30
+> 0
+> Soprano 1      0      0       0       0      0      0         0
+> 36
+>
+> > table(reorder.factor(singer$voice.part,
+> >
+> singer$height),reorder.factor(singer$voice.part, singer$height))
+>           Soprano 2 Soprano 1 Alto 1 Alto 2 Tenor 1 Tenor 2 Bass 1 Bass
+> 2
+> Soprano 2        30         0      0      0       0       0      0
+>
+> 0
+> Soprano 1         0        36      0      0       0       0      0
+> 0
+>    Alto 1         0         0     35      0       0       0      0
+> 0
+>    Alto 2         0         0      0     27       0       0      0
+> 0
+>   Tenor 1         0         0      0      0      21       0      0
+> 0
+>   Tenor 2         0         0      0      0       0      21      0
+> 0
+>    Bass 1         0         0      0      0       0       0     39
+> 0
+>    Bass 2         0         0      0      0       0       0      0
+> 26
+>
+>
+>
+> Samer
+> -----Original Message-----
+>
+> From: s-news-owner at lists.biostat.wustl.edu
+> [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Kim Elmore
+> Sent: 2009-09-16 17:39
+> To: S-News
+> Subject: [S] Table and order of rows and columns
+>
+> I have data frames of predictions and observation of three factors. Call
+>
+> these A, B, and c. I've built scoring functions that depend on table()
+> returning a contingency table such that column n and row n are always
+> for the same observed and predicted factor.  For example, I want table
+> to return:
+>
+>
+>    a    b   c
+> a  I   J   K
+> b  L  M  N
+> c  O  P   Q
+>
+> where I through Q are integers.
+>
+> Table provides what I want *almost* all the time. But now I've hit a
+> case where the rows and columns do not coincide. For example:
+>
+>
+>    a   b   c
+> b  L   M   N
+> c  O   P   Q
+> a   I   J   K
+>
+> What can I do (or use) that will reliably match the order of the rows
+> and columns?
+>
+>
+> Kim Elmore
+>
+>
+
+--
+Kim Elmore, Ph.D. (PP SEL/MEL/Glider, N5OP, 2nd Class Radiotelegraph, GROL)
+"All weather is divided into three parts: Yes, No and Maybe. The 
+greatest of these is maybe." -- The original Latin appears to be garbled.
+
+From ivanouw at post8.tele.dk  Sat Sep 19 13:35:55 2009
+From: ivanouw at post8.tele.dk (Jan Ivanouw)
+Date: Sat, 19 Sep 2009 15:35:55 +0200
+Subject: Problem with placement of 2nd graph as overlay on graph
+Message-ID: <79144221DAB5416F82F5B5DA50782218@JansAthlon64>
+
+Dear S-plus users
+
+ 
+
+On the historgram graph for an observed 
+distribution I want to overlay a normal density distribution 
+with the same mean and SD (and later in the analyses produce graphs 
+with several other theoretical distributions).
+
+I use the following syntax, BUT the normal 
+distribution is displaced on the x-axis (and possibly also on the y-axis). 
+
+The mean of the overlayed normal distribution is 
+farther to the right than the observed distribution. This is probably because 
+S-plus places the graph to fill the graph sheet for the best 
+presentation.
+
+ 
+
+HOW do I manage to have 
+the overlay distribution placed using the same axis scaling than the observed on 
+both the x- and y-axis?
+
+ 
+
+(the observed count variable is "mar") 
+
+ 
+
+hist(mar, nclass = 10,probability 
+=T, xlab = "Number of Mar", ylab = "Proportion of 
+mar",main = "MAR",
+sub = "with normal 
+distribution overlay", density=15)
+
+ 
+
+# Density for theoretic normal distribution with 
+same mean
+par(new = T) # for overlay at the same 
+graf
+plot(density(rnorm(50000,mean(mar),sqrt(var(mar)))),probability 
+=T,type="l", xlab = "", ylab = "",axes = F)
+
+ 
+
+Thank you
+
+ 
+
+Jan Ivanouw
+
+University of 
+Copenhagen
+
+From wdunlap at tibco.com  Sat Sep 19 14:53:40 2009
+From: wdunlap at tibco.com (William Dunlap)
+Date: Sat, 19 Sep 2009 07:53:40 -0700
+Subject: Re: Problem with placement of 2nd graph as overlay on graph
+In-Reply-To: <79144221DAB5416F82F5B5DA50782218@JansAthlon64>
+References: <79144221DAB5416F82F5B5DA50782218@JansAthlon64>
+Message-ID: <77EB52C6DD32BA4D87471DCD70C8D70001CE5FF9@NA-PA-VBE03.na.tibco.com>
+
+>
+>
+>   From: s-news-owner at lists.biostat.wustl.edu
+>   [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Jan
+>   Ivanouw
+> Sent: Saturday, September 19, 2009 6:36 AM
+> To:
+>   s-news at lists.biostat.wustl.edu
+> Subject: [S] Problem with placement
+>   of 2nd graph as overlay on graph
+>
+>
+>
+>
+>
+>   Dear S-plus users
+>
+>
+>
+>   On the historgram graph for an observed
+>   distribution I want to overlay a normal density
+>   distribution with the same mean and SD (and later in the analyses produce
+>   graphs with several other theoretical distributions).
+>
+>
+> I use the following syntax, BUT the normal
+>   distribution is displaced on the x-axis (and possibly also on the y-axis).
+>
+>
+>   The mean of the overlayed normal distribution
+>   is farther to the right than the observed distribution. This is probably
+>   because S-plus places the graph to fill the graph sheet for the best
+>   presentation.
+>
+>
+>
+>   HOW do I manage to have
+>   the overlay distribution placed using the same axis scaling than the observed
+>   on both the x- and y-axis?
+>
+>
+>
+>   (the observed count variable is "mar")
+>
+>
+>
+>   hist(mar, nclass = 10,probability
+>   =T, xlab = "Number of Mar", ylab = "Proportion of
+>   mar",main = "MAR",
+> sub = "with
+>   normal distribution overlay", density=15)
+>
+>
+>
+>   # Density for theoretic normal distribution
+>   with same mean
+> par(new = T) # for overlay at the same
+>   graf
+> plot(density(rnorm(50000,mean(mar),sqrt(var(mar)))),probability
+>   =T,type="l", xlab = "", ylab = "",axes = F)
+>
+>
+>
+>
+>
+>   The
+>   par(new=TRUE) tells the plotting system to forget about the
+>   current
+>
+>   coordinate
+>   system (and to forget that anything is plotted on the
+>   current
+>
+>   page).  Omit that line and
+>   replace
+>
+>      plot(density(...),
+>   ...)
+>
+>   with
+>
+>      lines(density(...))
+>
+>
+>
+>   The
+>   complete script would be
+>
+>
+>
+>
+>   hist(mar, nclass = 10,probability =T,
+>   xlab = "Number of Mar", ylab = "Proportion of
+>   mar",main = "MAR",
+> sub = "with normal distribution overlay",
+>   density=15)
+>
+>
+>
+>   # Density for theoretic normal
+>   distribution with same mean
+>  lines (density(rnorm(50000,mean(mar),sqrt(var(mar)))))
+>
+>
+>
+>
+>   Note that
+>   the comment is wrong -- that gives you the density
+>   of
+>
+>   a sample
+>   from a normal distribution.  To get the actual
+>   density
+>
+>   use the
+>   dnorm(x, mean, sd) function, as in
+>
+>
+>
+>    x<-seq(min(mar),max(mar),length=500)
+>
+>    lines(x,
+>   dnorm(x,mean(mar),sqrt(var(mar))))
+>
+>
+>   Bill Dunlap
+> TIBCO Software Inc - Spotfire
+>   Division
+> wdunlap tibco.com
+>
+>
+>   Thank you
+>
+>
+>
+>   Jan Ivanouw
+>
+>   University of
+> Copenhagen
+
+From ivanouw at post8.tele.dk  Sat Sep 19 16:42:49 2009
+From: ivanouw at post8.tele.dk (Jan Ivanouw)
+Date: Sat, 19 Sep 2009 18:42:49 +0200
+Subject: Re: Problem with placement of 2nd graph as overlay on graph
+References: <79144221DAB5416F82F5B5DA50782218@JansAthlon64> <77EB52C6DD32BA4D87471DCD70C8D70001CE5FF9@NA-PA-VBE03.na.tibco.com>
+Message-ID: <CE4C7D1B52D049E5AE4E04174D495754@JansAthlon64>
+
+Thank you. This works very fine.
+
+ 
+
+How would I do to overlay a histogram of the 
+theoretical Poisson distribution with same mean unto the histogram with the 
+observed data?
+
+Jan Ivanouw
+
+>   ----- Original Message -----
+>
+>   From:
+>   William Dunlap
+>
+>
+>   To: Jan Ivanouw ; s-news at lists.biostat.wustl.edu
+>
+>
+>   Sent: Saturday, September 19, 2009 4:53
+>   PM
+>
+>   Subject: RE: [S] Problem with placement
+>   of 2nd graph as overlay on graph
+>
+>
+>
+>
+>   >
+> >
+> >     From: s-news-owner at lists.biostat.wustl.edu
+> >     [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Jan
+> >     Ivanouw
+> > Sent: Saturday, September 19, 2009 6:36 AM
+> > To:
+> >     s-news at lists.biostat.wustl.edu
+> > Subject:
+> >     [S] Problem with placement of 2nd graph as overlay on
+> >     graph
+> >
+> >
+> >
+> >
+> >
+> >     Dear S-plus users
+> >
+> >
+> >
+> >     On the historgram graph for an observed
+> >     distribution I want to overlay a normal density
+> >     distribution with the same mean and SD (and later in the analyses produce
+> >     graphs with several other theoretical
+> >     distributions).
+> >
+> >
+> > I use the following syntax, BUT the
+> >     normal distribution is displaced on the x-axis (and possibly also on the
+> >     y-axis).
+> >
+> >     The mean of the overlayed normal distribution
+> >     is farther to the right than the observed distribution. This is probably
+> >     because S-plus places the graph to fill the graph sheet for the best
+> >     presentation.
+> >
+> >
+> >
+> >     HOW do I manage to
+> >     have the overlay distribution placed using the same axis scaling than the
+> >     observed on both the x- and y-axis?
+> >
+> >
+> >
+> >     (the observed count variable is "mar")
+> >
+> >
+> >
+> >     hist(mar, nclass =
+> >     10,probability =T, xlab = "Number of Mar", ylab =
+> >     "Proportion of mar",main = "MAR",
+> > sub = "with normal distribution overlay",
+> >     density=15)
+> >
+> >
+> >
+> >     # Density for theoretic normal distribution
+> >     with same mean
+> > par(new = T) # for overlay at the same
+> >     graf
+> > plot(density(rnorm(50000,mean(mar),sqrt(var(mar)))),probability
+> >     =T,type="l", xlab = "", ylab = "",axes = F)
+> >
+> >
+> >
+> >
+> >
+> >     The
+> >     par(new=TRUE) tells the plotting system to forget about the
+> >     current
+> >
+> >     coordinate system (and to forget that anything is plotted
+> >     on the current
+> >
+> >     page).  Omit that line and
+> >     replace
+> >
+> >        plot(density(...),
+> >     ...)
+> >
+> >     with
+> >
+> >
+> >     lines(density(...))
+> >
+> >
+> >
+> >     The
+> >     complete script would be
+> >
+> >
+> >
+> >
+> >     hist(mar, nclass = 10,probability =T,
+> >     xlab = "Number of Mar", ylab = "Proportion of
+> >     mar",main = "MAR",
+> > sub = "with normal distribution overlay",
+> >     density=15)
+> >
+> >
+> >
+> >     # Density for theoretic normal
+> >     distribution with same mean
+> >  lines (density(rnorm(50000,mean(mar),sqrt(var(mar)))))
+> >
+> >
+> >
+> >
+> >     Note
+> >     that the comment is wrong -- that gives you the density
+> >     of
+> >
+> >     a sample
+> >     from a normal distribution.  To get the actual
+> >     density
+> >
+> >     use the
+> >     dnorm(x, mean, sd) function, as in
+> >
+> >
+> >
+> >      x<-seq(min(mar),max(mar),length=500)
+> >
+> >      lines(x,
+> >     dnorm(x,mean(mar),sqrt(var(mar))))
+> >
+> >
+> >     Bill Dunlap
+> > TIBCO Software Inc - Spotfire
+> >     Division
+> > wdunlap tibco.com
+> >
+> >
+> >     Thank you
+> >
+> >
+> >
+> >     Jan Ivanouw
+> >
+> >     University of
+> >   Copenhagen
+
+From wdunlap at tibco.com  Sat Sep 19 19:52:52 2009
+From: wdunlap at tibco.com (William Dunlap)
+Date: Sat, 19 Sep 2009 12:52:52 -0700
+Subject: Re: Problem with placement of 2nd graph as overlay on graph
+In-Reply-To: <CE4C7D1B52D049E5AE4E04174D495754@JansAthlon64>
+References: <79144221DAB5416F82F5B5DA50782218@JansAthlon64> <77EB52C6DD32BA4D87471DCD70C8D70001CE5FF9@NA-PA-VBE03.na.tibco.com> <CE4C7D1B52D049E5AE4E04174D495754@JansAthlon64>
+Message-ID: <77EB52C6DD32BA4D87471DCD70C8D70001CE600A@NA-PA-VBE03.na.tibco.com>
+
+Use the Poisson density function, dpois(), where 
+you
+
+used the normal density function in the other 
+example.
+
+You may not want to connect the points where 
+the
+
+density is evaluated.   Try the 
+following
+
+ 
+
+> N<-kyphosis$Number
+> hist(N, prob=TRUE, 
+breaks=seq(-.5, max(N)+.5, by=1))
+> points(pch=16, 0:max(N), 
+dpois(0:max(N), mean(N)))
+> lines(type="h", 0:max(N), dpois(0:max(N), 
+mean(N)))
+
+ 
+
+Bill Dunlap
+TIBCO Software Inc - Spotfire Division
+wdunlap 
+tibco.com 
+
+ 
+
+>
+>
+>   From: s-news-owner at lists.biostat.wustl.edu
+>   [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Jan
+>   Ivanouw
+> Sent: Saturday, September 19, 2009 9:43 AM
+> To:
+>   s-news at lists.biostat.wustl.edu
+> Subject: Re: [S] Problem with
+>   placement of 2nd graph as overlay on graph
+>
+>
+>
+>
+>
+>   Thank you. This works very fine.
+>
+>
+>
+>   How would I do to overlay a histogram of the
+>   theoretical Poisson distribution with same mean unto the histogram with the
+>   observed data?
+>
+>
+>   Jan Ivanouw
+>
+>   >     ----- Original Message -----
+> >
+> >     From:
+> >     William
+> >     Dunlap
+> >
+> >     To: Jan Ivanouw ; s-news at lists.biostat.wustl.edu
+> >
+> >
+> >     Sent: Saturday, September 19, 2009 4:53
+> >     PM
+> >
+> >     Subject: RE: [S] Problem with placement
+> >     of 2nd graph as overlay on graph
+> >
+> >
+> >
+> >
+> >     >
+> > >
+> > >       From: s-news-owner at lists.biostat.wustl.edu
+> > >       [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Jan
+> > >       Ivanouw
+> > > Sent: Saturday, September 19, 2009 6:36 AM
+> > > To:
+> > >       s-news at lists.biostat.wustl.edu
+> > > Subject:
+> > >       [S] Problem with placement of 2nd graph as overlay on
+> > >       graph
+> > >
+> > >
+> > >
+> > >
+> > >
+> > >       Dear S-plus users
+> > >
+> > >
+> > >
+> > >       On the historgram graph for an observed
+> > >       distribution I want to overlay a normal density
+> > >       distribution with the same mean and SD (and later in the analyses produce
+> > >       graphs with several other theoretical
+> > >       distributions).
+> > >
+> > >
+> > > I use the following syntax, BUT the
+> > >       normal distribution is displaced on the x-axis (and possibly also on the
+> > >       y-axis).
+> > >
+> > >       The mean of the overlayed normal
+> > >       distribution is farther to the right than the observed distribution. This
+> > >       is probably because S-plus places the graph to fill the graph sheet
+> > >       for the best presentation.
+> > >
+> > >
+> > >
+> > >       HOW do I manage to
+> > >       have the overlay distribution placed using the same axis scaling than the
+> > >       observed on both the x- and y-axis?
+> > >
+> > >
+> > >
+> > >       (the observed count variable is "mar")
+> > >
+> > >
+> > >
+> > >       hist(mar, nclass =
+> > >       10,probability =T, xlab = "Number of Mar", ylab =
+> > >       "Proportion of mar",main = "MAR",
+> > > sub = "with normal distribution overlay",
+> > >       density=15)
+> > >
+> > >
+> > >
+> > >       # Density for theoretic normal distribution
+> > >       with same mean
+> > > par(new = T) # for overlay at the
+> > >       same graf
+> > > plot(density(rnorm(50000,mean(mar),sqrt(var(mar)))),probability
+> > >       =T,type="l", xlab = "", ylab = "",axes = F)
+> > >
+> > >
+> > >
+> > >
+> > >
+> > >       The
+> > >       par(new=TRUE) tells the plotting system to forget about the
+> > >       current
+> > >
+> > >       coordinate system (and to forget that anything is plotted
+> > >       on the current
+> > >
+> > >       page).  Omit that line and
+> > >       replace
+> > >
+> > >          plot(density(...),
+> > >       ...)
+> > >
+> > >       with
+> > >
+> > >
+> > >       lines(density(...))
+> > >
+> > >
+> > >
+> > >       The
+> > >       complete script would be
+> > >
+> > >
+> > >
+> > >
+> > >       hist(mar, nclass = 10,probability
+> > >       =T, xlab = "Number of Mar", ylab = "Proportion of
+> > >       mar",main = "MAR",
+> > > sub = "with normal distribution overlay",
+> > >       density=15)
+> > >
+> > >
+> > >
+> > >       # Density for theoretic normal
+> > >       distribution with same mean
+> > >  lines (density(rnorm(50000,mean(mar),sqrt(var(mar)))))
+> > >
+> > >
+> > >
+> > >
+> > >       Note
+> > >       that the comment is wrong -- that gives you the density
+> > >       of
+> > >
+> > >       a
+> > >       sample from a normal distribution.  To get the actual
+> > >       density
+> > >
+> > >       use
+> > >       the dnorm(x, mean, sd) function, as in
+> > >
+> > >
+> > >
+> > >        x<-seq(min(mar),max(mar),length=500)
+> > >
+> > >        lines(x,
+> > >       dnorm(x,mean(mar),sqrt(var(mar))))
+> > >
+> > >
+> > >       Bill Dunlap
+> > > TIBCO Software Inc - Spotfire
+> > >       Division
+> > > wdunlap tibco.com
+> > >
+> > >
+> > >       Thank you
+> > >
+> > >
+> > >
+> > >       Jan Ivanouw
+> > >
+> > >       University of
+> > >     Copenhagen
+
+From ivanouw at post8.tele.dk  Sun Sep 20 09:33:43 2009
+From: ivanouw at post8.tele.dk (Jan Ivanouw)
+Date: Sun, 20 Sep 2009 11:33:43 +0200
+Subject: Re: Problem with placement of 2nd graph as overlay on graph
+References: <79144221DAB5416F82F5B5DA50782218@JansAthlon64> <77EB52C6DD32BA4D87471DCD70C8D70001CE5FF9@NA-PA-VBE03.na.tibco.com> <CE4C7D1B52D049E5AE4E04174D495754@JansAthlon64> <77EB52C6DD32BA4D87471DCD70C8D70001CE600A@NA-PA-VBE03.na.tibco.com>
+Message-ID: <328EB91EB0104A6CBDC2D09A16F03E09@JansAthlon64>
+
+Thank you. This is very helpful.
+
+ 
+
+How would I make an overlay like the Poisson here, 
+but instead with and overlay of the Negative BInomial 
+distribution?
+
+ 
+
+Jan
+
+>   ----- Original Message -----
+>
+>   From:
+>   William Dunlap
+>
+>
+>   To: Jan Ivanouw ; s-news at lists.biostat.wustl.edu
+>
+>
+>   Sent: Saturday, September 19, 2009 9:52
+>   PM
+>
+>   Subject: Re: [S] Problem with placement
+>   of 2nd graph as overlay on graph
+>
+>
+>
+>
+>   Use the Poisson density function, dpois(), where
+>   you
+>
+>   used the normal density function in the other
+>   example.
+>
+>   You may not want to connect the points where
+>   the
+>
+>   density is evaluated.   Try the
+>   following
+>
+>
+>
+>   > N<-kyphosis$Number
+> > hist(N, prob=TRUE,
+>   breaks=seq(-.5, max(N)+.5, by=1))
+> > points(pch=16, 0:max(N),
+>   dpois(0:max(N), mean(N)))
+> > lines(type="h", 0:max(N), dpois(0:max(N),
+>   mean(N)))
+>
+>
+>
+>
+>   Bill Dunlap
+> TIBCO Software Inc - Spotfire
+>   Division
+> wdunlap tibco.com
+>
+>
+>
+>
+>   >
+> >
+> >     From: s-news-owner at lists.biostat.wustl.edu
+> >     [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Jan
+> >     Ivanouw
+> > Sent: Saturday, September 19, 2009 9:43 AM
+> > To:
+> >     s-news at lists.biostat.wustl.edu
+> > Subject: Re: [S] Problem with
+> >     placement of 2nd graph as overlay on graph
+> >
+> >
+> >
+> >
+> >
+> >     Thank you. This works very fine.
+> >
+> >
+> >
+> >     How would I do to overlay a histogram of the
+> >     theoretical Poisson distribution with same mean unto the histogram with the
+> >     observed data?
+> >
+> >
+> >     Jan Ivanouw
+> >
+> >     >       ----- Original Message -----
+> > >
+> > >       From:
+> > >       William
+> > >       Dunlap
+> > >
+> > >       To: Jan Ivanouw ; s-news at lists.biostat.wustl.edu
+> > >
+> > >
+> > >       Sent: Saturday, September 19, 2009
+> > >       4:53 PM
+> > >
+> > >       Subject: RE: [S] Problem with
+> > >       placement of 2nd graph as overlay on graph
+> > >
+> > >
+> > >
+> > >
+> > >       >
+> > > >
+> > > >         From: s-news-owner at lists.biostat.wustl.edu
+> > > >         [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Jan
+> > > >         Ivanouw
+> > > > Sent: Saturday, September 19, 2009 6:36
+> > > >         AM
+> > > > To: s-news at lists.biostat.wustl.edu
+> > > > Subject:
+> > > >         [S] Problem with placement of 2nd graph as overlay on
+> > > >         graph
+> > > >
+> > > >
+> > > >
+> > > >
+> > > >
+> > > >         Dear S-plus users
+> > > >
+> > > >
+> > > >
+> > > >         On the historgram graph for an observed
+> > > >         distribution I want to overlay a normal density
+> > > >         distribution with the same mean and SD (and later in the analyses
+> > > >         produce graphs with several other theoretical
+> > > >         distributions).
+> > > >
+> > > >
+> > > > I use the following syntax, BUT the
+> > > >         normal distribution is displaced on the x-axis (and possibly also on the
+> > > >         y-axis).
+> > > >
+> > > >         The mean of the overlayed normal
+> > > >         distribution is farther to the right than the observed distribution.
+> > > >         This is probably because S-plus places the graph to fill the graph
+> > > >         sheet for the best presentation.
+> > > >
+> > > >
+> > > >
+> > > >         HOW do I manage
+> > > >         to have the overlay distribution placed using the same axis scaling than
+> > > >         the observed on both the x- and y-axis?
+> > > >
+> > > >
+> > > >
+> > > >         (the observed count variable is "mar")
+> > > >
+> > > >
+> > > >
+> > > >         hist(mar, nclass =
+> > > >         10,probability =T, xlab = "Number of Mar", ylab =
+> > > >         "Proportion of mar",main = "MAR",
+> > > > sub = "with normal distribution overlay",
+> > > >         density=15)
+> > > >
+> > > >
+> > > >
+> > > >         # Density for theoretic normal
+> > > >         distribution with same mean
+> > > > par(new = T) # for
+> > > >         overlay at the same graf
+> > > > plot(density(rnorm(50000,mean(mar),sqrt(var(mar)))),probability
+> > > >         =T,type="l", xlab = "", ylab = "",axes = F)
+> > > >
+> > > >
+> > > >
+> > > >
+> > > >
+> > > >         The
+> > > >         par(new=TRUE) tells the plotting system to forget about the
+> > > >         current
+> > > >
+> > > >         coordinate system (and to forget that anything is
+> > > >         plotted on the current
+> > > >
+> > > >         page).  Omit that line and
+> > > >         replace
+> > > >
+> > > >            plot(density(...),
+> > > >         ...)
+> > > >
+> > > >         with
+> > > >
+> > > >
+> > > >         lines(density(...))
+> > > >
+> > > >
+> > > >
+> > > >         The
+> > > >         complete script would be
+> > > >
+> > > >
+> > > >
+> > > >
+> > > >         hist(mar, nclass = 10,probability
+> > > >         =T, xlab = "Number of Mar", ylab = "Proportion of
+> > > >         mar",main = "MAR",
+> > > > sub = "with normal distribution overlay",
+> > > >         density=15)
+> > > >
+> > > >
+> > > >
+> > > >         # Density for theoretic normal
+> > > >         distribution with same mean
+> > > >  lines (density(rnorm(50000,mean(mar),sqrt(var(mar)))))
+> > > >
+> > > >
+> > > >
+> > > >
+> > > >         Note
+> > > >         that the comment is wrong -- that gives you the density
+> > > >         of
+> > > >
+> > > >         a
+> > > >         sample from a normal distribution.  To get the actual
+> > > >         density
+> > > >
+> > > >         use
+> > > >         the dnorm(x, mean, sd) function, as in
+> > > >
+> > > >
+> > > >
+> > > >          x<-seq(min(mar),max(mar),length=500)
+> > > >
+> > > >          lines(x,
+> > > >         dnorm(x,mean(mar),sqrt(var(mar))))
+> > > >
+> > > >
+> > > >         Bill Dunlap
+> > > > TIBCO Software Inc - Spotfire
+> > > >         Division
+> > > > wdunlap tibco.com
+> > > >
+> > > >
+> > > >         Thank you
+> > > >
+> > > >
+> > > >
+> > > >         Jan Ivanouw
+> > > >
+> > > >         University of
+> > > >       Copenhagen
+
+From wdunlap at tibco.com  Sun Sep 20 19:50:29 2009
+From: wdunlap at tibco.com (William Dunlap)
+Date: Sun, 20 Sep 2009 12:50:29 -0700
+Subject: Re: Problem with placement of 2nd graph as overlay on graph
+In-Reply-To: <328EB91EB0104A6CBDC2D09A16F03E09@JansAthlon64>
+References: <79144221DAB5416F82F5B5DA50782218@JansAthlon64> <77EB52C6DD32BA4D87471DCD70C8D70001CE5FF9@NA-PA-VBE03.na.tibco.com> <CE4C7D1B52D049E5AE4E04174D495754@JansAthlon64> <77EB52C6DD32BA4D87471DCD70C8D70001CE600A@NA-PA-VBE03.na.tibco.com> <328EB91EB0104A6CBDC2D09A16F03E09@JansAthlon64>
+Message-ID: <77EB52C6DD32BA4D87471DCD70C8D70001CE6038@NA-PA-VBE03.na.tibco.com>
+
+Use the dnbinom function.  Note the pattern: 
+d<dist> is
+
+the density function for the distribution 'dist'.  'p' 
+gives
+
+the distribution function, 'r' gives the random 
+number
+
+generator, and 'q' gives the quantile function (inverse 
+of
+
+the distribution function).  The distributions 
+include
+
+'binom', 'norm', 'lnorm', 'pois', 'nbinom', 'exp', 
+'gamma', 'beta',
+
+and 'f'.  I probably have left out 
+some.
+
+ 
+
+Bill Dunlap
+TIBCO Software Inc - Spotfire Division
+wdunlap 
+tibco.com 
+
+ 
+
+>
+>
+>   From: s-news-owner at lists.biostat.wustl.edu
+>   [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Jan
+>   Ivanouw
+> Sent: Sunday, September 20, 2009 2:34 AM
+> To:
+>   s-news at lists.biostat.wustl.edu
+> Subject: Re: [S] Problem with
+>   placement of 2nd graph as overlay on graph
+>
+>
+>
+>
+>
+>   Thank you. This is very helpful.
+>
+>
+>
+>   How would I make an overlay like the Poisson
+>   here, but instead with and overlay of the Negative BInomial
+>   distribution?
+>
+>
+>
+>   Jan
+>
+>   >     ----- Original Message -----
+> >
+> >     From:
+> >     William
+> >     Dunlap
+> >
+> >     To: Jan Ivanouw ; s-news at lists.biostat.wustl.edu
+> >
+> >
+> >     Sent: Saturday, September 19, 2009 9:52
+> >     PM
+> >
+> >     Subject: Re: [S] Problem with placement
+> >     of 2nd graph as overlay on graph
+> >
+> >
+> >
+> >
+> >     Use the Poisson density function, dpois(), where
+> >     you
+> >
+> >     used the normal density function in the other
+> >     example.
+> >
+> >     You may not want to connect the points where
+> >     the
+> >
+> >     density is evaluated.   Try the
+> >     following
+> >
+> >
+> >
+> >     > N<-kyphosis$Number
+> > > hist(N, prob=TRUE,
+> >     breaks=seq(-.5, max(N)+.5, by=1))
+> > > points(pch=16, 0:max(N),
+> >     dpois(0:max(N), mean(N)))
+> > > lines(type="h", 0:max(N), dpois(0:max(N),
+> >     mean(N)))
+> >
+> >
+> >
+> >
+> >     Bill Dunlap
+> > TIBCO Software Inc - Spotfire
+> >     Division
+> > wdunlap tibco.com
+> >
+> >
+> >
+> >
+> >     >
+> > >
+> > >       From: s-news-owner at lists.biostat.wustl.edu
+> > >       [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Jan
+> > >       Ivanouw
+> > > Sent: Saturday, September 19, 2009 9:43 AM
+> > > To:
+> > >       s-news at lists.biostat.wustl.edu
+> > > Subject: Re: [S] Problem with
+> > >       placement of 2nd graph as overlay on graph
+> > >
+> > >
+> > >
+> > >
+> > >
+> > >       Thank you. This works very fine.
+> > >
+> > >
+> > >
+> > >       How would I do to overlay a histogram of the
+> > >       theoretical Poisson distribution with same mean unto the histogram with
+> > >       the observed data?
+> > >
+> > >
+> > >       Jan Ivanouw
+> > >
+> > >       >         ----- Original Message -----
+> > > >
+> > > >         From:
+> > > >         William
+> > > >         Dunlap
+> > > >
+> > > >         To: Jan Ivanouw ; s-news at lists.biostat.wustl.edu
+> > > >
+> > > >
+> > > >         Sent: Saturday, September 19, 2009
+> > > >         4:53 PM
+> > > >
+> > > >         Subject: RE: [S] Problem with
+> > > >         placement of 2nd graph as overlay on graph
+> > > >
+> > > >
+> > > >
+> > > >
+> > > >         >
+> > > > >
+> > > > >           From: s-news-owner at lists.biostat.wustl.edu
+> > > > >           [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Jan
+> > > > >           Ivanouw
+> > > > > Sent: Saturday, September 19, 2009 6:36
+> > > > >           AM
+> > > > > To: s-news at lists.biostat.wustl.edu
+> > > > > Subject:
+> > > > >           [S] Problem with placement of 2nd graph as overlay on
+> > > > >           graph
+> > > > >
+> > > > >
+> > > > >
+> > > > >
+> > > > >
+> > > > >           Dear S-plus users
+> > > > >
+> > > > >
+> > > > >
+> > > > >           On the historgram graph for an observed
+> > > > >           distribution I want to overlay a normal density
+> > > > >           distribution with the same mean and SD (and later in the analyses
+> > > > >           produce graphs with several other theoretical
+> > > > >           distributions).
+> > > > >
+> > > > >
+> > > > > I use the following syntax, BUT the
+> > > > >           normal distribution is displaced on the x-axis (and possibly also on
+> > > > >           the y-axis).
+> > > > >
+> > > > >           The mean of the overlayed normal
+> > > > >           distribution is farther to the right than the observed distribution.
+> > > > >           This is probably because S-plus places the graph to fill the
+> > > > >           graph sheet for the best presentation.
+> > > > >
+> > > > >
+> > > > >
+> > > > >           HOW do I manage
+> > > > >           to have the overlay distribution placed using the same axis scaling
+> > > > >           than the observed on both the x- and y-axis?
+> > > > >
+> > > > >
+> > > > >
+> > > > >           (the observed count variable is "mar")
+> > > > >
+> > > > >
+> > > > >
+> > > > >           hist(mar, nclass =
+> > > > >           10,probability =T, xlab = "Number of Mar", ylab =
+> > > > >           "Proportion of mar",main = "MAR",
+> > > > > sub = "with normal distribution overlay",
+> > > > >           density=15)
+> > > > >
+> > > > >
+> > > > >
+> > > > >           # Density for theoretic normal
+> > > > >           distribution with same mean
+> > > > > par(new = T) # for
+> > > > >           overlay at the same graf
+> > > > > plot(density(rnorm(50000,mean(mar),sqrt(var(mar)))),probability
+> > > > >           =T,type="l", xlab = "", ylab = "",axes = F)
+> > > > >
+> > > > >
+> > > > >
+> > > > >
+> > > > >
+> > > > >           The par(new=TRUE) tells the plotting system to forget
+> > > > >           about the current
+> > > > >
+> > > > >           coordinate system (and to forget that anything is
+> > > > >           plotted on the current
+> > > > >
+> > > > >           page).  Omit that line and
+> > > > >           replace
+> > > > >
+> > > > >              plot(density(...),
+> > > > >           ...)
+> > > > >
+> > > > >           with
+> > > > >
+> > > > >
+> > > > >           lines(density(...))
+> > > > >
+> > > > >
+> > > > >
+> > > > >           The complete script would
+> > > > >           be
+> > > > >
+> > > > >
+> > > > >
+> > > > >
+> > > > >           hist(mar, nclass =
+> > > > >           10,probability =T, xlab = "Number of Mar", ylab =
+> > > > >           "Proportion of mar",main =
+> > > > >           "MAR",
+> > > > > sub = "with normal distribution
+> > > > >           overlay", density=15)
+> > > > >
+> > > > >
+> > > > >
+> > > > >           # Density for theoretic normal
+> > > > >           distribution with same mean
+> > > > >  lines (density(rnorm(50000,mean(mar),sqrt(var(mar)))))
+> > > > >
+> > > > >
+> > > > >
+> > > > >
+> > > > >           Note that the comment is wrong -- that gives you the
+> > > > >           density of
+> > > > >
+> > > > >           a
+> > > > >           sample from a normal distribution.  To get the actual
+> > > > >           density
+> > > > >
+> > > > >           use the dnorm(x, mean, sd) function, as
+> > > > >           in
+> > > > >
+> > > > >
+> > > > >
+> > > > >            x<-seq(min(mar),max(mar),length=500)
+> > > > >
+> > > > >            lines(x,
+> > > > >           dnorm(x,mean(mar),sqrt(var(mar))))
+> > > > >
+> > > > >
+> > > > >           Bill Dunlap
+> > > > > TIBCO Software Inc - Spotfire
+> > > > >           Division
+> > > > > wdunlap tibco.com
+> > > > >
+> > > > >
+> > > > >           Thank you
+> > > > >
+> > > > >
+> > > > >
+> > > > >           Jan Ivanouw
+> > > > >
+> > > > >           University of
+> > > > >         Copenhagen
+
+From courses at statcourse.com  Mon Sep 21 16:24:41 2009
+From: courses at statcourse.com
+Date: Mon, 21 Sep 2009 09:24:41 -0700
+Subject: Online Statistics Courses: Early Bird discounts end 28 September 2009
+Message-ID: <20090921092441.5a62eba552c1ae6b94526da164128382.1a26ac7940.wbe@email01.secureserver.net>
+
+Learn Statistics Through Applications.  An easy introduction to the basic concepts of statistics. Three lessons in three Weeks.  7 October  to 28 October 2009.   $199. Early Bird discount of $25 before 29 September 2009.  
+
+>
+>
+> Modeling with R.  Three lessons in three weeks. 7 October  to 28 October 2009.   OLS, EIV, QR, and CART plus validation. $300. Early Bird (by 29th September) discount of $75.  A further $50 discount for students, faculty, and research workers at academic institutions.
+>
+>
+>
+>
+>
+> How would you test for correlation greater than 0.8?   What's a confidence interval for the 40th percentile?  Take Applications of Bootstrap, CART and Permutation Methods from 7 October  to 28 October 2009.  $324.  ($254 for students, faculty, and research workers at academic institutions, and the self-employed.)  Plus Early Bird discount of $50 if you register before 29 September 2009.
+>
+>
+>
+>   Write courses at statcourse.com to obtain discounts.  Or, see http://statcourse.com
+
+From ivanouw at post8.tele.dk  Mon Sep 21 22:26:01 2009
+From: ivanouw at post8.tele.dk (Jan Ivanouw)
+Date: Tue, 22 Sep 2009 00:26:01 +0200
+Subject: Re: Problem with placement of 2nd graph as overlay on graph
+References: <79144221DAB5416F82F5B5DA50782218@JansAthlon64> <77EB52C6DD32BA4D87471DCD70C8D70001CE5FF9@NA-PA-VBE03.na.tibco.com> <CE4C7D1B52D049E5AE4E04174D495754@JansAthlon64> <77EB52C6DD32BA4D87471DCD70C8D70001CE600A@NA-PA-VBE03.na.tibco.com> <328EB91EB0104A6CBDC2D09A16F03E09@JansAthlon64> <77EB52C6DD32BA4D87471DCD70C8D70001CE6038@NA-PA-VBE03.na.tibco.com>
+Message-ID: <E9EFC393434C4363AEF9595D7A0D409F@JansAthlon64>
+
+Hi BIll, 
+
+Thank you.
+
+What I find difficult is which arguments to give to 
+the dnbinom function in order to get the same mean and standard deviation as the 
+observed distribution.
+
+Do you have any hints?
+
+ 
+
+Best, Jan
+
+>   ----- Original Message -----
+>
+>   From:
+>   William Dunlap
+>
+>
+>   To: Jan Ivanouw ; s-news at lists.biostat.wustl.edu
+>
+>
+>   Sent: Sunday, September 20, 2009 9:50
+>   PM
+>
+>   Subject: Re: [S] Problem with placement
+>   of 2nd graph as overlay on graph
+>
+>
+>
+>
+>   Use the dnbinom function.  Note the pattern:
+>   d<dist> is
+>
+>   the density function for the distribution 'dist'.  'p'
+>   gives
+>
+>   the distribution function, 'r' gives the random
+>   number
+>
+>   generator, and 'q' gives the quantile function (inverse
+>   of
+>
+>   the distribution function).  The distributions
+>   include
+>
+>   'binom', 'norm', 'lnorm', 'pois', 'nbinom', 'exp',
+>   'gamma', 'beta',
+>
+>   and 'f'.  I probably have left out
+>   some.
+>
+>
+>
+>   Bill Dunlap
+> TIBCO Software Inc - Spotfire
+>   Division
+> wdunlap tibco.com
+>
+>
+>
+>
+>   >
+> >
+> >     From: s-news-owner at lists.biostat.wustl.edu
+> >     [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Jan
+> >     Ivanouw
+> > Sent: Sunday, September 20, 2009 2:34 AM
+> > To:
+> >     s-news at lists.biostat.wustl.edu
+> > Subject: Re: [S] Problem with
+> >     placement of 2nd graph as overlay on graph
+> >
+> >
+> >
+> >
+> >
+> >     Thank you. This is very helpful.
+> >
+> >
+> >
+> >     How would I make an overlay like the Poisson
+> >     here, but instead with and overlay of the Negative BInomial
+> >     distribution?
+> >
+> >
+> >
+> >     Jan
+> >
+> >     >       ----- Original Message -----
+> > >
+> > >       From:
+> > >       William
+> > >       Dunlap
+> > >
+> > >       To: Jan Ivanouw ; s-news at lists.biostat.wustl.edu
+> > >
+> > >
+> > >       Sent: Saturday, September 19, 2009
+> > >       9:52 PM
+> > >
+> > >       Subject: Re: [S] Problem with
+> > >       placement of 2nd graph as overlay on graph
+> > >
+> > >
+> > >
+> > >
+> > >       Use the Poisson density function, dpois(), where
+> > >       you
+> > >
+> > >       used the normal density function in the other
+> > >       example.
+> > >
+> > >       You may not want to connect the points where
+> > >       the
+> > >
+> > >       density is evaluated.   Try the
+> > >       following
+> > >
+> > >
+> > >
+> > >       > N<-kyphosis$Number
+> > > > hist(N, prob=TRUE,
+> > >       breaks=seq(-.5, max(N)+.5, by=1))
+> > > > points(pch=16, 0:max(N),
+> > >       dpois(0:max(N), mean(N)))
+> > > > lines(type="h", 0:max(N),
+> > >       dpois(0:max(N), mean(N)))
+> > >
+> > >
+> > >
+> > >
+> > >       Bill Dunlap
+> > > TIBCO Software Inc - Spotfire
+> > >       Division
+> > > wdunlap tibco.com
+> > >
+> > >
+> > >
+> > >
+> > >       >
+> > > >
+> > > >         From:
+> > > >         s-news-owner at lists.biostat.wustl.edu
+> > > >         [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Jan
+> > > >         Ivanouw
+> > > > Sent: Saturday, September 19, 2009 9:43
+> > > >         AM
+> > > > To: s-news at lists.biostat.wustl.edu
+> > > > Subject: Re:
+> > > >         [S] Problem with placement of 2nd graph as overlay on
+> > > >         graph
+> > > >
+> > > >
+> > > >
+> > > >
+> > > >
+> > > >         Thank you. This works very
+> > > >         fine.
+> > > >
+> > > >
+> > > >
+> > > >         How would I do to overlay a histogram of
+> > > >         the theoretical Poisson distribution with same mean unto the histogram
+> > > >         with the observed data?
+> > > >
+> > > >
+> > > >         Jan
+> > > >         Ivanouw
+> > > >
+> > > >         >           ----- Original Message -----
+> > > > >
+> > > > >           From:
+> > > > >           William
+> > > > >           Dunlap
+> > > > >
+> > > > >           To: Jan
+> > > > >           Ivanouw ; s-news at lists.biostat.wustl.edu
+> > > > >
+> > > > >
+> > > > >           Sent: Saturday, September 19,
+> > > > >           2009 4:53 PM
+> > > > >
+> > > > >           Subject: RE: [S] Problem with
+> > > > >           placement of 2nd graph as overlay on graph
+> > > > >
+> > > > >
+> > > > >
+> > > > >
+> > > > >           >
+> > > > > >
+> > > > > >             From: s-news-owner at lists.biostat.wustl.edu
+> > > > > >             [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of
+> > > > > >             Jan Ivanouw
+> > > > > > Sent: Saturday, September 19, 2009 6:36
+> > > > > >             AM
+> > > > > > To: s-news at lists.biostat.wustl.edu
+> > > > > > Subject:
+> > > > > >             [S] Problem with placement of 2nd graph as overlay on
+> > > > > >             graph
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > >             Dear S-plus users
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > >             On the historgram graph for an
+> > > > > >             observed distribution I want to overlay a normal
+> > > > > >             density distribution with the same mean and SD (and later in the
+> > > > > >             analyses produce graphs with several other theoretical
+> > > > > >             distributions).
+> > > > > >
+> > > > > >
+> > > > > > I use the following syntax, BUT
+> > > > > >             the normal distribution is displaced on the x-axis (and possibly
+> > > > > >             also on the y-axis).
+> > > > > >
+> > > > > >             The mean of the overlayed normal
+> > > > > >             distribution is farther to the right than the observed distribution.
+> > > > > >             This is probably because S-plus places the graph to fill the
+> > > > > >             graph sheet for the best presentation.
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > >             HOW do I
+> > > > > >             manage to have the overlay distribution placed using the same axis
+> > > > > >             scaling than the observed on both the x- and y-axis?
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > >             (the observed count variable is "mar")
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > >             hist(mar, nclass =
+> > > > > >             10,probability =T, xlab = "Number of Mar", ylab
+> > > > > >             = "Proportion of mar",main =
+> > > > > >             "MAR",
+> > > > > > sub = "with normal distribution
+> > > > > >             overlay", density=15)
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > >             # Density for theoretic normal
+> > > > > >             distribution with same mean
+> > > > > > par(new = T) #
+> > > > > >             for overlay at the same graf
+> > > > > > plot(density(rnorm(50000,mean(mar),sqrt(var(mar)))),probability
+> > > > > >             =T,type="l", xlab = "", ylab = "",axes = F)
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > >             The par(new=TRUE) tells the plotting system to
+> > > > > >             forget about the current
+> > > > > >
+> > > > > >             coordinate system (and to forget that anything is
+> > > > > >             plotted on the current
+> > > > > >
+> > > > > >             page).  Omit that line and
+> > > > > >             replace
+> > > > > >
+> > > > > >                plot(density(...),
+> > > > > >             ...)
+> > > > > >
+> > > > > >             with
+> > > > > >
+> > > > > >
+> > > > > >             lines(density(...))
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > >             The complete script would
+> > > > > >             be
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > >             hist(mar, nclass =
+> > > > > >             10,probability =T, xlab = "Number of Mar", ylab
+> > > > > >             = "Proportion of mar",main =
+> > > > > >             "MAR",
+> > > > > > sub = "with normal distribution
+> > > > > >             overlay", density=15)
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > >             # Density for theoretic
+> > > > > >             normal distribution with same mean
+> > > > > >  lines (density(rnorm(50000,mean(mar),sqrt(var(mar)))))
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > >             Note that the comment is wrong -- that gives you
+> > > > > >             the density of
+> > > > > >
+> > > > > >             a sample from a normal distribution.  To get
+> > > > > >             the actual density
+> > > > > >
+> > > > > >             use the dnorm(x, mean, sd) function, as
+> > > > > >             in
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > >              x<-seq(min(mar),max(mar),length=500)
+> > > > > >
+> > > > > >              lines(x,
+> > > > > >             dnorm(x,mean(mar),sqrt(var(mar))))
+> > > > > >
+> > > > > >
+> > > > > >             Bill Dunlap
+> > > > > > TIBCO Software Inc - Spotfire
+> > > > > >             Division
+> > > > > > wdunlap tibco.com
+> > > > > >
+> > > > > >
+> > > > > >             Thank you
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > >             Jan Ivanouw
+> > > > > >
+> > > > > >             University of
+> > > > > >           Copenhagen
+
+From courses at zanybooks.com  Tue Sep 22 13:46:46 2009
+From: courses at zanybooks.com
+Date: Tue, 22 Sep 2009 06:46:46 -0700
+Subject: Hotelling's T2
+Message-ID: <20090922064646.b21645f2bceb2bcc4cba8e709837b1d9.3cecef5499.wbe@email.secureserver.net>
+
+Has anyone programmed the calculations for Hotelling's T2?  I would appreciate receiving the calculations.
+
+(Not incidentally, as noted in the latest edition of Common Errors in Statistics, p77, exact p-values can be obtained regardless of the underlying distribution by referring to the permutation distribution of T2.)
+
+ 
+
+D
+
+From ral at lcfltd.com  Tue Sep 22 14:32:55 2009
+From: ral at lcfltd.com (Robert A LaBudde)
+Date: Tue, 22 Sep 2009 10:32:55 -0400
+Subject: Re: Hotelling's T2
+Message-ID: <0KQD00KYWN30UEN9@vms173019.mailsrvcs.net>
+
+See pp. 139-140 of Everitt's An R and S-PLUS Companion to 
+Multivariate Statistics.
+
+The formulae straightforward and apparently simple. Just a scaled 
+Mahalanobis D^2 distance based on the pooled covariance matrix and 
+some scaling by sample sizes.
+
+Is there part of the process that's a sticking point?
+
+At 09:46 AM 9/22/2009, courses at zanybooks.com wrote:
+> Has anyone programmed the calculations for Hotelling's T2?  I would
+> appreciate receiving the calculations.
+> (Not incidentally, as noted in the latest edition of Common Errors
+> in Statistics, p77, exact p-values can be obtained regardless of the
+> underlying distribution by referring to the permutation distribution of T2.)
+>
+>
+> D
+
+================================================================
+Robert A. LaBudde, PhD, PAS, Dpl. ACAFS  e-mail: ral at lcfltd.com
+Least Cost Formulations, Ltd.            URL: http://lcfltd.com/
+824 Timberlake Drive                     Tel: 757-467-0954
+Virginia Beach, VA 23464-3239            Fax: 757-467-2947
+
+"Vere scire est per causas scire"
+================================================================
+
+From gerald.jean at dgag.ca  Wed Sep 23 14:48:24 2009
+From: gerald.jean at dgag.ca
+Date: Wed, 23 Sep 2009 10:48:24 -0400
+Subject: Function's results inconsistent with command line results?
+Message-ID: <OFFDA95670.BEAA0733-ON8525763A.004F07B2-8525763A.00515661@dgag.ca>
+
+Hello,
+
+I am running:
+
+TIBCO Software Inc. Confidential Information
+Copyright (c) 1988-2008 TIBCO Software Inc. ALL RIGHTS RESERVED.
+TIBCO Spotfire S+ Version 8.1.1 for Linux 2.6.9-34.EL, 64-bit : 2008
+
+the following trivial function illustrates the problem I am having, i.e.
+not getting the same result within the function as I get from the command
+line.
+
+The function
+
+"test" <- function(object)
+{
+  summ.obj <- summary(object)
+  summ.obj
+}
+
+Now I call it through "by".  The variable "type" is a three level factor.
+
+> ttt.summ <- by(x = FMD.fac.Qc.unique.CLV[, c("Lifetime", "CLV", "tx.gpa",
+"Prime")],
++    INDICES = FMD.fac.Qc.unique.CLV$type, FUN = test)
+
+I check the dimmensions of the returned object, a list with three objects
+of class "table", as expected.
+
+> lapply(ttt.summ, FUN = dim)
+[[1]]:
+[1] 6 4
+[[2]]:
+[1] 6 4
+[[3]]:
+[1] 6 4
+
+Accordingly I can subset any of those tables, what I want to do ultimately
+within the function.
+
+> ttt.summ[[1]][3, 1]
+     Lifetime
+  Median: 2.8861257
+
+Now I modify the function to check the dimensions within the function.
+
+"test" <- function(object)
+{
+  summ.obj <- summary(object)
+  lapply(summ.obj, FUN = dim)
+}
+
+Then running it I get the following:
+
+> ttt.summ <- by(x = FMD.fac.Qc.unique.CLV[, c("Lifetime", "CLV", "tx.gpa",
+"Prime")],
++    INDICES = FMD.fac.Qc.unique.CLV$type, FUN = test)
+> ttt.summ
+FMD.fac.Qc.unique.CLV$type:1
+[[1]]:
+NULL
+[[2]]:
+NULL
+[[3]]:
+NULL
+[[4]]:
+NULL
+[[5]]:
+NULL
+[[6]]:
+NULL
+[[7]]:
+NULL
+[[8]]:
+NULL
+[[9]]:
+NULL
+[[10]]:
+NULL
+[[11]]:
+NULL
+[[12]]:
+NULL
+[[13]]:
+NULL
+[[14]]:
+NULL
+[[15]]:
+NULL
+[[16]]:
+NULL
+[[17]]:
+NULL
+[[18]]:
+NULL
+[[19]]:
+NULL
+[[20]]:
+NULL
+[[21]]:
+NULL
+[[22]]:
+NULL
+[[23]]:
+NULL
+[[24]]:
+NULL
+
+Similarly for the two other components of "ttt.sum".  Accordingly, if I try
+to subset any of the components of "summ.obj" within the function I get an
+error:
+
+Problem in summ.obj[[1]][3, 1]: No dim attribute for array subset of object
+of class "character"
+Use traceback() to see the call stack
+
+What is happening here?  It seems that the object "summ.obj" is not
+considered the same type of object within the function as outside the
+function?
+
+Thanks for any insights,
+
+Gérald Jean
+Conseiller senior en statistiques,
+VP Planification et Développement des Marchés,
+Desjardins Groupe d'Assurances Générales
+télephone            : (418) 835-4900 poste (7639)
+télecopieur          : (418) 835-6657
+courrier électronique: gerald.jean at dgag.ca
+
+"In God we trust, all others must bring data"  W. Edwards Deming
+
+Le message ci-dessus, ainsi que les documents l'accompagnant, sont destinés 
+uniquement aux personnes identifiées et peuvent contenir des informations
+privilégiées, confidentielles ou ne pouvant être divulguées. Si vous avez reçu 
+ce message par erreur, veuillez le détruire.
+
+This communication ( and/or the attachments ) is intended for named recipients 
+only and may contain privileged or confidential information which is
+not to be disclosed. If you received this communication by mistake please 
+destroy all copies.
+
+Faites bonne impression et imprimez seulement au besoin !
+Think green before you print !
+
+Le message ci-dessus, ainsi que les documents l'accompagnant, sont destinés 
+uniquement aux personnes identifiées et peuvent contenir des informations 
+privilégiées, confidentielles ou ne pouvant être divulguées. Si vous avez reçu 
+ce message par erreur, veuillez le détruire.
+
+This communication (and/or the attachments) is intended for named recipients 
+only and may contain privileged or confidential information which is not to be 
+disclosed. If you received this communication by mistake please destroy all 
+copies.
+
+From elvis at xlsolutions-corp.com  Thu Sep 24 17:17:16 2009
+From: elvis at xlsolutions-corp.com (elvis Miller)
+Date: Thu, 24 Sep 2009 10:17:16 -0700
+Subject: October-November R /S-PLUS Courses: Nationwide (1) R/S+ Fundamentals and (2) R/S-Plus Advanced Programming. in San Francisco, New York City, Boston, Washington DC, Seattle and Salt Lake City
+Message-ID: <20090924101716.aa8924c5d28ca71e2a043bb294e795eb.6574673f20.wbe@email.secureserver.net>
+
+XLSolutions Corporation is proud to announce our October-November 
+R /S-PLUS  course schedule 
+in New York City, San Francisco, Boston, Washington DC, 
+Seattle and Salt Lake City. Taught by top R/S+ gurus!
+
+http://www.xlsolutions-corp.com/rplus.asp
+
+(1-a) R/S-PLUS: An Introduction to R and S
+October-November, 2009
+
+(1-b)) R/S-PLUS Fundamentals and Programming Techniques
+October-November, 2009
+
+(2) R/S+ System: Advanced Programming 
+October-November, 2009
+ 
+Ask for group discount and reserve your seat Now - Earlybird Rates.
+Payment due after the class! Email Sue Turner: sue at xlsolutions-corp.com
+
+http://www.xlsolutions-corp.com/rplus.asp
+
+Please let us know if you and your colleagues are interested in this
+class to take advantage of group discount. Register now to secure your
+seat!
+
+Cheers,
+Elvis Miller, PhD
+Manager Training.
+XLSolutions Corporation
+206 686 1578
+www.xlsolutions-corp.com
+elvis at xlsolutions-corp.com
+
+From Yingmei.Lavin at magnetar.com  Thu Sep 24 20:16:45 2009
+From: Yingmei.Lavin at magnetar.com (Lavin, Yingmei)
+Date: Thu, 24 Sep 2009 15:16:45 -0500
+Subject: NuOpt memory problem
+Message-ID: <198377D9828DF94E86910389B987D733075A4274@EVPRODEXCH01.magnetar.com>
+
+Hi,
+
+ 
+
+I am using solveQP in NuOpt and when the memory hit 1G, the
+program will crash. I have 4G of RAM and nothing else was running on desktop,
+anyone have any suggestions why it crashes way before SPLUS hit the memory
+limit? Any suggestions on what I can do?
+
+ 
+
+Thanks,
+
+ 
+
+Yingmei
+
+The information contained in this message and its attachments
+is intended only for the private and confidential use of the
+intended recipient(s).  If you are not the intended recipient
+(or have received this e-mail in error) please notify the
+sender immediately and destroy this e-mail. Any unauthorized
+copying, disclosure or distribution of the material in this e-
+mail is strictly prohibited.
+
+From wic-office at wi-consortium.org  Sat Sep 26 16:09:15 2009
+From: wic-office at wi-consortium.org (WIC Office)
+Date: Sun, 27 Sep 2009 01:09:15 +0900
+Subject: AMT-BI'09 Call for Posters/Participation
+Message-ID: <4ABE3CAB.8000102@wi-consortium.org>
+
+[Apologies if you receive this more than once]
+
+####################################################################
+Active Media Technology 2009 & Brain Informatics 2009
+
+CALL FOR POSTERS and CALL FOR PARTICIPATION
+####################################################################
+
+2009 International Conference on Active Media Technology (AMT 2009)
+2009 International Conference on Brain Informatics (BI 2009)
+
+October 22-24, 2009, Beijing, China
+
+Homepage: http://www.wici-lab.org/amtbi09/
+Mirror page: http://www.iwici.org/amtbi09/
+
+Co-organized by Web Intelligence Consortium (WIC) and
+IEEE Task Force on Brain Informatics (IEEE TF-BI)
+
+------------------------------------------------
+On-line registration (and more information) at
+http://www.wici-lab.org/amtbi09/
+
+Posters Due: *** 30 September 2009 ***
+
+Special discount (or free) registration is available
+for students and poster session presenters
+************************************************
+
+You are invited to join Active Media Technology 2009 and Brain
+Informatics 2009.
+
+Active Media Technology is a new area of intelligent information
+technology and computer science that emphasizes the proactive,
+seamless roles of interfaces and systems as well as new media in all
+aspects of digital life. An AMT based system offers services to enable
+the rapid design, implementation and support of customized solutions.
+
+Brain Informatics has recently emerged as an interdisciplinary
+research field that focuses on studying the mechanisms underlying the
+human information processing system (HIPS). BI lies in the interplay
+between the studies of human brain and the research of informatics.
+
+The two conferences will have a joint opening, keynote, reception, and
+banquet. Attendees only need to register for one conference and can
+attend keynotes, sessions, workshop, posters across the two conferences.
+
+============================
+***** Call for Posters *****
+============================
+
+AMT-BI'09 also welcomes Posters submissions.
+AMT-BI'09 Posters session will provide researchers and practitioners
+in active media technology and brain informatics an exciting and
+highly interactive way to explore new ideas and results.
+All areas of the AMT/BI conference are of interest to the Posters and Demos.
+
+The proposal of a poster must include the following information:
+
+- Authors (name, affiliation, email, address, phone and fax)
+- The corresponding author with her/his email address
+- Title
+- Keywords
+- The category of the submission (AMT or BI)
+
+The proposals of posters must be submitted online at the conference
+websites.
+The deadline for proposals submission is *** 30 September 2009 ***.
+
+Special discount (or free) registration is available
+for students and poster session presenters
+
+AMT-BI 2009 Keynote Speakers
+============================
+
+Using Neural Imaging to Inform the Instruction of Mathematics
+Professor John Anderson
+Department of Psychology, Carnegie Mellon University
+http://act-r.psy.cmu.edu/people/ja/
+
+Distributed Human-Machine Systems: Progress and Prospects
+Dr. Jeffrey M. Bradshaw
+Florida Institute for Human and Machine Cognition (IHMC)
+http://www.ihmc.us/users/jbradshaw
+
+Large Scale Reasoning on the Semantic Web:
+what to do when success is becoming a problem
+Professor Frank van Harmelen
+AI Department, Vrije Universiteit Amsterdam
+http://www.cs.vu.nl/~frankh
+
+How Midazolam Can Help Us Understand Human Memory:
+3 Illustrations and a Proposal for a New Methodology
+Professor Lynne Reder
+Department of Psychology, Carnegie Mellon University
+http://memory.psy.cmu.edu/
+
+Research on Brain-like Computer
+Professor Zhongzhi Shi
+Key Laboratory of Intelligent Information Processing
+Institute of Computing Technology, Chinese Academy of Sciences
+http://www.intsci.ac.cn/en/shizz/
+
+A Framework for Machine Learning with Ambiguous Objects
+Professor Zhi-Hua Zhou
+National Key Laboratory for Novel Software Technology
+Nanjing University, China
+http://cs.nju.edu.cn/zhouzh/
+
+AMT-BI 2009 Special Sessions
+============================
+
+In addition to sessions for presenting accepted papers,
+we have the following special sessions:
+
+Special Session on Information Processing Meets Brain Sciences
+--------------------------------------------------------------
+
+Data Compression and Data Selection in Human Vision
+Zhaoping Li (University College London, UK)
+
+Do Brain Networks Correlate with Intelligence?
+Tianzi Jiang (Institute of Automation, Chinese Academy of Sciences, China)
+
+How Were Intelligence and Language Created in Human Brain
+Setsuo Ohsuga (University of Tokyo, Japan)
+
+Affective Learning with an EEG Approach
+Bin Hu (Birmingham City University, UK, and
+Lanzhou Unviersity, China)
+
+Some Web Intelligence Oriented Brain Informatics Studies
+Yulin Qin (Beijing University of Technology, China, and
+Carnegie Mellon University, USA)
+
+Special Session on Conversational Informatics
+---------------------------------------------
+
+Implementing a Multi-user Tour Guide system with an Embodied
+Conversational Agent
+Aleksandra Cerekovic, Hsuan-Huang Huang, Takuya Furukawa, Yuji Yamaoka,
+Igor Pandzic, Toyoaki Nishida, and Yukiko Nakano
+
+Actively Adaptive Agent for Human-Agent Collaborative Task
+Yong Xu, Yoshimasa Ohmoto, Kazuhiro Ueda, Takanori Komatsu, Takeshi
+Okadome, Koji Kamei, Shogo Okada, Yasuyuki Sumi, and Toyoaki Nishida
+
+Low-Overhead 3D Items Drawing Engine for Communicating Situated Knowledge
+Loic Merckel and Toyoaki Nishida
+
+A Method to Detect Lies in Free Communication using Diverse
+Nonverbal Information: Towards an Attentive Agent
+Yoshimasa Ohmoto, Kazuhiro Ueda, and Takehiko Ohno
+
+An Integrative Agent Model for Adaptive Human-Aware Presentation
+of Information During Demanding Tasks
+Andy van der Mee, Nataliya Mogles, and Jan Treur
+
+Special Session on Human-Web Interaction
+----------------------------------------
+
+Consumer Decision Making in Knowledge-Based Recommendation
+Monika Mandl, Alexander Felfernig, and Monika Schubert
+
+Incremental Learning of Triadic PLSA for Collaborative Filtering
+Hu Wu and Yongji Wang
+
+Interactive Storyboard: Animated Story Creation on Touch Interfaces
+Kun Yu, Hao Wang, Chang Liu, and Jianwei Niu
+
+Comparative Evaluation of Reliabilities on Semantic Search
+Functions: Auto-complete and Entity-centric Unified Search
+Hanmin Jung, Mi-Kyoung Lee, Beom-Jong You, and Do-Wan Kim
+
+Integrated Recommender Systems Based on Ontology and Usage Mining
+Liang Wei
+
+AMT-BI 2009 Workshop
+====================
+
+WICI Workshop/Posters on Web Intelligence Meets Brain Informatics
+
+Conference Site
+===============
+The conference will take place at the Grand Gongda Jianguo Hotel
+(Beijing Gongda Jianguo Fandian - 4-stars hotel) is located inside
+Beijing University of Technology within close proximity of
+the central business district and only a five-minute walk
+from the 2008 Beijing Olympic badminton and eurythmics venue.
+We will give a special discount price for BI-AMT'09 attendees.
+(400 RMB/1 single room, 450 RMB/1 double room (2 persons use),
+including Tax, Breakfast, etc.)
+The hotel reservation information is available at the AMT-BI'09 homepages.
+
+-----------------
+Co-sponsored by
+Beijing University of Technology (BJUT)
+Chinese Society of Radiology
+National Natural Science Foundation of China (NSFC)
+State Administration of Foreign Experts Affairs, PRC
+Shanghai Psytech Electronic Technology Co. Ltd
+Shenzhen Hanix United, Inc. Beijing Branch
+Beijing JinShangQi Net System Integration Co. Ltd
+Springer Lecture Notes in Computer Science (LNCS/LNAI)
+
+*** Contact Information ***
+
+Email: Jia Hu hujia0601 at gmail.com
+Jiajin Huang hjj at emails.bjut.edu.cn
+
+From lchihara at carleton.edu  Mon Sep 28 15:28:56 2009
+From: lchihara at carleton.edu (Laura Chihara)
+Date: Mon, 28 Sep 2009 10:28:56 -0500
+Subject: Dialog box for linear regression
+Message-ID: <4AC0D638.1030205@carleton.edu>
+
+We have S+ 8.1.1 installed on campus
+computers here. On some machines, in
+the dialog box for linear regression,
+the variable fields are labeled as
+"Independent" and "Dependent." But
+on some of the machines, they are labeled
+as "Explanatory" and "Response."
+
+I checked the S+ builds and they are all
+4 November 2008, M8622. Has anybody
+else noticed this discrepancy for this
+dialog box?
+
+Thanks.
+
+-- Laura Chihara
+
+*******************************************
+Laura Chihara
+Professor of Mathematics   507-222-4065 (office)
+Dept of Mathematics        507-222-4312 (fax)
+Carleton College
+1 North College Street
+Northfield MN 55057
+
+From simona.costanzo at ubs.com  Mon Sep 28 16:53:41 2009
+From: simona.costanzo at ubs.com
+Date: Mon, 28 Sep 2009 17:53:41 +0100
+Subject: Re: Kendall tau-b
+In-Reply-To: <4AA77493.25393.2EAC56@r.verwer.nin.knaw.nl>
+References: <4AA53A83.13626.1EBF705@r.verwer.nin.knaw.nl> <4AA61774.27682.22BD27@r.verwer.nin.knaw.nl> <OF8929BA52.3522859C-ON8625762B.0057B907-8625762B.005808F1@usgs.gov> <4AA77493.25393.2EAC56@r.verwer.nin.knaw.nl>
+Message-ID: <18C1822E7E505D47AC7D5D6A2DFBC4DC0551CB5C@NLDNC102PEX1.ubsw.net>
+
+Hi,
+
+Many thanks for your contributions. In summary we found that cor.test()
+calculates tau ignoring ties, but corrects the p-values. 
+
+However, unfortunately I am not completely done. I am still looking for
+a function that calculates tau-b coefficient in splus. I tried
+copy-pasting and running the R code of the function cor but no success. 
+
+Does anyone have any suggestions?
+
+Many thanks
+
+Simona
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Ronald WH
+Verwer
+Sent: 09 September 2009 08:26
+To: lorenz at usgs.gov; s-news at lists.biostat.wustl.edu
+Subject: Re: [S] Kendall tau-b
+
+Dave,
+
+Thank you for pointing out that Conover and S+ ignore ties when
+calculating tau, but that the p-values are indeed corrected (as also
+appears from the vark-function).
+
+Kind regards,
+
+Ronald
+
+Ronald W.H. Verwer
+Netherlands Institute for Neuroscience
+an institute of the Royal Netherlands
+Academy of Arts and Sciences
+Meibergdreef 47
+1105 BA Amsterdam
+The Netherlands
+tel: 020-5665518
+fax: 020-5666121
+email: r.verwer at nin.knaw.nl
+web-site:www1.nin.knaw.nl/~verwer
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+Visit our website at http://www.ubs.com
+
+This message contains confidential information and is intended only
+for the individual named.  If you are not the named addressee you
+should not disseminate, distribute or copy this e-mail.  Please
+notify the sender immediately by e-mail if you have received this
+e-mail by mistake and delete this e-mail from your system.
+
+E-mails are not encrypted and cannot be guaranteed to be secure or
+error-free as information could be intercepted, corrupted, lost,
+destroyed, arrive late or incomplete, or contain viruses.  The sender
+therefore does not accept liability for any errors or omissions in the
+contents of this message which arise as a result of e-mail transmission.
+If verification is required please request a hard-copy version.  This
+message is provided for informational purposes and should not be
+construed as a solicitation or offer to buy or sell any securities
+or related financial instruments.
+
+UBS Limited is a company registered in England & Wales under company
+number 2035362, whose registered office is at 1 Finsbury Avenue,
+London, EC2M 2PP, United Kingdom.
+
+UBS AG (London Branch) is registered as a branch of a foreign company
+under number BR004507, whose registered office is at
+1 Finsbury Avenue, London, EC2M 2PP, United Kingdom.
+
+UBS Clearing and Execution Services Limited is a company registered
+in England & Wales under company number 03123037, whose registered
+office is at 1 Finsbury Avenue, London, EC2M 2PP, United Kingdom.
+
+UBS reserves the right to retain all messages. Messages are protected
+and accessed only in legally justified cases.
+
+From rditmars at geomega.com  Mon Sep 28 20:14:24 2009
+From: rditmars at geomega.com (Rick Ditmars)
+Date: Mon, 28 Sep 2009 14:14:24 -0600
+Subject: Re: Kendall tau-b
+In-Reply-To: <18C1822E7E505D47AC7D5D6A2DFBC4DC0551CB5C@NLDNC102PEX1.ubsw.net>
+References: <4AA53A83.13626.1EBF705@r.verwer.nin.knaw.nl> <4AA61774.27682.22BD27@r.verwer.nin.knaw.nl> <OF8929BA52.3522859C-ON8625762B.0057B907-8625762B.005808F1@usgs.gov> <4AA77493.25393.2EAC56@r.verwer.nin.knaw.nl> <18C1822E7E505D47AC7D5D6A2DFBC4DC0551CB5C@NLDNC102PEX1.ubsw.net>
+Message-ID: <4AC11920.3010508@geomega.com>
+
+You may want to look at the Kendall.trend.test function in the 
+Environmental Stats module, if your S-Plus version has it.
+
+Rick Ditmars 
+Sr. Geophysicist 
+Geomega 
+2525 28th St. Ste. 200 
+Boulder, CO 
+80301 
+
+www.geomega.com 
+rditmars at geomega.com 
+(720)266-5424  
+(303)938-8123 (fax)
+
+On 9/28/2009 10:53 AM, simona.costanzo at ubs.com wrote:
+> Hi,
+>
+> Many thanks for your contributions. In summary we found that cor.test()
+> calculates tau ignoring ties, but corrects the p-values.
+>
+>
+> However, unfortunately I am not completely done. I am still looking for
+> a function that calculates tau-b coefficient in splus. I tried
+> copy-pasting and running the R code of the function cor but no success.
+>
+>
+> Does anyone have any suggestions?
+>
+> Many thanks
+>
+> Simona
+>
+>
+>
+> -----Original Message-----
+> From: s-news-owner at lists.biostat.wustl.edu
+> [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Ronald WH
+> Verwer
+> Sent: 09 September 2009 08:26
+> To: lorenz at usgs.gov; s-news at lists.biostat.wustl.edu
+> Subject: Re: [S] Kendall tau-b
+>
+> Dave,
+>
+> Thank you for pointing out that Conover and S+ ignore ties when
+> calculating tau, but that the p-values are indeed corrected (as also
+> appears from the vark-function).
+>
+> Kind regards,
+>
+> Ronald
+>
+>
+> Ronald W.H. Verwer
+> Netherlands Institute for Neuroscience
+> an institute of the Royal Netherlands
+> Academy of Arts and Sciences
+> Meibergdreef 47
+> 1105 BA Amsterdam
+> The Netherlands
+> tel: 020-5665518
+> fax: 020-5666121
+> email: r.verwer at nin.knaw.nl
+> web-site:www1.nin.knaw.nl/~verwer
+>
+>
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+> Visit our website at http://www.ubs.com
+>
+> This message contains confidential information and is intended only
+> for the individual named.  If you are not the named addressee you
+> should not disseminate, distribute or copy this e-mail.  Please
+> notify the sender immediately by e-mail if you have received this
+> e-mail by mistake and delete this e-mail from your system.
+>
+> E-mails are not encrypted and cannot be guaranteed to be secure or
+> error-free as information could be intercepted, corrupted, lost,
+> destroyed, arrive late or incomplete, or contain viruses.  The sender
+> therefore does not accept liability for any errors or omissions in the
+> contents of this message which arise as a result of e-mail transmission.
+> If verification is required please request a hard-copy version.  This
+> message is provided for informational purposes and should not be
+> construed as a solicitation or offer to buy or sell any securities
+> or related financial instruments.
+>
+> UBS Limited is a company registered in England & Wales under company
+> number 2035362, whose registered office is at 1 Finsbury Avenue,
+> London, EC2M 2PP, United Kingdom.
+>
+> UBS AG (London Branch) is registered as a branch of a foreign company
+> under number BR004507, whose registered office is at
+> 1 Finsbury Avenue, London, EC2M 2PP, United Kingdom.
+>
+> UBS Clearing and Execution Services Limited is a company registered
+> in England & Wales under company number 03123037, whose registered
+> office is at 1 Finsbury Avenue, London, EC2M 2PP, United Kingdom.
+>
+> UBS reserves the right to retain all messages. Messages are protected
+> and accessed only in legally justified cases.
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+>
+
+From skaluzny at tibco.com  Mon Sep 28 21:06:25 2009
+From: skaluzny at tibco.com (Stephen Kaluzny)
+Date: Mon, 28 Sep 2009 14:06:25 -0700
+Subject: Re: Kendall tau-b
+In-Reply-To: <4AC11920.3010508@geomega.com>
+References: <OF8929BA52.3522859C-ON8625762B.0057B907-8625762B.005808F1@usgs.gov> <4AA77493.25393.2EAC56@r.verwer.nin.knaw.nl> <18C1822E7E505D47AC7D5D6A2DFBC4DC0551CB5C@NLDNC102PEX1.ubsw.net> <4AC11920.3010508@geomega.com>
+Message-ID: <20090928210625.GA21915@seadevintranet01.na.tibco.com>
+
+On Mon, Sep 28, 2009 at 02:14:24PM -0600, Rick Ditmars wrote:
+> You may want to look at the Kendall.trend.test function in the 
+> Environmental Stats module, if your S-Plus version has it.
+> 
+> Rick Ditmars 
+> Sr. Geophysicist 
+> Geomega 
+> 2525 28th St. Ste. 200 
+> Boulder, CO 
+> 80301 
+> 
+> www.geomega.com 
+> rditmars at geomega.com 
+
+Starting with S+ 8.1, the Environmental Stats module is included with
+base S+ for Windows as a package (library). You can attach the package
+with the command:
+
+    library(envstats)
+
+In addition to adding $SHOME\library\envstats to the S+ search path, the
+above command will add the EnvironmentalStats menu to the S+ menu bar
+(if you are running the S+ for Windows GUI).
+
+-Stephen Kaluzny
+ TIBCO Software
+
+From rosenfes at mail.nih.gov  Tue Sep 29 17:28:39 2009
+From: rosenfes at mail.nih.gov (Rosenfeld, Simon (NIH/NCI) [E])
+Date: Tue, 29 Sep 2009 13:28:39 -0400
+Subject: AT again
+Message-ID: <55C6F5F484F0434D9B29DA87DFAE498616FCC84C86@NIHMLBX07.nih.gov>
+
+Lamine;
+
+Do you still remember about existence of the AT? Sunday is
+going to be nice.
+
+How’s everything?
+
+Simon
+
+From r.verwer at nin.knaw.nl  Wed Sep 30 06:38:03 2009
+From: r.verwer at nin.knaw.nl (Ronald WH Verwer)
+Date: Wed, 30 Sep 2009 08:38:03 +0200
+Subject: Re: Kendall tau-b
+In-Reply-To: <18C1822E7E505D47AC7D5D6A2DFBC4DC0551CB5C@NLDNC102PEX1.ubsw.net>
+References: <4AA53A83.13626.1EBF705@r.verwer.nin.knaw.nl> <4AA77493.25393.2EAC56@r.verwer.nin.knaw.nl> <18C1822E7E505D47AC7D5D6A2DFBC4DC0551CB5C@NLDNC102PEX1.ubsw.net>
+Message-ID: <4AC318EB.17285.23A85B@r.verwer.nin.knaw.nl>
+
+Simona,
+
+Via Google I found this site (Base SAS(R) 9.2 Procedures Guide: 
+Statistical Procedures: The CORR Procedure: Kendall's Tau-b 
+Correlation Coefficient):
+
+http://support.sas.com/documentation/cdl/en/procstat/59629/HT
+ML/default/procstat_corr_sect015.htm
+
+It describes the formulae necessary to compute Kendall's tau b 
+and the p-value. You will see that the code in S+ calculates s, V(s) 
+and v0, vt, vu, v1 and v2. If you copy the first parts of v0, vt and 
+vu then divide by 2 you obtain T0, T1 andT2.
+
+Tau b is then obtained by s/sqrt((T0-T1)(T0-T2))
+
+I hope this helps,
+
+Ronald
+
+Ronald W.H. Verwer
+Netherlands Institute for Neuroscience
+an institute of the Royal Netherlands
+Academy of Arts and Sciences
+Meibergdreef 47
+1105 BA Amsterdam
+The Netherlands
+tel: 020-5665518
+fax: 020-5666121
+email: r.verwer at nin.knaw.nl
+web-site:www1.nin.knaw.nl/~verwer
+

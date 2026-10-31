@@ -1,0 +1,1299 @@
+{
+  "list": "s-news",
+  "description": "",
+  "month": "2006-11",
+  "messages": [
+    {
+      "id": "msg-6bcfec294db0",
+      "message_id": "<1f70651fd2be.1fd2be1f7065@huskymail.uconn.edu>",
+      "from_name": "Stephanie A Mather",
+      "from_email_hash": "2114493c9ebd72d3c74d3f494beaea0423a813bd42bea264c6202f894c91a9a8",
+      "date": "2006-11-02T15:44:00Z",
+      "subject": "tree model rpart - printcp output",
+      "subject_clean": "tree model rpart - printcp output",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hi all -\n\nI am doing tree regression using S-Plus 7.0 and rpart.  I came up with a model \nand am trying to figure out what the rel error, xerror, and xstd rows stand for \nwhen using the printcp command.  Here is my output when using printcp:\n\n> printcp(trpmilav.rp)\n\nRegression tree:\nrpart(formula = trpmilav ~ hhsize + kids18 + adults18 + hhtype + \n        numveh + numwrker + numdrver + income + poppersq + urban +\n        cbdg25 + cbdg100, data = HHTable.11.01Final, control = \n        rpart.control(minbucket = 30, cp = 0.001, xval = 10))\n\nVariables actually used in tree construction:\n[1] cbdg100  cbdg25   income   numwrker poppersq\n\nRoot node error: 5.8745e6/4072 = 1442.6\n\nn=4072 (271 observations deleted due to missing values)\n\n         CP nsplit rel error xerror    xstd \n1 0.0064231      0   1.00000 1.0006 0.40944\n2 0.0035024      2   0.98715 1.0156 0.41187\n3 0.0027420      3   0.98365 1.0193 0.41225\n4 0.0017144      6   0.97543 1.0251 0.41228\n5 0.0012832     12   0.96500 1.0331 0.41248\n6 0.0010689     13   0.96371 1.0342 0.41245\n7 0.0010000     14   0.96264 1.0354 0.41245\n\nIn all the examples in textbooks I've seen, the xerror column decreases as CP \nincreases - why does mine go up?  And what's the best CP value to prune at?\n\nAny advice would be greatly appreciated - thanks in advance!\n\n-Stephanie\n\nStephanie Mather\nGraduate Research Assistant\nUniversity of Connecticut\nDept of Civil & Enviro. Engineering\n261 Glenbrook Rd, Unit 2037\nStorrs, CT 06269-2037",
+      "body_snippet": "Hi all -\n\nI am doing tree regression using S-Plus 7.0 and rpart.  I came up with a model \nand am trying to figure out what the rel error, xerror, and xstd rows stand for \nwhen using the printcp comman",
+      "thread_id": "thread-6bcfec294db0",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-da9fcf568a47",
+      "message_id": "<454B5F5C.4040203@web.de>",
+      "from_name": "Volker Bahn",
+      "from_email_hash": "48d57e2d8d4748f4c21fcf7dd8e4c0b4f221cee3480fc9e73ddb4f2c6abd9f9e",
+      "date": "2006-11-03T15:25:16Z",
+      "subject": "Re: tree model rpart - printcp output",
+      "subject_clean": "tree model rpart - printcp output",
+      "in_reply_to": "<1f70651fd2be.1fd2be1f7065@huskymail.uconn.edu>",
+      "references": [
+        "<1f70651fd2be.1fd2be1f7065@huskymail.uconn.edu>"
+      ],
+      "body_plain": "The increasing error is indeed a bad sign. Usually, the error, \ndetermined by cross-validation, decreases up to a certain number of \nsplits (= model complexity) and then starts to increase again. One \npruning strategy is to take the model with the lowest error (xerror) and \nadd 1 std (xstd) to it and then go to the simplest model that has an \nerror smaller than this sum. (1 standard error rule, Breiman 1984). In \nyour case, however, every included variable only increases the error, \nindicating, that you do not have any variables in your set that can \nrobustly explain variability in your dependent variable by the method of \nregression trees. \n\nHTH\n\nVolker\n\nStephanie A Mather wrote:\n> Hi all -\n>\n> I am doing tree regression using S-Plus 7.0 and rpart.  I came up with a model\n> and am trying to figure out what the rel error, xerror, and xstd rows stand for\n> when using the printcp command.  Here is my output when using printcp:\n>\n>\n> > printcp(trpmilav.rp)\n> >\n>\n>\n> Regression tree:\n> rpart(formula = trpmilav ~ hhsize + kids18 + adults18 + hhtype +\n> \tnumveh + numwrker + numdrver + income + poppersq + urban +\n> \tcbdg25 + cbdg100, data = HHTable.11.01Final, control =\n> \trpart.control(minbucket = 30, cp = 0.001, xval = 10))\n>\n>\n> Variables actually used in tree construction:\n> [1] cbdg100  cbdg25   income   numwrker poppersq\n>\n> Root node error: 5.8745e6/4072 = 1442.6\n>\n> n=4072 (271 observations deleted due to missing values)\n>\n>          CP nsplit rel error xerror    xstd\n> 1 0.0064231      0   1.00000 1.0006 0.40944\n>\n> 2 0.0035024      2   0.98715 1.0156 0.41187\n> 3 0.0027420      3   0.98365 1.0193 0.41225\n> 4 0.0017144      6   0.97543 1.0251 0.41228\n> 5 0.0012832     12   0.96500 1.0331 0.41248\n> 6 0.0010689     13   0.96371 1.0342 0.41245\n> 7 0.0010000     14   0.96264 1.0354 0.41245\n>\n> In all the examples in textbooks I've seen, the xerror column decreases as CP\n> increases - why does mine go up?  And what's the best CP value to prune at?\n>\n> Any advice would be greatly appreciated - thanks in advance!\n>\n> -Stephanie\n>\n> Stephanie Mather\n> Graduate Research Assistant\n> University of Connecticut\n> Dept of Civil & Enviro. Engineering\n> 261 Glenbrook Rd, Unit 2037\n> Storrs, CT 06269-2037\n>\n>\n>\n>",
+      "body_snippet": "The increasing error is indeed a bad sign. Usually, the error, \ndetermined by cross-validation, decreases up to a certain number of \nsplits (= model complexity) and then starts to increase again. One ",
+      "thread_id": "thread-6bcfec294db0",
+      "thread_depth": 1,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-df563a6058d5",
+      "message_id": "<000001c6ff76$64481ff0$6101a8c0@wyndham4w512hy>",
+      "from_name": "Brian Lossie",
+      "from_email_hash": "a0a793b2e16ff002600d40ecdd4ed832712c560cb0114341eeaf073e53379b27",
+      "date": "2006-11-03T18:32:11Z",
+      "subject": "position description",
+      "subject_clean": "position description",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Can you offer assistance in posting the following position.\n\n \n\nTitle:  Senior Quantitative Analyst:\n\n \n\n Position Description: \n\n \n\nDesign/perform quantitative studies\nin support of company’s business strategy. Develop, maintain, debug,\ndocument and optimize a library of S-Plus & C++ functions that include\nmathematical, statistical and optimization models developed and currently used\nin house. Mentor lower level analysts on S-Plus modeling\ntechniques. Working for Special Valuation within the Project Valuation\ngroup, the job offers exposure to various business units of company in valuing\ninvestment opportunities as applied to new or existing assets. The job requires\na person that can be comfortable working under pressure in a fast paced\nbusiness oriented environment.\n\n \n\n Position Requires: \n\n \n\nA minimum of a master's degree in\nStatistics, Mathematics, Computer Science, or other quantitative discipline;\ndoctorate preferred. Detail oriented, strong analytical and programming skills.\n5-10 years of quantitative or statistical analysis experience with 3-5 years of\nexperience working with S-Plus or R. The candidate should demonstrate the\nability to apply ANOVA, random number generation and Monte Carlo methods in \n\nS-Plus/R, and C++.  The candidate\nshould demonstrate effective verbal and written communications skills. \n\n \n\n Qualifications: \n\n \n\nEffective Verbal Communications\n\n - Competent; Effective Written Communications\n\n - Competent; Highly\nmotivated, self starting, resourceful, and driven by challenges; excellent\ncommunication skills, ability to examine information, data, and facts to\nsupport sound business decisions.\n\n \n\nInterested individuals should\nrespond with a resume to the following email address; bsl at wyndmill.com",
+      "body_snippet": "Can you offer assistance in posting the following position.\n\n \n\nTitle:  Senior Quantitative Analyst:\n\n \n\n Position Description: \n\n \n\nDesign/perform quantitative studies\nin support of company’s busines",
+      "thread_id": "thread-df563a6058d5",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-04d738adc5ea",
+      "message_id": "<454FC394@webster.usu.edu>",
+      "from_name": "slsbr",
+      "from_email_hash": "a9f603d4ea6cadb9f86953b88573787ff6f50f58b24efeb062850ec264d1dc08",
+      "date": "2006-11-03T20:08:34Z",
+      "subject": "single constant covariates, dfs, and frailties",
+      "subject_clean": "single constant covariates, dfs, and frailties",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "I?d appreciate any advice on coxph with a frailty component:\n\nWhen I try to run the model with ?site? representing the level of shared\nfrailties, the model fails. When I specify dfs, per T&G (2000), the model\nruns. For each site, there is one constant covariate. (The positive stable\nfrailty macro (EM algorithm) for SAS (Shu and Klein), runs fine but gives\ndifferent results than the S+ frailty with dfs specified.) Is the problem\nmeasuring shared frailties with a single constant covariate? How is this\nintra-site comparison made? Is bootstrapping the answer?\n\n> names(subjects)\n[1] \"site\"   \"time\"   \"status\" \"dummy1\"   \"dummy2\"   \"dummy3\"\n> model <-coxph(Surv(time,status)~dummy1+dummy2+dummy3+frailty(site),subjects)\nWarning messages:\n1: Inner loop failed to coverge for iterations 2 3 6 7 in: coxpenal.fit(X, Y,\nstrats, offset, init = init, control, weights = weights, method = method,\nrow.names(m), pcols,\n        pattr)\n2: X matrix deemed to be singular; variable 3 in: coxph(Surv(time, status) ~\ndummy1 + dummy2 + dummy3 + frailty(site), subjects)\n\n> model2 <-coxph(Surv(time,status)~dummy1+dummy2+dummy3+frailty(site,\ndf=15),subjects)\n> model2                 coef se(coef)   se2  Chisq DF      p\n                  dummy1 0.158 0.146    0.122   1.17  1 0.2800\n                  dummy2 0.335 0.144    0.120   5.40  1 0.0200\n                  dummy3 0.461 0.146    0.121   9.90  1 0.0016\nfrailty(site, df = 15)                      142.96 15 0.0000\n\nIterations: 4 outer, 14 Newton-Raphson\n     Variance of random effect= 0.0369   I-likelihood = -3369.1\nDegrees of freedom for terms=  0.7  0.7  0.7 15.0\nLikelihood ratio test=263  on 17.08 df, p=0  n= 720\n\n> model3 <-coxph(Surv(time,status)~dummy1+dummy2+dummy3+frailty(site,\ndf=3),subjects)\n> model3                coef se(coef)   se2 Chisq DF        p\n                 dummy1 0.153 0.125    0.121  1.49 1  2.2e-001\n                 dummy2 0.334 0.124    0.119  7.28 1  7.0e-003\n                 dummy3 0.392 0.124    0.120  9.90 1  1.7e-003\nfrailty(site, df = 3)                      26.03 3  9.4e-006\n\nIterations: 3 outer, 8 Newton-Raphson\n     Variance of random effect= 0.00601   I-likelihood = -3417.1\nDegrees of freedom for terms= 0.9 0.9 0.9 3.0\nLikelihood ratio test=63.6  on 5.79 df, p=6.39e-012  n= 720\n\nThanks,\nTarek",
+      "body_snippet": "I?d appreciate any advice on coxph with a frailty component:\n\nWhen I try to run the model with ?site? representing the level of shared\nfrailties, the model fails. When I specify dfs, per T&G (2000), t",
+      "thread_id": "thread-04d738adc5ea",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-11e01d000d84",
+      "message_id": "<Pine.GSO.4.58.0611060747260.21068@jupiter>",
+      "from_name": "John Kershaw",
+      "from_email_hash": "d8907b068a6385453dfaf794604451a8ac6400000e9f38409ca6db6b63c1ac8d",
+      "date": "2006-11-06T11:56:01Z",
+      "subject": "OOP enquiry",
+      "subject_clean": "OOP enquiry",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hello all,\n\nI have used S/Splus/R since the mid1980s.  As a former FORTRAN user, I\nhave always built code on the fly for the prupose immediately needed and\nhave amassed quite a collection of relatively useless functions because\nthey only relate to the job I needed done.  I have been reading a bit\nabout the OOP approaches and can see a lot of value in this approach (who\nsays old dogs can't learn new tricks?).  I have found bits and pieces on\nthe web and in the help files/manuals, but would really like a good\ncomprehensive source on OOP preferably in R or Splus.  Is there such a\nbeast?  If not, what would be a good starting reference for OOP that I\ncould relatively easily transfer to R/Splus?  Sorry for the somewhat\n\"Non\"group posting, but it would be useful to get a samplingpeople's\nperspectives on this.\n\nJAK",
+      "body_snippet": "Hello all,\n\nI have used S/Splus/R since the mid1980s.  As a former FORTRAN user, I\nhave always built code on the fly for the prupose immediately needed and\nhave amassed quite a collection of relativel",
+      "thread_id": "thread-11e01d000d84",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-8676087476d7",
+      "message_id": "<40e66e0b0611060538n47cbff01n5cf075f1cd77a989@mail.gmail.com>",
+      "from_name": "Douglas Bates",
+      "from_email_hash": "c908588836123be177df15f4b3132be3a2b4b95c4eaeddcc72b433a3981bb1b3",
+      "date": "2006-11-06T13:38:57Z",
+      "subject": "Re: OOP enquiry",
+      "subject_clean": "OOP enquiry",
+      "in_reply_to": "<Pine.GSO.4.58.0611060747260.21068@jupiter>",
+      "references": [
+        "<Pine.GSO.4.58.0611060747260.21068@jupiter>"
+      ],
+      "body_plain": "On 11/6/06, John Kershaw <kershaw at unb.ca> wrote:\n> Hello all,\n>\n> I have used S/Splus/R since the mid1980s.  As a former FORTRAN user, I\n> have always built code on the fly for the prupose immediately needed and\n> have amassed quite a collection of relatively useless functions because\n> they only relate to the job I needed done.  I have been reading a bit\n> about the OOP approaches and can see a lot of value in this approach (who\n> says old dogs can't learn new tricks?).  I have found bits and pieces on\n> the web and in the help files/manuals, but would really like a good\n> comprehensive source on OOP preferably in R or Splus.  Is there such a\n> beast?  If not, what would be a good starting reference for OOP that I\n> could relatively easily transfer to R/Splus?  Sorry for the somewhat\n> \"Non\"group posting, but it would be useful to get a samplingpeople's\n> perspectives on this.\n\nI think that John Chamber's book \"Programming with Data\" (a.k.a. \"the\ngreen book\") would be a good place for you to start.",
+      "body_snippet": "On 11/6/06, John Kershaw <kershaw at unb.ca> wrote:\n> Hello all,\n>\n> I have used S/Splus/R since the mid1980s.  As a former FORTRAN user, I\n> have always built code on the fly for the prupose immediat",
+      "thread_id": "thread-11e01d000d84",
+      "thread_depth": 1,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-7aa42a77d798",
+      "message_id": "<200611061529.08312.rdiaz@cnio.es>",
+      "from_name": "Ramon Diaz-Uriarte",
+      "from_email_hash": "332a9a197ac0bb17ec0abd7431d8d460db755af04c9ba93c6cbdfe8af497bbe5",
+      "date": "2006-11-06T14:29:08Z",
+      "subject": "Re: OOP enquiry",
+      "subject_clean": "OOP enquiry",
+      "in_reply_to": "<Pine.GSO.4.58.0611060747260.21068@jupiter>",
+      "references": [
+        "<Pine.GSO.4.58.0611060747260.21068@jupiter>"
+      ],
+      "body_plain": "On Monday 06 November 2006 12:56, John Kershaw wrote:\n> Hello all,\n>\n> I have used S/Splus/R since the mid1980s.  As a former FORTRAN user, I\n> have always built code on the fly for the prupose immediately needed and\n> have amassed quite a collection of relatively useless functions because\n> they only relate to the job I needed done.  I have been reading a bit\n> about the OOP approaches and can see a lot of value in this approach (who\n> says old dogs can't learn new tricks?).  I have found bits and pieces on\n> the web and in the help files/manuals, but would really like a good\n> comprehensive source on OOP preferably in R or Splus.  Is there such a\n> beast?  If not, what would be a good starting reference for OOP that I\n> could relatively easily transfer to R/Splus?  Sorry for the somewhat\n> \"Non\"group posting, but it would be useful to get a samplingpeople's\n> perspectives on this.\n>\n> JAK\n\nDear John,\n\nMaybe I'll get into trouble because of my answer, but here it goes anyway. Its \na digression, and might not be of any practical value :-).\n\nYou say:\n\n> have amassed quite a collection of relatively useless functions because\n> they only relate to the job I needed done.  \n\nOK, this is the problem you want to solve.\n\n> I have been reading a bit \n> about the OOP approaches and can see a lot of value in this approach (who\n> says old dogs can't learn new tricks?).  \n\nSure, OOP is _one_ way of dealing with your problem above (though what exactly \nis OOP might be vague ---see Graham's link below). But some people say there \nare other approaches for dealing with this problem which are not necessarily \ninferior to OOP. Some people even argue that OOP has been (way too much) \noversold. So oversold, in fact, that saying \"xyz is an object oriented \nlanguage\" seems to say something about the inherent value of language xyz \n(something that might end up seeming even more relevant than how expressive \nthe language is, or how un-contorted the syntax is, etc).  The conclusion \nthat OOP is oversold is something one might reach after reading good, \nreputable programming books such as  \"Concepts, techniques, and models of \ncomputer programming\", by van Roy and Haridi, and similar (note I am not \nclaiming the authors say this). A short piece on these issues is the comment \nby Paul Graham \nhttp://paulgraham.com/reesoo.html\nwhich contains additional links.\n\nSo maybe there are other ways of dealing with your problem that are better \nsuited for the kinds of things you do. \n\nThat said, I find the usage of S3-style classes just fine, and perfectly \nnatural, but I feel terribly overwhelmed and imprissoned trying to use \nS4-style classes. (I've used objects in C++ and I've used them in Python, but \nmost of my Python is not OOP). But this might be a personal handicap.\n\nAs for your original question, I think usage of S3-style classes is present in \nmost of the R literature, such as the \"S programming\" by Venables and Ripley, \nand some of the original S books. Examples of S3 classes are present in many \n(most?) CRAN packages and the recommended and built-in packages.\n\nI think the best place to understand what S4 is about might start \nwith \"Programming with data\", by Chambers. And there is lots of code using S4 \nclasses in BioConductor.\n\nBest,\n\nR.\n\nP.S. Pardon the rambling; might be a hangover from some discussion with Java \nprogrammers which seem to think that Java is the cannon that defines what is \ndesirable in programming.\n\n>\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n\n-- \nRamón Díaz-Uriarte\nBioinformatics \nCentro Nacional de Investigaciones Oncológicas (CNIO)\n(Spanish National Cancer Center)\nMelchor Fernández Almagro, 3\n28029 Madrid (Spain)\nFax: +-34-91-224-6972\nPhone: +-34-91-224-6900\n\nhttp://ligarto.org/rdiaz\nPGP KeyID: 0xE89B3462\n(http://ligarto.org/rdiaz/0xE89B3462.asc)\n\n**NOTA DE CONFIDENCIALIDAD** Este correo electrónico, y en su caso los ficheros \nadjuntos, pueden contener información protegida para el uso exclusivo de su \ndestinatario. Se prohíbe la distribución, reproducción o cualquier otro tipo de \ntransmisión por parte de otra persona que no sea el destinatario. Si usted \nrecibe por error este correo, se ruega comunicarlo al remitente y borrar el \nmensaje recibido.\n**CONFIDENTIALITY NOTICE** This email communication and any attachments may \ncontain confidential and privileged information for the sole use of the \ndesignated recipient named above. Distribution, reproduction or any other use \nof this transmission by any party other than the intended recipient is \nprohibited. If you are not the intended recipient please contact the sender and \ndelete all copies.",
+      "body_snippet": "On Monday 06 November 2006 12:56, John Kershaw wrote:\n> Hello all,\n>\n> I have used S/Splus/R since the mid1980s.  As a former FORTRAN user, I\n> have always built code on the fly for the prupose immedi",
+      "thread_id": "thread-11e01d000d84",
+      "thread_depth": 1,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-335c45983bd8",
+      "message_id": "<loom.20061107T003557-129@post.gmane.org>",
+      "from_name": "Gregor Gorjanc",
+      "from_email_hash": "b39c75688faf9190a17a4a292fdf8f9ec6b9f34cb9f4caf4a9101153bea16442",
+      "date": "2006-11-06T23:37:56Z",
+      "subject": "Re: OOP enquiry",
+      "subject_clean": "OOP enquiry",
+      "in_reply_to": null,
+      "references": [
+        "<Pine.GSO.4.58.0611060747260.21068@jupiter>"
+      ],
+      "body_plain": "John Kershaw <kershaw <at> unb.ca> writes:\n...\n> about the OOP approaches and can see a lot of value in this approach (who\n> says old dogs can't learn new tricks?).  I have found bits and pieces on\n> the web and in the help files/manuals, but would really like a good\n> comprehensive source on OOP preferably in R or Splus.  Is there such a\n> beast?  If not, what would be a good starting reference for OOP that I\n> could relatively easily transfer to R/Splus?  Sorry for the somewhat\n> \"Non\"group posting, but it would be useful to get a samplingpeople's\n> perspectives on this.\n\nGo to R wiki (seems to be down at the moment) and search for S4 and you will\nfind some pointers to the S4 system literature. I was also reading (yesterday!) \n\nhttp://www.omegahat.org/RSMethods/\n\nand found the PDF very nice.\n\nGregor",
+      "body_snippet": "John Kershaw <kershaw <at> unb.ca> writes:\n...\n> about the OOP approaches and can see a lot of value in this approach (who\n> says old dogs can't learn new tricks?).  I have found bits and pieces on\n> ",
+      "thread_id": "thread-11e01d000d84",
+      "thread_depth": 1,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-86524832deaf",
+      "message_id": "<4053699F3E4AD04BA536A5F6BB81A2CFF91FE7@UXEXMBU116.academic.windsor>",
+      "from_name": "Xiaochen Sun",
+      "from_email_hash": "1742e8152ebe1b75971318ff86b8bc747c8350db873ff016b1d5a41956cbcc93",
+      "date": "2006-11-07T10:13:28Z",
+      "subject": "CONTINUOUS TIME FINANCE Workshop with S-PLUS",
+      "subject_clean": "CONTINUOUS TIME FINANCE Workshop with S-PLUS",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Dear list, we are pleased to announce the following workshop with S-Plus:\n \n\nCONTINUOUS TIME FINANCE with S-Plus\n\nCONTINUOUS TIME FINANCE with S-Plus\n27-29 November 2006, Brunel University, West London, UK\n(www.unicom.co.uk/finance)\n\nBackground\nThree-day workshop presented by Dr Paresh Date and Mr Luka Jalen,\nCARISMA: The Centre for the Analysis of Risk and Optimisation Modelling\nApplications, Brunel University\n\nWhether it is mergers and acquisitions, derivative asset pricing, optimal \nportfolio choice or risk management, success in modern finance is unthinkable \nwithout a solid grasp of mathematics. Continuous time models now play a central \nrole in pricing of financial assets under more challenging circumstances than \ncan be handled with discrete time models. This course introduces models in \ncontinuous time and the advanced mathematics required for their analysis such \nas stochastic analysis (Brownian motion), partial differential equations and \nmartingale measures, and shows how these can be used for asset and derivative \nvaluation in continuous time.\nGiven the fast pace of development of finance theory and product innovation in \nrecent times, the course will be of great value to banking professionals who \nwant to learn basic modelling and pricing methods in investment banking as well \nas to graduate students starting their doctoral studies in finance.\n\nCourse Outline\n* Day 1\no Introduction to stochastic calculus\nWiener processes\nLinear stochastic differential equations: asset price dynamics\nIto's lemma\no Introduction to Splus for mathematical finance\nWriting functions\nRandom number generation and generating sample paths\n\n*Day 2\no Introduction to pricing and hedging of derivatives\nPricing of futures contracts\nHedging using futures\nEuropean Option payoffs and hedging using options\nBlack-Scholes formula\nDelta hedging\no Pricing European options using Monte Carlo in Splus\n\n* Day 3\no Stochastic interest rate models\nSpot rates, forward rates and arbitrage\nBond prices and yield curve\nShort rate models, Vasicek model\no Calibration of Vasicek model from real yield data using Splus\n\nEach day will include hands-on demonstrations of Splus\n\nBenefits of Attending\nYou will learn about the latest developments in the field from acknowledged \nresearch leaders, gathered together in London. By networking and listening to \nthe presentations, you will gain valuable knowledge and practical techniques to \napply your own area of practice or research. You will gain first hand \nexperience of the innovative thinking and best practices currently being \ndeveloped in some of the world's leading educational institutions.\n\nThe target audience\n*Graduate students who are starting their doctoral studies in finance\n*PhD Research Students\n*Academics\n*Banking professionals who want to learn basic modelling and pricing methods in \ninvestment banking.\n\nThis workshop is organized by The Centre for the Analysis of Risk and \nOptimisation Modelling Applications (CARISMA) at Brunel University and managed \nby UNICOM Seminars. It takes place at Brunel University campus, West London.\n\nFor further details please go to www.unicom.co.uk/finance  or email \ninfo at unicom.co.uk  for a PDF flier.\n\nAlternatively you may telephone UNICOM on +44 1895 256 484 for further \ninformation.\n\nWe look forward to welcoming you to the CONTINUOUS TIME FINANCE, 27-29 November \n2006; please also make your colleagues aware of it.\n\nWith regards,\n\nMichael\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \nMichael(Xiaochen) Sun\nCARISMA, www.carisma.brunel.ac.uk <http://www.carisma.brunel.ac.uk/>  \nCentre for the Analysis of Risk and Optimisation Modelling Application; \nSchool of Computing, Information Systems and Mathematics \nBrunel University \nUxbridge, UB8 3PH \nUnited Kingdom \nEmail: xiaochen.sun (at) brunel.ac.uk\nhttp://optirisk.googlepages.com/ <http://optirisk.googlepages.com/>  \nhttp://people.brunel.ac.uk/~mapgxcs <http://people.brunel.ac.uk/~mapgxcs>  \nBlog: http://mam3xs.blogspot.com <http://mam3xs.blogspot.com/> \nTel: (+44) (0)1895 265625\nMobile: (+44) (0)7841873292\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+      "body_snippet": "Dear list, we are pleased to announce the following workshop with S-Plus:\n \n\nCONTINUOUS TIME FINANCE with S-Plus\n\nCONTINUOUS TIME FINANCE with S-Plus\n27-29 November 2006, Brunel University, West Londo",
+      "thread_id": "thread-86524832deaf",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-3e8896b8d15a",
+      "message_id": "<20061107124005.9f08cc34deb45d78e54b3b5664e21546.1ae78328c8.wbe@email.secureserver.net>",
+      "from_name": "elvis at xlsolutions-corp.com",
+      "from_email_hash": "f5a1d7ffa3c41eb3ba715c56787a90ce278ec16d4012453afddbb46301816a06",
+      "date": "2006-11-07T19:40:05Z",
+      "subject": "December Courses: (1) R/Splus Fundamentals and Programming Techniques (2) Regression Modeling Strategies in R/Splus",
+      "subject_clean": "December Courses: (1) R/Splus Fundamentals and Programming Techniques (2) Regression Modeling Strategies in R/Splus",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "XLSolutions Corporation (www.xlsolutions-corp.com) is proud to announce\nNovember - December courses: \n    \n(1) R/Splus Fundamentals and Programming Techniques  \n           \n                  http://www.xlsolutions-corp.com/Rfund.htm \n  \n                    *** San Francisco / December 14-15, 2006 *** \n                    *** Boston / December 18-19, 2006 ***\n                    *** Seattle / December 18-19, 2006 ***\n\n(2) Regression Modeling Strategies in R/Splus --- by Prof Frank Harrell \n  \n                    http://www.xlsolutions-corp.com/Rstats2.htm \n                           \n                        *** Seattle, December 7-8, 2006 *** \n  \n(3) R/Splus Advanced Programming  --- by the R Development Core Team\nGuru! \n  \n                   http://www.xlsolutions-corp.com/Radv.htm \n  \n                     *** Seattle / December - 2006  DTB*** \n\n  \nAsk for group discount and reserve your seat Now - Earlybird Rates \nPayment due after the class! Email Sue Turner:  sue at xlsolutions-corp.com\n\n  \nEmail us for group discounts: sue at xlsolutions-corp.com\nPhone:  206 686 1578 \n  \nVisit us: www.xlsolutions-corp.com/training.htm \n  \nPlease let us know if you and your colleagues are interested in this\nclass to take advantage of group discount. Register now to secure your\nseat! \n  \nCheers, \n  \nElvis Miller, PhD \nManager Training \nXLSolutions Corporation \n206 686 1578 \nwww.xlsolutions-corp.com/training.htm \nelvis at xlsolutions-corp.com",
+      "body_snippet": "XLSolutions Corporation (www.xlsolutions-corp.com) is proud to announce\nNovember - December courses: \n    \n(1) R/Splus Fundamentals and Programming Techniques  \n           \n                  http://ww",
+      "thread_id": "thread-3e8896b8d15a",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-dc7e1b45448e",
+      "message_id": "<20061108003849.6933.qmail@web50805.mail.yahoo.com>",
+      "from_name": "Mike Trianni",
+      "from_email_hash": "ec4d05a26774e7c2946f9c73b64df511cc0730d3f320ce059a508f6b421babe2",
+      "date": "2006-11-08T00:38:49Z",
+      "subject": "glm warning message",
+      "subject_clean": "glm warning message",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "I have the following data frame, XX;\n   NNN   OOO \n 1  11   0.0\n 2  11   0.0\n 3  11   0.0\n 4  12   0.0\n 5  12   0.4\n 6  13   0.5\n 7  13   0.6\n 8  13   0.7\n 9  13   0.8\n10  14  0.9\n11  14  1.0\n12  14  1.0\n13  14  1.0\n14  14  1.0\n\n  When I perform the following glm;\n   \n  glm(OOO~NNN, family=binomial, data=\"\">   \n  in S-plus 6.2 there is no 'Warning message', but in S-plus 7.0 I get the following 'Warning message';\n   \n  Warning messages:\n  non-integer number of successes in a binomial glm in: glm.fitter(x = X, y = Y, w = w, start = start, offset = offset, family = family, maxit\n = control$maxit, epsilon =\n control$epsilon, trace = control$trace, null.dev = T)\n\n  Why no Warning meesage in 6.2?\n   \n  Thanks for any insight\n   \n  Mike",
+      "body_snippet": "I have the following data frame, XX;\n   NNN   OOO \n 1  11   0.0\n 2  11   0.0\n 3  11   0.0\n 4  12   0.0\n 5  12   0.4\n 6  13   0.5\n 7  13   0.6\n 8  13   0.7\n 9  13   0.8\n10  14  0.9\n11  14  1.0\n12  14  ",
+      "thread_id": "thread-dc7e1b45448e",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-39454ceb84fd",
+      "message_id": "<F3007D45992A294386A8A1ADDAA397CA01AD0DF3@exzh1.kispi.int>",
+      "from_name": "Molinari, Luciano",
+      "from_email_hash": "54279d69862c17dffaa7a7fa95f314766c3971ab5fc7cf66b06b57554ca5f11d",
+      "date": "2006-11-08T14:31:56Z",
+      "subject": "Printing in SP7",
+      "subject_clean": "Printing in SP7",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "I recently switched \nfrom SP2000 to SP7 for Windows. It seems that in SP7 results calculated, e.g. \nduring the loop, are printed first at the end of the loop, in contrast to \nSP2000, where they were printed continuously.\n\nCan this behaviour \nbe changed?\n\nThanks,\n\nL. \nMolinari",
+      "body_snippet": "I recently switched \nfrom SP2000 to SP7 for Windows. It seems that in SP7 results calculated, e.g. \nduring the loop, are printed first at the end of the loop, in contrast to \nSP2000, where they were p",
+      "thread_id": "thread-39454ceb84fd",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-c1317392f29d",
+      "message_id": "<Pine.LNX.4.58.0611091621260.24191@penguin.rand.org>",
+      "from_name": "J.R. Lockwood",
+      "from_email_hash": "1ef19b411c04f5bc4689ffb7732fdb8c2935514a63143af3582500108261cfce",
+      "date": "2006-11-09T21:21:48Z",
+      "subject": "2007 John M. Chambers Statistical Software Award",
+      "subject_clean": "2007 John M. Chambers Statistical Software Award",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "(sorry for cross-posting)\n\nJohn M. Chambers Statistical Software Award\n\nStatistical Computing Section\nAmerican Statistical Association\n\nThe Statistical Computing Section of the American Statistical\nAssociation announces the competition for the John M. Chambers\nStatistical Software Award. In 1998 the Association for Computing\nMachinery presented its Software System Award to John Chambers for the\ndesign and development of S. Dr. Chambers generously donated his award\nto the Statistical Computing Section to endow an annual prize for\nstatistical software written by an undergraduate or graduate student.\nThe prize carries with it a cash award of $1000, plus a substantial\nallowance for travel to the annual Joint Statistical Meetings where\nthe award will be presented.\n\nTeams of up to 3 people can participate in the competition, with the\ncash award being split among team members. The travel allowance will\nbe given to just one individual in the team, who will be presented the\naward at JSM.  To be eligible, the team must have designed and\nimplemented a piece of statistical software.  The individual within\nthe team indicated to receive the travel allowance must have begun the\ndevelopment while a student, and must either currently be a student,\nor have completed all requirements for her/his last degree after\nJanuary 1, 2004.  To apply for the award, teams must provide the\nfollowing materials:\n\n   Current CV's of all team members.\n\n   A letter from a faculty mentor at the academic institution of the\n   individual indicated to receive the travel award.  The letter\n   should confirm that the individual had substantial participation in\n   the development of the software, certify her/his student status\n   when the software began to be developed (and either the current\n   student status or the date of degree completion), and briefly\n   discuss the importance of the software to statistical practice.\n\n   A brief, one to two page description of the software, summarizing\n   what it does, how it does it, and why it is an important\n   contribution.  If the team member competing for the travel\n   allowance has continued developing the software after finishing\n   her/his studies, the description should indicate what was developed\n   when the individual was a student and what has been added since.\n\n   Access to the software by the award committee for their use on\n   inputs of their choosing.  Access to the software can consist of an\n   executable file, Web-based access, macro code, or other appropriate\n   form.  Access should be accompanied by enough information to allow\n   the judges to effectively use and evaluate the software (including\n   its design considerations.)  This information can be provided in a\n   variety of ways, including but not limited to a user manual (paper\n   or electronic), a paper, a URL, online help to the system, and\n   source code.  In particular, the entrant must be prepared to\n   provide complete source code for inspection by the committee if\n   requested.\n\nAll materials must be in English.  We prefer that electronic text be\nsubmitted in Postscript or PDF.  The entries will be judged on a\nvariety of dimensions, including the importance and relevance for\nstatistical practice of the tasks performed by the software, ease of\nuse, clarity of description, elegance and availability for use by the\nstatistical community. Preference will be given to those entries that\nare grounded in software design rather than calculation.  The decision\nof the award committee is final.\n\nAll application materials must be received by 5:00pm EST, Monday,\nFebruary 26, 2007 at the address below.  The winner will be announced\nin May and the award will be given at the 2007 Joint Statistical\nMeetings.\n\nInformation on the competition can also be accessed on the website of\nthe Statistical Computing Section (www.statcomputing.org or see the\nASA website, www.amstat.org for a pointer), including the names and\ncontributions of previous winners.  Inquiries and application\nmaterials should be emailed or mailed to:\n\n                       Chambers Software Award\n                       c/o J.R. Lockwood\n                       The RAND Corporation\n                       4570 Fifth Avenue, Suite 600\n                       Pittsburgh, PA 15213\n                       lockwood at rand.org\n\n--------------------\n\nThis email message is for the sole use of the intended recipient(s) and\nmay contain privileged information. Any unauthorized review, use,\ndisclosure or distribution is prohibited. If you are not the intended\nrecipient, please contact the sender by reply email and destroy all copies\nof the original message.",
+      "body_snippet": "(sorry for cross-posting)\n\nJohn M. Chambers Statistical Software Award\n\nStatistical Computing Section\nAmerican Statistical Association\n\nThe Statistical Computing Section of the American Statistical\nAs",
+      "thread_id": "thread-c1317392f29d",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-3d3e62748fe6",
+      "message_id": "<00e501c704f9$f57805c0$017e270a@lapphil>",
+      "from_name": "J. Philip Miller",
+      "from_email_hash": "44eef3ac1ea8559cb6d9c568d056dd69efce1d1ef92c2fb4dbea810297ab4623",
+      "date": "2006-11-10T18:56:40Z",
+      "subject": "Opportunity in NYC",
+      "subject_clean": "Opportunity in NYC",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "[jpm] I was asked to forward the following to the\nlist - phil  \n\n(Bio-) Statistical Programmer (temporary assignment)\n\n \n\nResponsibilies: \n\n \n\nModifying a C library for S-Plus and S-Plus code to increase\nspeed and flexibility of a scoring algorithm. \n\n \n\nRequirements: \n\n \n\nfamiliarity with basic statistical methods \n\nExcellent skills in the use of C++ and R or S as programming language for\nstatistical methods \n\nfamiliarity with programming techniques for FPGAs and grid environments a plus \n\na B.S. or M.S. in biostatistics, computational statistics, or a related field\nrequired. \n\ngood written communication skills \n\nability to work independently and creatively \n\nAssignment: \n\nThree months with an extension to a permanent position as an\noption.\n\nCompensation: open \n\n \n\nRegards,\n\n \n\nBrian Pedersen\n\nCTI TEKSource\n\n551 Fifth Avenue\n\nNew York, NY\n 10176\n\nBrian Pedersen <bpedersen at cti-group.com>\n\nO: 860-228-2957\n\nM: 201-988-4916\n\nF:  212-453-9011",
+      "body_snippet": "[jpm] I was asked to forward the following to the\nlist - phil  \n\n(Bio-) Statistical Programmer (temporary assignment)\n\n \n\nResponsibilies: \n\n \n\nModifying a C library for S-Plus and S-Plus code to incre",
+      "thread_id": "thread-3d3e62748fe6",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-564ca74d676a",
+      "message_id": "<3.0.6.32.20061111182506.00a589f8@Fagus.engref.fr>",
+      "from_name": "Jean-Daniel BONTEMPS",
+      "from_email_hash": "8cc85a30cec9ed0105077cd0d573c1162d8d307547daf343dbef05f86ef37796",
+      "date": "2006-11-11T17:25:06Z",
+      "subject": "problem with $apVar in nlme objects",
+      "subject_clean": "problem with $apVar in nlme objects",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Dear All,\n\nI am using S-plus 2000 under windows XP.\n\nI am using nlme to fit growth functions to tree growth data. As I need\nestimates for standard-errors of random-effects, I tried with\n\"object$apVar\" (object being of class nlme) supposed to give \"an\napproximate covariance matrix for the variance-covariance coefficients\".\nThe estimates I obtained were by far to high. \n\nIn order to check the meaning of these so called variances for\nvariance-covariance coefficients, I adjusted the same model, rescaling\nparameters (for instance p' = p/100). The new estimate of the mean of p' is\n100 times the old one, as well as for the random effect (sigma p'). But\nusing $apVar, I found exactly the same estimates for the precision of sigma\np' !\n\nCan anyone please tell me how is $apVar parametrized ? What is exactly\ngiven inside ?\n\nWith great many thanks,\n\nJD Bontemps\n\n--\nJean-Daniel BONTEMPS\n\nUMR 1092 Inra-Engref \"LERFoB\" - équipe Ecologie Forestière\nENGREF - 14, rue Girardet \nF-54000 NANCY\n\ntél: (+33) (0)3 83 39 68 75 \nmél: bontemps at engref.fr         \n\nwww.nancy.inra.fr/lerfob/",
+      "body_snippet": "Dear All,\n\nI am using S-plus 2000 under windows XP.\n\nI am using nlme to fit growth functions to tree growth data. As I need\nestimates for standard-errors of random-effects, I tried with\n\"object$apVar\"",
+      "thread_id": "thread-564ca74d676a",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-7455a73c9ca2",
+      "message_id": "<OFE5B4BA25.8C1289E6-ON85257226.00595CD7-85257226.0059EFA9@nps.gov>",
+      "from_name": "Jeff_Runde at nps.gov",
+      "from_email_hash": "8f82dc4e321c8ecf3c96491578e1f364ce7fd8e883923d313343b8fbad001364",
+      "date": "2006-11-14T16:22:20Z",
+      "subject": "Box plot not doing \"Display selected points\"",
+      "subject_clean": "Box plot not doing \"Display selected points\"",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hi,\n\nUsing Splus 7 for windows on xp machine.\n\nI have box plots that show outliers.  I would like to use the \"display\nselected points\" capability.  I have the option selected in the graphics\npreferences and I am trying to use the \"display selected points\" tool in\nthe graphics tool box.  I am using menus to do everything, no command line.\n\nTIA,\n\nJeff\n\nJeff Runde, PhD\nAquatic Ecologist\nNational Park Service\nNational Capital Region / Northeast Region\n\nThe Center for Urban Ecology\n4598 MacArthur Blvd, NW\nWashington DC 20007\n\noffice phone: (202) 342-1443 x224\ncell phone: (703) 216-7539\nfax: (202) 282-1031\nemail: Jeff_Runde at nps.gov\n\nVisit the CUE website: http://www.nps.gov/cue",
+      "body_snippet": "Hi,\n\nUsing Splus 7 for windows on xp machine.\n\nI have box plots that show outliers.  I would like to use the \"display\nselected points\" capability.  I have the option selected in the graphics\npreferenc",
+      "thread_id": "thread-7455a73c9ca2",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-2cd6cfeeaf8b",
+      "message_id": "<20061116213054.GA9739@idsia.ch>",
+      "from_name": "Alessandro Antonucci",
+      "from_email_hash": "e05823903b898de3190fcdec78c90d09127dcf37e3fe9baee9356b61df71527b",
+      "date": "2006-11-16T21:30:54Z",
+      "subject": "SIPTA Newsletter Announcement - New issue",
+      "subject_clean": "SIPTA Newsletter Announcement - New issue",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "We would like to briefly indicate that the June issue of the SIPTA\nnewsletter (Society for Imprecise Probability Theory: Theories and \nApplications) has been available at the address      \n\n   http://www.sipta.org/resources/news.html\n\nand that it contains material that may be of interest to this community:\n\n1) An interview with Prof. Peter M. Williams on the 30th anniversary of \nthe paper \"Notes on Conditional Previsions\", a foundational paper that \nextends many aspects of de Finetti's approach to probability theory.\n\n2) Announcements of lectures and special issues, and a discussion of the \nBounds software package, by Arie Beresteanu and Charles Manski.\n\nAlso, the issue contains a discussion of the new articles of the\nsociety.      \n-- \n===============================================================\nAlessandro Antonucci\nDalle Molle Institute for Artificial Intelligence (IDSIA)\nat Idsia                        e-mail:     alessandro at idsia.ch\nGalleria 2                      web:   www.idsia.ch/~alessandro\nVia Cantonale                   mobile:       +39 339-567-23-28\nCH-6928                         tel:           +41 58-666-66-70\nManno - Lugano                  fax:           +41 58-666-66-61\nSwitzerland                     skype:     alessandro.antonucci\n===============================================================",
+      "body_snippet": "We would like to briefly indicate that the June issue of the SIPTA\nnewsletter (Society for Imprecise Probability Theory: Theories and \nApplications) has been available at the address      \n\n   http://",
+      "thread_id": "thread-2cd6cfeeaf8b",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-e527ae79b90e",
+      "message_id": "<3FC0430478C30B4A9AF0AFF7863418F130EF1B@BCMEVS6.ad.bcm.edu>",
+      "from_name": "Roberts, J. Kyle",
+      "from_email_hash": "88de96a6c2a9d0cf7c5c9055fcd25cf68d8edc8e6550db1c23d6252724ee7877",
+      "date": "2006-11-17T21:26:07Z",
+      "subject": "p-values for variance components in lme",
+      "subject_clean": "p-values for variance components in lme",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Does anyone know how \nto test for the statistical significance of variance components in lme (actually \nproduce the p-values)?  I have an editor asking for \nthem.\n\n \n\nThanks,\n\nKyle\n\n \n\n***************************************\n\nJ. Kyle Roberts, Ph.D.\n\nBaylor College of Medicine\n\nCenter for Educational \nOutreach\n\nOne Baylor Plaza, MS:  \nBCM411\n\nHouston, TX   \n77030-3411\n\n713-798-6672 - 713-798-8201 \nFax\n\njkrobert at bcm.edu\n\n***************************************",
+      "body_snippet": "Does anyone know how \nto test for the statistical significance of variance components in lme (actually \nproduce the p-values)?  I have an editor asking for \nthem.\n\n \n\nThanks,\n\nKyle\n\n \n\n***************",
+      "thread_id": "thread-e527ae79b90e",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-166a79d13fd1",
+      "message_id": "<40e66e0b0611180555hb42cd94qa1fb1722f77fa970@mail.gmail.com>",
+      "from_name": "Douglas Bates",
+      "from_email_hash": "c908588836123be177df15f4b3132be3a2b4b95c4eaeddcc72b433a3981bb1b3",
+      "date": "2006-11-18T13:55:47Z",
+      "subject": "Re: p-values for variance components in lme",
+      "subject_clean": "p-values for variance components in lme",
+      "in_reply_to": "<3FC0430478C30B4A9AF0AFF7863418F130EF1B@BCMEVS6.ad.bcm.edu>",
+      "references": [
+        "<3FC0430478C30B4A9AF0AFF7863418F130EF1B@BCMEVS6.ad.bcm.edu>"
+      ],
+      "body_plain": "On 11/17/06, Roberts, J. Kyle <jkrobert at bcm.tmc.edu> wrote:\n\n> Does anyone know how to test for the statistical significance of variance\n> components in lme (actually produce the p-values)?  I have an editor asking\n> for them.\n\nFit the model with and without the variance component and compare the\ntwo model fits using the anova function.  Because the null hypothesis\nof the variance component being zero is on the boundary of the\nparameter space, the p-value obtained from a chi-square distribution\nwith one degree of freedom will be conservative in the sense that it\nis an upper bound on the true p-value for the test.\n\nIf removing the variance component results in a model without any\nrandom effects you need to fit the reduced model using lm and you must\nlist the lme model before the lm model in the call to anova.\n\nI hope this helps.\n\nDoug Bates",
+      "body_snippet": "On 11/17/06, Roberts, J. Kyle <jkrobert at bcm.tmc.edu> wrote:\n\n> Does anyone know how to test for the statistical significance of variance\n> components in lme (actually produce the p-values)?  I have",
+      "thread_id": "thread-e527ae79b90e",
+      "thread_depth": 1,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-d9c293f36970",
+      "message_id": "<OF71C1CDF3.63A8D23D-ONC125722C.004C822A-C125722C.004CECFA@arz.co.at>",
+      "from_name": "Ita.Cirovic-Donev at hypo-alpe-adria.com",
+      "from_email_hash": "71a513f2cffebb78f3f2e4bda8760d7489478d4ec1ee38edf48c4af45b83c922",
+      "date": "2006-11-20T14:00:14Z",
+      "subject": "counting occurrences",
+      "subject_clean": "counting occurrences",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hi,\n\nI have a vector with qualitative values such as A,B,C,D,E,F,G. The length\nof the column is 1100. I would like to go through the vector an count the\noccurrences of A, B,C and so on and record the values in the new vector. Is\nthere a function that does a counting in this way that I can insert into\nthe for loop. Thanks.\n\nRazmjena informacija s HYPO ALPE-ADRIA-BANK d.d. putem e-maila je bez\njamstava. Zakljucivanje pravnih poslova putem ovog medija nije dozvoljeno.\nOvaj e-mail moze sadrzavati povjerljive i/ili povlastene informacije. Ako\nste ga primili greskom, molimo Vas da nas o tome odmah obavijestite tako\nsto cete na njega odgovoriti, a zatim vas molimo da ga izbrisete iz vaseg\nsustava. Ovime vas obavjestavamo da je svako otkrivanje, kopiranje,\ndistribuiranje ili poduzimanje bilo kakvih aktivnosti u vezi s njegovim\nsadrzajem strogo zabranjeno i moze biti nezakonito.\n\nThe exchange of messages with HYPO ALPE-ADRIA-BANK d.d. via e-mail is not\nbinding. Declarations regarding legal transactions must not be exchanged\nvia this medium. The information contained in this e-mail message is\nconfidential and intended exclusively for the addressee. Persons receiving\nthis e-mail message who are not the named addressee (or his/her co-workers,\nor persons authorized to take delivery) must not use, forward or reproduce\nits  contents. If you have received this e-mail message by mistake, please\ncontact us immediately and delete this email message beyond retrieval.",
+      "body_snippet": "Hi,\n\nI have a vector with qualitative values such as A,B,C,D,E,F,G. The length\nof the column is 1100. I would like to go through the vector an count the\noccurrences of A, B,C and so on and record the ",
+      "thread_id": "thread-d9c293f36970",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-4cba71271a52",
+      "message_id": "<02c401c70cad$5c7cb260$0540210a@www.domain>",
+      "from_name": "Dimitris Rizopoulos",
+      "from_email_hash": "255e70445195f93351001d553d560dab56dbee2dac8cb6c7029fa1bd536c406c",
+      "date": "2006-11-20T14:08:32Z",
+      "subject": "Re: counting occurrences",
+      "subject_clean": "counting occurrences",
+      "in_reply_to": null,
+      "references": [
+        "<OF71C1CDF3.63A8D23D-ONC125722C.004C822A-C125722C.004CECFA@arz.co.at>"
+      ],
+      "body_plain": "look at ?table, e.g.,\n\nx <- sample(LETTERS, 1100, TRUE)\ntable(x)\n\nI hope it helps.\n\nBest,\nDimitris\n\n----\nDimitris Rizopoulos\nPh.D. Student\nBiostatistical Centre\nSchool of Public Health\nCatholic University of Leuven\n\nAddress: Kapucijnenvoer 35, Leuven, Belgium\nTel: +32/(0)16/336899\nFax: +32/(0)16/337015\nWeb: http://med.kuleuven.be/biostat/\n    http://www.student.kuleuven.be/~m0390867/dimitris.htm\n\n----- Original Message ----- \nFrom: <Ita.Cirovic-Donev at hypo-alpe-adria.com>\n\nTo: <s-news at lists.biostat.wustl.edu>\nSent: Monday, November 20, 2006 3:00 PM\nSubject: [S] counting occurrences\n\n> Hi,\n>\n> I have a vector with qualitative values such as A,B,C,D,E,F,G. The\n> length\n> of the column is 1100. I would like to go through the vector an\n> count the\n> occurrences of A, B,C and so on and record the values in the new\n> vector. Is\n> there a function that does a counting in this way that I can insert\n> into\n>\n> the for loop. Thanks.\n>\n>\n> Razmjena informacija s HYPO ALPE-ADRIA-BANK d.d. putem e-maila je\n> bez\n> jamstava. Zakljucivanje pravnih poslova putem ovog medija nije\n> dozvoljeno.\n> Ovaj e-mail moze sadrzavati povjerljive i/ili povlastene\n> informacije. Ako\n> ste ga primili greskom, molimo Vas da nas o tome odmah obavijestite\n> tako\n> sto cete na njega odgovoriti, a zatim vas molimo da ga izbrisete iz\n> vaseg\n>\n> sustava. Ovime vas obavjestavamo da je svako otkrivanje, kopiranje,\n> distribuiranje ili poduzimanje bilo kakvih aktivnosti u vezi s\n> njegovim\n>\n> sadrzajem strogo zabranjeno i moze biti nezakonito.\n>\n>\n>\n> The exchange of messages with HYPO ALPE-ADRIA-BANK d.d. via e-mail\n> is not\n> binding. Declarations regarding legal transactions must not be\n> exchanged\n>\n> via this medium. The information contained in this e-mail message is\n> confidential and intended exclusively for the addressee. Persons\n> receiving\n> this e-mail message who are not the named addressee (or his/her\n> co-workers,\n> or persons authorized to take delivery) must not use, forward or\n> reproduce\n> its  contents. If you have received this e-mail message by mistake,\n> please\n> contact us immediately and delete this email message beyond\n> retrieval.\n>\n>\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu\n> with\n>\n> the BODY of the message:  unsubscribe s-news\n\nDisclaimer: http://www.kuleuven.be/cwis/email_disclaimer.htm",
+      "body_snippet": "look at ?table, e.g.,\n\nx <- sample(LETTERS, 1100, TRUE)\ntable(x)\n\nI hope it helps.\n\nBest,\nDimitris\n\n----\nDimitris Rizopoulos\nPh.D. Student\nBiostatistical Centre\nSchool of Public Health\nCatholic Univer",
+      "thread_id": "thread-d9c293f36970",
+      "thread_depth": 1,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-f5241800d222",
+      "message_id": "<efb536d50611200608sb32214ck8bf8111f6ca66066@mail.gmail.com>",
+      "from_name": "Sarah Goslee",
+      "from_email_hash": "273eb6baae4ac25f2de5845f3f62dce55d161cfc7cf04eb5f3cc6d94b3d4aa24",
+      "date": "2006-11-20T14:08:51Z",
+      "subject": "Re: counting occurrences",
+      "subject_clean": "counting occurrences",
+      "in_reply_to": "<OF71C1CDF3.63A8D23D-ONC125722C.004C822A-C125722C.004CECFA@arz.co.at>",
+      "references": [
+        "<OF71C1CDF3.63A8D23D-ONC125722C.004C822A-C125722C.004CECFA@arz.co.at>"
+      ],
+      "body_plain": "Is this what you're looking for?\n\n> x <- c(\"A\", \"B\", \"C\", \"A\", \"C\", \"A\", \"A\")\n> y <- table(x)\n> y\n\nx\nA B C\n4 1 2\n\nOn 11/20/06, Ita.Cirovic-Donev at hypo-alpe-adria.com\n<Ita.Cirovic-Donev at hypo-alpe-adria.com> wrote:\n> Hi,\n>\n> I have a vector with qualitative values such as A,B,C,D,E,F,G. The length\n> of the column is 1100. I would like to go through the vector an count the\n> occurrences of A, B,C and so on and record the values in the new vector. Is\n> there a function that does a counting in this way that I can insert into\n> the for loop. Thanks.\n\n--\nSarah Goslee\nhttp://www.functionaldiversity.org",
+      "body_snippet": "Is this what you're looking for?\n\n> x <- c(\"A\", \"B\", \"C\", \"A\", \"C\", \"A\", \"A\")\n> y <- table(x)\n> y\n\nx\nA B C\n4 1 2\n\nOn 11/20/06, Ita.Cirovic-Donev at hypo-alpe-adria.com\n<Ita.Cirovic-Donev at hypo-alpe-",
+      "thread_id": "thread-d9c293f36970",
+      "thread_depth": 1,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-09d2ab0f900b",
+      "message_id": "<OF37967DBD.A1CF9C2B-ONC125722C.004D11E7-C125722C.004DD87C@arz.co.at>",
+      "from_name": "Ita.Cirovic-Donev at hypo-alpe-adria.com",
+      "from_email_hash": "71a513f2cffebb78f3f2e4bda8760d7489478d4ec1ee38edf48c4af45b83c922",
+      "date": "2006-11-20T14:10:17Z",
+      "subject": "count occurrences",
+      "subject_clean": "count occurrences",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Sorry, I have an addition to previous email. I also have a vector of zeros\nand ones of equal length as the first vector. The counting should be done\nin the following way:\n\n      count each A where it is equal to zero\n      count each A where it is equal to one\n      and so on for the rest of the qualitative marks.\n\nthanks\n\n--------\n\nHi,\n\nI have a vector with qualitative values such as A,B,C,D,E,F,G. The length\nof the column is 1100. I would like to go through the vector an count the\noccurrences of A, B,C and so on and record the values in the new vector. Is\nthere a function that does a counting in this way that I can insert into\nthe for loop. Thanks.\n\nRazmjena informacija s HYPO ALPE-ADRIA-BANK d.d. putem e-maila je bez\njamstava. Zakljucivanje pravnih poslova putem ovog medija nije dozvoljeno.\nOvaj e-mail moze sadrzavati povjerljive i/ili povlastene informacije. Ako\nste ga primili greskom, molimo Vas da nas o tome odmah obavijestite tako\nsto cete na njega odgovoriti, a zatim vas molimo da ga izbrisete iz vaseg\nsustava. Ovime vas obavjestavamo da je svako otkrivanje, kopiranje,\ndistribuiranje ili poduzimanje bilo kakvih aktivnosti u vezi s njegovim\nsadrzajem strogo zabranjeno i moze biti nezakonito.\n\nThe exchange of messages with HYPO ALPE-ADRIA-BANK d.d. via e-mail is not\nbinding. Declarations regarding legal transactions must not be exchanged\nvia this medium. The information contained in this e-mail message is\nconfidential and intended exclusively for the addressee. Persons receiving\nthis e-mail message who are not the named addressee (or his/her co-workers,\nor persons authorized to take delivery) must not use, forward or reproduce\nits  contents. If you have received this e-mail message by mistake, please\ncontact us immediately and delete this email message beyond retrieval.",
+      "body_snippet": "Sorry, I have an addition to previous email. I also have a vector of zeros\nand ones of equal length as the first vector. The counting should be done\nin the following way:\n\n      count each A where it ",
+      "thread_id": "thread-09d2ab0f900b",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-d32dd85aeaa6",
+      "message_id": "<Pine.GSO.4.58.0611201015180.1207@jupiter>",
+      "from_name": "John Kershaw",
+      "from_email_hash": "d8907b068a6385453dfaf794604451a8ac6400000e9f38409ca6db6b63c1ac8d",
+      "date": "2006-11-20T14:15:51Z",
+      "subject": "Re: count occurrences",
+      "subject_clean": "count occurrences",
+      "in_reply_to": "<OF37967DBD.A1CF9C2B-ONC125722C.004D11E7-C125722C.004DD87C@arz.co.at>",
+      "references": [
+        "<OF37967DBD.A1CF9C2B-ONC125722C.004D11E7-C125722C.004DD87C@arz.co.at>"
+      ],
+      "body_plain": "table works here as well:\n\n> x<-sample(LETTERS,1100,T)\n> y<-sample(c(0,1),1100,T)\n> table(x,y)\n   0  1\nA 32 17\nB 20 20\nC 27 25\nD 13 17\nE 28 28\nF 16 23\nG 16 18\nH 21 19\nI 31 18\nJ 12 22\nK 27 20\nL 29 18\nM 18 21\nN 24 11\nO 22 17\nP 20 17\nQ 24 27\nR 22 23\nS 17 19\nT 30 22\nU 24 18\nV 22 19\nW 18 27\nX 20 22\nY 19 23\nZ 20 17\n\nJAK\n\nOn Mon, 20 Nov 2006 Ita.Cirovic-Donev at hypo-alpe-adria.com wrote:\n\n>\n>\n>\n>\n> Sorry, I have an addition to previous email. I also have a vector of zeros\n> and ones of equal length as the first vector. The counting should be done\n> in the following way:\n>\n>       count each A where it is equal to zero\n>       count each A where it is equal to one\n>       and so on for the rest of the qualitative marks.\n>\n> thanks\n>\n>\n>\n> --------\n>\n> Hi,\n>\n> I have a vector with qualitative values such as A,B,C,D,E,F,G. The length\n> of the column is 1100. I would like to go through the vector an count the\n> occurrences of A, B,C and so on and record the values in the new vector. Is\n> there a function that does a counting in this way that I can insert into\n> the for loop. Thanks.\n>\n>\n>\n>\n>\n> Razmjena informacija s HYPO ALPE-ADRIA-BANK d.d. putem e-maila je bez\n> jamstava. Zakljucivanje pravnih poslova putem ovog medija nije dozvoljeno.\n> Ovaj e-mail moze sadrzavati povjerljive i/ili povlastene informacije. Ako\n> ste ga primili greskom, molimo Vas da nas o tome odmah obavijestite tako\n> sto cete na njega odgovoriti, a zatim vas molimo da ga izbrisete iz vaseg\n> sustava. Ovime vas obavjestavamo da je svako otkrivanje, kopiranje,\n> distribuiranje ili poduzimanje bilo kakvih aktivnosti u vezi s njegovim\n> sadrzajem strogo zabranjeno i moze biti nezakonito.\n>\n>\n>\n> The exchange of messages with HYPO ALPE-ADRIA-BANK d.d. via e-mail is not\n> binding. Declarations regarding legal transactions must not be exchanged\n> via this medium. The information contained in this e-mail message is\n> confidential and intended exclusively for the addressee. Persons receiving\n> this e-mail message who are not the named addressee (or his/her co-workers,\n> or persons authorized to take delivery) must not use, forward or reproduce\n> its  contents. If you have received this e-mail message by mistake, please\n> contact us immediately and delete this email message beyond retrieval.\n>\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>",
+      "body_snippet": "table works here as well:\n\n> x<-sample(LETTERS,1100,T)\n> y<-sample(c(0,1),1100,T)\n> table(x,y)\n   0  1\nA 32 17\nB 20 20\nC 27 25\nD 13 17\nE 28 28\nF 16 23\nG 16 18\nH 21 19\nI 31 18\nJ 12 22\nK 27 20\nL 29 18\nM",
+      "thread_id": "thread-09d2ab0f900b",
+      "thread_depth": 1,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-a66c774e0626",
+      "message_id": "<efb536d50611200617k30e46a81l3b6b310a0bb36d3d@mail.gmail.com>",
+      "from_name": "Sarah Goslee",
+      "from_email_hash": "273eb6baae4ac25f2de5845f3f62dce55d161cfc7cf04eb5f3cc6d94b3d4aa24",
+      "date": "2006-11-20T14:17:21Z",
+      "subject": "Re: count occurrences",
+      "subject_clean": "count occurrences",
+      "in_reply_to": "<OF37967DBD.A1CF9C2B-ONC125722C.004D11E7-C125722C.004DD87C@arz.co.at>",
+      "references": [
+        "<OF37967DBD.A1CF9C2B-ONC125722C.004D11E7-C125722C.004DD87C@arz.co.at>"
+      ],
+      "body_plain": "Same thing, pretty much\n\nx <- c(\"A\", \"B\", \"C\", \"A\", \"C\", \"A\", \"A\")\ny <- c(1,1,1,0,0,0,0)\n\nt0 <- table(x[y == 0])\nt1 <- table([x[y == 1])\n\nSarah\n\nOn 11/20/06, Ita.Cirovic-Donev at hypo-alpe-adria.com\n<Ita.Cirovic-Donev at hypo-alpe-adria.com> wrote:\n> Sorry, I have an addition to previous email. I also have a vector of zeros\n> and ones of equal length as the first vector. The counting should be done\n> in the following way:\n>\n>       count each A where it is equal to zero\n>       count each A where it is equal to one\n>       and so on for the rest of the qualitative marks.\n>\n> thanks\n\n--\nSarah Goslee\nhttp://www.functionaldiversity.org",
+      "body_snippet": "Same thing, pretty much\n\nx <- c(\"A\", \"B\", \"C\", \"A\", \"C\", \"A\", \"A\")\ny <- c(1,1,1,0,0,0,0)\n\nt0 <- table(x[y == 0])\nt1 <- table([x[y == 1])\n\nSarah\n\nOn 11/20/06, Ita.Cirovic-Donev at hypo-alpe-adria.com\n<",
+      "thread_id": "thread-09d2ab0f900b",
+      "thread_depth": 1,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-9ded82552be7",
+      "message_id": "<02d901c70cae$c62d0330$0540210a@www.domain>",
+      "from_name": "Dimitris Rizopoulos",
+      "from_email_hash": "255e70445195f93351001d553d560dab56dbee2dac8cb6c7029fa1bd536c406c",
+      "date": "2006-11-20T14:18:39Z",
+      "subject": "Re: count occurrences",
+      "subject_clean": "count occurrences",
+      "in_reply_to": null,
+      "references": [
+        "<OF37967DBD.A1CF9C2B-ONC125722C.004D11E7-C125722C.004DD87C@arz.co.at>"
+      ],
+      "body_plain": "try this then:\n\nx <- sample(LETTERS, 1100, TRUE)\ny <- sample(0:1, 1100, TRUE)\n\n#########\n\nind <- as.logical(y)\ntable(x) # all\ntable(x[ind]) # ones\ntable(x[!ind]) # zeros\n\nBest,\nDimitris\n\n----\nDimitris Rizopoulos\nPh.D. Student\nBiostatistical Centre\nSchool of Public Health\nCatholic University of Leuven\n\nAddress: Kapucijnenvoer 35, Leuven, Belgium\nTel: +32/(0)16/336899\nFax: +32/(0)16/337015\nWeb: http://med.kuleuven.be/biostat/\n    http://www.student.kuleuven.be/~m0390867/dimitris.htm\n\n----- Original Message ----- \nFrom: <Ita.Cirovic-Donev at hypo-alpe-adria.com>\n\nTo: <s-news at lists.biostat.wustl.edu>\nSent: Monday, November 20, 2006 3:10 PM\nSubject: [S] count occurrences\n\n> Sorry, I have an addition to previous email. I also have a vector of\n> zeros\n> and ones of equal length as the first vector. The counting should be\n> done\n>\n> in the following way:\n>\n>      count each A where it is equal to zero\n>      count each A where it is equal to one\n>      and so on for the rest of the qualitative marks.\n>\n> thanks\n>\n>\n>\n> --------\n>\n> Hi,\n>\n> I have a vector with qualitative values such as A,B,C,D,E,F,G. The\n> length\n> of the column is 1100. I would like to go through the vector an\n> count the\n> occurrences of A, B,C and so on and record the values in the new\n> vector. Is\n> there a function that does a counting in this way that I can insert\n> into\n>\n> the for loop. Thanks.\n>\n>\n>\n>\n>\n> Razmjena informacija s HYPO ALPE-ADRIA-BANK d.d. putem e-maila je\n> bez\n> jamstava. Zakljucivanje pravnih poslova putem ovog medija nije\n> dozvoljeno.\n> Ovaj e-mail moze sadrzavati povjerljive i/ili povlastene\n> informacije. Ako\n> ste ga primili greskom, molimo Vas da nas o tome odmah obavijestite\n> tako\n> sto cete na njega odgovoriti, a zatim vas molimo da ga izbrisete iz\n> vaseg\n>\n> sustava. Ovime vas obavjestavamo da je svako otkrivanje, kopiranje,\n> distribuiranje ili poduzimanje bilo kakvih aktivnosti u vezi s\n> njegovim\n>\n> sadrzajem strogo zabranjeno i moze biti nezakonito.\n>\n>\n>\n> The exchange of messages with HYPO ALPE-ADRIA-BANK d.d. via e-mail\n> is not\n> binding. Declarations regarding legal transactions must not be\n> exchanged\n>\n> via this medium. The information contained in this e-mail message is\n> confidential and intended exclusively for the addressee. Persons\n> receiving\n> this e-mail message who are not the named addressee (or his/her\n> co-workers,\n> or persons authorized to take delivery) must not use, forward or\n> reproduce\n> its  contents. If you have received this e-mail message by mistake,\n> please\n> contact us immediately and delete this email message beyond\n> retrieval.\n>\n>\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu\n> with\n>\n> the BODY of the message:  unsubscribe s-news\n\nDisclaimer: http://www.kuleuven.be/cwis/email_disclaimer.htm",
+      "body_snippet": "try this then:\n\nx <- sample(LETTERS, 1100, TRUE)\ny <- sample(0:1, 1100, TRUE)\n\n#########\n\nind <- as.logical(y)\ntable(x) # all\ntable(x[ind]) # ones\ntable(x[!ind]) # zeros\n\nBest,\nDimitris\n\n----\nDimitris",
+      "thread_id": "thread-09d2ab0f900b",
+      "thread_depth": 1,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-289a5a57e91f",
+      "message_id": "<000c01c70d76$6ba5d2c0$d6495382@Steffenlaptop>",
+      "from_name": "Steffen Barembruch",
+      "from_email_hash": "484dc0b452412b38745c9508f28cb46742dbfbe809d1119de57289b73c07c40e",
+      "date": "2006-11-21T14:07:41Z",
+      "subject": "SPXML and graphics",
+      "subject_clean": "SPXML and graphics",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hey!\n\n \n\nI want to create a report in rtf including data\nframes and plots.\n\nIs it possible to create an xml file with the SPXML\nlibrary which includes plots?\n\n \n\nThank you\n\nSteffen Barembruch",
+      "body_snippet": "Hey!\n\n \n\nI want to create a report in rtf including data\nframes and plots.\n\nIs it possible to create an xml file with the SPXML\nlibrary which includes plots?\n\n \n\nThank you\n\nSteffen Barembruch",
+      "thread_id": "thread-289a5a57e91f",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-9635c9fbc2e1",
+      "message_id": "<7.0.1.0.2.20061121130523.05135e60@noaa.gov>",
+      "from_name": "Kim Elmore",
+      "from_email_hash": "3cd6671ef932770cc8d1186ae3ebf1aa7f121e069148949e0825595f39cb6687",
+      "date": "2006-11-21T19:10:12Z",
+      "subject": "Strange hist() problem",
+      "subject_clean": "Strange hist() problem",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "I'm running S-Plus 7.0 under XP SP 2.  I'me experiencing problems \nwith hist(). I've used hist plenty of times, but I've never seen this.\n\nSpecifically, when I use the example given in the help file:\n\n> hist(state.region)\n\nI get the following error:\n\nProblem in tabulate: argument weights= not matched: \ntabulate(as.integer(unclass(x)), length(levels(x)), weights = weights)\n\nThere is no \"weights\" argument for hist() that appears in the help \nfile. I've never had this problem in the past.\n\nI recently had to replace the motherboard in this workstation and so \nhad to re-host the S-Plus license, but I can't imagine how that would \nhave affected internal functions like hist().\n\nHow do I resolve this?\n\nKim Elmore\n                          Kim Elmore, Ph.D.\n                       University of Oklahoma\n        Cooperative Institute for Mesoscale Meteorological Studies\n\"All of weather is divided into three parts: Yes, No, and Maybe. The\ngreatest of these is Maybe\" The original Latin appears to be garbled.",
+      "body_snippet": "I'm running S-Plus 7.0 under XP SP 2.  I'me experiencing problems \nwith hist(). I've used hist plenty of times, but I've never seen this.\n\nSpecifically, when I use the example given in the help file:\n",
+      "thread_id": "thread-9635c9fbc2e1",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-5617c6c176ff",
+      "message_id": "<7.0.1.0.2.20061121142554.04e9eba0@noaa.gov>",
+      "from_name": "Kim Elmore",
+      "from_email_hash": "3cd6671ef932770cc8d1186ae3ebf1aa7f121e069148949e0825595f39cb6687",
+      "date": "2006-11-21T20:31:25Z",
+      "subject": "Re: Strange hist() problem",
+      "subject_clean": "Strange hist() problem",
+      "in_reply_to": "<SEWINEXCH00oG1VRIjn00000982@sewinexch00.insightful.com>",
+      "references": [
+        "<7.0.1.0.2.20061121130523.05135e60@noaa.gov>",
+        "<SEWINEXCH00oG1VRIjn00000982@sewinexch00.insightful.com>"
+      ],
+      "body_plain": "Thanks, Tim.\n\nApologies to the list: yes, resample is loaded.\n\n.resample.version yields: S+Resample library, Version 2.0, Beta \nRelease 7, build date: Thu Jan 20 16:10:01 PST 2005\n\nversion yields: Enterprise Developer Version 7.0.6  for Microsoft \nWindows : 2005\n\nmasked() tells me: [1] \".Random.seed\"     \"samp.permute.old\"\n\nThe second masked function is one that I wrote and should discard.\n\nsearch() shows:\n> search()\n [1] \"H:\\\\EnKF\\\\data\" \n\"resample\"       \"bigdata\"        \"splus\"          \"stat\" \n\"data\"\n [7] \n\"trellis\"        \"nlme3\"          \"menu\"           \"sgui\" \n\"winjava\"        \"SPXML\"\n\n[13] \"maps\"           \"main\"\n\nSo resample appears to be loaded as it should be.\n\nIs there a more recent version of resample?\n\nKim Elmore\n\nAt 01:36 PM 11/21/2006, you wrote:\n> This sounds like you might have some functions from the resample\n> library (that support weights) but not others.  Possibly the wrong\n> version of resample for S+7.0.\n>\n> When this happens:\n> * is resample loaded?\n> * what version of resample?  And S-PLUS?  Do:\n>         .resample.version\n>         version\n> * Do you have any functions masked?  Do:\n>         masked()\n> * Where in the search list is resample loaded?  Do:\n>         search()\n>\n> Tim Hesterberg\n>\n> >I'm running S-Plus 7.0 under XP SP 2.  I'me experiencing problems\n> >with hist(). I've used hist plenty of times, but I've never seen this.\n> >\n> >Specifically, when I use the example given in the help file:\n> >\n> > > hist(state.region)\n> >\n> >I get the following error:\n> >\n> >Problem in tabulate: argument weights= not matched:\n> >tabulate(as.integer(unclass(x)), length(levels(x)), weights = weights)\n> >\n> >There is no \"weights\" argument for hist() that appears in the help\n> >file. I've never had this problem in the past.\n> >\n> >I recently had to replace the motherboard in this workstation and so\n> >had to re-host the S-Plus license, but I can't imagine how that would\n> >have affected internal functions like hist().\n> >\n> >How do I resolve this?\n> >\n> >Kim Elmore\n\n                          Kim Elmore, Ph.D.\n                       University of Oklahoma\n        Cooperative Institute for Mesoscale Meteorological Studies\n\"All of weather is divided into three parts: Yes, No, and Maybe. The\ngreatest of these is Maybe\" The original Latin appears to be garbled.",
+      "body_snippet": "Thanks, Tim.\n\nApologies to the list: yes, resample is loaded.\n\n.resample.version yields: S+Resample library, Version 2.0, Beta \nRelease 7, build date: Thu Jan 20 16:10:01 PST 2005\n\nversion yields: Ent",
+      "thread_id": "thread-5617c6c176ff",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-a87c9d645ab5",
+      "message_id": "<SEWINEXCH00R8YGn7Oz00000983@sewinexch00.insightful.com>",
+      "from_name": "Tim Hesterberg",
+      "from_email_hash": "006d6c7dc32bd30d08b3192457126eabf59f5d9c77c66b3f4bd6b70dafb4738c",
+      "date": "2006-11-21T20:45:40Z",
+      "subject": "Re: Strange hist() problem",
+      "subject_clean": "Strange hist() problem",
+      "in_reply_to": "<7.0.1.0.2.20061121142554.04e9eba0@noaa.gov>",
+      "references": [
+        "<7.0.1.0.2.20061121130523.05135e60@noaa.gov>",
+        "<SEWINEXCH00oG1VRIjn00000982@sewinexch00.insightful.com>",
+        "<7.0.1.0.2.20061121142554.04e9eba0@noaa.gov>"
+      ],
+      "body_plain": "That version of S+Resample is for S-PLUS 6.2 and earlier.\nThe version for S-PLUS 7.0 and later is at:\n        www.insightful.com/downloads/libraries\n\nTim Hesterberg\n\n>Thanks, Tim.\n>\n>Apologies to the list: yes, resample is loaded.\n>\n>.resample.version yields: S+Resample library, Version 2.0, Beta \n>Release 7, build date: Thu Jan 20 16:10:01 PST 2005\n>\n>version yields: Enterprise Developer Version 7.0.6  for Microsoft \n>Windows : 2005\n>\n>masked() tells me: [1] \".Random.seed\"     \"samp.permute.old\"\n>\n>The second masked function is one that I wrote and should discard.\n>\n>search() shows:\n> > search()\n>  [1] \"H:\\\\EnKF\\\\data\" \n>\"resample\"       \"bigdata\"        \"splus\"          \"stat\" \n>\"data\"\n>  [7] \n>\"trellis\"        \"nlme3\"          \"menu\"           \"sgui\" \n>\"winjava\"        \"SPXML\"\n>[13] \"maps\"           \"main\"\n>\n>So resample appears to be loaded as it should be.\n>\n>Is there a more recent version of resample?\n>\n>Kim Elmore\n>\n>At 01:36 PM 11/21/2006, you wrote:\n>>This sounds like you might have some functions from the resample\n>>library (that support weights) but not others.  Possibly the wrong\n>>version of resample for S+7.0.\n>>\n>>When this happens:\n>>* is resample loaded?\n>>* what version of resample?  And S-PLUS?  Do:\n>>         .resample.version\n>>         version\n>>* Do you have any functions masked?  Do:\n>>         masked()\n>>* Where in the search list is resample loaded?  Do:\n>>         search()\n>>\n>>Tim Hesterberg\n>>\n>> >I'm running S-Plus 7.0 under XP SP 2.  I'me experiencing problems\n>> >with hist(). I've used hist plenty of times, but I've never seen this.\n>> >\n>> >Specifically, when I use the example given in the help file:\n>> >\n>> > > hist(state.region)\n>> >\n>> >I get the following error:\n>> >\n>> >Problem in tabulate: argument weights= not matched:\n>> >tabulate(as.integer(unclass(x)), length(levels(x)), weights = weights)\n>> >\n>> >There is no \"weights\" argument for hist() that appears in the help\n>> >file. I've never had this problem in the past.\n>> >\n>> >I recently had to replace the motherboard in this workstation and so\n>> >had to re-host the S-Plus license, but I can't imagine how that would\n>> >have affected internal functions like hist().\n>> >\n>> >How do I resolve this?\n>> >\n>> >Kim Elmore\n\n========================================================\n| Tim Hesterberg       Research Scientist              |\n| timh at insightful.com  Insightful Corp.                |\n| (206)802-2319        1700 Westlake Ave. N, Suite 500 |\n| (206)283-8691 (fax)  Seattle, WA 98109-3044, U.S.A.  |\n|                      www.insightful.com/Hesterberg   |\n========================================================\nDownload the S+Resample library from www.insightful.com/downloads/libraries",
+      "body_snippet": "That version of S+Resample is for S-PLUS 6.2 and earlier.\nThe version for S-PLUS 7.0 and later is at:\n        www.insightful.com/downloads/libraries\n\nTim Hesterberg\n\n>Thanks, Tim.\n>\n>Apologies to the ",
+      "thread_id": "thread-5617c6c176ff",
+      "thread_depth": 1,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-e1c1a36546b7",
+      "message_id": "<7.0.1.0.2.20061121153644.05586900@noaa.gov>",
+      "from_name": "Kim Elmore",
+      "from_email_hash": "3cd6671ef932770cc8d1186ae3ebf1aa7f121e069148949e0825595f39cb6687",
+      "date": "2006-11-21T21:38:38Z",
+      "subject": "Re: Strange hist() problem",
+      "subject_clean": "Strange hist() problem",
+      "in_reply_to": "<SEWINEXCH00R8YGn7Oz00000983@sewinexch00.insightful.com>",
+      "references": [
+        "<7.0.1.0.2.20061121130523.05135e60@noaa.gov>",
+        "<SEWINEXCH00oG1VRIjn00000982@sewinexch00.insightful.com>",
+        "<7.0.1.0.2.20061121142554.04e9eba0@noaa.gov>",
+        "<SEWINEXCH00R8YGn7Oz00000983@sewinexch00.insightful.com>"
+      ],
+      "body_plain": "That was the problem; all is now well.  I thought that I had done \nthis, but was obviously wrong. I found that the proper .ZIP file had \nbeen downloaded but never installed.\n\nThanks, Tim.\n\nHappy Thanksgiving,\n\nKim Elmore\n\nAt 02:45 PM 11/21/2006, Tim Hesterberg wrote:\n> That version of S+Resample is for S-PLUS 6.2 and earlier.\n> The version for S-PLUS 7.0 and later is at:\n>         www.insightful.com/downloads/libraries\n>\n> Tim Hesterberg\n>\n> >Thanks, Tim.\n> >\n> >Apologies to the list: yes, resample is loaded.\n> >\n> >.resample.version yields: S+Resample library, Version 2.0, Beta\n> >Release 7, build date: Thu Jan 20 16:10:01 PST 2005\n> >\n> >version yields: Enterprise Developer Version 7.0.6  for Microsoft\n> >Windows : 2005\n> >\n> >masked() tells me: [1] \".Random.seed\"     \"samp.permute.old\"\n> >\n> >The second masked function is one that I wrote and should discard.\n> >\n> >search() shows:\n> > > search()\n> >  [1] \"H:\\\\EnKF\\\\data\"\n> >\"resample\"       \"bigdata\"        \"splus\"          \"stat\"\n> >\"data\"\n> >  [7]\n> >\"trellis\"        \"nlme3\"          \"menu\"           \"sgui\"\n> >\"winjava\"        \"SPXML\"\n> >[13] \"maps\"           \"main\"\n> >\n> >So resample appears to be loaded as it should be.\n> >\n> >Is there a more recent version of resample?\n> >\n> >Kim Elmore\n> >\n> >At 01:36 PM 11/21/2006, you wrote:\n> >>This sounds like you might have some functions from the resample\n> >>library (that support weights) but not others.  Possibly the wrong\n> >>version of resample for S+7.0.\n> >>\n> >>When this happens:\n> >>* is resample loaded?\n> >>* what version of resample?  And S-PLUS?  Do:\n> >>         .resample.version\n> >>         version\n> >>* Do you have any functions masked?  Do:\n> >>         masked()\n> >>* Where in the search list is resample loaded?  Do:\n> >>         search()\n> >>\n> >>Tim Hesterberg\n> >>\n> >> >I'm running S-Plus 7.0 under XP SP 2.  I'me experiencing problems\n> >> >with hist(). I've used hist plenty of times, but I've never seen this.\n> >> >\n> >> >Specifically, when I use the example given in the help file:\n> >> >\n> >> > > hist(state.region)\n> >> >\n> >> >I get the following error:\n> >> >\n> >> >Problem in tabulate: argument weights= not matched:\n> >> >tabulate(as.integer(unclass(x)), length(levels(x)), weights = weights)\n> >> >\n> >> >There is no \"weights\" argument for hist() that appears in the help\n> >> >file. I've never had this problem in the past.\n> >> >\n> >> >I recently had to replace the motherboard in this workstation and so\n> >> >had to re-host the S-Plus license, but I can't imagine how that would\n> >> >have affected internal functions like hist().\n> >> >\n> >> >How do I resolve this?\n> >> >\n> >> >Kim Elmore\n>\n> ========================================================\n> | Tim Hesterberg       Research Scientist              |\n> | timh at insightful.com  Insightful Corp.                |\n> | (206)802-2319        1700 Westlake Ave. N, Suite 500 |\n> | (206)283-8691 (fax)  Seattle, WA 98109-3044, U.S.A.  |\n> |                      www.insightful.com/Hesterberg   |\n> ========================================================\n> Download the S+Resample library from www.insightful.com/downloads/libraries\n\n                          Kim Elmore, Ph.D.\n                       University of Oklahoma\n        Cooperative Institute for Mesoscale Meteorological Studies\n\"All of weather is divided into three parts: Yes, No, and Maybe. The\ngreatest of these is Maybe\" The original Latin appears to be garbled.",
+      "body_snippet": "That was the problem; all is now well.  I thought that I had done \nthis, but was obviously wrong. I found that the proper .ZIP file had \nbeen downloaded but never installed.\n\nThanks, Tim.\n\nHappy Thank",
+      "thread_id": "thread-5617c6c176ff",
+      "thread_depth": 2,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-3e1afe7c79ee",
+      "message_id": "<45646FA8.5030906@web.de>",
+      "from_name": "Steffen Klug",
+      "from_email_hash": "e34983624c79ed684702552b3d56dd1a433f019ee9ac90bc6e1e9b21b62c82d7",
+      "date": "2006-11-22T15:41:28Z",
+      "subject": "NAs in S-Plus",
+      "subject_clean": "NAs in S-Plus",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Dear List\n\nI'm absolutely new in this field.\nCan anybody help me, how I can fill the NAs of a time series with \nplausible values with easy methods of s-plus?\n\nI'm very glad about your answer.\n\nYours sincerely\nSteffen",
+      "body_snippet": "Dear List\n\nI'm absolutely new in this field.\nCan anybody help me, how I can fill the NAs of a time series with \nplausible values with easy methods of s-plus?\n\nI'm very glad about your answer.\n\nYours s",
+      "thread_id": "thread-3e1afe7c79ee",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-d53176713848",
+      "message_id": "<BEA6A318CB196546AA5184CE0F374470082725@UTHEVS3.mail.uthouston.edu>",
+      "from_name": "Padhye, Nikhil S",
+      "from_email_hash": "474fc4db5169ae4e3dc30ee92f567b72c80114c7c55b8c3619dd0c1c7b06b288",
+      "date": "2006-11-22T18:04:22Z",
+      "subject": "Re: NAs in S-Plus",
+      "subject_clean": "NAs in S-Plus",
+      "in_reply_to": null,
+      "references": [
+        "<45646FA8.5030906@web.de>"
+      ],
+      "body_plain": "Steffen,\n\nLinear interpolation is available through the function approx, or you could use \nthe function spline for cubic spline interpolation. Neither of these functions \naccepts NAs, so you will need to preprocess. Assuming that your time stamps are \nin a vector t0 and data in vector y0, consider something like:\n\nt1 <- t0[!is.na(y0)]  ##removes times at which data is not available\n\ny1 <- y0[!is.na(y0)]\n\nz <- approx(t1, y1, t0, method=\"linear\") ##estimates values of y at all \noriginal time stamps\n\n## if you want just a fixed number of output points, say 50, on a uniform grid \nbetween min(x) and max(x),\n\n## use approx(t1, y1, n=50, method=\"linear\")\n\n## to extract the time and data vectors from list z, use t2 <- z$x and y2 <- z$y\n\nHope that is of use.\n\nNikhil\n\n____________________________________________\n\nN. S. Padhye, Ph.D.\n\nAssistant Professor, Biostatistician\n\nUniversity of Texas Health Science Center at Houston\n\nhttp://www.uth.tmc.edu\n\n \n\nDear List\n\nI'm absolutely new in this field.\nCan anybody help me, how I can fill the NAs of a time series with\nplausible values with easy methods of s-plus?\n\nI'm very glad about your answer.\n\nYours sincerely\nSteffen\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
+      "body_snippet": "Steffen,\n\nLinear interpolation is available through the function approx, or you could use \nthe function spline for cubic spline interpolation. Neither of these functions \naccepts NAs, so you will need",
+      "thread_id": "thread-3e1afe7c79ee",
+      "thread_depth": 1,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-4ec3e3e688b1",
+      "message_id": "<20061122210817.0D0CC136EE5@mailgate.biostat.wustl.edu>",
+      "from_name": "Chen,Sichong",
+      "from_email_hash": "8e36183e4a22c27c7c802ab7324b01c8b07d40e2e6e7da6ab58038df167cb5fa",
+      "date": "2006-11-22T21:07:54Z",
+      "subject": "OLS or lm without a intercept",
+      "subject_clean": "OLS or lm without a intercept",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Dear Users\n\nI have a question that how I can not include an intercept in OLS or lm\nlinear regression Function.\n\n>From the help, I find that lm (A~B-1)  using \"-1\" can exclude the intercept,\nwhich works for OLS as well.\n\nHowever, if I have more than one independent variable, it does not work. For\nexample, lm(A~B+C-1) which only report one coefficient. I tried to make B+C\nas a matrix. But it still does not work. Does anyone have some idea how to\nsolve this problem with more than one independent variable?\n\nMany thanks,\nBest regards,\n\nSichong\nSPlus 7.0 & FinMetrics 2.0 User\nWindows XP",
+      "body_snippet": "Dear Users\n\nI have a question that how I can not include an intercept in OLS or lm\nlinear regression Function.\n\n>From the help, I find that lm (A~B-1)  using \"-1\" can exclude the intercept,\nwhich work",
+      "thread_id": "thread-4ec3e3e688b1",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-62c41cddf3ac",
+      "message_id": "<4564F837.3070208@stat.auckland.ac.nz>",
+      "from_name": "Paul Murrell",
+      "from_email_hash": "71bf5cc945d7d1be4a537186b0b66a69b1cc63d99d978b8a16f5750506707116",
+      "date": "2006-11-23T01:24:07Z",
+      "subject": "DSC 2007 registration and scientific program",
+      "subject_clean": "DSC 2007 registration and scientific program",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hi\n\nDSC 2007, a conference on systems and environments for statistical\ncomputing, will take place in Auckland, New Zealand on February 15 & 16,\n2007.\n\nThis is a reminder that the deadline for early bird DSC registration is\nDecember 1, 2006.\n\nAlso, the accepted abstracts for DSC are now available on the web site\nhttp://www.stat.auckland.ac.nz/dsc-2007/abstracts/abstracts.html\n\nFinally, a reminder that there is a small amount of financial assistance\nbeing offered to help people attend DSC.  For details, please see\nhttp://www.stat.auckland.ac.nz/dsc-2007/#funding\n\nPlease visit the conference web page at\nhttp://www.stat.auckland.ac.nz/dsc-2007/\n\nPaul\n(on behalf of the Organising Committee)\n-- \nDr Paul Murrell\nDepartment of Statistics\nThe University of Auckland\nPrivate Bag 92019\nAuckland\nNew Zealand\n64 9 3737599 x85392\npaul at stat.auckland.ac.nz\nhttp://www.stat.auckland.ac.nz/~paul/",
+      "body_snippet": "Hi\n\nDSC 2007, a conference on systems and environments for statistical\ncomputing, will take place in Auckland, New Zealand on February 15 & 16,\n2007.\n\nThis is a reminder that the deadline for early bi",
+      "thread_id": "thread-62c41cddf3ac",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-70ef5755b153",
+      "message_id": "<E1GnEUD-0006aj-1t@elasmtp-dupuy.atl.sa.earthlink.net>",
+      "from_name": "Walter R. Paczkowski",
+      "from_email_hash": "443479c0b721da0dac0fa3876e0e3e3a1e5a4473b12d210b69baaeb9f46d9845",
+      "date": "2006-11-23T13:20:30Z",
+      "subject": "Passing arguments to a function",
+      "subject_clean": "Passing arguments to a function",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hi,\n\nI wrote a function to produce crosstabs for a special layout my client\nasked for.  The function works by calling the S-Plus crosstab\nfunction.  My function works fine for my purpose but I want to\ngeneralize it.  Basically, the function is\n\nfn.tabs <- function(data){\n\n        some\ncode\n\n        z <-\ncrosstabs(~ x + y, data = \"\">\n        some\ncode\n\n}\n\nEvery time I want to change the x and y to tab new variables, I have to\nedit the function.  How can I pass x and y as a formula such as\nfn.tabs(~x + y, data)?\n\nThanks,\n\nWalt Paczkowski\n\n_________________________________\n\nWalter R. Paczkowski, Ph.D.\n\nData Analytics Corp.\n\n44 Hamilton Lane\n\nPlainsboro, NJ  08536\n\n(V) 609-936-8999\n\n(F) 609-936-3733",
+      "body_snippet": "Hi,\n\nI wrote a function to produce crosstabs for a special layout my client\nasked for.  The function works by calling the S-Plus crosstab\nfunction.  My function works fine for my purpose but I want to",
+      "thread_id": "thread-70ef5755b153",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-f9bd2ad34fd9",
+      "message_id": "<4566D3FD.2030900@bangor.ac.uk>",
+      "from_name": "Dr. Takashi Kikuchi",
+      "from_email_hash": "cd87f7bac4f8c4ceacb10a512f0badd9618f550bd33bb019211c25560631aca2",
+      "date": "2006-11-24T11:14:05Z",
+      "subject": "confidence interval for Odds Ratio for Mantel-Haenszel test",
+      "subject_clean": "confidence interval for Odds Ratio for Mantel-Haenszel test",
+      "in_reply_to": null,
+      "references": [
+        "<E1GnEUD-0006aj-1t@elasmtp-dupuy.atl.sa.earthlink.net>"
+      ],
+      "body_plain": "Hi,\n\nDoes anyone have S-Plus codes or a written program to calculate a \nconfidence interval for the odds ratio for Mantel-Haenszel test?\n\nRegards\nTakashi\n\n--\n        mhs208 at bangor.ac.uk \n\n--\nGall y neges e-bost hon, ac unrhyw atodiadau a anfonwyd gyda hi,\ngynnwys deunydd cyfrinachol ac wedi eu bwriadu i'w defnyddio'n unig\ngan y sawl y cawsant eu cyfeirio ato (atynt). Os ydych wedi derbyn y\nneges e-bost hon trwy gamgymeriad, rhowch wybod i'r anfonwr ar\nunwaith a dilëwch y neges. Os na fwriadwyd anfon y neges atoch chi,\nrhaid i chi beidio â defnyddio, cadw neu ddatgelu unrhyw wybodaeth a\ngynhwysir ynddi. Mae unrhyw farn neu safbwynt yn eiddo i'r sawl a'i\nhanfonodd yn unig  ac nid yw o anghenraid yn cynrychioli barn\nPrifysgol Cymru, Bangor. Nid yw Prifysgol Cymru, Bangor yn gwarantu\nbod y neges e-bost hon neu unrhyw atodiadau yn rhydd rhag firysau neu\n100% yn ddiogel. Oni bai fod hyn wedi ei ddatgan yn uniongyrchol yn\nnhestun yr e-bost, nid bwriad y neges e-bost hon yw ffurfio contract\nrhwymol - mae rhestr o lofnodwyr awdurdodedig ar gael o Swyddfa\nCyllid Prifysgol Cymru, Bangor.  www.bangor.ac.uk\n\nThis email and any attachments may contain confidential material and\nis solely for the use of the intended recipient(s).  If you have\nreceived this email in error, please notify the sender immediately\nand delete this email.  If you are not the intended recipient(s), you\nmust not use, retain or disclose any information contained in this\nemail.  Any views or opinions are solely those of the sender and do\nnot necessarily represent those of the University of Wales, Bangor.\nThe University of Wales, Bangor does not guarantee that this email or\nany attachments are free from viruses or 100% secure.  Unless\nexpressly stated in the body of the text of the email, this email is\nnot intended to form a binding contract - a list of authorised\nsignatories is available from the University of Wales, Bangor Finance\nOffice.  www.bangor.ac.uk",
+      "body_snippet": "Hi,\n\nDoes anyone have S-Plus codes or a written program to calculate a \nconfidence interval for the odds ratio for Mantel-Haenszel test?\n\nRegards\nTakashi\n\n--\n        mhs208 at bangor.ac.uk \n\n--\nGall y",
+      "thread_id": "thread-70ef5755b153",
+      "thread_depth": 1,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-15fb43619fcc",
+      "message_id": "<56A80768E1273C42B9C60D53285D50150153C6C1@phoceo07.aphm.ap-hm.fr>",
+      "from_name": "GIORGI Roch",
+      "from_email_hash": "5bda3844705bda2f58aaccca5aea06b9fbc5b5d95924ce99938e2fa72c06e753",
+      "date": "2006-11-24T11:49:19Z",
+      "subject": "Multiple imputation in cox regression",
+      "subject_clean": "Multiple imputation in cox regression",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Dear all,\n\nI have to analyse survival using Cox regression. There is some missing \ncovariates in my data set and I would like to perform multiple imputation. The \nMICE package doesn't allows to combine multiple imputation for a Cox model.\nIs there an SPLUS/R code to do this?\n\nRegards,\n\nRoch\n\n_____________________________________________________\n  Roch GIORGI, MD, PhD\n  Service de Santé Publique et d'Information Médicale\n  Hôpital de la Timone\n  264, rue St Pierre \n  13385 Marseille cedex 5 \n  Tel: +33 (0)491 384 949\n  Fax: +33 (0)491 385 749 \n  email: roch.giorgi at ap-hm.fr \n  Web: http://cybertim.timone.univ-mrs.fr/",
+      "body_snippet": "Dear all,\n\nI have to analyse survival using Cox regression. There is some missing \ncovariates in my data set and I would like to perform multiple imputation. The \nMICE package doesn't allows to combin",
+      "thread_id": "thread-15fb43619fcc",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-77001947c2d0",
+      "message_id": "<20061124124212.x20w4tzu8r8k44oc@www.mango-solutions.com>",
+      "from_name": "rfrancois at mango-solutions.com",
+      "from_email_hash": "b9d2e46d3033f07ff80e5a76fd7ec7d72d03566990f3afa71d2947985c4eb48d",
+      "date": "2006-11-24T12:42:12Z",
+      "subject": "Re: Multiple imputation in cox regression",
+      "subject_clean": "Multiple imputation in cox regression",
+      "in_reply_to": "<E1GnZbJ-0004n8-DP@colo13.ukhost4u.com>",
+      "references": [
+        "<E1GnZbJ-0004n8-DP@colo13.ukhost4u.com>"
+      ],
+      "body_plain": "> Dear all,\n>\n> I have to analyse survival using Cox regression. There is some missing\n> covariates in my data set and I would like to perform multiple imputation.\n> The MICE package doesn't allows to combine multiple imputation for a Cox\n> model.\n> Is there an SPLUS/R code to do this?\n>\n> Regards,\n>\n> Roch\n\nHi,\n\nIn R you can do the imputation part using mice and then fit the models  \nand pool them using the package mitools. mitools has a nice vignette  \nthat explains how to use it.\n\nR> require(mitools)\nR> vignette(\"smi\")\n\nR> # (almost) from ?coxph\nR> test2 <- data.frame(\n                start=c(1, 2, 5, 2, 1, 7, 3, 4, 8, 8),\n                stop =c(2, 3, 6, 7, 8, 9, 9, 9,14,17),\n                event=c(1, 1, 1, 1, 1, 1, 1, 0, 0, 0),\n                x    =c(1, 0, NA, 1, NA, 1, 1, 1, 0, 0) )\n\n# using mice to impute\nR> mi <- mice( test2  )\n# prepare the data for mitools\n\nR> mit <- imputationList( lapply( 1:5, complete, x = mi ) )\n\n# run the models\nR> models <- with( mit, coxph( Surv(start, stop, event)~x ) )\n\n# combine them\nR>  MIcombine( models )\nMultiple imputation results:\n      with.imputationList(mit, coxph(Surv(start, stop, event) ~ x))\n      MIcombine.default(models)\n     results        se\nx -0.4694952 0.9454943\n\nR>  summary( MIcombine( models ) )\nMultiple imputation results:\n      with.imputationList(mit, coxph(Surv(start, stop, event) ~ x))\n      MIcombine.default(models)\n     results        se    (lower   upper) missInfo\nx -0.4694952 0.9454943 -2.328277 1.389286     10 %\n\nCheers,\n\nRomain\n\n--\nMango Solutions\nTel  +44 1249 467 467\nFax  +44 1249 467 468\nMob  +44 7813 526 123\ndata analysis that delivers\n\n> _____________________________________________________\n>   Roch GIORGI, MD, PhD\n>   Service de Santé Publique et d'Information Médicale\n>   Hôpital de la Timone\n>   264, rue St Pierre\n>   13385 Marseille cedex 5\n>   Tel: +33 (0)491 384 949\n>   Fax: +33 (0)491 385 749\n>   email: roch.giorgi at ap-hm.fr\n>   Web: http://cybertim.timone.univ-mrs.fr/\n>\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news",
+      "body_snippet": "> Dear all,\n>\n> I have to analyse survival using Cox regression. There is some missing\n> covariates in my data set and I would like to perform multiple imputation.\n> The MICE package doesn't allows to",
+      "thread_id": "thread-77001947c2d0",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-b8f4f214e546",
+      "message_id": "<20061126214547.28795.qmail@web38714.mail.mud.yahoo.com>",
+      "from_name": "Jewel Bright",
+      "from_email_hash": "fe722fd61327a66c4beb4206f5789ba51c7d73072089c676260ebb2725d4075e",
+      "date": "2006-11-26T21:45:47Z",
+      "subject": "ivp.ab solver",
+      "subject_clean": "ivp.ab solver",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Dear S-plusers:\n  Does anybody have any experience with the S-PLUS differential equation solver 'ivp.ab'. I tried to use it following the instructions in the help file but in vain. The example is very murky. It does not even say what diff equation is being solved. Seems to me that the syntax in example is wrong. I think that such an important thing as diff equation, which is central to all the mathematics, deserve greater attention of S-PLUS developers. Please help. I think that just an example to follow would be OK with me. If nobody has a ready to use example, then maybe somebody can help me with the following.\n   \n  I have a system of equations:\n   \n  dx/dt=exp(a11*x+a12*y+a13*z)-exp(b11*x+b12*y+b13*z)\n  dy/dt=exp(a21*x+a22*y+a23*z)-exp(b21*x+b22*y+b23*z)\n  dz/dt=exp(a31*x+a32*y+a33*z)-exp(b31*x+b32*y+b33*z)\n   \n  and some kind of initial\n conditions, say\n   \n  x(0)=0; y(0)=-1; z(0)=1\n   \n  Please, help to formulate the problem using the ivp.ab\n   \n  Many thanks in advance\n   \n  Jewel Bright\n   \n   \n   \n   \n   \n   \n \nCheap Talk? Check out Yahoo! Messenger's low PC-to-Phone call rates.",
+      "body_snippet": "Dear S-plusers:\n  Does anybody have any experience with the S-PLUS differential equation solver 'ivp.ab'. I tried to use it following the instructions in the help file but in vain. The example is very",
+      "thread_id": "thread-b8f4f214e546",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-8b2bf76be66a",
+      "message_id": "<BAY105-F3851E46CAB10F8914F2874B6E60@phx.gbl>",
+      "from_name": "jose Bartolomei",
+      "from_email_hash": "c78bb848e0f845900be6d71f5a84ef857ef3eaa50f9ee85c3a213bfbb39d0446",
+      "date": "2006-11-27T14:51:38Z",
+      "subject": "reference value in lrm",
+      "subject_clean": "reference value in lrm",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Dear S users,\n\nI am conducting a logistic regression (lrm) using the Design library.\n\nI have a categorical dependent variable and I will like to change de \nreference value in the model.\n\nIn addition I will like to exclude one of the categories included in the \ndependent variable.\n\nWhich are the commands within the lrm model for that?\n\nThanks,\n\nJose\n\n_________________________________________________________________\nFixing up the home? Live Search can help \nhttp://imagine-windowslive.com/search/kits/default.aspx?kit=improve&locale=en-US&source=hmemailtaglinenov06&FORM=WLMTAG",
+      "body_snippet": "Dear S users,\n\nI am conducting a logistic regression (lrm) using the Design library.\n\nI have a categorical dependent variable and I will like to change de \nreference value in the model.\n\nIn addition I",
+      "thread_id": "thread-8b2bf76be66a",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-28e1481ea664",
+      "message_id": "<456B0659.4090107@vanderbilt.edu>",
+      "from_name": "Frank E Harrell Jr",
+      "from_email_hash": "aac2104e568f1b4bc608deccefed75168aaf244b4de06a96ffe1c917f66b7853",
+      "date": "2006-11-27T15:38:01Z",
+      "subject": "Re: reference value in lrm",
+      "subject_clean": "reference value in lrm",
+      "in_reply_to": "<BAY105-F3851E46CAB10F8914F2874B6E60@phx.gbl>",
+      "references": [
+        "<BAY105-F3851E46CAB10F8914F2874B6E60@phx.gbl>"
+      ],
+      "body_plain": "jose Bartolomei wrote:\n> Dear S users,\n>\n> I am conducting a logistic regression (lrm) using the Design library.\n>\n> I have a categorical dependent variable and I will like to change de\n> reference value in the model.\n\nThere is no need to change the reference value when fitting the model. \nAll estimates should come from summary( ), contrast( ), predict( ), and \nfor those it is very easy to use any category of your choice as the \nreference value.  summary( ) defaults to the modal category but do \n?summary.Design to see how to use others quite easily.\n\nFrank Harrell\n\n> In addition I will like to exclude one of the categories included in the\n> dependent variable.\n>\n>\n> Which are the commands within the lrm model for that?\n>\n> Thanks,\n>\n> Jose\n\n--\nFrank E Harrell Jr   Professor and Chair           School of Medicine\n                     Department of Biostatistics   Vanderbilt University",
+      "body_snippet": "jose Bartolomei wrote:\n> Dear S users,\n>\n> I am conducting a logistic regression (lrm) using the Design library.\n>\n> I have a categorical dependent variable and I will like to change de\n> reference va",
+      "thread_id": "thread-8b2bf76be66a",
+      "thread_depth": 1,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-ea5afc9ec6d2",
+      "message_id": "<SEWINEXCH00UTvl7PDq00000a98@sewinexch00.insightful.com>",
+      "from_name": "Tim Hesterberg",
+      "from_email_hash": "006d6c7dc32bd30d08b3192457126eabf59f5d9c77c66b3f4bd6b70dafb4738c",
+      "date": "2006-11-27T17:01:14Z",
+      "subject": "Re: Multiple imputation in cox regression",
+      "subject_clean": "Multiple imputation in cox regression",
+      "in_reply_to": "<56A80768E1273C42B9C60D53285D50150153C6C1@phoceo07.aphm.ap-hm.fr>",
+      "references": [
+        "<56A80768E1273C42B9C60D53285D50150153C6C1@phoceo07.aphm.ap-hm.fr>"
+      ],
+      "body_plain": "The missing data library (library(missing)) provides general capabilities\nfor \n* creating multiple imputations\n* running analyses for each set of imputations\n  (this supports arbitrary analyses, including Cox regression)\n* combining inferences.\n\nAt bottom is an excerpt from the readme file for the library, that gives\nan overview of the capabilities.\n\n>Dear all,\n>\n>I have to analyse survival using Cox regression. There is some missing \n>covariates in my data set and I would like to perform multiple imputation. The \n>MICE package doesn't allows to combine multiple imputation for a Cox model.\n>Is there an SPLUS/R code to do this?\n>\n>Regards,\n>\n>Roch\n>\n>\n>_____________________________________________________\n>  Roch GIORGI, MD, PhD\n>  Service de Santé Publique et d'Information Médicale\n>  Hôpital de la Timone\n>  264, rue St Pierre \n>  13385 Marseille cedex 5 \n>  Tel: +33 (0)491 384 949\n>  Fax: +33 (0)491 385 749 \n>  email: roch.giorgi at ap-hm.fr \n>  Web: http://cybertim.timone.univ-mrs.fr/\n\nHere is an excerpt from the readme file\n(do library(help = \"missing\") to see the readme file):\n\nTo use the library, first load it, e.g. from the command line use:\n\n> library(missing)\n\nTo summarize and view patterns of missing data, see functions:\n        miss\n        numberMissing\n\nTo estimate parameters using EM or data augmentation, see functions:\n        mdGauss\n        mdLoglin\n        mdCgm\n\nTo create multiple imputations using data augmentation, see functions:\n        impGauss\n        impLoglin\n        impCgm\n\nTo convert your own multiple imputations into the appropriate S-PLUS\nobjects for use with this library, see functions:\n        miVariable\n        miList\n\nTo perform analyses in parallel on multiple imputations, see functions:\n        miApply\n        miEval\n\nTo consolidate numerical results and standard errors from statistical\nanalyses from multiple imputations, see functions:\n        miMean         miChiSquareTest\n        miMeanSE       miLikelihoodTest\n        miSummary      miFTest\n\nThe help files for these functions contain examples and references\nto additional functions.\n\nExtensive documentation is provided in the manual, file\n        Missing.pdf\n\nTim Hesterberg\n\n========================================================\n| Tim Hesterberg       Research Scientist              |\n| timh at insightful.com  Insightful Corp.                |\n| (206)802-2319        1700 Westlake Ave. N, Suite 500 |\n| (206)283-8691 (fax)  Seattle, WA 98109-3044, U.S.A.  |\n|                      www.insightful.com/Hesterberg   |\n========================================================\nDownload the S+Resample library from www.insightful.com/downloads/libraries",
+      "body_snippet": "The missing data library (library(missing)) provides general capabilities\nfor \n* creating multiple imputations\n* running analyses for each set of imputations\n  (this supports arbitrary analyses, inclu",
+      "thread_id": "thread-15fb43619fcc",
+      "thread_depth": 1,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-8605e23ec9cc",
+      "message_id": "<6021CA6EF4C8374084D4F5A141F1CBBB6648DE@msgebe23.mfad.mfroot.org>",
+      "from_name": "Inman, Brant A. M.D.",
+      "from_email_hash": "3665a5964407275225f9ee77396c322c08268fb6a4e2049abab6026335aaf15b",
+      "date": "2006-11-28T04:36:51Z",
+      "subject": "Interpretation of 'interquartile effects' in summary.lrm",
+      "subject_clean": "Interpretation of 'interquartile effects' in summary.lrm",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "S-experts:  \n\nI am using the Design and Hmisc libraries to fit a logistic regression\nmodel in a manner similar to that given below (note that this model may\nnot make sense, I just use it to demonstrate my question):\n---------------------------\n\nlibrary(Hmisc)\nlibrary(Design)\n\ndata(pbc)\npbc$ascites[pbc$ascites==-9] <- NA\npbc$ascites <- as.factor(pbc$ascites)\npbc$edema <- as.factor(pbc$edema)\npbc$hepmeg[pbc$hepmeg==-9] <- NA\npbc$hepmeg <- as.factor(pbc$hepmeg)\npbc$stage[pbc$stage==-9] <- NA\npbc$stage <- as.ordered(pbc$stage)\nattach(pbc)\n\nddist <- datadist(pbc)\noptions(datadist='ddist')\nfit <- lrm(edema ~ age + alb + ascites + hepmeg, data=pbc)\n--------------------------\n\nSince my goal is to extract the odds ratios from this model, I have\ntried two different methods: the obvious method of exponentiation of the\nregression coefficients and using the summary.Design function.\n\n--------------------------\n\nexp(fit$coef)\nsummary(fit)\n\n--------------------------\n\nThe problem that I have is with the \"summary(fit)\" output, namely that\nits odds ratios are different from those of \"exp(fit$coef)\".  From the\ndocumentation that is provided by the function's author, I surmise that\nthe reason the odds ratios for the continuous variables are different is\nthat the function calculates the odds ratios using \"inter-quartile\neffects\".  I have not previously encountered this method of computing\nodds ratios and would appreciate any advice from the experts regarding\nthe reasons for using the inter-quartile method for calculating the odds\nratios rather than the usual method.  Which method should be reported in\na paper and is there evidence/publications to support this choice?\n\nBrant Inman\nMayo Clinic",
+      "body_snippet": "S-experts:  \n\nI am using the Design and Hmisc libraries to fit a logistic regression\nmodel in a manner similar to that given below (note that this model may\nnot make sense, I just use it to demonstrat",
+      "thread_id": "thread-8605e23ec9cc",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-87884641875a",
+      "message_id": "<456BBFD6.7010203@vanderbilt.edu>",
+      "from_name": "Frank E Harrell Jr",
+      "from_email_hash": "aac2104e568f1b4bc608deccefed75168aaf244b4de06a96ffe1c917f66b7853",
+      "date": "2006-11-28T04:49:26Z",
+      "subject": "Re: Interpretation of 'interquartile effects' in summary.lrm",
+      "subject_clean": "Interpretation of 'interquartile effects' in summary.lrm",
+      "in_reply_to": "<6021CA6EF4C8374084D4F5A141F1CBBB6648DE@msgebe23.mfad.mfroot.org>",
+      "references": [
+        "<6021CA6EF4C8374084D4F5A141F1CBBB6648DE@msgebe23.mfad.mfroot.org>"
+      ],
+      "body_plain": "Inman, Brant A. M.D. wrote:\n> S-experts:\n>\n>\n> I am using the Design and Hmisc libraries to fit a logistic regression\n> model in a manner similar to that given below (note that this model may\n> not make sense, I just use it to demonstrate my question):\n> ---------------------------\n>\n> library(Hmisc)\n> library(Design)\n>\n> data(pbc)\n> pbc$ascites[pbc$ascites==-9] <- NA\n> pbc$ascites <- as.factor(pbc$ascites)\n> pbc$edema <- as.factor(pbc$edema)\n> pbc$hepmeg[pbc$hepmeg==-9] <- NA\n> pbc$hepmeg <- as.factor(pbc$hepmeg)\n> pbc$stage[pbc$stage==-9] <- NA\n> pbc$stage <- as.ordered(pbc$stage)\n> attach(pbc)\n\nThe attach had no effect for your code, it just clutters up the search \nlist and should be avoided.  And whenever you have multiple $ there is a \nbetter way.  See for example the Hmisc upData function.\n\n> ddist <- datadist(pbc)\n> options(datadist='ddist')\n> fit <- lrm(edema ~ age + alb + ascites + hepmeg, data=pbc)\n> --------------------------\n>\n> Since my goal is to extract the odds ratios from this model, I have\n> tried two different methods: the obvious method of exponentiation of the\n> regression coefficients and using the summary.Design function.\n>\n> --------------------------\n>\n> exp(fit$coef)\n> summary(fit)\n>\n> --------------------------\n>\n> The problem that I have is with the \"summary(fit)\" output, namely that\n> its odds ratios are different from those of \"exp(fit$coef)\".  From the\n> documentation that is provided by the function's author, I surmise that\n> the reason the odds ratios for the continuous variables are different is\n> that the function calculates the odds ratios using \"inter-quartile\n> effects\".  I have not previously encountered this method of computing\n> odds ratios and would appreciate any advice from the experts regarding\n> the reasons for using the inter-quartile method for calculating the odds\n> ratios rather than the usual method.  Which method should be reported in\n> a paper and is there evidence/publications to support this choice?\n\nPlease see my book Regression Modeling Strategies which details the \nreasons for this and for not doing exp(coef).  A one-unit change is not \nmeaningful for many of the variables we see in biomedical research.\n\nFrank\n\n> Brant Inman\n> Mayo Clinic\n\n--\nFrank E Harrell Jr   Professor and Chair           School of Medicine\n                     Department of Biostatistics   Vanderbilt University",
+      "body_snippet": "Inman, Brant A. M.D. wrote:\n> S-experts:\n>\n>\n> I am using the Design and Hmisc libraries to fit a logistic regression\n> model in a manner similar to that given below (note that this model may\n> not ma",
+      "thread_id": "thread-8605e23ec9cc",
+      "thread_depth": 1,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-3da265e9c8fe",
+      "message_id": "<1164690946.6504.1.camel@musume.snl.home>",
+      "from_name": "Stuart Luppescu",
+      "from_email_hash": "42bb68fe0529a2f74c54fd89ecc77ae06532c56eb020a0c5742319fc354505eb",
+      "date": "2006-11-28T05:15:46Z",
+      "subject": "How to Avoid Singularity in lrm",
+      "subject_clean": "How to Avoid Singularity in lrm",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hello, I have 11 years of data (1995 to 2005) on about 550 units. I want\nto do two discontinuous robust regressions on each set of data. One set\nof predictors (years1) is  \n[1] 0 0 0 0 0 0 1 2 3 4 5\nand the other (years2) is\n[1] 1 2 3 4 5 0 0 0 0 0 0\nI run the models like this:\nrlm(stab[,2:12] ~ years1, psi=psi.bisquare)\nand similarly with years2 as the predictor. I'm running this on the 550\nunits using apply().\nThis works fine except when the last 5 years of data are missing. In\nthat case the whole thing blows up and I get this message:\nError in rlm.default(x, y, weights, method = method, wt.method =\nwt.method,  : \n     'x' is singular: singular fits are not implemented in rlm\nHow can I get this to just skip over the cases where x is singular, and\njust go on the the next one?\n(I'm running R 2.3.1 and MASS 7.2)\n\nThanks.\n-- \nStuart Luppescu -=- s-luppescu .at. uchicago.edu        \nUniversity of Chicago (^_^)/ CCSR \n才文と智奈美の父 -=-=- Kernel 2.6.17-gentoo-r\nLay off the muses, it's a very tough dollar.   -- \nS.J. Perelman",
+      "body_snippet": "Hello, I have 11 years of data (1995 to 2005) on about 550 units. I want\nto do two discontinuous robust regressions on each set of data. One set\nof predictors (years1) is  \n[1] 0 0 0 0 0 0 1 2 3 4 5\na",
+      "thread_id": "thread-3da265e9c8fe",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-b8a2f9bed23b",
+      "message_id": "<c739eff2035350065b7e1c0130bb56e9@charter.net>",
+      "from_name": "Stephen D.Weigand",
+      "from_email_hash": "1044bf926a3351b76a85f8334fb6de63ee3346d92f049347a17c14c8f834adf7",
+      "date": "2006-11-28T06:21:21Z",
+      "subject": "Re: Interpretation of 'interquartile effects' in summary.lrm",
+      "subject_clean": "Interpretation of 'interquartile effects' in summary.lrm",
+      "in_reply_to": "<456BBFD6.7010203@vanderbilt.edu>",
+      "references": [
+        "<6021CA6EF4C8374084D4F5A141F1CBBB6648DE@msgebe23.mfad.mfroot.org>",
+        "<456BBFD6.7010203@vanderbilt.edu>"
+      ],
+      "body_plain": "On Nov 27, 2006, at 10:49 PM, Frank E Harrell Jr wrote:\n\n> Inman, Brant A. M.D. wrote:\n> > S-experts:  I am using the Design and Hmisc libraries to fit a\n> > logistic regression\n> > model in a manner similar to that given below (note that this model\n> > may\n> >\n> > not make sense, I just use it to demonstrate my question):\n\n[...]\n\n> > ddist <- datadist(pbc)\n> > options(datadist='ddist')\n> > fit <- lrm(edema ~ age + alb + ascites + hepmeg, data=pbc)\n> > --------------------------\n> > Since my goal is to extract the odds ratios from this model, I have\n> > tried two different methods: the obvious method of exponentiation of\n> > the\n> >\n> > regression coefficients and using the summary.Design function.\n> > --------------------------\n> > exp(fit$coef)\n> > summary(fit)\n> > --------------------------\n> > The problem that I have is with the \"summary(fit)\" output, namely that\n> > its odds ratios are different from those of \"exp(fit$coef)\".  From the\n> > documentation that is provided by the function's author, I surmise\n> > that\n> > the reason the odds ratios for the continuous variables are different\n> > is\n> >\n> > that the function calculates the odds ratios using \"inter-quartile\n> > effects\".  I have not previously encountered this method of computing\n> > odds ratios and would appreciate any advice from the experts regarding\n> > the reasons for using the inter-quartile method for calculating the\n> > odds\n> > ratios rather than the usual method.  Which method should be reported\n> > in\n> >\n> > a paper and is there evidence/publications to support this choice?\n>\n>\n> Please see my book Regression Modeling Strategies which details the\n> reasons for this and for not doing exp(coef).  A one-unit change is\n> not meaningful for many of the variables we see in biomedical\n> research.\n>\n>\n> Frank\n>\n> > Brant Inman\n> > Mayo Clinic\n>\n>\n>\n> --\n> Frank E Harrell Jr   Professor and Chair           School of Medicine\n>                      Department of Biostatistics   Vanderbilt\n> University\n\nBrant,\n\nMy additional comments:\n\nFor continuous variables that are found to be approximately linear in \nthe logit\n(perhaps only due to limited power to detect non-linearity),  I report \nan\nodds ratio based on a difference that is easy to understand or \nclinically\n\nmeaningful: e.g., a 10-year difference in age, or a 0.5 cm difference in\nlesion size.\n\nIf it's hard to come up with a meaningful difference, if I've \ntransformed a\nvariable, or if it enters into the model non-linearly, then I follow \nthe above\nreference and report an odds ratio based on Q3 vs. Q1 since a k-unit \nchange in\nthe variable does not have the same effect across the distribution of \nvalues.\n\nI've had some success explaining the use of Q3 vs. Q1 as \"comparing a \nperson\nwith a typical above-average value to one with a typical below-average \nvalue\".\n\nThe one drawback to the Q3 vs. Q1 approach is that a careless reviewer \nmay think\nyou've cut the variable into quartiles, fit the model, and reported ORs \nbased on\nthis. So a few sentences justifying Q3 vs. Q1 ORs may be worth \nincluding in your\n\nreport.\n\nHope this helps,\n\nStephen Weigand\nRochester, Minnesota, USA",
+      "body_snippet": "On Nov 27, 2006, at 10:49 PM, Frank E Harrell Jr wrote:\n\n> Inman, Brant A. M.D. wrote:\n> > S-experts:  I am using the Design and Hmisc libraries to fit a\n> > logistic regression\n> > model in a manner ",
+      "thread_id": "thread-8605e23ec9cc",
+      "thread_depth": 2,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-75a75cbf9f96",
+      "message_id": "<000901c712ea$dcb3da10$c9495382@Steffenlaptop>",
+      "from_name": "Steffen Barembruch",
+      "from_email_hash": "484dc0b452412b38745c9508f28cb46742dbfbe809d1119de57289b73c07c40e",
+      "date": "2006-11-28T12:43:52Z",
+      "subject": "gui Dialog Box",
+      "subject_clean": "gui Dialog Box",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hey!\n\n \n\nI created a very simple Dialog Box with the following\ncode:\n\n \n\n \n\nguiCreate(\"Property\",\nName=\"first\", DialogControl=\"String\",\nDialogPrompt=\"first\")\n\nguiCreate(\"Property\",\nName=\"group1\",  Type=\"Group\", PropertyList =\n\"first\")\n\nguiCreate(\"Property\", Name=\n\"returnvalue\", DialogControl = \"Invisible\", DefaultValue=\n\"a\")\n\n \n\ntest <- function(arg1){\n\n   \n\n   print(arg1)\n\n   invisible()\n\n   \n\n}\n\n \n\nguiCreate(\"FunctionInfo\",\nName=\"test\", Function=\"test\", PropertyList =\n\"returnvalue, group1\") \n\nguiDisplayDialog(\"Function\",\nName=\"test\")\n\n \n\nUnfortunately I get the following error when\nentering  a string into the field: \n\nProblem: Object \"text\" not found\n\n \n\nIf I enter a string included in quotation marks, the\nerror does not occur and the string is passed to the function. How can I change\nthat behaviour?\n\n \n\nThanks a lot\n\nSteffen Barembruch",
+      "body_snippet": "Hey!\n\n \n\nI created a very simple Dialog Box with the following\ncode:\n\n \n\n \n\nguiCreate(\"Property\",\nName=\"first\", DialogControl=\"String\",\nDialogPrompt=\"first\")\n\nguiCreate(\"Property\",\nName=\"group1\",  Typ",
+      "thread_id": "thread-75a75cbf9f96",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-99b3ad1efa0e",
+      "message_id": "<456C36FA.3080101@vanderbilt.edu>",
+      "from_name": "Frank E Harrell Jr",
+      "from_email_hash": "aac2104e568f1b4bc608deccefed75168aaf244b4de06a96ffe1c917f66b7853",
+      "date": "2006-11-28T13:17:46Z",
+      "subject": "Re: Interpretation of 'interquartile effects' in summary.lrm",
+      "subject_clean": "Interpretation of 'interquartile effects' in summary.lrm",
+      "in_reply_to": "<c739eff2035350065b7e1c0130bb56e9@charter.net>",
+      "references": [
+        "<6021CA6EF4C8374084D4F5A141F1CBBB6648DE@msgebe23.mfad.mfroot.org>",
+        "<456BBFD6.7010203@vanderbilt.edu>",
+        "<c739eff2035350065b7e1c0130bb56e9@charter.net>"
+      ],
+      "body_plain": "Stephen D.Weigand wrote:\n> On Nov 27, 2006, at 10:49 PM, Frank E Harrell Jr wrote:\n>\n> > Inman, Brant A. M.D. wrote:\n> > > S-experts:  I am using the Design and Hmisc libraries to fit a\n> > > logistic regression\n> > >\n> > > model in a manner similar to that given below (note that this model may\n> > > not make sense, I just use it to demonstrate my question):\n>\n>\n> [...]\n>\n> > > ddist <- datadist(pbc)\n> > > options(datadist='ddist')\n> > > fit <- lrm(edema ~ age + alb + ascites + hepmeg, data=pbc)\n> > > --------------------------\n> > > Since my goal is to extract the odds ratios from this model, I have\n> > > tried two different methods: the obvious method of exponentiation of the\n> > > regression coefficients and using the summary.Design function.\n> > > --------------------------\n> > > exp(fit$coef)\n> > > summary(fit)\n> > > --------------------------\n> > > The problem that I have is with the \"summary(fit)\" output, namely that\n> > > its odds ratios are different from those of \"exp(fit$coef)\".  From the\n> > > documentation that is provided by the function's author, I surmise that\n> > > the reason the odds ratios for the continuous variables are different is\n> > > that the function calculates the odds ratios using \"inter-quartile\n> > > effects\".  I have not previously encountered this method of computing\n> > > odds ratios and would appreciate any advice from the experts regarding\n> > > the reasons for using the inter-quartile method for calculating the odds\n> > > ratios rather than the usual method.  Which method should be reported in\n> > > a paper and is there evidence/publications to support this choice?\n> >\n> >\n> > Please see my book Regression Modeling Strategies which details the\n> > reasons for this and for not doing exp(coef).  A one-unit change is\n> > not meaningful for many of the variables we see in biomedical research.\n> >\n> >\n> > Frank\n> >\n> > > Brant Inman\n> > > Mayo Clinic\n> >\n> >\n> >\n> > --\n> > Frank E Harrell Jr   Professor and Chair           School of Medicine\n> >                      Department of Biostatistics   Vanderbilt University\n>\n>\n> Brant,\n>\n> My additional comments:\n>\n> For continuous variables that are found to be approximately linear in\n> the logit\n>\n> (perhaps only due to limited power to detect non-linearity),  I report an\n> odds ratio based on a difference that is easy to understand or clinically\n> meaningful: e.g., a 10-year difference in age, or a 0.5 cm difference in\n> lesion size.\n>\n> If it's hard to come up with a meaningful difference, if I've transformed a\n> variable, or if it enters into the model non-linearly, then I follow the\n> above\n> reference and report an odds ratio based on Q3 vs. Q1 since a k-unit\n> change in\n> the variable does not have the same effect across the distribution of\n> values.\n>\n>\n> I've had some success explaining the use of Q3 vs. Q1 as \"comparing a\n> person\n> with a typical above-average value to one with a typical below-average\n> value\".\n>\n>\n> The one drawback to the Q3 vs. Q1 approach is that a careless reviewer\n> may think\n> you've cut the variable into quartiles, fit the model, and reported ORs\n> based on\n> this. So a few sentences justifying Q3 vs. Q1 ORs may be worth including\n> in your\n>\n> report.\n>\n> Hope this helps,\n>\n> Stephen Weigand\n> Rochester, Minnesota, USA\n\nNicely said Stephen.  I would just add that most relationships are \nnonlinear and I don't base modeling on the power to detect nonlinearity \nbut on a tradeoff between underfitting and overfitting.  And when the \nmodel is more than mildly nonlinear, the Q1 Q3 approach isn't as good as \nshowing the continuous partial effect of the predictor holding other \npredictors constant.\n\nFrank\n--\nFrank E Harrell Jr   Professor and Chair           School of Medicine\n                     Department of Biostatistics   Vanderbilt University",
+      "body_snippet": "Stephen D.Weigand wrote:\n> On Nov 27, 2006, at 10:49 PM, Frank E Harrell Jr wrote:\n>\n> > Inman, Brant A. M.D. wrote:\n> > > S-experts:  I am using the Design and Hmisc libraries to fit a\n> > > logistic",
+      "thread_id": "thread-8605e23ec9cc",
+      "thread_depth": 3,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-496a60393b7a",
+      "message_id": "<FC-MAILFRONT01s7nlT000002e1@fc-mailfront01.ul.pt>",
+      "from_name": "Helena Mouriño",
+      "from_email_hash": "88d951ec27c51992bdbd0a01d2e758f47aa46e4b4e3f3343065c053b9a829ab1",
+      "date": "2006-11-28T16:07:05Z",
+      "subject": "Problems with the CensorReg function",
+      "subject_clean": "Problems with the CensorReg function",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Dear S-news maling list \nmembers,\n\n \n\n \n\nI need to model the amount of chlorophyll-a in \nPortuguese waters as a function of the upwelling pulses felt in the previous \ndays to the day when water samples were collected, water stratification and \ntemperature at the surface of the ocean. As chlorophyll-a cannot take \nnegative values, I thought that it would be a good idea to fit a Gaussian \ntruncated regression model at the point zero. To attain this goal I've used the \n\"censorReg\" function in SPLUS 6.0, namely:\n\n \n\n    \nadjustment<-censorReg(censor(dados.fito$clorophyll) \n~     \n\n    dados.fito$Stratification+dados.fito$Temperature+dados.fito$upwell0days+dados.fito$upwell1day+dados.fito$upwell2days+dados.fito$upwell3days+\n\n    \ndados.fito$upwell4days+dados.fito$upwell5days+dados.fito$upwell6days+dados.fito$upwell7days,\n\n    \ndata=\"\">\n\n \n\nUnfortunately, this function did not work properly with \nmy data set because I got a few warning messages:\n\n \n\n          1: problems \nin covariance matrix computations; error code iervcv = 1 in: censorReg.mlest(Yi, \ncensor.codesi, Xi, casewti, distribution, \nlink,      \n\n           parameter.fixed = \nparameter.fixed, fixed = fixed, control = ....\n\n2: Maximum change in parameter does not change the likelihood \nin: censorReg.mlest(Yi, censor.codesi, NULL, casewti, distribution, link, \nparameter.fixed = parms.fixed, fixed = fix2p, control = control, \n....\n\n3: Information matrix is not positive definite in: \ncensorReg.mlest(Yi, censor.codesi, NULL, casewti, distribution, link, parameter.fixed = parms.fixed, fixed = fix2p, \ncontrol = control, ....\n\nHas anybody experience with such warnings? I don't know \nwhat is the effect of such pitfalls in the estimated \nparameters.\n\n \n\n \n\nI would also like to ask if anyone has ever tried to \nrun a stepwise function afterwards? The reason I'm asking for this is because \nI would like to run a stepwise function (or a \nsimiliar one) to select a statistical significant subset of those variables. \nI've already tried the functions step, step.glm but neither of \nthem worked properly. I get the following message:\n\n \n\n    problems in names(z) <- names(wz) \n<- yn: supplied 207 names for a vector of lenght 414. Use traceback() to see \nthe call stack in: remove(list).        \n\n    Warning massages: Problem: \ninternal error: trying to set internal exit action in frame , must be between 1 \nand 0.\n\n \n\nAfter writing the command  \"traceback()\" in the \ncommand prompt, the SPLUS program aborts!\n\n \n\n \n\nHas anybody ever had similar problems? Can anyone \nprovide some hints on how to get through this matter?\n\n \n\n \n\nThanks in advanced.\n\n \n\n \n\nBest regards,\n\n \n\nHelena \nMouriño.",
+      "body_snippet": "Dear S-news maling list \nmembers,\n\n \n\n \n\nI need to model the amount of chlorophyll-a in \nPortuguese waters as a function of the upwelling pulses felt in the previous \ndays to the day when water sample",
+      "thread_id": "thread-496a60393b7a",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-36a3c14be378",
+      "message_id": "<456D8500.E131.007D.0@warnell.uga.edu>",
+      "from_name": "Lewis Jordan",
+      "from_email_hash": "f53df7072db51fe847210e20b364085a6ce28910e3409e25af1d552aedfab787",
+      "date": "2006-11-29T18:02:56Z",
+      "subject": "S-plus Users:",
+      "subject_clean": "S-plus Users:",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "S-plus Users:\n\n \n\nI am currently trying to create some conditioning plots using xyplot. I want to plot y*n for two distinct \"regions\" and then overlay the levels of a second factor \"m\" onto the plots for each region. For the example below, I will have 1 column and 2 rows with each row corresponding to a \"region\". I then overlay the values of y for the second factor \"m\" onto each plot for the respective \"region\". A legend is created at the top of the graph listing the linetype (lty) for each level of \"m\". \n\n \n\nTHE PROBLEM: When I copy the graph in s-plus and paste it directly into Microsoft word, the legend identifying the line types become almost transparent, so when I print it out you can hardly identify which line type corresponds to the level of \"m\". The lty's in the graph look great, so no problem there. I have also tried exporting the graph as a .jpeg, bmp and the same thing occurs.\n\n \n\nTHE SOLUTION: How can I make the lty's in the legend more identifiable? I cannot increase the line width (lwd) b/c the values between the levels of \"m\" are so small that you could not distinguish between the levels.\n\nThis is not the case for the example below b/c I only have 2 levels of \"m\", but for the entire data set I have 6 levels and it just looks like a great big mess if I increase the LWD.\n\n \n\nAny suggestions as to how I can remedy this problem? Is there perhaps an easier way to get the graph that I am interested in?\n\n \n\nThanks for the help...\n\n \n\nLewis Jordan \n\n \n\n\"Plots\"<-\nstructure(list(n=c(20,  40,  60,  80, 100,  20,  40,  60,  80, 100,\n                   20,  40,  60,  80, 100,  20,  40,  60,  80, 100),\n              region = c(\"North\", \"North\", \"North\", \"North\", \"North\", \"North\", \"North\", \"North\", \"North\", \"North\", \n                         \"South\",\"South\", \"South\", \"South\", \"South\", \"South\", \"South\", \"South\", \"South\", \"South\"),\n              m=c(  5,  5,  5,  5,  5, 30, 30, 30, 30, 30,\n               &n\n bsp;    5,  5,  5,  5,  5, 30, 30, 30, 30, 30),\n              y=c( .005, .004, .003, .003, .002, .004, .003, .002, .002, .002,\n                   .006, .004, .003, .003, .003, .005, .003, .003, .002, .002)),\n    .Names=c(\"n\",\"Region\",\"m\",\"y\"),\n    row.names=as.character(1:20),\n    class=\"data.frame\")\n\n \n\nPlots[1:3,]\n\n \n\nPlots$groupM<-ordered(Plots$m,levels=c(5,30),c(\"5\",\"30\"));\n\n \n\ngt$lty<-c(1,3)\nxlim <- range(Plots$n)\nylim <- range(Plots$y)\ntrellis.device(color=F)\nxyplot(y~n|Region,data=\"\" groups=groupM,xlim=xlim,ylim=ylim,subscripts=T,subset=T,layout=c(1,2),\n  scales=list(relation=\"free\"),\npanel=function(x,y,subscripts,groups)\n\n \n\n{\n panel.grid()\n panel.superpose(x,y,subscripts,groups,type=\"l\",lty=c(1,3))\n},\n \n main=\"\",\n xlab=\"n (Stands)\", \n ylab=\"Standard Error\",\n key=list(lines=gt,\n    text=list(c(\"5\",\"30\")),\n    columns=2,),\n    strip=function(...) strip.default(...,style=1)\n    )",
+      "body_snippet": "S-plus Users:\n\n \n\nI am currently trying to create some conditioning plots using xyplot. I want to plot y*n for two distinct \"regions\" and then overlay the levels of a second factor \"m\" onto the plots ",
+      "thread_id": "thread-36a3c14be378",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-199ca6b77b69",
+      "message_id": "<46FE375EF87BAC42B69E493F296F4ACC0382D8E8@singx01.wam.westernasset.local>",
+      "from_name": "Krishnamachari, Raghuraman",
+      "from_email_hash": "123d9c17e3c1a9b8b52f7121c75e36eb9511783976d17f545f45bf5e0e806895",
+      "date": "2006-11-30T02:13:18Z",
+      "subject": "bd.bin",
+      "subject_clean": "bd.bin",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hi \nall,\n\n \n\nIs it possible to \ncustomize the big data function bd.bin.\n\n \n\nFor eg: \nbd.bin(fuel.frame, \"Weight\", nbins=7,method=\"count\") \n\nreturns the \nfollowing output.\n\n \n\n                 \nWeight Disp. Mileage     Fuel    \nType \n 2: [2337.50,2650.00)    \n97      33 3.030303   Small\n 2: \n[2337.50,2650.00)   114      33 \n3.030303   Small\n 1: [1845.00,2337.50)    \n81      37 2.702703   Small\n 1: \n[1845.00,2337.50)    91      32 \n3.125000   Small\n 2: [2337.50,2650.00)   \n113      32 3.125000   Small\n 1: \n[1845.00,2337.50)    97      26 \n3.846154   Small\n 1: [1845.00,2337.50)    \n97      33 3.030303   Small\n 2: \n[2337.50,2650.00)    98      28 \n3.571429   Small\n\nIs there any way to \nreturn like this..\n\n \n\nWeight Disp. \nMileage     Fuel    Type \n\n2     97      33 \n 3.030303   Small\n2   \n 114      33  3.030303   \nSmall\n1     81      37 \n 2.702703   Small\n1    \n 91      32  3.125000   \nSmall\n2    113      32 \n 3.125000   Small\n1    \n 97      26  3.846154   \nSmall\n1     97      33 \n 3.030303   Small\n2    \n 98      28  3.571429   \nSmall\n\n \n\nregards,\n\nRaghuraman \nK.\n\n**********************************************************************\n\nE-mail sent through the Internet is not secure. Legg Mason Asset Management (Asia) Pte Ltd [Co. Reg. No. 200007692R] therefore recommends that you do utilize electronic mail to send to us any confidential or sensitive information, including account numbers and personal identification numbers. Delivery, and/or timely delivery of Internet electronic mail is not guaranteed. Legg Mason Asset Management (Asia) Pte Ltd therefore recommends that you do not send time-sensitive or action-oriented messages to us via electronic mail. \n\n**********************************************************************",
+      "body_snippet": "Hi \nall,\n\n \n\nIs it possible to \ncustomize the big data function bd.bin.\n\n \n\nFor eg: \nbd.bin(fuel.frame, \"Weight\", nbins=7,method=\"count\") \n\nreturns the \nfollowing output.\n\n \n\n                 \nWeight ",
+      "thread_id": "thread-199ca6b77b69",
+      "thread_depth": 0,
+      "month": "2006-11"
+    },
+    {
+      "id": "msg-9d10f17874b7",
+      "message_id": "<C8696843AE995F4EA4CDC3E2B83482A901879137@mailbox02.cshl.edu>",
+      "from_name": "Khan, Sohail",
+      "from_email_hash": "b8b253d2bd15de91e33b7067513ec8dc4f7c1d20972bf67b5cea04a725f0b9e6",
+      "date": "2006-11-30T19:59:19Z",
+      "subject": "data frame row calculations",
+      "subject_clean": "data frame row calculations",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Dear list,\n\nI have a large data frame as follows:\n\nIds     start   end\nA       1250    1500\nB       4500    7540\nC       9875    1254\n\nI would to select the rows where the difference between the \"end\" and \"start\" \nis between 100-2000\nThanks .\n\nSohail Khan\nScientific Programmer\nCOLD SPRING HARBOR LABORATORY\nGenome Research Center\n500 Sunnyside Boulevard\nWoodbury, NY 11797\n(516)422-4076",
+      "body_snippet": "Dear list,\n\nI have a large data frame as follows:\n\nIds     start   end\nA       1250    1500\nB       4500    7540\nC       9875    1254\n\nI would to select the rows where the difference between the \"end\"",
+      "thread_id": "thread-9d10f17874b7",
+      "thread_depth": 0,
+      "month": "2006-11"
+    }
+  ],
+  "threads": [
+    {
+      "id": "thread-6bcfec294db0",
+      "subject": "tree model rpart - printcp output",
+      "message_count": 2,
+      "participants": [
+        "Stephanie A Mather",
+        "Volker Bahn"
+      ],
+      "started": "2006-11-02T15:44:00Z",
+      "last_reply": "2006-11-03T15:25:16Z",
+      "root_message_id": "msg-6bcfec294db0"
+    },
+    {
+      "id": "thread-df563a6058d5",
+      "subject": "position description",
+      "message_count": 1,
+      "participants": [
+        "Brian Lossie"
+      ],
+      "started": "2006-11-03T18:32:11Z",
+      "last_reply": "2006-11-03T18:32:11Z",
+      "root_message_id": "msg-df563a6058d5"
+    },
+    {
+      "id": "thread-04d738adc5ea",
+      "subject": "single constant covariates, dfs, and frailties",
+      "message_count": 1,
+      "participants": [
+        "slsbr"
+      ],
+      "started": "2006-11-03T20:08:34Z",
+      "last_reply": "2006-11-03T20:08:34Z",
+      "root_message_id": "msg-04d738adc5ea"
+    },
+    {
+      "id": "thread-11e01d000d84",
+      "subject": "OOP enquiry",
+      "message_count": 4,
+      "participants": [
+        "Douglas Bates",
+        "Gregor Gorjanc",
+        "John Kershaw",
+        "Ramon Diaz-Uriarte"
+      ],
+      "started": "2006-11-06T11:56:01Z",
+      "last_reply": "2006-11-06T23:37:56Z",
+      "root_message_id": "msg-11e01d000d84"
+    },
+    {
+      "id": "thread-86524832deaf",
+      "subject": "CONTINUOUS TIME FINANCE Workshop with S-PLUS",
+      "message_count": 1,
+      "participants": [
+        "Xiaochen Sun"
+      ],
+      "started": "2006-11-07T10:13:28Z",
+      "last_reply": "2006-11-07T10:13:28Z",
+      "root_message_id": "msg-86524832deaf"
+    },
+    {
+      "id": "thread-3e8896b8d15a",
+      "subject": "December Courses: (1) R/Splus Fundamentals and Programming Techniques (2) Regression Modeling Strategies in R/Splus",
+      "message_count": 1,
+      "participants": [
+        "elvis at xlsolutions-corp.com"
+      ],
+      "started": "2006-11-07T19:40:05Z",
+      "last_reply": "2006-11-07T19:40:05Z",
+      "root_message_id": "msg-3e8896b8d15a"
+    },
+    {
+      "id": "thread-dc7e1b45448e",
+      "subject": "glm warning message",
+      "message_count": 1,
+      "participants": [
+        "Mike Trianni"
+      ],
+      "started": "2006-11-08T00:38:49Z",
+      "last_reply": "2006-11-08T00:38:49Z",
+      "root_message_id": "msg-dc7e1b45448e"
+    },
+    {
+      "id": "thread-39454ceb84fd",
+      "subject": "Printing in SP7",
+      "message_count": 1,
+      "participants": [
+        "Molinari, Luciano"
+      ],
+      "started": "2006-11-08T14:31:56Z",
+      "last_reply": "2006-11-08T14:31:56Z",
+      "root_message_id": "msg-39454ceb84fd"
+    },
+    {
+      "id": "thread-c1317392f29d",
+      "subject": "2007 John M. Chambers Statistical Software Award",
+      "message_count": 1,
+      "participants": [
+        "J.R. Lockwood"
+      ],
+      "started": "2006-11-09T21:21:48Z",
+      "last_reply": "2006-11-09T21:21:48Z",
+      "root_message_id": "msg-c1317392f29d"
+    },
+    {
+      "id": "thread-3d3e62748fe6",
+      "subject": "Opportunity in NYC",
+      "message_count": 1,
+      "participants": [
+        "J. Philip Miller"
+      ],
+      "started": "2006-11-10T18:56:40Z",
+      "last_reply": "2006-11-10T18:56:40Z",
+      "root_message_id": "msg-3d3e62748fe6"
+    },
+    {
+      "id": "thread-564ca74d676a",
+      "subject": "problem with $apVar in nlme objects",
+      "message_count": 1,
+      "participants": [
+        "Jean-Daniel BONTEMPS"
+      ],
+      "started": "2006-11-11T17:25:06Z",
+      "last_reply": "2006-11-11T17:25:06Z",
+      "root_message_id": "msg-564ca74d676a"
+    },
+    {
+      "id": "thread-7455a73c9ca2",
+      "subject": "Box plot not doing \"Display selected points\"",
+      "message_count": 1,
+      "participants": [
+        "Jeff_Runde at nps.gov"
+      ],
+      "started": "2006-11-14T16:22:20Z",
+      "last_reply": "2006-11-14T16:22:20Z",
+      "root_message_id": "msg-7455a73c9ca2"
+    },
+    {
+      "id": "thread-2cd6cfeeaf8b",
+      "subject": "SIPTA Newsletter Announcement - New issue",
+      "message_count": 1,
+      "participants": [
+        "Alessandro Antonucci"
+      ],
+      "started": "2006-11-16T21:30:54Z",
+      "last_reply": "2006-11-16T21:30:54Z",
+      "root_message_id": "msg-2cd6cfeeaf8b"
+    },
+    {
+      "id": "thread-e527ae79b90e",
+      "subject": "p-values for variance components in lme",
+      "message_count": 2,
+      "participants": [
+        "Douglas Bates",
+        "Roberts, J. Kyle"
+      ],
+      "started": "2006-11-17T21:26:07Z",
+      "last_reply": "2006-11-18T13:55:47Z",
+      "root_message_id": "msg-e527ae79b90e"
+    },
+    {
+      "id": "thread-d9c293f36970",
+      "subject": "counting occurrences",
+      "message_count": 3,
+      "participants": [
+        "Dimitris Rizopoulos",
+        "Ita.Cirovic-Donev at hypo-alpe-adria.com",
+        "Sarah Goslee"
+      ],
+      "started": "2006-11-20T14:00:14Z",
+      "last_reply": "2006-11-20T14:08:51Z",
+      "root_message_id": "msg-d9c293f36970"
+    },
+    {
+      "id": "thread-09d2ab0f900b",
+      "subject": "count occurrences",
+      "message_count": 4,
+      "participants": [
+        "Dimitris Rizopoulos",
+        "Ita.Cirovic-Donev at hypo-alpe-adria.com",
+        "John Kershaw",
+        "Sarah Goslee"
+      ],
+      "started": "2006-11-20T14:10:17Z",
+      "last_reply": "2006-11-20T14:18:39Z",
+      "root_message_id": "msg-09d2ab0f900b"
+    },
+    {
+      "id": "thread-289a5a57e91f",
+      "subject": "SPXML and graphics",
+      "message_count": 1,
+      "participants": [
+        "Steffen Barembruch"
+      ],
+      "started": "2006-11-21T14:07:41Z",
+      "last_reply": "2006-11-21T14:07:41Z",
+      "root_message_id": "msg-289a5a57e91f"
+    },
+    {
+      "id": "thread-9635c9fbc2e1",
+      "subject": "Strange hist() problem",
+      "message_count": 1,
+      "participants": [
+        "Kim Elmore"
+      ],
+      "started": "2006-11-21T19:10:12Z",
+      "last_reply": "2006-11-21T19:10:12Z",
+      "root_message_id": "msg-9635c9fbc2e1"
+    },
+    {
+      "id": "thread-5617c6c176ff",
+      "subject": "Strange hist() problem",
+      "message_count": 3,
+      "participants": [
+        "Kim Elmore",
+        "Tim Hesterberg"
+      ],
+      "started": "2006-11-21T20:31:25Z",
+      "last_reply": "2006-11-21T21:38:38Z",
+      "root_message_id": "msg-5617c6c176ff"
+    },
+    {
+      "id": "thread-3e1afe7c79ee",
+      "subject": "NAs in S-Plus",
+      "message_count": 2,
+      "participants": [
+        "Padhye, Nikhil S",
+        "Steffen Klug"
+      ],
+      "started": "2006-11-22T15:41:28Z",
+      "last_reply": "2006-11-22T18:04:22Z",
+      "root_message_id": "msg-3e1afe7c79ee"
+    },
+    {
+      "id": "thread-4ec3e3e688b1",
+      "subject": "OLS or lm without a intercept",
+      "message_count": 1,
+      "participants": [
+        "Chen,Sichong"
+      ],
+      "started": "2006-11-22T21:07:54Z",
+      "last_reply": "2006-11-22T21:07:54Z",
+      "root_message_id": "msg-4ec3e3e688b1"
+    },
+    {
+      "id": "thread-62c41cddf3ac",
+      "subject": "DSC 2007 registration and scientific program",
+      "message_count": 1,
+      "participants": [
+        "Paul Murrell"
+      ],
+      "started": "2006-11-23T01:24:07Z",
+      "last_reply": "2006-11-23T01:24:07Z",
+      "root_message_id": "msg-62c41cddf3ac"
+    },
+    {
+      "id": "thread-70ef5755b153",
+      "subject": "Passing arguments to a function",
+      "message_count": 2,
+      "participants": [
+        "Dr. Takashi Kikuchi",
+        "Walter R. Paczkowski"
+      ],
+      "started": "2006-11-23T13:20:30Z",
+      "last_reply": "2006-11-24T11:14:05Z",
+      "root_message_id": "msg-70ef5755b153"
+    },
+    {
+      "id": "thread-15fb43619fcc",
+      "subject": "Multiple imputation in cox regression",
+      "message_count": 2,
+      "participants": [
+        "GIORGI Roch",
+        "Tim Hesterberg"
+      ],
+      "started": "2006-11-24T11:49:19Z",
+      "last_reply": "2006-11-27T17:01:14Z",
+      "root_message_id": "msg-15fb43619fcc"
+    },
+    {
+      "id": "thread-77001947c2d0",
+      "subject": "Multiple imputation in cox regression",
+      "message_count": 1,
+      "participants": [
+        "rfrancois at mango-solutions.com"
+      ],
+      "started": "2006-11-24T12:42:12Z",
+      "last_reply": "2006-11-24T12:42:12Z",
+      "root_message_id": "msg-77001947c2d0"
+    },
+    {
+      "id": "thread-b8f4f214e546",
+      "subject": "ivp.ab solver",
+      "message_count": 1,
+      "participants": [
+        "Jewel Bright"
+      ],
+      "started": "2006-11-26T21:45:47Z",
+      "last_reply": "2006-11-26T21:45:47Z",
+      "root_message_id": "msg-b8f4f214e546"
+    },
+    {
+      "id": "thread-8b2bf76be66a",
+      "subject": "reference value in lrm",
+      "message_count": 2,
+      "participants": [
+        "Frank E Harrell Jr",
+        "jose Bartolomei"
+      ],
+      "started": "2006-11-27T14:51:38Z",
+      "last_reply": "2006-11-27T15:38:01Z",
+      "root_message_id": "msg-8b2bf76be66a"
+    },
+    {
+      "id": "thread-8605e23ec9cc",
+      "subject": "Interpretation of 'interquartile effects' in summary.lrm",
+      "message_count": 4,
+      "participants": [
+        "Frank E Harrell Jr",
+        "Inman, Brant A. M.D.",
+        "Stephen D.Weigand"
+      ],
+      "started": "2006-11-28T04:36:51Z",
+      "last_reply": "2006-11-28T13:17:46Z",
+      "root_message_id": "msg-8605e23ec9cc"
+    },
+    {
+      "id": "thread-3da265e9c8fe",
+      "subject": "How to Avoid Singularity in lrm",
+      "message_count": 1,
+      "participants": [
+        "Stuart Luppescu"
+      ],
+      "started": "2006-11-28T05:15:46Z",
+      "last_reply": "2006-11-28T05:15:46Z",
+      "root_message_id": "msg-3da265e9c8fe"
+    },
+    {
+      "id": "thread-75a75cbf9f96",
+      "subject": "gui Dialog Box",
+      "message_count": 1,
+      "participants": [
+        "Steffen Barembruch"
+      ],
+      "started": "2006-11-28T12:43:52Z",
+      "last_reply": "2006-11-28T12:43:52Z",
+      "root_message_id": "msg-75a75cbf9f96"
+    },
+    {
+      "id": "thread-496a60393b7a",
+      "subject": "Problems with the CensorReg function",
+      "message_count": 1,
+      "participants": [
+        "Helena Mouriño"
+      ],
+      "started": "2006-11-28T16:07:05Z",
+      "last_reply": "2006-11-28T16:07:05Z",
+      "root_message_id": "msg-496a60393b7a"
+    },
+    {
+      "id": "thread-36a3c14be378",
+      "subject": "S-plus Users:",
+      "message_count": 1,
+      "participants": [
+        "Lewis Jordan"
+      ],
+      "started": "2006-11-29T18:02:56Z",
+      "last_reply": "2006-11-29T18:02:56Z",
+      "root_message_id": "msg-36a3c14be378"
+    },
+    {
+      "id": "thread-199ca6b77b69",
+      "subject": "bd.bin",
+      "message_count": 1,
+      "participants": [
+        "Krishnamachari, Raghuraman"
+      ],
+      "started": "2006-11-30T02:13:18Z",
+      "last_reply": "2006-11-30T02:13:18Z",
+      "root_message_id": "msg-199ca6b77b69"
+    },
+    {
+      "id": "thread-9d10f17874b7",
+      "subject": "data frame row calculations",
+      "message_count": 1,
+      "participants": [
+        "Khan, Sohail"
+      ],
+      "started": "2006-11-30T19:59:19Z",
+      "last_reply": "2006-11-30T19:59:19Z",
+      "root_message_id": "msg-9d10f17874b7"
+    }
+  ]
+}

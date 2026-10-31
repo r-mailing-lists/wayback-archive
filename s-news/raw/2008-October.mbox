@@ -1,0 +1,185 @@
+From gerald.jean at dgag.ca  Thu Oct 30 15:05:49 2008
+From: gerald.jean at dgag.ca
+Date: Thu, 30 Oct 2008 11:05:49 -0400
+Subject: Re: Code that works outside a custom function but not inside
+In-Reply-To: <29ee5dab0810300719p60c08034t97ea2ca1bfe01ba7@mail.gmail.com>
+References: <29ee5dab0810300719p60c08034t97ea2ca1bfe01ba7@mail.gmail.com>
+Message-ID: <OF58574871.639271B8-ON852574F2.00520892-852574F2.0052EE6F@dgag.ca>
+
+Salut Sébastien,
+
+I think the problem comes from the way you build your formula.  Try the
+following:
+
+## Modify your function a little bit:
+
+> myhisto <- function(myformula, mydata, nBar){
+>
+>   mysds <- levels(factor(mydata[,2]))
+>   nID <- length(mysds)
+>
+>   myplot <- histogram(formula = myformula,
+...
+
+## Then,  assuming you name your variables in your data.frame V1 and V2
+call your  function this way:
+
+>
+> myhisto(myformula = as.formula(~ V1 | V2), mydf, 50)
+
+Your formula should then be recognized, I haven't looked at the rest of the
+function ...
+
+Gérald Jean
+Conseiller senior en statistiques,
+VP Planification et Développement des Marchés,
+Desjardins Groupe d'Assurances Générales
+télephone            : (418) 835-4900 poste (7639)
+télecopieur          : (418) 835-6657
+courrier électronique: gerald.jean at dgag.ca
+
+"In God we trust, all others must bring data"  W. Edwards Deming
+s-news-owner at lists.biostat.wustl.edu a écrit sur 2008/10/30 10:19:36 :
+
+> Hi Ron,
+>
+> Thanks for your input. I have however tested my code with and
+> without the strip function and still had the same error message:
+>
+> Problem in eval(if(no.given) formula else expr[[1]],..: Object
+> "mydata" not found
+>
+> Sebastien
+
+> On Thu, Oct 30, 2008 at 10:10 AM, Rongsheng Liu <rsliu at homer.att.com>
+wrote:
+> Sebastien,
+>
+> try to passing parameter into strip function:
+>
+>           strip = function(which.panel, nID=nID, ...){
+>                         lines(c(0,1,1,0,0),c(0,0,1,1,0),col=1)
+>                         text(rep(0.5,nID),rep(0.5,nID),
+>                         paste("SD = ",mysds[which.panel],sep=""),
+>                         cex = 0.75)}
+> Thanks,
+> Ron
+>
+>
+>
+> -----Original Message-----
+> From: s-news-owner at lists.biostat.wustl.edu [mailto:s-news-
+> owner at lists.biostat.wustl.edu]On Behalf Of s b
+> Sent: Thursday, October 30, 2008 8:21 AM
+> To: s-news at lists.biostat.wustl.edu
+> Subject: [S] Code that works outside a custom function but not inside
+
+> Dear S-plus users,
+>
+> I am trying to plot some density histograms from a data.frame of
+> simulated data. Since I want to plot several sets of simulated data,
+> I have created this function myhisto which supposedly should do the
+> work. Funny thing: the code within the function does not work when
+> the data are passed to the function, BUT it does when it is used
+> outside of a function (see the end of the code below). Can anyone
+> explain what I am doing wrong in my function?
+>
+> Thanks you in advance,
+> Sebastien
+>
+> PS: if anyone can also explain why the attribute which.panel does
+> not work in strip, I would also be grateful!
+>
+>
+> ############# Code starts here
+>
+> # Custom functions
+> # Random generation of 10000 individuals for each input sd
+>
+> myranddf <- function(mysds){
+>   nsd <- length(mysds)
+>   tmp <- c()
+>   for (i in seq(nsd)){
+>     tmp <- c(tmp,rnorm(10000, mean = 0, sd = mysds[i]))
+>   }
+>   mydf <- data.frame(X=tmp, SD=rep(mysds, each = 10000))
+>   mydf
+> }
+>
+>
+> # Histogram plot
+>
+> myhisto <- function(mydata,nBar){
+>
+>   mysds <- levels(factor(mydata[,2]))
+>   nID <- length(mysds)
+>
+>   myplot <- histogram(~mydata[,1]|mydata[,2],
+>                       data = mydata,
+>                       as.table=TRUE,
+>                       type = "percent",
+>                       nint=nBar,
+>                       xlim=c(0,1),
+>                       xlab="X",
+>                       ylab="Probability density",
+>                       layout=c(2,2),
+>                       main=NULL,
+>                       strip = function(which.panel,...){
+>                         lines(c(0,1,1,0,0),c(0,0,1,1,0),col=1)
+>                         text(rep(0.5,nID),rep(0.5,nID),
+>                              paste("SD = ",mysds[which.panel],sep=""),
+>                              cex = 0.75)},
+>                       key=NULL)
+>   print(myplot)
+> }
+>
+> # Create data set for typical logit transform with additive variability
+model
+> # X = exp(ln(TVX/(100-TVX))+eta)/(1+exp(ln(TVX/(100-TVX))+eta))
+>
+> TVX = 50
+> mysds = c(0.05,0.1,0.25,0.75)*TVX
+>
+> mydf <- myranddf(mysds)
+> mydf[,1] <- exp(log(TVX/(100-TVX))+mydf[,1])
+> mydf[,1] <- mydf[,1]/(1+mydf[,1])
+>
+> # Plotting using the function
+>
+> myhisto(mydf,50)
+>
+> # Plotting outside a function
+>
+> mydata <- mydf
+> nBar <- 50
+>
+>   myplot <- histogram(~mydata[,1]|mydata[,2],
+>                       data = mydata,
+>                       as.table=TRUE,
+>                       type = "percent",
+>                       nint=nBar,
+>                       xlim=c(0,1),
+>                       xlab="X",
+>                       ylab="Probability density",
+>                       layout=c(2,2),
+>                       main=NULL,
+>                       strip = function(which.panel,...){
+>                         lines(c(0,1,1,0,0),c(0,0,1,1,0),col=1)
+>                         text(rep(0.5,4),rep(0.5,4),
+>                              paste("SD = ",mysds[which.panel],sep=""),
+>                              cex = 0.75)},
+>                       key=NULL)
+>   print(myplot)
+>
+> ################ END of code
+
+Le message ci-dessus, ainsi que les documents l'accompagnant, sont destinés
+uniquement aux personnes identifiées et peuvent contenir des informations
+privilégiées, confidentielles ou ne pouvant être divulguées. Si vous avez
+reçu ce message par erreur, veuillez le détruire.
+
+This communication ( and/or the attachments ) is intended for named
+recipients only and may contain privileged or confidential information
+which is not to be disclosed. If you received this communication by mistake
+please destroy all copies.
+

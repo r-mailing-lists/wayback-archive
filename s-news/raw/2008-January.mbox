@@ -1,0 +1,2587 @@
+From jgdaley at gw.dec.state.ny.us  Wed Jan  2 18:05:37 2008
+From: jgdaley at gw.dec.state.ny.us (Jim Daley)
+Date: Wed, 02 Jan 2008 13:05:37 -0500
+Subject: bar chart breaks
+Message-ID: <20080102T130537Z_472200030000@gw.dec.state.ny.us>
+
+Hello,
+
+ 
+
+I am running S-PLUS 8.0 and have a bar chart question.  Most of my bars are under a certain height, say 20, but one goes all the way up to 70.  I would like to have the Y-axis stop at 20 so that most of the bars are not compressed.  Is there a way to break the one tall bar to indicate that it goes off the scale?  The attached image shows what I am trying to do.  Any ideas out there?
+
+ 
+
+Thanks,
+
+ 
+
+Jim Daley
+NYSDEC Bureau of Fisheries
+Albany, NY 12233-4753
+jgdaley at gw.dec.state.ny.us
+
+BarChartMockUp.bmp
+
+Description: Windows bitmap
+
+From fisher at plessthan.com  Mon Jan  7 14:05:29 2008
+From: fisher at plessthan.com (Dennis Fisher)
+Date: Mon, 07 Jan 2008 06:05:29 -0800
+Subject: R "alarm"
+Message-ID: <9A848FAF-50AA-4EBB-A404-BE1620C78E26@plessthan.com>
+
+Colleagues,
+I recently discovered that R permits the user to generate a beep with the command alarm() or cat("\a").  I can't find a command comparable to alarm() is Splus 8 and cat("\a") yields an error message.  Is there a work-around available in S-plus?
+
+Dennis
+ 
+
+ Dennis Fisher MD
+ P < (The "P Less Than" Company)
+ Phone: 1-866-PLessThan (1-866-753-7784)
+ Fax: 1-415-564-2220
+ www.PLessThan.com
+ 
+ 
+
+From garrett at NRCan.gc.ca  Mon Jan  7 22:03:11 2008
+From: garrett at NRCan.gc.ca (Garrett, Robert)
+Date: Mon, 07 Jan 2008 17:03:11 -0500
+Subject: Re: R "alarm"
+References: <9A848FAF-50AA-4EBB-A404-BE1620C78E26@plessthan.com>
+Message-ID: <2B55B3DBF6DC4C4EAF915D826BC76A51048A2B76@S0-OTT-X2.nrn.nrcan.gc.ca>
+
+I saved the following from S-News back in 2004.  It may do the trick for you:
+ 
+From:  Steve McKinney[SMTP:smckinney at insightful.com]
+Sent:  Thursday, January 15, 2004 9:04 PM
+To:  Buttrey, Sam USA
+Cc:  s-news at lists.biostat.wustl.edu
+Subject:  Re: [S] bells and rings
+The following function rings a bell on my Windows 2000 PC and should not 
+interfere any of your existing S-PLUS objects:
+
+bell <- 
+  function(N = 5)
+{
+  while(exists(bellfile <- paste("bell", sample(9999, 1), sep = ""),
+               where = 1)) {}
+  on.exit(remove(bellfile))
+  assign(bellfile, rep("\007", N), where = 1, immediate = T)
+  commandString <-
+    paste("dos(\"type .\\\\.Data\\\\",
+          bellfile, "\", out = F, min = T )",
+          sep = "")
+  eval(parse(text = commandString))
+  
+}
+
+In S-PLUS:
+> bell()
+# rings 5 times
+> bell(2)
+# rings twice
+ 
+
+Hope this helps
+Steven McKinney 
+Consulting Services 
+Insightful Corporation 
+  
+smckinney at insightful.com <mailto:smckinney at insightful.com> 
+  
+Views expressed are my own, not Insightful's, etc. 
+ 
+Cheers,
+ 
+        Bob
+ 
+Robert G. (Bob) Garrett                                   Robert G. (Bob) 
+Garrett
+Emeritus scientist                                                  scientique 
+émérite
+Geological Survey of Canada          Commission géologique du Canada
+Natural Resources Canada                    Ressources naturelles Canada
+601 Booth St., Ottawa, Ontario            601 rue Booth, Ottawa (Ontario) 
+Canada K1A 0E8                                                     Canada K1A 
+0E8
+------------------------------------------------------------------------------------------------------
+Tel.: 613+995-4517  FAX: 613+996-3726
+Email: garrett at NRCan.gc.ca <mailto:garrett at NRCan.gc.ca> 
+website: http://gsc.nrcan.gc.ca/dir/index_e.php?id=4961 
+<http://gsc.nrcan.gc.ca/dir/index_e.php?id=4961> 
+------------------------------------------------------------------------------------------------------
+
+________________________________
+
+From: s-news-owner at lists.biostat.wustl.edu on behalf of Dennis Fisher
+Sent: Mon 1/7/2008 9:05 AM
+To: s-news at lists.biostat.wustl.edu
+Subject: [S] R "alarm"
+
+Colleagues, 
+
+I recently discovered that R permits the user to generate a beep with the 
+command alarm() or cat("\a").  I can't find a command comparable to alarm() is 
+Splus 8 and cat("\a") yields an error message.  Is there a work-around 
+available in S-plus?
+
+Dennis
+
+Dennis Fisher MD
+
+P < (The "P Less Than" Company)
+
+Phone: 1-866-PLessThan (1-866-753-7784)
+
+Fax: 1-415-564-2220
+
+www.PLessThan.com <http://www.plessthan.com/> 
+
+From b_toprani at hotmail.com  Mon Jan  7 22:56:32 2008
+From: b_toprani at hotmail.com (bhavin toprani)
+Date: Mon, 07 Jan 2008 22:56:32 +0000
+Subject: categorising weight
+Message-ID: <BAY114-W31E01390C6E24E865AC1C8D4F0@phx.gbl>
+
+Dear all,
+
+ 
+
+I have data of 797 pregnant women and the dataframe is anaemia.
+
+It has 6 variables: anaemia is the response variable of interest is binary.
+
+                         wt is continuous
+
+                         ceb is categorical
+
+                         educ is categorical
+
+                         region is categorical
+
+                         age is categorical
+
+I want to use log linear models to investigate the association structure of the potential bio-demographic explanatory variables after categorising weight.
+
+I want to categorise wt as <= 50, >50 AND <= 60, AND > 60.
+
+I did this
+
+ 
+
+var <- ifelse(anaemia$wt <= 50, 1, 0)
+
+ifelse(anaemia$wt > 50 & anaemia$wt <= 60, 2, var)
+
+ifelse(anaemia$wt > 60, 3, var)
+
+cbind(anaemia, var)
+
+ 
+
+This does not work. Please let me know my mistake. Any suggestions welcome.
+
+Thanks in advance.
+
+ 
+
+Bhavin
+
+Think you know your TV, music and film? Try Search Charades!
+
+From f.harrell at vanderbilt.edu  Mon Jan  7 23:01:07 2008
+From: f.harrell at vanderbilt.edu (Frank E Harrell Jr)
+Date: Mon, 07 Jan 2008 17:01:07 -0600
+Subject: Re: categorising weight
+In-Reply-To: <BAY114-W31E01390C6E24E865AC1C8D4F0@phx.gbl>
+References: <BAY114-W31E01390C6E24E865AC1C8D4F0@phx.gbl>
+Message-ID: <4782AF33.1080205@vanderbilt.edu>
+
+bhavin toprani wrote:
+>   Dear all,
+>
+> I have data of 797 pregnant women and the dataframe is anaemia.
+>
+> It has 6 variables: anaemia is the response variable of interest is binary.
+>                          wt is continuous
+>                          ceb is categorical
+>                          educ is categorical
+>                          region is categorical
+>                          age is categorical
+> I want to use log linear models to investigate the association structure
+> of the potential bio-demographic explanatory variables after
+> categorising weight.
+>
+> I want to categorise wt as <= 50, >50 AND <= 60, AND > 60.
+
+This will result in a very poor analysis.  See 
+http://biostat.mc.vanderbilt.edu/CatContinuous
+
+The first reference there shows how the resulting effects are almost 
+impossible to interpret.
+
+Frank
+
+> I did this
+>
+> var <- ifelse(anaemia$wt <= 50, 1, 0)
+>
+> ifelse(anaemia$wt > 50 & anaemia$wt <= 60, 2, var)
+> ifelse(anaemia$wt > 60, 3, var)
+> cbind(anaemia, var)
+>
+> This does not work. Please let me know my mistake. Any suggestions welcome.
+>
+> Thanks in advance.
+>
+> Bhavin
+>
+>
+> Think you know your TV, music and film? Try Search Charades!
+> <https://www.searchcharades.com>
+
+--
+Frank E Harrell Jr   Professor and Chair           School of Medicine
+                     Department of Biostatistics   Vanderbilt University
+
+From b_toprani at hotmail.com  Wed Jan  9 13:38:49 2008
+From: b_toprani at hotmail.com (bhavin toprani)
+Date: Wed, 09 Jan 2008 13:38:49 +0000
+Subject: thanks
+Message-ID: <BAY114-W4090DD8BAAD2487F06C5998D490@phx.gbl>
+
+Dear all,
+
+ 
+
+Thanks to Chuck, Frank and Brad for your help.
+
+ 
+
+Bhavin
+
+She said what? About who? Shameful celebrity quotes on Search Star!
+
+From elvis at xlsolutions-corp.com  Wed Jan  9 22:08:28 2008
+From: elvis at xlsolutions-corp.com (elvis Miller)
+Date: Wed, 09 Jan 2008 15:08:28 -0700
+Subject: Course*** R/S-Plus Advanced Programming ****by XLSolutions Corp
+Message-ID: <20080109150828.aa8924c5d28ca71e2a043bb294e795eb.2c5dbc58d9.wbe@email.secureserver.net>
+
+Happy New Year
+
+Our *** San Francisco *** R/Splus Advanced Programming is scheduled for January 24-25,
+2008
+
+Please email for earlybird rates: Payments due after the class.
+
+R/Splus Advanced Programming Course Outline:
+
+Day 1 
+
+- Overview of R/S fundamentals: Syntax and Semantics 
+- Class and Inheritance 
+- Concepts, Construction and good use of Language Objects 
+- Coercion and Efficiency 
+- Object-oriented Programming in R and S-Plus 
+- Taking advantage of fast objects and fast functions 
+- Advanced Manipulation tools: Parse, Deparse, Substitute, etc. 
+- How to fully take advantage of Vectorization 
+- Generic and Method Functions 
+- Search path, Databases and Frames Visibility (S-plus) 
+
+Day 2 
+
+- Working with Large Objects 
+- Handling Properly Recursion and Iterative Calculations 
+- Managing loops; For (S-Plus) and for() loops 
+- Consequences of Lazy Evaluation 
+- Efficie
+ nt Code Practices for Large Computations 
+- Memory Management and Resource Monitoring 
+- Writing R and S-plus Functions to call Compiled Code 
+- Writing and Debugging Compiled Code for S-plus and R system 
+- Connecting R to External Data Sources 
+- Macros in R 
+- Understanding the Structure of Model fitting Functions in R and
+S-plus 
+- Designing and Packaging Efficiently a new model Function 
+
+Payment due AFTER the class
+Email us for group discounts.
+Email Sue Turner: sue at xlsolutions-corp.com
+Phone: 206-686-1578
+Visit us: www.xlsolutions-corp.com/courselist.htm
+Please let us know if you and your colleagues are interested in this
+class to take advantage of group discount. 
+
+Register now to secure your seat!
+
+Cheers,
+E
+ lvis Miller, PhD
+Manager Training.
+XLSolutions Corporation
+206 686 1578
+www.xlsolutions-corp.com
+
+From gerald.jean at dgag.ca  Thu Jan 10 17:02:58 2008
+From: gerald.jean at dgag.ca
+Date: Thu, 10 Jan 2008 12:02:58 -0500
+Subject: No splits using rpart?
+Message-ID: <OFC0AE082F.1EC0EE2F-ON852573CC.005CD601-852573CC.005DA81F@spgdag.ca>
+
+Hello,
+
+I am trying to use rpart from the rpart library with little success so far,
+I have used it in the past though for similar problems but I can't figure
+out what I am doing wrong this time, no matter what I do, how I simplify
+the problem, I don't get any splits.  Here is a simplified run with number
+of rows considerably reduced (nsinB2 is a binary variable, 0 or 1):
+
+> test.rpart <- rpart(formula = as.factor(nsinB2) ~ priv + kmprom + ageveh,
++                               data = test2)
+> test.rpart
+n= 105895
+
+node), split, n, loss, yval, (yprob)
+      * denotes terminal node
+
+1) root 105895 32701 0 (0.6911941 0.3088059) *
+
+The builtin tree function has no problem with the same call, it gives me
+lots of splits:
+
+> test.tree <- tree(formula = as.factor(nsinB2) ~ priv + kmprom + ageveh,
++                   data = test2)
+> test.tree
+node), split, n, deviance, yval, (yprob)
+      * denotes terminal node
+
+     1) root 105895 1.309e+05 0 ( 0.6912 0.30880 )
+       2) ageveh<6.5 77648 9.865e+04 0 ( 0.6685 0.33150 )
+         4) ageveh<3.5 47696 6.150e+04 0 ( 0.6543 0.34570 )
+           8) ageveh<-0.5 3331 3.901e+03 0 ( 0.7277 0.27230 )
+            16) priv: Non 2856 3.408e+03 0 ( 0.7160 0.28400 )
+              32) ageveh<-1.5 108 9.732e+01 0 ( 0.8333 0.16670 ) *
+              33) ageveh>-1.5 2748 3.302e+03 0 ( 0.7114 0.28860 )
+                66) kmprom<17250 1736 2.055e+03 0 ( 0.7212 0.27880 )
+.
+.
+.
+
+and the output continues for lots more splits.  Anyone can figure out what
+I am doing wrong?
+
+Thanks for your support,
+
+Gérald Jean
+Conseiller senior en statistiques, Actuariat
+télephone            : (418) 835-4900 poste (7639)
+télecopieur          : (418) 835-6657
+courrier électronique: gerald.jean at dgag.ca
+
+"In God we trust, all others must bring data"  W. Edwards Deming
+
+Le message ci-dessus, ainsi que les documents l'accompagnant, sont destinés
+uniquement aux personnes identifiées et peuvent contenir des informations
+privilégiées, confidentielles ou ne pouvant être divulguées. Si vous avez
+reçu ce message par erreur, veuillez le détruire.
+
+This communication (and/or the attachments) is intended for named
+recipients only and may contain privileged or confidential information
+which is not to be disclosed. If you received this communication by mistake
+please destroy all copies.
+
+From mpacheco at glec.com  Thu Jan 10 18:59:43 2008
+From: mpacheco at glec.com (Manoel Pacheco)
+Date: Thu, 10 Jan 2008 13:59:43 -0500
+Subject: Survival analysis - survfit
+Message-ID: <47866B1F.5020903@glec.com>
+
+I am trying to estimate survival of fishes exposed to multiple 
+concentrations of a contaminant. Only fishes exposed to the highest 
+concentration experienced high mortality. Consequently, most of the 
+records in my file are censored data at the last day of the experiment.
+
+The analysis,
+
+se3.surv <- survfit(Surv(time, cens) ~ treat, data = se3t)
+
+results in an error message: "Problem: No. of rows in Surv(time, cens) 
+(variable 1) is 798 != length of others (364)"
+
+Records on the last day start on row 365. I get no error message when 
+data from the last day is excluded, but then most n.risk values, and 
+survival estimates, are wrong.
+
+I would appreciate suggestions,
+
+thanks
+
+S-Plus 6.2 for Windows (Professional Edition)
+
+From paul.gross at blackrock.com  Thu Jan 10 19:36:44 2008
+From: paul.gross at blackrock.com (Gross, Paul)
+Date: Thu, 10 Jan 2008 14:36:44 -0500
+Subject: titles for multiple pages of graphs
+Message-ID: <3371F8B1B2D739468B4241DB5F65E8F902045825@NYCPEXV009.na.blkint.com>
+
+I am generating multiple graphs over multiple pages using the plot.gam
+function and would like an overall title ideally on every page, but at
+least on the first page of graphs.  If in my script I do the following,
+e.g.
+
+par(mfrow=c(3,3),oma=c(0,0,4,0))
+plot.gam(data.gam.disc, se=T, rugplot=F)
+mtext(outer=T, side=3, line=1, "my gam functions", cex=1)
+dev.off()
+
+then the output is pages of plots with no title save for the last page
+which has the title.
+
+If mtext goes ahead of the plot function then the output is a page which
+is blank except for the title and the plots are on the following pages
+(with no title).  
+
+Using the title() function yields similar results (using the main
+argument to plot.gam puts the same title string over every plot).
+
+Can anyone offer some pointers on the S-plus way to get page titles in
+this context?
+
+Thank you,
+Paul
+
+THE INFORMATION CONTAINED IN THIS MESSAGE AND ANY ATTACHMENT MAY BE PRIVILEGED, 
+CONFIDENTIAL, PROPRIETARY OR OTHERWISE PROTECTED FROM DISCLOSURE. If the reader 
+of this message is not the intended recipient, you are hereby notified that any 
+dissemination, distribution, copying or use of this message and any attachment 
+is strictly prohibited. If you have received this message in error, please 
+notify us immediately by replying to the message and permanently delete it from 
+your computer and destroy any printout thereof.
+
+From therneau at mayo.edu  Thu Jan 10 22:11:58 2008
+From: therneau at mayo.edu (Terry Therneau)
+Date: Thu, 10 Jan 2008 16:11:58 -0600
+Subject: Re: Survival analysis - survfit
+Message-ID: <200801102211.m0AMBvF04660@hsrnfs-101.mayo.edu>
+
+> se3.surv <- survfit(Surv(time, cens) ~ treat, data = se3t)
+
+> results in an error message: "Problem: No. of rows in Surv(time, cens) 
+> (variable 1) is 798 != length of others (364)"
+
+  This message usually means that one of the variables is coming from your work 
+directory, and others from the data set (se3t).  It likely has nothing to do 
+with survfit per se.
+  
+        Terry Therneau
+        
+
+From wht_crl at yahoo.com  Fri Jan 11 11:45:36 2008
+From: wht_crl at yahoo.com (carol white)
+Date: Fri, 11 Jan 2008 03:45:36 -0800
+Subject: CI of geometric mean
+Message-ID: <834832.74753.qm@web62004.mail.re1.yahoo.com>
+
+Hi,
+It doesn't seem that the calculation of Confidence Interval of geometric mean is already implemented. Does any body have the function written in S?
+
+Thanks
+
+carol
+
+      Looking for last minute shopping deals?  
+Find them fast with Yahoo! Search.
+
+From bkb5 at cdc.gov  Fri Jan 11 16:24:15 2008
+From: bkb5 at cdc.gov (Biggerstaff, Brad J. (CDC/CCID/NCZVED))
+Date: Fri, 11 Jan 2008 09:24:15 -0700
+Subject: Re: CI of geometric mean
+References: <834832.74753.qm@web62004.mail.re1.yahoo.com>
+Message-ID: <7E6C5EBC0D0DB8448A56A8BEEC632A900B5906B4@m-ncid-3.ncid.cdc.gov>
+
+Dear Carol:
+
+ 
+
+Generally, you can compute a CI on the log(titer) 
+values and the exponentiate.  I wrote some code to do this and also do 
+a boostrap CI, just for fun.  Not the default dilution factor is 2, but you 
+may want to switch this to 10, say.  The function will perform separate 
+analyses with different groups, specified with a formula; for one group, you 
+need to use a formula as Y ~ 1, or you can use the gmt.basic function 
+directly.  Here's some example calls:
+
+ 
+
+ 
+
+gmt.dat <- data.frame(Y2 = 
+2^c(0,2,5,3,1,4,4,3,2,2,1,2,3), Y10 = 
+10^c(1,0,0,2,1,1,3,1,2,2,1,1,3),
+              
+Grp=c("A","A","A","A","A","A","B","B","B","B","B","B","B"))
+gmt(Y2~1,data="">gmt(Y2~Grp,data="">gmt(Y10~Grp,data="">
+
+ 
+
+ 
+
+Note that this is not designed to *compare* the groups, 
+which would be nice, huh?
+
+ 
+
+Cheers,
+
+Brad
+
+ 
+
+Brad Biggerstaff, Ph.D. 
+(970) 
+221-6473 ... BBiggerstaff at cdc.gov 
+
+ 
+
+From: s-news-owner at lists.biostat.wustl.edu 
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of carol 
+white
+Sent: Friday, January 11, 2008 4:46 AM
+To: 
+s-news at wubios.wustl.edu
+Subject: [S] CI of geometric 
+mean
+
+Hi,
+It doesn't seem that the calculation of Confidence Interval of 
+geometric mean is already implemented. Does any body have the function written 
+in S?
+
+Thanks
+
+carol
+
+Looking for last minute shopping deals? Find 
+them fast with Yahoo! Search.
+
+gmt.txt
+
+Description: gmt.txt
+
+From lochapoka at web.de  Fri Jan 11 16:56:27 2008
+From: lochapoka at web.de (Volker Bahn)
+Date: Fri, 11 Jan 2008 11:56:27 -0500
+Subject: Re: No splits using rpart?
+Message-ID: <47879FBB.2000909@web.de>
+
+Look into the stopping criteria of the two methods. If I remember
+
+correctly, their defaults are different. Otherwise the two methods give 
+in my experience virtually identical results.
+
+HTH
+
+Volker
+
+gerald.jean at dgag.ca wrote:
+> Hello,
+>
+> I am trying to use rpart from the rpart library with little success so far,
+> I have used it in the past though for similar problems but I can't figure
+> out what I am doing wrong this time, no matter what I do, how I simplify
+> the problem, I don't get any splits.  Here is a simplified run with number
+> of rows considerably reduced (nsinB2 is a binary variable, 0 or 1):
+>
+>
+> > test.rpart <- rpart(formula =s.factor(nsinB2) ~ priv + kmprom + ageveh,
+> >
+>
+> +                               data =est2)
+>
+> > test.rpart
+> >
+>
+> n=05895
+>
+> node), split, n, loss, yval, (yprob)
+>       * denotes terminal node
+>
+> 1) root 105895 32701 0 (0.6911941 0.3088059) *
+>
+>
+> The builtin tree function has no problem with the same call, it gives me
+> lots of splits:
+>
+>
+> > test.tree <- tree(formula =s.factor(nsinB2) ~ priv + kmprom + ageveh,
+> >
+>
+> +                   data =est2)
+>
+> > test.tree
+> >
+>
+> node), split, n, deviance, yval, (yprob)
+>       * denotes terminal node
+>
+>      1) root 105895 1.309e+05 0 ( 0.6912 0.30880 )
+>        2) ageveh<6.5 77648 9.865e+04 0 ( 0.6685 0.33150 )
+>          4) ageveh<3.5 47696 6.150e+04 0 ( 0.6543 0.34570 )
+>            8) ageveh<-0.5 3331 3.901e+03 0 ( 0.7277 0.27230 )
+>             16) priv: Non 2856 3.408e+03 0 ( 0.7160 0.28400 )
+>               32) ageveh<-1.5 108 9.732e+01 0 ( 0.8333 0.16670 ) *
+>               33) ageveh>-1.5 2748 3.302e+03 0 ( 0.7114 0.28860 )
+>                 66) kmprom<17250 1736 2.055e+03 0 ( 0.7212 0.27880 )
+> .
+> .
+> .
+>
+> and the output continues for lots more splits.  Anyone can figure out what
+> I am doing wrong?
+>
+> Thanks for your support,
+>
+> Gérald Jean
+> Conseiller senior en statistiques, Actuariat
+> télephone            : (418) 835-4900 poste (7639)
+> télecopieur          : (418) 835-6657
+> courrier électronique: gerald.jean at dgag.ca
+>
+> "In God we trust, all others must bring data"  W. Edwards Deming
+>
+>
+>
+> Le message ci-dessus, ainsi que les documents l'accompagnant, sont destinés
+> uniquement aux personnes identifiées et peuvent contenir des informations
+> privilégiées, confidentielles ou ne pouvant être divulguées. Si vous avez
+> reçu ce message par erreur, veuillez le détruire.
+>
+> This communication (and/or the attachments) is intended for named
+> recipients only and may contain privileged or confidential information
+> which is not to be disclosed. If you received this communication by mistake
+> please destroy all copies.
+>
+>
+>
+
+--
+
+--------------------------------------
+Volker Bahn
+Department of Biology
+McGill University
+Stewart Biol. Bldg. W3/5
+1205 ave Docteur Penfield
+Montreal, QC, H3A 1B1
+Canada
+t: (514) 398-6428
+f: (514) 398-5069
+volker.bahn at mcgill.ca
+www.volkerbahn.com
+
+Lat-Long:       
+45.50285, -73.5814
+--------------------------------------
+
+From fisher at plessthan.com  Sat Jan 12 17:39:53 2008
+From: fisher at plessthan.com (Dennis Fisher)
+Date: Sat, 12 Jan 2008 09:39:53 -0800
+Subject: Obtaining values to the OS in Windows / Linux
+Message-ID: <1E340EF5-B006-4B5D-AE72-DB1CFC27F458@plessthan.com>
+
+Colleagues,
+I would like to confirm which version of Splus is being called.  With R, the command-line command "R -- version" returns "R version 2.6.0 (2007-10-03)"  As far as I can tell, there is nothing directly comparable in Splus.
+
+Once I open Splus, I can type: "version", which returns "Version 8.0.4  for Linux 2.4.21, 32-bit : 2007" and  "version$major" yields 8.
+
+My question is - how can I get this information to the operating system.  I could write the info to a file; however, I prefer to pass the info in some way as an environment variable that I can access from the OS, e.g., %S_VERSION_MAJOR% in Windows or $S_VERSION_MAJOR in Linux.
+
+Any ideas how this be accomplished (other than writing to a file)?
+ 
+
+Dennis
+
+ Dennis Fisher MD
+ P < (The "P Less Than" Company)
+ Phone: 1-866-PLessThan (1-866-753-7784)
+ Fax: 1-415-564-2220
+ www.PLessThan.com
+ 
+ 
+
+From gerald.jean at dgag.ca  Mon Jan 14 16:59:00 2008
+From: gerald.jean at dgag.ca
+Date: Mon, 14 Jan 2008 11:59:00 -0500
+Subject: Re: No splits using rpart?
+In-Reply-To: <5B833E900330354F9FDA984D06F92428032EBE97@ca-exchange.corp.pharsight.com>
+References: <5B833E900330354F9FDA984D06F92428032EBE97@ca-exchange.corp.pharsight.com>
+Message-ID: <OF5004E0D3.A4F37EB5-ON852573D0.00519ED9-852573D0.005D4B28@spgdag.ca>
+
+Thanks to Elizabeth Atkinson, Terry Therneau, Andreas Krause and Volker
+Bahn for their insights.
+
+I should have been more specific about what I am trying to acheive.
+
+I have a large data set, around 1,750,000 rows, with somewhere around 80
+very highly correlated continuous variables with missing values on all of
+them, some with lots of missing -- excluding all the missings is not an
+option since if I do that I have no data left!
+
+  What I was hoping to be able to acheive with trees, built in "tree" and /
+or "rpart", was to get help in categorizing those continuous variables as
+optimally as possible with respect to some continuous response variable and
+sort out, in some way, the correlated variables.  Once these task
+accomplished, the remaining categorized variables will be used in a glm.
+Any suggestion, preferably within the realm of S+, would be greatly
+welcomed.
+
+Thanks to all,
+
+Gérald Jean
+Conseiller senior en statistiques, Actuariat
+télephone            : (418) 835-4900 poste (7639)
+télecopieur          : (418) 835-6657
+courrier électronique: gerald.jean at dgag.ca
+
+"In God we trust, all others must bring data"  W. Edwards Deming
+
+Le message ci-dessus, ainsi que les documents l'accompagnant, sont destinés 
+uniquement aux personnes identifiées et peuvent contenir des informations
+privilégiées, confidentielles ou ne pouvant être divulguées. Si vous avez reçu 
+ce message par erreur, veuillez le détruire.
+
+This communication (and/or the attachments) is intended for named recipients 
+only and may contain privileged or confidential information which is not
+to be disclosed. If you received this communication by mistake please destroy 
+all copies.
+
+From jsimonof at stern.nyu.edu  Mon Jan 14 23:04:47 2008
+From: jsimonof at stern.nyu.edu (Jeffrey Simonoff)
+Date: Mon, 14 Jan 2008 18:04:47 -0500
+Subject: Call for papers: Fourth Symposium on Statistical Challenges in Electronic Commerce Research
+Message-ID: <478BEA8F.7000109@stern.nyu.edu>
+
+Hi folks,
+I was asked by colleagues if I could send this announcement to the list. 
+I apologize if it is too off-topic, but perhaps some readers of this 
+list might be interested.
+
+               Jeff Simonoff
+
+----------------
+
+Dear Colleagues,
+
+We are pleased to announce the Fourth Symposium on Statistical 
+Challenges in Electronic Commerce Research (SCECR), which will be hosted 
+by NYU's Center for Digital Economy, and held at the Stern School of 
+Business on May 18th and 19th, 2008.
+
+The theme of this year's symposium is "Social Networks and User 
+Generated Content". Details that include how to submit your work are 
+available in the CFP, which available on the link below. The submission 
+deadline for two-page abstracts is February 15th, 2008.
+
+If your colleagues or students might be interested in submitting their 
+work for this symposium, please do forward this to them. Further 
+information is available on the symposium web site:
+
+http://w4.stern.nyu.edu/ceder/events.cfm?doc_id=7909
+
+Cordially,
+Anindya Ghose
+Foster Provost
+Arun Sundararajan
+
+From fisher at plessthan.com  Tue Jan 15 18:02:39 2008
+From: fisher at plessthan.com (Dennis Fisher)
+Date: Tue, 15 Jan 2008 10:02:39 -0800
+Subject: Comparing today's date to a particular date
+Message-ID: <7262F68C-A540-4547-B55B-69542141A26A@plessthan.com>
+
+Colleagues,
+I would like to compare today's date to a particular date, e.g., next January 1.  In R, you could do something like:
+
+	as.numeric(Sys.Date()) < as.numeric(as.Date("2009-01-01"))
+
+However, fewer time-related commands are available in S-Plus.  Does anyone have a quick fix to this?
+
+Dennis
+
+ 
+
+ Dennis Fisher MD
+ P < (The "P Less Than" Company)
+ Phone: 1-866-PLessThan (1-866-753-7784)
+ Fax: 1-415-564-2220
+ www.PLessThan.com
+ 
+ 
+
+From mzhao at homer.att.com  Tue Jan 15 18:45:44 2008
+From: mzhao at homer.att.com (Max Zhao)
+Date: Tue, 15 Jan 2008 13:45:44 -0500
+Subject: Re: Comparing today's date to a particular date
+In-Reply-To: <7262F68C-A540-4547-B55B-69542141A26A@plessthan.com>
+References: <7262F68C-A540-4547-B55B-69542141A26A@plessthan.com>
+Message-ID: <004c01c857a6$d6094ae0$9deb2b87@zhaopc>
+
+Dennis,
+
+ 
+
+I don’t know if there is an easy way
+to do that. But here is one way if we use the Splus function “date”.
+
+ 
+
+#########  Write a function of your
+own using the Splus function “date”
+
+   mytoday_function() {
+
+      tdate_as.character(date())
+
+      dates(paste(substring(tdate, 5,
+10),substring(tdate, 25),sep=" "), format="mon dd yyyy")
+
+   }  
+
+ 
+
+########  You can compare the dates
+using the following command
+
+as.numeric(mytoday())<as.numeric(dates("01/14/2008"))
+
+as.numeric(mytoday())<as.numeric(dates("01/16/2008"))
+
+ 
+
+Hope this helps.
+
+Max
+
+ 
+
+ 
+
+From:
+s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On
+Behalf Of Dennis Fisher
+
+Sent: Tuesday, January 15, 2008
+1:03 PM
+
+To: s-news at lists.biostat.wustl.edu
+
+Subject: [S] Comparing today's
+date to a particular date
+
+ 
+
+Colleagues,
+
+ 
+
+I would like to compare today's date to a particular date, e.g., next
+January 1.  In R, you could do something like:
+
+ 
+
+            as.numeric(Sys.Date())
+< as.numeric(as.Date("2009-01-01"))
+
+ 
+
+However, fewer time-related commands are available in S-Plus.
+ Does anyone have a quick fix to this?
+
+ 
+
+Dennis
+
+ 
+
+ 
+
+Dennis Fisher MD
+
+P < (The "P Less
+Than" Company)
+
+Phone: 1-866-PLessThan
+(1-866-753-7784)
+
+Fax: 1-415-564-2220
+
+www.PLessThan.com
+
+ 
+
+From maustin at amgen.com  Tue Jan 15 22:28:31 2008
+From: maustin at amgen.com (Austin, Matt)
+Date: Tue, 15 Jan 2008 14:28:31 -0800
+Subject: Re: Comparing today's date to a particular date
+In-Reply-To: <7262F68C-A540-4547-B55B-69542141A26A@plessthan.com>
+References: <7262F68C-A540-4547-B55B-69542141A26A@plessthan.com>
+Message-ID: <A413DCB0A7390F41B86A3EF6E2C9743A3797CA3F19@usto-pmsg-mbs02.am.corp.amgen.com>
+
+Does the following do what you want?
+
+timeDate(date(), in.format="%w %m %d %H:%M:%S %Z %Y") > timeDate("2009-01-01", 
+in.format="%Y-%M-%d")
+
+--Matt
+
+Matt Austin
+Director, Biostatistics
+Amgen, Inc
+
+________________________________
+
+From: s-news-owner at lists.biostat.wustl.edu 
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Dennis Fisher
+Sent: Tuesday, January 15, 2008 10:03 AM
+To: s-news at lists.biostat.wustl.edu
+Subject: [S] Comparing today's date to a particular date
+
+Colleagues,
+
+I would like to compare today's date to a particular date, e.g., next January 
+1.  In R, you could do something like:
+
+as.numeric(Sys.Date()) < as.numeric(as.Date("2009-01-01"))
+
+However, fewer time-related commands are available in S-Plus.  Does anyone have 
+a quick fix to this?
+
+Dennis
+
+Dennis Fisher MD
+
+P < (The "P Less Than" Company)
+
+Phone: 1-866-PLessThan (1-866-753-7784)
+
+Fax: 1-415-564-2220
+
+www.PLessThan.com
+
+From yiwu21111958 at yahoo.com  Wed Jan 16 06:30:02 2008
+From: yiwu21111958 at yahoo.com (yiwu ye)
+Date: Tue, 15 Jan 2008 22:30:02 -0800
+Subject: 'plot' makes S+ not-responding
+Message-ID: <429493.38320.qm@web57106.mail.re3.yahoo.com>
+
+Dear list,
+
+Suddenly, when I use 'plot' function, S+ only opens a graphsheet, but does not, not responding any more. After deleting the sub directories, .Data and .Pref, I restarted S+. The problem remains. Could anyone help with this?
+
+Thanks a lot,
+
+Yiwu
+
+      Never miss a thing.   Make Yahoo your homepage.
+
+From kjarcher at vcu.edu  Wed Jan 16 13:48:51 2008
+From: kjarcher at vcu.edu (Kellie J Archer/FS/VCU)
+Date: Wed, 16 Jan 2008 08:48:51 -0500
+Subject: Post-doctoral position
+Message-ID: <OF40707015.DF405ACF-ON852573D2.004BE267-852573D2.004BE26E@vcu.edu>
+
+The Department of Biostatistics at Virginia Commonwealth University has a T32 training grant supported by the National Institute of Environmental Health Sciences entitled “Integration of Chemical Mixtures Toxicology, Toxicogenomics, and Statistics.”  We are currently seeking applications to fill a post-doctoral position with salary ranges from $31,000-$51,000, commensurate with experience. The post-doctoral trainee will collaborate with statisticians in methods development related to the statistical analysis of toxicogenomic data and will participate collaboratively with disciplinary scientists in analyzing high-throughput genomic data. 
+Qualifications: Necessary qualifications include a Ph.D. in biostatistics or statistics with experience in the design and statistical analysis of high‑throughput genomic data (e.g., microarrays, proteomics), familiarity with statistical programming environments for analyzing such data, and excellent oral and written communication skills. Trainees must be U.S. citizens or have permanent residency.
+Application Process: Applications will be reviewed as soon as received, and the position will remain open until filled. Please send curriculum vitae, a letter highlighting research interests and qualifications, and contact information for three references to: Dr. Kellie Archer, Assistant Professor, Dept of Biostatistics, Virginia Commonwealth University, P. O. Box 980032, Richmond, VA 23298 (phone: 804.827.2039, email: kjarcher at vcu.edu). 
+Virginia Commonwealth University is an equal opportunity/affirmative action employer. Women, minorities, and persons with disabilities are encouraged to apply.
+
+Kellie J. Archer, Ph.D.
+Assistant Professor 
+Department of Biostatistics & Massey Cancer Center
+Virginia Commonwealth University
+730 East Broad St., 3-022
+Richmond, VA 23298-0032
+phone: (804) 827-2039
+fax: (804) 828-8900
+e-mail: kjarcher at vcu.edu
+website: www.people.vcu.edu/~kjarcher
+
+From weiye1 at yahoo.com  Sat Jan 19 00:42:02 2008
+From: weiye1 at yahoo.com (Wei Ye)
+Date: Fri, 18 Jan 2008 16:42:02 -0800
+Subject: random partitioning of a data frame
+Message-ID: <797046.11300.qm@web51811.mail.re2.yahoo.com>
+
+Dear S-news members:
+
+I am new to S-plus programing.I would really
+appreciate it if somebody can help me with this.
+
+I took a random sample from a large data frame x
+using:
+samp1<-x[sample(1:nrow(x), 100,replace=F),]. 
+But I also want to keep the observations that were not
+selected. How do I separate the observations that were
+sampled and those that were not sampled? Thanks a lot.
+
+Wei
+
+      
+____________________________________________________________________________________
+Be a better friend, newshound, and 
+know-it-all with Yahoo! Mobile.  Try it now.  
+http://mobile.yahoo.com/;_ylt=Ahu06i62sR8HDtDypao8Wcj9tAcJ 
+
+From timh at insightful.com  Sat Jan 19 00:53:19 2008
+From: timh at insightful.com (Tim Hesterberg)
+Date: Fri, 18 Jan 2008 16:53:19 -0800
+Subject: Re: random partitioning of a data frame
+In-Reply-To: <797046.11300.qm@web51811.mail.re2.yahoo.com>
+References: <797046.11300.qm@web51811.mail.re2.yahoo.com>
+Message-ID: <ubq7itz40.fsf@insightful.com>
+
+Try this:
+indices <- sample(1:nrow(x), 100,replace=F)
+x[indices, ]
+x[-indices, ]
+
+Tim Hesterberg
+
+>Dear S-news members:
+>
+>I am new to S-plus programing.I would really
+>appreciate it if somebody can help me with this.
+>
+>I took a random sample from a large data frame x
+>using:
+>samp1<-x[sample(1:nrow(x), 100,replace=F),]. 
+>But I also want to keep the observations that were not
+>selected. How do I separate the observations that were
+>sampled and those that were not sampled? Thanks a lot.
+>
+>Wei
+
+From tristan.lorino at lcpc.fr  Mon Jan 21 10:17:43 2008
+From: tristan.lorino at lcpc.fr (Tristan Lorino)
+Date: Mon, 21 Jan 2008 11:17:43 +0100
+Subject: Problem with matrix
+Message-ID: <1366519230.20080121111743@lcpc.fr>
+
+Hi,
+
+In this example, I fit several Weibull survival models and I put the
+numerical results (scale, intercept and coefficient) in a length(y)x4
+matrix. But the output matrix A is character, so I can't make
+calculations on the results!
+I don't understand why A is non-numerical matrix. How can I get
+numerical values?
+
+> y_c("005","01","015","02","025","03","035","04","045","05","055","06","065","07","075","08","085")
+> z2_outer("csgg",y,paste,sep="")
+> A_matrix(NULL,ncol=4)
+
+> for (i in 1:length(y))
+> {
+>         w2_get(z2[i])
+>         w1_survReg(Surv(w2[,2],w2[,3], type="interval2")~w2$Granulo, 
+> dist="weibull",na.action=na.exclude)
+>         A_rbind(A,c(y[i],w1$scale,w1$coef[1],w1$coef[2]))
+>         A
+> }
+> A
+> dimnames(A)[[2]]_c("threshold","scale","intercept","coef")
+
+> mean(A[,2])
+[1] NA
+Warning messages:
+  mean of data of class "character" undefined, returning NA in: mean(A[, 2])
+
+Thank you,
+Tristan Lorino
+
+  
+-- 
+Laboratoire Central des Ponts et Chaussées
+[Division ESAR — Section AGR]
+Route de Bouaye BP 4129
+44341 Bouguenais Cedex
+France
+Tél 33 (0)2 40 84 56 18
+Fax 33 (0)2 40 84 59 92
+
+From rfrancois at mango-solutions.com  Mon Jan 21 14:12:04 2008
+From: rfrancois at mango-solutions.com (Romain Francois)
+Date: Mon, 21 Jan 2008 14:12:04 +0000
+Subject: Re: Problem with matrix
+In-Reply-To: <1366519230.20080121111743@lcpc.fr>
+References: <1366519230.20080121111743@lcpc.fr>
+Message-ID: <4794A834.8090902@mango-solutions.com>
+
+Hi Tristan,
+
+Matrices are single mode structures (ie. they can only hold a single type of data at any time).  
+When you "rbind" a matrix including "y[1]" you effectively are including 
+character data (as y is character) into a matrix.  Hence all the matrix is coerced to characters.
+
+You may also want to look at restructuring your code using applys and do.call.  
+Something like this (untested) code perhaps:
+
+z2 <- paste("csgg", y, sep="")
+outList <- lapply(z2, function(txt) {
+        w2 <- get(txt)
+        w1 <- survReg(Surv(w2[,2],w2[,3], type="interval2")~w2$Granulo,
+                dist="weibull",na.action=na.exclude)
+        c(w1$scale,w1$coef[1:2])
+})
+do.call("rbind", outList)
+
+Hope this helps,
+Romain.
+
+mangosolutions
+S & R training and consulting services
+
+Tristan Lorino wrote:
+> Hi,
+>
+> In this example, I fit several Weibull survival models and I put the
+> numerical results (scale, intercept and coefficient) in a length(y)x4
+> matrix. But the output matrix A is character, so I can't make
+> calculations on the results!
+> I don't understand why A is non-numerical matrix. How can I get
+> numerical values?
+>
+>
+> > y_c("005","01","015","02","025","03","035","04","045","05","055","06","065","07","075","08","085")
+> > z2_outer("csgg",y,paste,sep="")
+> > A_matrix(NULL,ncol=4)
+> >
+>
+>
+>
+> > for (i in 1:length(y))
+> > {
+> >         w2_get(z2[i])
+> >         w1_survReg(Surv(w2[,2],w2[,3], type="interval2")~w2$Granulo,
+> > dist="weibull",na.action=na.exclude)
+> >         A_rbind(A,c(y[i],w1$scale,w1$coef[1],w1$coef[2]))
+> >         A
+> > }
+> > A
+> > dimnames(A)[[2]]_c("threshold","scale","intercept","coef")
+> >
+>
+>
+>
+> > mean(A[,2])
+> >
+>
+> [1] NA
+> Warning messages:
+>   mean of data of class "character" undefined, returning NA in: mean(A[, 2])
+>
+> Thank you,
+> Tristan Lorino
+>
+>
+>
+
+--
+Mango Solutions
+data analysis that delivers
+
+Tel:  +44(0) 1249 467 467
+Fax:  +44(0) 1249 467 468
+Mob:  +44(0) 7813 526 123
+
+From Saadi at telfer.uottawa.ca  Mon Jan 21 16:32:28 2008
+From: Saadi at telfer.uottawa.ca (Saadi, Samir)
+Date: Mon, 21 Jan 2008 11:32:28 -0500
+Subject: Monte carlo simulation
+References: <1366519230.20080121111743@lcpc.fr> <4794A834.8090902@mango-solutions.com>
+Message-ID: <EBEF03D341A7544EA1481BB1B64FA6760122CF37@SoM-Exchange.management.uottawa.ca>
+
+Hi S-Plus users,
+
+I learnig how to use S-plus. I am running a simple linear regression model ( yt = contant + Coef * One independent variable + errors).
+
+I want to test whether Coef =1 using Monte carlo simulation.   I find out how to use Bootstraping but couldn't find how to do it using Monte Carlo with SPlus.
+
+Does any one knows to do this?
+
+Thanks a million !
+
+Sam
+
+From timh at insightful.com  Mon Jan 21 21:24:46 2008
+From: timh at insightful.com (Tim Hesterberg)
+Date: Mon, 21 Jan 2008 13:24:46 -0800
+Subject: Re: Monte carlo simulation
+In-Reply-To: <EBEF03D341A7544EA1481BB1B64FA6760122CF37@SoM-Exchange.management.uottawa.ca>
+References: <1366519230.20080121111743@lcpc.fr> <4794A834.8090902@mango-solutions.com> <EBEF03D341A7544EA1481BB1B64FA6760122CF37@SoM-Exchange.management.uottawa.ca>
+Message-ID: <uprvu50td.fsf@insightful.com>
+
+>Hi S-Plus users,
+>I learnig how to use S-plus. I am running a simple linear regression model ( 
+>yt = contant + Coef * One independent variable + errors).
+>I want to test whether Coef =1 using Monte carlo simulation.   I find out how 
+>to use Bootstraping but couldn't find how to do it using Monte Carlo with 
+>SPlus.
+>Does any one knows to do this?
+>Thanks a million !
+>Sam
+
+Are you willing to assume that the residuals from the line y = x + constant
+are independent and identically distributed (and independent of the x's)?
+If so, then a permutation test would be appropriate, permuting
+the residuals from that line (using any constant).
+
+The resample library supports permutation tests.  
+It would handle the test Coef = 0.  To convert your problem into
+that framework, you can define
+        yx <- y - x
+and then regress yx against x.  This would test the hypothesis that yx
+and x are independent.
+
+Download S+Resample from www.insightful.com/downloads/libraries
+
+If you're not willing to make that iid assumption, then there may be a
+bootstrap test that would be approximately correct.  The appropriate
+way to bootstrap would depend on what you are willing to assume.
+
+Tim Hesterberg
+
+========================================================
+| Tim Hesterberg       Senior Research Scientist       |
+| timh at insightful.com  Insightful Corp.                |
+| (206)802-2319        1700 Westlake Ave. N, Suite 500 |
+| (206)283-8691 (fax)  Seattle, WA 98109-3044, U.S.A.  |
+|                      www.insightful.com/Hesterberg   |
+========================================================
+Advanced Programming in S-PLUS: San Antonio TX, March 26-27, 2008.
+Bootstrap Methods and Permutation Tests: San Antonio, March 28, 2008.
+
+From kamiltoth at yahoo.com  Mon Jan 21 21:53:26 2008
+From: kamiltoth at yahoo.com (Kamil Toth)
+Date: Mon, 21 Jan 2008 13:53:26 -0800
+Subject: Cornish Fisher for Gamma
+Message-ID: <327068.18571.qm@web35812.mail.mud.yahoo.com>
+
+Folks:
+  Does anybody knows any publications/S-PLUS functions/algorithms for computing the generalized Cornish-Fisher type expansion but with gamma distribution as the "base" function (instead of traditional normal)?
+  Thanks
+ 
+      Be a better friend, newshound, and 
+know-it-all with Yahoo! Mobile.  Try it now.
+
+From jeedward at yahoo.com  Wed Jan 23 15:01:48 2008
+From: jeedward at yahoo.com (John Edward)
+Date: Wed, 23 Jan 2008 07:01:48 -0800
+Subject: BCBGC-08 Final call for papers
+Message-ID: <105775.4315.qm@web45904.mail.sp1.yahoo.com>
+
+BCBGC-08 Final call for papers
+
+The 2008 International Conference on Bioinformatics,
+Computational Biology, Genomics and Chemoinformatics
+(BCBGC-08) (website: www.PromoteResearch.org ) will be
+held during July 7-10 2008 in Orlando, FL, USA. We
+invite draft paper submissions. The conference will be
+held at the same time and place where several other
+major events are taking place. The website contains
+more details.
+
+Sincerely
+John Edward
+
+      
+____________________________________________________________________________________
+Be a better friend, newshound, and 
+know-it-all with Yahoo! Mobile.  Try it now.  
+http://mobile.yahoo.com/;_ylt=Ahu06i62sR8HDtDypao8Wcj9tAcJ 
+
+From lisas at salford-systems.com  Wed Jan 23 19:17:05 2008
+From: lisas at salford-systems.com (Lisa Solomon)
+Date: Wed, 23 Jan 2008 11:17:05 -0800
+Subject: Free Online: Data Mining Intro for Beginners, Vendor-Neutral, January 29, February 19
+Message-ID: <RDNCMzUzSyVPOTFUIC8pMjM0NTMyOTY@sspc-lisa>
+
+ONLINE VENDOR NEUTRAL INTRO TO DATA MINING FOR ABSOLUTE BEGINNERS
+(no charge)
+
+A non-technical data mining introduction for beginners
+January 29, 2008, 10AM-11AM PST
+February 19, 2008, 4PM-5PM PST
+To register: http://salford.webex.com
+
+This one-hour webinar is a perfect place to start if you are new to data mining 
+and have little-to-no background in statistics or machine learning. 
+
+In one hour, we will discuss:
+
+**Data basics: what kind of data is required for data mining and predictive 
+analytics; In what format must the data be; what steps are necessary to prepare 
+data appropriately 
+
+**What kinds of questions can we answer with data mining
+
+**How data mining models work: the inputs, the outputs, and the nature of the 
+predictive mechanism 
+
+**Evaluation criteria: how predictive models can be assessed and their value 
+measured 
+
+**Specific background knowledge to prepare you to begin a data mining project.
+
+To register: http://salford.webex.com
+
+Contact me if the January 29th or February 19th dates/times are inconvenient 
+and you wish to be put on our webinar notification list.
+
+Sincerely,
+Lisa Solomon
+lisas at salford-systems.com
+
+From juhlin.kd at pg.com  Wed Jan 23 20:52:34 2008
+From: juhlin.kd at pg.com (Juhlin, Kenton)
+Date: Wed, 23 Jan 2008 15:52:34 -0500
+Subject: Multivariate Analysis Short COurse
+Message-ID: <BA899FE42B52C241A7C7E08EE803D866B3CEF4@bdc-emb005.na.pg.com>
+
+We are looking for someone to teach a 1-day course in
+multivariate analysis.  This is for a group of 50-80 statisticians who
+work on various projects in health care, consumer research, and other areas of
+our business.  We are not especially interested in a chemometrics-oriented
+course.  The primary software we use includes SAS, S-Plus, R, and JMP,
+although the course does not need to be tied to any particular software.
+ We are expecting this to occur in early May.
+
+ 
+
+Please respond privately (juhlin.kd at pg.com).
+
+ 
+
+Thanks
+
+ 
+
+- Kenton
+
+ 
+
+Kenton D. Juhlin
+
+The Procter & Gamble Company
+
+ 
+
+From yiwu21111958 at yahoo.com  Fri Jan 25 00:48:42 2008
+From: yiwu21111958 at yahoo.com (yiwu ye)
+Date: Thu, 24 Jan 2008 16:48:42 -0800
+Subject: Names of coefficients in GLM
+Message-ID: <861410.84640.qm@web57112.mail.re3.yahoo.com>
+
+Dear List,
+
+This is a simple example showing what I am after.
+
+Number<-c(1,2,2,4,5,4,12,15,13)
+Region<-c(rep("South",3),rep("West",3),rep("North",3))
+X1<-c(c(1,2,3),c(2,3,2),c(3,4,5))
+dat<-data.frame(Number=Number,Region=Region,X1=X1)
+fit<-glm(Number~X1+Region)
+summary(fit,cor=F) gives:
+....
+Coefficients:
+                 Value Std. Error   t value 
+(Intercept)  4.8571429  1.2568582  3.864511
+         X1  0.5714286  0.4379917  1.304656
+    Region1 -5.2619048  0.5839889 -9.010282
+    Region2 -0.9285714  0.2433287
+ -3.816119
+.....
+The names Region1 and Region2  are confusing particularly when there are many levels. I remember I got the names like RegionSouth and RegionWest before, but I don't know how to get that kind of coefficient names. Could anyone help?
+
+Thanks,
+
+Yiwu
+
+      Never miss a thing.   Make Yahoo your homepage.
+
+From Bill.Venables at csiro.au  Fri Jan 25 06:08:27 2008
+From: Bill.Venables at csiro.au
+Date: Fri, 25 Jan 2008 16:08:27 +1000
+Subject: Re: Names of coefficients in GLM
+References: <861410.84640.qm@web57112.mail.re3.yahoo.com>
+Message-ID: <B998A44C8986644EA8029CFE6396A924F534C1@exqld2-bne.nexus.csiro.au>
+
+Your question suggest to me a number of 
+misunderstandings.
+
+ 
+
+'Region1' in this ourput, does not refer to any 
+particular region at all, but rather to the first contrast between regions that 
+the model has used in the fitting.  Likewise 'Region2' is the second 
+helmert contrast (according to the default).
+
+ 
+
+If you want a separate intercept for each level of 
+Region, that is possible to some extent, and easy here.
+
+ 
+
+dat <- data.frame(Number = 
+c(1,2,2,4,5,4,12,15,13),
+
+                  Region = 
+c(rep("South",3),
+
+                             
+rep("West",3),
+
+                             rep("North",3)),
+
+                  
+X1 = 
+c(c(1,2,3),c(2,3,2),c(3,4,5)))
+fit 
+<- lm(Number ~ X1 + Region - 1, 
+data = "" ## why 
+use 'glm'??
+summary(fit,cor=F)
+
+ 
+
+will give 
+you an equivalent fit to the model you fitted, but with more interpretable and 
+better labelled coefficients.
+
+ 
+
+Alternatively you can set
+
+ 
+
+options(contrasts = 
+c("contr.treatment", "contr.poly"))
+
+ 
+
+for 
+example, and then
+
+ 
+
+fit <- lm(Number 
+~ X1 + Region, data = "">
+
+ 
+
+Will get 
+you labelled coefficients, all right, but they may not mean quite what you think 
+they mean.  You need to be careful in this game.  Things are not 
+always as the seem at first glance.
+
+ 
+
+Bill 
+Venables 
+CSIRO Laboratories 
+PO Box 120, Cleveland, 
+4163 
+AUSTRALIA 
+Office Phone (email preferred): +61 7 3826 7251 
+
+Fax (if absolutely 
+necessary):  +61 7 3826 7304 
+Mobile:                         
++61 4 8819 4402 
+Home 
+Phone:                     
++61 7 3286 7700 
+mailto:Bill.Venables at csiro.au 
+
+http://www.cmis.csiro.au/bill.venables/ 
+
+ 
+
+>
+>
+>   From: s-news-owner at lists.biostat.wustl.edu
+>   [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of yiwu
+>   ye
+> Sent: Friday, 25 January 2008 10:49 AM
+> To:
+>   s-news at wubios.wustl.edu
+> Subject: [S] Names of coefficients in
+>   GLM
+>
+>
+>
+>
+>
+>
+>   Dear List,
+>
+> This is a simple example showing what I am
+>   after.
+>
+> Number
+>   <-
+>   c(1,2,2,4,5,4,12,15,13)
+> Region
+>   <-
+>   c(rep("South",3),rep("West",3),rep("North",3))
+> X1 <-
+>   c(c(1,2,3),c(2,3,2),c(3,4,5))
+> dat
+>   <-
+>   data.frame(Number=Number,Region=Region,X1=X1)
+> fit <-
+>   glm(Number~X1+Region)
+> summary(fit,cor=F)
+>
+>
+>
+>    gives:
+> ....
+> Coefficients:
+>
+>   Value Std. Error   t value
+> (Intercept)  4.8571429
+>   1.2568582  3.864511
+>
+>   X1  0.5714286  0.4379917  1.304656
+>
+>   Region1 -5.2619048  0.5839889 -9.010282
+>     Region2
+>   -0.9285714  0.2433287 -3.816119
+> .....
+> The names Region1 and
+>   Region2  are confusing particularly when there are many levels. I
+>   remember I got the names like RegionSouth and RegionWest before, but I don't
+>   know how to get that kind of coefficient names. Could anyone
+>   help?
+>
+> Thanks,
+>
+> Yiwu
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>   Never miss a thing. Make Yahoo
+>   your homepage.
+
+From dataanalytics at earthlink.net  Mon Jan 28 01:12:44 2008
+From: dataanalytics at earthlink.net (Data Analytics Corp.)
+Date: Sun, 27 Jan 2008 20:12:44 -0500
+Subject: sorting a dataframe
+Message-ID: <479D2C0C.3020507@earthlink.net>
+
+Hi,
+
+I have a simple dataframe, x, of two columns:
+
+  year  month
+  2008  1
+  2007  4
+  2007  5
+  2007  6
+  2007  7
+  2007  8
+  2007  9
+  2007  10
+  2007  11
+  2007  12
+
+that I want to sort by year, then month.  Forget the fact that I could 
+just move the first row to the end of x to get what I want; this is just 
+an example.  I used
+
+         sort.col(x, "@ALL", 1:2, ascending = T)
+
+and got
+
+  year month
+  2007  8
+  2007  9
+  2007  10
+  2007  11
+  2007  12
+  2007  4
+  2007  5
+  2007  6
+  2007  7
+  2008  1
+
+when, of course, I should have gotten
+
+  year  month
+  2007  4
+  2007  5
+  2007  6
+  2007  7
+  2007  8
+  2007  9
+  2007  10
+  2007  11
+  2007  12
+  2008  1
+
+I also tried sort.col(x, 1:2, 1:2) and got the same result.  Why?  This 
+should be a simple sort.   I put the data into Excel (sorry about that) 
+and got the correct sort.  Why not here?
+
+Thanks,
+
+Walt Paczkowski
+
+From hanan.elimam at umontreal.ca  Mon Jan 28 02:46:19 2008
+From: hanan.elimam at umontreal.ca (El Imam Hanan Attia Rizk)
+Date: Sun, 27 Jan 2008 21:46:19 -0500
+Subject: Re: sorting a dataframe
+References: <479D2C0C.3020507@earthlink.net>
+Message-ID: <64E0B1A1FF5F1B4497212A108E11118F8CE160@MAPIUDEM2.sim.umontreal.ca>
+
+Hi Walt;
+ 
+Simply data sort can be done by using  Splus icons, first select all the data 
+frame, then go to data, restructure, then sort,  sort column window will 
+contains option "sort by column", choose column 1&2 you will get the correct 
+sort
+ 
+In addition your script:
+sort.col(SDF2, "@ALL", 1:2, ascending = T) is working very well and give me the 
+following output
+
+year month 
+
+2007 4
+2007 5
+2007 6
+2007 7
+2007 8
+2007 9
+2007 10
+2007 11
+2007 12
+2008 1
+So check your data format
+
+hope this help
+
+Hanan Elimam
+Ph.D student, Pharmaceutical Sciences
+Université de Montréal
+Faculté de pharmacie
+Pavillon Jean-Coutu, bureau 3173
+2940 Chemin de la polytechnique
+Montréal, H3T 1J4
+ 
+tél.:  514-343-6111, poste 0388
+FAX: 514-343-7073
+
+________________________________
+
+From: s-news-owner at lists.biostat.wustl.edu on behalf of Data Analytics Corp.
+Sent: Sun 2008-01-27 20:12
+To: s-news at lists.biostat.wustl.edu
+Subject: [S] sorting a dataframe
+
+Hi,
+
+I have a simple dataframe, x, of two columns:
+
+   year  month
+   2008  1
+   2007  4
+   2007  5
+   2007  6
+   2007  7
+   2007  8
+   2007  9
+   2007  10
+   2007  11
+   2007  12
+
+that I want to sort by year, then month.  Forget the fact that I could
+just move the first row to the end of x to get what I want; this is just
+an example.  I used
+
+          sort.col(x, "@ALL", 1:2, ascending = T)
+
+and got
+
+   year month
+   2007  8
+   2007  9
+   2007  10
+   2007  11
+   2007  12
+   2007  4
+   2007  5
+   2007  6
+   2007  7
+   2008  1
+
+when, of course, I should have gotten
+
+   year  month
+   2007  4
+   2007  5
+   2007  6
+   2007  7
+   2007  8
+   2007  9
+   2007  10
+   2007  11
+   2007  12
+   2008  1
+
+I also tried sort.col(x, 1:2, 1:2) and got the same result.  Why?  This
+should be a simple sort.   I put the data into Excel (sorry about that)
+and got the correct sort.  Why not here?
+
+Thanks,
+
+Walt Paczkowski
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From maustin at amgen.com  Mon Jan 28 16:41:32 2008
+From: maustin at amgen.com (Austin, Matt)
+Date: Mon, 28 Jan 2008 08:41:32 -0800
+Subject: Re: sorting a dataframe
+In-Reply-To: <479D2C0C.3020507@earthlink.net>
+References: <479D2C0C.3020507@earthlink.net>
+Message-ID: <A413DCB0A7390F41B86A3EF6E2C9743A37B094E09A@usto-pmsg-mbs02.am.corp.amgen.com>
+
+It would appear that your month variable is not numeric.
+
+For example, the following gives what you want.  Year and month are both 
+numeric.
+
+> temp <- data.frame(year = c(rep(2007, length.out = length(4:12)), 2008), 
+> month = c(4:12, 1))
+> sort.col(temp, "@ALL", 1:2, ascending = T)
+   year month
+ 1 2007     4
+ 2 2007     5
+ 3 2007     6
+ 4 2007     7
+ 5 2007     8
+ 6 2007     9
+ 7 2007    10
+ 8 2007    11
+ 9 2007    12
+10 2008     1
+
+This example gives a different sorting because month is now a character.
+
+> temp2 <- data.frame(year = c(rep(2007, length.out = length(4:12)), 2008), 
+> month
+         = as.character(c(4:12, 1)))
+> sort.col(temp2, "@ALL", 1:2, ascending = T)
+   year month
+ 7 2007    10
+ 8 2007    11
+ 9 2007    12
+ 1 2007     4
+ 2 2007     5
+ 3 2007     6
+ 4 2007     7
+ 5 2007     8
+ 6 2007     9
+10 2008     1
+
+I haven't been able to duplicate your exact order, but a naïve guess whould be 
+that your month is a factor and the levels are dictating the sort order that 
+you are seeing.
+
+Try levels(x$month) and see what you get.
+
+--Matt
+
+Matt Austin
+Director, Biostatistics
+Amgen, Inc
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu 
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Data Analytics Corp.
+Sent: Sunday, January 27, 2008 5:13 PM
+To: s-news at lists.biostat.wustl.edu
+Subject: [S] sorting a dataframe
+
+Hi,
+
+I have a simple dataframe, x, of two columns:
+
+   year  month
+   2008  1
+   2007  4
+   2007  5
+   2007  6
+   2007  7
+   2007  8
+   2007  9
+   2007  10
+   2007  11
+   2007  12
+
+that I want to sort by year, then month.  Forget the fact that I could just 
+move the first row to the end of x to get what I want; this is just an example. 
+ I used
+
+          sort.col(x, "@ALL", 1:2, ascending = T)
+
+and got
+
+   year month
+   2007  8
+   2007  9
+   2007  10
+   2007  11
+   2007  12
+   2007  4
+   2007  5
+   2007  6
+   2007  7
+   2008  1
+
+when, of course, I should have gotten
+
+   year  month
+   2007  4
+   2007  5
+   2007  6
+   2007  7
+   2007  8
+   2007  9
+   2007  10
+   2007  11
+   2007  12
+   2008  1
+
+I also tried sort.col(x, 1:2, 1:2) and got the same result.  Why?  This
+should be a simple sort.   I put the data into Excel (sorry about that)
+and got the correct sort.  Why not here?
+
+Thanks,
+
+Walt Paczkowski
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To unsubscribe 
+send e-mail to s-news-request at lists.biostat.wustl.edu with the BODY of the 
+message:  unsubscribe s-news
+
+From jlloret at dcom.upv.es  Mon Jan 28 23:25:41 2008
+From: jlloret at dcom.upv.es (Jaime Lloret Mauri)
+Date: Tue, 29 Jan 2008 00:25:41 +0100
+Subject: CFP: SENSORCOMM 2008 - August 25-31, 2008 - Cap Esterel, France
+Message-ID: <1201562741.479e64755f10a@webmail.upv.es>
+
+==============  SENSORCOMM 2008 Call for Papers ===============
+
+Please consider to contribute to and distribute to the appropriate groups the
+following
+
+CALL FOR PAPERS, TUTORIALS, PANELS
+
+SENSORCOMM 2008, The Second International Conference on Sensor Technologies and
+Applications
+
+August 25-31, 2008 - Cap Esterel, France
+
+General page: http://www.iaria.org/conferences2008/SENSORCOMM08.html
+
+Call for Papers: http://www.iaria.org/conferences2008/CfPSENSORCOMM08.html
+
+Submission deadline: April 5, 2008
+
+Submissions will be peer-reviewed, published by IEEE CPS, posted in IEEE Digital
+Library, and indexed with the major indexes.
+
+Extended versions of selected papers will be invited for specialized journals.
+
+SENSORCOMM 2008 features two workshops:
+
+UNWAT 2008: The Second International Workshop on Under Water Sensors and Systems
+http://www.iaria.org/conferences2008/UNWAT.html
+
+ENOPT 2008: The Second International Workshop on Energy Optimization in Wireless
+Sensor Networks
+http://www.iaria.org/conferences2008/ENOPT.html
+
+SENSORCOMM 2008 Special Area Tracks (details in the CfP on site):
+
+APASN: Architectures, protocols and algorithms of sensor networks
+MECSN: Energy, management and control of sensor networks
+RASQOFT: Resource allocation, services, QoS and fault tolerance in sensor
+networks
+PESMOSN: Performance, simulation and modelling of sensor networks
+SEMOSN: Security and monitoring of sensor networks
+SECSED: Sensor circuits and sensor devices
+RIWISN: Radio issues in wireless sensor networks
+SAPSN: Software, applications and programming of sensor networks
+DAIPSN: Data allocation and information in sensor networks
+DISN: Deployments and implementations of sensor networks
+
+=================
+
+SENSORCOMM 2008 General Chairs
+
+Jean Philippe Vasseur, Cisco Systems, Inc., USA
+Ivan Stojmenovic,   University of Birmingham, UK
+
+SENSORCOMM Steering Committee
+
+Yuh-Shyan Chen, National Taipei University, Taiwan
+Jose A. Delgado-Penín, Technical University of Catalonia, Spain
+Petre Dini, Cisco Systems, Inc. / Concordia University, Canada  [Chair]
+Jaime Lloret Mauri, Polytechnic University of Valencia, Spain
+Pascal Lorenz, University of Haute Alsace, France
+
+SENSORCOMM 2008 Technical Program Committee
+
+Chairs:
+
+Brijesh Verma, Central Queensland University, Australia
+Ignacio R. Matias, Public University of Navarra, Spain
+
+Special Area Chairs:
+
+Min Song, Old Dominion University, USA [APASN]
+Debojyoti Dutta, Cisco Systems, Inc., USA [Wireless Sensors]
+Reinhardt Karnapke, Brandenburg University of Technology, Germany [APASN]
+Carlos T. Calafate, Polytechnic University of Valencia, Spain [DISN]
+Bart Braem, University of Antwerp - IBBT- PATS - UA, Belgium [MECSN]
+Thomas Newe, University of Limerick, Ireland [SEMOSN]
+Vladimir Oleshchuk, University of Agder , Norway  [SEMOSN]
+Jan Neering, Ecole des Mines de Paris, France  [PESMOSN]
+Jer Hayes, Dublin City University, Ireland  [DISN]
+Giancarlo Fortino, University of Calabria, Italy [SAPSN]
+
+==================
+
+-- 
+
+From dataanalytics at earthlink.net  Tue Jan 29 14:56:34 2008
+From: dataanalytics at earthlink.net (Data Analytics Corp.)
+Date: Tue, 29 Jan 2008 09:56:34 -0500
+Subject: sorting a data frame
+Message-ID: <479F3EA2.8050206@earthlink.net>
+
+Good morning,
+
+I posted a question yesterday regarding sorting a data frame.  The 
+problem is that the sort order is not correct when I use sort.col.  I 
+received many responses, all saying basically the same thing - I must 
+have a factor.  I actually checked this before posting the query and all 
+was numeric.  So let me try again but be more explicit this time, 
+because I'm very puzzled.
+
+I have a client file that has the dates as 1.2008, 4.2007, etc.  The 
+commands and example I used along with the as.numeric() checks are 
+below.  As you can see, the sort is not correct.  I still don't 
+understand why.  Any hints?
+
+> y <- c(1.2008, 4.2007, 5.2007, 6.2007, 7.2007, 8.2007, 9.2007, 
+10.2007, 11.2007, 12.2007)
+
+> y
+[1]  1.2008  4.2007  5.2007  6.2007  7.2007  8.2007  9.2007 10.2007 
+11.2007 12.2007
+
+> is.numeric(y)
+[1] T
+> x <- data.frame(yr = (y - floor(y))*10000, month = floor(y))
+> x
+    yr month
+1 2008     1
+2 2007     4
+3 2007     5
+4 2007     6
+5 2007     7
+6 2007     8
+7 2007     9
+8 2007    10
+9 2007    11
+10 2007    12
+> is.numeric(x$month)
+[1] T
+> sort.col(x, "@ALL", 1:2)
+    yr month
+6 2007     8
+7 2007     9
+8 2007    10
+9 2007    11
+10 2007    12
+2 2007     4
+3 2007     5
+4 2007     6
+5 2007     7
+1 2008     1
+>
+
+Any help is appreciated.
+
+Walt Paczkowski
+
+From lorenz at usgs.gov  Tue Jan 29 15:16:33 2008
+From: lorenz at usgs.gov (David L Lorenz)
+Date: Tue, 29 Jan 2008 09:16:33 -0600
+Subject: Re: sorting a data frame
+In-Reply-To: <479F3EA2.8050206@earthlink.net>
+References: <479F3EA2.8050206@earthlink.net>
+Message-ID: <OFDD266B6D.593C3D54-ON862573DF.005350C5-862573DF.0053E93D@usgs.gov>
+
+Walt,
+
+  The reason that the data appear
+not to be sorted correctly is that the year column is not an integer value.
+There are very small differences in the value for yr because of minor differences
+in the storage of the values. This is what I get when I subtract 2007 from
+x$yr
+
+x$yr - 2007
+
+ [1]  1.000000e+000  3.183231e-012
+ 3.183231e-012  3.183231e-012  3.183231e-012 -5.684342e-012
+
+-5.684342e-012 -5.684342e-012
+
+ [9] -5.684342e-012 -5.684342e-012
+
+  As you can see, the values that
+started out greater than 7 are all slightly less than 2007 and the values
+that started out less than 8 are all slightly larger than 2007, thus they
+are sorted correctly. You need to round them when you do your computations.
+
+Dave
+
+"Data Analytics Corp."
+<dataanalytics at earthlink.net> 
+
+Sent by: s-news-owner at lists.biostat.wustl.edu
+01/29/2008 08:56 AM
+
+To
+
+s-news at lists.biostat.wustl.edu
+
+cc
+
+Subject
+
+[S] sorting a data frame
+
+Good morning,
+
+I posted a question yesterday regarding sorting a data frame.  The
+
+problem is that the sort order is not correct when I use sort.col.  I
+
+received many responses, all saying basically the same thing - I must 
+
+have a factor.  I actually checked this before posting the query and
+all 
+
+was numeric.  So let me try again but be more explicit this time,
+
+because I'm very puzzled.
+
+I have a client file that has the dates as 1.2008, 4.2007, etc.  The
+
+commands and example I used along with the as.numeric() checks are 
+
+below.  As you can see, the sort is not correct.  I still don't
+
+understand why.  Any hints?
+
+ > y <- c(1.2008, 4.2007, 5.2007, 6.2007, 7.2007, 8.2007, 9.2007,
+
+10.2007, 11.2007, 12.2007)
+
+ > y
+
+ [1]  1.2008  4.2007  5.2007  6.2007  7.2007  8.2007
+ 9.2007 10.2007 
+
+11.2007 12.2007
+
+ > is.numeric(y)
+
+[1] T
+
+ > x <- data.frame(yr = (y - floor(y))*10000, month = floor(y))
+
+ > x
+
+     yr month
+
+ 1 2008     1
+
+ 2 2007     4
+
+ 3 2007     5
+
+ 4 2007     6
+
+ 5 2007     7
+
+ 6 2007     8
+
+ 7 2007     9
+
+ 8 2007    10
+
+ 9 2007    11
+
+10 2007    12
+
+ > is.numeric(x$month)
+
+[1] T
+
+ > sort.col(x, "@ALL", 1:2)
+
+     yr month
+
+ 6 2007     8
+
+ 7 2007     9
+
+ 8 2007    10
+
+ 9 2007    11
+
+10 2007    12
+
+ 2 2007     4
+
+ 3 2007     5
+
+ 4 2007     6
+
+ 5 2007     7
+
+ 1 2008     1
+
+ >
+
+Any help is appreciated.
+
+Walt Paczkowski
+
+--------------------------------------------------------------------
+
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+
+the BODY of the message:  unsubscribe s-news
+
+From calzola at cox.net  Tue Jan 29 15:22:07 2008
+From: calzola at cox.net (Carlos Alzola)
+Date: Tue, 29 Jan 2008 10:22:07 -0500
+Subject: Re: sorting a data frame
+In-Reply-To: <479F3EA2.8050206@earthlink.net>
+References: <479F3EA2.8050206@earthlink.net>
+Message-ID: <001401c8628a$b644a4e0$3502a8c0@LAPTOP>
+
+Your issue is that the columns of x are not integer. If you look at the data
+frame in the object explorer and set the precision to 12 or more decimals
+you will see that the sorting is indeed correct. To solve it you could do
+something like this
+
+> x1 <- data.frame(yr = round(x$yr),month = round(x$month))
+> sort.col(x1,"@ALL",1:2,T)
+     yr month 
+ 2 2007     4
+ 3 2007     5
+ 4 2007     6
+ 5 2007     7
+ 6 2007     8
+ 7 2007     9
+ 8 2007    10
+ 9 2007    11
+10 2007    12
+ 1 2008     1
+
+Regards,
+
+Carlos 
+
+Carlos Alzola
+calzola at cox.net
+(703) 242-6747 
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Data Analytics
+Corp.
+Sent: Tuesday, January 29, 2008 9:57 AM
+To: s-news at lists.biostat.wustl.edu
+Subject: [S] sorting a data frame
+
+Good morning,
+
+I posted a question yesterday regarding sorting a data frame.  The problem
+is that the sort order is not correct when I use sort.col.  I received many
+responses, all saying basically the same thing - I must have a factor.  I
+actually checked this before posting the query and all was numeric.  So let
+me try again but be more explicit this time, because I'm very puzzled.
+
+I have a client file that has the dates as 1.2008, 4.2007, etc.  The
+commands and example I used along with the as.numeric() checks are below.
+As you can see, the sort is not correct.  I still don't understand why.  Any
+hints?
+
+ > y <- c(1.2008, 4.2007, 5.2007, 6.2007, 7.2007, 8.2007, 9.2007, 10.2007,
+11.2007, 12.2007)  > y  [1]  1.2008  4.2007  5.2007  6.2007  7.2007  8.2007
+9.2007 10.2007
+11.2007 12.2007
+ > is.numeric(y)
+[1] T
+ > x <- data.frame(yr = (y - floor(y))*10000, month = floor(y))  > x
+     yr month
+ 1 2008     1
+ 2 2007     4
+ 3 2007     5
+ 4 2007     6
+ 5 2007     7
+ 6 2007     8
+ 7 2007     9
+ 8 2007    10
+ 9 2007    11
+10 2007    12
+ > is.numeric(x$month)
+[1] T
+ > sort.col(x, "@ALL", 1:2)
+     yr month
+ 6 2007     8
+ 7 2007     9
+ 8 2007    10
+ 9 2007    11
+10 2007    12
+ 2 2007     4
+ 3 2007     5
+ 4 2007     6
+ 5 2007     7
+ 1 2008     1
+ >
+
+Any help is appreciated.
+
+Walt Paczkowski
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with the
+BODY of the message:  unsubscribe s-news
+
+From dataanalytics at earthlink.net  Tue Jan 29 15:42:22 2008
+From: dataanalytics at earthlink.net (Data Analytics Corp.)
+Date: Tue, 29 Jan 2008 10:42:22 -0500
+Subject: Re: sorting a data frame
+In-Reply-To: <479F3EA2.8050206@earthlink.net>
+References: <479F3EA2.8050206@earthlink.net>
+Message-ID: <479F495E.6050705@earthlink.net>
+
+Hi,
+
+I received many responses to my query.  The answer is that the year is 
+variable is not an integer - machine precision is the culprit.  It was 
+suggested that I use round() and that worked.
+
+Thanks to all,
+
+Walt
+
+Data Analytics Corp. wrote:
+> Good morning,
+>
+> I posted a question yesterday regarding sorting a data frame.  The
+> problem is that the sort order is not correct when I use sort.col.  I
+> received many responses, all saying basically the same thing - I must
+> have a factor.  I actually checked this before posting the query and
+> all was numeric.  So let me try again but be more explicit this time,
+> because I'm very puzzled.
+>
+>
+> I have a client file that has the dates as 1.2008, 4.2007, etc.  The
+> commands and example I used along with the as.numeric() checks are
+> below.  As you can see, the sort is not correct.  I still don't
+> understand why.  Any hints?
+>
+>
+> > y <- c(1.2008, 4.2007, 5.2007, 6.2007, 7.2007, 8.2007, 9.2007,
+> 10.2007, 11.2007, 12.2007)
+>
+> > y
+> [1]  1.2008  4.2007  5.2007  6.2007  7.2007  8.2007  9.2007 10.2007
+> 11.2007 12.2007
+>
+> > is.numeric(y)
+> [1] T
+> > x <- data.frame(yr = (y - floor(y))*10000, month = floor(y))
+> > x
+>     yr month
+> 1 2008     1
+> 2 2007     4
+> 3 2007     5
+> 4 2007     6
+> 5 2007     7
+> 6 2007     8
+> 7 2007     9
+> 8 2007    10
+> 9 2007    11
+> 10 2007    12
+> > is.numeric(x$month)
+> [1] T
+> > sort.col(x, "@ALL", 1:2)
+>     yr month
+> 6 2007     8
+> 7 2007     9
+> 8 2007    10
+> 9 2007    11
+> 10 2007    12
+> 2 2007     4
+> 3 2007     5
+> 4 2007     6
+> 5 2007     7
+> 1 2008     1
+> >
+>
+>
+> Any help is appreciated.
+>
+> Walt Paczkowski
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+
+From santosh2005 at gmail.com  Tue Jan 29 18:38:26 2008
+From: santosh2005 at gmail.com (Santosh)
+Date: Tue, 29 Jan 2008 10:38:26 -0800
+Subject: R equivalent for xyplot
+Message-ID: <816b5ce40801291038g2fc9b917h50ecdf6a1e8aa77d@mail.gmail.com>
+
+Dear experts,
+Is there an equivalent function in R for "xyplot" functionality available in S+?
+
+Thanks much in advance,
+Santosh
+
+From Greg.Snow at imail.org  Tue Jan 29 20:37:37 2008
+From: Greg.Snow at imail.org (Greg Snow)
+Date: Tue, 29 Jan 2008 13:37:37 -0700
+Subject: Re: R equivalent for xyplot
+In-Reply-To: <816b5ce40801291038g2fc9b917h50ecdf6a1e8aa77d@mail.gmail.com>
+References: <816b5ce40801291038g2fc9b917h50ecdf6a1e8aa77d@mail.gmail.com>
+Message-ID: <07E228A5BE53C24CAD490193A7381BBBE5324F@LP-EXCHVS07.CO.IHC.COM>
+
+yes, it is called xyplot (but you need to load the lattice 
+package for it to be available).
+
+ 
+
+--
+Gregory (Greg) L. Snow Ph.D.
+Statistical Data 
+Center
+Intermountain Healthcare
+greg.snow at imail.org
+(801) 
+408-8111
+
+ 
+
+>
+>
+>   From: s-news-owner at lists.biostat.wustl.edu
+>   [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of
+>   Santosh
+> Sent: Tuesday, January 29, 2008 11:38 AM
+> To:
+>   S-news
+> Subject: [S] R equivalent for xyplot
+>
+>
+>
+>
+> Dear experts,
+> Is there an equivalent function in R for "xyplot"
+>   functionality available in S+?
+>
+>
+> Thanks much in
+>   advance,
+> Santosh
+
+From jlloret at dcom.upv.es  Mon Jan 28 23:27:48 2008
+From: jlloret at dcom.upv.es (Jaime Lloret Mauri)
+Date: Tue, 29 Jan 2008 00:27:48 +0100
+Subject: CFP: SENSORCOMM 2008 - August 25-31, 2008 - Cap Esterel, France
+Message-ID: <1201562868.479e64f4e5579@webmail.upv.es>
+
+==============  SENSORCOMM 2008 Call for Papers ===============
+
+Please consider to contribute to and distribute to the appropriate groups the
+following
+
+CALL FOR PAPERS, TUTORIALS, PANELS
+
+SENSORCOMM 2008, The Second International Conference on Sensor Technologies and
+Applications
+
+August 25-31, 2008 - Cap Esterel, France
+
+General page: http://www.iaria.org/conferences2008/SENSORCOMM08.html
+
+Call for Papers: http://www.iaria.org/conferences2008/CfPSENSORCOMM08.html
+
+Submission deadline: April 5, 2008
+
+Submissions will be peer-reviewed, published by IEEE CPS, posted in IEEE Digital
+Library, and indexed with the major indexes.
+
+Extended versions of selected papers will be invited for specialized journals.
+
+SENSORCOMM 2008 features two workshops:
+
+UNWAT 2008: The Second International Workshop on Under Water Sensors and Systems
+http://www.iaria.org/conferences2008/UNWAT.html
+
+ENOPT 2008: The Second International Workshop on Energy Optimization in Wireless
+Sensor Networks
+http://www.iaria.org/conferences2008/ENOPT.html
+
+SENSORCOMM 2008 Special Area Tracks (details in the CfP on site):
+
+APASN: Architectures, protocols and algorithms of sensor networks
+MECSN: Energy, management and control of sensor networks
+RASQOFT: Resource allocation, services, QoS and fault tolerance in sensor
+networks
+PESMOSN: Performance, simulation and modelling of sensor networks
+SEMOSN: Security and monitoring of sensor networks
+SECSED: Sensor circuits and sensor devices
+RIWISN: Radio issues in wireless sensor networks
+SAPSN: Software, applications and programming of sensor networks
+DAIPSN: Data allocation and information in sensor networks
+DISN: Deployments and implementations of sensor networks
+
+=================
+
+SENSORCOMM 2008 General Chairs
+
+Jean Philippe Vasseur, Cisco Systems, Inc., USA
+Ivan Stojmenovic,   University of Birmingham, UK
+
+SENSORCOMM Steering Committee
+
+Yuh-Shyan Chen, National Taipei University, Taiwan
+Jose A. Delgado-Penín, Technical University of Catalonia, Spain
+Petre Dini, Cisco Systems, Inc. / Concordia University, Canada  [Chair]
+Jaime Lloret Mauri, Polytechnic University of Valencia, Spain
+Pascal Lorenz, University of Haute Alsace, France
+
+SENSORCOMM 2008 Technical Program Committee
+
+Chairs:
+
+Brijesh Verma, Central Queensland University, Australia
+Ignacio R. Matias, Public University of Navarra, Spain
+
+Special Area Chairs:
+
+Min Song, Old Dominion University, USA [APASN]
+Debojyoti Dutta, Cisco Systems, Inc., USA [Wireless Sensors]
+Reinhardt Karnapke, Brandenburg University of Technology, Germany [APASN]
+Carlos T. Calafate, Polytechnic University of Valencia, Spain [DISN]
+Bart Braem, University of Antwerp - IBBT- PATS - UA, Belgium [MECSN]
+Thomas Newe, University of Limerick, Ireland [SEMOSN]
+Vladimir Oleshchuk, University of Agder , Norway  [SEMOSN]
+Jan Neering, Ecole des Mines de Paris, France  [PESMOSN]
+Jer Hayes, Dublin City University, Ireland  [DISN]
+Giancarlo Fortino, University of Calabria, Italy [SAPSN]
+
+==================
+
+-- 
+
+From paul.gross at blackrock.com  Wed Jan 30 21:12:55 2008
+From: paul.gross at blackrock.com (Gross, Paul)
+Date: Wed, 30 Jan 2008 16:12:55 -0500
+Subject: commandArgs in S-plus
+Message-ID: <3371F8B1B2D739468B4241DB5F65E8F9020458E1@NYCPEXV009.na.blkint.com>
+
+There was a posting on this in 2006, but the reply, if any, was not
+posted.  
+
+I run the following at the command line:
+
+Splus < myScript ARG
+
+where myScript consists of the following:
+
+for (arg in  commandArgs()){  cat(arg, "\n") }
+
+In any version of Splus, this leads to an error, e.g.:
+
+=> /usr/local/splus8.0.4/cmd/Splus < myScript ARG
+/usr/local/splus8.0.4/cmd/Splus: line 290: exec: ARG: not found
+
+Does this not work in S-plus?  The documenation says:
+
+TITLE:
+        Function commandArgs
+
+USAGE:
+        commandArgs()
+
+ARGUMENTS:
+
+DESCRIPTION:
+
+        returns the command-line invoking this S session, as a character
+        vector.The first element is the name by which the S executable
+was
+        invoked; the remainingelements, if any, are the arguments on the
+        command line.
+
+What am I missing?
+
+Thanks,
+Paul
+
+THE INFORMATION CONTAINED IN THIS MESSAGE AND ANY ATTACHMENT MAY BE PRIVILEGED, 
+CONFIDENTIAL, PROPRIETARY OR OTHERWISE PROTECTED FROM DISCLOSURE. If the reader 
+of this message is not the intended recipient, you are hereby notified that any 
+dissemination, distribution, copying or use of this message and any attachment 
+is strictly prohibited. If you have received this message in error, please 
+notify us immediately by replying to the message and permanently delete it from 
+your computer and destroy any printout thereof.
+

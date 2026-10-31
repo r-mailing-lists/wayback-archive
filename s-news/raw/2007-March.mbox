@@ -1,0 +1,4295 @@
+From chaofeng.kou at gmail.com  Thu Mar  1 12:14:53 2007
+From: chaofeng.kou at gmail.com (Kou Chaofeng)
+Date: Thu, 01 Mar 2007 04:14:53 -0800
+Subject: Help with command of returning the random effect covariance estimate using 'lme' fitting
+Message-ID: <b088501f0703010414q6597dfc2n986768ff6ef462c3@mail.gmail.com>
+
+Dear all
+
+ 
+
+I am fitting and analyzing linear mixed-effects models using the Splus command 'lme'. The following is the results:
+
+dental.fit <- lme(fixed = distance~age, random = ~age + cluster = ~subject, data = "">
+> summary(dental.fit)
+
+Variance/Covariance Components Estimates:
+                 Standard Deviation(s) of Random Effect(s)
+                            (Intercept)        age
+                            
+2.134464     0.1541247
+                 Correlation of Random Effects
+                                 (Intercept)
+                        age    -0.6024329
+                 Cluster Residual Variance: 1.716232
+
+ 
+
+Fixed Effects Estimates:
+                                   Value       Approx. Std.Error        z ratio(C)
+       (Intercept)         16.3406250     0.98005731        16.6731321
+                 age         
+0.7843750      0.08275189         9.4786353
+                 sex         1.0321023      1.53545472         0.6721802
+                age:sex   -0.3048295      0.12964730        -2.3512218
+      Conditional Correlations of Fixed Effects Estimates
+
+                 (Intercept)        age                sex
+     age       -0.8801554
+     sex       -0.6382847   0.5617897
+     age:sex 0.5617897   -0.6382847    -0.8801554
+
+I have known that using command 'dental.fit$varFix' I can obtain the conditional covariance matrix of the fixed effects. My question is how i can return the covariance matrix estimate of the random effects. I tried many commands 
+
+such as 'dental.fit$varRan', 'dental.fit$var.Ran', but they didn't work. 
+
+Thanks very much!
+
+Chaofeng
+
+From jkrobert at bcm.tmc.edu  Thu Mar  1 16:18:02 2007
+From: jkrobert at bcm.tmc.edu (Roberts, J. Kyle)
+Date: Thu, 01 Mar 2007 10:18:02 -0600
+Subject: Re: Help with command of returning the random effect covariance estimate using 'lme' fitting
+In-Reply-To: <b088501f0703010414q6597dfc2n986768ff6ef462c3@mail.gmail.com>
+References: <b088501f0703010414q6597dfc2n986768ff6ef462c3@mail.gmail.com>
+Message-ID: <3FC0430478C30B4A9AF0AFF7863418F130F067@BCMEVS6.ad.bcm.edu>
+
+Chaofeng,
+
+ 
+
+It 
+doesn't quite give everything you need in the same format, but if you use 
+
+VarCorr(dental.fit) 
+
+you 
+will get the variance estimates as well as the correlations.  Just multiply 
+these correlations by their respective SD's and you have the covariance 
+estimates.  Beyond this, you may have to ask Doug 
+Bates.
+
+ 
+
+Hope 
+this Helps,
+
+Kyle
+
+ 
+
+***************************************
+
+J. Kyle Roberts, Ph.D.
+
+Baylor College of Medicine
+
+Center for Educational 
+Outreach
+
+One Baylor Plaza, MS:  
+BCM411
+
+Houston, TX   
+77030-3411
+
+713-798-6672 - 713-798-8201 
+Fax
+
+jkrobert at bcm.edu
+
+***************************************
+
+ 
+
+From: s-news-owner at lists.biostat.wustl.edu 
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Kou 
+Chaofeng
+Sent: Thursday, March 01, 2007 6:15 AM
+To: 
+s-news at lists.biostat.wustl.edu
+Subject: [S] Help with command of 
+returning the random effect covariance estimate using 'lme' 
+fitting
+
+Dear all
+
+ 
+
+I am fitting and analyzing linear mixed-effects models using the Splus 
+command 'lme'. The following is the results:
+
+dental.fit <- lme(fixed = distance~age, random = ~age + cluster = 
+~subject, data = "">
+> summary(dental.fit)
+
+Variance/Covariance Components 
+Estimates:
+                 
+Standard Deviation(s) of Random 
+Effect(s)
+                          
+  (Intercept)        
+age
+                           
+  2.134464    
+ 0.1541247
+                 
+Correlation of Random 
+Effects
+                             
+   
+ (Intercept)
+                       
+ age   
+ -0.6024329
+                 
+Cluster Residual Variance: 1.716232 
+ 
+
+Fixed Effects 
+Estimates:
+                                  
+ Value       Approx. 
+Std.Error        z 
+ratio(C)
+       
+(Intercept)         
+16.3406250     
+0.98005731        
+16.6731321
+                 
+age          
+0.7843750      
+0.08275189         
+9.4786353
+                 
+sex         
+1.0321023      
+1.53545472         
+0.6721802
+                
+age:sex   -0.3048295     
+ 0.12964730       
+ -2.3512218
+      Conditional Correlations of 
+Fixed Effects Estimates 
+
+                 
+(Intercept)       
+ age                
+sex
+     age       
+-0.8801554
+     sex       -0.6382847   
+0.5617897
+     
+age:sex 0.5617897   -0.6382847   
+ -0.8801554
+
+I have known that using command 'dental.fit$varFix' I can obtain the 
+conditional covariance matrix of the fixed effects. My question is how i can 
+return the covariance matrix estimate of the random effects. I tried many 
+commands 
+such as 'dental.fit$varRan', 'dental.fit$var.Ran', but they didn't 
+work. 
+
+Thanks very much!
+
+Chaofeng
+
+From kprins at Pharsight.com  Thu Mar  1 16:34:19 2007
+From: kprins at Pharsight.com (Klaas Prins)
+Date: Thu, 01 Mar 2007 08:34:19 -0800
+Subject: Re: Help with command of returning the random effect covariance estimate using 'lme' fitting
+Message-ID: <5B833E900330354F9FDA984D06F92428AF27B6@ca-exchange.corp.pharsight.com>
+
+or you 
+can plough through:
+
+ 
+
+object$apVar  #object = dental.fit
+
+ 
+
+where, 
+among many other useful things, the (approximation of the) log of the random 
+effects (i.e. attr(object$apVar,"Pars") ) and 
+their variance covariance matrix resides. Handy for post-processing these 
+estimates in calls like rmvnorm() etc...
+
+ 
+
+Don't 
+forget nlme estimates random effects in log space, thus apVar has them stored in 
+log space, whereas summary and VarCorr will provide them they way you have 
+introduced them into your model.
+
+ 
+
+good 
+luck,
+
+Klaas
+
+>   -----Original Message-----
+> From:
+>   s-news-owner at lists.biostat.wustl.edu
+>   [mailto:s-news-owner at lists.biostat.wustl.edu]On Behalf Of Roberts, J.
+>   Kyle
+> Sent: Thursday, March 01, 2007 5:18 PM
+> To:
+>   s-news at lists.biostat.wustl.edu
+> Subject: Re: [S] Help with command of
+>   returning the random effect covariance estimate using 'lme'
+>   fitting
+>
+>
+>
+>   Chaofeng,
+>
+>
+>
+>   It
+>   doesn't quite give everything you need in the same format, but if you use
+>
+>
+>   VarCorr(dental.fit)
+>
+>   you
+>   will get the variance estimates as well as the correlations.  Just
+>   multiply these correlations by their respective SD's and you have the
+>   covariance estimates.  Beyond this, you may have to ask Doug
+>   Bates.
+>
+>
+>
+>   Hope
+>   this Helps,
+>
+>   Kyle
+>
+>
+>
+>   ***************************************
+>
+>   J. Kyle Roberts, Ph.D.
+>
+>   Baylor College of
+> Medicine
+>
+>   Center for Educational
+>   Outreach
+>
+>   One Baylor Plaza, MS:
+>   BCM411
+>
+>   Houston, TX
+>   77030-3411
+>
+>   713-798-6672 - 713-798-8201
+>   Fax
+>
+>   jkrobert at bcm.edu
+>
+>   ***************************************
+>
+>
+>
+>
+>
+>
+>   From: s-news-owner at lists.biostat.wustl.edu
+>   [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Kou
+>   Chaofeng
+> Sent: Thursday, March 01, 2007 6:15 AM
+> To:
+>   s-news at lists.biostat.wustl.edu
+> Subject: [S] Help with command of
+>   returning the random effect covariance estimate using 'lme'
+>   fitting
+>
+>
+>
+>
+>
+>   Dear all
+>
+>
+>
+>   I am fitting and analyzing linear mixed-effects models using the Splus
+>   command 'lme'. The following is the results:
+>
+>   dental.fit <- lme(fixed = distance~age, random = ~age + cluster =
+>   ~subject, data = "">
+>   > summary(dental.fit)
+>
+> Variance/Covariance Components
+>   Estimates:
+>
+>   Standard Deviation(s) of Random
+>   Effect(s)
+>
+>     (Intercept)
+>   age
+>
+>     2.134464
+>    0.1541247
+>
+>   Correlation of Random
+>   Effects
+>
+>
+>    (Intercept)
+>
+>    age
+>    -0.6024329
+>
+>   Cluster Residual Variance: 1.716232
+>
+>
+>   Fixed Effects
+>   Estimates:
+>
+>    Value       Approx.
+>   Std.Error        z
+>   ratio(C)
+>
+>   (Intercept)
+>   16.3406250
+>   0.98005731
+>   16.6731321
+>
+>   age
+>   0.7843750
+>   0.08275189
+>   9.4786353
+>
+>   sex
+>   1.0321023
+>   1.53545472
+>   0.6721802
+>
+>   age:sex   -0.3048295
+>    0.12964730
+>    -2.3512218
+>       Conditional Correlations of
+>   Fixed Effects Estimates
+>
+>
+>   (Intercept)
+>    age
+>   sex
+>      age
+>   -0.8801554
+>      sex       -0.6382847
+>   0.5617897
+>
+>   age:sex 0.5617897   -0.6382847
+>    -0.8801554
+>
+>   I have known that using command 'dental.fit$varFix' I can obtain the
+>   conditional covariance matrix of the fixed effects. My question is how i can
+>   return the covariance matrix estimate of the random effects. I tried many
+>   commands
+> such as 'dental.fit$varRan', 'dental.fit$var.Ran', but they
+>   didn't work.
+>
+>   Thanks very much!
+>
+>   Chaofeng
+
+From o_sanni at yahoo.com  Fri Mar  2 11:55:46 2007
+From: o_sanni at yahoo.com (Olanrewaju Sanni)
+Date: Fri, 02 Mar 2007 03:55:46 -0800
+Subject: plot
+Message-ID: <201476.66514.qm@web62308.mail.re1.yahoo.com>
+
+Dear Subscribers,
+Pls kindly send me  functions for plotting histogram
+and bar chart with s-plus 7 finmetrics.
+Regards,
+Lanre Sanni
+
+ 
+____________________________________________________________________________________
+Be a PS3 game guru.
+Get your game face on with the latest PS3 news and previews at Yahoo! Games.
+http://videogames.yahoo.com/platform?platform=120121
+
+From Kim.Elmore at noaa.gov  Fri Mar  2 15:08:48 2007
+From: Kim.Elmore at noaa.gov (Kim Elmore)
+Date: Fri, 02 Mar 2007 09:08:48 -0600
+Subject: Potting from within a function
+Message-ID: <I9SN08RPQSW0IE02G4@hedwig.nssl.noaa.gov>
+
+This has to be a very fundamental question in S, but I haven't been 
+able to find it -- probably because I use the wrong nomenclature.
+
+I want to create a function that generates a plot as its output. I 
+can write a script that generates the plot I want, but when I turn 
+the script into a function, the plot never appears disappearing as 
+soon as the function exits, as do all other objects within a function 
+unless I use, say, the <<- operator. How do I make the plot itself 
+persist after the function exits?
+
+Kim Elmore
+                          Kim Elmore, Ph.D.
+                       University of Oklahoma
+        Cooperative Institute for Mesoscale Meteorological Studies
+"All of weather is divided into three parts: Yes, No, and Maybe. The
+greatest of these is Maybe" The original Latin appears to be garbled.
+
+From Kim.Elmore at noaa.gov  Fri Mar  2 19:47:57 2007
+From: Kim.Elmore at noaa.gov (Kim Elmore)
+Date: Fri, 02 Mar 2007 13:47:57 -0600
+Subject: Re: Plotting from within a function
+Message-ID: <1I3U08R5E6RWIF029C@hedwig.nssl.noaa.gov>
+
+My thanks to everyone for your replies!
+
+The trick I needed is to wrap plot() within print(), so the result 
+will resemble print(plot(...)).
+
+As an aside, I am also plotting more complex objects: I'm using map() 
+(from the S-Plus maps library), image() and contour(). It turns out 
+that these functions need not be wrapped within print(). In fact, 
+doing so forces a lot of extraneous output that I can't seem to 
+suppress with invisible(). However, if my function resembles
+
+my.plot.map <- function(...) {
+   ...
+   print(plot(...))
+   ...
+   map(...)
+   image(...)
+   map(...)
+   contour(...)
+   ...
+   invisible()
+}
+
+then all is well! Note that the last invisible() is needed to prevent 
+extraneous output from map() in particular and contour() to a lesser extent.
+
+Kim Elmore
+                          Kim Elmore, Ph.D.
+                       University of Oklahoma
+        Cooperative Institute for Mesoscale Meteorological Studies
+"All of weather is divided into three parts: Yes, No, and Maybe. The
+greatest of these is Maybe" The original Latin appears to be garbled.
+
+From Debabrata.Midya at commerce.nsw.gov.au  Mon Mar  5 03:01:17 2007
+From: Debabrata.Midya at commerce.nsw.gov.au (Debabrata Midya)
+Date: Mon, 05 Mar 2007 14:01:17 +1100
+Subject: Multistage Stochastic Programming
+Message-ID: <45EC22AD020000D00000BC13@out-gwia.dpws.nsw.gov.au>
+
+Hi S-PLUS users!
+
+Thanks in advance.
+
+I am using S-PLUS 7.0 for Windows (Enterprise Developer).
+
+I am using nuopt module of S-PLUS for Multistage Stochastic Programming. This 
+has reference to the Code 2.9 Stochastic Multiperiod Optimization of the book 
+?Introduction to Modern Portfolio Optimization? by Scherer and Martin.
+
+May I request you to help me to understand the solution coming out of it:
+
+I am looking for the interpretation of w.eq, w.bd, upper and lower.
+
+Any further reference on Multistage Stochastic Programming is highly 
+appreciated.
+
+Thanks,
+
+Debabrata Midya
+
+NSW Department of Commerce
+Policy Support Services
+Level 11
+McKell Building
+2-24 Rawson Place
+Sydney NSW 2000
+Australia
+
+******************************************************************************
+
+This email message, including any attached files, is confidential and intended 
+solely for the use of the individual or entity to whom it is addressed. 
+
+The NSW Department of Commerce prohibits the right to publish, 
+copy, distribute or disclose any information contained in this email, 
+or its attachments, by any party other than the intended recipient. 
+If you have received this email in error please notify the sender and delete it 
+from your system.
+
+No employee or agent is authorised to conclude any binding 
+agreement on behalf of the NSW Department of Commerce by email. The views or 
+opinions presented in this email are solely those of the author and do not 
+necessarily represent those of the Department, 
+except where the sender expressly, and with authority, states them to be the 
+views of NSW Department of Commerce.  
+
+The NSW Department of Commerce accepts no liability for any loss or damage 
+arising from the use of this email and recommends that the recipient check this 
+email and any attached files for the presence of viruses. 
+
+******************************************************************************
+
+From Kim.Elmore at noaa.gov  Mon Mar  5 15:10:01 2007
+From: Kim.Elmore at noaa.gov (Kim Elmore)
+Date: Mon, 05 Mar 2007 09:10:01 -0600
+Subject: Exporting a color table
+Message-ID: <SB8408RGRJH8IM02K4@hedwig.nssl.noaa.gov>
+
+I'm using S-Plus 7 under windows. I've built a color table I'd like 
+to export. I know that the color table is buried within the .Prefs, 
+but I don't know what it's called. I use it for filled plots 
+generated with image(). I suppose I could export the entire .Prefs 
+directory, but that seems a bit extreme and potentially unwise.  Are 
+there alternatives?
+
+Kim Elmore
+                          Kim Elmore, Ph.D.
+                       University of Oklahoma
+        Cooperative Institute for Mesoscale Meteorological Studies
+"All of weather is divided into three parts: Yes, No, and Maybe. The
+greatest of these is Maybe" The original Latin appears to be garbled.
+
+From ashasoji at yahoo.com  Mon Mar  5 15:27:44 2007
+From: ashasoji at yahoo.com (soji Ashasoji)
+Date: Mon, 05 Mar 2007 07:27:44 -0800
+Subject: want to ask question
+Message-ID: <857911.99053.qm@web60412.mail.yahoo.com>
+
+Hello,
+   Just want to ask the difference between cluster
+analysis and principal component analysis.
+Thank you.
+Soji.
+
+ 
+____________________________________________________________________________________
+Want to start your own business?
+Learn how on Yahoo! Small Business.
+http://smallbusiness.yahoo.com/r-index
+
+From alan.hochberg at prosanos.com  Mon Mar  5 15:52:53 2007
+From: alan.hochberg at prosanos.com (Alan Hochberg)
+Date: Mon, 05 Mar 2007 10:52:53 -0500
+Subject: Re: Exporting a color table
+In-Reply-To: <SB8408RGRJH8IM02K4@hedwig.nssl.noaa.gov>
+References: <SB8408RGRJH8IM02K4@hedwig.nssl.noaa.gov>
+Message-ID: <008901c75f3e$5876f2f0$8dba11ac@prosanos.local>
+
+Kim,
+
+If you use the S-plus GUI to build the color table and then display the
+History window, you can learn about some little-documented commands that
+S-plus uses to build the color tables.  You can then incorporate these
+functions into your own code.  Here is an example:
+
+mycolors <- function() {
+        guiSetOption(option.name="UserColors", value.string="User 1")
+        guiSetOption(option.name="SchemeColorTableUser",
+        
+value.string="20,80,20|30,140,20|50,170,20|80,200,20|120,220,20|250,250,20|2
+50,204,20|250,153,20|250,79,20|250,0,20|220,30,70|200,30,100|170,30,150|150,
+30,190|150,30,210|0,0,0")
+}
+
+The string for value.string can't have any line breaks in it.  As usual,
+there are no guarantees when working with these internal functions (Version
+stability, etc.), but often they let you do things that can't be done any
+other way.  Good luck.
+
+Alan
+
+Alan Hochberg
+Vice President, Research
+ProSanos Corp.
+225 Market Street
+Suite 502
+Harrisburg, PA 17101
+Tel. 717-635-2124
+Fax 717-635-2575
+alan.hochberg at prosanos.com
+www.prosanos.com
+
+From meteor_shahab at yahoo.com  Mon Mar  5 19:49:37 2007
+From: meteor_shahab at yahoo.com (shahab einabadi)
+Date: Mon, 05 Mar 2007 19:49:37 +0000
+Subject: drawing mao
+Message-ID: <589595.19647.qm@web53214.mail.yahoo.com>
+
+    Hello All,
+
+    I was trying to use the s-plus map library, but I noticed that it
+only in its library the USA map, How can I do in order to work with
+other country maps?
+
+    thanks.
+   
+  #I am using S+ 6.01
+
+ Send instant messages to your online friends http://uk.messenger.yahoo.com 
+
+From Ray.Brownrigg at mcs.vuw.ac.nz  Mon Mar  5 20:50:27 2007
+From: Ray.Brownrigg at mcs.vuw.ac.nz (Ray Brownrigg)
+Date: Tue, 06 Mar 2007 09:50:27 +1300
+Subject: Re: drawing mao
+In-Reply-To: <589595.19647.qm@web53214.mail.yahoo.com>
+References: <589595.19647.qm@web53214.mail.yahoo.com>
+Message-ID: <200703060950.27848.Ray.Brownrigg@mcs.vuw.ac.nz>
+
+On Tue, 06 Mar 2007, shahab einabadi wrote:
+>     Hello All,
+>
+>     I was trying to use the s-plus map library, but I noticed that it
+> only in its library the USA map, How can I do in order to work with
+> other country maps?
+>
+>     thanks.
+>
+>   #I am using S+ 6.01
+>
+I have .[GLN] files for the world (high and low resolution) in both 
+euro-centric and pacific-centric forms.
+
+The problem is they are more than 15 years old, and a lot has happened to 
+political boundaries in that time.
+
+Are these of any use to you?
+
+Ray Brownrigg
+
+From ashasoji at yahoo.com  Tue Mar  6 08:02:54 2007
+From: ashasoji at yahoo.com (soji Ashasoji)
+Date: Tue, 06 Mar 2007 00:02:54 -0800
+Subject: factor analysis in marketing research
+Message-ID: <495570.5886.qm@web60419.mail.yahoo.com>
+
+Want to know how factor analysis can be use in
+marketing research.I'll be glad if this can be explain
+with a good practical examples.Can principal component
+analysis and cluster analysis be use in marketing
+research too?If yes how?Looking forward to receiving
+contribution/suggestion from far and wide.
+Soji 
+
+ 
+____________________________________________________________________________________
+Don't get soaked.  Take a quick peak at the forecast
+with the Yahoo! Search weather shortcut.
+http://tools.search.yahoo.com/shortcuts/#loc_weather
+
+From allitt2000 at yahoo.com  Tue Mar  6 08:16:51 2007
+From: allitt2000 at yahoo.com (alli charbes)
+Date: Tue, 06 Mar 2007 00:16:51 -0800
+Subject: Help
+Message-ID: <22494.16911.qm@web51315.mail.yahoo.com>
+
+Splus subsbribers,
+I need an analytical explanation on splus.I have some
+weekly data for 5weeks and on different items for an
+eatery/restaurant.Can you tell me another analysis I
+cann run apart from the factor analysis, dynamic and
+sales analysis a=usin splus7 with finmetrics
+appilation.
+Thanks
+Titilayo Alli
+
+ 
+____________________________________________________________________________________
+Yahoo! Music Unlimited
+Access over 1 million songs.
+http://music.yahoo.com/unlimited
+
+From dimitrios.stats at btopenworld.com  Tue Mar  6 19:03:51 2007
+From: dimitrios.stats at btopenworld.com (Dimitrios Chalvatzis)
+Date: Tue, 06 Mar 2007 19:03:51 +0000
+Subject: UK Map (?)
+In-Reply-To: <200703060950.27848.Ray.Brownrigg@mcs.vuw.ac.nz>
+References: <589595.19647.qm@web53214.mail.yahoo.com> <200703060950.27848.Ray.Brownrigg@mcs.vuw.ac.nz>
+Message-ID: <002c01c76022$2e45f640$4001a8c0@dimitrios>
+
+Talking about maps has anyone got an S-Plus [county] map for the UK?
+Many thanks,
+
+Dimitrios
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Ray Brownrigg
+Sent: 05 March 2007 20:50
+To: shahab einabadi
+Cc: s-news at wubios.wustl.edu
+Subject: Re: [S] drawing mao
+
+On Tue, 06 Mar 2007, shahab einabadi wrote:
+>     Hello All,
+>
+>     I was trying to use the s-plus map library, but I noticed that it
+> only in its library the USA map, How can I do in order to work with
+> other country maps?
+>
+>     thanks.
+>
+>   #I am using S+ 6.01
+>
+I have .[GLN] files for the world (high and low resolution) in both 
+euro-centric and pacific-centric forms.
+
+The problem is they are more than 15 years old, and a lot has happened to 
+political boundaries in that time.
+
+Are these of any use to you?
+
+Ray Brownrigg
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From ldecola at usgs.gov  Tue Mar  6 20:06:11 2007
+From: ldecola at usgs.gov (F. Lee De Cola)
+Date: Tue, 06 Mar 2007 15:06:11 -0500
+Subject: Re: UK Map (?)
+In-Reply-To: <002c01c76022$2e45f640$4001a8c0@dimitrios>
+References: <002c01c76022$2e45f640$4001a8c0@dimitrios>
+Message-ID: <OFBC8FB5EF.5C5FFFF5-ON85257296.006E5AD3-85257296.006E6E60@usgs.gov>
+
+I use S-PLUS maps for simple GIS (vector-based) mapping, but for serious
+work you may need to consider something like ArcGIS.
+
+Also look at the following (which I've NOT used):
+
+http://cran.cnr.berkeley.edu/src/contrib/Descriptions/maptools.html
+
+Lee De Cola, PhD, MCP
+U.S. Geological Survey
+521 National Center
+Reston VA 20192 USA
+Room 2D324
+703-648-4178, fax 4603
+W77°22'10" N38°56'48"
+703-709-6972 home
+LDECOLA at USGS.GOV
+ldecola.home.comcast.net
+
+                                                                       
+             "Dimitrios                                                
+             Chalvatzis"                                               
+             <dimitrios.stats@                                          To
+             btopenworld.com>          <s-news at wubios.wustl.edu>       
+             Sent by:                                                   cc
+             s-news-owner@list                                         
+             s.biostat.wustl.e                                     Subject
+             du                        [S] UK Map (?)                  
+                                                                       
+                                                                       
+             07/03/06 02:03 PM                                         
+                                                                       
+                                                                       
+                                                                       
+
+Talking about maps has anyone got an S-Plus [county] map for the UK?
+Many thanks,
+
+Dimitrios
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Ray Brownrigg
+Sent: 05 March 2007 20:50
+To: shahab einabadi
+Cc: s-news at wubios.wustl.edu
+Subject: Re: [S] drawing mao
+
+On Tue, 06 Mar 2007, shahab einabadi wrote:
+>     Hello All,
+>
+>     I was trying to use the s-plus map library, but I noticed that it
+> only in its library the USA map, How can I do in order to work with
+> other country maps?
+>
+>     thanks.
+>
+>   #I am using S+ 6.01
+>
+I have .[GLN] files for the world (high and low resolution) in both
+euro-centric and pacific-centric forms.
+
+The problem is they are more than 15 years old, and a lot has happened to
+political boundaries in that time.
+
+Are these of any use to you?
+
+Ray Brownrigg
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From Luciano.Molinari at kispi.unizh.ch  Wed Mar  7 13:28:22 2007
+From: Luciano.Molinari at kispi.unizh.ch (Molinari, Luciano)
+Date: Wed, 07 Mar 2007 14:28:22 +0100
+Subject: Problem with SP7
+Message-ID: <F3007D45992A294386A8A1ADDAA397CA01AD0EBB@exzh1.kispi.int>
+
+I recently switched 
+from SP2000 to SP7 for Windows. 
+
+>From time to time I 
+have problems. Here are the most recent one:
+
+function 
+model.tables.aov used to have an option "adj.means" for the 
+type parameter. This option is not mentioned anymore in the 
+help, although it is still available. What is the reason?
+
+ 
+
+Can anybody 
+help?
+
+Thanks,
+
+L. 
+Molinari
+
+From robertsr at science.oregonstate.edu  Wed Mar  7 18:12:17 2007
+From: robertsr at science.oregonstate.edu
+Date: Wed, 07 Mar 2007 10:12:17 -0800
+Subject: logistic regression model validity
+Message-ID: <1173291137.45ef0081d1e7a@webmail.oregonstate.edu>
+
+Dear S-plus users,
+
+I'm new to logistic regression, and relatively new to statistics in general, so
+I've got a few basic questions:
+
+I'm looking at the success of native species sown in the field.  I have 28
+species, and have 15 traits for each species that I would like to use to create
+a regression model that can be used to predict the probability of establishment.
+I have presence/absence data (0/1) for 9 species in 56 quadrats, with the traits
+(continuous) serving as the predictor variables.
+
+1.  I am using stepAIC in the MASS library in S-plus to create a smaller model
+from a list of 15 predictor variables.  There is some evidence of
+overdispersion (scale parameter > 2), and I am wondering if this affects how
+stepAIC chooses the model, or if I can control for this after getting the model
+from stepAIC.
+
+2.  Related to question 1, I've read that you can control for overdispersion by
+using a quasi-likelihood model.  Can I take the model specified by stepAIC, then
+use the quasi family, logit link, and mu(1-mu) variance function to create a glm
+that avoids the overdispersion problem?  Let me know if I'm way off
+track.
+
+3.  When I create the suggested glm from stepAIC, the residuals show skewness
+and outliers. I'm reluctant to throw out the outliers, and according to
+Venables and Ripley (3rd ed.) residual plots are not very useful in logistic
+regression.  I would be delighted if I could just ignore the residual plots,
+but I don't feel like this is a good idea.  What are the best diagnostics to
+evaluate the fit of the model?
+
+Am I proceeding in the right direction?  I fear I'm making some fatal errors
+that will prevent me from passing my final exam in the near future.
+
+I am using S-plus 7.0, Windows XP.
+
+Thanks for any help you can provide,
+
+Rachael Roberts
+
+Department of Botany & Plant Pathology
+Oregon State University
+
+From courses at zanybooks.com  Wed Mar  7 19:42:22 2007
+From: courses at zanybooks.com
+Date: Wed, 07 Mar 2007 12:42:22 -0700
+Subject: Online Course: Introduction to R
+Message-ID: <20070307124222.b21645f2bceb2bcc4cba8e709837b1d9.119178208f.wbe@email.secureserver.net>
+
+A new three-week online course will provide an easy introduction to R
+and its use in statistics and in organizing data. Once you've completed this course you'll be able to enter, save, retrieve, summarize, display and analyze data, run simulations, construct confidence intervals and test hypotheses using R.  To be held April. 2 - April. 17, 2007.
+
+ 
+
+To find out more details, go to http://mysite.verizon.net/res7sf1o/courses.htm
+
+ 
+
+or
+
+https://www.shop.zanybooks.com/displayProductDocument.hg?productId=17&categoryId=8
+
+ 
+
+ 
+
+From dataanalytics at earthlink.net  Thu Mar  8 02:02:35 2007
+From: dataanalytics at earthlink.net (Walter R. Paczkowski)
+Date: Wed, 07 Mar 2007 21:02:35 -0500
+Subject: Scanning a line for a carriage return
+Message-ID: <E1HP7vt-0003DT-8T@elasmtp-junco.atl.sa.earthlink.net>
+
+Hi,
+
+I'm hoping someone has a suggestion for handling a simple problem. 
+A client gave me a comma separated value file (call it x.csv) that has an
+id and name and address for about 25,000 people (25,000 records).  I
+used read.table to read it, but then discovered that there are stray
+carriage returns on several records.  This plays havoc with
+read.table since it starts a new input line when it sees the carriage
+return.  In short, the read is all wrong.
+
+I thought I could write a simple function to parse a line and write it
+back out, character by character.  If a carriage return is found, it
+would simply be ignored on the writing back out part.  But how do I
+identify a carriage return?  What is the code or symbol?  Is
+there any easier way to rid the file of carriage returns in the middle of
+the input lines?
+
+Any help is appreciated.
+
+Walt Paczkowski
+
+_________________________________
+
+Walter R. Paczkowski, Ph.D.
+
+Data Analytics Corp.
+
+44 Hamilton Lane
+
+Plainsboro, NJ  08536
+
+(V) 609-936-8999
+
+(F) 609-936-3733
+
+From Luciano.Molinari at kispi.unizh.ch  Thu Mar  8 14:48:47 2007
+From: Luciano.Molinari at kispi.unizh.ch (Molinari, Luciano)
+Date: Thu, 08 Mar 2007 15:48:47 +0100
+Subject: Interpreting glm
+Message-ID: <F3007D45992A294386A8A1ADDAA397CA01AD0EC1@exzh1.kispi.int>
+
+I am working 
+with SP7 for Windows. 
+
+Can anybody 
+help, give some hint, in interpreting, numericaly and statistically, the 
+following printout of glm:
+
+--------------------------------------
+
+S+>zz0_glm(kop~mprae+einviuni+einvizya+kpros1,na="na.exclude",family=binomial)
+S+>summary(zz0)
+
+ 
+
+Call: 
+glm(formula = kop ~ mprae + einviuni + einvizya + kpros1, family = binomial, 
+na.action = ""> "na.exclude")
+Deviance Residuals:
+   
+Min       1Q Median    3Q  Max 
+
+ -2.27 0.000722  0.224 0.513 1.45
+
+ 
+
+Coefficients:
+             
+Value Std. Error t value      P 
+(Intercept)  
+9.416    210.017  0.0448 
+0.9643            #The P 
+values for the t's
+      mprae 
+-0.591      0.336 -1.7582 
+0.0808            #are 
+calculated in my local version of summary.glm
+   einviuni 
+-0.698      0.376 -1.8559 0.0655
+   
+einvizya -0.855      0.417 -2.0482 
+0.0424
+     kpros1  7.887    
+210.017  0.0376 0.9701
+
+ 
+
+(Dispersion 
+Parameter for Binomial family taken to be 1 )
+
+ 
+
+    Null Deviance: 102 on 148 degrees of 
+freedom
+
+ 
+
+Residual 
+Deviance: 72.1 on 144 degrees of freedom
+
+ 
+
+Number of 
+Fisher Scoring Iterations: 15 
+Warning 
+messages:
+      LM: This is my local version of 
+summary.glm!
+ (P-values based on t added)
+  in: 
+summary(zz0)
+S+>anova(zz0,test="Chi")
+Analysis of Deviance 
+Table
+
+ 
+
+Binomial 
+model
+
+ 
+
+Response: 
+kop
+
+ 
+
+Terms added 
+sequentially (first to last)
+         
+Df Deviance Resid. Df Resid. Dev Pr(Chi) 
+    
+NULL                   
+148        
+102        
+   mprae  
+1      7.7       
+147         94  
+0.0055
+einviuni  1      
+4.2       
+146         90  
+0.0414
+einvizya  1      
+3.7       
+145         86  0.0529
+  
+kpros1  1     13.9       
+144         72  
+0.0002
+
+S+>anova(zz0,test="F")
+Analysis of Deviance 
+Table
+
+ 
+
+Binomial 
+model
+
+ 
+
+Response: 
+kop
+
+ 
+
+Terms added 
+sequentially (first to last)
+         
+Df Deviance Resid. Df Resid. Dev F Value  Pr(F) 
+    
+NULL                   
+148        
+102               
+
+   mprae  1      
+7.7       
+147         94    12.1 
+0.0007
+einviuni  1      
+4.2       
+146         90     
+6.5 0.0117
+einvizya  1      
+3.7       
+145         86     
+5.9 0.0166
+  kpros1  1     
+13.9       
+144         72    21.9 
+0.0000
+
+------------------
+
+All the variables 
+involved are binary. They are relatively unbalanced, so that a number of 
+combinations might not occur at all.
+
+Here my 
+questions:
+
+- why are the some 
+standard errors, see summary, so large?
+
+- which are the 
+correct, if any, P-values for the coefficientas?
+
+- is the difference 
+null.deviace-residual.deviance adequately described by the Chisquare 
+distribution, here, when not?
+
+- Can one 
+confidently believe that variable kpros1 is relevant, or not relevant? There 
+appear to be a contradiction with the t-value of the summary and the reduction 
+in the deviance in the anova(zz0,test="Chi") 
+command.
+
+ 
+
+Thanks for 
+helping,
+
+L. 
+Molinari
+
+ 
+
+From elvis at xlsolutions-corp.com  Thu Mar  8 15:37:49 2007
+From: elvis at xlsolutions-corp.com
+Date: Thu, 08 Mar 2007 08:37:49 -0700
+Subject: April Courses*** R/S+: Fundamentals and Programming Techniques - @ 6 Locations Nationwide / Ann Arbor, Hartford, Raleigh, Princeton, Seattle, Boston
+Message-ID: <20070308083749.9f08cc34deb45d78e54b3b5664e21546.be1f21fcff.wbe@email.secureserver.net>
+
+XLSolutions Corporation is proud to announce our April 2007 R/S:
+Fundamentals and Programming Techniques - @ 6 USA locations:
+http://www.xlsolutions-corp.com/Rfund.htm
+
+Ann Arbor, MI *** April 23-24, 2007
+Raleigh, NC *** April 19-20, 2007
+Princeton, NJ *** April 26-27 , 2007
+Hartford, CT *** April 26-27 , 2007
+Seattle, WA *** April 30- May 1, 2007
+Boston, MA *** April 30 - May 1, 2007
+
+This two-day beginner to intermediate R/S-plus course focuses on a broad
+spectrum of topics, from reading raw data to a comparison of R and S. We
+will learn the essentials of data manipulation, graphical visualization
+and R/S-plus programming. We will explore statistical data analysis
+tools,including graphics with data sets. How to enhance your plots,
+build your own packages (librairies) and connect via ODBC,etc. The
+course will give beginners a strong foundation for becoming a versatile
+programmer, and will expose experienced users to skills that make a
+better programmer.
+http://www.xlsolutions-corp.com/Rfund.htm
+
+Other courses:
+(1) R/S System: Advanced Programming - San Francisco, March 15-16, 2007
+(2) Data Mining: Practical Tools and Techniques in R/Splus - Salt Lake
+City, March 26-27, 2007
+
+Ask for group discount and reserve your seat Now - Earlybird Rates.
+Please email us for for April-May courses.
+Payment due after the class! Email Sue Turner:  sue at xlsolutions-corp.com
+
+(1) R/S System: Advanced Programming - San Francisco, March 15-16, 2007
+
+This advanced course is designed for people who use R or S-Plus in their
+day-to-day work and want to maximize the efficiency of their programs.
+Participants will learn in depth advanced programming techniques that
+are available in R and S-Plus. This course will improve your general
+strategies and extend your programming skills. This two-day course will
+introduce participants to many programming techniques and tools. In
+addition a special session dedicated to making S-Plus functions more
+efficient will focus on "fast objects" and "fast functions". The
+advanced programming techniques include object orientation, classes,
+inheritance and methods. http://www.xlsolutions-corp.com/Radv.htm
+
+(2) Data Mining: Practical Tools and Techniques in R/Splus - Salt Lake
+City, March 26-27, 2007
+
+This course gives students an understanding of R/Splus tools used to
+investigate the main tasks that predictive analytics and exploratory
+data mining is usually called upon to accomplish and data preparation
+which is universally held as the key to successful data mining. We
+focus on the most common data mining tasks which are: Description,
+Estimation, Prediction, Classification, Clustering, Association and the
+need for Dimension Reduction with Principal Components and Factor
+Analysis. Analytical methods used in the class include decision trees,
+logistic regression, neural networks, link analysis (social networks)
+and Kernel-based Methods (SVMs).
+http://www.xlsolutions-corp.com/RSMining.htm
+
+Email us for group discounts: sue at xlsolutions-corp.com
+Phone:  206 686 1578
+ 
+Visit us: www.xlsolutions-corp.com/training.htm
+ 
+Please let us know if you and your colleagues are interested in this
+class to take advantage of group discount. Register now to secure your
+seat!
+ 
+Cheers,
+ 
+Elvis Miller, PhD
+Manager Training
+XLSolutions Corporation
+206 686 1578
+www.xlsolutions-corp.com/training.htm
+elvis at xlsolutions-corp.com
+
+From yiwu21111958 at yahoo.com  Fri Mar  9 04:23:24 2007
+From: yiwu21111958 at yahoo.com (yiwu ye)
+Date: Thu, 08 Mar 2007 20:23:24 -0800
+Subject: Standard errors for the adjusted factor level means from a GLM model
+Message-ID: <549881.56212.qm@web57104.mail.re3.yahoo.com>
+
+Dear list,
+
+I fitted the following GLM model,
+
+rating_c(20,24,28,28,15,18,23,24,18,19,24,23,26,26,30,30,22,24,28,26,19,21,27,25)
+judge_c(1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,6)
+wine_c(1,2,3,4,1,2,3,4,1,2,3,4,1,2,3,4,1,2,3,4,1,2,3,4)
+
+dat_data.frame(rating=rating,judge=judge,wine=wine)
+dat$judge_as.factor(dat$judge)
+dat$wine_as.factor(dat$wine)
+
+options(contrast=c("contr.treatment","contr.poly"))
+glm.1_glm(rating~judge+wine,data="">> summary(glm.1, cor = F)
+
+Call: glm(formula = rating ~ judge + wine, family = gaussian, data = "">Deviance Residuals:
+       Min         1Q     Median       
+ 3Q      Max 
+ -1.333333 -0.3333333 -0.1666667 0.6666667 1.666667
+
+Coefficients:
+                  Value Std. Error     t value 
+(Intercept)  23.6666667  0.2108185  112.260857
+     judge1  -2.5000000  0.3651484   -6.846532
+     judge2  -0.5000000  0.2108185   -2.371708
+     judge3   1.5000000  0.1490712   10.062306
+     judge4   0.3000000  0.1154701    2.598076
+     judge5  -0.1333333  0.0942809   -1.414214
+      wine1   1.0000000  0.2981424    3.354102
+      wine2   1.8888889 
+ 0.1721326   10.973453
+      wine3   0.7777778  0.1217161    6.390097
+
+The level means for factor judge would be:
+> c(coef(glm.1)[1], coef(glm.1)[1] + coef(glm.1)[2:6])
+ (Intercept)   judge1   judge2   judge3   judge4   judge5 
+    23.66667 21.16667 23.16667 25.16667 23.96667 23.53333
+However, I don't know how to calculate standard errors for those means.
+Could any one help? 
+
+Thanks,
+
+Yiwu
+
+	
+
+ Looking for earth-friendly autos? 
+ Browse Top Cars by "Green Rating" at Yahoo! Autos' Green Center.  
+
+From romlh at hum.au.dk  Fri Mar  9 06:23:42 2007
+From: romlh at hum.au.dk (Lise Hedevang Nielsen)
+Date: Fri, 09 Mar 2007 07:23:42 +0100
+Subject: Interpreting main effects and interactions in lme (and log reg) models
+Message-ID: <fc.0075824e02479b070075824e02479b07.2479c7c@fcmail.hum.au.dk>
+
+Dear alle,
+
+I have an lme model with four independent variables. There is a significant interaction between two of the variables (context and group). Each of the variables has 3 levels. My question relates to the reading of the Value and p-value in the model: Does the main effect represent an average of all the values for all the subjects at that particular level (for exemple context N in the first model below) as compared to the average of all the values for all the subjects at the reference level (context F that is included in intercept)? Or does it show the values for the third group (gr.av) that doesn't figure in the interaction between group and context? How do I interpret the interaction between context and group? Only two of three contexts and two of three groups are shown in the interaction in the model.
+
+                      Value  Std.Error   DF   t-value p-value
+
+       (Intercept)  7.048984 0.03735696 2308  188.6926 <.0001
+
+          contextN  0.022821 0.00891043 2308    2.5612 0.0105 
+
+         contextNN  0.122887 0.01707241 2308    7.1980 <.0001 
+
+         målf.type -0.055151 0.02529478 2308   -2.1803 0.0293
+
+            gr.iav  0.056431 0.03122954 2308    1.8070 0.0709
+
+             gr.ns -0.156082 0.02279682 2308   -6.8467 <.0001
+
+          position -0.080792 0.02467325 2308   -3.2745 0.0011
+
+   contextN:gr.iav -0.024463 0.01049197 2308   -2.3316 0.0198 
+
+  contextNN:gr.iav -0.020950 0.00739759 2308   -2.8320 0.0047 
+
+    contextN:gr.ns  0.015571 0.00651959 2308    2.3883 0.0170 
+
+   contextNN:gr.ns -0.012505 0.00412531 2308   -3.0312 0.0025 
+
+position:m.lf.type  0.051293 0.02468307 2308    2.0781 0.0378
+
+In the second model below I have tried to leave out one of the main effects (context). This gives me the interaction between all three groups and two of the contexts. I suppose that for each group the value of each of the contexts is given as compared to the value of the third context (contextF) for that same group and that this third context is included in the intercept?
+
+                       Value  Std.Error   DF   t-value p-value
+
+       (Intercept)  7.048984 0.03735697 2308  188.6926 <.0001
+
+         m.lf.type -0.055151 0.02529478 2308   -2.1803 0.0293
+
+            gr.iav  0.056431 0.03122954 2308    1.8070 0.0709
+
+             gr.ns -0.156082 0.02279682 2308   -6.8467 <.0001
+
+          position -0.080792 0.02467325 2308   -3.2745 0.0011
+
+    gr.av:contextN  0.031713 0.01299862 2308    2.4398 0.0148 
+
+   gr.iav:contextN -0.017213 0.01649266 2308   -1.0437 0.2968 
+
+    gr.ns:contextN  0.053963 0.01650482 2308    3.2695 0.0011 
+
+   gr.av:contextNN  0.156342 0.01855375 2308    8.4264 <.0001 
+
+  gr.iav:contextNN  0.114442 0.01978861 2308    5.7832 <.0001 
+
+   gr.ns:contextNN  0.097878 0.01871174 2308    5.2308 <.0001 
+
+position:m.lf.type  0.051293 0.02468307 2308    2.0781 0.0378
+
+Does it mean anything whether the variable is a between or within subjects variable? 
+
+I suppose a logistic regression model would have to be read the same way as the lme model? 
+
+Is there a better way to get S+ to show the interaction for each level of the variables? 
+
+Any help would be appreciated. Thank you.
+
+Lise Hedevang
+
+Ph.d.-studerende
+
+Institut for Sprog, Litteratur og Kultur, Fransk
+
+Aarhus Universitet
+
+Jens Chr. Skous Vej 5, bygn. 1461, 425
+
+DK - 8000 Århus C
+
+(+ 45) 89 42 64 34
+
+romlh at hum.au.dk
+
+http://person.au.dk/romlh@hum 
+
+From akrause at Pharsight.com  Fri Mar  9 11:37:48 2007
+From: akrause at Pharsight.com (Andreas Krause)
+Date: Fri, 09 Mar 2007 03:37:48 -0800
+Subject: Re: Scanning a line for a carriage return
+Message-ID: <5B833E900330354F9FDA984D06F9242801559A8C@ca-exchange.corp.pharsight.com>
+
+Hi,
+
+ 
+
+the easy way out is to get rid of the carriage 
+returns.
+
+Under most unix distributions, you would have a tool like 
+dos2unix. 
+
+(Note: do you want the Ctrl-Ms to insert a new line or not? 
+dos2unix adds new lines)
+
+Under Windows, wordpad is generally better than 
+notepad in handling CR characters (Ctrl-M).
+
+You should be able to just open the file with wordpad, 
+ctrl-a to select all, ctrl-c for copy, and paste into a new 
+document.
+
+Many editors can also do the job in that you can specify 
+what type of file to save (DOS, Unix) or get rid of the characters (see emacs or 
+vi).
+
+Does this help?
+
+Alternatively, see if importData instead of read.table does 
+the job.
+
+ 
+
+  Andreas Krause
+
+ 
+
+-----
+Andreas Krause, PhD
+Pharsight 
+Corporation
+Strategic Consulting Services
+http://www.pharsight.com/
+
+Phone:  +41-61-481 39 
+74
+Fax:            +41-61-481 39 
+78
+Cell:   +41-76-324 75 54
+  
+
+ 
+
+From: s-news-owner at lists.biostat.wustl.edu 
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Walter R. 
+Paczkowski
+Sent: Thursday, March 08, 2007 3:03 AM
+To: 
+s-news at lists.biostat.wustl.edu
+Subject: [S] Scanning a line for a 
+carriage return
+
+Hi,
+
+I'm hoping someone has a suggestion for handling a simple 
+problem.  A client gave me a comma separated value file (call it x.csv) 
+that has an id and name and address for about 25,000 people (25,000 
+records).  I used read.table to read it, but then discovered that there are 
+stray carriage returns on several records.  This plays havoc with 
+read.table since it starts a new input line when it sees the carriage 
+return.  In short, the read is all wrong.
+
+I thought I could write a 
+simple function to parse a line and write it back out, character by 
+character.  If a carriage return is found, it would simply be ignored on 
+the writing back out part.  But how do I identify a carriage return?  
+What is the code or symbol?  Is there any easier way to rid the file of 
+carriage returns in the middle of the input lines?
+
+Any help is 
+appreciated.
+
+Walt Paczkowski
+
+_________________________________
+
+Walter R. Paczkowski, Ph.D.
+Data Analytics 
+Corp.
+44 Hamilton Lane
+Plainsboro, NJ  08536
+(V) 
+609-936-8999
+(F) 609-936-3733
+
+From gangolly at csc.albany.edu  Fri Mar  9 15:12:41 2007
+From: gangolly at csc.albany.edu (J. S. Gangolly)
+Date: Fri, 09 Mar 2007 10:12:41 -0500
+Subject: Re: Scanning a line for a carriage return
+In-Reply-To: <5B833E900330354F9FDA984D06F9242801559A8C@ca-exchange.corp.pharsight.com>
+References: <5B833E900330354F9FDA984D06F9242801559A8C@ca-exchange.corp.pharsight.com>
+Message-ID: <Pine.GSO.4.58.0703091006150.19494@cayley.ba.albany.edu>
+
+Hi all,
+
+You can not get rid of such characters using any word processors
+or text editors. There are two ways you can deal with the problem.
+
+The first is to use the character editor such as tr in unix.
+You delete the character you want deleted by specifying their
+octal code. I always keep a character translation table
+(ascii-hexadecimal-octal...) on my desk. If you are a
+Microsoftie, you can install cygwin that gives you all
+unix tools including tr.
+
+The second method, is to  use hex editors, but this,
+in my humble opinion, is an overkill.
+
+Jagdish
+--
+Jagdish S. Gangolly, (j.gangolly at albany.edu)
+Chairperson, Department of Accounting & Law, School of Business
+Director, PhD Program in Information Science,
+College of Computing & Information
+State University of New York at Albany, Albany, NY 12222.
+Phone: (518) 442-4949
+URL: http://www.albany.edu/acc/gangolly
+
+"We must remember that there are many men who, without being
+productive, are anxious to say something important, and the
+results are most curious." --Goethe
+
+On Fri, 9 Mar 2007, Andreas Krause wrote:
+> Hi,
+>
+> the easy way out is to get rid of the carriage returns.
+> Under most unix distributions, you would have a tool like dos2unix.
+> (Note: do you want the Ctrl-Ms to insert a new line or not? dos2unix
+> adds new lines)
+> Under Windows, wordpad is generally better than notepad in handling CR
+> characters (Ctrl-M).
+> You should be able to just open the file with wordpad, ctrl-a to select
+> all, ctrl-c for copy, and paste into a new document.
+> Many editors can also do the job in that you can specify what type of
+> file to save (DOS, Unix) or get rid of the characters (see emacs or vi).
+> Does this help?
+> Alternatively, see if importData instead of read.table does the job.
+>
+>   Andreas Krause
+>
+> -----
+> Andreas Krause, PhD
+> Pharsight Corporation
+> Strategic Consulting Services
+> http://www.pharsight.com/
+>
+> Phone:  +41-61-481 39 74
+> Fax:            +41-61-481 39 78
+> Cell:   +41-76-324 75 54
+>
+>
+>
+> ________________________________
+>
+> From: s-news-owner at lists.biostat.wustl.edu
+> [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Walter R.
+> Paczkowski
+> Sent: Thursday, March 08, 2007 3:03 AM
+> To: s-news at lists.biostat.wustl.edu
+> Subject: [S] Scanning a line for a carriage return
+>
+>
+> Hi,
+>
+> I'm hoping someone has a suggestion for handling a simple problem.  A
+> client gave me a comma separated value file (call it x.csv) that has an
+> id and name and address for about 25,000 people (25,000 records).  I
+> used read.table to read it, but then discovered that there are stray
+> carriage returns on several records.  This plays havoc with read.table
+> since it starts a new input line when it sees the carriage return.  In
+> short, the read is all wrong.
+>
+> I thought I could write a simple function to parse a line and write it
+> back out, character by character.  If a carriage return is found, it
+> would simply be ignored on the writing back out part.  But how do I
+> identify a carriage return?  What is the code or symbol?  Is there any
+> easier way to rid the file of carriage returns in the middle of the
+> input lines?
+>
+> Any help is appreciated.
+>
+> Walt Paczkowski
+>
+>
+>
+> _________________________________
+>
+> Walter R. Paczkowski, Ph.D.
+> Data Analytics Corp.
+> 44 Hamilton Lane
+> Plainsboro, NJ  08536
+> (V) 609-936-8999
+> (F) 609-936-3733
+>
+>
+>
+
+--
+Jagdish S. Gangolly, Associate Professor (j.gangolly at albany.edu)
+Chairperson, Department of Accounting & Law, School of Business
+Director, PhD Program in Information Science,
+College of Computing & Information
+State University of New York at Albany, Albany, NY 12222.
+Phone: (518) 442-4949
+URL: http://www.albany.edu/acc/gangolly
+
+"We must remember that there are many men who, without being
+productive, are anxious to say something important, and the
+results are most curious." --Goethe
+
+From rafzal at ccc.mcmaster.ca  Fri Mar  9 15:35:21 2007
+From: rafzal at ccc.mcmaster.ca (Rizwan Afzal)
+Date: Fri, 09 Mar 2007 10:35:21 -0500
+Subject: Re: Scanning a line for a carriage return
+References: <5B833E900330354F9FDA984D06F9242801559A8C@ca-exchange.corp.pharsight.com> <Pine.GSO.4.58.0703091006150.19494@cayley.ba.albany.edu>
+Message-ID: <004101c76260$8cb7d9b0$3462cfcd@cardio.on.ca>
+
+Dear Jagdish;
+Your mail surprises me, I thought carriage return was same as paragraph mark 
+in MSword and I replace that all the time with a character of my choice. May 
+be I didn't understand the problem.
+
+Rizwan
+
+----- Original Message ----- 
+From: "J. S. Gangolly" <gangolly at csc.albany.edu>
+
+To: "Andreas Krause" <akrause at Pharsight.com>
+Cc: "Walter R. Paczkowski" <dataanalytics at earthlink.net>; 
+<s-news at lists.biostat.wustl.edu>
+
+Sent: Friday, March 09, 2007 10:12 AM
+Subject: Re: [S] Scanning a line for a carriage return
+
+> Hi all,
+>
+> You can not get rid of such characters using any word processors
+> or text editors. There are two ways you can deal with the problem.
+>
+> The first is to use the character editor such as tr in unix.
+> You delete the character you want deleted by specifying their
+> octal code. I always keep a character translation table
+> (ascii-hexadecimal-octal...) on my desk. If you are a
+> Microsoftie, you can install cygwin that gives you all
+> unix tools including tr.
+>
+> The second method, is to  use hex editors, but this,
+> in my humble opinion, is an overkill.
+>
+> Jagdish
+> --
+> Jagdish S. Gangolly, (j.gangolly at albany.edu)
+> Chairperson, Department of Accounting & Law, School of Business
+> Director, PhD Program in Information Science,
+> College of Computing & Information
+> State University of New York at Albany, Albany, NY 12222.
+> Phone: (518) 442-4949
+> URL: http://www.albany.edu/acc/gangolly
+>
+> "We must remember that there are many men who, without being
+> productive, are anxious to say something important, and the
+> results are most curious." --Goethe
+>
+>
+> On Fri, 9 Mar 2007, Andreas Krause wrote:
+> > Hi,
+> >
+> > the easy way out is to get rid of the carriage returns.
+> > Under most unix distributions, you would have a tool like dos2unix.
+> > (Note: do you want the Ctrl-Ms to insert a new line or not? dos2unix
+> > adds new lines)
+> > Under Windows, wordpad is generally better than notepad in handling CR
+> > characters (Ctrl-M).
+> > You should be able to just open the file with wordpad, ctrl-a to select
+> > all, ctrl-c for copy, and paste into a new document.
+> > Many editors can also do the job in that you can specify what type of
+> > file to save (DOS, Unix) or get rid of the characters (see emacs or vi).
+> > Does this help?
+> > Alternatively, see if importData instead of read.table does the job.
+> >
+> >   Andreas Krause
+> >
+> > -----
+> > Andreas Krause, PhD
+> > Pharsight Corporation
+> > Strategic Consulting Services
+> > http://www.pharsight.com/
+> >
+> > Phone:  +41-61-481 39 74
+> > Fax:            +41-61-481 39 78
+> > Cell:   +41-76-324 75 54
+> >
+> >
+> >
+> > ________________________________
+> >
+> > From: s-news-owner at lists.biostat.wustl.edu
+> > [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Walter R.
+> > Paczkowski
+> > Sent: Thursday, March 08, 2007 3:03 AM
+> > To: s-news at lists.biostat.wustl.edu
+> > Subject: [S] Scanning a line for a carriage return
+> >
+> >
+> > Hi,
+> >
+> > I'm hoping someone has a suggestion for handling a simple problem.  A
+> > client gave me a comma separated value file (call it x.csv) that has an
+> > id and name and address for about 25,000 people (25,000 records).  I
+> > used read.table to read it, but then discovered that there are stray
+> > carriage returns on several records.  This plays havoc with read.table
+> > since it starts a new input line when it sees the carriage return.  In
+> > short, the read is all wrong.
+> >
+> > I thought I could write a simple function to parse a line and write it
+> > back out, character by character.  If a carriage return is found, it
+> > would simply be ignored on the writing back out part.  But how do I
+> > identify a carriage return?  What is the code or symbol?  Is there any
+> > easier way to rid the file of carriage returns in the middle of the
+> > input lines?
+> >
+> > Any help is appreciated.
+> >
+> > Walt Paczkowski
+> >
+> >
+> >
+> > _________________________________
+> >
+> > Walter R. Paczkowski, Ph.D.
+> > Data Analytics Corp.
+> > 44 Hamilton Lane
+> > Plainsboro, NJ  08536
+> > (V) 609-936-8999
+> > (F) 609-936-3733
+>
+>
+> --
+> Jagdish S. Gangolly, Associate Professor (j.gangolly at albany.edu)
+> Chairperson, Department of Accounting & Law, School of Business
+> Director, PhD Program in Information Science,
+> College of Computing & Information
+> State University of New York at Albany, Albany, NY 12222.
+> Phone: (518) 442-4949
+> URL: http://www.albany.edu/acc/gangolly
+>
+> "We must remember that there are many men who, without being
+> productive, are anxious to say something important, and the
+> results are most curious." --Goethe
+>
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+
+From s-luppescu at uchicago.edu  Fri Mar  9 15:36:40 2007
+From: s-luppescu at uchicago.edu (Stuart Luppescu)
+Date: Fri, 09 Mar 2007 09:36:40 -0600
+Subject: Re: Scanning a line for a carriage return
+In-Reply-To: <Pine.GSO.4.58.0703091006150.19494@cayley.ba.albany.edu>
+References: <5B833E900330354F9FDA984D06F9242801559A8C@ca-exchange.corp.pharsight.com> <Pine.GSO.4.58.0703091006150.19494@cayley.ba.albany.edu>
+Message-ID: <1173454600.17614.4.camel@musuko.uchicago.edu>
+
+On 金, 2007-03-09 at 10:12 -0500, J. S. Gangolly wrote:
+> Hi all,
+> 
+> You can not get rid of such characters using any word processors
+> or text editors. 
+
+You sure can. In emacs: M-x replace-string<ENTER>C-q C-m<ENTER><ENTER>
+
+-- 
+Stuart Luppescu -=-=- slu <AT> ccsr <DOT> uchicago <DOT> edu
+CCSR at U of C ,.;-*^*-;.,  ccsr.uchicago.edu
+     (^_^)/    才文と智奈美の父
+Thank God I'm an atheist!
+
+smime.p7s
+
+Description: S/MIME cryptographic signature
+
+From slapfish17 at hotmail.com  Fri Mar  9 16:59:40 2007
+From: slapfish17 at hotmail.com (Dimitris Tambakopoulos)
+Date: Fri, 09 Mar 2007 16:59:40 +0000
+Subject: discriminate groups of data
+Message-ID: <BAY135-F80B831993835AD80C1B18D3780@phx.gbl>
+
+Hi everyone...
+
+I need desperately some serious help here...
+and please forgive me for my English in advance.
+
+I have a database of 4 quantities measured from a large number of
+samples originating from different groups.
+I'm giving the above figure..
+
+sample(1) from group(1)     quantity1 quantity2 quantity3 quantity4
+...
+sample(i) from group(1)     q1     q2     q3     q4
+
+sample(1) from group(2)     q1     q2     q3     q4
+...
+sample(i) from group(2)     q1     q2     q3     q4
+
+sample(1) from group(i)     q1     q2     q3     q4
+...
+sample(i) from group(i)        q1     q2     q3     q4
+
+hope this clears things up...
+
+I'm trying to discriminate the above groups as much as I can using the 4
+quantities above in a 2D plot.
+I can take a pleasant discrimination by plotting a q1-q2 scatter plot,
+but I have some overlaps that I would like to be eliminated.
+
+Is there a way to (pre)set the groups and calculate the new x and y
+(function of q1, q2, q3 and q4),
+which maximize the discrimination of the groups in a scatter plot?
+
+Please note that I'm not looking for the cluster analysis.
+I already know which are the groups and I would like to plot them
+together and discriminated.
+
+Thanks in advance
+Dimitris
+
+_________________________________________________________________
+Find what you need at prices you?ll love. Compare products and save at MSN® 
+Shopping. 
+http://shopping.msn.com/default/shp/?ptnrid=37,ptnrdata=24102&tcode=T001MSN20A0701
+
+From gangolly at csc.albany.edu  Fri Mar  9 17:05:01 2007
+From: gangolly at csc.albany.edu (J. S. Gangolly)
+Date: Fri, 09 Mar 2007 12:05:01 -0500
+Subject: Re: Scanning a line for a carriage return
+In-Reply-To: <004101c76260$8cb7d9b0$3462cfcd@cardio.on.ca>
+References: <5B833E900330354F9FDA984D06F9242801559A8C@ca-exchange.corp.pharsight.com> <Pine.GSO.4.58.0703091006150.19494@cayley.ba.albany.edu> <004101c76260$8cb7d9b0$3462cfcd@cardio.on.ca>
+Message-ID: <Pine.GSO.4.58.0703091200400.19655@cayley.ba.albany.edu>
+
+Dear Rizwan,
+
+The octal code for nextline is 012 and for carriage return
+it is 015. To remove the characters using tr, you would
+specify these with a backslash character (\012\015).
+
+A paragraph as generally understood is simply a sequence
+of two such characters. Since Microsoft uses aproprietary
+storage format, I haven't a clue what a paragraph (or a
+nextline for that metter) means.
+
+Jagdish
+
+On Fri, 9 Mar 2007, Rizwan Afzal wrote:
+
+> Dear Jagdish;
+> Your mail surprises me, I thought carriage return was same as paragraph mark
+> in MSword and I replace that all the time with a character of my choice. May
+> be I didn't understand the problem.
+>
+> Rizwan
+>
+> ----- Original Message -----
+> From: "J. S. Gangolly" <gangolly at csc.albany.edu>
+> To: "Andreas Krause" <akrause at Pharsight.com>
+> Cc: "Walter R. Paczkowski" <dataanalytics at earthlink.net>;
+> <s-news at lists.biostat.wustl.edu>
+> Sent: Friday, March 09, 2007 10:12 AM
+> Subject: Re: [S] Scanning a line for a carriage return
+>
+>
+> > Hi all,
+> >
+> > You can not get rid of such characters using any word processors
+> > or text editors. There are two ways you can deal with the problem.
+> >
+> > The first is to use the character editor such as tr in unix.
+> > You delete the character you want deleted by specifying their
+> > octal code. I always keep a character translation table
+> > (ascii-hexadecimal-octal...) on my desk. If you are a
+> > Microsoftie, you can install cygwin that gives you all
+> > unix tools including tr.
+> >
+> > The second method, is to  use hex editors, but this,
+> > in my humble opinion, is an overkill.
+> >
+> > Jagdish
+> > --
+> > Jagdish S. Gangolly, (j.gangolly at albany.edu)
+> > Chairperson, Department of Accounting & Law, School of Business
+> > Director, PhD Program in Information Science,
+> > College of Computing & Information
+> > State University of New York at Albany, Albany, NY 12222.
+> > Phone: (518) 442-4949
+> > URL: http://www.albany.edu/acc/gangolly
+> >
+> > "We must remember that there are many men who, without being
+> > productive, are anxious to say something important, and the
+> > results are most curious." --Goethe
+> >
+> >
+> > On Fri, 9 Mar 2007, Andreas Krause wrote:
+> >> Hi,
+> >>
+> >> the easy way out is to get rid of the carriage returns.
+> >> Under most unix distributions, you would have a tool like dos2unix.
+> >> (Note: do you want the Ctrl-Ms to insert a new line or not? dos2unix
+> >> adds new lines)
+> >> Under Windows, wordpad is generally better than notepad in handling CR
+> >> characters (Ctrl-M).
+> >> You should be able to just open the file with wordpad, ctrl-a to select
+> >> all, ctrl-c for copy, and paste into a new document.
+> >> Many editors can also do the job in that you can specify what type of
+> >> file to save (DOS, Unix) or get rid of the characters (see emacs or vi).
+> >> Does this help?
+> >> Alternatively, see if importData instead of read.table does the job.
+> >>
+> >>   Andreas Krause
+> >>
+> >> -----
+> >> Andreas Krause, PhD
+> >> Pharsight Corporation
+> >> Strategic Consulting Services
+> >> http://www.pharsight.com/
+> >>
+> >> Phone:  +41-61-481 39 74
+> >> Fax:            +41-61-481 39 78
+> >> Cell:   +41-76-324 75 54
+> >>
+> >>
+> >>
+> >> ________________________________
+> >>
+> >> From: s-news-owner at lists.biostat.wustl.edu
+> >> [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Walter R.
+> >> Paczkowski
+> >> Sent: Thursday, March 08, 2007 3:03 AM
+> >> To: s-news at lists.biostat.wustl.edu
+> >> Subject: [S] Scanning a line for a carriage return
+> >>
+> >>
+> >> Hi,
+> >>
+> >> I'm hoping someone has a suggestion for handling a simple problem.  A
+> >> client gave me a comma separated value file (call it x.csv) that has an
+> >> id and name and address for about 25,000 people (25,000 records).  I
+> >> used read.table to read it, but then discovered that there are stray
+> >> carriage returns on several records.  This plays havoc with read.table
+> >> since it starts a new input line when it sees the carriage return.  In
+> >> short, the read is all wrong.
+> >>
+> >> I thought I could write a simple function to parse a line and write it
+> >> back out, character by character.  If a carriage return is found, it
+> >> would simply be ignored on the writing back out part.  But how do I
+> >> identify a carriage return?  What is the code or symbol?  Is there any
+> >> easier way to rid the file of carriage returns in the middle of the
+> >> input lines?
+> >>
+> >> Any help is appreciated.
+> >>
+> >> Walt Paczkowski
+> >>
+> >>
+> >>
+> >> _________________________________
+> >>
+> >> Walter R. Paczkowski, Ph.D.
+> >> Data Analytics Corp.
+> >> 44 Hamilton Lane
+> >> Plainsboro, NJ  08536
+> >> (V) 609-936-8999
+> >> (F) 609-936-3733
+> >>
+> >>
+> >>
+> >
+> > --
+> > Jagdish S. Gangolly, Associate Professor (j.gangolly at albany.edu)
+> > Chairperson, Department of Accounting & Law, School of Business
+> > Director, PhD Program in Information Science,
+> > College of Computing & Information
+> > State University of New York at Albany, Albany, NY 12222.
+> > Phone: (518) 442-4949
+> > URL: http://www.albany.edu/acc/gangolly
+> >
+> > "We must remember that there are many men who, without being
+> > productive, are anxious to say something important, and the
+> > results are most curious." --Goethe
+> >
+> > --------------------------------------------------------------------
+> > This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> > unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> > the BODY of the message:  unsubscribe s-news
+> >
+>
+>
+
+--
+Jagdish S. Gangolly, Associate Professor (j.gangolly at albany.edu)
+Chairperson, Department of Accounting & Law, School of Business
+Director, PhD Program in Information Science,
+College of Computing & Information
+State University of New York at Albany, Albany, NY 12222.
+Phone: (518) 442-4949
+URL: http://www.albany.edu/acc/gangolly
+
+"We must remember that there are many men who, without being
+productive, are anxious to say something important, and the
+results are most curious." --Goethe
+
+From gangolly at csc.albany.edu  Fri Mar  9 17:10:46 2007
+From: gangolly at csc.albany.edu (J. S. Gangolly)
+Date: Fri, 09 Mar 2007 12:10:46 -0500
+Subject: Re: Scanning a line for a carriage return
+In-Reply-To: <1173454600.17614.4.camel@musuko.uchicago.edu>
+References: <5B833E900330354F9FDA984D06F9242801559A8C@ca-exchange.corp.pharsight.com> <Pine.GSO.4.58.0703091006150.19494@cayley.ba.albany.edu> <1173454600.17614.4.camel@musuko.uchicago.edu>
+Message-ID: <Pine.GSO.4.58.0703091205130.19655@cayley.ba.albany.edu>
+
+Sure you can replace just about anything coded in ascii
+using replace-string in emacs. Unfortunately, many of these
+control characters are not encoded in ascii. That is why
+you don't see them in text editors. In emacs, SR-NL shows
+up as ^M for example. However, I don't think you can
+remove them, since ^M in ascii is semantically not the same
+as Meta-M or Ctrl-M in the encoding.
+
+Jagdish
+
+On Fri, 9 Mar 2007, Stuart Luppescu wrote:
+
+> On 金, 2007-03-09 at 10:12 -0500, J. S. Gangolly wrote:
+> > Hi all,
+> >
+> > You can not get rid of such characters using any word processors
+> > or text editors.
+>
+> You sure can. In emacs: M-x replace-string<ENTER>C-q C-m<ENTER><ENTER>
+>
+> --
+> Stuart Luppescu -=-=- slu <AT> ccsr <DOT> uchicago <DOT> edu
+> CCSR at U of C ,.;-*^*-;.,  ccsr.uchicago.edu
+>      (^_^)/    才文と智奈美の父
+> Thank God I'm an atheist!
+>
+>
+
+--
+Jagdish S. Gangolly, Associate Professor (j.gangolly at albany.edu)
+Chairperson, Department of Accounting & Law, School of Business
+Director, PhD Program in Information Science,
+College of Computing & Information
+State University of New York at Albany, Albany, NY 12222.
+Phone: (518) 442-4949
+URL: http://www.albany.edu/acc/gangolly
+
+"We must remember that there are many men who, without being
+productive, are anxious to say something important, and the
+results are most curious." --Goethe
+
+From christos at nuverabio.com  Fri Mar  9 17:14:30 2007
+From: christos at nuverabio.com (Christos Hatzis)
+Date: Fri, 09 Mar 2007 12:14:30 -0500
+Subject: Re: discriminate groups of data
+In-Reply-To: <BAY135-F80B831993835AD80C1B18D3780@phx.gbl>
+References: <BAY135-F80B831993835AD80C1B18D3780@phx.gbl>
+Message-ID: <004a01c7626e$667cfba0$0e010a0a@headquarters.silicoinsights>
+
+Dimitris,
+
+You need to look into multidimensional scaling (MDS).  If you have the MASS4
+book handy (Venables & Ripley) take a look at Chapter 11.  There is a lot of
+background materials and several examples.
+
+You can also check out the CRAN task view on Multivariate Statistics under
+"Principal coordinates / scaling methods" for some additional pointers.
+
+Good luck!
+-Christos
+
+Christos Hatzis, Ph.D.
+Nuvera Biosciences, Inc.
+400 West Cummings Park
+Suite 5350
+Woburn, MA 01801
+Tel: 781-938-3830
+www.nuverabio.com
+ 
+> -----Original Message-----
+> From: s-news-owner at lists.biostat.wustl.edu 
+> [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of 
+> Dimitris Tambakopoulos
+> Sent: Friday, March 09, 2007 12:00 PM
+> To: s-news at lists.biostat.wustl.edu
+> Subject: [S] discriminate groups of data
+> 
+> Hi everyone...
+> 
+> I need desperately some serious help here...
+> and please forgive me for my English in advance.
+> 
+> I have a database of 4 quantities measured from a large 
+> number of samples originating from different groups.
+> I'm giving the above figure..
+> 
+> sample(1) from group(1)     quantity1 quantity2 quantity3 quantity4
+> ...
+> sample(i) from group(1)     q1     q2     q3     q4
+> 
+> sample(1) from group(2)     q1     q2     q3     q4
+> ...
+> sample(i) from group(2)     q1     q2     q3     q4
+> 
+> sample(1) from group(i)     q1     q2     q3     q4
+> ...
+> sample(i) from group(i)        q1     q2     q3     q4
+> 
+> hope this clears things up...
+> 
+> I'm trying to discriminate the above groups as much as I can 
+> using the 4 quantities above in a 2D plot.
+> I can take a pleasant discrimination by plotting a q1-q2 
+> scatter plot, but I have some overlaps that I would like to 
+> be eliminated.
+> 
+> Is there a way to (pre)set the groups and calculate the new x 
+> and y (function of q1, q2, q3 and q4), which maximize the 
+> discrimination of the groups in a scatter plot?
+> 
+> Please note that I'm not looking for the cluster analysis.
+> I already know which are the groups and I would like to plot 
+> them together and discriminated.
+> 
+> Thanks in advance
+> Dimitris
+> 
+> _________________________________________________________________
+> Find what you need at prices you'll love. Compare products 
+> and save at MSNR Shopping. 
+> http://shopping.msn.com/default/shp/?ptnrid=37,ptnrdata=24102&
+> tcode=T001MSN20A0701
+> 
+> --------------------------------------------------------------------
+> This message was distributed by 
+> s-news at lists.biostat.wustl.edu.  To unsubscribe send e-mail 
+> to s-news-request at lists.biostat.wustl.edu with the BODY of 
+> the message:  unsubscribe s-news
+> 
+> 
+
+From Andrew.Loach at icbc.com  Fri Mar  9 17:25:05 2007
+From: Andrew.Loach at icbc.com (Loach, Andrew)
+Date: Fri, 09 Mar 2007 09:25:05 -0800
+Subject: Re: Scanning a line for a carriage return
+In-Reply-To: <Pine.GSO.4.58.0703091205130.19655@cayley.ba.albany.edu>
+References: <Pine.GSO.4.58.0703091205130.19655@cayley.ba.albany.edu>
+Message-ID: <B818EBFE412CF44A9DB921B28C17789F0164A626@EX01VS299.icbc.net>
+
+As a workaround, depending on how large the dataset is and how many
+stray CRs you have, you might be better off to import the data into a
+spreadsheet program and clean it manually (search for blanks in the last
+column, move stranded data up from the next line).
+
+Alternately, although this may be grasping at straws since I've never
+tried it, you might be able to load and concatenate the data as a string
+and then use the regexp functions such as sub() to remove the early CRs.
+You'd then need to process the string into your desired data structure.
+
+Andrew
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of J. S.
+Gangolly
+Sent: March 9, 2007 9:11 AM
+To: Stuart Luppescu
+Cc: s-news at lists.biostat.wustl.edu
+Subject: Re: [S] Scanning a line for a carriage return
+
+Sure you can replace just about anything coded in ascii
+using replace-string in emacs. Unfortunately, many of these
+control characters are not encoded in ascii. That is why
+you don't see them in text editors. In emacs, SR-NL shows
+up as ^M for example. However, I don't think you can
+remove them, since ^M in ascii is semantically not the same
+as Meta-M or Ctrl-M in the encoding.
+
+Jagdish
+
+From gangolly at csc.albany.edu  Fri Mar  9 18:42:45 2007
+From: gangolly at csc.albany.edu (J. S. Gangolly)
+Date: Fri, 09 Mar 2007 13:42:45 -0500
+Subject: Re: Scanning a line for a carriage return
+In-Reply-To: <1173461880.17614.11.camel@musuko.uchicago.edu>
+References: <5B833E900330354F9FDA984D06F9242801559A8C@ca-exchange.corp.pharsight.com> <Pine.GSO.4.58.0703091006150.19494@cayley.ba.albany.edu> <1173454600.17614.4.camel@musuko.uchicago.edu> <Pine.GSO.4.58.0703091205130.19655@cayley.ba.albany.edu> <1173461880.17614.11.camel@musuko.uchicago.edu>
+Message-ID: <Pine.GSO.4.58.0703091340540.19789@cayley.ba.albany.edu>
+
+Thank you for the trick. I should have thought about it.
+It will make my life a lot simpler.
+
+Thank you again.
+
+Jagdish
+
+On Fri, 9 Mar 2007, Stuart Luppescu wrote:
+
+> On 金, 2007-03-09 at 12:10 -0500, J. S. Gangolly wrote:
+> > Sure you can replace just about anything coded in ascii
+> > using replace-string in emacs. Unfortunately, many of these
+> > control characters are not encoded in ascii. That is why
+> > you don't see them in text editors. In emacs, SR-NL shows
+> > up as ^M for example. However, I don't think you can
+> > remove them, since ^M in ascii is semantically not the same
+> > as Meta-M or Ctrl-M in the encoding.
+>
+> Right. That's why you use the quote character to indicate an actual ^M.
+> As in my example:
+>
+> M-x replace-string<ENTER>C-q C-m<ENTER><ENTER>
+>
+> C-q (^Q) quotes the next character so it enters an actual ^M. If you
+> don't do that, emacs interprets the C-m (^M) the same as <ENTER>.
+> --
+> Stuart Luppescu -=-=- slu <AT> ccsr <DOT> uchicago <DOT> edu
+> CCSR at U of C ,.;-*^*-;.,  ccsr.uchicago.edu
+>      (^_^)/    才文と智奈美の父
+> Thank God I'm an atheist!
+>
+
+--
+Jagdish S. Gangolly, Associate Professor (j.gangolly at albany.edu)
+Chairperson, Department of Accounting & Law, School of Business
+Director, PhD Program in Information Science,
+College of Computing & Information
+State University of New York at Albany, Albany, NY 12222.
+Phone: (518) 442-4949
+URL: http://www.albany.edu/acc/gangolly
+
+"We must remember that there are many men who, without being
+productive, are anxious to say something important, and the
+results are most curious." --Goethe
+
+From jreid at myriad.com  Fri Mar  9 19:04:41 2007
+From: jreid at myriad.com (Julia Reid)
+Date: Fri, 09 Mar 2007 12:04:41 -0700
+Subject: export.graph
+Message-ID: <EAFBFB8381BB94488D2F3F786FD9CEF413A3FA@EXCHANGE.mygn.myriad.com>
+
+I am using Splus v 7.0.3 for Linux. I would like to use the export.graph function described in the Programmer's Guide but it is not recognized on the command line. The other related functions (exportData and data.dump) are recognized. I hope there is an easy explanation. If not, does anyone know how to export a graph in another format besides postscript, such as a png or jpg image?
+
+Many thanks to all.
+
+Julia
+
+From wht_crl at yahoo.com  Fri Mar  9 22:07:41 2007
+From: wht_crl at yahoo.com (carol white)
+Date: Fri, 09 Mar 2007 14:07:41 -0800
+Subject: p-value of survdiff
+Message-ID: <736461.28173.qm@web62010.mail.re1.yahoo.com>
+
+Dear All,
+It seems that p-value generated by survdiff is too low for my plot. for such KM curves that cross each other (see attached), I didn't expect to get p-val = 0.03 (see result of survdiff below). Could you see where the discrepancy comes from?
+
+thanks
+---------------------------------------------------------------------------------------------------------- 
+>  metInd = which (ds[,3] == 0)
+> print (survdiff(Surv (dsSurv[metInd], ds[metInd,4])~ifelse(pred.ds[metInd] < 0, 0, 1)))
+Call:
+survdiff(formula = Surv(dsSurv[metInd], ds[metInd, 4]) ~
+    ifelse(pred.ds[metInd] < 0, 0, 1))
+
+                                          N Observed Expected (O-E)^2/E
+ifelse(pred.ds[metInd] < 0, 0, 1)=0
+ 125        1     3.22      1.53
+ifelse(pred.ds[metInd] < 0, 0, 1)=1  69        4     1.78      2.78
+                                        (O-E)^2/V
+ifelse(pred.ds[metInd] < 0, 0, 1)=0      4.31
+ifelse(pred.ds[metInd] < 0, 0, 1)=1      4.31
+
+ Chisq= 4.3  on 1 degrees of freedom, p= 0.0379
+> plot (survfit(Surv (dsSurv[metInd], ds[metInd,4])~ifelse(pred.ds[metInd] < 0, 0, 1)))
+
+   
+
+Sucker-punch spam with award-winning protection.
+ Try the free Yahoo! Mail Beta.
+
+From s-luppescu at uchicago.edu  Fri Mar  9 17:38:00 2007
+From: s-luppescu at uchicago.edu (Stuart Luppescu)
+Date: Fri, 09 Mar 2007 11:38:00 -0600
+Subject: Re: Scanning a line for a carriage return
+In-Reply-To: <Pine.GSO.4.58.0703091205130.19655@cayley.ba.albany.edu>
+References: <5B833E900330354F9FDA984D06F9242801559A8C@ca-exchange.corp.pharsight.com> <Pine.GSO.4.58.0703091006150.19494@cayley.ba.albany.edu> <1173454600.17614.4.camel@musuko.uchicago.edu> <Pine.GSO.4.58.0703091205130.19655@cayley.ba.albany.edu>
+Message-ID: <1173461880.17614.11.camel@musuko.uchicago.edu>
+
+On 金, 2007-03-09 at 12:10 -0500, J. S. Gangolly wrote:
+> Sure you can replace just about anything coded in ascii
+> using replace-string in emacs. Unfortunately, many of these
+> control characters are not encoded in ascii. That is why
+> you don't see them in text editors. In emacs, SR-NL shows
+> up as ^M for example. However, I don't think you can
+> remove them, since ^M in ascii is semantically not the same
+> as Meta-M or Ctrl-M in the encoding. 
+
+Right. That's why you use the quote character to indicate an actual ^M.
+As in my example:
+
+M-x replace-string<ENTER>C-q C-m<ENTER><ENTER>
+
+C-q (^Q) quotes the next character so it enters an actual ^M. If you
+don't do that, emacs interprets the C-m (^M) the same as <ENTER>.
+-- 
+Stuart Luppescu -=-=- slu <AT> ccsr <DOT> uchicago <DOT> edu
+CCSR at U of C ,.;-*^*-;.,  ccsr.uchicago.edu
+     (^_^)/    才文と智奈美の父
+Thank God I'm an atheist!
+
+smime.p7s
+
+Description: S/MIME cryptographic signature
+
+From devens8765 at yahoo.com  Sun Mar 11 15:28:11 2007
+From: devens8765 at yahoo.com (Dave Evens)
+Date: Sun, 11 Mar 2007 08:28:11 -0700
+Subject: trellis plots question
+Message-ID: <71567.71571.qm@web58310.mail.re3.yahoo.com>
+
+Dear members, 
+
+I would like to produce a multi-histogram plot of some
+data such that each sub-plot has a mark in the heading
+bar to represent the mean,
+
+For example, I have the following data 
+
+>x <- matrix(c(runif(15), sample(4, 15, T)), 15) 
+
+plot the data 
+
+>histogram(~x[,1]|as.factor(x[,2]), layout=c(2,2)) 
+
+and the means are
+
+>tapply(x[,1], x[,2], mean)
+
+         1        2         3         4 
+ 0.6384744 0.677662 0.5630317 0.5473149
+
+I want to put this mean data into each sub-plot such
+that the top (heading) panel has a mark in the correct
+position on the x-axis to represent the mean. Is this
+possible?
+
+Many thanks in advance for your help.
+
+Regards,
+Dave
+
+ 
+____________________________________________________________________________________
+Bored stiff? Loosen up... 
+Download and play hundreds of games for free on Yahoo! Games.
+http://games.yahoo.com/games/front
+
+From mbauer at usc.edu  Sun Mar 11 21:35:56 2007
+From: mbauer at usc.edu (Madeline Bauer)
+Date: Sun, 11 Mar 2007 13:35:56 -0800
+Subject: ASA Southern California Chapter Applied Statistics Workshop
+Message-ID: <5.1.0.14.2.20070311133422.0247afc0@email.usc.edu>
+
+The Southern California Chapter of the American Statistical Association
+invites you to attend the 26th annual Applied Statistics Workshop on
+Saturday March 31, 2007 at the University of California Los
+Angeles.  The topic is "Advances in Latent Variable
+Modeling" presented by Professor Bengt Muthén, University of
+California, Los Angeles. For more information, go to
+www.sc-asa.org
+
+===
+
+Madeline Bauer, Ph.D.       
+University of Southern California
+
+Keck School of Medicine (Infectious Diseases)
+
+IRD Room 620 (MC9520), 2020 Zonal Ave, Los Angeles 90033
+
+(323) 226-2775 [Voice] (FAX by appointment ;-)
+
+mbauer at usc.edu  [Fastest communication method] 
+
+From Rich at Mango-Solutions.com  Mon Mar 12 09:30:11 2007
+From: Rich at Mango-Solutions.com
+Date: Mon, 12 Mar 2007 09:30:11 +0000
+Subject: Re: trellis plots question
+In-Reply-To: <71567.71571.qm@web58310.mail.re3.yahoo.com>
+References: <71567.71571.qm@web58310.mail.re3.yahoo.com>
+Message-ID: <20070312093006.C41501371F2@mailgate.biostat.wustl.edu>
+
+Hi Dave,
+
+You could do this in the panel function.  Unfortunately, the panel.histogram
+function doesn't accept "the data", so we have to use a few ugly S tricks:
+
+> myDf <- data.frame(X = sample(LETTERS[1:4], 100, T), Y = rnorm(100),
+stringsAsFactors = F)
+> panel.mango <- function(x, y, col = trellis.par.get("bar.fill")$col,
+border = 1, myMeans = NULL, ...)
+{
+        panel.histogram(x, y, col, border, ...)
+        whichCell <- get("cell", frame = sys.parent())
+        abline(v = myMeans[whichCell], col = 8, lwd = 3)
+}
+> histogram( ~ Y | X, data = myDf, as.table = T, panel = panel.mango, strip
+= function(...) strip.default(..., style = 1), myMeans = tapply(myDf$Y,
+myDf$X, mean))
+
+In the above, please note that it is vital the means are passed in in the
+correct order (told you it was ugly).
+
+Quick alternative: you could print the mean in each header by creating a new
+trellis variable containing the means you want.  Here is a quick and dirty
+piece of code ...
+
+> # Create the data
+> myDf <- data.frame(X=sample(LETTERS[1:4], 100, T), Y=rnorm(100),
+stringsAsFactors=F)
+
+> # Current version of the plot
+> histogram(~Y|X, data=myDf, as.table=T, strip=function(...)
+strip.default(..., style=1))
+
+> # New version - create "newX" trellis variable
+> xMeans <- round(tapply(myDf$Y, myDf$X, mean), 2)
+> myDf$newX <- paste(myDf$X, " (Mean =", xMeans[myDf$X], ")", sep="")
+> histogram(~Y|newX, data=myDf, as.table=T, strip=function(...)
+strip.default(..., style=1))
+
+Many thanks,
+Rich.
+
+mangosolutions
+data analysis that delivers
+
+-----Original Message-----
+From: Dave Evens [mailto:devens8765 at yahoo.com] 
+Sent: 11 March 2007 15:28
+To: s-news at lists.biostat.wustl.edu
+Subject: [S] trellis plots question
+
+Dear members, 
+
+I would like to produce a multi-histogram plot of some
+data such that each sub-plot has a mark in the heading
+bar to represent the mean,
+
+For example, I have the following data 
+
+>x <- matrix(c(runif(15), sample(4, 15, T)), 15) 
+
+plot the data 
+
+>histogram(~x[,1]|as.factor(x[,2]), layout=c(2,2)) 
+
+and the means are
+
+>tapply(x[,1], x[,2], mean)
+
+         1        2         3         4 
+ 0.6384744 0.677662 0.5630317 0.5473149
+
+I want to put this mean data into each sub-plot such
+that the top (heading) panel has a mark in the correct
+position on the x-axis to represent the mean. Is this
+possible?
+
+Many thanks in advance for your help.
+
+Regards,
+Dave
+
+ 
+____________________________________________________________________________
+________
+Bored stiff? Loosen up... 
+Download and play hundreds of games for free on Yahoo! Games.
+http://games.yahoo.com/games/front
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From tlumley at u.washington.edu  Mon Mar 12 14:37:44 2007
+From: tlumley at u.washington.edu (Thomas Lumley)
+Date: Mon, 12 Mar 2007 07:37:44 -0700
+Subject: Re: p-value of survdiff
+In-Reply-To: <736461.28173.qm@web62010.mail.re1.yahoo.com>
+References: <736461.28173.qm@web62010.mail.re1.yahoo.com>
+Message-ID: <Pine.LNX.4.64.0703120732540.19580@homer21.u.washington.edu>
+
+AFAICS the curves don't actually cross in your graph.
+
+You have 4 events in the smaller group and 1 in the larger group, 
+and a weakly significant p-value looks plausible to me. Of course, there's 
+no way for anyone to check without having the data.
+
+        -thomas
+
+On Fri, 9 Mar 2007, carol white wrote:
+
+> Dear All,
+> It seems that p-value generated by survdiff is too low for my plot. for such KM
+> curves that cross each other (see attached), I didn't expect to get p-val =
+> 0.03 (see result of survdiff below). Could you see where the discrepancy comes
+> from?
+>
+> thanks
+> ----------------------------------------------------------------------------------------------------------
+> >  metInd = which (ds[,3] == 0)
+> > print (survdiff(Surv (dsSurv[metInd], ds[metInd,4])~ifelse(pred.ds[metInd] < 0,
+> > 0, 1)))
+>
+> Call:
+> survdiff(formula = Surv(dsSurv[metInd], ds[metInd, 4]) ~
+>    ifelse(pred.ds[metInd] < 0, 0, 1))
+>
+>                                          N Observed Expected (O-E)^2/E
+> ifelse(pred.ds[metInd] < 0, 0, 1)=0 125        1     3.22      1.53
+> ifelse(pred.ds[metInd] < 0, 0, 1)=1  69        4     1.78      2.78
+>                                        (O-E)^2/V
+> ifelse(pred.ds[metInd] < 0, 0, 1)=0      4.31
+> ifelse(pred.ds[metInd] < 0, 0, 1)=1      4.31
+>
+> Chisq= 4.3  on 1 degrees of freedom, p= 0.0379
+> > plot (survfit(Surv (dsSurv[metInd], ds[metInd,4])~ifelse(pred.ds[metInd] < 0,
+> > 0, 1)))
+>
+>
+>
+>
+> ---------------------------------
+> Sucker-punch spam with award-winning protection.
+> Try the free Yahoo! Mail Beta.
+
+Thomas Lumley                   Assoc. Professor, Biostatistics
+tlumley at u.washington.edu        University of Washington, Seattle
+
+From jreid at myriad.com  Mon Mar 12 17:56:30 2007
+From: jreid at myriad.com (Julia Reid)
+Date: Mon, 12 Mar 2007 11:56:30 -0600
+Subject: Answers to export.graph question
+Message-ID: <45F5944E.7080802@myriad.com>
+
+Many thanks to
+everyone for responses to my question about how to export graphics in
+a  format other than postscript, using Splus v 7.0.3 for Linux.
+
+Chuck Taylor from
+Insightful suggested using the java.graph() function.
+
+First, be
+sure that you start up Splus using the “-j” option to
+enable Java. Then type help(java.graph, win=T).
+
+Simple example:
+
+java.graph(file=”test.png”,
+format=”PNG”)
+
+(“export.graph” is found only
+in S-PLUS for Windows)
+
+Another method suggested by Andreas Krause also works well.
+It does not offer as many format options as java.graph but does not
+require starting with the java option.
+
+I use
+dev.copy to create jpeg and png. Take a look at all available devices
+by entering
+
+?Devices
+
+Best regards,
+
+Julia
+
+From timh at insightful.com  Mon Mar 12 22:13:45 2007
+From: timh at insightful.com (Tim Hesterberg)
+Date: Mon, 12 Mar 2007 15:13:45 -0700
+Subject: Re: bootstrap tutorial
+In-Reply-To: <45E5589B.9020305@pburns.seanet.com>
+References: <45E5589B.9020305@pburns.seanet.com>
+Message-ID: <SEWINEXCH00q4gtopWd00000080@sewinexch00.insightful.com>
+
+Another introductory document is
+        "Bootstrap Methods and Permutation Tests"
+        http://bcs.whfreeman.com/ips5e/content/cat_080/pdf/moore14.pdf
+This focuses on the methods, not on particular software.
+
+There is an accompanying S+ library at
+        http://www.insightful.com/Hesterberg/bootstrap/IPSdata.zip
+that includes the datasets and code for the exercises.
+
+The document is written for introductory statistics students, but
+should be interesting to those who are more advanced.  For more info see
+http://www.insightful.com/Hesterberg/bootstrap/default.asp#Reference.introStat
+
+>There is now a tutorial on bootstrapping and other resampling
+>techniques at:
+>
+>http://www.burns-stat.com/pages/Tutor/bootstrap_resampling.html
+
+========================================================
+| Tim Hesterberg       Senior Research Scientist       |
+| timh at insightful.com  Insightful Corp.                |
+| (206)802-2319        1700 Westlake Ave. N, Suite 500 |
+| (206)283-8691 (fax)  Seattle, WA 98109-3044, U.S.A.  |
+|                      www.insightful.com/Hesterberg   |
+========================================================
+Download S+Resample from www.insightful.com/downloads/libraries
+
+Bootstrap Methods and Permutation Tests
+                May 21-22 Philadelphia, Oct 10-11 San Francisco.
+                2-3 May UK, 3-4 Oct UK.
+Workshop on resampling for teaching:
+                May 16 Ohio State 
+                http://www.causeweb.org/workshop/hesterberg/
+
+From timh at insightful.com  Tue Mar 13 00:54:37 2007
+From: timh at insightful.com (Tim Hesterberg)
+Date: Mon, 12 Mar 2007 17:54:37 -0700
+Subject: useR! 2007 --- Call for papers and posters
+Message-ID: <SEWINEXCH00NzPZrIky0000009b@sewinexch00.insightful.com>
+
+S Users and Developers,
+
+The first North American useR! will be held at Iowa State  
+University, Ames, Iowa, August 8-10, 2007. Information about the  
+meeting can be found at http://www.user2007.org/.
+
+We are now ready to accept paper and poster submissions.
+
+Papers are encouraged in all areas, but particular emphasis is  
+given to work describing newly created or improved R packages.  
+Papers will be refereed and a best paper/presentation award is  
+likely. Your full paper needs to be submitted by April 23, 5:00PM  
+CST, to be considered for the meeting.
+
+There will also be the opportunity to present your work as a poster  
+instead of a paper. Poster submissions will be in the form of an  
+abstract and needs to be submitted by June 30.
+
+Submit full papers, and poster abstracts, to submissions at user2007.org.
+
+useR! 2007 Program Committee
+user2007 at iastate.edu
+
+---------------------------
+Di Cook
+dicook at iastate.edu
+(sent on Di's behalf by Tim Hesterberg)
+
+From Kim.Elmore at noaa.gov  Tue Mar 13 22:01:55 2007
+From: Kim.Elmore at noaa.gov (Kim Elmore)
+Date: Tue, 13 Mar 2007 17:01:55 -0500
+Subject: SVMs in S-Plus
+Message-ID: <QUOV08RD83P8J902YS@hedwig.nssl.noaa.gov>
+
+I've looked at libsvm as a way to include SVMs into S-Plus. I have R 
+and successfully installed the e1701 package that contains libsvm 
+within the R environment without a problem. I'd like to also have 
+this available in S-Plus, but I can't seem to figure out how to 
+generate a library for S-Plus, nor have I found one that anyone else 
+has made. There may be a good reason for this, and I'm happy to learn 
+it. In the interim, what steps do I need to generate a library from 
+the libsvm software that I can use in S-Plus?
+
+Kim Elmore
+                          Kim Elmore, Ph.D.
+                       University of Oklahoma
+        Cooperative Institute for Mesoscale Meteorological Studies
+"All of weather is divided into three parts: Yes, No, and Maybe. The
+greatest of these is Maybe" The original Latin appears to be garbled.
+
+From ultisol at gmail.com  Wed Mar 14 20:48:56 2007
+From: ultisol at gmail.com (Neung-Hwan Oh)
+Date: Wed, 14 Mar 2007 16:48:56 -0400
+Subject: group by
+Message-ID: <67249fb50703141348g56ff34d6r84df58ffc49738ab@mail.gmail.com>
+
+Hello,
+
+ 
+
+How can you calculate the following example in s-plus?   In Access, it is relatively easy with "Group By" and I am wondering whether there is a similar function that I missed in S-Plus.
+
+ 
+
+"From this table" 
+
+site.no date time value 
+
+1 1989/04/27 12:00   1.0
+
+2 1975/10/01 19:00   2.0
+
+2 1975/10/01 20:00   4.0
+
+3 1993/04/10 09:00   3.0
+
+3 1993/04/10 12:00   6.0
+
+3 1993/04/10 15:00   9.0
+
+ 
+
+"To this (averages per date per site)" + (count column?)
+
+1 1989/04/27 12:00 1.0  (1.0)
+
+2 1975/10/01 19:30 3.0  (2.0)
+
+3 1993/04/10 12:00 6.0  (3.0)
+
+ 
+
+Many thanks!
+
+NH
+
+From liuwensui at gmail.com  Wed Mar 14 21:02:26 2007
+From: liuwensui at gmail.com (Wensui Liu)
+Date: Wed, 14 Mar 2007 17:02:26 -0400
+Subject: Re: group by
+In-Reply-To: <67249fb50703141348g56ff34d6r84df58ffc49738ab@mail.gmail.com>
+References: <67249fb50703141348g56ff34d6r84df58ffc49738ab@mail.gmail.com>
+Message-ID: <1115a2b00703141402w71cf7452l577310d6a12bf02b@mail.gmail.com>
+
+I am not sure if in Splus, there is a nice function like tapply() in R or not.
+
+On 3/14/07, Neung-Hwan Oh <ultisol at gmail.com> wrote:
+> Hello,
+>
+> How can you calculate the following example in s-plus?   In Access, it is
+> relatively easy with "Group By" and I am wondering whether there is a
+> similar function that I missed in S-Plus.
+>
+>
+>
+> "From this table"
+>
+> site.no date time value
+>
+> 1 1989/04/27 12:00   1.0
+>
+> 2 1975/10/01 19:00   2.0
+>
+> 2 1975/10/01 20:00   4.0
+>
+> 3 1993/04/10 09:00   3.0
+>
+> 3 1993/04/10 12:00   6.0
+>
+> 3 1993/04/10 15:00   9.0
+>
+>
+>
+> "To this (averages per date per site)" + (count column?)
+>
+> 1 1989/04/27 12:00 1.0  (1.0)
+>
+> 2 1975/10/01 19:30 3.0  (2.0)
+>
+> 3 1993/04/10 12:00 6.0  (3.0)
+>
+>
+>
+> Many thanks!
+>
+> NH
+
+--
+WenSui Liu
+A lousy statistician who happens to know a little programming
+(http://spaces.msn.com/statcompute/blog)
+
+From wht_crl at yahoo.com  Wed Mar 14 21:03:32 2007
+From: wht_crl at yahoo.com (carol white)
+Date: Wed, 14 Mar 2007 14:03:32 -0700
+Subject: validation of cox coeff estimation by patients scores
+Message-ID: <636508.37641.qm@web62009.mail.re1.yahoo.com>
+
+Hi all,
+if the patient risk score is defined as the sum of the product of gene _expression_ and  coefficients of cox estimation, then negative score means low risk score and positive score a high score, respectively. then if the low score kaplan meier plot is shorter than high score plot, could it be assumed that the cox coeff were not estimated correctly and patients were mis-stratified? the same question if decreasing steps (for died patients) are observed in low risk plot and/or the high risk plot remains flat or stable instead of decreasing.
+
+Look forward to your feedback
+  
+
+It's here! Your new message!
+Get
+ new email alerts with the free Yahoo! Toolbar.
+
+From Kim.Elmore at noaa.gov  Wed Mar 14 21:07:10 2007
+From: Kim.Elmore at noaa.gov (Kim Elmore)
+Date: Wed, 14 Mar 2007 16:07:10 -0500
+Subject: Re: SVMs in S-Plus
+In-Reply-To: <QUOV08RD83P8J902YS@hedwig.nssl.noaa.gov>
+References: <QUOV08RD83P8J902YS@hedwig.nssl.noaa.gov>
+Message-ID: <45F863FE.4010003@noaa.gov>
+
+I should add that I'm using S-Plus 7 under Windows XP.
+
+Kim Elmore
+
+Kim Elmore wrote:
+> I've looked at libsvm as a way to include SVMs into S-Plus. I have R
+> and successfully installed the e1701 package that contains libsvm
+> within the R environment without a problem. I'd like to also have this
+> available in S-Plus, but I can't seem to figure out how to generate a
+> library for S-Plus, nor have I found one that anyone else has made.
+> There may be a good reason for this, and I'm happy to learn it. In the
+> interim, what steps do I need to generate a library from the libsvm
+> software that I can use in S-Plus?
+>
+>
+> Kim Elmore
+>                           Kim Elmore, Ph.D.
+>                        University of Oklahoma
+>         Cooperative Institute for Mesoscale Meteorological Studies
+> "All of weather is divided into three parts: Yes, No, and Maybe. The
+> greatest of these is Maybe" The original Latin appears to be garbled.
+>
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+
+From Kim.Elmore at noaa.gov  Wed Mar 14 21:08:52 2007
+From: Kim.Elmore at noaa.gov (Kim Elmore)
+Date: Wed, 14 Mar 2007 16:08:52 -0500
+Subject: Re: SVMs in S-Plus
+In-Reply-To: <QUOV08RD83P8J902YS@hedwig.nssl.noaa.gov>
+References: <QUOV08RD83P8J902YS@hedwig.nssl.noaa.gov>
+Message-ID: <EFAP08RQH06OJC02NO@hedwig.nssl.noaa.gov>
+
+An item of clarification: I'm using S-Plus 7 under Windows XP.
+
+Kim Elmore
+
+At 05:01 PM 3/13/2007, you wrote:
+> I've looked at libsvm as a way to include SVMs into S-Plus. I have R
+> and successfully installed the e1701 package that contains libsvm
+> within the R environment without a problem. I'd like to also have
+> this available in S-Plus, but I can't seem to figure out how to
+> generate a library for S-Plus, nor have I found one that anyone else
+> has made. There may be a good reason for this, and I'm happy to
+> learn it. In the interim, what steps do I need to generate a library
+> from the libsvm software that I can use in S-Plus?
+>
+>
+> Kim Elmore
+>                           Kim Elmore, Ph.D.
+>                        University of Oklahoma
+>         Cooperative Institute for Mesoscale Meteorological Studies
+> "All of weather is divided into three parts: Yes, No, and Maybe. The
+> greatest of these is Maybe" The original Latin appears to be garbled.
+>
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+
+                          Kim Elmore, Ph.D.
+                       University of Oklahoma
+        Cooperative Institute for Mesoscale Meteorological Studies
+"All of weather is divided into three parts: Yes, No, and Maybe. The
+greatest of these is Maybe" The original Latin appears to be garbled.
+
+From Rich at Mango-Solutions.com  Wed Mar 14 21:14:20 2007
+From: Rich at Mango-Solutions.com
+Date: Wed, 14 Mar 2007 21:14:20 +0000
+Subject: Re: group by
+In-Reply-To: <1115a2b00703141402w71cf7452l577310d6a12bf02b@mail.gmail.com>
+References: <1115a2b00703141402w71cf7452l577310d6a12bf02b@mail.gmail.com>
+Message-ID: <20070314211413.E237E137456@mailgate.biostat.wustl.edu>
+
+Yes ... you can use tapply in S.  For the structure you're using, I'd
+probably recommend "aggregate" though ...
+
+Something like "aggregate(df[,1:3], df$value, mean)"
+
+Rich.
+mangosolutions
+
+-----Original Message-----
+From: Wensui Liu [mailto:liuwensui at gmail.com] 
+Sent: 14 March 2007 21:02
+To: Neung-Hwan Oh
+Cc: s-news at wubios.wustl.edu
+Subject: Re: [S] group by
+
+I am not sure if in Splus, there is a nice function like tapply() in R or
+not.
+
+On 3/14/07, Neung-Hwan Oh <ultisol at gmail.com> wrote:
+> Hello,
+>
+> How can you calculate the following example in s-plus?   In Access, it is
+> relatively easy with "Group By" and I am wondering whether there is a
+> similar function that I missed in S-Plus.
+>
+>
+>
+> "From this table"
+>
+> site.no date time value
+>
+> 1 1989/04/27 12:00   1.0
+>
+> 2 1975/10/01 19:00   2.0
+>
+> 2 1975/10/01 20:00   4.0
+>
+> 3 1993/04/10 09:00   3.0
+>
+> 3 1993/04/10 12:00   6.0
+>
+> 3 1993/04/10 15:00   9.0
+>
+>
+>
+> "To this (averages per date per site)" + (count column?)
+>
+> 1 1989/04/27 12:00 1.0  (1.0)
+>
+> 2 1975/10/01 19:30 3.0  (2.0)
+>
+> 3 1993/04/10 12:00 6.0  (3.0)
+>
+>
+>
+> Many thanks!
+>
+> NH
+
+-- 
+WenSui Liu
+A lousy statistician who happens to know a little programming
+(http://spaces.msn.com/statcompute/blog)
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From Rich at Mango-Solutions.com  Wed Mar 14 21:17:52 2007
+From: Rich at Mango-Solutions.com
+Date: Wed, 14 Mar 2007 21:17:52 +0000
+Subject: Re: group by
+In-Reply-To: <20070314211413.E237E137456@mailgate.biostat.wustl.edu>
+References: <20070314211413.E237E137456@mailgate.biostat.wustl.edu>
+Message-ID: <20070314211746.3443D136DCF@mailgate.biostat.wustl.edu>
+
+Sorry ...
+
+I mean "aggregate(df$value, df[,1:3], mean)"
+
+Rich.
+mangosolutions
+
+-----Original Message-----
+From: Rich at Mango-Solutions.com [mailto:Rich at Mango-Solutions.com] 
+Sent: 14 March 2007 21:14
+To: 'Wensui Liu'; 'Neung-Hwan Oh'
+Cc: s-news at wubios.wustl.edu
+Subject: Re: [S] group by
+
+Yes ... you can use tapply in S.  For the structure you're using, I'd
+probably recommend "aggregate" though ...
+
+Something like "aggregate(df[,1:3], df$value, mean)"
+
+Rich.
+mangosolutions
+
+-----Original Message-----
+From: Wensui Liu [mailto:liuwensui at gmail.com] 
+Sent: 14 March 2007 21:02
+To: Neung-Hwan Oh
+Cc: s-news at wubios.wustl.edu
+Subject: Re: [S] group by
+
+I am not sure if in Splus, there is a nice function like tapply() in R or
+not.
+
+On 3/14/07, Neung-Hwan Oh <ultisol at gmail.com> wrote:
+> Hello,
+>
+> How can you calculate the following example in s-plus?   In Access, it is
+> relatively easy with "Group By" and I am wondering whether there is a
+> similar function that I missed in S-Plus.
+>
+>
+>
+> "From this table"
+>
+> site.no date time value
+>
+> 1 1989/04/27 12:00   1.0
+>
+> 2 1975/10/01 19:00   2.0
+>
+> 2 1975/10/01 20:00   4.0
+>
+> 3 1993/04/10 09:00   3.0
+>
+> 3 1993/04/10 12:00   6.0
+>
+> 3 1993/04/10 15:00   9.0
+>
+>
+>
+> "To this (averages per date per site)" + (count column?)
+>
+> 1 1989/04/27 12:00 1.0  (1.0)
+>
+> 2 1975/10/01 19:30 3.0  (2.0)
+>
+> 3 1993/04/10 12:00 6.0  (3.0)
+>
+>
+>
+> Many thanks!
+>
+> NH
+
+-- 
+WenSui Liu
+A lousy statistician who happens to know a little programming
+(http://spaces.msn.com/statcompute/blog)
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From ultisol at gmail.com  Wed Mar 14 22:58:48 2007
+From: ultisol at gmail.com (Neung-Hwan Oh)
+Date: Wed, 14 Mar 2007 18:58:48 -0400
+Subject: Re: group by
+In-Reply-To: <20070314211746.3443D136DCF@mailgate.biostat.wustl.edu>
+References: <20070314211413.E237E137456@mailgate.biostat.wustl.edu> <20070314211746.3443D136DCF@mailgate.biostat.wustl.edu>
+Message-ID: <67249fb50703141558k9bfc6bfqca0b37fadd53696d@mail.gmail.com>
+
+Thanks a lot for the quick replies.
+But, doesn't "tapply" or "aggregate" provide a matrix format rather
+than data frame format?
+
+On 3/14/07, Rich at mango-solutions.com <Rich at mango-solutions.com> wrote:
+> Sorry ...
+>
+> I mean "aggregate(df$value, df[,1:3], mean)"
+>
+> Rich.
+> mangosolutions
+>
+> -----Original Message-----
+> From: Rich at Mango-Solutions.com [mailto:Rich at Mango-Solutions.com]
+> Sent: 14 March 2007 21:14
+> To: 'Wensui Liu'; 'Neung-Hwan Oh'
+> Cc: s-news at wubios.wustl.edu
+> Subject: Re: [S] group by
+>
+> Yes ... you can use tapply in S.  For the structure you're using, I'd
+> probably recommend "aggregate" though ...
+>
+> Something like "aggregate(df[,1:3], df$value, mean)"
+>
+> Rich.
+> mangosolutions
+>
+> -----Original Message-----
+> From: Wensui Liu [mailto:liuwensui at gmail.com]
+> Sent: 14 March 2007 21:02
+> To: Neung-Hwan Oh
+> Cc: s-news at wubios.wustl.edu
+> Subject: Re: [S] group by
+>
+> I am not sure if in Splus, there is a nice function like tapply() in R or
+> not.
+>
+> On 3/14/07, Neung-Hwan Oh <ultisol at gmail.com> wrote:
+> > Hello,
+> >
+> > How can you calculate the following example in s-plus?   In Access, it is
+> > relatively easy with "Group By" and I am wondering whether there is a
+> > similar function that I missed in S-Plus.
+> >
+> >
+> >
+> > "From this table"
+> >
+> > site.no date time value
+> >
+> > 1 1989/04/27 12:00   1.0
+> >
+> > 2 1975/10/01 19:00   2.0
+> >
+> > 2 1975/10/01 20:00   4.0
+> >
+> > 3 1993/04/10 09:00   3.0
+> >
+> > 3 1993/04/10 12:00   6.0
+> >
+> > 3 1993/04/10 15:00   9.0
+> >
+> >
+> >
+> > "To this (averages per date per site)" + (count column?)
+> >
+> > 1 1989/04/27 12:00 1.0  (1.0)
+> >
+> > 2 1975/10/01 19:30 3.0  (2.0)
+> >
+> > 3 1993/04/10 12:00 6.0  (3.0)
+> >
+> >
+> >
+> > Many thanks!
+> >
+> > NH
+>
+>
+> --
+> WenSui Liu
+> A lousy statistician who happens to know a little programming
+> (http://spaces.msn.com/statcompute/blog)
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+>
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+>
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+
+From liuwensui at gmail.com  Wed Mar 14 23:07:18 2007
+From: liuwensui at gmail.com (Wensui Liu)
+Date: Wed, 14 Mar 2007 19:07:18 -0400
+Subject: Re: group by
+In-Reply-To: <67249fb50703141558k9bfc6bfqca0b37fadd53696d@mail.gmail.com>
+References: <20070314211413.E237E137456@mailgate.biostat.wustl.edu> <20070314211746.3443D136DCF@mailgate.biostat.wustl.edu> <67249fb50703141558k9bfc6bfqca0b37fadd53696d@mail.gmail.com>
+Message-ID: <1115a2b00703141607u451fb30fg116edd4ea83d1164@mail.gmail.com>
+
+following is an example I copied from my blog and HTH.
+
+CALCULATE GROUP SUMMARY IN R
+
+##################################################
+# HOW TO CALCULATE GROUP SUMMARY IN R            #
+##################################################
+# EQUIVALENT SAS CODE:                           #
+#                                                #
+# DATA DATA;                                     #
+#   DO I = 1 TO 2;                               #
+#     DO J = 1 TO 4;                             #
+#       GROUP = 'TREATMENT_'||PUT(I, 1.);        #
+#       X = RANNOR(1);                           #
+#       OUTPUT;                                  #
+#     END;                                       #
+#   END;                                         #
+#   KEEP GROUP X;                                #
+# RUN;                                           #
+#                                                #
+# PROC SQL;                                      #
+#   CREATE TABLE COMBINE AS                      #
+#   SELECT *, MEAN(X) AS MEAN_X, SUM(X) AS SUM_X #
+#   FROM DATA                                    #
+#   GROUP BY GROUP;                              #
+# QUIT;                                          #
+##################################################
+
+# GENERATE A TREATMENT GROUP #
+group<-as.factor(paste("treatment", rep(1:2, 4), sep = '_'));
+
+# CREATE A SERIES OF RANDOM VALUES #
+x<-rnorm(length(group));
+
+# CREATE A DATA FRAME TO COMBINE THE ABOVE TWO #
+data<-data.frame(group, x);
+
+# CALCULATE SUMMARY FOR X #
+x.mean<-tapply(data$x, data$group, mean, na.rm = T);
+x.sum<-tapply(data$x, data$group, sum, na.rm = T);
+
+# CREATE A DATA FRAME TO COMBINE SUMMARIES #
+summ<-data.frame(x.mean, x.sum, group = names(x.mean));
+
+# COMBINE DATA AND SUMMARIES TOGETHER #
+combine<-merge(data, summ, by = "group");
+
+On 3/14/07, Neung-Hwan Oh <ultisol at gmail.com> wrote:
+> Thanks a lot for the quick replies.
+> But, doesn't "tapply" or "aggregate" provide a matrix format rather
+> than data frame format?
+>
+> On 3/14/07, Rich at mango-solutions.com <Rich at mango-solutions.com> wrote:
+> > Sorry ...
+> >
+> > I mean "aggregate(df$value, df[,1:3], mean)"
+> >
+> > Rich.
+> > mangosolutions
+> >
+> > -----Original Message-----
+> > From: Rich at Mango-Solutions.com [mailto:Rich at Mango-Solutions.com]
+> > Sent: 14 March 2007 21:14
+> > To: 'Wensui Liu'; 'Neung-Hwan Oh'
+> > Cc: s-news at wubios.wustl.edu
+> > Subject: Re: [S] group by
+> >
+> > Yes ... you can use tapply in S.  For the structure you're using, I'd
+> > probably recommend "aggregate" though ...
+> >
+> > Something like "aggregate(df[,1:3], df$value, mean)"
+> >
+> > Rich.
+> > mangosolutions
+> >
+> > -----Original Message-----
+> > From: Wensui Liu [mailto:liuwensui at gmail.com]
+> > Sent: 14 March 2007 21:02
+> > To: Neung-Hwan Oh
+> > Cc: s-news at wubios.wustl.edu
+> > Subject: Re: [S] group by
+> >
+> > I am not sure if in Splus, there is a nice function like tapply() in R or
+> > not.
+> >
+> > On 3/14/07, Neung-Hwan Oh <ultisol at gmail.com> wrote:
+> > > Hello,
+> > >
+> > > How can you calculate the following example in s-plus?   In Access, it is
+> > > relatively easy with "Group By" and I am wondering whether there is a
+> > > similar function that I missed in S-Plus.
+> > >
+> > >
+> > >
+> > > "From this table"
+> > >
+> > > site.no date time value
+> > >
+> > > 1 1989/04/27 12:00   1.0
+> > >
+> > > 2 1975/10/01 19:00   2.0
+> > >
+> > > 2 1975/10/01 20:00   4.0
+> > >
+> > > 3 1993/04/10 09:00   3.0
+> > >
+> > > 3 1993/04/10 12:00   6.0
+> > >
+> > > 3 1993/04/10 15:00   9.0
+> > >
+> > >
+> > >
+> > > "To this (averages per date per site)" + (count column?)
+> > >
+> > > 1 1989/04/27 12:00 1.0  (1.0)
+> > >
+> > > 2 1975/10/01 19:30 3.0  (2.0)
+> > >
+> > > 3 1993/04/10 12:00 6.0  (3.0)
+> > >
+> > >
+> > >
+> > > Many thanks!
+> > >
+> > > NH
+> >
+> >
+> > --
+> > WenSui Liu
+> > A lousy statistician who happens to know a little programming
+> > (http://spaces.msn.com/statcompute/blog)
+> > --------------------------------------------------------------------
+> > This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> > unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> > the BODY of the message:  unsubscribe s-news
+> >
+> > --------------------------------------------------------------------
+> > This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> > unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> > the BODY of the message:  unsubscribe s-news
+> >
+> > --------------------------------------------------------------------
+> > This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> > unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> > the BODY of the message:  unsubscribe s-news
+> >
+
+--
+WenSui Liu
+A lousy statistician who happens to know a little programming
+(http://spaces.msn.com/statcompute/blog)
+
+From Harry.Southworth at astrazeneca.com  Thu Mar 15 08:03:19 2007
+From: Harry.Southworth at astrazeneca.com (Southworth, Harry)
+Date: Thu, 15 Mar 2007 08:03:19 +0000
+Subject: Re: SVMs in S-Plus
+In-Reply-To: <EFAP08RQH06OJC02NO@hedwig.nssl.noaa.gov>
+References: <EFAP08RQH06OJC02NO@hedwig.nssl.noaa.gov>
+Message-ID: <5FEC4F8459B55448AB1D8E8D37D2B238011DDC60@ukaprdembx02.rd.astrazeneca.net>
+
+Brian Ripley has made a port of libsvm for S-PLUS 6.x. I haven't checked, but I 
+expect it would work in version 7.
+http://www.stats.ox.ac.uk/pub/MASS4/Software.html#Windows
+
+____________________________________________
+
+Harry Southworth,
+FE2 A/2 Parklands,
+Alderley Park,
+Cheshire, SK10 4TG, UK
+Tel.: +44 1625 518327
+Mobile: 07867 676073
+____________________________________________
+
+> -----Original Message-----
+> From: s-news-owner at lists.biostat.wustl.edu
+> [mailto:s-news-owner at lists.biostat.wustl.edu]On Behalf Of Kim Elmore
+> Sent: 14 March 2007 21:09
+> To: S-News
+> Subject: Re: [S] SVMs in S-Plus
+> 
+> 
+> An item of clarification: I'm using S-Plus 7 under Windows XP.
+> 
+> Kim Elmore
+> 
+> At 05:01 PM 3/13/2007, you wrote:
+> >I've looked at libsvm as a way to include SVMs into S-Plus. I have R 
+> >and successfully installed the e1701 package that contains libsvm 
+> >within the R environment without a problem. I'd like to also have 
+> >this available in S-Plus, but I can't seem to figure out how to 
+> >generate a library for S-Plus, nor have I found one that anyone else 
+> >has made. There may be a good reason for this, and I'm happy to 
+> >learn it. In the interim, what steps do I need to generate a library 
+> >from the libsvm software that I can use in S-Plus?
+> >
+> >Kim Elmore
+> >                           Kim Elmore, Ph.D.
+> >                        University of Oklahoma
+> >         Cooperative Institute for Mesoscale Meteorological Studies
+> >"All of weather is divided into three parts: Yes, No, and Maybe. The
+> >greatest of these is Maybe" The original Latin appears to be garbled.
+> >
+> >--------------------------------------------------------------------
+> >This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> >unsubscribe send e-mail to 
+> s-news-request at lists.biostat.wustl.edu with
+> >the BODY of the message:  unsubscribe s-news
+> 
+>                            Kim Elmore, Ph.D.
+>                         University of Oklahoma
+>          Cooperative Institute for Mesoscale Meteorological Studies
+> "All of weather is divided into three parts: Yes, No, and Maybe. The
+> greatest of these is Maybe" The original Latin appears to be garbled.
+> 
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+> 
+
+From Rich at Mango-Solutions.com  Thu Mar 15 09:38:13 2007
+From: Rich at Mango-Solutions.com
+Date: Thu, 15 Mar 2007 09:38:13 +0000
+Subject: Re: group by
+In-Reply-To: <1115a2b00703141607u451fb30fg116edd4ea83d1164@mail.gmail.com>
+References: <1115a2b00703141607u451fb30fg116edd4ea83d1164@mail.gmail.com>
+Message-ID: <20070315093813.65958137582@mailgate.biostat.wustl.edu>
+
+I think of the "tapply" function returning a (simplified) list structure.
+Typically this is a single mode structure for single value returns (eg.
+vector, matrix, array depending on # of "by" variables).  For multiple
+returns, it will return a list structure (eg. try
+"tapply(fuel.frame$Mileage, fuel.frame$Type, range)").
+
+> data
+        group          x 
+1 treatment_1 -0.8514052
+2 treatment_2 -0.2327822
+3 treatment_1  0.3106438
+4 treatment_2 -0.5681113
+5 treatment_1 -1.2298195
+6 treatment_2 -0.1028086
+7 treatment_1  0.8201559
+8 treatment_2 -0.9596621
+
+> tapply(data$x, data$group, mean) # Returns a vector
+ treatment_1 treatment_2 
+  -0.2376172   -0.465841
+
+> tapply(data$x, data$group, range) # Returns a list
+$"treatment_1":
+[1] -1.2298195  0.8201559
+
+$"treatment_2":
+[1] -0.9596621 -0.1028086
+
+The aggregate function will return a data frame.  However, the aggregate
+function can only return a single value:
+
+> aggregate(data$x, data$group, mean) 
+                  Group          x 
+treatment_1 treatment_1 -0.2376172
+treatment_2 treatment_2 -0.4658410
+
+So, whether you use tapply or aggregate on your data, you'll still need to
+do some manipulation of the results.
+
+Note: There is a small bug in aggregate (fixed in S+7), where the ellipses
+arguments are not passed through to the function call.
+
+Cheers,
+Rich.
+
+mangosolutions
+
+-----Original Message-----
+From: Wensui Liu [mailto:liuwensui at gmail.com] 
+Sent: 14 March 2007 23:07
+To: Neung-Hwan Oh
+Cc: Rich at mango-solutions.com; s-news at wubios.wustl.edu
+Subject: Re: [S] group by
+
+following is an example I copied from my blog and HTH.
+
+CALCULATE GROUP SUMMARY IN R
+
+##################################################
+# HOW TO CALCULATE GROUP SUMMARY IN R            #
+##################################################
+# EQUIVALENT SAS CODE:                           #
+#                                                #
+# DATA DATA;                                     #
+#   DO I = 1 TO 2;                               #
+#     DO J = 1 TO 4;                             #
+#       GROUP = 'TREATMENT_'||PUT(I, 1.);        #
+#       X = RANNOR(1);                           #
+#       OUTPUT;                                  #
+#     END;                                       #
+#   END;                                         #
+#   KEEP GROUP X;                                #
+# RUN;                                           #
+#                                                #
+# PROC SQL;                                      #
+#   CREATE TABLE COMBINE AS                      #
+#   SELECT *, MEAN(X) AS MEAN_X, SUM(X) AS SUM_X #
+#   FROM DATA                                    #
+#   GROUP BY GROUP;                              #
+# QUIT;                                          #
+##################################################
+
+# GENERATE A TREATMENT GROUP #
+group<-as.factor(paste("treatment", rep(1:2, 4), sep = '_'));
+
+ # CREATE A SERIES OF RANDOM VALUES #
+x<-rnorm(length(group));
+
+# CREATE A DATA FRAME TO COMBINE THE ABOVE TWO #
+data<-data.frame(group, x);
+
+# CALCULATE SUMMARY FOR X #
+x.mean<-tapply(data$x, data$group, mean, na.rm = T);
+x.sum<-tapply(data$x, data$group, sum, na.rm = T);
+
+# CREATE A DATA FRAME TO COMBINE SUMMARIES #
+summ<-data.frame(x.mean, x.sum, group = names(x.mean));
+
+# COMBINE DATA AND SUMMARIES TOGETHER #
+combine<-merge(data, summ, by = "group");
+
+On 3/14/07, Neung-Hwan Oh <ultisol at gmail.com> wrote:
+> Thanks a lot for the quick replies.
+> But, doesn't "tapply" or "aggregate" provide a matrix format rather
+> than data frame format?
+>
+> On 3/14/07, Rich at mango-solutions.com <Rich at mango-solutions.com> wrote:
+> > Sorry ...
+> >
+> > I mean "aggregate(df$value, df[,1:3], mean)"
+> >
+> > Rich.
+> > mangosolutions
+> >
+> > -----Original Message-----
+> > From: Rich at Mango-Solutions.com [mailto:Rich at Mango-Solutions.com]
+> > Sent: 14 March 2007 21:14
+> > To: 'Wensui Liu'; 'Neung-Hwan Oh'
+> > Cc: s-news at wubios.wustl.edu
+> > Subject: Re: [S] group by
+> >
+> > Yes ... you can use tapply in S.  For the structure you're using, I'd
+> > probably recommend "aggregate" though ...
+> >
+> > Something like "aggregate(df[,1:3], df$value, mean)"
+> >
+> > Rich.
+> > mangosolutions
+> >
+> > -----Original Message-----
+> > From: Wensui Liu [mailto:liuwensui at gmail.com]
+> > Sent: 14 March 2007 21:02
+> > To: Neung-Hwan Oh
+> > Cc: s-news at wubios.wustl.edu
+> > Subject: Re: [S] group by
+> >
+> > I am not sure if in Splus, there is a nice function like tapply() in R
+or
+> > not.
+> >
+> > On 3/14/07, Neung-Hwan Oh <ultisol at gmail.com> wrote:
+> > > Hello,
+> > >
+> > > How can you calculate the following example in s-plus?   In Access, it
+is
+> > > relatively easy with "Group By" and I am wondering whether there is a
+> > > similar function that I missed in S-Plus.
+> > >
+> > >
+> > >
+> > > "From this table"
+> > >
+> > > site.no date time value
+> > >
+> > > 1 1989/04/27 12:00   1.0
+> > >
+> > > 2 1975/10/01 19:00   2.0
+> > >
+> > > 2 1975/10/01 20:00   4.0
+> > >
+> > > 3 1993/04/10 09:00   3.0
+> > >
+> > > 3 1993/04/10 12:00   6.0
+> > >
+> > > 3 1993/04/10 15:00   9.0
+> > >
+> > >
+> > >
+> > > "To this (averages per date per site)" + (count column?)
+> > >
+> > > 1 1989/04/27 12:00 1.0  (1.0)
+> > >
+> > > 2 1975/10/01 19:30 3.0  (2.0)
+> > >
+> > > 3 1993/04/10 12:00 6.0  (3.0)
+> > >
+> > >
+> > >
+> > > Many thanks!
+> > >
+> > > NH
+> >
+> >
+> > --
+> > WenSui Liu
+> > A lousy statistician who happens to know a little programming
+> > (http://spaces.msn.com/statcompute/blog)
+> > --------------------------------------------------------------------
+> > This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> > unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> > the BODY of the message:  unsubscribe s-news
+> >
+> > --------------------------------------------------------------------
+> > This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> > unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> > the BODY of the message:  unsubscribe s-news
+> >
+> > --------------------------------------------------------------------
+> > This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> > unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> > the BODY of the message:  unsubscribe s-news
+> >
+>
+
+-- 
+WenSui Liu
+A lousy statistician who happens to know a little programming
+(http://spaces.msn.com/statcompute/blog)
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From parkhurs at imap.iu.edu  Fri Mar 16 00:29:26 2007
+From: parkhurs at imap.iu.edu (David Parkhurst)
+Date: Thu, 15 Mar 2007 20:29:26 -0400
+Subject: xyplot with square boxes
+Message-ID: <45F9E4E6.3010800@imap.iu.edu>
+
+How do I make the boxes square in
+
+xyplot(y ~ x | A*B, data=stuff)  ?
+
+I've tried everything I can find in ?par, with no luck.
+
+Thanks.
+
+David Parkhurst
+
+From sundar.dorai-raj at pdf.com  Fri Mar 16 01:05:20 2007
+From: sundar.dorai-raj at pdf.com (Sundar Dorai-Raj)
+Date: Thu, 15 Mar 2007 18:05:20 -0700
+Subject: Re: xyplot with square boxes
+In-Reply-To: <45F9E4E6.3010800@imap.iu.edu>
+References: <45F9E4E6.3010800@imap.iu.edu>
+Message-ID: <45F9ED50.60303@pdf.com>
+
+Use the pch parameter. I think pch = 0 will produce boxes, at least on 
+Windows S-PLUS 6.2.
+
+xy <- data.frame(x = 1:10, y = 1:10)
+trellis.device(color.scheme = "standard")
+xyplot(y ~ x, xy, pch = 0, cex = 2)
+
+HTH,
+
+--sundar
+
+David Parkhurst said the following on 3/15/2007 5:29 PM:
+> How do I make the boxes square in
+>
+> xyplot(y ~ x | A*B, data=stuff)  ?
+>
+> I've tried everything I can find in ?par, with no luck.
+>
+> Thanks.
+>
+> David Parkhurst
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+
+From sundar.dorai-raj at pdf.com  Fri Mar 16 01:09:27 2007
+From: sundar.dorai-raj at pdf.com (Sundar Dorai-Raj)
+Date: Thu, 15 Mar 2007 18:09:27 -0700
+Subject: Re: xyplot with square boxes
+In-Reply-To: <45F9E4E6.3010800@imap.iu.edu>
+References: <45F9E4E6.3010800@imap.iu.edu>
+Message-ID: <45F9EE47.70602@pdf.com>
+
+Re-reading this I think I misunderstood your question. Are you trying to 
+make the aspect ratio 1?
+
+--sundar
+
+David Parkhurst said the following on 3/15/2007 5:29 PM:
+> How do I make the boxes square in
+>
+> xyplot(y ~ x | A*B, data=stuff)  ?
+>
+> I've tried everything I can find in ?par, with no luck.
+>
+> Thanks.
+>
+> David Parkhurst
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+
+From DCacela at stratusconsulting.com  Fri Mar 16 17:31:32 2007
+From: DCacela at stratusconsulting.com (Dave Cacela)
+Date: Fri, 16 Mar 2007 11:31:32 -0600
+Subject: value of enterprise edition / big data?
+Message-ID: <88D649D1E09B684E8CBF77A5ADB3D306010847BB@tron.stratus.local>
+
+Hi,
+
+I use splus pro 7.0 "professional developer" under windows XP (dell optiplex / 
+3.2GHz pentium 4 / 1.0GB RAM) 
+
+Lately I'm encountering an increasing number of projects that involve large 
+data sets, e.g. data frames with >million records and dozens of fields. I'm 
+running into problems characterized by this error message:
+
+Problem in .A0[ri] <- .A1: Unable to obtain requested dynamic memory
+
+This error occurs in various situations, most recently with a simple call to 
+rbind.data.frame() to append several hefty data frames.
+
+I realize that I may be able to avoid some memory-related problems by using 
+better programming techniques. For now, let's assume that is not a practical 
+option. I've investigated tuning some parameters that control paging on my PC, 
+and I've tweaked everything towards "bigger" as best I can manage.
+
+I am considering addressing the problem by upgrading to Insightful's  
+"enterprise edition" in order to have access to the "big data" features of that 
+edition. Before I spend big money to acquire big data capabilities, I'd like to 
+hear any comments or recommendations from users who are familiar with the 
+enterprise edition. 
+
+What are your impressions of the enterprise edition, especially the big data 
+features? Is that appropriate software for solving the kind of problem 
+described above? If so, what kinds of new problems could arise by migrating to 
+that package? How difficult would it be to adapt existing code scripts to 
+exploit the big data routines? Does using enterprise edition introduce any 
+significant new requirements for writing decent scripts? In general, what 
+pitfalls might be lurking in enterprise edition that could come as an unwelcome 
+surprise? 
+
+Are there any obvious or not-so-obvious tricks that I could use to minimize 
+memory problems without going to enterprise edition? Are there any new features 
+of splus pro v8 that might help with these problems? 
+   
+Thanks,
+dc
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Dave Cacela             303-381-8000 (voice)
+Managing Scientist      303-381-8200 (fax)
+Stratus Consulting     
+PO Box 4059
+1881 Ninth St
+Boulder, Colorado 80302 
+mailto://dcacela at stratusconsulting.com
+http://www.stratusconsulting.com
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+
+ 
+
+From MichaelCamilleri at branz.co.nz  Sun Mar 18 21:59:39 2007
+From: MichaelCamilleri at branz.co.nz (Michael Camilleri)
+Date: Mon, 19 Mar 2007 09:59:39 +1200
+Subject: Re: value of enterprise edition / big data?
+In-Reply-To: <88D649D1E09B684E8CBF77A5ADB3D306010847BB@tron.stratus.local>
+References: <88D649D1E09B684E8CBF77A5ADB3D306010847BB@tron.stratus.local>
+Message-ID: <A23B682083FD8248ADFE1317C82CBD6702536F27@exchange.branznt.org.nz>
+
+I don't have the Big Data version so don't know how it would work,
+however I have a lot of experience in using S+ and large data sets. Here
+are some tips that might let you do the job without new software.
+
+I presume you have set up S+ to use a much memory as it can. Specify an
+unlimited object size for starters options(object.size=Inf), otherwise
+it only goes up to the specified size.
+
+As a general rule of thumb you need at least a 100% RAM overhead in S+.
+So if you are manipulating a 100 MB object you will need at least 200 MB
+of available RAM. This puts a limit on how large an object you can deal
+with directly in S+. Work out the actual physical storage size of your
+objects and multiply by 2-3, and that is roughly the amount of memory
+you will need. If you want to find out how large an object is use the
+object.size command. To find out how large it would be import a few
+thousand rows, calculate the object size, then multiply it up.
+
+Get more RAM as 1 GB is simply not enough. Max out your machine to 2 or
+4 GB. It doesn't cost much. With Windows running you already lose a few
+hundred megabytes for the OS (my S+ with Windows XP uses ~350 MB), so
+with only 600 MB of RAM left you would be able to go up to maybe a 200
+MB object maximum. Get 2 GB of RAM and you might be OK up to a 500 MB
+object.
+
+Using rbind is an inefficient way of adding rows to a large data frame
+or merging data frames. If you want to merge a number of data frames
+with identical columns use new.df <- do.call('rbind',
+list(df1,df2,df3,etc)). This can be up to 100 times faster then using
+rbind, and is much better for large data objects. Just be careful with
+factor levels - they may need to be identical in all the data frames.
+
+If you can pre-process your data to make it more compact, or only import
+what you need then that would help. This could be done in a database if
+S+ can't handle the size.
+
+You need to import character data as factors, as otherwise the memory
+size may blow out - this is the default S+ behaviour, but check your
+system. There are functions now in S+ for importing data from big files
+in chunks to make them more manageable. You can make the objects a bit
+smaller by storing integer data as integers, not floating point, and
+character data as factors. This can either be done in the import
+procedure (some let you specify import formats and storage modes),
+otherwise convert after importing, e.g. x[1]_as.integer(x[,1]).
+
+Occasionally a bit of bad data will force a numeric column to be
+imported as character data, which blows out the object size. Numeric
+columns must have no odd data in them. You can filter out values, or
+specify what data to be interpreted as NA, depending on what import
+function you use.
+ 
+In my experience large time series objects are more difficult to handle
+then large data frames. If you don't really need to store them as time
+series, store them as data frames, and convert to time series as needed.
+
+A couple of million rows by a couple of dozen fields should give an
+object that is about 100-200 MB. That size object should be easily
+manageable if you get more RAM. If you were dealing with 10 million rows
+by 500 columns then you really would need the Big Data library, but I
+don't think you need it. 
+
+Michael
+
+MICHAEL CAMILLERI BSc, MSc, PhD 
+BUILDING PHYSICIST      
+T +64 4 237 1170
+DDI +64 4 237 1174
+PRIVATE BAG 50908       
+PORIRUA CITY 5240       
+WWW.BRANZ.CO.NZ 
+
+From MichaelCamilleri at branz.co.nz  Mon Mar 19 20:49:55 2007
+From: MichaelCamilleri at branz.co.nz (Michael Camilleri)
+Date: Tue, 20 Mar 2007 08:49:55 +1200
+Subject: Re: value of enterprise edition / big data?
+In-Reply-To: <A23B682083FD8248ADFE1317C82CBD6702536F27@exchange.branznt.org.nz>
+References: <88D649D1E09B684E8CBF77A5ADB3D306010847BB@tron.stratus.local> <A23B682083FD8248ADFE1317C82CBD6702536F27@exchange.branznt.org.nz>
+Message-ID: <A23B682083FD8248ADFE1317C82CBD67025372C7@exchange.branznt.org.nz>
+
+BTW, when you are importing files and are near the limits of your memory
+some import functions might work and some may not. There is the GUI
+import menu function, which you can also call directly as
+guiImportData(). There is also the importData function which is very
+similar. On a large data set one might work where another fails.
+
+If your files are stored in a database then that frees S+ from having to
+figure out what the column data types should be. This might be a more
+efficient way of importing large files.
+
+If you are reading delimited files then you can use read.table().
+
+And finally, the openData function lets you open large files a block at
+a time. This allows you to open a large file and process it on the fly.
+
+Just saying that if at first you don't succeed, try, try again. There
+are usually several ways to accomplish the same thing in S+, and
+sometimes their performance is dramatically different.
+
+As far as analysis goes, do you really need to look at a few dozen
+columns at the same time? Doing preliminary analysis on subsets of the
+data might be a viable option, or enable you to find which columns you
+really need to look at, or how to summarise or compact the data.
+
+Michael
+
+From allegro1978 at hotmail.com  Tue Mar 20 23:20:39 2007
+From: allegro1978 at hotmail.com (Steve S)
+Date: Wed, 21 Mar 2007 09:20:39 +1000
+Subject: Using C with Splus for Windows
+Message-ID: <BAY108-F173F7D8459B06A33125C40B6750@phx.gbl>
+
+Dear All,
+
+I am currently using Splus Enterprise Developer Version 7.0.6  for Microsoft 
+Windows.
+
+I recently wrote a library in R and used two C codes written by someone else 
+and I was able to build the dll from scratch and it works fine in R.
+
+What I like to do is to have the same library in Splus. So the first thing I 
+tried was:
+
+Rename the dll I created in R as S.dll and saved in my Splus working 
+chapter.
+
+It worked! But I was baffled because sometimes, I got totally different 
+numbers using exactly the same function in R and as in Splus. The only 
+difference is the C code part in the calculations.
+
+I then read the Application Developer?s Guide, which on page 372 onwards 
+give a description of how to do get the C code into Splus step by step.
+
+Being a beginner in this, I am not exactly sure how this process would work 
+for TWO C codes, so if any one can give me a quick hint that will be really 
+useful!
+
+(I have to get Visual C++ 6.0 yet, but it is still nice to have the process 
+sorted out so I can try this out as soon as I get the software)
+
+Many thanks in advance.
+
+Steve.
+
+_________________________________________________________________
+Advertisement: yellow.com.au - Find what you need when you need it  
+http://a.ninemsn.com.au/b.aspx?URL=http%3A%2F%2Fadsfac%2Enet%2Flink%2Easp%3Fcc%3DPAS062%2E9345%2E0%26clk%3D1%26creativeID%3D57763&_t=761839555&_r=hotmail_email_taglines_1March07&_m=EXT
+
+From yiwu21111958 at yahoo.com  Wed Mar 21 05:00:40 2007
+From: yiwu21111958 at yahoo.com (yiwu ye)
+Date: Tue, 20 Mar 2007 22:00:40 -0700
+Subject: free memory
+Message-ID: <136807.69737.qm@web57101.mail.re3.yahoo.com>
+
+Dear list,
+
+My computor has 2GB of RAM. However, the command, system.stat() in Splus shows $winmemfree:
+[1] 537,329,664. Does this mean that I have only ~0.5GB free memory? How I can fully use the 2GB RAM? 
+
+Thanks for your help,
+
+Yiwu
+
+No need to miss a message. Get email on-the-go 
+with Yahoo! Mail for Mobile. Get started.
+
+From parkhurs at imap.iu.edu  Wed Mar 21 17:57:48 2007
+From: parkhurs at imap.iu.edu (David Parkhurst)
+Date: Wed, 21 Mar 2007 13:57:48 -0400
+Subject: 600 dpi in exported graphs
+Message-ID: <4601721C.9050307@imap.iu.edu>
+
+I'm using s-plus (Enterprise Developer Version 7.0.6  for Microsoft 
+Windows : 2005) to create some graphs for a journal publication.   The 
+journal requires graphs to be submitted in .tif or .eps format, with 600 
+dpi resolution.  When I export a figure as a tif file from splus, it has 
+only 72 dpi.  How can I get more resolution?
+
+This seems a pretty basic need that splus should be able to meet.
+
+When I export in .eps, and look at the result in ghostview, extra lines, 
+tilted ones, appear through my two-way error bars.  Wierd.  And, I don't 
+know the resolution.
+
+Thank you.
+
+David Parkhurst
+
+From MichaelCamilleri at branz.co.nz  Wed Mar 21 21:27:06 2007
+From: MichaelCamilleri at branz.co.nz (Michael Camilleri)
+Date: Thu, 22 Mar 2007 09:27:06 +1200
+Subject: Re: free memory
+In-Reply-To: <136807.69737.qm@web57101.mail.re3.yahoo.com>
+References: <136807.69737.qm@web57101.mail.re3.yahoo.com>
+Message-ID: <A23B682083FD8248ADFE1317C82CBD6702537AC2@exchange.branznt.org.nz>
+
+The help file for system.stat() says “the number of bytes
+of memory that Windows reports as being free”. I suspect that Windows is
+not reporting everything that it has available.
+
+ 
+
+If you look under the Task Manager (press CTRL-ALT-DELETE,
+then select Task Manager) and look under Physical Memory you can see what
+Windows is really doing.
+
+ 
+
+I have 2 GB of RAM and system.stat reports ~1 GB free, but the
+task manager reports 1.5 GB free. Typically when running S+ and a few other
+applications it chews up about 500 MB. Not sure what it DOES with those 500 MB…
+
+ 
+
+If you look under the Processes tab in the Task Manager you
+can see how much memory individual applications are using. Outlooks uses about
+100 MB, S+ about 50 MB on my machine. Closing down some applications that are
+chewing up memory might help your performance on large S+ tasks. 
+
+ 
+
+Michael
+
+From filloon.tg at pg.com  Fri Mar 23 17:47:16 2007
+From: filloon.tg at pg.com
+Date: Fri, 23 Mar 2007 13:47:16 -0400
+Subject: Graphlet question
+Message-ID: <OF1BEEB63C.595B8268-ON852572A7.00615D2F-852572A7.0061B601@pg.com>
+
+When using the java.identify function to have 'pop-up' text show up in Graphlet,
+
+        is there a way to increase the font size of the text?
+
+[running S+ Version 6.1 on Windows]
+
+Tom Filloon
+
+Procter & Gamble
+
+Cincinnati, Ohio, USA 
+
+From mpacheco at glec.com  Tue Mar 27 15:06:26 2007
+From: mpacheco at glec.com (Manoel Pacheco)
+Date: Tue, 27 Mar 2007 10:06:26 -0500
+Subject: match
+Message-ID: <001c01c77081$7dd74320$0401a8c0@Manolo>
+
+I have a list of integers,
+
+dat <- c(12, 1, 7, 10, 1, 10, 8, 5, 14, 7, 1, 1, 1, 76, 15, 78)
+
+I can easily exclude ones
+
+n <- dat[dat > 1]
+
+to use the vector n in a function.  The problem I am facing is to match the
+function output to the original sequence of values in my list list. I tried
+
+match(n, dat, nomatch = 0)
+
+but the output is all zeroes. Perhaps I can use a vector of the positions
+where dat=1.  I would appreciate help to solve this simple problem.
+
+    Thanks,
+                    Manolo
+
+From sundar.dorai-raj at pdf.com  Tue Mar 27 14:30:11 2007
+From: sundar.dorai-raj at pdf.com (Sundar Dorai-Raj)
+Date: Tue, 27 Mar 2007 07:30:11 -0700
+Subject: Re: match
+In-Reply-To: <001c01c77081$7dd74320$0401a8c0@Manolo>
+References: <001c01c77081$7dd74320$0401a8c0@Manolo>
+Message-ID: <46092A73.6090102@pdf.com>
+
+Manoel Pacheco said the following on 3/27/2007 8:06 AM:
+> I have a list of integers,
+>
+> dat <- c(12, 1, 7, 10, 1, 10, 8, 5, 14, 7, 1, 1, 1, 76, 15, 78)
+>
+> I can easily exclude ones
+>
+> n <- dat[dat > 1]
+>
+> to use the vector n in a function.  The problem I am facing is to match the
+> function output to the original sequence of values in my list list. I tried
+>
+> match(n, dat, nomatch = 0)
+>
+> but the output is all zeroes. Perhaps I can use a vector of the positions
+> where dat=1.  I would appreciate help to solve this simple problem.
+>
+>     Thanks,
+>                     Manolo
+>
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+
+You get "all zeros"? That's not what I get in S-PLUS 6.2 for Windows:
+
+> dat <- c(12, 1, 7, 10, 1, 10, 8, 5, 14, 7, 1, 1, 1, 76, 15, 78)
+> n <- dat[dat > 1]
+> match(n, dat, nomatch=0)
+ [1]  1  3  4  4  7  8  9  3 14 15 16
+
+But perhaps you really want ?which
+
+> which(dat > 1)
+[1]  1  3  4  6  7  8  9 10 14 15 16
+
+It's a bit unclear what you're expecting.
+
+HTH,
+
+--sundar
+
+From isabella at stat.ubc.ca  Tue Mar 27 18:00:31 2007
+From: isabella at stat.ubc.ca (Isabella Ghement)
+Date: Tue, 27 Mar 2007 11:00:31 -0700
+Subject: Displaying gaps in the data using plot.timeSeries()
+In-Reply-To: <46092A73.6090102@pdf.com>
+References: <46092A73.6090102@pdf.com>
+Message-ID: <Pine.GSO.4.10.10703271057530.22880-100000@hajek.stat.ubc.ca>
+
+Hello, 
+
+I have a timeSeries object B containing data for non-consecutive days,
+say: 
+
+B <- timeSeries(cbind(B1=4:7,B2=7:10),pos=c(1:2,5:6))
+
+and  would like to plot it such that the gaps in the data are visible.
+However, when I use the plot.timeSeries() function,  the data points
+corresponding to non-consecutive days are connected through a line:
+
+plot.timeSeries(B,reference.grid=F)
+
+Is there a way to get plot.timeSeries to automatically recognize the gaps
+in the data and display them as such?   
+
+Thank you in advance for any insight you may be able to provide! 
+
+Isabella R. Ghement, Ph.D.
+
+From courses at zanybooks.com  Tue Mar 27 20:54:15 2007
+From: courses at zanybooks.com
+Date: Tue, 27 Mar 2007 13:54:15 -0700
+Subject: Enrollment closing for "Introduction to R."
+Message-ID: <20070327135415.b21645f2bceb2bcc4cba8e709837b1d9.2b0491e754.wbe@email.secureserver.net>
+
+Enrollment is closing for “Introduction to R.”   
+This week is your last chance to enroll for the current session of
+“Introduction to R.”   Go to http://statisticsonline.info for details.
+
+ 
+
+From isabella at stat.ubc.ca  Tue Mar 27 21:32:30 2007
+From: isabella at stat.ubc.ca (Isabella Ghement)
+Date: Tue, 27 Mar 2007 14:32:30 -0700
+Subject: Re: Displaying gaps in the data using plot.timeSeries()
+In-Reply-To: <46097968.5070104@acm.org>
+References: <46097968.5070104@acm.org>
+Message-ID: <Pine.GSO.4.10.10703271428500.27181-100000@hajek.stat.ubc.ca>
+
+    Thank you so much to Stephen Veronneau and Tony Plate for their prompt
+answers to my question!  Stephen pointed out that I would need to include
+NA values in my timeSeries object to force plot() to recognize the
+corresponding gaps in the data, and Tony explained how to achieve that
+using the align() function.  Problem solved!  
+
+    Cheers, 
+
+    Isabella  
+
+On Tue, 27 Mar 2007, Tony Plate wrote:
+
+> Try something along these lines:
+> 
+>  > B <- timeSeries(cbind(B1=4:7,B2=7:10),pos=timeDate(julian=c(1:2,5:6)))
+>  > align(B, pos=timeDate(julian=1:6))
+>    Positions B1 B2
+>   1960/01/02  4  7
+>   1960/01/03  5  8
+>   1960/01/04 NA NA
+>   1960/01/05 NA NA
+>   1960/01/06  6  9
+>   1960/01/07  7 10
+>  > plot(align(B, pos=timeDate(julian=1:6)), reference.grid=F)
+> 
+> You might also want to explore the x.axis.args argument to 
+> plot.timeSeries, e.g.:
+>  > plot(align(B, pos=timeDate(julian=1:6)), reference.grid=F, 
+> x.axis.args=list(nobreaks=T, skip.weekends=F))
+>  >
+> 
+> (Though it makes no difference in this case.)
+> 
+> -- Tony Plate
+> 
+> Isabella Ghement wrote:
+> > Hello, 
+> > 
+> > I have a timeSeries object B containing data for non-consecutive days,
+> > say: 
+> > 
+> > B <- timeSeries(cbind(B1=4:7,B2=7:10),pos=c(1:2,5:6))
+> > 
+> > and  would like to plot it such that the gaps in the data are visible.
+> > However, when I use the plot.timeSeries() function,  the data points
+> > corresponding to non-consecutive days are connected through a line:
+> > 
+> > plot.timeSeries(B,reference.grid=F)
+> > 
+> > Is there a way to get plot.timeSeries to automatically recognize the gaps
+> > in the data and display them as such?   
+> > 
+> > Thank you in advance for any insight you may be able to provide! 
+> > 
+> > Isabella R. Ghement, Ph.D.
+> > 
+> > 
+> > 
+> > 
+> > 
+> > 
+> > --------------------------------------------------------------------
+> > This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> > unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> > the BODY of the message:  unsubscribe s-news
+> > 
+> 
+> 
+
+From lawrence-hunsicker at uiowa.edu  Wed Mar 28 21:56:35 2007
+From: lawrence-hunsicker at uiowa.edu (Hunsicker, Lawrence)
+Date: Wed, 28 Mar 2007 16:56:35 -0500
+Subject: Estimated median survival from Cox analysis
+Message-ID: <825A13A34899AB40A5039B9E1B71939F483AF6@HC-MAIL12.healthcare.uiowa.edu>
+
+Hi, folks:
+
+I am trying to predict the estimated median survival for a group of patients with a defined set of values for SOME of the covariates from the cox model.  I know that I can use the coxph version of survfit to calculate the entire curve, but really all I need is the estimated median survival.  A couple of questions:
+
+1.  Am I correct that survfit.coxph will estimate the survival curve from the mean values of all of the covariates that are not explicitly set in the “newdata” data set?  
+
+2.  Is there any way to get survfit.coxph to print out for each of the specified covariate sets only the time to median survival, and its confidence intervals?  (I am assuming that what one gets is the estimated survivals at each of the event times, since this appears to be what plot(survfit(model)) plots.)
+
+Many thanks in advance for any help that you can give me.
+
+Larry Hunsicker
+
+From elvis at xlsolutions-corp.com  Wed Mar 28 23:40:44 2007
+From: elvis at xlsolutions-corp.com
+Date: Wed, 28 Mar 2007 16:40:44 -0700
+Subject: Course in Vegas*** R/S+: Fundamentals and Programming Techniques - May 21-22
+Message-ID: <20070328164044.9f08cc34deb45d78e54b3b5664e21546.533bdcfcec.wbe@email.secureserver.net>
+
+XLSolutions Corporation is proud to announce our May 2007 R/S:
+Fundamentals and Programming Techniques - 
+
+ 
+
+in Las Vegas - May 21-22, 2007
+
+http://www.xlsolutions-corp.com
+
+This two-day beginner to intermediate R/S-plus course focuses on a broad
+spectrum of topics, from reading raw data to a comparison of R and S. We
+will learn the essentials of data manipulation, graphical visualization
+and R/S-plus programming. We will explore statistical data analysis
+tools,including graphics with data sets. How to enhance your plots,
+build your own packages (librairies) and connect via ODBC,etc. The
+course will give beginners a strong foundation for becoming a versatile
+programmer, and will expose experienced users to skills that make a
+better programmer.
+
+Ask for group discount and reserve your seat Now - Earlybird Rates.
+Please email us for for April-May courses.
+Payment due after the class! Email Sue Turner:  sue at xlsolutions-corp.com
+
+(1) R/S System: Advanced Programming - San Francisco, July  2007
+
+This advanced course is designed for people who use 
+ R or S-Plus in their
+day-to-day work and want to maximize the efficiency of their programs.
+Participants will learn in depth advanced programming techniques that
+are available in R and S-Plus. This course will improve your general
+strategies and extend your programming skills. This two-day course will
+introduce participants to many programming techniques and tools. In
+addition a special session dedicated to making S-Plus functions more
+efficient will focus on "fast objects" and "fast functions". The
+advanced programming techniques include object orientation, classes,
+inheritance and methods. http://www.xlsolutions-corp.com/Radv.htm
+
+(2) Data Mining: Practical Tools and Techniques in R/Splus - Salt Lake
+City, June 2007
+
+This course gives students an understanding of R/Splus tools used to
+investigate the main tasks that predictive analytics and exploratory
+data mining is usually called upon to accomplish and data preparation
+w
+ hich is universally held as the key to successful data mining. We
+focus on the most common data mining tasks which are: Description,
+Estimation, Prediction, Classification, Clustering, Association and the
+need for Dimension Reduction with Principal Components and Factor
+Analysis. Analytical methods used in the class include decision trees,
+logistic regression, neural networks, link analysis (social networks)
+and Kernel-based Methods (SVMs).
+http://www.xlsolutions-corp.com/RSMining.htm
+
+Email us for group discounts: sue at xlsolutions-corp.com
+Phone:  206 686 1578
+
+Visit us: www.xlsolutions-corp.com/training.htm
+
+Please let us know if you and your colleagues are interested in this
+class to take advantage of group discount. Register now to secure your
+seat!
+
+Cheers,
+
+Elvis Miller, PhD
+Manager Training
+XLSolutions Corporation
+206 686 1578
+www.xlsolutions-corp.com/training.htm
+elvis@xlsolutions-
+ corp.com
+

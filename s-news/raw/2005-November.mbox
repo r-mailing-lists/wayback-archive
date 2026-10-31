@@ -1,0 +1,4579 @@
+From sichong.chen at postgrad.manchester.ac.uk  Sat Nov  5 16:47:27 2005
+From: sichong.chen at postgrad.manchester.ac.uk (Chen Sichong)
+Date: Sun, 06 Nov 2005 00:47:27 +0800
+Subject: Estimation of Time Varying Parameters
+Message-ID: <20051105164717.4AB681006D57@mailgate.biostat.wustl.edu>
+
+Hi,
+
+ 
+
+I am using nlminb to estimate
+a parameter which is time varying and autocorrelated by
+itself. Say, for example, 
+
+ 
+
+rho(t)=a0+alpha*rho(t-1)+beta*X(t-1)
+
+ 
+
+Previously, rho is a fixed number, now I use the
+formula above to let it change with time. This, a0, alpha and beta is the parameters which I want to estimate.
+X(t) is a known time series vector.
+
+ 
+
+What I program is to create a new vector rho, so I have
+to initial the first value of vector rho
+
+ 
+
+rho=NULL
+
+   rho[1]=0.2
+
+      for(i
+in 2:(length(X)))
+
+   {
+
+       rho[i]=a0+alpha*rho[(i-1)]+beta*X[(i-1)]
+
+   }
+
+ 
+
+Then I put rho back to my ML function. As we know, to create
+a time varying vector using iteration is quite time consuming. Do you have some
+idea how to make an autocorrelated vector without iteration?
+
+ 
+
+Many thanks,
+
+Chen Sichong
+
+ 
+
+PhD of Finance
+
+Manchester Business School
+
+University of Manchester
+
+Oxford Road
+
+Manchester
+
+United Kingdom
+
+M13 9PL
+
+ 
+
+From PSchwarz at gcrinsight.com  Sun Nov  6 21:45:11 2005
+From: PSchwarz at gcrinsight.com (Schwarz,Paul)
+Date: Sun, 06 Nov 2005 13:45:11 -0800
+Subject: creating a data frame from a vector of character strings
+Message-ID: <89C7DEAADB79564DB278694EB2417CCE56F164@CHOCOLATE.GCRInsight.com>
+
+Hi S-News readers,
+
+I'm looking for a way to create a data frame using a vector of character
+strings returned by the objects() function. In other words, objects(pat=
+"xdata.*") returns a charcter vector of the names of objects, but I
+haven't figured out how to convert this character vector into the actual
+objects to pass to the data.frame() function. I know it seems straight
+forward but I haven't figured out how to do it.
+
+I'd appreciate help and suggestions.
+
+Thanks in advance.
+
+Paul Schwarz
+
+From pburns at pburns.seanet.com  Sun Nov  6 22:34:51 2005
+From: pburns at pburns.seanet.com (Patrick Burns)
+Date: Sun, 06 Nov 2005 22:34:51 +0000
+Subject: Re: creating a data frame from a vector of character strings
+In-Reply-To: <89C7DEAADB79564DB278694EB2417CCE56F164@CHOCOLATE.GCRInsight.com>
+References: <89C7DEAADB79564DB278694EB2417CCE56F164@CHOCOLATE.GCRInsight.com>
+Message-ID: <436E850B.9090106@pburns.seanet.com>
+
+If I understand correctly, you want the "get" function.
+
+Patrick Burns
+patrick at burns-stat.com
++44 (0)20 8525 0696
+http://www.burns-stat.com
+(home of S Poetry and "A Guide for the Unwilling S User")
+
+Schwarz,Paul wrote:
+
+> Hi S-News readers,
+>
+> I'm looking for a way to create a data frame using a vector of character
+> strings returned by the objects() function. In other words, objects(pat=
+> "xdata.*") returns a charcter vector of the names of objects, but I
+> haven't figured out how to convert this character vector into the actual
+> objects to pass to the data.frame() function. I know it seems straight
+> forward but I haven't figured out how to do it.
+>
+> I'd appreciate help and suggestions.
+>
+> Thanks in advance.
+>
+> Paul Schwarz
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+>
+>
+>
+>
+
+From lsdst8+ at pitt.edu  Mon Nov  7 05:07:39 2005
+From: lsdst8+ at pitt.edu
+Date: Mon, 07 Nov 2005 00:07:39 -0500
+Subject: Calling newly compiled rpart
+Message-ID: <1082.24.3.122.82.1131340059.squirrel@webmail.pitt.edu>
+
+I need some guidance in calling a newly compiled version of rpart. I am
+using rpart3 for windows and Microsoft Visual C+ 6.0. I have created a
+project (to create a DLL) in Visual 6.0, added the rpart3 source code and
+created a definition file that includes all of the function calls in
+rpart3. Then, I compile (without making any changes) the code to create a
+S.dll file. The DLL file is created without any errors.
+
+In Splus 6.0, I load my dataset and dll
+(dyn.open("C:/temp/rpart3/S.dll")). I try to call the newly compiled rpart
+with the following statement:
+
+                test1_.C("s_to_rp",
+Surv(tlfup,sur)~(trt>1)+pnod+nucgr+mcsiz,x=T,y=T)
+
+I get the following message:
+
+            > test1
+            Problem: Object "test1" not found, while calling subroutine 
+
+            Use traceback() to see the call stack
+
+Am I not making the proper function call? I thought that s_to_rp is the
+function that I should call but I guess I am wrong. If I do the above
+statement with rpart library loaded
+(test1_rpart(Surv(tlfup,sur)~(trt>1)+pnod+nucgr+mcsiz,x=T,y=T)), it works.
+
+To test the dll that I created, I added a simple function to rpart.c:
+             void rsum(double* x, int* pn, double* mean, double* stdv)
+                 {
+                     int n= *pn,i,j;
+                     double sum=0, sqrsum=0;
+
+                     for (i=0;i<n;i++)
+                      {
+                          sum += x[i];
+                      }
+                     *mean = sum/n;
+                       for (j=0;j<n;j++)
+                      {
+                          sqrsum += ((x[j]- *mean)*(x[j]-*mean));
+                        }
+                     *stdv = sqrt(sqrsum/(n-1));
+                    }
+I compiled the code and created a new S.dll. I was able to get this
+function to work with the following code in Splus:
+            y_pnod
+            z_0
+            x_0
+            x_.C("rsum",as.double(y),as.integer(402), as.double(x),
+as.double(z))[[3]]
+
+So the problem does not seem to be the DLL. Obviously, the problem is in
+my call statement. Could anyone supply me with an example of how I could
+call this newly compiled rpart? Sorry for the novice question but I have
+not come across this information or I missed it. Any guidance would be
+greatly appreciated. Thank you.
+
+Scott Dean
+
+From hirsch at pdmi.ras.ru  Mon Nov  7 06:46:27 2005
+From: hirsch at pdmi.ras.ru (Edward A. Hirsch)
+Date: Mon, 07 Nov 2005 09:46:27 +0300
+Subject: CSR-2006: Final Call for Papers
+Message-ID: <20051107064627.80E7E578A2@euclid.pdmi.ras.ru>
+
+(Sincere apologies for cross-posting.
+ Note: the deadline is December 11.
+ Submission server is now open.)
+
+                                  CSR-2006
+             International Computer Science Symposium in Russia
+
+        Sponsored by the U.S. Civilian Research & Development Foundation
+    Organized by St.Petersburg Department of Steklov Institute of Mathematics
+
+                   June 8-12, 2006, St.Petersburg, Russia
+
+                            Final Call for Papers
+
+CSR 2006 is the first conference in a series of regular events intended
+to reflect the broad scope of international cooperation in computer
+science.  CSR 2006 consists of two tracks:
+
+Theory Track:
+* algorithms, protocols, and data structures;
+* complexity and cryptography;
+* formal languages, automata and their applications to computer science;
+* computational models and concepts;
+* proof theory and applications of logic to computer science.
+
+Applications and Technology Track:
+* programming and languages;
+* computer architecture and hardware design;
+* symbolic computing and numerical applications;
+* application software;
+* artificial intelligence and robotics.
+
+Program committee:
+
+Theory Track: Sergei Artemov, Paul Beame, Michael Ben-Or, Andrei Bulatov,
+  Peter Buergisser, Felipe Cucker, Evgeny Dantsin, Volker Diekert,
+  Dima Grigoriev (chair), Yuri Gurevich, Janos Makowsky, Yuri Matiyasevich,
+  Peter Bro Miltersen, Grigori Mints, Pavel Pudlak, Prabhakar Raghavan,
+  Alexander Razborov, Michael E. Saks, Alexander Shen, Amin Shokrollahi,
+  Anatol Slissenko, Mikhail Volkov
+
+Applications and Technology Track: Boris Babayan, Robert Bauer, Matthias Blume,
+  Walter Daelemans, Vassil Dimitrov, Sergey Dmitriev, Richard Fateman,
+  Dina Goldin, John R. Harrison (chair), John Mashey, Bertrand Meyer,
+  Fedor Novikov, Michael Parks, Andreas Reuter, Mary Sheeran,
+  Elena Troubitsyna, Miroslav Velev, Sergey Zhukov
+
+The (confirmed) invited speakers include:
+
+* Boaz Barak (Princeton University, USA)
+* Gerard Berry (Esterel Technologies, France)
+* Bob Colwell (R&E Colwell & Assoc. Inc., USA)
+* Byron Cook (Microsoft Research, USA)
+* Melvin Fitting (Lehman College and the Graduate Center, CUNY, USA)
+* Russell Impagliazzo (University of California at San Diego, USA)
+* Michael Kaminski (Technion, Israel)
+* Pascal Koiran (Ecole Normale Superieure de Lyon, France)
+* Omer Reingold (Weizmann Institute, Israel)
+
+The opening lecture will be given by Stephen A. Cook
+(University of Toronto, Canada).
+
+It is planned to publish the proceedings of the symposium in
+Springer's LNCS series.
+
+Important dates:
+* Paper submission:     December 11, 2005
+* Notification:         January 31, 2006
+* Symposium:            June 8-12, 2006
+
+There will be limited support for travel expenses of Russian participants.
+
+Further information and contacts:
+  Web: http://logic.pdmi.ras.ru/~csr2006/
+  Email: csr06chair at logic.pdmi.ras.ru
+
+With best regards,
+
+Edward Hirsch
+CSR-2006, Conference Chair
+
+From timh at insightful.com  Mon Nov  7 19:17:30 2005
+From: timh at insightful.com (Tim Hesterberg)
+Date: Mon, 07 Nov 2005 11:17:30 -0800
+Subject: Re: creating a data frame from a vector of character strings
+In-Reply-To: <89C7DEAADB79564DB278694EB2417CCE56F164@CHOCOLATE.GCRInsight.com>
+References: <89C7DEAADB79564DB278694EB2417CCE56F164@CHOCOLATE.GCRInsight.com>
+Message-ID: <SE2KEXCH01Rp7JbkKcE00000433@se2kexch01.insightful.com>
+
+You could use a combination of
+        paste()                         (to create a text string to evaluate)
+        eval(parse(text="the command")) (to evaluate the string)
+e.g. if your vector is c("a", "b") you want:
+
+        eval(parse(text="data.frame(a,b)"))
+
+Tim Hesterberg
+
+>Hi S-News readers,
+>
+>I'm looking for a way to create a data frame using a vector of character
+>strings returned by the objects() function. In other words, objects(pat=
+>"xdata.*") returns a charcter vector of the names of objects, but I
+>haven't figured out how to convert this character vector into the actual
+>objects to pass to the data.frame() function. I know it seems straight
+>forward but I haven't figured out how to do it.
+>
+>I'd appreciate help and suggestions.
+>
+>Thanks in advance.
+>
+>Paul Schwarz
+
+========================================================
+| Tim Hesterberg       Research Scientist              |
+| timh at insightful.com  Insightful Corp.                |
+| (206)802-2319        1700 Westlake Ave. N, Suite 500 |
+| (206)283-8691 (fax)  Seattle, WA 98109-3012, U.S.A.  |
+|                      www.insightful.com/Hesterberg   |
+========================================================
+Download the S+Resample library from www.insightful.com/downloads/libraries
+
+Two Research Scientist positions:
+        data mining
+        frailty/mixed effects
+    http://www.insightful.com/company/jobs.asp
+
+Speak out about biased science in Washington D.C.
+    http://home.comcast.net/~timhesterberg/ScientificIntegrity.html
+
+From ripley at stats.ox.ac.uk  Tue Nov  8 13:48:16 2005
+From: ripley at stats.ox.ac.uk (Prof Brian Ripley)
+Date: Tue, 08 Nov 2005 13:48:16 +0000
+Subject: Re: Calling newly compiled rpart
+In-Reply-To: <1082.24.3.122.82.1131340059.squirrel@webmail.pitt.edu>
+References: <1082.24.3.122.82.1131340059.squirrel@webmail.pitt.edu>
+Message-ID: <Pine.LNX.4.61.0511081339460.7366@gannet.stats>
+
+You are diving into undocumented internal structures of rpart.  But as a 
+general principle, .C is not designed to pass S objects like a formula as 
+here (except to pass them on to call_S). Your call is nothing like that to 
+"s_to_rp" in rpart(), and I think it was fortuitous that you did not crash 
+S-PLUS.
+
+What do you actually want to do?  Rpart is not just C code but also S 
+code, and you need to use the latter to give you the correct calls.
+
+On Mon, 7 Nov 2005 lsdst8+ at pitt.edu wrote:
+
+> I need some guidance in calling a newly compiled version of rpart. I am
+> using rpart3 for windows and Microsoft Visual C+ 6.0. I have created a
+> project (to create a DLL) in Visual 6.0, added the rpart3 source code and
+> created a definition file that includes all of the function calls in
+> rpart3. Then, I compile (without making any changes) the code to create a
+> S.dll file. The DLL file is created without any errors.
+>
+> In Splus 6.0, I load my dataset and dll
+> (dyn.open("C:/temp/rpart3/S.dll")). I try to call the newly compiled rpart
+> with the following statement:
+>
+>                test1_.C("s_to_rp",
+> Surv(tlfup,sur)~(trt>1)+pnod+nucgr+mcsiz,x=T,y=T)
+>
+> I get the following message:
+>
+>            > test1
+>            Problem: Object "test1" not found, while calling subroutine 
+>
+>            Use traceback() to see the call stack
+>
+> Am I not making the proper function call? I thought that s_to_rp is the
+> function that I should call but I guess I am wrong. If I do the above
+> statement with rpart library loaded
+> (test1_rpart(Surv(tlfup,sur)~(trt>1)+pnod+nucgr+mcsiz,x=T,y=T)), it works.
+>
+> To test the dll that I created, I added a simple function to rpart.c:
+>             void rsum(double* x, int* pn, double* mean, double* stdv)
+>                 {
+>                     int n= *pn,i,j;
+>                     double sum=0, sqrsum=0;
+>
+>                     for (i=0;i<n;i++)
+>                      {
+>                          sum += x[i];
+>                      }
+>                     *mean = sum/n;
+>                       for (j=0;j<n;j++)
+>                      {
+>                          sqrsum += ((x[j]- *mean)*(x[j]-*mean));
+>                        }
+>                     *stdv = sqrt(sqrsum/(n-1));
+>                    }
+> I compiled the code and created a new S.dll. I was able to get this
+> function to work with the following code in Splus:
+>            y_pnod
+>            z_0
+>            x_0
+>            x_.C("rsum",as.double(y),as.integer(402), as.double(x),
+> as.double(z))[[3]]
+>
+> So the problem does not seem to be the DLL. Obviously, the problem is in
+> my call statement. Could anyone supply me with an example of how I could
+> call this newly compiled rpart? Sorry for the novice question but I have
+> not come across this information or I missed it. Any guidance would be
+> greatly appreciated. Thank you.
+>
+>
+> Scott Dean
+
+--
+Brian D. Ripley,                  ripley at stats.ox.ac.uk
+Professor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/
+University of Oxford,             Tel:  +44 1865 272861 (self)
+1 South Parks Road,                     +44 1865 272866 (PA)
+Oxford OX1 3TG, UK                Fax:  +44 1865 272595
+
+From henrik.parn at bio.ntnu.no  Tue Nov  8 14:45:21 2005
+From: henrik.parn at bio.ntnu.no (Henrik Parn)
+Date: Tue, 08 Nov 2005 15:45:21 +0100
+Subject: boxplot colors
+Message-ID: <4370BA01.1070808@bio.ntnu.no>
+
+Dear S-plus users,
+
+I would like to create a boxplot with several boxes where I can specify 
+the colors of inviduals boxes.
+
+I have read the posting 'Summary of Specifying box colors in boxplot' by 
+Peter Sherer. I am not sure if the proposed script, which is based on 
+boxplot(split(y.dat,x.dat)), suits the way my data is arranged. I pick 
+two (or more) vectors of data from two (or more) different data sets.
+
+An example could start out from this:
+I have two data sets, data1 and data2, and I want to plot two variables 
+Y1 and Y2, from each data set.
+
+I would like to specify the color (gray scale) of each box.
+For example, different colors for different data sets, different colors 
+for different variables or completely manually on each box.
+
+Any suggestions are appreciated!
+
+Cheers,
+
+Henrik
+S-Plus 6.2, Win XP
+
+--
+************************
+Henrik Pärn
+Department of Biology
+NTNU
+7491 Trondheim
+Norway
+
++47 735 96282 (office)
++47 909 89 255 (mobile)
++47 735 96100 (fax)
+************************
+
+From markleeds at verizon.net  Tue Nov  8 15:44:02 2005
+From: markleeds at verizon.net (MARK LEEDS)
+Date: Tue, 08 Nov 2005 07:44:02 -0800
+Subject: Re: boxplot colors
+References: <4370BA01.1070808@bio.ntnu.no>
+Message-ID: <003a01c5e47b$3e8e7140$2f01a8c0@m8d4477f3de884>
+
+does anyone know if there
+is a function in Splus called
+cov2cor. i don't have Splus
+at the moment so I can't check it.
+
+I knw the function exists in R ( and can also be
+written fairly easily ) but
+I am grading an Splus exam as a favor to someone
+and the test taker used cov2cor and I need
+to know if that's a valid function in Splus. Thanks.
+
+                                        Mark
+
+----- Original Message ----- 
+From: "Henrik Parn" <henrik.parn at bio.ntnu.no>
+
+To: <s-news at lists.biostat.wustl.edu>
+Sent: Tuesday, November 08, 2005 6:45 AM
+Subject: [S] boxplot colors
+
+> Dear S-plus users,
+>
+> I would like to create a boxplot with several boxes where I can specify
+> the colors of inviduals boxes.
+>
+>
+> I have read the posting 'Summary of Specifying box colors in boxplot' by
+> Peter Sherer. I am not sure if the proposed script, which is based on
+> boxplot(split(y.dat,x.dat)), suits the way my data is arranged. I pick two
+> (or more) vectors of data from two (or more) different data sets.
+>
+>
+> An example could start out from this:
+> I have two data sets, data1 and data2, and I want to plot two variables Y1
+> and Y2, from each data set.
+>
+> I would like to specify the color (gray scale) of each box.
+> For example, different colors for different data sets, different colors
+> for different variables or completely manually on each box.
+>
+>
+>
+> Any suggestions are appreciated!
+>
+> Cheers,
+>
+> Henrik
+> S-Plus 6.2, Win XP
+>
+> --
+> ************************
+> Henrik Pärn
+> Department of Biology
+> NTNU
+> 7491 Trondheim
+> Norway
+>
+> +47 735 96282 (office)
+> +47 909 89 255 (mobile)
+> +47 735 96100 (fax)
+> ************************
+>
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+
+From seth3116 at gmail.com  Wed Nov  9 02:07:29 2005
+From: seth3116 at gmail.com (Seth O'Beeth)
+Date: Tue, 08 Nov 2005 21:07:29 -0500
+Subject: big data library for $2200
+Message-ID: <188150fa0511081807h60174474qbad128292b252a6b@mail.gmail.com>
+
+Folks:
+
+I need your urgent advise. My lab is about ordering s-plus 7.0, enterprise edition. It is damn expensive.
+
+In addition to the cost of the site license that my lab already has, insightful wants me to pay $2200 for upgrade from professional to 
+
+enterprise. It is my understanding that the thing we are going to pay for is the so called "big data library". 
+
+My question to all of your, smart people, is it really such a good thing, this bigdata library, that worth $2200 on top of "professional" cost ?  
+
+Is there anything else particularly attractive in s-plus 7.0, as compared to 6.2?
+
+ 
+
+Could you please share your experience? 
+
+ 
+
+Also, it is still kind of clouded for me whether or not I will have right and technical ability to install this version on my laptop and my home machine.
+
+I remember some kind of discussion of this matter, but not sure what was the conclusion.
+
+ 
+
+Please, help. We need to BUY OR NOT TO BUY this THURSDAY at latest.
+
+ 
+
+THANKS!!!!
+
+ 
+
+Seth O'Beeth
+
+From jsorkin at grecc.umaryland.edu  Wed Nov  9 02:31:16 2005
+From: jsorkin at grecc.umaryland.edu (John Sorkin)
+Date: Tue, 08 Nov 2005 21:31:16 -0500
+Subject: Re: big data library for $2200
+Message-ID: <s3711950.098@medicine.umaryland.edu>
+
+Seth,
+My experience with Insightful not good. They would not let me install Splus on 
+more than one machine. Thus I could install it on my office computer, but not 
+my laptop. Insightfull was willing to give me a small discount on a second 
+license which would allow me to install on my laptop, but the price was more 
+than prohibitive. I tired to explain to Insightufull that they would lose users 
+to R if they persisted in their awful licensing policy but they would not 
+listen.
+John
+
+John Sorkin M.D., Ph.D.
+Chief, Biostatistics and Informatics
+Baltimore VA Medical Center GRECC and
+University of Maryland School of Medicine Claude Pepper OAIC
+
+University of Maryland School of Medicine
+Division of Gerontology
+Baltimore VA Medical Center
+10 North Greene Street
+GRECC (BT/18/GR)
+Baltimore, MD 21201-1524
+
+410-605-7119 
+NOTE NEW EMAIL ADDRESS:
+jsorkin at grecc.umaryland.edu
+
+>>> "Seth O'Beeth" <seth3116 at gmail.com> 11/08/05 9:07 PM >>>
+Folks:
+I need your urgent advise. My lab is about ordering s-plus 7.0, enterprise
+edition. It is damn expensive.
+In addition to the cost of the site license that my lab already has,
+insightful wants me to pay $2200 for upgrade from professional to
+enterprise. It is my understanding that the thing we are going to pay for is
+the so called "big data library".
+My question to all of your, smart people, is it really such a good thing,
+this bigdata library, that worth $2200 on top of "professional" cost ?
+Is there anything else particularly attractive in s-plus 7.0, as compared to
+6.2?
+ Could you please share your experience?
+ Also, it is still kind of clouded for me whether or not I will have right
+and technical ability to install this version on my laptop and my home
+machine.
+I remember some kind of discussion of this matter, but not sure what was the
+conclusion.
+ Please, help. We need to BUY OR NOT TO BUY this THURSDAY at latest.
+ THANKS!!!!
+ Seth O'Beeth
+
+From henrik.parn at bio.ntnu.no  Wed Nov  9 08:43:59 2005
+From: henrik.parn at bio.ntnu.no (Henrik Parn)
+Date: Wed, 09 Nov 2005 09:43:59 +0100
+Subject: Boxplots - grayscale and position
+Message-ID: <4371B6CF.80305@bio.ntnu.no>
+
+Dear S-plus users,
+
+I have some questions relating to boxplots.
+
+1. In order to make 'boxcol' refer to a grayscale I have used the command:
+
+graphsheet(image.color.scheme="trellis black on white")
+
+I this THE way to get a grayscale? It looks very good on my screen, but 
+when I exported a plot with boxcol=100 (which is gray on the screen) as 
+Compuserve GIF, grayscale, 128 levels, it appears pale green when I 
+insert in my Word (2002) document (I suspect this is a 'Word problem' or?)
+
+2. Is it possible specify the x-position of separate boxes? Sometimes I 
+want to plot boxes together in groups, but the problem(?) is that I 
+don't have any particular grouping variables, and my grouping criteria 
+can be quite arbitrary so it needs to be done manually.
+
+S-plus 6.2. Win XP
+
+--
+************************
+Henrik Pärn
+Department of Biology
+NTNU
+7491 Trondheim
+Norway
+
++47 735 96282 (office)
++47 909 89 255 (mobile)
++47 735 96100 (fax)
+************************
+
+From kimmerer at sfsu.edu  Wed Nov  9 15:28:54 2005
+From: kimmerer at sfsu.edu (Wim Kimmerer)
+Date: Wed, 09 Nov 2005 07:28:54 -0800
+Subject: 
+Message-ID: <6.2.1.2.2.20051109071953.01e155e8@sfsu.edu>
+
+Seth, I want to second what John Sorkin said about V.7 and the Insightful 
+licensing practices.  Even on the basis of functionality I have already 
+reverted to v. 6.2 after getting the V.7 "upgrade", and will probably 
+switch to R.  I found that none of the annoying features of v.6.2 that I 
+had been complaining about had been fixed in v. 7 (several previous 
+messages in the archives on these). Thus, as far as my use of Splus is 
+concerned, I gained nothing from the switch to v.7.
+
+Not only can you not install v.7 on your desktop and laptop machines, but 
+if for some reason you have to reinstall it you have to go through a big 
+rigamarole with license keys or whatever they are called.
+
+I don't know about the "big data library".  I analyze data sets of 10s of 
+MB and don't really have much of a problem.  I would think $2200 would be 
+better spent on more memory - and that is quite a load of memory!
+
+Everybody has to decide for themselves, but since you asked for advice, 
+mine is: don't do it!
+
+Wim
+
+>>> "Seth O'Beeth" <seth3116 at gmail.com> 11/08/05 9:07 PM >>>
+
+Folks:
+I need your urgent advise. My lab is about ordering s-plus 7.0, enterprise
+edition. It is damn expensive.
+In addition to the cost of the site license that my lab already has,
+insightful wants me to pay $2200 for upgrade from professional to
+enterprise. It is my understanding that the thing we are going to pay for is
+the so called "big data library".
+My question to all of your, smart people, is it really such a good thing,
+this bigdata library, that worth $2200 on top of "professional" cost ?
+Is there anything else particularly attractive in s-plus 7.0, as compared to
+6.2?
+ Could you please share your experience?
+ Also, it is still kind of clouded for me whether or not I will have right
+and technical ability to install this version on my laptop and my home
+machine.
+I remember some kind of discussion of this matter, but not sure what was the
+conclusion.
+ Please, help. We need to BUY OR NOT TO BUY this THURSDAY at latest.
+ THANKS!!!!
+ Seth O'Beeth
+
+======================
+Dr. Wim Kimmerer
+Research Professor of Biology
+Romberg Tiburon Center
+San Francisco State University
+3152 Paradise Drive
+Tiburon CA 94920
+Ph. (415) 338-3515
+Fax (415) 435-7120
+http://online.sfsu.edu/~kimmerer/ 
+
+From rolf at math.unb.ca  Wed Nov  9 16:43:09 2005
+From: rolf at math.unb.ca (Rolf Turner)
+Date: Wed, 09 Nov 2005 12:43:09 -0400
+Subject: S and value for money.
+Message-ID: <200511091643.jA9Gh9Qp002925@erdos.math.unb.ca>
+
+Use R.  (a) It's generally better (e.g. plotmath()) and (b) it's
+free.  This is not only good for you from a practical point of view,
+but it's good in ***principle***.  Software ***should*** be free ---
+in both senses (price and openness of source).
+
+                        cheers,
+
+                                Rolf Turner
+
+From Kim.Elmore at noaa.gov  Wed Nov  9 16:49:52 2005
+From: Kim.Elmore at noaa.gov (Kim Elmore)
+Date: Wed, 09 Nov 2005 10:49:52 -0600
+Subject: Behavior of cor() with na.methods "omit" and "available"
+Message-ID: <437228B0.2050800@noaa.gov>
+
+I can't quite figure out what the cor() function does with the different 
+na.methods "omit" and "available". I find that each of these methods 
+yields a different answer, even if there is no missing data.
+
+example:
+> rn1 <- rnorm(3)
+> rn1
+[1]  0.52170 -0.34945  0.76141
+> rn2 <- rnorm(3)
+> rn2
+[1]  0.44834 -2.10544 -0.91762
+> cor(rn1, rn2)
+[1] 0.71767
+> cor(rn1, rn2, na.method = "omit")
+[1] 0.71767
+
+Which is exactly what I'd expect. But when
+
+> cor(rn1, rn2, na.method = "available")
+[1] 0.35884
+
+is the result.
+
+Why is this, when there is no missing data? If there is missing data, 
+the two methods also yield different answers, though "omit" does what 
+I'd expect, which is compute the correlation based on whatever pairs are 
+available. I can't figure out what "available" does. Any insight will be 
+deeply appreciated
+
+Kim Elmore
+
+--
+           Kim Elmore, OU/CIMMS/NSSL
+  "All of weather is divided into three parts:
+Yes, No and Maybe. The greatest of these is Maybe."
+
+From kimmerer at sfsu.edu  Wed Nov  9 16:52:38 2005
+From: kimmerer at sfsu.edu (Wim Kimmerer)
+Date: Wed, 09 Nov 2005 08:52:38 -0800
+Subject: Re: big data library for $2200 (my $0.02 worth)
+Message-ID: <6.2.1.2.2.20051109085210.01deec28@sfsu.edu>
+
+Sorry for the repost, but I left off the subject line before...
+
+Seth, I want to second what John Sorkin said about V.7 and the Insightful 
+licensing practices.  Even on the basis of functionality I have already 
+reverted to v. 6.2 after getting the V.7 "upgrade", and will probably 
+switch to R.  I found that none of the annoying features of v.6.2 that I 
+had been complaining about had been fixed in v. 7 (several previous 
+messages in the archives on these). Thus, as far as my use of Splus is 
+concerned, I gained nothing from the switch to v.7.
+
+Not only can you not install v.7 on your desktop and laptop machines, but 
+if for some reason you have to reinstall it you have to go through a big 
+rigamarole with license keys or whatever they are called.
+
+I don't know about the "big data library".  I analyze data sets of 10s of 
+MB and don't really have much of a problem.  I would think $2200 would be 
+better spent on more memory - and that is quite a load of memory!
+
+Everybody has to decide for themselves, but since you asked for advice, 
+mine is: don't do it!
+
+Wim
+
+>>> "Seth O'Beeth" <seth3116 at gmail.com> 11/08/05 9:07 PM >>>
+
+Folks:
+I need your urgent advise. My lab is about ordering s-plus 7.0, enterprise
+edition. It is damn expensive.
+In addition to the cost of the site license that my lab already has,
+insightful wants me to pay $2200 for upgrade from professional to
+enterprise. It is my understanding that the thing we are going to pay for is
+the so called "big data library".
+My question to all of your, smart people, is it really such a good thing,
+this bigdata library, that worth $2200 on top of "professional" cost ?
+Is there anything else particularly attractive in s-plus 7.0, as compared to
+6.2?
+ Could you please share your experience?
+ Also, it is still kind of clouded for me whether or not I will have right
+and technical ability to install this version on my laptop and my home
+machine.
+I remember some kind of discussion of this matter, but not sure what was the
+conclusion.
+ Please, help. We need to BUY OR NOT TO BUY this THURSDAY at latest.
+ THANKS!!!!
+ Seth O'Beeth
+
+======================
+Dr. Wim Kimmerer
+Research Professor of Biology
+Romberg Tiburon Center
+San Francisco State University
+3152 Paradise Drive
+Tiburon CA 94920
+Ph. (415) 338-3515
+Fax (415) 435-7120
+http://online.sfsu.edu/~kimmerer/  
+
+From Jason.Overstreet at honeywell.com  Wed Nov  9 17:07:35 2005
+From: Jason.Overstreet at honeywell.com (Overstreet, Jason (FL51))
+Date: Wed, 09 Nov 2005 10:07:35 -0700
+Subject: My two cents on the S-plus/R debate
+Message-ID: <67BDC44EE870F04183CA36084D53EA9B139EB5DD@fl51m01a.space.honeywell.com>
+
+I have been reading the debate about S-plus and R.  I think that for the hard core programmers, it doesn't make a difference. However,  there are some (like me) that are amateur programmers that don't like to code anything over 100 lines and like the nice-point-and-click GUI.  I think that Insightful would do well to continue to give nice GUI options for the amateur programmers like me.  The other side is that I was able to create nice looking reports in SAS in the form of Word documents or HTML formats.  I am still tinkering with this, but have not found happiness to date in regards to this.  That being said, I think that S-plus will get to this first (based on the graphs to PowerPoint capability).  I also like Bill Meeker's Splida which requires Splus. 
+
+In short, if you are a command line freak and want to run simulations, Monte Carlos, and the like, then go with R.  If you are a GUI junkie and have no intention of kicking the habit, then Splus is the way to go.  
+
+I also hope that Splus will continue 1) to increase the capability of being able to "talk" to other software packages and expand the reporting capabilities. 2) add more options to GUI.  
+
+I know that when I do a test of equal variance, I use Minitab.  When I wrote Insightful, they suggested that I write Bartlett's test from scratch.  I wrote it from scratch just to see how hard it would be which took a few hours out of my life, but this is an example of such a basic test, that Insightful should have included on the GUI.  If I were the CEO of Insightful, there would be no way that I would let Minitab have a built in canned capability that Splus doesn't have.  Convenience is the only thing that Splus has over R and if they want to stay in business, then they better not forget this.
+
+So I guess it is a matter of personal preference and needs and the end of my two-cents!  
+
+Jason Overstreet
+
+Statistician
+
+Honeywell DSES
+
+(727) 539-3964 
+
+From dsmith at insightful.com  Wed Nov  9 17:29:52 2005
+From: dsmith at insightful.com (David Smith)
+Date: Wed, 09 Nov 2005 09:29:52 -0800
+Subject: Re: big data library for $2200
+Message-ID: <EDAC416B87ECCA44BEAB4D0CF48034EF860570@se2kexch01.insightful.com>
+
+S-PLUS 7.0 Enterprise has many new capabilities compared to S-PLUS 6.2. The
+main ones are:
+
+- Pipeline Architecture and Big Data Library.  This enables you to create
+bdFrame objects (analagous to data frames) much larger than available RAM,
+and manipulate and analyse them using standard and new S functions in S-PLUS.
+
+- S-PLUS Workbench.  This is a complete new graphical user interface
+providing an integrated development environment for S programmers, including
+a syntax-aware editor, program outline, syntax checker, and integration with
+source code control systems.
+
+S-PLUS users who need to analyze large data sets, or who program libraries of
+S functions, have found S-PLUS Enterprise worth the upgrade fee.
+
+These two features are available in S-PLUS Enterprise, but we also added many
+other new capabilities to both S-PLUS Enterprise and S-PLUS Professional.
+You can see a complete list at:
+
+http://www.insightful.com/products/splus/s7_features.asp
+
+> Also, it is still kind of clouded for me whether or not I will have right
+and technical ability to install this version on my laptop and my home
+machine.
+
+If you've purchased S-PLUS at an academic institution, you'll be able to
+install S-PLUS at home free of charge (but since you're talking about an
+upgrade fee, I'm guessing you're not -- the upgrade to Enterprise was free of
+charge for academic institutions).  At commercial organizations, home copies
+are available for 1/5th the standard price (i.e. 80% discount).
+
+# David Smith
+
+--
+David M Smith <dsmith at insightful.com>
+Senior Product Manager, Insightful Corp, Seattle WA
+Tel: +1 (206) 802 2360
+Fax: +1 (206) 283 6310
+
+Insightful Corporation (www.insightful.com) provides analytical solutions for
+text and data using S-PLUS, Insightful Miner, InFact and consulting services.
+
+-----Original Message-----
+From: Seth O'Beeth [mailto:seth3116 at gmail.com]
+Sent: Tuesday, November 08, 2005 6:07 PM
+To: s-news at lists.biostat.wustl.edu
+Subject: [S] big data library for $2200
+
+Folks:
+I need your urgent advise. My lab is about ordering s-plus 7.0, enterprise
+edition. It is damn expensive.
+In addition to the cost of the site license that my lab already has,
+insightful wants me to pay $2200 for upgrade from professional to 
+enterprise. It is my understanding that the thing we are going to pay for is
+the so called "big data library". 
+My question to all of your, smart people, is it really such a good thing,
+this bigdata library, that worth $2200 on top of "professional" cost ?  
+Is there anything else particularly attractive in s-plus 7.0, as compared to
+6.2?
+
+Could you please share your experience? 
+
+Also, it is still kind of clouded for me whether or not I will have right and
+technical ability to install this version on my laptop and my home machine.
+I remember some kind of discussion of this matter, but not sure what was the
+conclusion.
+
+Please, help. We need to BUY OR NOT TO BUY this THURSDAY at latest.
+
+THANKS!!!!
+
+Seth O'Beeth
+
+From elvis at xlsolutions-corp.com  Wed Nov  9 17:35:25 2005
+From: elvis at xlsolutions-corp.com
+Date: Wed, 09 Nov 2005 10:35:25 -0700
+Subject: Course***R/Splus Fundamentals and Programming Techniques, December 2005
+Message-ID: <20051109103525.a108dc04937c07ba67766dad37185406.c7b683586c.wbe@email.secureserver.net>
+
+ XLSolutions Corporation (www.xlsolutions-corp.com) is proud to
+announce  2-day "R/S-plus Fundamentals and Programming
+Techniques" in New York and Boston: www.xlsolutions-corp.com/Rfund.htm
+
+****Boston           ------------------------------------ December
+15th-16th, 2005
+****New York       ------------------------------------ December 19th
+-20th, 2005
+
+Reserve your seat now at the early bird rates! Payment due AFTER
+the class
+
+Course Description:
+
+This two-day beginner to intermediate R/S-plus course focuses on a
+broad spectrum of topics, from reading raw data to a comparison of R
+and S. We will learn the essentials of data manipulation, graphical
+visualization and R/S-plus programming. We will explore statistical
+data analysis tools,including graphics with data sets. How to enhance
+your plots, build your own packages (librairies) and connect via
+ODBC,etc.
+We will perform some statistical modeling and fit linear regression
+models. Participants are encouraged to bring data for interactive
+sessions
+
+With the following outline:
+
+- An Overview of R and S
+- Data Manipulation and Graphics
+- Using Lattice Graphics
+- A Comparison of R and S-Plus
+- How can R Complement SAS?
+- Writing Functions
+- Avoiding Loops
+- Vectorization
+- Statistical Modeling
+- Project Management
+- Techniques for Effective use of R and S
+- Enhancing Plots
+- Using High-level Plotting Functions
+- Building and Distributing Packages (libraries)
+- Connecting; ODBC, Rweb, Orca via sockets and via Rjava
+
+Email us for group discounts.
+Email Sue Turner: sue at xlsolutions-corp.com
+Phone: 206-686-1578
+Visit us: www.xlsolutions-corp.com/training.htm
+Please let us know if you and your colleagues are interested in this
+classto take advantage of group discount. Register now to secure your
+seat!
+
+Interested in R/Splus Advanced course? email us.
+
+Cheers,
+Elvis Miller, PhD
+Manager Training.
+XLSolutions Corporation
+206 686 1578
+www.xlsolutions-corp.com
+elvis at xlsolutions-corp.com
+
+From maechler at stat.math.ethz.ch  Wed Nov  9 18:34:15 2005
+From: maechler at stat.math.ethz.ch (Martin Maechler)
+Date: Wed, 09 Nov 2005 19:34:15 +0100
+Subject: Re: boxplot colors
+In-Reply-To: <003a01c5e47b$3e8e7140$2f01a8c0@m8d4477f3de884>
+References: <4370BA01.1070808@bio.ntnu.no> <003a01c5e47b$3e8e7140$2f01a8c0@m8d4477f3de884>
+Message-ID: <17266.16679.397201.888732@stat.math.ethz.ch>
+
+>>>>> "MARK" == MARK LEEDS <markleeds at verizon.net>
+>>>>>     on Tue, 08 Nov 2005 07:44:02 -0800 writes:
+
+    MARK> does anyone know if there
+    MARK> is a function in Splus called
+    MARK> cov2cor. i don't have Splus
+    MARK> at the moment so I can't check it.
+
+    MARK> I knw the function exists in R ( and can also be
+    MARK> written fairly easily ) but
+    MARK> I am grading an Splus exam as a favor to someone
+    MARK> and the test taker used cov2cor and I need
+    MARK> to know if that's a valid function in Splus. Thanks.
+
+Since I know that I'm the author of cov2cor() 
+and it's a relatively recent addition to R,
+I'd wonder if it was an "official" S-plus function.
+
+OTOH, one main reason for providing it was really to set an
+example on how to do operations efficiently and nicely readable.
+
+Here is the current version
+also available at the bottom of the (larger) file
+https://svn.R-project.org/R/trunk/src/library/stats/R/cor.R :
+
+cov2cor <- function(V)
+{
+    ## Purpose: Covariance matrix |--> Correlation matrix -- efficiently
+    ## ----------------------------------------------------------------------
+    ## Arguments: V: a covariance matrix (i.e. symmetric and positive definite)
+    ## ----------------------------------------------------------------------
+    ## Author: Martin Maechler, Date: 12 Jun 2003, 11:50
+    p <- (d <- dim(V))[1]
+    if(!is.numeric(V) || length(d) != 2 || p != d[2])
+        stop("'V' is not a square numeric matrix")
+    Is <- sqrt(1/diag(V)) # diag( 1/sigma_i )
+    if(any(!is.finite(Is)))
+        warning("diagonal has non-finite entries")
+    r <- V # keep dimnames
+    r[] <- Is * V * rep(Is, each = p)
+    ##  == D %*% V %*% D  where D = diag(Is)
+    r[cbind(1:p,1:p)] <- 1 # exact in diagonal
+    r
+}
+
+Regards,
+Martin Maechler, ETH Zurich
+
+PS. Yes, I'd gladly grant Insightful the permission....
+
+    MARK> Mark
+
+    MARK> ----- Original Message ----- 
+    MARK> From: "Henrik Parn" <henrik.parn at bio.ntnu.no>
+    MARK> To: <s-news at lists.biostat.wustl.edu>
+    MARK> Sent: Tuesday, November 08, 2005 6:45 AM
+    MARK> Subject: [S] boxplot colors
+
+    >> Dear S-plus users,
+    >> 
+    >> I would like to create a boxplot with several boxes where I can specify 
+    >> the colors of inviduals boxes.
+    >> 
+    >> I have read the posting 'Summary of Specifying box colors in boxplot' by 
+    >> Peter Sherer. I am not sure if the proposed script, which is based on 
+    >> boxplot(split(y.dat,x.dat)), suits the way my data is arranged. I pick 
+two 
+    >> (or more) vectors of data from two (or more) different data sets.
+    >> 
+    >> An example could start out from this:
+    >> I have two data sets, data1 and data2, and I want to plot two variables 
+Y1 
+    >> and Y2, from each data set.
+    >> I would like to specify the color (gray scale) of each box.
+    >> For example, different colors for different data sets, different colors 
+    >> for different variables or completely manually on each box.
+    >> 
+    >> 
+    >> Any suggestions are appreciated!
+    >> 
+    >> Cheers,
+    >> 
+    >> Henrik
+    >> S-Plus 6.2, Win XP
+    >> 
+    >> -- 
+    >> ************************
+    >> Henrik Pärn
+    >> Department of Biology
+    >> NTNU
+    >> 7491 Trondheim
+    >> Norway
+    >> 
+    >> +47 735 96282 (office)
+    >> +47 909 89 255 (mobile)
+    >> +47 735 96100 (fax)
+    >> ************************
+    >> 
+    >> --------------------------------------------------------------------
+    >> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+    >> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+    >> the BODY of the message:  unsubscribe s-news
+    >> 
+
+    MARK> --------------------------------------------------------------------
+    MARK> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+    MARK> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+    MARK> the BODY of the message:  unsubscribe s-news
+
+From rmh at temple.edu  Wed Nov  9 21:10:26 2005
+From: rmh at temple.edu (Richard M. Heiberger)
+Date: Wed, 09 Nov 2005 16:10:26 -0500
+Subject: Re: boxplot colors
+Message-ID: <43e0d47b.58af6878.825f900@po-d.temple.edu>
+
+The easiest way to create boxplots with individual colors is to use
+the functions we provide in the online files that accompany our
+recent book
+
+                Statistical Analysis and Data Display
+                Richard M. Heiberger and Burt Holland
+
+The functions and examples are available on the HH online files from
+the book's webpage
+   http://springeronline.com/0-387-40270-5
+Follow the link to the "Online Files from Authors" on the right of
+the book's webpage.
+
+The cover of the book, visible on the book's webpage and the download
+page, shows a bwplot in four colors.  At the bottom of the download
+page, in the section "Sample Graphs", is a link to the original graph
+from which the cover was abstracted.  A black and white version of
+this graph appears on page 479 of the book.
+
+A link to another graph, showing user control over both the placement
+and the color of the boxplots, is also on the download page.
+
+From Kim.Elmore at noaa.gov  Thu Nov 10 03:08:14 2005
+From: Kim.Elmore at noaa.gov (Kim Elmore)
+Date: Wed, 09 Nov 2005 21:08:14 -0600
+Subject: Re: Behavior of cor() with na.methods "omit" and
+In-Reply-To: <SE2KEXCH01PrvCWO6hm000004f5@se2kexch01.insightful.com>
+References: <437228B0.2050800@noaa.gov> <SE2KEXCH01PrvCWO6hm000004f5@se2kexch01.insightful.com>
+Message-ID: <6.2.3.4.2.20051109205627.021e6830@129.15.69.4>
+
+This is wild...
+
+I did this with S-Plus 7.0.0 for windows under XP. I'm now at home, 
+with S-Plus 6.2 under Windows XP and get exactly the same results I 
+got on my work machine: cor() using na.method = "available" yields 
+exactly 0.5 the value of cor() using na.method = "omit".
+
+> .First
+function()
+{
+        library(resample, first = T)
+        library(maps)
+}
+
+But wait!  I failed to tell everyone that I'm loading the resample 
+and maps libraries with a .First function when I start the session:
+
+> .First
+function()
+{
+        library(resample, first = T)
+        library(maps)
+}
+
+ I detached the resample library and now cor() behaves identically 
+with na.method = "omit" and na.method = "available". Obviously, a 
+different cor() is used under the resample library...
+
+Hence, I can now refine my question: why do these two NA methods 
+yield different results when the resample library is attached?
+
+Kim Elmore
+
+At 11:01 AM 11/9/2005, you wrote:
+> I can't reproduce that.  I get:
+>
+> Enterprise Developer Version 7.0.0  for Microsoft Windows : 2005
+> Working data will be in d:/timh
+> > rn1 <- c(0.52170, -0.34945,  0.76141)
+> > rn2 <- c(0.44834, -2.10544, -0.91762)
+> > cor(rn1, rn2)
+> [1] 0.7176714
+> > cor(rn1, rn2, na.method = "omit")
+> [1] 0.7176714
+> > cor(rn1, rn2, na.method = "available")
+> [1] 0.7176714
+> > cor(cbind(rn1, rn2))
+>           rn1       rn2
+> rn1 1.0000000 0.7176714
+> rn2 0.7176714 1.0000000
+>
+>
+> What version of S-PLUS are you using?
+>
+> I also note that the last answer you got is 0.5 times the other answer.
+>
+> >I can't quite figure out what the cor() function does with the different
+> >na.methods "omit" and "available". I find that each of these methods
+> >yields a different answer, even if there is no missing data.
+> >
+> >example:
+> > > rn1 <- rnorm(3)
+> > > rn1
+> >[1]  0.52170 -0.34945  0.76141
+> > > rn2 <- rnorm(3)
+> > > rn2
+> >[1]  0.44834 -2.10544 -0.91762
+> > > cor(rn1, rn2)
+> >[1] 0.71767
+> > > cor(rn1, rn2, na.method = "omit")
+> >[1] 0.71767
+> >
+> >Which is exactly what I'd expect. But when
+> >
+> > > cor(rn1, rn2, na.method = "available")
+> >[1] 0.35884
+> >
+> >is the result.
+> >
+> >Why is this, when there is no missing data? If there is missing data,
+> >the two methods also yield different answers, though "omit" does what
+> >I'd expect, which is compute the correlation based on whatever pairs are
+> >available. I can't figure out what "available" does. Any insight will be
+> >deeply appreciated
+> >
+> >Kim Elmore
+> >
+> >
+> >--
+> >            Kim Elmore, OU/CIMMS/NSSL
+> >   "All of weather is divided into three parts:
+> >Yes, No and Maybe. The greatest of these is Maybe."
+
+From Patrick.Heer at bakom.admin.ch  Thu Nov 10 11:19:28 2005
+From: Patrick.Heer at bakom.admin.ch
+Date: Thu, 10 Nov 2005 12:19:28 +0100
+Subject: Quantreg package - R1 goodness of fit
+Message-ID: <972231170C40FE4797E048E1E39B22AB1EF8B9@sbem35exc1004.efd.intra.admin.ch>
+
+Dear all
+Using S-Plus 6.0 for Windows XP
+
+Does anyone knows how compute the R1 (analgous to the R2) statistic of a
+quantile regression ?
+
+Thanks in advance
+Patrick
+
+From kershaw at unb.ca  Thu Nov 10 18:23:10 2005
+From: kershaw at unb.ca (John Kershaw)
+Date: Thu, 10 Nov 2005 14:23:10 -0400
+Subject: Importing Excel Worksheets with multiple formats
+Message-ID: <Pine.GSO.4.58.0511101413580.9796@jupiter>
+
+Hello All,
+
+I have been trying to import a batch of excel files (about 800) in Splus
+6.2 for Windows.  The files are autocreated by a data collection system.
+I have figured out how to do this as a batch, but I have one complication.
+The first ten rows of each file contains Unit Descriptors with the heading
+in the first column and the value in the second column.  I have figured
+out how to read the first 10 rows and transpose it into a data.frame with
+the first column becoming the names of the elements in the data.frame.  My
+problem is that there is one variable somewhere in the middle of the
+rows that is text and the rest are numeric, so Splus assigns NA to the
+text value.  Is there any way to force Splus to import everything as text?
+I can then use as.numeric to convert the values I need to be numeric.  I
+really don't want to have to edit each excel file if possible.
+
+Any help, hints, or solutions are, as always, greatly appreciated.
+
+JAK
+
+From dsmith at insightful.com  Fri Nov 11 00:55:13 2005
+From: dsmith at insightful.com (David Smith)
+Date: Thu, 10 Nov 2005 16:55:13 -0800
+Subject: Re: Importing Excel Worksheets with multiple formats
+Message-ID: <EDAC416B87ECCA44BEAB4D0CF48034EF860578@se2kexch01.insightful.com>
+
+If you have S-PLUS 7.0 available, you could use the new colTypes argument to
+importData.  This will let you specify the column types in advance as
+character, and convert them later as you suggest.
+
+Otherwise, my only thought would be: are these .csv files or .xls files?
+Many data collection systems create .csv files, which are just
+comma-separated ASCII files.  In this case you could use the lower-level
+scan() function to read the data, and specify the types with the "what"
+argument.
+
+# David Smith
+
+-- 
+David M Smith <dsmith at insightful.com>
+Senior Product Manager, Insightful Corp, Seattle WA
+Tel: +1 (206) 802 2360
+Fax: +1 (206) 283 6310
+
+Insightful Corporation (www.insightful.com) provides analytical solutions for
+text and data using S-PLUS, Insightful Miner, InFact and consulting services.
+
+> -----Original Message-----
+> From: John Kershaw [mailto:kershaw at unb.ca]
+> Sent: Thursday, November 10, 2005 10:23 AM
+> To: s-news at lists.biostat.wustl.edu
+> Subject: [S] Importing Excel Worksheets with multiple formats
+> 
+> 
+> Hello All,
+> 
+> I have been trying to import a batch of excel files (about 
+> 800) in Splus
+> 6.2 for Windows.  The files are autocreated by a data 
+> collection system.
+> I have figured out how to do this as a batch, but I have one 
+> complication.
+> The first ten rows of each file contains Unit Descriptors 
+> with the heading
+> in the first column and the value in the second column.  I 
+> have figured
+> out how to read the first 10 rows and transpose it into a 
+> data.frame with
+> the first column becoming the names of the elements in the 
+> data.frame.  My
+> problem is that there is one variable somewhere in the middle of the
+> rows that is text and the rest are numeric, so Splus assigns NA to the
+> text value.  Is there any way to force Splus to import 
+> everything as text?
+> I can then use as.numeric to convert the values I need to be 
+> numeric.  I
+> really don't want to have to edit each excel file if possible.
+> 
+> Any help, hints, or solutions are, as always, greatly appreciated.
+> 
+> JAK
+> 
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+> 
+
+From roger.bos at gmail.com  Fri Nov 11 13:06:09 2005
+From: roger.bos at gmail.com (roger bos)
+Date: Fri, 11 Nov 2005 08:06:09 -0500
+Subject: Re: S and value for money.
+In-Reply-To: <200511091643.jA9Gh9Qp002925@erdos.math.unb.ca>
+References: <200511091643.jA9Gh9Qp002925@erdos.math.unb.ca>
+Message-ID: <1db726800511110506v42e0b1f1v5d880472480dad24@mail.gmail.com>
+
+I think its a win/win for the users.  The existance of R benefits both R users and S+ users.  R users already know how they benefit and S+ users benefit from the improved product enhancements which competition fosters.  I think there will always be room for a 'value added' version.
+
+ 
+
+I don't know that software has to be free.  I am glad my company pays me to write the R code that I write.  I could not afford to do it for free, but I was turned off by Insightful pricing and licensing stances.
+
+ 
+
+Anyway, the important point is that as a result of the competition, all useRs will benefit.
+
+ 
+
+Thanks,
+
+ 
+
+Roger
+
+ 
+
+ 
+
+ 
+
+On 11/9/05, Rolf Turner <rolf at math.unb.ca> wrote:
+> Use R.  (a) It's generally better (e.g. plotmath()) and (b) it's
+> free.  This is not only good for you from a practical point of view,
+>
+> but it's good in ***principle***.  Software ***should*** be free ---
+> in both senses (price and openness of source).
+>
+>                        cheers,
+>
+>                                Rolf Turner
+> --------------------------------------------------------------------
+>
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu
+>  with
+> the BODY of the message:  unsubscribe s-news
+
+From blindglobe at gmail.com  Fri Nov 11 13:19:41 2005
+From: blindglobe at gmail.com (A.J. Rossini)
+Date: Fri, 11 Nov 2005 14:19:41 +0100
+Subject: Re: S and value for money.
+In-Reply-To: <1db726800511110506v42e0b1f1v5d880472480dad24@mail.gmail.com>
+References: <200511091643.jA9Gh9Qp002925@erdos.math.unb.ca> <1db726800511110506v42e0b1f1v5d880472480dad24@mail.gmail.com>
+Message-ID: <1abe3fa90511110519m167ddf2esecb6073636841c3b@mail.gmail.com>
+
+There definitely is room for a "value-added" version, both for R _AND_
+S-PLUS.  Sigh.
+
+On 11/11/05, roger bos <roger.bos at gmail.com> wrote:
+> I think its a win/win for the users.  The existance of R benefits both R
+> users and S+ users.  R users already know how they benefit and S+ users
+> benefit from the improved product enhancements which competition fosters.  I
+> think there will always be room for a 'value added' version.
+>
+> I don't know that software has to be free.  I am glad my company pays me to
+> write the R code that I write.  I could not afford to do it for free, but I
+> was turned off by Insightful pricing and licensing stances.
+>
+> Anyway, the important point is that as a result of the competition, all
+> useRs will benefit.
+>
+> Thanks,
+>
+> Roger
+>
+>
+>
+>
+> On 11/9/05, Rolf Turner <rolf at math.unb.ca> wrote:
+> > Use R.  (a) It's generally better (e.g. plotmath()) and (b) it's
+> > free.  This is not only good for you from a practical point of view,
+> > but it's good in ***principle***.  Software ***should*** be free ---
+> > in both senses (price and openness of source).
+> >
+> >                        cheers,
+> >
+> >                                Rolf Turner
+> >
+> --------------------------------------------------------------------
+> > This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> > unsubscribe send e-mail to
+> s-news-request at lists.biostat.wustl.edu with
+> > the BODY of the message:  unsubscribe s-news
+> >
+>
+>
+
+--
+best,
+-tony
+
+blindglobe at gmail.com
+Muttenz, Switzerland.
+"Commit early,commit often, and commit in a repository from which we can easily
+roll-back your mistakes" (AJR, 4Jan05).
+
+From sichong.chen at postgrad.manchester.ac.uk  Fri Nov 11 18:30:15 2005
+From: sichong.chen at postgrad.manchester.ac.uk (Chen Sichong)
+Date: Sat, 12 Nov 2005 02:30:15 +0800
+Subject: produce more than one graphs at the same time
+Message-ID: <20051111183004.508611006D57@mailgate.biostat.wustl.edu>
+
+Dear All
+
+ 
+
+I am using loop function to produce about 320 figures.
+I set par(mfrow=c(2,2)), so in
+each graph there are 4 figures and I want to get 80 graphs at the same time after
+the loop is finished. But the problem I have is that I have to save this graph before
+producing the fifth figure because it does not create a new graph windown and the previous graph window will be cleared when it
+produce the fifth figure. So I have to break my loop into 320/4=80. And run my loop
+80 times to save the older graph one by one. 
+
+ 
+
+Do you have some idea to let it open a new graph window
+without clear of the older graph?
+
+ 
+
+Many thanks,
+
+ 
+
+Chen Sichong
+
+PhD of Finance
+
+Manchester Business School
+
+University of Manchester
+
+Oxford Road
+
+Manchester
+
+United Kingdom
+
+M13 9PL
+
+ 
+
+From rmh at temple.edu  Fri Nov 11 18:46:08 2005
+From: rmh at temple.edu (Richard M. Heiberger)
+Date: Fri, 11 Nov 2005 13:46:08 -0500
+Subject: Re: produce more than one graphs at the
+Message-ID: <7d0f8020.59a9e8a3.8217800@po-d.temple.edu>
+
+There are several solutions.
+
+1.  S-Plus for Windows graphsheet
+Click Options/Graph Options.../Options/Traditional Graphics/Auto Pages:/Every 
+Graph
+Now your GraphSheet will have tabs and you can view any of the graphs.  You can 
+save
+the entire GraphSheet as a single object in the file system.
+
+2. Use the PostScript driver.
+       trellis.device(postscript, file="myfile.ps")
+       ## put your graphics loop here.
+       dev.off()
+You now have a single postscript file with the 80 pages.
+
+Rich
+
+From Rich at Mango-Solutions.com  Fri Nov 11 18:59:24 2005
+From: Rich at Mango-Solutions.com
+Date: Fri, 11 Nov 2005 18:59:24 +0000
+Subject: Re: produce more than one graphs at the
+In-Reply-To: <7d0f8020.59a9e8a3.8217800@po-d.temple.edu>
+References: <7d0f8020.59a9e8a3.8217800@po-d.temple.edu>
+Message-ID: <20051111185910.BA82E1006D57@mailgate.biostat.wustl.edu>
+
+One other trick that might help ...
+
+> graphsheeet(file="output##.gif")
+> for (i in 1:10) plot(rnorm(100), main=paste("Plot", i))
+> dev.off()
+
+This will create 10 file outputs (one file for each page of the graph) ...
+
+Rich.
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Richard M.
+Heiberger
+Sent: 11 November 2005 18:46
+To: Chen Sichong; s-news at lists.biostat.wustl.edu
+Subject: Re: [S] produce more than one graphs at the
+
+There are several solutions.
+
+1.  S-Plus for Windows graphsheet
+Click Options/Graph Options.../Options/Traditional Graphics/Auto
+Pages:/Every Graph
+Now your GraphSheet will have tabs and you can view any of the graphs.  You
+can save
+the entire GraphSheet as a single object in the file system.
+
+2. Use the PostScript driver.
+       trellis.device(postscript, file="myfile.ps")
+       ## put your graphics loop here.
+       dev.off()
+You now have a single postscript file with the 80 pages.
+
+Rich
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From kimmerer at sfsu.edu  Fri Nov 11 21:10:27 2005
+From: kimmerer at sfsu.edu (Wim Kimmerer)
+Date: Fri, 11 Nov 2005 13:10:27 -0800
+Subject: 
+Message-ID: <6.2.1.2.2.20051111123421.01e7f8c8@sfsu.edu>
+
+I don't know the reasoning behind not including Bartlett's test, but in 
+general the philosophy behind Splus has followed that of Cleveland and 
+other authors who advocate graphical, exploratory approaches to 
+statistics.  If you look at a normal probability plot of your residuals, 
+that should tell you all you need to know about the degree of normal-ness 
+of your data.  Besides, it makes a huge difference what you are going to do 
+next - if it is a balanced ANOVA with no post-hoc testing you can get away 
+with more deviation from normality than Bartlett's test would likely let 
+you get away with.  So a careful look at diagnostic graphs (which are 
+easier to do in Splus than anything else I know of) by an informed analyst 
+beats rote application of procedures hands down.
+
+Regarding GUI vs. no GUI, it can be easier the first time or two, but the 
+command line is much quicker once you learn how to do something and don't 
+have to go pointing and clicking all over the place.
+
+Wim
+
+"Overstreet, Jason (FL51)" <Jason.Overstreet at honeywell.com> writes
+...
+know that when I do a test of equal variance, I use Minitab.  When I wrote
+Insightful, they suggested that I write Bartlett's test from scratch.  I
+wrote it from scratch just to see how hard it would be which took a few
+hours out of my life, but this is an example of such a basic test, that
+Insightful should have included on the GUI.  If I were the CEO of
+Insightful, there would be no way that I would let Minitab have a built in
+canned capability that Splus doesn't have.  Convenience is the only thing
+that Splus has over R and if they want to stay in business, then they better
+not forget this.
+...
+
+From kimmerer at sfsu.edu  Fri Nov 11 21:59:32 2005
+From: kimmerer at sfsu.edu (Wim Kimmerer)
+Date: Fri, 11 Nov 2005 13:59:32 -0800
+Subject: Re: My two cents on the S-plus/R debate
+Message-ID: <6.2.1.2.2.20051111135911.033ec880@sfsu.edu>
+
+(Sorry if this went twice... did it again)
+
+I don't know the reasoning behind not including Bartlett's test, but in 
+general the philosophy behind Splus has followed that of Cleveland and 
+other authors who advocate graphical, exploratory approaches to 
+statistics.  If you look at a normal probability plot of your residuals, 
+that should tell you all you need to know about the degree of normal-ness 
+of your data.  Besides, it makes a huge difference what you are going to do 
+next - if it is a balanced ANOVA with no post-hoc testing you can get away 
+with more deviation from normality than Bartlett's test would likely let 
+you get away with.  So a careful look at diagnostic graphs (which are 
+easier to do in Splus than anything else I know of) by an informed analyst 
+beats rote application of procedures hands down.
+
+Regarding GUI vs. no GUI, it can be easier the first time or two, but the 
+command line is much quicker once you learn how to do something and don't 
+have to go pointing and clicking all over the place.
+
+Wim
+
+"Overstreet, Jason (FL51)" <Jason.Overstreet at honeywell.com> writes
+...
+know that when I do a test of equal variance, I use Minitab.  When I wrote
+Insightful, they suggested that I write Bartlett's test from scratch.  I
+wrote it from scratch just to see how hard it would be which took a few
+hours out of my life, but this is an example of such a basic test, that
+Insightful should have included on the GUI.  If I were the CEO of
+Insightful, there would be no way that I would let Minitab have a built in
+canned capability that Splus doesn't have.  Convenience is the only thing
+that Splus has over R and if they want to stay in business, then they better
+not forget this.
+... 
+
+From mcheang at mac.com  Sat Nov 12 04:19:29 2005
+From: mcheang at mac.com (Maggie Cheang)
+Date: Fri, 11 Nov 2005 20:19:29 -0800
+Subject: annual hazard rate
+Message-ID: <4EDE53AE-F7A9-4065-B55E-752AA7042DB1@mac.com>
+
+Hi all:
+I am wondering can anyone advise me how I can use a S-plus or R to  
+calculate and plot the annual hazard rate, in a cohort of subjects  
+that I have the survival time, even status, and the factor (for  
+example, node positive and node negative). I would like to see plot  
+the annual hazard rate for the nodal status separately.
+
+Many thanks in advance,
+
+Maggie Cheang
+mcheang at mac.com
+
+From jvadams at usgs.gov  Mon Nov 14 20:24:26 2005
+From: jvadams at usgs.gov (Jean V Adams)
+Date: Mon, 14 Nov 2005 15:24:26 -0500
+Subject: statistics.com courses
+Message-ID: <OFCB9CEAA5.64087191-ON852570B9.006F1D8D-852570B9.007017C1@usgs.gov>
+
+S-news folks,
+
+This query is not (directly) S-PLUS
+related, but I am posting it here because I wanted to get the opinion of
+the s-news community.
+
+I am considering taking a course from
+statistics.com (http://www.statistics.com/content/courses.html), and would
+be interested in hearing feedback from those that have taken courses with
+them.  (I was unable to find any objective reviews on-line ... only
+the testimonials on the statistics.com website.)  Please respond to
+me, and I will summarize for the group.  Thanks.
+
+JVA
+
+`·.,,  ><(((º>   `·.,,  ><(((º>  
+`·.,,  ><(((º>
+
+Jean V. Adams
+
+Statistician
+
+U.S. Geological Survey
+
+Great Lakes Science Center
+
+c/o Marquette Biological Station
+
+1924 Industrial Parkway
+
+Marquette, MI 49855  USA
+
+phone: 906-226-1212
+
+FAX: 906-226-3632
+
+web site: www.glsc.usgs.gov
+
+e-mail: jvadams at usgs.gov
+
+From srmillis at yahoo.com  Mon Nov 14 20:43:09 2005
+From: srmillis at yahoo.com (SR Millis)
+Date: Mon, 14 Nov 2005 12:43:09 -0800
+Subject: Re: statistics.com courses
+In-Reply-To: <OFCB9CEAA5.64087191-ON852570B9.006F1D8D-852570B9.007017C1@usgs.gov>
+References: <OFCB9CEAA5.64087191-ON852570B9.006F1D8D-852570B9.007017C1@usgs.gov>
+Message-ID: <20051114204309.50539.qmail@web50912.mail.yahoo.com>
+
+I took one of Statistic.com's courses in regression.
+IMHO, it was awful. The instructor simply assined
+chapters to read in his book along with exercises.
+There was no active teaching. You could post questions
+to the website but the responses were not as helpful
+as posting to any of the statistical listservs. And
+the course was expensive for what I received. I would
+have gotten as much had I simply gone to the
+Statistics.com website, determined what books would be
+used by the course, and then worked through the book
+on my own. 
+
+In my experience, the best of the internet-based
+courses are those put on by SAS. Of course, all of the
+analyses are done in SAS, but the course content was
+well-organized and up-to-date. I found the SAS course
+on GEE quite good.
+
+SR Millis  
+
+--- Jean V Adams <jvadams at usgs.gov> wrote:
+
+> S-news folks,
+> 
+> This query is not (directly) S-PLUS related, but I
+> am posting it here 
+> because I wanted to get the opinion of the s-news
+> community.
+> 
+> I am considering taking a course from statistics.com
+> 
+> (http://www.statistics.com/content/courses.html),
+> and would be interested 
+> in hearing feedback from those that have taken
+> courses with them.  (I was 
+> unable to find any objective reviews on-line ...
+> only the testimonials on 
+> the statistics.com website.)  Please respond to me,
+> and I will summarize 
+> for the group.  Thanks.
+> 
+> JVA
+> 
+> `·.,,  ><(((º>   `·.,,  ><(((º>   `·.,,  ><(((º>
+> 
+> Jean V. Adams
+> Statistician
+> U.S. Geological Survey
+> Great Lakes Science Center
+> c/o Marquette Biological Station
+> 1924 Industrial Parkway
+> Marquette, MI 49855  USA
+> phone: 906-226-1212
+> FAX: 906-226-3632
+> web site: www.glsc.usgs.gov
+> e-mail: jvadams at usgs.gov
+
+Scott R Millis, PhD, MEd, ABPP (CN & RP)
+Professor & Director of Research
+Rehabilitation Institute of Michigan
+Wayne State University School of Medicine
+261 Mack Blvd
+Detroit, MI 48201
+Email: smillis at med.wayne.edu
+Tel: 313-993-8085
+Fax: 313-745-9854
+
+*********************************************************
+This electronic message may contain information that is confidential and/or 
+legally privileged. It is intended only for the use of the individual(s) and 
+entity named as recipients in the message. If you are not an intended recipient 
+of this message, please notify the sender immediately and delete the material 
+from any computer. Do not deliver, distribute or copy this message, and do not 
+disclose its contents or take any action in reliance on the information it 
+contains. Thank you.
+
+From elvis at xlsolutions-corp.com  Mon Nov 14 21:04:44 2005
+From: elvis at xlsolutions-corp.com
+Date: Mon, 14 Nov 2005 14:04:44 -0700
+Subject: November Course In San Francisco***R/Splus Fundamentals and Programming Techniques
+Message-ID: <20051114140444.a108dc04937c07ba67766dad37185406.f7fffc9973.wbe@email.secureserver.net>
+
+XLSolutions Corporation (www.xlsolutions-corp.com) is proud to
+announce  2-day "R/S-plus Fundamentals and Programming
+Techniques" in San Francisco: www.xlsolutions-corp.com/Rfund.htm
+
+**** San Francisco,   November 17 - 18, 2005
+
+Reserve your seat now at the early bird rates! Payment due AFTER
+the class
+
+Course Description:
+
+This two-day beginner to intermediate R/S-plus course focuses on a
+broad spectrum of topics, from reading raw data to a comparison of R
+and S. We will learn the essentials of data manipulation, graphical
+visualization and R/S-plus programming. We will explore statistical
+data analysis tools,including graphics with data sets. How to enhance
+your plots, build your own packages (librairies) and connect via
+ODBC,etc.
+We will perform some statistical modeling and fit linear regression
+models. Participants are encouraged to bring data for interactive
+sessions
+
+With the following outline:
+
+- An Overview of R and S
+- Data Manipulation and Graphics
+- Using Lattice Graphics
+- A Comparison of R and S-Plus
+- How can R Complement SAS?
+- Writing Functions
+- Avoiding Loops
+- Vectorization
+- Statistical Modeling
+- Project Management
+- Techniques for Effective use of R and S
+- Enhancing Plots
+- Using High-level Plotting Functions
+- Building and Distributing Packages (libraries)
+- Connecting; ODBC, Rweb, Orca via sockets and via Rjava
+
+Email us for group discounts.
+Email Sue Turner: sue at xlsolutions-corp.com
+Phone: 206-686-1578
+Visit us: www.xlsolutions-corp.com/training.htm
+Please let us know if you and your colleagues are interested in this
+classto take advantage of group discount. Register now to secure your
+seat!
+
+Interested in R/Splus Advanced course? email us.
+
+Cheers,
+Elvis Miller, PhD
+Manager Training.
+XLSolutions Corporation
+206 686 1578
+www.xlsolutions-corp.com
+elvis at xlsolutions-corp.com
+
+From FolkesM at pac.dfo-mpo.gc.ca  Tue Nov 15 01:55:02 2005
+From: FolkesM at pac.dfo-mpo.gc.ca
+Date: Mon, 14 Nov 2005 17:55:02 -0800
+Subject: Trellis: second y-axis with different scale?
+Message-ID: <7CBBD627E4E688499349A5D11D07831601AA4FB1@msgpacpbs.pac.dfo-mpo.ca>
+
+Is it possible to generate trellis plots with a completely different scale on axis 4?  i.e. I've got two time series to plot (superpose) and they have very different Y scales. There is a conditioning component too, so I'd like to stick to trellis.
+
+Thanks!
+
+Michael
+
+From maustin at amgen.com  Tue Nov 15 04:22:25 2005
+From: maustin at amgen.com (Austin, Matt)
+Date: Mon, 14 Nov 2005 20:22:25 -0800
+Subject: Re: Trellis: second y-axis with different scale?
+Message-ID: <E7D5AB4811D20B489622AABA9C53859109DAD45C@teal-exch.amgen.com>
+
+One 
+way would be to scale the two values, plot them together and then rescale the 
+vertical axis.  I'm not sure how you would want to label the vertical axis 
+to be clear, but here is one example:
+
+ 
+
+ 
+
+n      <- 
+100
+
+day    <- rep(1:n, 
+2)
+
+var1   <- 
+c(cumsum(rnorm(n)), cumsum(rnorm(n, 2, 2)))
+var2   <- 
+c(cumsum(rnorm(n, 5, 2)),cumsum(rnorm(n, 5, 2)))
+
+group  <- rep(letters[1:2], 
+each=n)
+
+var1.s <- scale(var1)
+var2.s <- 
+scale(var2)
+
+ 
+
+axisVals <- pretty(c(var1.s, 
+var2.s))
+
+ 
+
+axisLabels <-  apply( format( 
+round( cbind( axisVals 
+* stdev( var1 ) + 
+mean( var1 
+),
+                                                              
+axisVals * stdev( 
+var2 ) + mean( var2 
+)), 2), scientific 
+= 
+FALSE),
+                     
+1,
+                     
+paste, collapse=", ")
+
+ 
+
+   xyplot(var1.s ~ 
+day|group,
+             
+panel = function(x, y, subscripts, ..., y2 = 
+var2.s){
+               
+
+               
+panel.xyplot(x, y, subscripts, 
+...)
+               
+lines(x, 
+y2[subscripts])
+               
+
+             
+},
+             
+type   = 
+'l',
+             
+scales = list( y = list( at = axisVals, labels = axisLabels 
+)),
+             
+ylim   = range(axisVals), #range(c(var1.s, var2.s ) 
+),
+             
+ylab   ='Var1, 
+Var2',
+             
+xlab="Day")
+
+ 
+
+ 
+
+ 
+
+--Matt
+
+>
+>   -----Original Message-----
+> From:
+>   s-news-owner at lists.biostat.wustl.edu
+>   [mailto:s-news-owner at lists.biostat.wustl.edu]On Behalf Of
+>   FolkesM at pac.dfo-mpo.gc.ca
+> Sent: Monday, November 14, 2005 5:55
+>   PM
+> To: s-news at wubios.wustl.edu
+> Subject: [S] Trellis:
+>   second y-axis with different scale?
+>
+>
+>
+>   Is it possible to generate trellis plots with a
+>   completely different scale on axis 4?  i.e. I've got two time series to
+>   plot (superpose) and they have very different Y scales. There is a
+>   conditioning component too, so I'd like to stick to trellis.
+>
+>   Thanks!
+> Michael
+
+From tsiwik at deloitte.de  Tue Nov 15 18:54:28 2005
+From: tsiwik at deloitte.de (Siwik, Thomas (DE - Duesseldorf))
+Date: Tue, 15 Nov 2005 19:54:28 +0100
+Subject: Survival analysis with two mutually exclusive events
+Message-ID: <B5D6FE7D483FE8419B2EB0DC053055960A63878B@dedus0410.atrema.deloitte.com>
+
+Dear All, 
+
+I would be grateful if you could point me to references, pre-defined routines 
+in S+ or packages that can handle two mutually exclusive events in survival 
+analysis. I have the feeling that there is a straightforward solution but I 
+couldn't find supporting evidence on the internet. I have done first steps via 
+minimisation of the likelihood but that seems to be cumbersome.
+
+My statistical problem is as follows: 
+A variable can assume either state "A" or "B" after time t dependent on y. The 
+sample is right-censored. "A" and "B" are mutually exclusive and do always and 
+permanently realise as time grows to infinity.
+
+I use S+ Professional 7.0 on WinXP.
+ 
+Thanks & Regards, 
+Thomas Siwik 
+________________________________________________ 
+
+Deloitte & Touche GmbH 
+Financial Risk Solutions 
+Schwannstr. 6 
+40476 Düsseldorf (GERMANY) 
+  
+Tel:     +49-211-8772 2147 (-2133)      
+Fax:     +49-211-8772 2443      
+Email:   tsiwik at deloitte.de 
+Http:    www.deloitte.com/de/frs        
+________________________________________________ 
+
+(I am not able to avoid possible disclaimers attached.) 
+
+ 
+----------------------------------------------------------------------------
+
+Vertraulichkeitshinweis
+Diese Nachricht und jeder uebermittelte Anhang beinhaltet vertrauliche 
+Informationen und ist nur fuer die Personen oder das Unternehmen bestimmt, an 
+welche sie tatsaechlich gerichtet ist. Sollten Sie nicht der 
+Bestimmungsempfaenger sein, weisen wir Sie darauf hin, dass die Verbreitung, 
+das (auch teilweise) Kopieren sowie der Gebrauch der empfangenen E-Mail und der 
+darin enthaltenen Informationen gesetzlich verboten ist und gegebenenfalls 
+Schadensersatzpflichten ausloesen kann. Sollten Sie diese Nachricht aufgrund 
+eines Uebermittlungsfehlers erhalten haben, bitten wir Sie, den Sender 
+unverzueglich hiervon in Kenntnis zu setzen. 
+Sicherheitswarnung: Bitte beachten Sie, dass das Internet kein sicheres 
+Kommunikationsmedium ist. Obwohl wir im Rahmen unseres Qualitaetsmanagements 
+und der gebotenen Sorgfalt Schritte eingeleitet haben, um einen 
+Computervirenbefall weitestgehend zu verhindern, koennen wir wegen der Natur 
+des Internet das Risiko eines Computervirenbefalls dieser E-Mail nicht 
+ausschliessen. 
+
+Confidentiality note
+This message (including any attachments) contains confidential information 
+intended for a specific individual or entity as the intended recipient. If you 
+are not the intended recipient, you are hereby notified that any distribution, 
+any copying of this message in part or in whole, or any taking of action based 
+on it, is strictly prohibited by law and may cause liability. In case you have 
+received this message due to an error in transmission, we ask you to notify the 
+sender immediately. 
+Safety warning: Please note that the Internet is not a safe means of 
+communication or form of media. Although we are continuously increasing our due 
+care of preventing virus attacks as a part of our Quality Management, we are 
+not able to fully prevent virus attacks as a result of the nature of the 
+Internet.
+----------------------------------------------------------------------------
+
+From kwaters at volcanotherapeutics.com  Wed Nov 16 19:33:06 2005
+From: kwaters at volcanotherapeutics.com (Waters, Kendall)
+Date: Wed, 16 Nov 2005 11:33:06 -0800
+Subject: Changes in Connect/C++ for S-Plus 7?
+Message-ID: <66A01CD43BAEB545A6419FF0961EA48C9F5DD8@volmail2.volcanotherapeutics.com>
+
+We currently use the Connect/C++ library with S-Plus 6 for a stand-alone C++ 
+application for developing classification trees.  We are considering purchasing 
+an additional copy of S-Plus (version 7) to permit analysis and development on 
+an additional computer.  
+ 
+I am aware that S-Plus 7 has additional developer capabilities (e.g., new 
+statistical methods, new S language capabilities).  However, have there have 
+been any other changes to the Connect/C++ library in S-Plus 7 since S-Plus 6.x 
+that might have an adverse effect on our application.
+ 
+We are using S-Plus on Windows XP boxes and developing with MS Visual Studio 6.
+ 
+Thank you in advance for your help.
+ 
+Kendall
+ 
+ 
+------------------------------------------------------------
+Kendall R. Waters
+Volcano Corp.
+Advanced Technology Laboratory
+9500 Euclid Ave.
+Mail Drop ND20
+Cleveland, OH  44195
+Tel: 216-445-4694
+E-mail: kwaters at volcanocorp.com
+
+From jvadams at usgs.gov  Wed Nov 16 21:09:08 2005
+From: jvadams at usgs.gov (Jean V Adams)
+Date: Wed, 16 Nov 2005 16:09:08 -0500
+Subject: Summary: statistics.com courses
+Message-ID: <OF3FFB54FB.BE34276F-ON852570BB.0072DAAF-852570BB.007430A0@usgs.gov>
+
+I asked the s-news list members for
+feedback on courses from statistics.com.  Thanks to SR Millis, Laura
+Chihara, Chris Andrews, David Lorenz, and Peter Bruce for responding.
+
+I received 5 replies: 
+
+3 were negative responses from people
+that have taken or are taking a statistics.com course, 
+
+1 was a negative response from a person
+that had not taken a course, and 
+
+1 was a response from someone at statistics.com
+offering additional information.
+
+As an aside, two people recommended
+other internet-based courses ... from SAS and RIT (Rochester Institute
+of Technology).
+
+Full responses and my original posting
+are pasted below.
+
+JVA
+
+---
+
+SR Millis:  I took one of Statistic.com's
+courses in regression. IMHO, it was awful. The instructor simply assigned
+chapters to read in his book along with exercises. There was no active
+teaching. You could post questions to the website but the responses were
+not as helpful as posting to any of the statistical listservs. And the
+course was expensive for what I received. I would have gotten as much had
+I simply gone to the Statistics.com website, determined what books would
+be used by the course, and then worked through the book on my own. In my
+experience, the best of the internet-based courses are those put on by
+SAS. Of course, all of the analyses are done in SAS, but the course content
+was well-organized and up-to-date. I found the SAS course on GEE quite
+good.
+
+Laura Chihara:  I took a gene _expression_
+course and was sorely disappointed. The instructor just listed what page
+to read from his book and assigned some exercises. There was a message
+board but most of the questions were answered by other students. The cost
+of the course was not justified at all.
+
+Chris Andrews:  I am currently
+taking a statistics.com course.  Unfortunately my experience has been
+like that of SR Millis, who posted to the listserv.   I read the teacher's
+text, had a few questions answered via a discussion board, and answered
+some vague homework questions.  I got the impression that only a few
+(<=5) people were in the course and only one was particularly active.
+ There was no student-student interaction via the discussion board.
+ I don't want to make any sweeping claims based on a single course
+but I will think hard before joining another.
+
+David Lorenz:  I looked into the
+courses that were offered and was not overly impressed. I did not take
+any. I recently found the Rochester Institute of Technology (RIT) offers
+online courses in stats. I don't know if you are interested in those classes,
+but they seemed like better classes and I'll probably try one this spring.
+Here's the URL: http://www.rit.edu/~625www/online.php3 
+
+Peter Bruce:  I saw your posting
+on the S-News group concerning our courses.  You mentioned the lack
+of objective reviews, aside from the testimonials on the site.  While
+there are as yet no published reviews of statistics.com courses (in general,
+I have not seen much in the way of published reviews of professional development
+courses), there is a review of one of our courses scheduled to be published
+early next year in "Information Processing and Management" and
+I would be happy to share it with you on condition that it not be released
+(it is not ours to release).  Also, I would be happy to share with
+you complete numerical evaluations of  recent courses by all respondents
+in the courses, as well as the extent of "repeat business" amongst
+our customers (don't know that number offhand - would have to do a spot
+check).
+
+---
+
+S-news folks, 
+
+This query is not (directly) S-PLUS
+related, but I am posting it here because I wanted to get the opinion of
+the s-news community. 
+
+I am considering taking a course from
+statistics.com (http://www.statistics.com/content/courses.html), and would
+be interested in hearing feedback from those that have taken courses with
+them.  (I was unable to find any objective reviews on-line ... only
+the testimonials on the statistics.com website.)  Please respond to
+me, and I will summarize for the group.  Thanks. 
+
+JVA 
+
+`·.,,  ><(((º>  
+`·.,,  ><(((º>   `·.,,  ><(((º>
+
+Jean V. Adams
+
+Statistician
+
+U.S. Geological Survey
+
+Great Lakes Science Center
+
+c/o Marquette Biological Station
+
+1924 Industrial Parkway
+
+Marquette, MI 49855  USA
+
+phone: 906-226-1212
+
+FAX: 906-226-3632
+
+web site: www.glsc.usgs.gov
+
+e-mail: jvadams at usgs.gov
+
+From kjarcher at vcu.edu  Wed Nov 16 22:21:49 2005
+From: kjarcher at vcu.edu (Kellie J. Archer, Ph.D.)
+Date: Wed, 16 Nov 2005 17:21:49 -0500
+Subject: Estimating threshold parameter for glm
+Message-ID: <3562.128.172.27.57.1132179709.squirrel@webmail3.vcu.edu>
+
+I'm using glm to estimate the parameters in a dose response model
+
+glm(activity~ace+dia+cpf+dim,data=allpest,family=quasi(link=log,var=mu))
+
+Can anyone tell me how to estimate the threshold parameter in glm
+following the methodology of Schwartz et al (1995) JASA 90(431):862-870?
+
+-- 
+Kellie J. Archer, Ph.D.
+Assistant Professor, Department of Biostatistics
+Fellow, Center for the Study of Biological Complexity
+Virginia Commonwealth University
+1101 East Marshall St.
+Sanger Hall B1-069
+Richmond, VA 23298-0032
+e-mail: kjarcher at vcu.edu
+phone: (804) 827-2039
+fax: (804) 828-8900
+website: www.people.vcu.edu/~kjarcher
+
+From jkrobert at bcm.tmc.edu  Wed Nov 16 21:41:46 2005
+From: jkrobert at bcm.tmc.edu (Roberts, J. Kyle)
+Date: Wed, 16 Nov 2005 15:41:46 -0600
+Subject: 
+Message-ID: <1FA4FE4BC3E0C24DABCFEA3E31C7CA403F658B@BCMEVS1.ad.bcm.edu>
+
+Dear 
+All,
+
+ 
+
+Quick 
+question, why is the Deviance statistic (-2*LL) so drastically different in a 
+binomial outcome model when using Laplace estimation versus PQL or MQL?  I am using the correlatedData library with glme 
+in S-PLUS 6.2.
+
+ 
+
+Thanks,
+
+Kyle
+
+ 
+
+ 
+
+***************************************
+
+J. Kyle Roberts, Ph.D.
+
+Baylor College of Medicine
+
+Center for Educational 
+Outreach
+
+One Baylor Plaza, MS:  
+BCM411
+
+Houston, TX   
+77030-3411
+
+713-798-6672 - 713-798-8201 
+Fax
+
+jkrobert at bcm.edu
+
+***************************************
+
+ 
+
+From PSchwarz at gcrinsight.com  Thu Nov 17 07:11:20 2005
+From: PSchwarz at gcrinsight.com (Schwarz,Paul)
+Date: Wed, 16 Nov 2005 23:11:20 -0800
+Subject: how to extract entire rows from a data frame based on a index variable?
+Message-ID: <89C7DEAADB79564DB278694EB2417CCE5FAA3C@CHOCOLATE.GCRInsight.com>
+
+Dear S-News readers,
+
+I'm puzzling over how to solve the following problem. Let's say that I
+have a data frame with possibly multiple observations (rows) per
+sampling unit, in this case survey respondents. In addition to a
+respondent ID variable, there is a date variable tracking the date the
+information was collected. If I want to extract from this data frame
+only the most recent observation (or the first, etc.) for each
+respondent, how could I do this? I've been thinking about this problem
+as a tapply()-like problem where the respondent ID would be the index
+variable, but I haven't figured how to write a function to extract and
+return entire rows. I would appreciate ideas or suggestions from fellow
+list readers on how to solve this.
+
+Thanks for your help.
+
+-Paul
+
+From lorenz at usgs.gov  Thu Nov 17 13:26:15 2005
+From: lorenz at usgs.gov (David L Lorenz)
+Date: Thu, 17 Nov 2005 07:26:15 -0600
+Subject: Re: how to extract entire rows from a data frame based on a index
+In-Reply-To: <89C7DEAADB79564DB278694EB2417CCE5FAA3C@CHOCOLATE.GCRInsight.com>
+References: <89C7DEAADB79564DB278694EB2417CCE5FAA3C@CHOCOLATE.GCRInsight.com>
+Message-ID: <OF24C55A48.CEC2B943-ON862570BC.0049AEFD-862570BC.0049D057@usgs.gov>
+
+Paul,
+
+  The aggregate() function should
+do what you want. Look at the aggregate.data.frame() documentation. The
+data would need to be sorted by date or ID and date to work correctly.
+
+Dave
+
+"Schwarz,Paul"
+<PSchwarz at gcrinsight.com> 
+
+Sent by: s-news-owner at lists.biostat.wustl.edu
+11/17/2005 01:11 AM
+
+To
+
+<s-news at lists.biostat.wustl.edu>
+
+cc
+
+Subject
+
+[S] how to extract entire rows from
+a data frame based on a index variable?
+
+Dear S-News readers,
+
+I'm puzzling over how to solve the following problem. Let's say that I
+
+have a data frame with possibly multiple observations (rows) per
+
+sampling unit, in this case survey respondents. In addition to a
+
+respondent ID variable, there is a date variable tracking the date the
+
+information was collected. If I want to extract from this data frame
+
+only the most recent observation (or the first, etc.) for each
+
+respondent, how could I do this? I've been thinking about this problem
+
+as a tapply()-like problem where the respondent ID would be the index
+
+variable, but I haven't figured how to write a function to extract and
+
+return entire rows. I would appreciate ideas or suggestions from fellow
+
+list readers on how to solve this.
+
+Thanks for your help.
+
+-Paul
+
+--------------------------------------------------------------------
+
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+
+the BODY of the message:  unsubscribe s-news
+
+From bkb5 at cdc.gov  Thu Nov 17 17:37:53 2005
+From: bkb5 at cdc.gov (Biggerstaff, Brad J.)
+Date: Thu, 17 Nov 2005 10:37:53 -0700
+Subject: Re: how to extract entire rows from a data frame based on a index variable?
+Message-ID: <7E6C5EBC0D0DB8448A56A8BEEC632A9003DA3BBA@m-ncid-3.ncid.cdc.gov>
+
+You could use a combination of sorting (to put the date in order) and
+then use duplicated() (on the ID), something like
+
+df <- data.frame(ID=rep(1:10,rep(2,10)),Date=rep(1:2,10),X=rnorm(20))
+df <- sort.col(df,"@ALL",c("ID","Date"),c(T,F)) # asc=F puts Date in
+reverse 
+                                                              # order
+df[!duplicated(df$ID),]
+
+with aggregate, this could be done as
+
+aggregate(df[,c("Date","X")],by=list(ID=df$ID),function(x) x[x==max(x)])
+
+without having to do the sorting.
+
+These both have the problem, however, that two observations with the
+same ID on the same date are not retained, so be certain that this won't
+be a rub.  To get around that, using split and lapply should help, but
+piecing the list of data frames back to a single data frame is a
+nuisance.
+
+Brad
+
+Brad Biggerstaff, Ph.D. 
+(970) 221-6473 ... BBiggerstaff at cdc.gov 
+
+---------------------------------------------------------------------
+
+> -----Original Message-----
+> From: s-news-owner at lists.biostat.wustl.edu [mailto:s-news-
+> owner at lists.biostat.wustl.edu] On Behalf Of Schwarz,Paul
+> Sent: Thursday, November 17, 2005 12:11 AM
+> To: s-news at lists.biostat.wustl.edu
+> Subject: [S] how to extract entire rows from a data frame based on a
+index
+> variable?
+> 
+> Dear S-News readers,
+> 
+> I'm puzzling over how to solve the following problem. Let's say that I
+> have a data frame with possibly multiple observations (rows) per
+> sampling unit, in this case survey respondents. In addition to a
+> respondent ID variable, there is a date variable tracking the date the
+> information was collected. If I want to extract from this data frame
+> only the most recent observation (or the first, etc.) for each
+> respondent, how could I do this? I've been thinking about this problem
+> as a tapply()-like problem where the respondent ID would be the index
+> variable, but I haven't figured how to write a function to extract and
+> return entire rows. I would appreciate ideas or suggestions from
+fellow
+> list readers on how to solve this.
+> 
+> Thanks for your help.
+> 
+> -Paul
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+
+From jhf2 at adelphia.net  Sun Nov 20 20:07:54 2005
+From: jhf2 at adelphia.net (John Fennick)
+Date: Sun, 20 Nov 2005 15:07:54 -0500
+Subject: Problem with sample()
+Message-ID: <6.2.3.4.0.20051120150722.02e06af8@mail.adelphia.net>
+
+Hello Group
+
+(I also sent this to S-Plus support, but I wonder is this an oldie or has
+anyone else experienced it)
+
+Using S version 7.2 under Win 2000.
+
+I am assuming that sample() and rsample() select a ?truly? random sample
+from the given population. If this is not true, then my question is
+mute.
+
+It is this: If I generate a binomial sequence using sample() or
+rsample(), and compare the sample variance with the theoretical, or with
+sequences generated using rbinom() or runif(), I have an incorrect
+result. The latter two are consistent and agree with theory, binomial
+variance = Npq.
+
+The means of all three methods used for the sequences agree and are
+correct, Np.
+
+Is there a problem with sample() or what am I missing?
+
+Thanks,
+
+john
+
+EXAMPLE
+
+> dim(tt)
+
+[1] 2048  100
+
+Ø
+       # tt[1,] <-
+c(rep(0,70),rep(1,30)) is repeated in 2048 rows.
+Ø
+       # Each row
+represents a sequence with probability of 0.30 of a ?1? appearing,
+Ø
+       # just need to
+randomize it for testing.
+Ø
+       # For a seq. of
+length 30, the binomial variance should be Npq = 30 * 0.3 * 0.7 = 0.63
+
+>
+      
+        # Use tt to
+create binomial sequences.
+
+Ø
+       # First,
+generate a binom. seq. using sample()
+Ø
+       
+
+> zz <- apply(tt,1,function(x){ sum(sample(x,30)) })
+
+> length(zz)    # check sample
+size
+
+[1] 2048
+
+> var(zz)       #
+What is the variance?
+
+[1] 4.420762    # ?wrong?
+
+>
+      
+        # Next generate a
+formal binom. seq. of same size using rbinom()
+
+> xx <- (rbinom(2048,30,0.3))
+
+> var(xx)       #
+What is the variance?
+
+[1] 6.310369    # ?correct?
+
+>
+      
+        # Now generate
+binom. seq. using runif()
+
+>       yy <-
+apply(tt,1,function(x){ sum(x[rnd(runif(30,0.5,100.5),0)]) })
+
+> var(yy)       #
+What is the variance?
+
+[1] 6.322804    # ?correct?
+
+>
+      
+        # Summary:
+
+> var(zz)
+
+[1] 4.420762
+
+> var(xx)
+
+[1] 6.310369
+
+> var(yy)
+
+[1] 6.322804
+
+# Npq = 30 * 0.3 * 0.7 = 0.63 
+
+These results repeat using rsample() instead of sample() for zz and for
+samples up to several thousand.
+
+John Fennick
+
+jhf2 at adelphia.net
+
+alt: j.fennick at ieee.org
+
+Tel: 603.526.4023
+
+134 Brookside Drive
+
+New London, NH 03257
+
+USA 
+
+From jhf2 at adelphia.net  Sun Nov 20 20:16:01 2005
+From: jhf2 at adelphia.net (John Fennick)
+Date: Sun, 20 Nov 2005 15:16:01 -0500
+Subject: Problem with sample()
+Message-ID: <6.2.3.4.0.20051120151438.02df2f30@mail.adelphia.net>
+
+Re: Last posting.
+
+The question may be moot.
+Seems sometimes I get mute.
+
+john
+
+John Fennick
+jhf2 at adelphia.net
+alt: j.fennick at ieee.org
+Tel: 603.526.4023
+134 Brookside Drive
+New London, NH 03257
+USA  
+
+From davidson at cs.albany.edu  Mon Nov 21 00:57:17 2005
+From: davidson at cs.albany.edu (Ian Davidson)
+Date: Sun, 20 Nov 2005 18:57:17 -0600
+Subject: Sixth SIAM Data Mining Conference - Workshops and Tutorials Announcement
+In-Reply-To: <KDEHKGODBLIHMLJFKOEIKENBCHAA.davidson@cs.albany.edu>
+References: <KDEHKGODBLIHMLJFKOEIKENBCHAA.davidson@cs.albany.edu>
+Message-ID: <KDEHKGODBLIHMLJFKOEIMEGHCJAA.davidson@cs.albany.edu>
+
+Apologies if you receive this more than once
+
+================================================
+
+The SIAM Data Mining (SDM) organizing committee 
+is pleased to present the following workshops and 
+tutorials that will be held in conjunction with 
+SDM'06 in the Washington DC Area (Bethesda, 
+Maryland), USA.
+
+---------------------Workshops------------------
+
+Workshop on Feature Selection for Data Mining
+
+Workshop on Text Mining
+
+Workshop on High Performance and Distributed Mining
+
+Workshop on Spatial Data Mining: Consolidation and 
+            Renewed Bearing
+
+Workshop on Link Discovery
+
+Workshop on Biomedical Informatics (invited)
+
+Workshop on Scientific Data Mining
+
+Details on these exciting workshops including specific 
+calls for papers, submission deadlines (typically 
+between Jan 7th and 10th for all workshops), organizing 
+committees and other important information can be found at:
+
+        www.siam.org/meetings/sdm06/workshops.htm
+
+---------------------Tutorials------------------
+
+1. Randomized Algorithms for Matrices and Massive 
+   Data Sets 
+   Petros Drineas (RPI) and 
+   Michael W. Mahoney (Yale)
+
+2. From Unsupervised to Semi-supervised Learning: 
+   Algorithms and evaluation approaches
+   Dimitrios Gunopulos (UCR), 
+   Michalis Vazirgiannis  (Athens U. of Economics)
+   and Maria Halkidi (Athens U. of Economics)
+
+Details on these tutorials can be found at:
+
+       www.siam.org/meetings/sdm06/tutorials.htm
+
+================================================
+
+From jhf2 at adelphia.net  Mon Nov 21 01:21:14 2005
+From: jhf2 at adelphia.net (John Fennick)
+Date: Sun, 20 Nov 2005 20:21:14 -0500
+Subject: Problem with sample()
+Message-ID: <6.2.3.4.0.20051120201858.02e01658@mail.adelphia.net>
+
+Many thanks to all who responded.
+
+No, I was not setting replace = T
+
+john
+
+Hello Group
+
+(I also sent this to S-Plus support, but I wonder is this an oldie or has
+anyone else experienced it)
+
+Using S version 7.2 under Win 2000.
+
+I am assuming that sample() and rsample() select a ?truly? random sample
+from the given population. If this is not true, then my question is
+mute.
+
+It is this: If I generate a binomial sequence using sample() or
+rsample(), and compare the sample variance with the theoretical, or with
+sequences generated using rbinom() or runif(), I have an incorrect
+result. The latter two are consistent and agree with theory, binomial
+variance = Npq.
+
+The means of all three methods used for the sequences agree and are
+correct, Np.
+
+Is there a problem with sample() or what am I missing?
+
+Thanks,
+
+john
+
+EXAMPLE
+
+> dim(tt)
+
+[1] 2048  100 
+
+Ø
+       # tt[1,] <-
+c(rep(0,70),rep(1,30)) is repeated in 2048 rows. 
+Ø
+       # Each row
+represents a sequence with probability of 0.30 of a ?1? appearing, 
+Ø
+       # just need to
+randomize it for testing. 
+Ø
+       # For a seq. of
+length 30, the binomial variance should be Npq = 30 * 0.3 * 0.7 = 0.63 
+
+>
+      
+        # Use tt to
+create binomial sequences. 
+
+Ø
+       # First,
+generate a binom. seq. using sample() 
+Ø
+       
+
+> zz <- apply(tt,1,function(x){ sum(sample(x,30)) })
+
+> length(zz)    # check sample
+size
+
+[1] 2048
+
+> var(zz)       #
+What is the variance?
+
+[1] 4.420762    # ?wrong?
+
+>
+      
+        # Next generate a
+formal binom. seq. of same size using rbinom()
+
+> xx <- (rbinom(2048,30,0.3))
+
+> var(xx)       #
+What is the variance?
+
+[1] 6.310369    # ?correct?
+
+>
+      
+        # Now generate
+binom. seq. using runif()
+
+>       yy <-
+apply(tt,1,function(x){ sum(x[rnd(runif(30,0.5,100.5),0)]) })
+
+> var(yy)       #
+What is the variance?
+
+[1] 6.322804    # ?correct?
+
+>
+      
+        # Summary:
+
+> var(zz)
+
+[1] 4.420762
+
+> var(xx)
+
+[1] 6.310369
+
+> var(yy)
+
+[1] 6.322804
+
+# Npq = 30 * 0.3 * 0.7 = 0.63 
+
+These results repeat using rsample() instead of sample() for zz and for
+samples up to several thousand.
+
+John Fennick
+
+jhf2 at adelphia.net
+
+alt: j.fennick at ieee.org
+
+Tel: 603.526.4023
+
+134 Brookside Drive
+
+New London, NH 03257
+
+USA 
+
+From b.jacobs at pandora.be  Mon Nov 21 11:55:19 2005
+From: b.jacobs at pandora.be (Bert Jacobs)
+Date: Mon, 21 Nov 2005 12:55:19 +0100
+Subject: Removing 0's
+Message-ID: <20051121115516.DDED9381DD@adicia.telenet-ops.be>
+
+Hi,
+
+Using S-Plus 6.2 for Windows XP
+
+I have a vector of values that looks like this:
+
+0
+0
+12
+15
+16
+0
+0
+18
+4
+3
+2
+0
+0
+
+Does there exist an elegant way to achieve the following 
+=removing the 0's at the start of the vector (if there are any) and at the
+end of the vector (if there are any):
+
+12
+15
+16
+0
+0
+18
+4
+3
+2
+
+Thx for helping me out.
+Bert
+
+From sundar.dorai-raj at pdf.com  Mon Nov 21 12:16:52 2005
+From: sundar.dorai-raj at pdf.com (Sundar Dorai-Raj)
+Date: Mon, 21 Nov 2005 06:16:52 -0600
+Subject: Re: Removing 0's
+In-Reply-To: <20051121115516.DDED9381DD@adicia.telenet-ops.be>
+References: <20051121115516.DDED9381DD@adicia.telenet-ops.be>
+Message-ID: <4381BAB4.2040809@pdf.com>
+
+Bert Jacobs wrote:
+> Hi,
+>
+> Using S-Plus 6.2 for Windows XP
+>
+> I have a vector of values that looks like this:
+>
+> 0
+> 0
+> 12
+> 15
+> 16
+> 0
+> 0
+> 18
+> 4
+> 3
+> 2
+> 0
+> 0
+>
+> Does there exist an elegant way to achieve the following
+> =removing the 0's at the start of the vector (if there are any) and at the
+>
+> end of the vector (if there are any):
+>
+> 12
+> 15
+> 16
+> 0
+> 0
+> 18
+> 4
+> 3
+> 2
+>
+> Thx for helping me out.
+> Bert
+
+How about:
+
+wz <- which(diff(x == 0) != 0)
+x[(wz[1] + 1):wz[length(wz)]]
+
+This assumes you always have zeros present. It would have to be 
+re-worked in the cases were you do no have zeros either at the 
+beginning, the end of the vector, or both.
+
+--sundar
+
+From rmh at temple.edu  Mon Nov 21 12:52:07 2005
+From: rmh at temple.edu (Richard M. Heiberger)
+Date: Mon, 21 Nov 2005 07:52:07 -0500
+Subject: Re: Removing 0's
+Message-ID: <a2298145.5eaf5d38.81a0600@po-d.temple.edu>
+
+tmp <- c(0,0,12,15,16,0,0,18,4,3,2,0,0)
+
+middle <- function(x) {
+  x0 <- (x == 0)
+  not0 <- !cumprod(x0) & !rev(cumprod(rev(x0)))
+  x[not0]
+}
+
+middle(tmp)
+
+From jsv at stat.ohio-state.edu  Mon Nov 21 13:51:15 2005
+From: jsv at stat.ohio-state.edu
+Date: Mon, 21 Nov 2005 08:51:15 -0500
+Subject: Re: Removing 0's
+In-Reply-To: <4381BAB4.2040809@pdf.com>
+References: <20051121115516.DDED9381DD@adicia.telenet-ops.be> <4381BAB4.2040809@pdf.com>
+Message-ID: <2191.24.210.88.144.1132581075.squirrel@www.stat.ohio-state.edu>
+
+zeros.trim <- function(x){
+non.zeros <- which(!(x==0))
+x[non.zeros[1]:non.zeros[length(non.zeros)]]}
+
+_______________________________________________
+
+>
+>
+> Bert Jacobs wrote:
+>> Hi,
+>>
+>> Using S-Plus 6.2 for Windows XP
+>>
+>> I have a vector of values that looks like this:
+>>
+>> 0
+>> 0
+>> 12
+>> 15
+>> 16
+>> 0
+>> 0
+>> 18
+>> 4
+>> 3
+>> 2
+>> 0
+>> 0
+>>
+>> Does there exist an elegant way to achieve the following
+>> =removing the 0's at the start of the vector (if there are any) and at
+>> the
+>> end of the vector (if there are any):
+>>
+>> 12
+>> 15
+>> 16
+>> 0
+>> 0
+>> 18
+>> 4
+>> 3
+>> 2
+>>
+>> Thx for helping me out.
+>> Bert
+>>
+>
+>
+> How about:
+>
+> wz <- which(diff(x == 0) != 0)
+> x[(wz[1] + 1):wz[length(wz)]]
+>
+> This assumes you always have zeros present. It would have to be
+> re-worked in the cases were you do no have zeros either at the
+> beginning, the end of the vector, or both.
+>
+> --sundar
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+>
+
+From carcappe at unina.it  Mon Nov 21 14:23:18 2005
+From: carcappe at unina.it (melina cappelli)
+Date: Mon, 21 Nov 2005 15:23:18 +0100
+Subject: surrogate splits in tree
+Message-ID: <1132582998.4381d8563cd68@webmail.unina.it>
+
+Hi all,
+does anybody know how (if possible...) to get surrogate splits in tree
+function?
+I think that burl.tree gives the competing splits but not the surrogates.
+Any helps is very much appreciated,
+melina 
+
+----------------------------------------------------------------
+This message was sent using IMP, the Internet Messaging Program.
+
+From sichong.chen at postgrad.manchester.ac.uk  Mon Nov 21 17:07:58 2005
+From: sichong.chen at postgrad.manchester.ac.uk (Chen Sichong)
+Date: Tue, 22 Nov 2005 01:07:58 +0800
+Subject: Simulation of multivariate student-t distribution
+Message-ID: <20051121170738.B423A100850B@mailgate.biostat.wustl.edu>
+
+Dear All
+
+I have some questions about simulation of multivariate student-t distribution. I am a SPlus 7.0 & FinMetrics 2.0 User
+
+1.      Do you know any function in Splus to generate a multivariate student-t distribution? I find rmvnorm for multinormal (Gaussian) but did not find for student t. In MatLab the function is mvtrnd.
+
+2.      The univariate series simulated from the multivariate student-t distribution should share the same degree of freedom as multivariate-t. But in my case, I want to release this assumption. What I want is to get two uniform series which should be the probability of univariate of the simulated multivariate series. So is there any way to generate two univariate probability series, whose quantile is multivariate student-t. Or I just can get these probabilities just from the cdf of the two quantile series from the simulation of multivariate student-t.
+
+3.      The last question is, if I assume the correlation between the two univariate series changes over time, which is not constant all the time. Is there any way to simulate a multivariate series which captures the characteristic of this changing correlation?
+
+Any suggestion is appreciated.
+
+Many thanks,
+
+Sichong Chen
+
+SPlus 7.0 & FinMetrics 2.0 User
+
+Windows XP
+
+From andreas.krause at novartis.com  Tue Nov 22 10:48:45 2005
+From: andreas.krause at novartis.com
+Date: Tue, 22 Nov 2005 11:48:45 +0100
+Subject: dev.copy on tabbed graphsheet device
+Message-ID: <OF416268B9.A8A9D6B4-ONC12570C1.003A325B-C12570C1.003B651C@EU.novartis.net>
+
+I have a graphsheet device with tabbed pages, for example by entering (on 
+S-Plus 6.2 Prof Windows in this case)
+dotplot(site ~ yield | year, data=barley, layout=c(1,1))
+
+If I now enter 
+dev.copy(wmf.graph, file="graph-###.wmf")
+only the currently active page gets exported and not the entire set of 
+graphs.
+
+I would need to cycle through the pages and activate each before calling 
+dev.copy, so it seems.
+So how can I activate the pages one after the other or use a completely 
+different, more elegant approach?
+
+Thank you very much in advance!
+
+        Andreas Krause
+
+PS. For the full context: the problem is that wmf.graph uses a different 
+specification of colors than graphsheet, and I find them difficult to map.
+That's why I want to use dev.copy instead of simply opening a wmf.graph 
+device and re-running the commands. I hate the color implementation(s!).
+
+From elvis at xlsolutions-corp.com  Tue Nov 22 18:14:00 2005
+From: elvis at xlsolutions-corp.com
+Date: Tue, 22 Nov 2005 11:14:00 -0700
+Subject: December Course In New York***R/Splus Fundamentals and Programming Techniques
+Message-ID: <20051122111400.a108dc04937c07ba67766dad37185406.afa1f4a2ef.wbe@email.secureserver.net>
+
+XLSolutions Corporation (www.xlsolutions-corp.com) is proud to
+announce  2-day "R/S-plus Fundamentals and Programming
+Techniques" in New York: www.xlsolutions-corp.com/Rfund.htm
+
+**** New York,   December 19-20, 2005
+
+Reserve your seat now at the early bird rates! Payment due AFTER
+the class
+
+Course Description:
+
+This two-day beginner to intermediate R/S-plus course focuses on a
+broad spectrum of topics, from reading raw data to a comparison of R
+and S. We will learn the essentials of data manipulation, graphical
+visualization and R/S-plus programming. We will explore statistical
+data analysis tools,including graphics with data sets. How to enhance
+your plots, build your own packages (librairies) and connect via
+ODBC,etc.
+We will perform some statistical modeling and fit linear regression
+models. Participants are encouraged to bring data for interactive
+sessions
+
+With the following outline:
+
+- An Overview of R and S
+- Data Manipulation and Graphics
+- Using Lattice Graphics
+- A Comparison of R and S-Plus
+- How can R Complement SAS?
+- Writing Functions
+- Avoiding Loops
+- Vectorization
+- Statistical Modeling
+- Project Management
+- Techniques for Effective use of R and S
+- Enhancing Plots
+- Using High-level Plotting Functions
+- Building and Distributing Packages (libraries)
+- Connecting; ODBC, Rweb, Orca via sockets and via Rjava
+
+Email us for group discounts.
+Email Sue Turner: sue at xlsolutions-corp.com
+Phone: 206-686-1578
+Visit us: www.xlsolutions-corp.com/training.htm
+Please let us know if you and your colleagues are interested in this
+classto take advantage of group discount. Register now to secure your
+seat!
+
+Interested in R/Splus Advanced course? email us.
+
+Cheers,
+Elvis Miller, PhD
+Manager Training.
+XLSolutions Corporation
+206 686 1578
+www.xlsolutions-corp.com
+elvis at xlsolutions-corp.com
+
+From jody_mcintyre99 at yahoo.com  Wed Nov 23 11:26:27 2005
+From: jody_mcintyre99 at yahoo.com (Jody McIntyre)
+Date: Wed, 23 Nov 2005 03:26:27 -0800
+Subject: Re: Time Series Observation Identification
+Message-ID: <20051123112627.48671.qmail@web36415.mail.mud.yahoo.com>
+
+  Dear S-News,
+   
+  I have a very large time series dataset with several variables, for example:
+   
+  Y1           x1            x2 ??????????.
+  .
+  Yn            x1n        x2n
+   
+  where x1 ?..xn  can be row number, year, month day etc.
+   
+  I would like to write a routine (or perhaps 2 if necessary) in S-Plus (Windows Version 6.1) to identify the nth highest (lowest) maximum (minimum) y for a given time period, say year. If there are any missing values (i.e. less than 'n' non-missing values), the routine would need to be aware of this and function accordingly.
+   
+  Having
+ identified the above, I would then like to calculate the 5 year moving average. For example, if in the above routine I were to identify the 12th highest value y for every year 1-23, I would then like to calculate a moving average of span 5 [(yt, yt-1, yt-2, yt-3, yt-4))/ 5]. Clearly, some averages would not be able to be calculated (i.e. t<5) because there would not be enough observations available.
+   
+  I have been told that it would be possible to carry out such manoeuvres in STATA using the syntax _n and _N and the 'sort' command but I wish to use S-Plus for its other time series capabilities.
+   
+  Any insights gratefully acknowledged. I will publish any responses received.
+   
+  Jody
+
+		 Yahoo! FareChase - Search multiple travel sites in one click.
+
+ 
+
+ 
+
+From Rich at Mango-Solutions.com  Wed Nov 23 11:39:33 2005
+From: Rich at Mango-Solutions.com
+Date: Wed, 23 Nov 2005 11:39:33 +0000
+Subject: JOB: Consultants, Mango Solutions (UK)
+Message-ID: <20051123113933.6C16E100645A@mailgate.biostat.wustl.edu>
+
+ 
+
+Mango Solutions, providers of S-PLUS and R consulting, development and
+Training Services, are looking for 2 consultants to join their UK-based technical
+team.  We are looking for highly motivated individuals to work in a
+customer-focused environment.
+
+This is a unique opportunity to develop within a dynamic company which
+has been expanding rapidly and profitably since it’s inception in
+2002.  Mango Solutions have an excellent reputation for quality work, and
+customers include major finance, pharmaceutical, marketing and consumer
+companies.  For further information, please send your CV to
+maldridge at mango-solutions.com.
+
+ 
+
+ 
+
+S-PLUS/R Pharmaceutical Consultant (Reading, UK)
+
+ 
+
+The role
+
+ To provide ad-hoc statistical software
+     consulting services to pharmaceutical customers.
+
+ To create and deliver tailored
+     statistical software courses to pharmaceutical clients worldwide.
+
+ To advise pharmaceutical customers on statistical
+     and software issues.
+
+ To participate in the design and
+     implementation of bespoke statistical and reporting applications.
+
+ 
+
+Qualifications
+
+ Msc or Phd in statistics, mathematics
+     or computer sciences.
+
+ Knowledge of statistical languages:
+     S-PLUS, R, or SAS.
+
+ Experience of statistical programming
+     and modelling in a pharmaceutical environment.
+
+ Excellent communication skills.
+
+ Experience of other pharmaceutical
+     softwares is an advantage (eg. NONMEM, Spotfire, Pharsight, WinBugs). 
+
+ Experience of general software systems
+     is an advantage (eg. Java, Oracle, C, XML, HTML).
+
+ 
+
+Offering
+
+ Opportunity to extend your technical
+     knowledge within the pharmaceutical sector.
+
+ Exposure to other areas of statistical
+     software consulting by working with customers from finance, CRM, consumer
+     and environmental sectors.
+
+ Flexible working environment and
+     working hours.
+
+ Competitive salary.
+
+ 
+
+ 
+
+S-PLUS/R Finance Consultant (Reading, UK)
+
+ 
+
+The role
+
+ To support the development of the R
+     language in the financial sector.
+
+ To provide ad-hoc statistical software
+     consulting services to finance customers.
+
+ To create and deliver tailored
+     statistical software courses to finance clients worldwide.
+
+ To advise financial customers on
+     statistical and software issues.
+
+ To participate in the design and implementation
+     of bespoke statistical and reporting applications.
+
+ 
+
+Qualifications
+
+ Msc or Phd in statistics, mathematics,
+     physics or computer sciences.
+
+ Knowledge of statistical languages:
+     S-PLUS, R, or Matlab.
+
+ Experience of programming and analysis
+     in a financial company.
+
+ Excellent communication skills.
+
+ Experience of other finance softwares
+     is an advantage (eg. eViews, FactSet, RATS). 
+
+ Experience of general software systems
+     is an advantage (eg. Java, Oracle, C, XML, HTML).
+
+ 
+
+Offering
+
+ Opportunity to extend your technical
+     knowledge within the finance sector.
+
+ Exposure to other areas of statistical
+     software consulting by working with customers from pharmaceutcal, CRM,
+     consumer and environmental sectors.
+
+ Flexible working environment and
+     working hours.
+
+ Competitive salary.
+
+ 
+
+From xao_ping at yahoo.com  Wed Nov 23 11:49:46 2005
+From: xao_ping at yahoo.com (Xao Ping)
+Date: Wed, 23 Nov 2005 03:49:46 -0800
+Subject: how to get back my "traceback()"?
+Message-ID: <20051123114946.48198.qmail@web54010.mail.yahoo.com>
+
+    Dear All:
+  It somehow happened that my S+6.2 (Win XP) stopped sending me the command
+  "use traceback()...." after some kind of error have occurred. If I nevertheless use the traceback() function after an error message it gives me the info on some kind of error which took place long ago and not related to the ad hoc one. I have probably messed up something in "options" or "env.parameters". Can any body please tell how to invite back my dear friend, the "traceback()" function?
+  Thanks
+  Xao Ping
+  R&R Pharmakinetics
+  Taiwan
+
+		 Yahoo! FareChase - Search multiple travel sites in one click.
+
+ 
+
+ 
+
+From tplate at blackmesacapital.com  Wed Nov 23 14:10:55 2005
+From: tplate at blackmesacapital.com (Tony Plate)
+Date: Wed, 23 Nov 2005 07:10:55 -0700
+Subject: Re: dev.copy on tabbed graphsheet device
+In-Reply-To: <OF416268B9.A8A9D6B4-ONC12570C1.003A325B-C12570C1.003B651C@EU.novartis.net>
+References: <OF416268B9.A8A9D6B4-ONC12570C1.003A325B-C12570C1.003B651C@EU.novartis.net>
+Message-ID: <4384786F.8000505@blackmesacapital.com>
+
+Here's a collection of notes on commands for manipulating tabbed
+graphsheets under Windows.  The first three functions in this list are 
+what you need to cycle through the pages in a tabbed graphsheet.
+
+* guiGetGSName() # to get the name of the currently active graphsheet -- 
+you can change active graphsheet by selecting with mouse (can replace 
+"GSD2" below by guiGetGSName())
+
+* guiGetObjectNames("GraphSheetPage", "GSD2") # to get the names of all
+the pages in the graphsheet "GSD2"
+* guiModify("GraphSheet", Name="GSD2", CurrentPage="Page1") # sets the
+currently displayed page in a graphsheet
+* guiGetPlotName("GSD2", GraphNum=1, PlotNum=1) # get the name of a plot
+(default 1) on a page (default 1) in the current graphsheet
+* guiGetPropertyValue("GraphSheet", Name="GSD2", "CurrentPage") #
+returns the name of the currently displayed page in the graphsheet
+graphsheet(Name="FooBar", ...) # set the name of the graphsheet when
+creating it
+* guiModify( "GraphSheet", Name = "GSD2", NewName = "MyGraph") # change
+the name of graphsheet "GSD2"
+* guiModify( "GraphSheetPage", Name = "GSD2$1", NewName = "MyPage") #
+change the name of a page (graphsheet name remains "GSD2")
+* guiCreate( "GraphSheetPage", Name = "GSD2$Page1") # create a new
+graphsheet page
+* guiPrint(Name="GSD2", StartPage=??, EndPage=??) # print some pages
+from a graphsheet (help page says that pages must be specified as
+numbers, don't know if this is true)
+* guiSave("GraphSheet", Name="GSD2", FileName="file.sgr") # saves the
+whole graphsheet (all pages) in a file
+* export.graph(FileName="GSD2.eps", Name="GSD2", ExportType="EPS") #
+saves the currently active page as an EPS file (many other types are
+available)
+* guiRemoveContents("GraphSheet", Name="GSD2"): remove the contents of
+the current page (note that "Clear" on the popup-menu on the page tab
+appears not to work properly)
+* guiRemove("GraphSheetPate", Name=page.name): remove a page from the
+graphsheet (get page names using guiGetObjectNames("GraphSheetPage",
+"GSD2")). Warning: removing the last page seems to make the graphsheet
+non-functional.
+
+hope this helps,
+
+Tony Plate
+
+andreas.krause at novartis.com wrote:
+> I have a graphsheet device with tabbed pages, for example by entering (on
+> S-Plus 6.2 Prof Windows in this case)
+>
+> dotplot(site ~ yield | year, data=barley, layout=c(1,1))
+>
+> If I now enter
+> dev.copy(wmf.graph, file="graph-###.wmf")
+> only the currently active page gets exported and not the entire set of
+> graphs.
+>
+>
+> I would need to cycle through the pages and activate each before calling
+> dev.copy, so it seems.
+> So how can I activate the pages one after the other or use a completely
+> different, more elegant approach?
+>
+>
+> Thank you very much in advance!
+>
+>         Andreas Krause
+>
+> PS. For the full context: the problem is that wmf.graph uses a different
+> specification of colors than graphsheet, and I find them difficult to map.
+> That's why I want to use dev.copy instead of simply opening a wmf.graph
+> device and re-running the commands. I hate the color implementation(s!).
+>
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+
+From mtexeira at agro.uba.ar  Thu Nov 24 11:28:45 2005
+From: mtexeira at agro.uba.ar
+Date: Thu, 24 Nov 2005 08:28:45 -0300
+Subject: restrict number of Independent variables
+Message-ID: <1132831725.4385a3ed66892@webmail3.agro.uba.ar>
+
+Hi
+
+Im workin with a data set consisting of an independent variable (sheep 
+survival) and 66 dependent variables. The series for each variable consists of 
+24 values. (the data matrix size is 24x67, that is a problem)
+I want to adjust logistic regresions and restrict the models as to have only 
+two independent variables...
+
+how can i do this?
+ thanks 
+Marcos
+
+From jrangrej at yahoo.com  Thu Nov 24 22:34:06 2005
+From: jrangrej at yahoo.com (Jagadish Rangrej)
+Date: Thu, 24 Nov 2005 14:34:06 -0800
+Subject: Inverse Gaussian Tranformation.
+In-Reply-To: <Pine.LNX.4.61.0510041913530.12433@gannet.stats>
+References: <Pine.LNX.4.61.0510041913530.12433@gannet.stats>
+Message-ID: <20051124223407.52929.qmail@web54402.mail.yahoo.com>
+
+Dear All,
+
+I have a variable to tranform, which is recommended in
+one of the linkage software, but I don't know how to
+do it, to take care of skewness and kurtosis.
+
+any suggestions would be highly appreciated.
+
+Many thanks,
+Jag
+
+                
+__________________________________ 
+Start your day with Yahoo! - Make it your home page! 
+http://www.yahoo.com/r/hs
+
+From yang_eric9 at yahoo.com  Fri Nov 25 12:07:44 2005
+From: yang_eric9 at yahoo.com (Eric yang)
+Date: Fri, 25 Nov 2005 04:07:44 -0800
+Subject: allowing for missing arguments in functions
+Message-ID: <20051125120744.14934.qmail@web33906.mail.mud.yahoo.com>
+
+ 
+  Dear members,
+   
+  I've created a function that reads in 10 arguments in the function call, example
+   
+  my.fun <- function(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10) {
+   
+  ...
+   
+  }
+   
+  I use all the arguments in the body of the function. Is there a neat way of allowing for missing arguments in the function call and not executing the code in the body of the function that refers to the missing arguments?
+   
+  Any help is much appreciated.
+   
+  Eric
+
+		 Yahoo! Personals
+ 
+Single? There's someone we'd like you to meet.
+
+Lot's of someone's, actually. Yahoo! Personals
+
+From Thierry.ONKELINX at inbo.be  Fri Nov 25 12:36:07 2005
+From: Thierry.ONKELINX at inbo.be (ONKELINX, Thierry)
+Date: Fri, 25 Nov 2005 13:36:07 +0100
+Subject: NA problem with aggregate
+Message-ID: <2E9C414912813E4EB981326983E0A10401255E49@inexch.instnat.be.grp>
+
+Dear
+listers,
+
+ 
+
+I’m working with a data frame with 6 columns. The first column
+indicates the year (ranging from 1993 until present) and the other ones the measurements
+at different locations. For each year there are several measurements and some
+of them are missing (NA). I need to sum the measurements in each column by
+year. The aggregate function should do the trick but the NA’s our
+troubling me.
+
+ 
+
+The command:
+
+aggregate(CiVi22), by = list(CiVi22$Year), FUN = sum, na.rm = T)
+
+ 
+
+The output:
+
+     Group.1      X11 X14
+X15 X16 X21 
+
+1993   
+1993       NA  NA  NA  NA  NA
+
+1994   
+1994 3745.594  NA  NA  NA  NA
+
+1995   
+1995       NA  NA  NA  NA  NA
+
+1996   
+1996       NA  NA  NA  NA  NA
+
+1997   
+1997       NA  NA  NA  NA  NA
+
+1998   
+1998       NA  NA  NA  NA  NA
+
+1999   
+1999       NA  NA  NA  NA  NA
+
+2000   
+2000       NA  NA  NA  NA  NA
+
+2001   
+2001       NA  NA  NA  NA  NA
+
+2002   
+2002       NA  NA  NA  NA  NA
+
+2003    2003      
+NA  NA  NA  NA  NA
+
+2004    2004      
+NA  NA  NA  NA  NA
+
+ 
+
+This output is correct for the same command but without the na.rm
+parameter (or with na.rm = F). Including na.rm = T doesn’t seem to effect
+the sum function although it should. Any ideas about what’s going wrong?
+
+ 
+
+Thank you in advance.
+
+ 
+
+Thierry
+
+--------------------------------------------------------
+
+ir. Thierry Onkelinx
+
+Instituut voor Bosbouw en Wildbeheer (Institute for Forestry and Game
+Management)
+
+Team Biometrie, methodologie en kwaliteitszorg
+
+Gaverstraat 4
+
+9500 Geraardsbergen
+
+Belgium
+
+tel. + 32 54/436 185
+
+fax. + 32 54/436 160
+
+Thierry.Onkelinx at inbo.be
+
+http://ibw.inbo.be
+
+ 
+
+From sundar.dorai-raj at pdf.com  Fri Nov 25 13:43:07 2005
+From: sundar.dorai-raj at pdf.com (Sundar Dorai-Raj)
+Date: Fri, 25 Nov 2005 07:43:07 -0600
+Subject: Re: allowing for missing arguments in functions
+In-Reply-To: <20051125120744.14934.qmail@web33906.mail.mud.yahoo.com>
+References: <20051125120744.14934.qmail@web33906.mail.mud.yahoo.com>
+Message-ID: <438714EB.2020505@pdf.com>
+
+Eric yang wrote:
+>
+> Dear members,
+>
+> I've created a function that reads in 10 arguments in the function call,
+> example
+>
+> my.fun <- function(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9,
+> arg10) {
+>
+> ...
+>
+> }
+>
+> I use all the arguments in the body of the function. Is there a neat way
+> of allowing for missing arguments in the function call and not executing
+> the code in the body of the function that refers to the missing arguments?
+>
+> Any help is much appreciated.
+>
+> Eric
+
+Take a look at ?missing.
+
+--sundar
+
+From sundar.dorai-raj at pdf.com  Fri Nov 25 13:47:40 2005
+From: sundar.dorai-raj at pdf.com (Sundar Dorai-Raj)
+Date: Fri, 25 Nov 2005 07:47:40 -0600
+Subject: Re: NA problem with aggregate
+In-Reply-To: <2E9C414912813E4EB981326983E0A10401255E49@inexch.instnat.be.grp>
+References: <2E9C414912813E4EB981326983E0A10401255E49@inexch.instnat.be.grp>
+Message-ID: <438715FC.5010001@pdf.com>
+
+ONKELINX, Thierry wrote:
+> Dear listers,
+>
+>
+>
+> I’m working with a data frame with 6 columns. The first column indicates
+> the year (ranging from 1993 until present) and the other ones the
+> measurements at different locations. For each year there are several
+> measurements and some of them are missing (NA). I need to sum the
+> measurements in each column by year. The aggregate function should do
+> the trick but the NA’s our troubling me.
+>
+>
+>
+>
+>
+> The command:
+>
+> aggregate(CiVi22), by = list(CiVi22$Year), FUN = sum, na.rm = T)
+>
+>
+>
+>
+> The output:
+>
+>      Group.1      X11 X14 X15 X16 X21
+>
+> 1993    1993       NA  NA  NA  NA  NA
+>
+> 1994    1994 3745.594  NA  NA  NA  NA
+>
+> 1995    1995       NA  NA  NA  NA  NA
+>
+> 1996    1996       NA  NA  NA  NA  NA
+>
+> 1997    1997       NA  NA  NA  NA  NA
+>
+> 1998    1998       NA  NA  NA  NA  NA
+>
+> 1999    1999       NA  NA  NA  NA  NA
+>
+> 2000    2000       NA  NA  NA  NA  NA
+>
+> 2001    2001       NA  NA  NA  NA  NA
+>
+> 2002    2002       NA  NA  NA  NA  NA
+>
+> 2003    2003       NA  NA  NA  NA  NA
+>
+> 2004    2004       NA  NA  NA  NA  NA
+>
+>
+>
+> This output is correct for the same command but without the na.rm
+> parameter (or with na.rm = F). Including na.rm = T doesn’t seem to
+> effect the sum function although it should. Any ideas about what’s going
+> wrong?
+>
+>
+>
+>
+>
+> Thank you in advance.
+>
+>
+>
+>
+> Thierry
+
+Hi, Thierry,
+
+This is a known bug in 6.2
+
+http://216.211.131.2/insightful_faq/dsp_article.asp?articleID=202
+
+There is a workaround provided in the link. However, I think the 
+simplest solution for you is to do the following:
+
+aggregate(CiVi22[c("X11", "X14", "X15", "X16", "X21")],
+          CiVi22["Year"], function(x) sum(x, na.rm = TRUE))
+
+--sundar
+
+From petr.pikal at precheza.cz  Fri Nov 25 14:00:15 2005
+From: petr.pikal at precheza.cz (Petr Pikal)
+Date: Fri, 25 Nov 2005 15:00:15 +0100
+Subject: Re: NA problem with aggregate
+In-Reply-To: <2E9C414912813E4EB981326983E0A10401255E49@inexch.instnat.be.grp>
+References: <2E9C414912813E4EB981326983E0A10401255E49@inexch.instnat.be.grp>
+Message-ID: <438726FF.24902.1AA2E1C@localhost>
+
+Hi
+
+Did not you by chance redefine sum function? I can not 
+reproduce this behaviour although I tested it on R only.
+
+Cheers
+Petr
+ 
+
+On 25 Nov 2005 at 13:36, ONKELINX, Thierry wrote:
+
+Subject:                [S] NA problem with aggregate
+Date sent:              Fri, 25 Nov 2005 13:36:07 +0100
+From:                   "ONKELINX, Thierry" <Thierry.ONKELINX at inbo.be>
+To:                     <s-news at lists.biostat.wustl.edu>
+
+> Dear listers,
+> 
+> 
+> 
+> I'm working with a data frame with 6 columns. The first column
+> indicates the year (ranging from 1993 until present) and the other
+> ones the measurements at different locations. For each year there are
+> several measurements and some of them are missing (NA). I need to sum
+> the measurements in each column by year. The aggregate function should
+> do the trick but the NA's our troubling me.
+> 
+> 
+> 
+> The command:
+> 
+> aggregate(CiVi22), by = list(CiVi22$Year), FUN = sum, na.rm = T)
+> 
+> 
+> 
+> The output:
+> 
+>      Group.1      X11 X14 X15 X16 X21 
+> 
+> 1993    1993       NA  NA  NA  NA  NA
+> 
+> 1994    1994 3745.594  NA  NA  NA  NA
+> 
+> 1995    1995       NA  NA  NA  NA  NA
+> 
+> 1996    1996       NA  NA  NA  NA  NA
+> 
+> 1997    1997       NA  NA  NA  NA  NA
+> 
+> 1998    1998       NA  NA  NA  NA  NA
+> 
+> 1999    1999       NA  NA  NA  NA  NA
+> 
+> 2000    2000       NA  NA  NA  NA  NA
+> 
+> 2001    2001       NA  NA  NA  NA  NA
+> 
+> 2002    2002       NA  NA  NA  NA  NA
+> 
+> 2003    2003       NA  NA  NA  NA  NA
+> 
+> 2004    2004       NA  NA  NA  NA  NA
+> 
+> 
+> 
+> This output is correct for the same command but without the na.rm
+> parameter (or with na.rm = F). Including na.rm = T doesn't seem to
+> effect the sum function although it should. Any ideas about what's
+> going wrong?
+> 
+> 
+> 
+> Thank you in advance.
+> 
+> 
+> 
+> Thierry
+> 
+> --------------------------------------------------------
+> ir. Thierry Onkelinx
+> Instituut voor Bosbouw en Wildbeheer (Institute for Forestry and Game
+> Management) Team Biometrie, methodologie en kwaliteitszorg Gaverstraat
+> 4 9500 Geraardsbergen Belgium tel. + 32 54/436 185 fax. + 32 54/436
+> 160 Thierry.Onkelinx at inbo.be http://ibw.inbo.be
+> 
+> 
+> 
+> 
+
+Petr Pikal
+petr.pikal at precheza.cz
+
+From Rich at Mango-Solutions.com  Fri Nov 25 12:33:32 2005
+From: Rich at Mango-Solutions.com
+Date: Fri, 25 Nov 2005 12:33:32 +0000
+Subject: Re: allowing for missing arguments in functions
+In-Reply-To: <20051125120744.14934.qmail@web33906.mail.mud.yahoo.com>
+References: <20051125120744.14934.qmail@web33906.mail.mud.yahoo.com>
+Message-ID: <20051125123327.3AB6E100647C@mailgate.biostat.wustl.edu>
+
+Hi Eric,
+
+There are a number of ways you could do this:-
+
+1) Use default values and the missing function: most useful for a set number
+of arguments with different actions occurring on each ...
+
+myFun <- function(arg1, arg2=NULL, arg3=NULL, arg4=NULL) {
+        if (!missing(arg2)) arg1 <- arg1 + arg2 ^ 2
+        if (!missing(arg3)) arg1 <- arg1 + arg3 ^ 3
+        if (!missing(arg4)) arg1 <- arg1 + arg4 ^ 4
+        arg1
+}
+
+myFun(4, arg4=2)
+
+2) Use ellipses: most useful for an unknown number of arguments ...
+
+myFun <- function(arg1, ...) {
+        listOfArgs <- list(...)
+        listOfArgs <- sapply(listOfArgs, "^", 2)
+        arg1 + sum(listOfArgs)
+}
+myFun(4, arg2=4, arg3=4, arg4=2, arg5=3)
+
+Hope this helps,
+Rich.
+
+mangosolutions
+Tel   +44 118 902 6617
+Fax  +44 118 902 6401
+
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Eric yang
+Sent: 25 November 2005 12:08
+To: s-news at wubios.wustl.edu
+Subject: [S] allowing for missing arguments in functions
+
+ 
+Dear members,
+ 
+I've created a function that reads in 10 arguments in the function call,
+example
+ 
+my.fun <- function(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9,
+arg10) {
+ 
+...
+ 
+}
+ 
+I use all the arguments in the body of the function. Is there a neat way of
+allowing for missing arguments in the function call and not executing the
+code in the body of the function that refers to the missing arguments?
+ 
+Any help is much appreciated.
+ 
+Eric
+
+Yahoo! Personals
+Single? There's someone we'd like you to meet.
+Lot's of someone's, actually. Yahoo! Personals
+<http://us.rd.yahoo.com/evt=36108/*http://personals.yahoo.com > 
+<<attachment: winmail.dat>>
+
+From cj5815 at yahoo.com  Fri Nov 25 18:29:44 2005
+From: cj5815 at yahoo.com (Joe Cerniglia)
+Date: Fri, 25 Nov 2005 10:29:44 -0800
+Subject: creating libraries
+Message-ID: <20051125182945.71455.qmail@web50209.mail.yahoo.com>
+
+I am trying to create a library and load data and
+functions into that library.  I get the following
+error message when I run the code:
+
+Problem in assign(mylib.funcs[1], get(mylib.funcs[1]),
+wh..: database "mylib" is read-only 
+Use traceback() to see the call stack
+
+#
+#code
+#
+
+mkdir("c:\\temp\\mylib")
+mkdir("c:\\temp\\mylib\\.Data")
+mkdir("c:\\temp\\mylib\\.Prefs")
+mkdir("c:\\temp\\mylib\\.Data\\_Help")
+
+my.sqrt <- function(x)
+{
+        y <- sqrt(x)
+        cat("\nThe square root of ", x, " is ", y, ".\n", sep
+= "")
+        invisible(y)
+}
+
+library(mylib, pos=2, lib.loc = "c:\\temp\\")
+mylib.funcs<-c("my.sqrt")
+assign(mylib.funcs[1], get(mylib.funcs[1]),where=2)
+
+                
+__________________________________ 
+Yahoo! Music Unlimited 
+Access over 1 million songs. Try it free. 
+http://music.yahoo.com/unlimited/
+
+From Thom.Burnett at cognigencorp.com  Fri Nov 25 18:42:02 2005
+From: Thom.Burnett at cognigencorp.com (Thom Burnett)
+Date: Fri, 25 Nov 2005 13:42:02 -0500
+Subject: Re: creating libraries
+In-Reply-To: <20051125182945.71455.qmail@web50209.mail.yahoo.com>
+References: <20051125182945.71455.qmail@web50209.mail.yahoo.com>
+Message-ID: <43875AFA.8030505@cognigencorp.com>
+
+Maybe you need to set database.status to readwrite for mylib.
+
+Joe Cerniglia wrote:
+
+> I am trying to create a library and load data and
+> functions into that library.  I get the following
+> error message when I run the code:
+>
+> Problem in assign(mylib.funcs[1], get(mylib.funcs[1]),
+> wh..: database "mylib" is read-only
+> Use traceback() to see the call stack
+>
+>
+>
+> #
+> #code
+> #
+>
+>
+> mkdir("c:\\temp\\mylib")
+> mkdir("c:\\temp\\mylib\\.Data")
+> mkdir("c:\\temp\\mylib\\.Prefs")
+> mkdir("c:\\temp\\mylib\\.Data\\_Help")
+>
+> my.sqrt <- function(x)
+> {
+>         y <- sqrt(x)
+>         cat("\nThe square root of ", x, " is ", y, ".\n", sep
+> = "")
+>         invisible(y)
+> }
+>
+> library(mylib, pos=2, lib.loc = "c:\\temp\\")
+> mylib.funcs<-c("my.sqrt")
+> assign(mylib.funcs[1], get(mylib.funcs[1]),where=2)
+>
+>
+
+From timh at insightful.com  Fri Nov 25 19:44:21 2005
+From: timh at insightful.com (Tim Hesterberg)
+Date: Fri, 25 Nov 2005 11:44:21 -0800
+Subject: Re: creating libraries
+In-Reply-To: <20051125182945.71455.qmail@web50209.mail.yahoo.com>
+References: <20051125182945.71455.qmail@web50209.mail.yahoo.com>
+Message-ID: <SE2KEXCH015Bl8LgFuo00000476@se2kexch01.insightful.com>
+
+library() attached read-only.
+You could use attach() instead.
+
+Also, you might like to use
+        createChapter()
+        sourceChapter()
+
+Tim Hesterberg
+
+>I am trying to create a library and load data and
+>functions into that library.  I get the following
+>error message when I run the code:
+>
+>Problem in assign(mylib.funcs[1], get(mylib.funcs[1]),
+>wh..: database "mylib" is read-only 
+>Use traceback() to see the call stack
+>
+>
+>#
+>#code
+>#
+>
+>
+>mkdir("c:\\temp\\mylib")
+>mkdir("c:\\temp\\mylib\\.Data")
+>mkdir("c:\\temp\\mylib\\.Prefs")
+>mkdir("c:\\temp\\mylib\\.Data\\_Help")
+>
+>my.sqrt <- function(x)
+>{
+>       y <- sqrt(x)
+>       cat("\nThe square root of ", x, " is ", y, ".\n", sep
+>= "")
+>       invisible(y)
+>}
+>
+>library(mylib, pos=2, lib.loc = "c:\\temp\\")
+>mylib.funcs<-c("my.sqrt")
+>assign(mylib.funcs[1], get(mylib.funcs[1]),where=2)
+
+========================================================
+| Tim Hesterberg       Research Scientist              |
+| timh at insightful.com  Insightful Corp.                |
+| (206)802-2319        1700 Westlake Ave. N, Suite 500 |
+| (206)283-8691 (fax)  Seattle, WA 98109-3012, U.S.A.  |
+|                      www.insightful.com/Hesterberg   |
+========================================================
+Download the S+Resample library from www.insightful.com/downloads/libraries
+
+Two Research Scientist positions:
+        data mining
+        frailty/mixed effects
+    http://www.insightful.com/company/jobs.asp
+
+Speak out about biased science in Washington D.C.
+    http://home.comcast.net/~timhesterberg/ScientificIntegrity.html
+
+From kershaw at unb.ca  Sun Nov 27 14:47:49 2005
+From: kershaw at unb.ca (John Kershaw)
+Date: Sun, 27 Nov 2005 10:47:49 -0400
+Subject: White's Durbin-Watson Test for Autocorrelation in Nonlinear Models
+Message-ID: <Pine.GSO.4.58.0511271043240.8476@jupiter>
+
+Hello,  I am working on a project where residual correlation has been a
+problem in previous studies, but does not seem to be a problem with my
+dataset.  White's Durbin-Watson Test for Autocorrelation in Nonlinear
+Models (Rev. Econ & Stats. 1992 74:370-373) seems to provide the test I
+need to support my ignoring the autocorrelation issue in my nonlinear
+model.  Has anyone implemented this is Splus or R or have an alternative
+approach?
+
+As always, any help is greatly appreciated and thanked in advance.
+
+JAK
+
+From elvis at xlsolutions-corp.com  Tue Nov 29 17:06:55 2005
+From: elvis at xlsolutions-corp.com
+Date: Tue, 29 Nov 2005 10:06:55 -0700
+Subject: Course***Adanced R/Splus Programming***at 3 USA locations, January 2006
+Message-ID: <20051129100654.a108dc04937c07ba67766dad37185406.9faf7f354a.wbe@email.secureserver.net>
+
+Happy New Year
+XSolutions Corp (www.xlsolutions-corp.com) is proud to announce
+a 2-day "Advanced R/Splus programming" taught by R Development
+Core Team Guru.
+
+*********San Francisco ------------- January 09-10,2006
+*********Seattle ------------------------ January 12-13,2006
+*********New York -------------------- January 26-27,2006
+*********Washington DC ----------  TBD
+
+            Reserve your seat Now  (payment due after the class)
+
+www.xlsolutions-corp.com/Radv.htm
+
+Email Sue Turner: sue at xlsolutions-corp.com
+
+Course outline:
+- Overview of R/S fundamentals: Syntax and Semantics
+- Class and Inheritance in R/S-Plus
+- Concepts, Construction and good use of language objects
+- Coercion and efficiency
+- Object-oriented programming in R and S-Plus
+- Advanced manipulation tools: Parse, Deparse, Substitute, etc.
+- How to fully take advantage of Vectorization
+- Generic and Method Functions; S4 (S-Plus 6)
+- Search path, databases and frames Visibility
+- Working with large objects
+- Handling Properly Recursion and iterative calculations
+- Managing loops; For (S-Plus) and for() loops
+- Consequences of Lazy Evaluation
+- Efficient Code practices for large computations
+- Memory management and Resource monitoring
+- Writing R/S-Plus functions to call compiled code
+- Writing and debugging compiled code for R/S-Plus system
+- Connecting R/S-Plus to External Data Sources
+- Understanding the structure of model fitting functions in R/S-Plus
+- Designing and Packaging efficiently 
+
+This course will also deal with lots of S-Plus efficiency issues and
+any special topics from participants is welcome.
+Please let us know if you and your colleagues are interested in this
+class to take advantage of group discount. 
+
+Register now to secure your seat in this course!
+ 
+Cheers,
+Elvis Miller, PhD
+Manager Training.
+XLSolutions Corporation
+206 686 1578
+www.xlsolutions-corp.com
+
+From Steve.Riley at pfizer.com  Tue Nov 29 17:54:47 2005
+From: Steve.Riley at pfizer.com (Riley, Steve)
+Date: Tue, 29 Nov 2005 12:54:47 -0500
+Subject: Re: Course***Adanced R/Splus Programming***at 3 USA locations, January 2006
+Message-ID: <D5D1C94BFC52BB47AE84BD29EA89778D03B9192E@groamrexm02.amer.pfizer.com>
+
+ All,
+
+I am wondering if anyone is willing to share their thoughts (good, bad,
+or indifferent) on this course. I have taken the comparable course
+sponsored by Insightful and found it to be very helpful. This course
+content appears to be slightly different so I am seeking the group's
+feedback. Any insight you could provide would be greatly appreciated.
+Thanks!
+
+Steve
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of
+elvis at xlsolutions-corp.com
+Sent: Tuesday, November 29, 2005 12:07 PM
+To: s-news at lists.biostat.wustl.edu
+Subject: [S] Course***Adanced R/Splus Programming***at 3 USA locations,
+January 2006
+
+Happy New Year
+XSolutions Corp (www.xlsolutions-corp.com) is proud to announce
+a 2-day "Advanced R/Splus programming" taught by R Development
+Core Team Guru.
+
+*********San Francisco ------------- January 09-10,2006
+*********Seattle ------------------------ January 12-13,2006
+*********New York -------------------- January 26-27,2006
+*********Washington DC ----------  TBD
+
+            Reserve your seat Now  (payment due after the class)
+
+www.xlsolutions-corp.com/Radv.htm
+
+Email Sue Turner: sue at xlsolutions-corp.com
+
+Course outline:
+- Overview of R/S fundamentals: Syntax and Semantics
+- Class and Inheritance in R/S-Plus
+- Concepts, Construction and good use of language objects
+- Coercion and efficiency
+- Object-oriented programming in R and S-Plus
+- Advanced manipulation tools: Parse, Deparse, Substitute, etc.
+- How to fully take advantage of Vectorization
+- Generic and Method Functions; S4 (S-Plus 6)
+- Search path, databases and frames Visibility
+- Working with large objects
+- Handling Properly Recursion and iterative calculations
+- Managing loops; For (S-Plus) and for() loops
+- Consequences of Lazy Evaluation
+- Efficient Code practices for large computations
+- Memory management and Resource monitoring
+- Writing R/S-Plus functions to call compiled code
+- Writing and debugging compiled code for R/S-Plus system
+- Connecting R/S-Plus to External Data Sources
+- Understanding the structure of model fitting functions in R/S-Plus
+- Designing and Packaging efficiently 
+
+This course will also deal with lots of S-Plus efficiency issues and
+any special topics from participants is welcome.
+Please let us know if you and your colleagues are interested in this
+class to take advantage of group discount. 
+
+Register now to secure your seat in this course!
+ 
+Cheers,
+Elvis Miller, PhD
+Manager Training.
+XLSolutions Corporation
+206 686 1578
+www.xlsolutions-corp.com
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+----------------------------------------------------------------------
+LEGAL NOTICE
+Unless expressly stated otherwise, this message is confidential and may be 
+privileged.  It is intended for the addressee(s) only.  Access to this E-mail 
+by anyone else is unauthorized.  If you are not an addressee, any disclosure or 
+copying of the contents of this E-mail or any action taken (or not taken) in 
+reliance on it is unauthorized and may be unlawful.  If you are not an 
+addressee, please inform the sender immediately.
+
+From Terrence.Murphy at yale.edu  Tue Nov 29 19:46:02 2005
+From: Terrence.Murphy at yale.edu (Terrence Murphy)
+Date: Tue, 29 Nov 2005 14:46:02 -0500
+Subject: help interpret a line of code
+Message-ID: <6.0.1.1.2.20051129143951.01b94540@email.med.yale.edu>
+
+Dear Users,
+
+I'm new to Splus and pardon this question, but don't understand the 
+following  lines in a program
+
+I'm trying to use:
+
+c83<-read.table('c:\\bin.txt',header=T)
+x<-matrix(0,sum(c83$total),4)
+y<-rep(0,sum(c83$total))
+g<-rep(0,sum(c83$total))
+k<-0
+
+The first line reads data from a text file into a vector called c83. The 
+second line establishes a
+matrix x but with what? What is the value of  c83$total ? What do the three 
+terms 0, c83$total  and 4 stand for with regard to the dimensions and 
+contents of the matrix x?
+
+I assume the last three lines set up vectors of 0 with respective lengths 
+of  c83$total , c83$total , and 0, no ?
+
+Any help greatly appreciated.
+
+Terrence E. Murphy, Ph.D.
+Program on Aging
+Yale University
+1 Church St., 7th Floor
+New Haven, CT 06437
+terrence.murphy at yale.edu
+phone: 203-764-9805
+fax:      203-764-9831 
+
+From maustin at amgen.com  Wed Nov 30 00:44:42 2005
+From: maustin at amgen.com (Austin, Matt)
+Date: Tue, 29 Nov 2005 16:44:42 -0800
+Subject: Re: help interpret a line of code
+Message-ID: <E7D5AB4811D20B489622AABA9C53859109DAD4FD@teal-exch.amgen.com>
+
+Look at the help files for matrix and rep
+
+?matrix
+?rep
+
+## Read dataset
+c83 <- read.table('c:\\bin.txt', header = T)
+
+## Create matrix x
+x <- matrix( data = 0,                ## fill with zeros
+             nrow = sum( c83$total),  ## number of rows
+                                      ## equal to the sum
+                                      ## of the c83$total vector
+             ncol = 4)                ## 4 columns
+
+## Create 2 vectors of zeros with length 
+## equal to the sum of the 'total' variable
+## from the c83 dataset and assign to y and g
+
+y <- rep( 0, times = sum(c83$total))
+g <- rep( 0, times = sum(c83$total))
+
+## Assign 0 to k
+k <- 0
+
+--Matt
+
+> -----Original Message-----
+> From: s-news-owner at lists.biostat.wustl.edu
+> [mailto:s-news-owner at lists.biostat.wustl.edu]On Behalf Of Terrence
+> Murphy
+> Sent: Tuesday, November 29, 2005 11:46 AM
+> To: s-news at lists.biostat.wustl.edu
+> Subject: [S] help interpret a line of code
+> 
+> 
+> Dear Users,
+> 
+> I'm new to Splus and pardon this question, but don't understand the 
+> following  lines in a program
+> I'm trying to use:
+> 
+> c83<-read.table('c:\\bin.txt',header=T)
+> x<-matrix(0,sum(c83$total),4)
+> y<-rep(0,sum(c83$total))
+> g<-rep(0,sum(c83$total))
+> k<-0
+> 
+> The first line reads data from a text file into a vector 
+> called c83. The 
+> second line establishes a
+> matrix x but with what? What is the value of  c83$total ? 
+> What do the three 
+> terms 0, c83$total  and 4 stand for with regard to the dimensions and 
+> contents of the matrix x?
+> 
+> I assume the last three lines set up vectors of 0 with 
+> respective lengths 
+> of  c83$total , c83$total , and 0, no ?
+> 
+> Any help greatly appreciated.
+> 
+> 
+> Terrence E. Murphy, Ph.D.
+> Program on Aging
+> Yale University
+> 1 Church St., 7th Floor
+> New Haven, CT 06437
+> terrence.murphy at yale.edu
+> phone: 203-764-9805
+> fax:      203-764-9831 
+> 
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+> 
+
+From yiwu21111958 at yahoo.com  Wed Nov 30 01:21:53 2005
+From: yiwu21111958 at yahoo.com (yiwu ye)
+Date: Tue, 29 Nov 2005 17:21:53 -0800
+Subject: plot with NA
+Message-ID: <20051130012153.9484.qmail@web34403.mail.mud.yahoo.com>
+
+Dear List,
+   
+  When I use plot(x,y) with y having NA, an error message jumps out, saying that x and y do not match. How can I make the plot command plot the non-NAs but leave the NAs empty? Thanks for your assistance.
+   
+  Best regards
+   
+  Yiwu
+
+		 Yahoo! Music Unlimited - Access over 1 million songs. Try it free.
+
+From rmh at temple.edu  Wed Nov 30 01:44:04 2005
+From: rmh at temple.edu (Richard M. Heiberger)
+Date: Tue, 29 Nov 2005 20:44:04 -0500
+Subject: Re: plot with NA
+Message-ID: <7873932e.631583fb.81fc000@po-d.temple.edu>
+
+This works:
+
+> x <- c(1,2,3,NA,4,5)
+> y <- c(3,2,NA,5,3,6)
+> plot(x, y)
+> 
+
+Therefore it is more likely that the x and y vectors in your example
+have different lengths.  In my example
+> length(x)
+[1] 6
+> length(y)
+[1] 6
+>
+
+If you have further difficulty, please send to the entire list a trivial
+example that reproduces the problem.
+
+From kingroi at hotmail.com  Wed Nov 30 03:40:55 2005
+From: kingroi at hotmail.com (paul king)
+Date: Wed, 30 Nov 2005 03:40:55 +0000
+Subject: Re: Course***Adanced R/Splus Programming***at 3 USA locations, January 2006
+In-Reply-To: <D5D1C94BFC52BB47AE84BD29EA89778D03B9192E@groamrexm02.amer.pfizer.com>
+References: <D5D1C94BFC52BB47AE84BD29EA89778D03B9192E@groamrexm02.amer.pfizer.com>
+Message-ID: <BAY107-F36D2FCE851CBEBDD565922B04A0@phx.gbl>
+
+Steve,
+
+I attended this class last year and found the instructor to be very 
+knowledgeable
+
+and the course was excellent. Great Instructor. I should get the name from 
+XLSolutions
+
+to email to you as I think a good instructor is important for advanced 
+classes.
+
+Something I also liked was the class size limitted to 12. Prior to attending 
+the course
+
+last year I had XLSolutions email me 3 names of people who attended the 
+class as referals
+
+and you should do the same.
+
+Best, Paul
+
+> From: "Riley, Steve" <Steve.Riley at pfizer.com>
+>
+> To: <s-news at lists.biostat.wustl.edu>
+>
+> Subject: Re: [S] Course***Adanced R/Splus Programming***at 3 USA locations,
+> January 2006
+>
+> Date: Tue, 29 Nov 2005 12:54:47 -0500
+>
+>
+>
+>  All,
+>
+> I am wondering if anyone is willing to share their thoughts (good, bad,
+> or indifferent) on this course. I have taken the comparable course
+> sponsored by Insightful and found it to be very helpful. This course
+> content appears to be slightly different so I am seeking the group's
+> feedback. Any insight you could provide would be greatly appreciated.
+> Thanks!
+>
+> Steve
+>
+> -----Original Message-----
+> From: s-news-owner at lists.biostat.wustl.edu
+> [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of
+> elvis at xlsolutions-corp.com
+> Sent: Tuesday, November 29, 2005 12:07 PM
+> To: s-news at lists.biostat.wustl.edu
+> Subject: [S] Course***Adanced R/Splus Programming***at 3 USA locations,
+> January 2006
+>
+> Happy New Year
+> XSolutions Corp (www.xlsolutions-corp.com) is proud to announce
+> a 2-day "Advanced R/Splus programming" taught by R Development
+> Core Team Guru.
+>
+> *********San Francisco ------------- January 09-10,2006
+> *********Seattle ------------------------ January 12-13,2006
+> *********New York -------------------- January 26-27,2006
+> *********Washington DC ----------  TBD
+>
+>             Reserve your seat Now  (payment due after the class)
+>
+> www.xlsolutions-corp.com/Radv.htm
+>
+> Email Sue Turner: sue at xlsolutions-corp.com
+>
+> Course outline:
+> - Overview of R/S fundamentals: Syntax and Semantics
+> - Class and Inheritance in R/S-Plus
+> - Concepts, Construction and good use of language objects
+> - Coercion and efficiency
+> - Object-oriented programming in R and S-Plus
+> - Advanced manipulation tools: Parse, Deparse, Substitute, etc.
+> - How to fully take advantage of Vectorization
+> - Generic and Method Functions; S4 (S-Plus 6)
+> - Search path, databases and frames Visibility
+> - Working with large objects
+> - Handling Properly Recursion and iterative calculations
+> - Managing loops; For (S-Plus) and for() loops
+> - Consequences of Lazy Evaluation
+> - Efficient Code practices for large computations
+> - Memory management and Resource monitoring
+> - Writing R/S-Plus functions to call compiled code
+> - Writing and debugging compiled code for R/S-Plus system
+> - Connecting R/S-Plus to External Data Sources
+> - Understanding the structure of model fitting functions in R/S-Plus
+> - Designing and Packaging efficiently
+>
+> This course will also deal with lots of S-Plus efficiency issues and
+> any special topics from participants is welcome.
+> Please let us know if you and your colleagues are interested in this
+> class to take advantage of group discount.
+>
+> Register now to secure your seat in this course!
+>
+> Cheers,
+> Elvis Miller, PhD
+> Manager Training.
+> XLSolutions Corporation
+> 206 686 1578
+> www.xlsolutions-corp.com
+>
+> --------------------------------------------------------------------
+>
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+>
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+>
+> the BODY of the message:  unsubscribe s-news
+>
+> ----------------------------------------------------------------------
+>
+> LEGAL NOTICE
+>
+> Unless expressly stated otherwise, this message is confidential and may be
+> privileged.  It is intended for the addressee(s) only.  Access to this
+> E-mail by anyone else is unauthorized.  If you are not an addressee, any
+> disclosure or copying of the contents of this E-mail or any action taken
+> (or not taken) in reliance on it is unauthorized and may be unlawful.  If
+> you are not an addressee, please inform the sender immediately.
+>
+> --------------------------------------------------------------------
+>
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+>
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+>
+> the BODY of the message:  unsubscribe s-news
+
+_________________________________________________________________
+
+Don?t just search. Find. Check out the new MSN Search! 
+http://search.msn.click-url.com/go/onm00200636ave/direct/01/
+
+From asanquer at virbac.fr  Wed Nov 30 07:44:19 2005
+From: asanquer at virbac.fr
+Date: Wed, 30 Nov 2005 08:44:19 +0100
+Subject: Errors in using Menus Data and Statistics
+Message-ID: <OFF997361F.2AEB3EA5-ONC12570C9.0028D549-C12570C9.002A393D@virbac.fr>
+
+Hello,
+
+I use S-PLUS 6.2 since some years, but I have a new and very worrying
+problem: my menus Data and Satistics don't work any more.
+When I choose an action in the menu, an error message appears first "There
+is an unrecognized property in the ArgumentList at Index", and then the
+analysis window appears, but incomplete (not with the usual display).
+
+example for statistics/Data summaries/Summary statistics:
+
+(Embedded image moved to file: pic22532.jpg)
+Before to start again the installation of S-PLUS, does someone have an idea
+of the reason of this problem (and may be a solution?).
+
+Thanks
+
+Annaële
+
+pic22532.jpg
+
+Description: JPEG image
+

@@ -1,0 +1,1489 @@
+{
+  "list": "s-news",
+  "description": "",
+  "month": "2008-02",
+  "messages": [
+    {
+      "id": "msg-dc792ab5b36d",
+      "message_id": "<EBEF03D341A7544EA1481BB1B64FA6760122CF45@SoM-Exchange.management.uottawa.ca>",
+      "from_name": "Saadi, Samir",
+      "from_email_hash": "e997bb1b27f08b843eed9f00652c35baaad06f9b69e8a6ca8a293b0d9e1ba646",
+      "date": "2008-02-04T12:47:26Z",
+      "subject": "prediction function",
+      "subject_clean": "prediction function",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hi Splus users,\n\n \n\nDoes anyone know about a splus command that provides forecast standard errors that does NOT ignore parameter estimation error. The command \"predict\" ignores the parameter estimation error.\n\nThank you !\n\nSam",
+      "body_snippet": "Hi Splus users,\n\n \n\nDoes anyone know about a splus command that provides forecast standard errors that does NOT ignore parameter estimation error. The command \"predict\" ignores the parameter estimatio",
+      "thread_id": "thread-dc792ab5b36d",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-2d0ab8acbb34",
+      "message_id": "<20080204T081603Z_472200030000@gw.dec.state.ny.us>",
+      "from_name": "Jim Daley",
+      "from_email_hash": "c29340eab03863992b5a82491da52f574271ba2972ad476ba4cc2f9d16d3149b",
+      "date": "2008-02-04T13:16:03Z",
+      "subject": "Bar chart breaks - solution",
+      "subject_clean": "Bar chart breaks - solution",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "A while back I posted the following question:\n\n \n\nI am running S-PLUS 8.0 and have a bar chart question.  Most of my bars are under a certain height, say 20, but one goes all the way up to 70.  I would like to have the Y-axis stop at 20 so that most of the bars are not compressed.  Is there a way to break the one tall bar to indicate that it goes off the scale?  The attached image shows what I am trying to do.  Any ideas out there?\n\n \n\nBill Dunlap at Insightful provided the following solution, which worked for me.  Being new to SPlus programming, I added some comments to the code to keep track of what was going on.  Thanks Bill.\n\n \n\n******************************\n\n \n\nx<-c(21,23,25,21,76,79,10)\nmy.barplot(x, ylim=c(0,30))\n\n \n\nmy.barplot <- function(x, ..., ylim = c(0,max(x))) {\n b <- barplot(pmin(x,ylim[2]) , ..., ylim = ylim)\n #pmin above truncates the higher values, in this case to 30\n big <- x > ylim[2] #Gives a list of T & F values, where T = bigger than 30\n if(any(big)) {\n  # label tops of truncated bars\n  # b contains the coordinates of the center of the x-axis of the bars.\n  # The first two arguments below are the x and y coordinates for the text.\n  # par(\"usr\") gives the max and min coords for the plot, for the x & y axis; [4] is the y max\n  # par(\"cxy\") gives the width and height if characters; [2] is the height\n  # xpd = True allow stuff to be drawn outside the plot\n  text(b[big], rep(par(\"usr\")[4], sum(b)) + par(\"cxy\")[2], as.character(x[big]), xpd = TRUE)\n  # overwrite truncated bars with parallelogram\n  # with given half height and half width.\n  halfheight <- par(\"cxy\")[2] * 0.7\n  halfwidth <- (b[2] - b[1])/2 * 0.95 # if 1 bar, use mean(par(\"usr\")[1:2])*.8?\n  ybreak <- 0.8 * ylim[2]\n  for(i in which(big)) {\n   bi <- b[i]\n   polygon(col = par(\"bg\"), border=FALSE, x = c(bi - halfwidth, bi + halfwidth, bi +\n    halfwidth, bi - halfwidth), y = c(ybreak - halfheight,\n    ybreak, ybreak + 2 * halfheight, ybreak + halfheight))\n   segments(c(bi - halfwidth, bi - halfwidth), c(ybreak - halfheight,\n    ybreak + halfheight), c(bi + halfwidth, bi + halfwidth),\n    c(ybreak, ybreak + 2 * halfheight))\n  }\n }\n}\n\n \n\n******************************\n\n \nJim Daley\nColdwater Fisheries Unit Leader\nNYSDEC Bureau of Fisheries\n625 Broadway, 5th Floor\nAlbany, NY 12233-4753\njgdaley at gw.dec.state.ny.us",
+      "body_snippet": "A while back I posted the following question:\n\n \n\nI am running S-PLUS 8.0 and have a bar chart question.  Most of my bars are under a certain height, say 20, but one goes all the way up to 70.  I woul",
+      "thread_id": "thread-2d0ab8acbb34",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-5bc50aaf4611",
+      "message_id": "<47A722E0.8090004@earthlink.net>",
+      "from_name": "Data Analytics Corp.",
+      "from_email_hash": "443479c0b721da0dac0fa3876e0e3e3a1e5a4473b12d210b69baaeb9f46d9845",
+      "date": "2008-02-04T14:36:16Z",
+      "subject": "Multicomp and letter assignments",
+      "subject_clean": "Multicomp and letter assignments",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Good morning,\n\nI'm trying to write a function to assign the mean separation grouping \nletters to the factors of an experiment.  A client wants this so I \nthought I'd write my own function for future use.  But I'm having \ntrouble doing it because I don't understand the logic of the \nassignment.  As a general example, consider the following data and the \nresults from SAS and its weak cousin, JMP:\n\nThe data:\n=======\nStrain  Nitrogen\n3DOK1    19.40\n3DOK1    32.60\n3DOK1    27.00\n3DOK1    32.10\n3DOK1    33.00\n3DOK5    17.70\n3DOK5    24.80\n3DOK5    27.90\n3DOK5    25.20\n3DOK5    24.30\n3DOK4    17.00\n3DOK4    19.40\n3DOK4    9.10\n3DOK4    11.90\n3DOK4    15.80\n3DOK7    20.70\n3DOK7    21.00\n3DOK7    20.50\n3DOK7    18.80\n3DOK7    18.60\n3DOK13    14.30\n3DOK13    14.40\n3DOK13    11.80\n3DOK13    11.60\n3DOK13    14.20\nCOMPOS    17.30\nCOMPOS    19.40\nCOMPOS    19.10\nCOMPOS    16.90\nCOMPOS    20.80\n\nResults from SAS:\n\nTukey Grouping          Mean      N    Strain\n                  A           28.820      5    3DOK1\n          B     A           23.980      5    3DOK5\n          B     C          19.920      5    3DOK7\n          B     C          18.700      5    COMPOS\n                 C           14.640      5    3DOK4\n                 C           13.260      5    3DOK13\n>From JMP:\n\n3DOK1    A            28.82\n3DOK5    A    B        23.98\n3DOK7        B    C    19.92\nCOMPOS        B    C    18.7\n3DOK4            C    14.64\n3DOK13            C    13.26\n\nThe results are the same as they should be.  What I don't understand is \nwhy only letters A-C?  Why not D and E also since each of five Strains \nappears in the first position of the 15 pairs?\n\nDoes anyone have a function to do this?\n\nThanks,\n\nWalt Paczkowski",
+      "body_snippet": "Good morning,\n\nI'm trying to write a function to assign the mean separation grouping \nletters to the factors of an experiment.  A client wants this so I \nthought I'd write my own function for future u",
+      "thread_id": "thread-5bc50aaf4611",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-c0bec6c707a9",
+      "message_id": "<47A748F4.1040409@pdf.com>",
+      "from_name": "Spencer Graves",
+      "from_email_hash": "0d1725402b5f223aa45a1714f600b741ea6c2ccb2d67d2b94ddab1ed1e80aefd",
+      "date": "2008-02-04T17:18:44Z",
+      "subject": "Re: Multicomp and letter assignments",
+      "subject_clean": "Multicomp and letter assignments",
+      "in_reply_to": "<47A722E0.8090004@earthlink.net>",
+      "references": [
+        "<47A722E0.8090004@earthlink.net>"
+      ],
+      "body_plain": "The 'multcompLetters' function in the R package 'multcompView' automates \na \"grouping letters\" algorithm documented in the following publication: \n\nPiepho, Hans-Peter (2004) \"An Algorithm for a Letter-Based\n    Representation of All-Pairwise Comparisons\", Journal of\n    Computational and Graphical Statistics, 13(2)456-466.\n\nhope this helps. \nSpencer Graves\n\nData Analytics Corp. wrote:\n> Good morning,\n>\n> I'm trying to write a function to assign the mean separation grouping\n> letters to the factors of an experiment.  A client wants this so I\n> thought I'd write my own function for future use.  But I'm having\n> trouble doing it because I don't understand the logic of the\n> assignment.  As a general example, consider the following data and the\n> results from SAS and its weak cousin, JMP:\n>\n>\n>\n> The data:\n> =======\n> Strain  Nitrogen\n> 3DOK1    19.40\n> 3DOK1    32.60\n> 3DOK1    27.00\n> 3DOK1    32.10\n> 3DOK1    33.00\n> 3DOK5    17.70\n> 3DOK5    24.80\n> 3DOK5    27.90\n> 3DOK5    25.20\n> 3DOK5    24.30\n> 3DOK4    17.00\n> 3DOK4    19.40\n> 3DOK4    9.10\n> 3DOK4    11.90\n> 3DOK4    15.80\n> 3DOK7    20.70\n> 3DOK7    21.00\n> 3DOK7    20.50\n> 3DOK7    18.80\n> 3DOK7    18.60\n> 3DOK13    14.30\n> 3DOK13    14.40\n> 3DOK13    11.80\n> 3DOK13    11.60\n> 3DOK13    14.20\n> COMPOS    17.30\n> COMPOS    19.40\n> COMPOS    19.10\n> COMPOS    16.90\n> COMPOS    20.80\n>\n> Results from SAS:\n>\n> Tukey Grouping          Mean      N    Strain\n>                   A           28.820      5    3DOK1\n>           B     A           23.980      5    3DOK5\n>           B     C          19.920      5    3DOK7\n>           B     C          18.700      5    COMPOS\n>                  C           14.640      5    3DOK4\n>                  C           13.260      5    3DOK13\n> From JMP:\n>\n> 3DOK1    A            28.82\n> 3DOK5    A    B        23.98\n> 3DOK7        B    C    19.92\n> COMPOS        B    C    18.7\n> 3DOK4            C    14.64\n> 3DOK13            C    13.26\n>\n> The results are the same as they should be.  What I don't understand\n> is why only letters A-C?  Why not D and E also since each of five\n> Strains appears in the first position of the 15 pairs?\n>\n>\n> Does anyone have a function to do this?\n>\n> Thanks,\n>\n> Walt Paczkowski\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news",
+      "body_snippet": "The 'multcompLetters' function in the R package 'multcompView' automates \na \"grouping letters\" algorithm documented in the following publication: \n\nPiepho, Hans-Peter (2004) \"An Algorithm for a Letter",
+      "thread_id": "thread-5bc50aaf4611",
+      "thread_depth": 1,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-3476f68095cc",
+      "message_id": "<40E02871B8B84F4FB46FA9F3D898B9DA6F09C3@mb-exch.ensco.win>",
+      "from_name": "Lambert.Winnie",
+      "from_email_hash": "266015b80b3e6aefc923dcb3c74d7c6b7716bd10d61ac53495b2af4a416bc1eb",
+      "date": "2008-02-05T16:01:57Z",
+      "subject": "stationary, or not stationary: time series dilemma",
+      "subject_clean": "stationary, or not stationary: time series dilemma",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "All,\n\n \n\nIs there a function in S-PLUS that can be used to test whether\na time series is stationary or not? Thanks.\n\n \n\n*****************************************************************\n\nWinifred\nC. Lambert  Senior Scientist/Meteorologist\n\nENSCO,\nInc.\n\nAerospace\nSciences and Engineering Division\n\n1980\nN. Atlantic Ave., Suite 230\n\nCocoa\nBeach, FL  32931\n\nVOICE: \n321.853.8130  FAX:  321.853.8415\n\nEMAIL: \nlambert.winnie at ensco.com\n\n \n\nAMU\nQuarterly Reports are available online:\n\nhttp://science.ksc.nasa.gov/amu\n\n*****************************************************************\n\nThe information contained in this email message is intended only for the use of the individuals to whom it is\n\naddressed and may contain information that is privileged and sensitive. If the reader of this message is not\n\nthe intended recipient, you are hereby notified that any dissemination, distribution or copying of this\n\ncommunication is strictly prohibited. If you have received this communication in error, please notify the\n\nsender immediately by email at the above referenced address. Thank you.",
+      "body_snippet": "All,\n\n \n\nIs there a function in S-PLUS that can be used to test whether\na time series is stationary or not? Thanks.\n\n \n\n*****************************************************************\n\nWinifred\nC. L",
+      "thread_id": "thread-3476f68095cc",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-bb1d1f6e663c",
+      "message_id": "<200802051728.m15HSXpg002428@smtp.washington.edu>",
+      "from_name": "Eric Zivot",
+      "from_email_hash": "1af1f898d9c468b05e686da9e60bce6b8a0d98f0ec7e822cde24d9d8b3634a20",
+      "date": "2008-02-05T17:28:33Z",
+      "subject": "Re: stationary, or not stationary: time series dilemma",
+      "subject_clean": "stationary, or not stationary: time series dilemma",
+      "in_reply_to": "<40E02871B8B84F4FB46FA9F3D898B9DA6F09C3@mb-exch.ensco.win>",
+      "references": [
+        "<40E02871B8B84F4FB46FA9F3D898B9DA6F09C3@mb-exch.ensco.win>"
+      ],
+      "body_plain": "In S+FinMetrics there are functions (eg. unitroot, stationaryTest) for\ntesting the hypothesis that a time series is integrated of order 1 (unit\nroot non-stationary - y(t) = y(t-1) + u(t), u(t) ~ I(0)) against the\nalternative that the series is integrated of order zero (e.g. covariance\nstationary)  and vice-versa. However, this is just a test for a very\nparticular type of non-stationarity. \n\n  _____  \n\nFrom: s-news-owner at lists.biostat.wustl.edu\n[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Lambert.Winnie\nSent: Tuesday, February 05, 2008 8:02 AM\nTo: S-PLUS Newsgroup\nSubject: [S] stationary, or not stationary: time series dilemma\n\n\n\nAll,\n\n \n\nIs there a function in S-PLUS that can be used to test whether a time series\nis stationary or not? Thanks.\n\n \n\n*****************************************************************\n\nWinifred C. Lambert  Senior Scientist/Meteorologist\n\nENSCO, Inc.\n\nAerospace Sciences and Engineering Division\n\n1980 N. Atlantic Ave., Suite 230\n\nCocoa Beach, FL  32931\n\nVOICE:  321.853.8130  FAX:  321.853.8415\n\nEMAIL:   <mailto:lambert.winnie at ensco.com> lambert.winnie at ensco.com\n\n \n\nAMU Quarterly Reports are available online:\n\n <http://science.ksc.nasa.gov/amu> http://science.ksc.nasa.gov/amu\n\n*****************************************************************\n\n  _____  \n\nThe information contained in this email message is intended only for the use\nof the individuals to whom it is\naddressed and may contain information that is privileged and sensitive. If\nthe reader of this message is not\nthe intended recipient, you are hereby notified that any dissemination,\ndistribution or copying of this\ncommunication is strictly prohibited. If you have received this\ncommunication in error, please notify the\nsender immediately by email at the above referenced address. Thank you.",
+      "body_snippet": "In S+FinMetrics there are functions (eg. unitroot, stationaryTest) for\ntesting the hypothesis that a time series is integrated of order 1 (unit\nroot non-stationary - y(t) = y(t-1) + u(t), u(t) ~ I(0))",
+      "thread_id": "thread-3476f68095cc",
+      "thread_depth": 1,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-b5c49df63bb4",
+      "message_id": "<15297181.post@talk.nabble.com>",
+      "from_name": "eggraid",
+      "from_email_hash": "f506541fea424fce1d2a76a89ca31028fa606fdefe83225eb940e61d35583186",
+      "date": "2008-02-05T19:06:23Z",
+      "subject": "Re: stationary, or not stationary: time series dilemma",
+      "subject_clean": "stationary, or not stationary: time series dilemma",
+      "in_reply_to": "<40E02871B8B84F4FB46FA9F3D898B9DA6F09C3@mb-exch.ensco.win>",
+      "references": [
+        "<40E02871B8B84F4FB46FA9F3D898B9DA6F09C3@mb-exch.ensco.win>"
+      ],
+      "body_plain": "Hi, \n\nI believe what you want to test for is first order stationarity. The\nconditions for this kind of stationarity are that:\n1. E[x_t]=m for all t,\n2. Variance of x_t does not diverge\n3. COV (x_t,x_(t-k)) = gk, for all t\n\n- You could be very lazy and look at the graph. See if the line does not\nspend \"too much time\" above or below the mean value. Then split your sample\nin two and see if the two means are the same... I do not recommand this\nmethod, but if you're in a hurry, you usualy get it right (don't tell any of\nmy professors)\n\n- You could be a little less lazy and take your code to R, d/L the Rmetrics\nlibrary from the CRAN site and enjoy the work of others. But if you're like\nme and you prefer Splus to R, and well... didn't you pay  for Splus at\nfirst?, Well you might want either buy finmetrics or do the next\nproposition:\n\n- Calculate your very own ADF test with the lm() function and a lot of\nfrustration. You can find plenty of doc on the dickey-fuller test over the\ninternet. However, there are a few things you want to look for.\n\n1. it is important to consider the right number of lags. Not enough means\nyou OLS is biased, too many and you lose valuable degrees of freedom. I\nrecommand using Campbell perron procedure.\n\n2. The asymptotic laws become degenerate when your time series are almost\nunit root. The t-statistic do not have the same confidence interval as for\nnormal law. At a 5% IC, those are the t-stat values you should consider.\n\ntstat (no constant, no trend) : -1.94\ntstat (constant, no trend) : -2.86\ntstat (constant, trend) : -3,41\n\nFor more information on the Campbell Perron proc. or the Adf test, I\nrecommend you look for \"TimeSeries Analysis\" by Hamilton, but boy is this\nhard work! Otherwise, find a professor that teaches Macroeconometrics and\ncheck out his script. I would recommand Alain Guay, but his script is in\nfrench...\n\n I hope this could help.\n \n\nLambert.Winnie wrote:\n> \n> All,\n> \n>  \n> \n> Is there a function in S-PLUS that can be used to test whether a time\n> series is stationary or not? Thanks.\n> \n>  \n> \n> *****************************************************************\n> \n> Winifred C. Lambert  Senior Scientist/Meteorologist\n> \n> ENSCO, Inc.\n> \n> Aerospace Sciences and Engineering Division\n> \n> 1980 N. Atlantic Ave., Suite 230\n> \n> Cocoa Beach, FL  32931\n> \n> VOICE:  321.853.8130  FAX:  321.853.8415\n> \n> EMAIL:  lambert.winnie at ensco.com <mailto:lambert.winnie at ensco.com> \n> \n>  \n> \n> AMU Quarterly Reports are available online:\n> \n> http://science.ksc.nasa.gov/amu <http://science.ksc.nasa.gov/amu> \n> \n> *****************************************************************\n> \n> ......................................................................\n> The information contained in this email message is intended only for the\n> use of the individuals to whom it is\n> addressed and may contain information that is privileged and sensitive. If\n> the reader of this message is not\n> the intended recipient, you are hereby notified that any dissemination,\n> distribution or copying of this\n> communication is strictly prohibited. If you have received this\n> communication in error, please notify the\n> sender immediately by email at the above referenced address. Thank you.\n> \n\n-- \nView this message in context: \nhttp://www.nabble.com/stationary%2C-or-not-stationary%3A--time-series-dilemma-tp15293311p15297181.html\nSent from the S-News mailing list archive at Nabble.com.",
+      "body_snippet": "Hi, \n\nI believe what you want to test for is first order stationarity. The\nconditions for this kind of stationarity are that:\n1. E[x_t]=m for all t,\n2. Variance of x_t does not diverge\n3. COV (x_t,x_(",
+      "thread_id": "thread-3476f68095cc",
+      "thread_depth": 1,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-87c1408c83cb",
+      "message_id": "<BEA6A318CB196546AA5184CE0F37447001BEA83A@UTHEVS3.mail.uthouston.edu>",
+      "from_name": "Padhye, Nikhil S",
+      "from_email_hash": "474fc4db5169ae4e3dc30ee92f567b72c80114c7c55b8c3619dd0c1c7b06b288",
+      "date": "2008-02-05T19:06:50Z",
+      "subject": "Re: stationary, or not stationary: time series dilemma",
+      "subject_clean": "stationary, or not stationary: time series dilemma",
+      "in_reply_to": "<40E02871B8B84F4FB46FA9F3D898B9DA6F09C3@mb-exch.ensco.win>",
+      "references": [
+        "<40E02871B8B84F4FB46FA9F3D898B9DA6F09C3@mb-exch.ensco.win>"
+      ],
+      "body_plain": "We use a stationarity test based on the Kolmogorov-Smirnov \ntest of difference between distributions on subsets of the test segment. As Eric \nZivot pointed out, this is once again a test of one kind of stationarity, but it \nis more robust than testing for varying means or variances. In any case, all \nstationarity tests that I am aware of pertain to weak stationarity, and this is \nusually sufficient. Unfortunately, I do not have a S-Plus implementation that I \ncould forward to you.\n\n \n\nNikhil\n\n________________________________________________ \n\nN. S. Padhye, Ph.D.\n\nResearch Assistant Professor, \nBiostatistician\n\nThe University of Texas Health \nScience Center at Houston\n\nhttp://www.uth.tmc.edu\n\nFrom: s-news-owner at lists.biostat.wustl.edu \n[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of \nLambert.Winnie\nSent: Tuesday, February 05, 2008 10:02 \nAM\nTo: S-PLUS Newsgroup\nSubject: [S] stationary, or not \nstationary: time series dilemma\n\nAll,\n\n \n\nIs there a function in S-PLUS that can be used to test \nwhether a time series is stationary or not? Thanks.\n\n \n\n*****************************************************************\n\nWinifred C. \nLambert  Senior Scientist/Meteorologist\n\nENSCO, \nInc.\n\nAerospace Sciences \nand Engineering Division\n\n1980 N. Atlantic \nAve., Suite 230\n\nCocoa Beach, FL  \n32931\n\nVOICE:  \n321.853.8130  FAX:  321.853.8415\n\nEMAIL:  lambert.winnie at ensco.com\n\n \n\nAMU Quarterly Reports \nare available online:\n\nhttp://science.ksc.nasa.gov/amu\n\n*****************************************************************\n\nThe information contained in this email message is intended only for the use of \nthe individuals to whom it is\naddressed and may contain information that is \nprivileged and sensitive. If the reader of this message is not\nthe intended \nrecipient, you are hereby notified that any dissemination, distribution or \ncopying of this\ncommunication is strictly prohibited. If you have received \nthis communication in error, please notify the\nsender immediately by email at \nthe above referenced address. Thank you.",
+      "body_snippet": "We use a stationarity test based on the Kolmogorov-Smirnov \ntest of difference between distributions on subsets of the test segment. As Eric \nZivot pointed out, this is once again a test of one kind o",
+      "thread_id": "thread-3476f68095cc",
+      "thread_depth": 1,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-029e04783490",
+      "message_id": "<431817.53107.qm@web45910.mail.sp1.yahoo.com>",
+      "from_name": "John Edward",
+      "from_email_hash": "418f2edfc117a9f79d599141ddf6831a55a007c7867f30ed2f312fd1b6b8451d",
+      "date": "2008-02-05T19:58:50Z",
+      "subject": "Draft paper submission deadline is extended: BCBGC-08",
+      "subject_clean": "Draft paper submission deadline is extended: BCBGC-08",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Dear Colleagues and Friends Kindly share the announcement below with those who may be interested: thank you in advance.   SincerelyJohn Edward   \n   \n  BCBGC-08 Draft paper submission deadline is extended.\n   \n  The 2008 International Conference on Bioinformatics, Computational Biology, Genomics and\n Chemoinformatics (BCBGC-08) (website: www.PromoteResearch.org ) will be held during July 7-10 2008 in Orlando, FL, USA.  The draft paper submission deadline is extended until February 19 2008 due to several requests from the authors. The conference will be held at the same time and location where several major events (see below) will be taking place. \n   \n  BCBGC brings\n together both academic and industrial scientists and developers from a diverse range of disciplines including bioinformatics, computer science, computational biology, genomics, proteomics and chemoinformatics. One of the main goals of the conference is to promote the dissemination of research to a multidisciplinary audience and to facilitate communication among researchers in different fields. Papers that demonstrate applications of existing techniques or developments of new methods are equally welcomed to the conference. \n   \n  Sincerely\n  John Edward\n   \n  ·        International Conference on Artificial Intelligence and Pattern Recognition (AIPR-08) \n  ·        International Conference on Automation, Robotics and Control Systems (ARCS-08)\n  ·        International Conference on Bioinformatics, Computational Biology, Genomics and Chemoinformatics (BCBGC-08)\n  ·        International Conference on Enterprise Information Systems and\n Web Technologies (EISWT-08)\n  ·        International Conference on High Performance Computing, Networking and Communication Systems (HPCNCS-08)\n  ·        International Conference on Software Engineering\n Theory and Practice (SETP-08)  \n  ·        International Conference on Theoretical and Mathematical Foundations of Computer Science (TMFCS-08)\n   \n   \n \n\n      Never miss a thing.   Make Yahoo your homepage.",
+      "body_snippet": "Dear Colleagues and Friends Kindly share the announcement below with those who may be interested: thank you in advance.   SincerelyJohn Edward   \n   \n  BCBGC-08 Draft paper submission deadline is exte",
+      "thread_id": "thread-029e04783490",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-b010d5bf0e20",
+      "message_id": "<001301c86863$9c0603b0$6601a8c0@Alazrak>",
+      "from_name": "Ali & Hind Lazrak",
+      "from_email_hash": "2c1613e4e7891880069edd73b79cda8ed99762ae0d8641649698cad59edbe35e",
+      "date": "2008-02-06T01:57:20Z",
+      "subject": "Continuous covariates interpretation in glme",
+      "subject_clean": "Continuous covariates interpretation in glme",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Dear all, \n\n \n\nI ran a generalized mixed effects model to \npredict a binary outcome using the 'glme' procedure. This model has two \nrandom subject (persons nested within companies) and 5 fixed effects \nterms for the subjects.\n\nAmong these 5 fixed effects variables, 2 are \ncontinuous.\n\nAs I am interpreting the results I have a question \npertaining to the treatment of continuous covariates:\n\nDoes Splus standardize \nautomatically continuous covariates?\n\n \n\nThank you kindly for your answer.\n\n \n\nHind",
+      "body_snippet": "Dear all, \n\n \n\nI ran a generalized mixed effects model to \npredict a binary outcome using the 'glme' procedure. This model has two \nrandom subject (persons nested within companies) and 5 fixed effects",
+      "thread_id": "thread-b010d5bf0e20",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-e8cab0212f03",
+      "message_id": "<96C6A984FE81AF4492020E9281CE67A8011924B8@sewinexch00.insightful.com>",
+      "from_name": "Stella Karuri",
+      "from_email_hash": "e6392e810897df4596c73f7156dee0388dd277d1a91f473848ed42363b529a0d",
+      "date": "2008-02-06T17:46:22Z",
+      "subject": "Re: Continuous covariates interpretation in glme",
+      "subject_clean": "Continuous covariates interpretation in glme",
+      "in_reply_to": "<001301c86863$9c0603b0$6601a8c0@Alazrak>",
+      "references": [
+        "<001301c86863$9c0603b0$6601a8c0@Alazrak>"
+      ],
+      "body_plain": "Splus does not standardize continous\nvariates – by standardizing I believe you mean centering to improve\ninterpretability, (if x is the continuous covariate, x*=(x-mean(x))). \n\n \n\nWhen you specify the formula, you can\ncenter your covariate i.e. instead of \n\nglme( y~ x); \n\nhave \n\nxst<- x-mean(x); glme(y~xst)\n\n \n\nstella\n\nFrom:\ns-news-owner at lists.biostat.wustl.edu\n[mailto:s-news-owner at lists.biostat.wustl.edu] On\nBehalf Of Ali & Hind Lazrak\n\nSent: Tuesday, February 05, 2008\n5:57 PM\n\nTo: Splus listserve\n\nSubject: [S] Continuous covariates\ninterpretation in glme\n\n \n\nDear all, \n\n \n\nI ran a generalized mixed effects model to predict a\nbinary outcome using the 'glme' procedure. This model has two\nrandom subject (persons nested within companies) and 5 fixed effects\nterms for the subjects.\n\nAmong these 5 fixed effects variables, 2 are continuous.\n\nAs I am interpreting the results I have a question\npertaining to the treatment of continuous covariates:\n\nDoes Splus standardize automatically continuous\ncovariates?\n\n \n\nThank you kindly for your answer.\n\n \n\nHind",
+      "body_snippet": "Splus does not standardize continous\nvariates – by standardizing I believe you mean centering to improve\ninterpretability, (if x is the continuous covariate, x*=(x-mean(x))). \n\n \n\nWhen you specify the",
+      "thread_id": "thread-b010d5bf0e20",
+      "thread_depth": 1,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-bac80f64f0b7",
+      "message_id": "<000a01c868ed$51aa43f0$6601a8c0@Alazrak>",
+      "from_name": "Ali & Hind Lazrak",
+      "from_email_hash": "2c1613e4e7891880069edd73b79cda8ed99762ae0d8641649698cad59edbe35e",
+      "date": "2008-02-06T18:23:04Z",
+      "subject": "Re: Continuous covariates interpretation in glme",
+      "subject_clean": "Continuous covariates interpretation in glme",
+      "in_reply_to": null,
+      "references": [
+        "<001301c86863$9c0603b0$6601a8c0@Alazrak>",
+        "<96C6A984FE81AF4492020E9281CE67A8011924B8@sewinexch00.insightful.com>"
+      ],
+      "body_plain": "Hello\n\n \n\nYou are right, I wanted to transform the continuous \ncovariates for ease of interpretation. However, by standardize, I meant \nx-mean(x)/sqrt(var(x).\n\nFor newbies like me :\n\nI have found that scale() does the \njob.\n\n \n\nThank you Stella.\n\nHind\n\n>   ----- Original Message -----\n>\n>   From:\n>   Stella\n>   Karuri\n>\n>   To: Splus listserve\n>\n>   Sent: Wednesday, February 06, 2008 9:46\n>   AM\n>\n>   Subject: Re: [S] Continuous covariates\n>   interpretation in glme\n>\n>\n>\n>\n>\n>   Splus does not\n>   standardize continous variates ? by standardizing I believe you mean centering\n>   to improve interpretability, (if x is the continuous covariate,\n>   x*=(x-mean(x))).\n>\n>\n>\n>   When you specify the\n>   formula, you can center your covariate i.e. instead of\n>\n>\n>   glme( y~ x);\n>\n>\n>   have\n>\n>\n>   xst<- x-mean(x);\n>   glme(y~xst)\n>\n>\n>\n>   stella\n>\n>\n>\n>\n>\n>\n>   From: s-news-owner at lists.biostat.wustl.edu\n>   [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Ali & Hind\n>   Lazrak\n> Sent: Tuesday,\n>   February 05, 2008 5:57 PM\n> To:\n>   Splus listserve\n> Subject: [S]\n>   Continuous covariates interpretation in\n> glme\n>\n>\n>\n>\n>\n>   Dear all,\n>\n>\n>\n>\n>\n>\n>\n>\n>   I ran a generalized mixed effects\n>   model to predict a binary outcome using the 'glme' procedure. This model\n>   has two random subject (persons nested within companies) and 5 fixed\n>   effects terms for the subjects.\n>\n>\n>\n>   Among these 5 fixed effects\n>   variables, 2 are continuous.\n>\n>\n>\n>   As I am interpreting the results I\n>   have a question pertaining to the treatment of continuous\n>   covariates:\n>\n>\n>\n>   Does Splus standardize\n>   automatically continuous covariates?\n>\n>\n>\n>\n>\n>\n>\n>   Thank you kindly for your\n>   answer.\n>\n>\n>\n>\n>\n>\n>\n>   Hind",
+      "body_snippet": "Hello\n\n \n\nYou are right, I wanted to transform the continuous \ncovariates for ease of interpretation. However, by standardize, I meant \nx-mean(x)/sqrt(var(x).\n\nFor newbies like me :\n\nI have found that",
+      "thread_id": "thread-b010d5bf0e20",
+      "thread_depth": 2,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-7a066df7bef6",
+      "message_id": "<47AA0075.8070705@vanderbilt.edu>",
+      "from_name": "Frank E Harrell Jr",
+      "from_email_hash": "aac2104e568f1b4bc608deccefed75168aaf244b4de06a96ffe1c917f66b7853",
+      "date": "2008-02-06T18:46:13Z",
+      "subject": "Re: Continuous covariates interpretation in glme",
+      "subject_clean": "Continuous covariates interpretation in glme",
+      "in_reply_to": "<000a01c868ed$51aa43f0$6601a8c0@Alazrak>",
+      "references": [
+        "<001301c86863$9c0603b0$6601a8c0@Alazrak>",
+        "<96C6A984FE81AF4492020E9281CE67A8011924B8@sewinexch00.insightful.com>",
+        "<000a01c868ed$51aa43f0$6601a8c0@Alazrak>"
+      ],
+      "body_plain": "Ali & Hind Lazrak wrote:\n> Hello\n>\n> You are right, I wanted to transform the continuous covariates for ease\n> of interpretation. However, by standardize, I meant x-mean(x)/sqrt(var(x).\n>\n> For newbies like me :\n> I have found that scale() does the job.\n>\n> Thank you Stella.\n>\n> Hind\n\nThat would seem to cloud rather than help the interpretation\n\nFrank Harrell\n\n>     ----- Original Message -----\n>     *From:* Stella Karuri <mailto:swkaruri at insightful.com>\n>     *To:* Splus listserve <mailto:s-news at lists.biostat.wustl.edu>\n>     *Sent:* Wednesday, February 06, 2008 9:46 AM\n>     *Subject:* Re: [S] Continuous covariates interpretation in glme\n>\n>     Splus does not standardize continous variates – by standardizing I\n>     believe you mean centering to improve interpretability, (if x is the\n>     continuous covariate, x*=(x-mean(x))).\n>\n>\n>\n>\n>     When you specify the formula, you can center your covariate i.e.\n>     instead of\n>\n>     glme( y~ x);\n>\n>     have\n>\n>     xst<- x-mean(x); glme(y~xst)\n>\n>\n>\n>\n>     stella\n>\n>     * From: * s-news-owner at lists.biostat.wustl.edu\n>     <mailto:s-news-owner at lists.biostat.wustl.edu>\n>     [mailto:s-news-owner at lists.biostat.wustl.edu] *On Behalf Of *Ali &\n>     Hind Lazrak\n>     *Sent:* Tuesday, February 05, 2008 5:57 PM\n>     *To:* Splus listserve\n>     *Subject:* [S] Continuous covariates interpretation in glme\n>\n>\n>\n>\n>     Dear all,\n>\n>\n>\n>\n>     I ran a generalized mixed effects model to predict a binary outcome\n>     using the 'glme' procedure. This model has two random subject\n>     (persons nested within companies) and 5 fixed effects terms for the\n>     subjects.\n>\n>     Among these 5 fixed effects variables, 2 are continuous.\n>\n>     As I am interpreting the results I have a question pertaining to the\n>     treatment of continuous covariates:\n>\n>     Does Splus standardize automatically continuous covariates?\n>\n>\n>\n>\n>     Thank you kindly for your answer.\n>\n>\n>\n>\n>     Hind\n\n--\nFrank E Harrell Jr   Professor and Chair           School of Medicine\n                     Department of Biostatistics   Vanderbilt University",
+      "body_snippet": "Ali & Hind Lazrak wrote:\n> Hello\n>\n> You are right, I wanted to transform the continuous covariates for ease\n> of interpretation. However, by standardize, I meant x-mean(x)/sqrt(var(x).\n>\n> For newbie",
+      "thread_id": "thread-b010d5bf0e20",
+      "thread_depth": 3,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-8969994e768b",
+      "message_id": "<002701c868f4$33d47650$6601a8c0@Alazrak>",
+      "from_name": "Ali & Hind Lazrak",
+      "from_email_hash": "2c1613e4e7891880069edd73b79cda8ed99762ae0d8641649698cad59edbe35e",
+      "date": "2008-02-06T19:12:22Z",
+      "subject": "Re: Continuous covariates interpretation in glme",
+      "subject_clean": "Continuous covariates interpretation in glme",
+      "in_reply_to": null,
+      "references": [
+        "<001301c86863$9c0603b0$6601a8c0@Alazrak>",
+        "<96C6A984FE81AF4492020E9281CE67A8011924B8@sewinexch00.insightful.com>",
+        "<000a01c868ed$51aa43f0$6601a8c0@Alazrak>",
+        "<47AA0075.8070705@vanderbilt.edu>"
+      ],
+      "body_plain": "Hi:\n\nMaybe I should have mentioned that I am fitting a logistic regression.with \nrandom intercepts to account for the hierarchical structure of my data. I \nwas thinking that it would be easier to interpret the result as the increase \nin odds ratio per one standard deviation shift.\n\nAm I wrong?\n\nHind\n----- Original Message ----- \nFrom: \"Frank E Harrell Jr\" <f.harrell at vanderbilt.edu>\n\nTo: \"Ali & Hind Lazrak\" <alazrak at telus.net>\nCc: \"Stella Karuri\" <swkaruri at insightful.com>; \"Splus listserve\" \n<s-news at lists.biostat.wustl.edu>\n\nSent: Wednesday, February 06, 2008 10:46 AM\nSubject: Re: [S] Continuous covariates interpretation in glme\n\n> Ali & Hind Lazrak wrote:\n> > Hello\n> >  You are right, I wanted to transform the continuous covariates for ease\n> > of interpretation. However, by standardize, I meant\n> > x-mean(x)/sqrt(var(x).\n> >\n> > For newbies like me :\n> > I have found that scale() does the job.\n> >  Thank you Stella.\n> > Hind\n>\n>\n> That would seem to cloud rather than help the interpretation\n>\n> Frank Harrell\n>\n> >     ----- Original Message -----\n> >     *From:* Stella Karuri <mailto:swkaruri at insightful.com>\n> >     *To:* Splus listserve <mailto:s-news at lists.biostat.wustl.edu>\n> >     *Sent:* Wednesday, February 06, 2008 9:46 AM\n> >     *Subject:* Re: [S] Continuous covariates interpretation in glme\n> >\n> >     Splus does not standardize continous variates – by standardizing I\n> >     believe you mean centering to improve interpretability, (if x is the\n> >     continuous covariate, x*=(x-mean(x))).\n> >\n> >      When you specify the formula, you can center your covariate i.e.\n> >     instead of\n> >\n> >     glme( y~ x);\n> >\n> >     have\n> >\n> >     xst<- x-mean(x); glme(y~xst)\n> >\n> >      stella\n> >\n> >     * From: * s-news-owner at lists.biostat.wustl.edu\n> >     <mailto:s-news-owner at lists.biostat.wustl.edu>\n> >     [mailto:s-news-owner at lists.biostat.wustl.edu] *On Behalf Of *Ali &\n> >     Hind Lazrak\n> >     *Sent:* Tuesday, February 05, 2008 5:57 PM\n> >     *To:* Splus listserve\n> >     *Subject:* [S] Continuous covariates interpretation in glme\n> >\n> >      Dear all,\n> >\n> >      I ran a generalized mixed effects model to predict a binary outcome\n> >     using the 'glme' procedure. This model has two random subject\n> >     (persons nested within companies) and 5 fixed effects terms for the\n> >     subjects.\n> >\n> >     Among these 5 fixed effects variables, 2 are continuous.\n> >\n> >     As I am interpreting the results I have a question pertaining to the\n> >     treatment of continuous covariates:\n> >\n> >     Does Splus standardize automatically continuous covariates?\n> >\n> >      Thank you kindly for your answer.\n> >\n> >      Hind\n>\n>\n>\n> --\n> Frank E Harrell Jr   Professor and Chair           School of Medicine\n>                      Department of Biostatistics   Vanderbilt University\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news",
+      "body_snippet": "Hi:\n\nMaybe I should have mentioned that I am fitting a logistic regression.with \nrandom intercepts to account for the hierarchical structure of my data. I \nwas thinking that it would be easier to inte",
+      "thread_id": "thread-b010d5bf0e20",
+      "thread_depth": 4,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-ec210a216d58",
+      "message_id": "<47AA0F32.4050703@earthlink.net>",
+      "from_name": "Data Analytics Corp.",
+      "from_email_hash": "443479c0b721da0dac0fa3876e0e3e3a1e5a4473b12d210b69baaeb9f46d9845",
+      "date": "2008-02-06T19:49:06Z",
+      "subject": "comparing bootstrapped confidence intervals",
+      "subject_clean": "comparing bootstrapped confidence intervals",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hi,\n\nI have a question about comparing bootstrapped confidence intervals. I \nhave a slightly complicated function to calculate a statistic called a \npenalty often used in the food sensory area.  Basically, it's just the \ndifference between the middle point on a 5-point liking scale and the \nweighted average of the other points.  This is done for all attributes \nof a product.   Let's say there are five attributes so there are 5 \npenalties.  I want to bootstrap a 95% confidence interval for each \npenalty (easy to do using the bootstrap and limits.bca functions) and \nthen plot the intervals on one graph similar to what multicomp does. The \ngoal is to tell the client which penalties are different.  Is this \nlegitimate to do with the bootstrapped intervals?  Any opinions?\n\nThanks,\n\nWalt Paczkowski",
+      "body_snippet": "Hi,\n\nI have a question about comparing bootstrapped confidence intervals. I \nhave a slightly complicated function to calculate a statistic called a \npenalty often used in the food sensory area.  Basic",
+      "thread_id": "thread-ec210a216d58",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-bec42203acba",
+      "message_id": "<999318.87856.qm@web53210.mail.re2.yahoo.com>",
+      "from_name": "meteor_shahab at yahoo.com",
+      "from_email_hash": "3e00599c09e7cadc2817705d4e5881dbc10f69046bf76687e01750a7a280a724",
+      "date": "2008-02-07T18:24:24Z",
+      "subject": "stable distribution",
+      "subject_clean": "stable distribution",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Dear all,\n\nIs there any function for calculating the\n\npdf and cdf of Stable distribution?\n\nI have downloaded the \"fbasics\" library in R\n\nwhich contains Stable distribution, is it possible to\n\nconvert this library to S.\n\n \n\nThanks.\n\nShahab Einabadi.\n\nSend instant messages to your online friends http://uk.messenger.yahoo.com",
+      "body_snippet": "Dear all,\n\nIs there any function for calculating the\n\npdf and cdf of Stable distribution?\n\nI have downloaded the \"fbasics\" library in R\n\nwhich contains Stable distribution, is it possible to\n\nconvert ",
+      "thread_id": "thread-bec42203acba",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-3305a8bb8b04",
+      "message_id": "<20080207144343.0285u0yjkk04kc0k@webmail.utoronto.ca>",
+      "from_name": "kate.bassil at utoronto.ca",
+      "from_email_hash": "35fa96a67050256bb7988832a2763714ead373e053e8bf96e76dbd2b55a1a91e",
+      "date": "2008-02-07T19:43:43Z",
+      "subject": "GAM p-values",
+      "subject_clean": "GAM p-values",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "I am using S-plus 7.0 to run GAM models in my analysis.\nAn example of the model is:\nmodel<-gam(Def1~T.Max+day+lo(RH)+lo(time)+offset(log(All.Calls)),family=poisson(link=log),na.action=na.omit).\nTo get the coefficients I enter:\ncoefficients(summary.glm(model,c=F,dispersion=0).\n\nHowever, this only produces the value, std error, and t-value. I would  \nalso like p-values for the GAM models. Any suggestions on how to do  \nthis?\n\nThanks,\nKate Bassil",
+      "body_snippet": "I am using S-plus 7.0 to run GAM models in my analysis.\nAn example of the model is:\nmodel<-gam(Def1~T.Max+day+lo(RH)+lo(time)+offset(log(All.Calls)),family=poisson(link=log),na.action=na.omit).\nTo get",
+      "thread_id": "thread-3305a8bb8b04",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-1f8cdc572b64",
+      "message_id": "<1115a2b00802071152n71c7f8e8gd969db373349af19@mail.gmail.com>",
+      "from_name": "Wensui Liu",
+      "from_email_hash": "37d9b84f19fa6ab90609a5029dcdfffd1cf1326a43752a70bb955249f8006c1f",
+      "date": "2008-02-07T19:52:35Z",
+      "subject": "Re: GAM p-values",
+      "subject_clean": "GAM p-values",
+      "in_reply_to": "<20080207144343.0285u0yjkk04kc0k@webmail.utoronto.ca>",
+      "references": [
+        "<20080207144343.0285u0yjkk04kc0k@webmail.utoronto.ca>"
+      ],
+      "body_plain": "what kind of p-value are you after? p-value for t-statistics or\np-value for chi-square statistics of nonlinear terms, or p-value for\nsomething else?\n\nOn Feb 7, 2008 2:43 PM,  <kate.bassil at utoronto.ca> wrote:\n> I am using S-plus 7.0 to run GAM models in my analysis.\n> An example of the model is:\n> model<-gam(Def1~T.Max+day+lo(RH)+lo(time)+offset(log(All.Calls)),family=poisson(link=log),na.action=na.omit).\n> To get the coefficients I enter:\n> coefficients(summary.glm(model,c=F,dispersion=0).\n>\n> However, this only produces the value, std error, and t-value. I would\n> also like p-values for the GAM models. Any suggestions on how to do\n> this?\n>\n> Thanks,\n> Kate Bassil\n>\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>\n\n-- \n===============================\nWenSui Liu\nChoicePoint Precision Marketing\nPhone: 678-893-9457\nEmail : wensui.liu at choicepoint.com\nBlog   : statcompute.spaces.live.com\n===============================",
+      "body_snippet": "what kind of p-value are you after? p-value for t-statistics or\np-value for chi-square statistics of nonlinear terms, or p-value for\nsomething else?\n\nOn Feb 7, 2008 2:43 PM,  <kate.bassil at utoronto.",
+      "thread_id": "thread-3305a8bb8b04",
+      "thread_depth": 1,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-7825492057ac",
+      "message_id": "<uzlucfrkn.fsf@insightful.com>",
+      "from_name": "Tim Hesterberg",
+      "from_email_hash": "006d6c7dc32bd30d08b3192457126eabf59f5d9c77c66b3f4bd6b70dafb4738c",
+      "date": "2008-02-07T20:18:48Z",
+      "subject": "Re: GAM p-values",
+      "subject_clean": "GAM p-values",
+      "in_reply_to": "<20080207144343.0285u0yjkk04kc0k@webmail.utoronto.ca>",
+      "references": [
+        "<20080207144343.0285u0yjkk04kc0k@webmail.utoronto.ca>"
+      ],
+      "body_plain": "First, note that you should not just look up the t-statistics\nin a t-table.  The t-statistics do not in general follow a\nt-distribution, and can be very different, with very skewed\ndistributions.\n\nThe authors of gam and glm deserve commendation for not including\np-values in the printout.\n\nYou could use anova() to compare two models, with and without a\nparticular term:\n\nfit1 <- gam(Kyphosis ~ s(Age,4) + Number, family = binomial, data = kyphosis)\nfit2 <- update(fit1, .~.-Number)\nanova(fit1, fit2)\n\nThe difference in deviance asymptotically follows a chi-square\ndistribution; this is a likelihood ratio test.  It isn't exact, but I\nbelieve it is is more accurate than assuming t-distributions.\n\nTim Hesterberg\nDisclaimer - these are my opinions, not Insightful's.\n\n>I am using S-plus 7.0 to run GAM models in my analysis.\n>An example of the model is:\n>model<-gam(Def1~T.Max+day+lo(RH)+lo(time)+offset(log(All.Calls)),family=poisson(link=log),na.action=na.omit).\n>To get the coefficients I enter:\n>coefficients(summary.glm(model,c=F,dispersion=0).\n>\n>However, this only produces the value, std error, and t-value. I would  \n>also like p-values for the GAM models. Any suggestions on how to do  \n>this?\n>\n>Thanks,\n>Kate Bassil",
+      "body_snippet": "First, note that you should not just look up the t-statistics\nin a t-table.  The t-statistics do not in general follow a\nt-distribution, and can be very different, with very skewed\ndistributions.\n\nThe",
+      "thread_id": "thread-3305a8bb8b04",
+      "thread_depth": 1,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-cae702a1b572",
+      "message_id": "<6BE3EC472981FB43ADD7DEB00A67ED5701D2DA06@bumc-xbe.ad.bu.edu>",
+      "from_name": "Weinberg, Janice M",
+      "from_email_hash": "9cac0437360189bcb00e90217269c9ad9867d577cee3e57dc41463b39efdf0e1",
+      "date": "2008-02-07T22:29:25Z",
+      "subject": "Use of weights in a GAM",
+      "subject_clean": "Use of weights in a GAM",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "I'm using Splus \nversion 8.0.  I'm looking for information on using the weights option in a \nGAM in Splus.  Are any value of weights acceptable?  Can you use the \nweights option with any kind of smoother available in a GAM?  If anyone has \ninformation or examples they can send me I'd really appreciate \nit.\n\nThanks,\n\nJanice \nWeinberg\n\n \n\nJanice Weinberg, ScD\n\nAssociate Professor, Department of \nBiostatistics\n\n801 Massachusetts Avenue, 3rd Floor \n(330)\n\nBoston, MA 02118\n\n \n\nMailing address:\n\n715 Albany Street, Crosstown Center-3rd \nFloor\n\nBoston, MA 02118\n\n \n\nPhone:  617-638-5470\n\nFax:      \n617-638-6484\n\nE-mail:  janicew at bu.edu",
+      "body_snippet": "I'm using Splus \nversion 8.0.  I'm looking for information on using the weights option in a \nGAM in Splus.  Are any value of weights acceptable?  Can you use the \nweights option with any kind of smoot",
+      "thread_id": "thread-cae702a1b572",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-8ff7b0f11d72",
+      "message_id": "<2E9C414912813E4EB981326983E0A1040448B6D2@inboexch.inbo.be>",
+      "from_name": "QUATAERT, Paul",
+      "from_email_hash": "2aed0d693ba9bcf50b24e7e977574932dad2af9ac1fb7425584eaa6a1a9ce462",
+      "date": "2008-02-08T08:33:33Z",
+      "subject": "tree of functions",
+      "subject_clean": "tree of functions",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hi,\n\n \n\nI am looking for a function that can find the tree of functions\ncalled in a function that are not S-plus functions.\n\n \n\nSuppose I call this function \"treefunc.my\"\nand I have a function \"a.my\" that calls other personal functions and\nSplus functions\n\n \n\na.my <- function(x) {b.my(x); e.my(x); cat(\"The\nend\\n\")}\n\nb.my <- function(x) c.my(x)\n\nc.my <- function(x) d.my(x)\n\nd.my <- function(x) print(x)\n\ne.my <- function(x) print(1/x)\n\n \n\nthen, treefunc.my(a.my) should give something like\nthat\n\n+ b.my\n\n++ c.my\n\n+++ d.my\n\n+ e.my\n\n \n\nAnd ignore cat & print\n\n \n\nThanks a lot,\n\nPaul \n\n \n\n Paul Quataert\n\n \n\nInstituut voor Natuur- en Bosonderzoek (INBO)\n\nResearch Institute for Nature and Forest \n\nGaverstraat 4\n\nB-9500 Geraardsbergen\n\n \n\ntel ++ 32 (0)54 437 136\n\nfax ++ 32 (0)54 436 160\n\n \n\ne-mail: paul.quataert at inbo.be\n\nwww.inbo.be\n\n \n\nHet Instituut voor Natuur- en Bosonderzoek\n(INBO) is ontstaan door de fusie van het Instituut voor Bosbouw en\nWildbeheer (IBW) en het Instituut voor Natuurbehoud (IN).\n\nThe new Research Institute\nfor Nature and Forest results from the merger of the Institute for\nForestry and Game Management and the Institute of Nature Conservation.",
+      "body_snippet": "Hi,\n\n \n\nI am looking for a function that can find the tree of functions\ncalled in a function that are not S-plus functions.\n\n \n\nSuppose I call this function \"treefunc.my\"\nand I have a function \"a.my\" ",
+      "thread_id": "thread-8ff7b0f11d72",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-b7703a0f71d7",
+      "message_id": "<20080208092631.w09r3vuywwgsoo4g@webmail.utoronto.ca>",
+      "from_name": "kate.bassil at utoronto.ca",
+      "from_email_hash": "35fa96a67050256bb7988832a2763714ead373e053e8bf96e76dbd2b55a1a91e",
+      "date": "2008-02-08T14:26:31Z",
+      "subject": "Re: GAM p-values",
+      "subject_clean": "GAM p-values",
+      "in_reply_to": "<1115a2b00802071152n71c7f8e8gd969db373349af19@mail.gmail.com>",
+      "references": [
+        "<20080207144343.0285u0yjkk04kc0k@webmail.utoronto.ca>",
+        "<1115a2b00802071152n71c7f8e8gd969db373349af19@mail.gmail.com>"
+      ],
+      "body_plain": "Hi Wendy,\n\nI need the p-values for the linear terms also, to see if they are  \nsignificantly associated with the outcome.\n\nKate\n\nQuoting Wensui Liu <liuwensui at gmail.com>:\n\n> what kind of p-value are you after? p-value for t-statistics or\n> p-value for chi-square statistics of nonlinear terms, or p-value for\n> something else?\n>\n> On Feb 7, 2008 2:43 PM,  <kate.bassil at utoronto.ca> wrote:\n> > I am using S-plus 7.0 to run GAM models in my analysis.\n> > An example of the model is:\n> > model<-gam(Def1~T.Max+day+lo(RH)+lo(time)+offset(log(All.Calls)),family=poisson(link=log),na.action=na.omit).\n> > To get the coefficients I enter:\n> > coefficients(summary.glm(model,c=F,dispersion=0).\n> >\n> > However, this only produces the value, std error, and t-value. I would\n> > also like p-values for the GAM models. Any suggestions on how to do\n> > this?\n> >\n> > Thanks,\n> > Kate Bassil\n> >\n> > --------------------------------------------------------------------\n> > This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> > unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> > the BODY of the message:  unsubscribe s-news\n>\n>\n>\n>\n> --\n> ===============================\n> WenSui Liu\n> ChoicePoint Precision Marketing\n> Phone: 678-893-9457\n> Email : wensui.liu at choicepoint.com\n> Blog   : statcompute.spaces.live.com\n> ===============================",
+      "body_snippet": "Hi Wendy,\n\nI need the p-values for the linear terms also, to see if they are  \nsignificantly associated with the outcome.\n\nKate\n\nQuoting Wensui Liu <liuwensui at gmail.com>:\n\n> what kind of p-value ar",
+      "thread_id": "thread-3305a8bb8b04",
+      "thread_depth": 2,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-9c3c8b404ee2",
+      "message_id": "<uhcgjfcx4.fsf@insightful.com>",
+      "from_name": "Tim Hesterberg",
+      "from_email_hash": "006d6c7dc32bd30d08b3192457126eabf59f5d9c77c66b3f4bd6b70dafb4738c",
+      "date": "2008-02-08T19:47:35Z",
+      "subject": "Re: tree of functions",
+      "subject_clean": "tree of functions",
+      "in_reply_to": "<2E9C414912813E4EB981326983E0A1040448B6D2@inboexch.inbo.be>",
+      "references": [
+        "<2E9C414912813E4EB981326983E0A1040448B6D2@inboexch.inbo.be>"
+      ],
+      "body_plain": ">I am looking for a function that can find the tree of functions called\n>in a function that are not S-plus functions.\n\ncallTree() does this.  The original version was posted by \nDavid Lubinsky to S-news 11/6/91.  Here's an updated version.\n\ncallTree <- function(fns, where=1, local.only=T) {\n  # Recursively find functions called by specified functions.\n  #\n  # fns - name of a function, or vector of function names\n  # where - positions in the search list to consider as local functions.\n  # local.only - only show local functions\n  #\n  # This does not find functions called by apply, lapply, eval,\n  #  functions called by methods of generic functions, etc.\n  # Original by David Lubinsky, revision by Tim Hesterberg\n  localfns <- c()\n  for(i in where)\n    localfns <- c(localfns, objects(where=i, classes=\"function\"))\n  result <- list()\n  if(!is.character(fns))\n    fns <- as.character(substitute(fns))\n  done <- c()\n  getFuns <- function(expr) {\n    if(is.recursive(expr)){\n      cc <- if(mode(expr) == \"call\") as.character(expr[[1]])\n      for(e in expr) cc <- c(cc, Recall(e))\n      cc\n    }\n    else NULL\n  }\n  while(length(fns) > 0) {\n    cf <- fns[1]\n    cfns <- unique(getFuns(get(cf)))\n    if(local.only)\n      cfns <- cfns[!is.na(match(cfns, localfns))]\n    result[[cf]] <- cfns\n    done <- c(done, cf)\n    fns <- c(fns[-1], cfns)\n    fns <- fns[is.na(match(fns, done)) & !is.na(match(fns, localfns))]\n  }\n  result\n}\n# For `dim(x) <- 3' it returns `dim' rather than `dim<-'\n# It includes functions defined internally, if they are also defined externally.\n\nHere is a help file by Alan Zaslavsky, in the old .d format:\n\n.BG\n.FN calltree\n.TL\nDescribe dependencies of a function on other functions\n.CS\ncalltree(fns, pos=1, local.only=T)\n.AG fns\nname of a function or vector of function names\n.AG pos\npositions in the search list to consider as local functions.\n.AG local.only\nonly show local functions in the calling tree.\n.RT\nList showing functions called by given functions and so on, recursively.\n.EX\n> calltree(is.category,2)        ### dependencies of a built-in function\n$is.category:\n[1] \">\"      \"length\" \"levels\"\n\n$\">\":\n[1] \">\"\n\n$length:\n[1] \"length\"\n\n$levels:\n[1] \"levels\"\n\n> sort(unique(unlist(calltree(is.category,2))))  ## flat list of dependencies\n is.category1 is.category2 is.category3\n \">\"          \"length\"     \"levels\"\n.KW ~keyword\n.WR",
+      "body_snippet": ">I am looking for a function that can find the tree of functions called\n>in a function that are not S-plus functions.\n\ncallTree() does this.  The original version was posted by \nDavid Lubinsky to S-ne",
+      "thread_id": "thread-8ff7b0f11d72",
+      "thread_depth": 1,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-017df5668df9",
+      "message_id": "<001a01c86ae9$08c9db70$6401a8c0@DellLazrak>",
+      "from_name": "Ali & Hind Lazrak",
+      "from_email_hash": "2c1613e4e7891880069edd73b79cda8ed99762ae0d8641649698cad59edbe35e",
+      "date": "2008-02-09T06:57:28Z",
+      "subject": "glme reference group treatment",
+      "subject_clean": "glme reference group treatment",
+      "in_reply_to": null,
+      "references": [
+        "<20080207144343.0285u0yjkk04kc0k@webmail.utoronto.ca>"
+      ],
+      "body_plain": "Hello \n\n \n\nAs part of my thesis (Master's level), I need to predict the \nuse of a device. The data that was gathered is a yes/no use self reported \nanswer.\n\nI \nfitted a multiple logistic regression mixed model with random intercepts to \nmodel a binary outcome the glme \nfunction from the correlatedData \nlibrary (Splus version 8).\n\nMy data has the following structure\n\n14 companies : outer level\n\n10,095 subjects: inner level\n\n59,000 measurements of the binary outcome.\n\nA GEE model was first fitted to the data to obtain the \nstarting values that were entered in the final model for parameters estimation \nusing Restricted Penalized Quasi Likelihood method.\n\nAfter review of the first draft of the paper I'm working on, \nmy supervisors asked me to change the reference group of two of \nthe fixed effects variables (gender and race) to the group having the \nlarger number of observations.\n\nRight now, I have female and Chinese. \n\nTo do what has been asked of me I need to switch the reference \ngroups to Male and White.\n\nRace is coded: Chinese, Indian, \nWhite\n\nGender \nis coded: Female, Male\n\nI have set the options as follow:\n\noptions(contrasts=c(factor=\"contr.treatment\",ordered=\"contr.poly))\n\nI used the GUI interface and recoded Female as Women and White \nas AWhite\n\nHowever I still have an output where Women and Chinese are the \nreference group of Gender and Race respectively.\n\n \n\nI truly hope that my question was clear and that you can \nprovide me with a solution/ explanation as to why this is \nhappening...\n\n \n\nMany thanks in advance\n\n \n\nHind",
+      "body_snippet": "Hello \n\n \n\nAs part of my thesis (Master's level), I need to predict the \nuse of a device. The data that was gathered is a yes/no use self reported \nanswer.\n\nI \nfitted a multiple logistic regression mi",
+      "thread_id": "thread-3305a8bb8b04",
+      "thread_depth": 1,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-c4c71f2f4c68",
+      "message_id": "<975534.53297.qm@web53207.mail.re2.yahoo.com>",
+      "from_name": "meteor_shahab at yahoo.com",
+      "from_email_hash": "3e00599c09e7cadc2817705d4e5881dbc10f69046bf76687e01750a7a280a724",
+      "date": "2008-02-09T19:40:28Z",
+      "subject": "stable distribution",
+      "subject_clean": "stable distribution",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Dear all,\n\nIs there any function for calculating the\n\npdf and cdf of Stable distribution?\n\nI have downloaded the \"fbasics\" library in R\n\nwhich contains Stable distribution, is it possible to\n\nconvert this library to S.\n\n \n\nThanks.\n\nShahab Einabadi.\n\nSend instant messages to your online friends http://uk.messenger.yahoo.com",
+      "body_snippet": "Dear all,\n\nIs there any function for calculating the\n\npdf and cdf of Stable distribution?\n\nI have downloaded the \"fbasics\" library in R\n\nwhich contains Stable distribution, is it possible to\n\nconvert ",
+      "thread_id": "thread-c4c71f2f4c68",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-c79c09d849da",
+      "message_id": "<2E9C414912813E4EB981326983E0A10404548115@inboexch.inbo.be>",
+      "from_name": "QUATAERT, Paul",
+      "from_email_hash": "2aed0d693ba9bcf50b24e7e977574932dad2af9ac1fb7425584eaa6a1a9ce462",
+      "date": "2008-02-11T20:14:47Z",
+      "subject": "powerpoint",
+      "subject_clean": "powerpoint",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hi,\n\n \n\nWith the graphical user interface, it is possible to\nexport a series of graphs to powerpoint with File/Create Powerpoint\nPresentation.\n\n \n\nDoes there exist a command for this task, such that I\ncan use it in a script?\n\n \n\nThanks,\n\nPaul\n Quataert\n\n \n\n \n\n Paul\n  Quataert\n\n Coördinator BMK (biometrie, methodologie en kwaliteitszorg)\n\n \n\nInstituut voor Natuur- en Bosonderzoek (INBO)\n\nResearch Institute for Nature and Forest \n\nGaverstraat 4\n\nB-9500 Geraardsbergen\n\n \n\ntel ++ 32 (0)54 437 136\n\nfax ++ 32 (0)54 436 160\n\n \n\ne-mail: paul.quataert at inbo.be\n\nwww.inbo.be",
+      "body_snippet": "Hi,\n\n \n\nWith the graphical user interface, it is possible to\nexport a series of graphs to powerpoint with File/Create Powerpoint\nPresentation.\n\n \n\nDoes there exist a command for this task, such that I",
+      "thread_id": "thread-c79c09d849da",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-995d1f06aa2f",
+      "message_id": "<1D345764276D6B45AEFADB0B8172FCEF035893A9@wpcmail.hotwater.aosmith.org>",
+      "from_name": "Overstreet, Jason",
+      "from_email_hash": "c32c8e49ae3662b759996f99998601e7c90bf71b5b0160a2f811adf6591af2fb",
+      "date": "2008-02-11T20:15:02Z",
+      "subject": "Re: powerpoint",
+      "subject_clean": "powerpoint",
+      "in_reply_to": "<2E9C414912813E4EB981326983E0A10404548115@inboexch.inbo.be>",
+      "references": [
+        "<2E9C414912813E4EB981326983E0A10404548115@inboexch.inbo.be>"
+      ],
+      "body_plain": "I have wondered the same thing…\n\n \n\n \n\nJason Overstreet\n\nStatistician\n\nASQ: CRE, CQE\n\n \n\nA.O. Smith\n\n106 Adkisson Street\n\nAshland City, TN 37015\n\nOffice: (615) 792-6253\n\nCell: (615) 495-6144\n\nFax: (615) 792-2121\n\nEmail: joverstreet at hotwater.com\n\n \n\n \n\n \n\nFrom:\ns-news-owner at lists.biostat.wustl.edu [mailto:s-news-owner at lists.biostat.wustl.edu]\nOn Behalf Of QUATAERT, Paul\n\nSent: Monday, February 11, 2008 2:15 PM\n\nTo: s-news at lists.biostat.wustl.edu\n\nSubject: [S] powerpoint\n\n \n\nHi,\n\n \n\nWith\nthe graphical user interface, it is possible to export a series of graphs to\npowerpoint with File/Create Powerpoint Presentation.\n\n \n\nDoes\nthere exist a command for this task, such that I can use it in a script?\n\n \n\nThanks,\n\nPaul\nQuataert\n\n \n\n \n\n Paul\n Quataert\n\n Coördinator\n BMK (biometrie, methodologie en kwaliteitszorg)\n\n \n\nInstituut\nvoor Natuur- en Bosonderzoek (INBO)\n\nResearch\nInstitute for Nature and Forest \n\nGaverstraat\n4\n\nB-9500\nGeraardsbergen\n\n \n\ntel\n++ 32 (0)54 437 136\n\nfax\n++ 32 (0)54 436 160\n\n \n\ne-mail:\npaul.quataert at inbo.be\n\nwww.inbo.be\n\n \n\n______________________________________________________________________\n\nThis email has been scanned by the MessageLabs Email Security System.\n\nFor more information please visit http://www.messagelabs.com/email \n\n______________________________________________________________________\n\n______________________________________________________________________\n\nThis email has been scanned by the MessageLabs Email Security System.\n\nFor more information please visit http://www.messagelabs.com/email \n\n______________________________________________________________________",
+      "body_snippet": "I have wondered the same thing…\n\n \n\n \n\nJason Overstreet\n\nStatistician\n\nASQ: CRE, CQE\n\n \n\nA.O. Smith\n\n106 Adkisson Street\n\nAshland City, TN 37015\n\nOffice: (615) 792-6253\n\nCell: (615) 495-6144\n\nFax: (61",
+      "thread_id": "thread-c79c09d849da",
+      "thread_depth": 1,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-dc3885717d76",
+      "message_id": "<47B0AEE8.8090004@earthlink.net>",
+      "from_name": "Data Analytics Corp.",
+      "from_email_hash": "443479c0b721da0dac0fa3876e0e3e3a1e5a4473b12d210b69baaeb9f46d9845",
+      "date": "2008-02-11T20:24:08Z",
+      "subject": "Re: powerpoint",
+      "subject_clean": "powerpoint",
+      "in_reply_to": "<1D345764276D6B45AEFADB0B8172FCEF035893A9@wpcmail.hotwater.aosmith.org>",
+      "references": [
+        "<2E9C414912813E4EB981326983E0A10404548115@inboexch.inbo.be>",
+        "<1D345764276D6B45AEFADB0B8172FCEF035893A9@wpcmail.hotwater.aosmith.org>"
+      ],
+      "body_plain": "Let me add myself to the wondering list. Knowing a programming command \nwould be a big help.\n\nWalt Paczkowski\n\nOverstreet, Jason wrote:\n> I have wondered the same thing…\n>\n> Jason Overstreet\n>\n> Statistician\n>\n> ASQ: CRE, CQE\n>\n> A.O. Smith\n>\n> 106 Adkisson Street\n>\n> Ashland City, TN 37015\n>\n> Office: (615) 792-6253\n>\n> Cell: (615) 495-6144\n>\n> Fax: (615) 792-2121\n>\n> Email: joverstreet at hotwater.com\n>\n> *From:* s-news-owner at lists.biostat.wustl.edu\n> [mailto:s-news-owner at lists.biostat.wustl.edu] *On Behalf Of *QUATAERT,\n> Paul\n>\n> *Sent:* Monday, February 11, 2008 2:15 PM\n> *To:* s-news at lists.biostat.wustl.edu\n> *Subject:* [S] powerpoint\n>\n> Hi,\n>\n> With the graphical user interface, it is possible to export a series\n> of graphs to powerpoint with File/Create Powerpoint Presentation.\n>\n>\n> Does there exist a command for this task, such that I can use it in a\n> script?\n>\n>\n> Thanks,\n>\n> Paul Quataert\n>\n> Paul Quataert\n>\n> Coördinator BMK (biometrie, methodologie en kwaliteitszorg)\n>\n> Instituut voor Natuur- en Bosonderzoek (INBO)\n>\n> Research Institute for Nature and Forest\n>\n> Gaverstraat 4\n>\n> B-9500 Geraardsbergen\n>\n> tel ++ 32 (0)54 437 136\n>\n> fax ++ 32 (0)54 436 160\n>\n> e-mail: paul.quataert at inbo.be <mailto:paul.quataert at inbo.be>\n>\n> www.inbo.be <http://www.inbo.be/>\n>\n>\n> ______________________________________________________________________\n> This email has been scanned by the MessageLabs Email Security System.\n> For more information please visit http://www.messagelabs.com/email\n> ______________________________________________________________________\n>\n>\n> ______________________________________________________________________\n> This email has been scanned by the MessageLabs Email Security System.\n> For more information please visit http://www.messagelabs.com/email\n> ______________________________________________________________________",
+      "body_snippet": "Let me add myself to the wondering list. Knowing a programming command \nwould be a big help.\n\nWalt Paczkowski\n\nOverstreet, Jason wrote:\n> I have wondered the same thing…\n>\n> Jason Overstreet\n>\n> Stati",
+      "thread_id": "thread-c79c09d849da",
+      "thread_depth": 2,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-8d768b3a01a0",
+      "message_id": "<000a01c86dfe$0c882970$6401a8c0@DellLazrak>",
+      "from_name": "Ali & Hind Lazrak",
+      "from_email_hash": "2c1613e4e7891880069edd73b79cda8ed99762ae0d8641649698cad59edbe35e",
+      "date": "2008-02-13T05:05:27Z",
+      "subject": "need help with setting logistic mixed model",
+      "subject_clean": "need help with setting logistic mixed model",
+      "in_reply_to": null,
+      "references": [
+        "<20080207144343.0285u0yjkk04kc0k@webmail.utoronto.ca>",
+        "<001a01c86ae9$08c9db70$6401a8c0@DellLazrak>"
+      ],
+      "body_plain": "Dear listserve users, \n\n \n\nI need help with the following command line where I \nneed to introduce a random effect for department (variable name: dept) and \nfor job (variable name: job)at the subject (variable name: studyno1) level \n\nI could not find any references on how to do that, \nso your help would be greatly appreciated\n\nCSO.glme.out2<-glme(use~ethn+sex+exposure+jobduration+age+time+time^2+dept+jobgroup,random=~1| \nplant/id,data=\"\">family=binomial(link=\"logit\"),start= \nCSOgee$coefficients, method=\"REPQL\")\n\n \n\nThank you so much in advance.",
+      "body_snippet": "Dear listserve users, \n\n \n\nI need help with the following command line where I \nneed to introduce a random effect for department (variable name: dept) and \nfor job (variable name: job)at the subject (",
+      "thread_id": "thread-3305a8bb8b04",
+      "thread_depth": 2,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-b2f1d18c0336",
+      "message_id": "<96C6A984FE81AF4492020E9281CE67A8011926E1@sewinexch00.insightful.com>",
+      "from_name": "Stella Karuri",
+      "from_email_hash": "e6392e810897df4596c73f7156dee0388dd277d1a91f473848ed42363b529a0d",
+      "date": "2008-02-13T17:32:04Z",
+      "subject": "Re: need help with setting logistic mixed model",
+      "subject_clean": "need help with setting logistic mixed model",
+      "in_reply_to": "<000a01c86dfe$0c882970$6401a8c0@DellLazrak>",
+      "references": [
+        "<20080207144343.0285u0yjkk04kc0k@webmail.utoronto.ca>",
+        "<001a01c86ae9$08c9db70$6401a8c0@DellLazrak>",
+        "<000a01c86dfe$0c882970$6401a8c0@DellLazrak>"
+      ],
+      "body_plain": "The argument ‘random’ can\naccept a list (See Pinheiro, J. C. and Bates., D. M.\n(2000). Mixed-effects Models in S and S-PLUS)\n\n \n\nCSO.glme.out2<-glme(use~ethn+sex+exposure+jobduration+age+time+time^2+dept+jobgroup,\n\n           \nRandom = list ( id =  ~ dept + job – 1,  # exclude intercept to\navoid over fitting\n\n                                  \nplant= ~ 1),  \n\n                                  \ndata = \"\">\n\n \n\nStella\n\nFrom:\ns-news-owner at lists.biostat.wustl.edu\n[mailto:s-news-owner at lists.biostat.wustl.edu] On\nBehalf Of Ali & Hind Lazrak\n\nSent: Tuesday, February 12, 2008\n9:05 PM\n\nTo: s-news at lists.biostat.wustl.edu\n\nSubject: [S] need help with\nsetting logistic mixed model\n\n \n\nDear listserve users, \n\n \n\nI need help with the following command line where I need to\nintroduce a random effect for department (variable name: dept) and for\njob (variable name: job)at the subject (variable name: studyno1) level \n\nI could not find any references on how to do that, so your\nhelp would be greatly appreciated\n\nCSO.glme.out2<-glme(use~ethn+sex+exposure+jobduration+age+time+time^2+dept+jobgroup,random=~1|\nplant/id,data=\"\"\nCSOgee$coefficients, method=\"REPQL\")\n\n \n\nThank you so much in advance.",
+      "body_snippet": "The argument ‘random’ can\naccept a list (See Pinheiro, J. C. and Bates., D. M.\n(2000). Mixed-effects Models in S and S-PLUS)\n\n \n\nCSO.glme.out2<-glme(use~ethn+sex+exposure+jobduration+age+time+time^2+d",
+      "thread_id": "thread-3305a8bb8b04",
+      "thread_depth": 3,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-76784f7a23b5",
+      "message_id": "<u8x1oad3u.fsf@insightful.com>",
+      "from_name": "Tim Hesterberg",
+      "from_email_hash": "006d6c7dc32bd30d08b3192457126eabf59f5d9c77c66b3f4bd6b70dafb4738c",
+      "date": "2008-02-13T19:08:21Z",
+      "subject": "Multiple streams of random numbers",
+      "subject_clean": "Multiple streams of random numbers",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Dear S-news readers:\n\nWe wish to draw your attention to a problem with set.seed(),\nthis affects people who use multiple streams of random numbers.\nThe sequences obtained after\n        set.seed(i1)\n        set.seed(i2)\nare not independent (details and a remedy below).\n\nIn general, it is best to use a single stream of numbers, rather\nthan multiple streams.  In other words, don't call set.seed routinely.\nIf you need to be able to reproduce a result, you can save\nthe value of .Random.seed.  To save the value in a form you can\npaste into a script, use:\n        dput(.Random.seed)\n\nThe dependencies between streams obtained using set.seed(i1) and\nset.seed(i2) are strongest when i1-i2 is a multiple of a large power\nof 2.  The worst case is:\n        set.seed(0)\n        x <- runif(1000)\n        set.seed(512)\n        y <- runif(1000)\nThe points fall in two stripes, rather than filling the unit square.\nIf seeds differ by 256, the points fall in four stripes.\nMore generally, if the seeds differ by a multiple of 2^c, the points\nfall in 2^(10-c) stripes.\n\nA remedy is to use the following function in place of set.seed:\n\nsetSeed <- function(k){\n  # k is an integer, typically in 0:1023\n  #\n  # This is like set.seed(i = 7 * k, tausworthe = k)\n  # (except set.seed ignores tausworthe if i is supplied)\n  # This sets both the congruential and tausworthe seeds, in order\n  # to prevent two subsequences from being dependent, which occurs\n  # if only the congruential seed is set.\n  if(length(k) != 1)\n    stop(\"k must be length 1\")\n  k <- k %% 1024\n  .C(\"setseed\",\n     as.integer(7 * k))\n  .C(\"setseed_tausval\",\n     as.integer(k))\n  invisible()\n}\n\nAnother remedy is to call set.seed() with no arguments.  This sets the\nseed to a random starting location.  However, if you use this\ntechnique with multiple streams and use many random numbers, there is\na (small) chance the streams will overlap.\n\nFor additional information see \nhttp://www.insightful.com/insightful_faq/dsp_article.asp?articleID=33\n\nTim Hesterberg\n\n========================================================\n| Tim Hesterberg       Senior Research Scientist       |\n| timh at insightful.com  Insightful Corp.                |\n| (206)802-2319        1700 Westlake Ave. N, Suite 500 |\n| (206)283-8691 (fax)  Seattle, WA 98109-3044, U.S.A.  |\n|                      www.insightful.com/Hesterberg   |\n========================================================\nDownload S+Resample from www.insightful.com/downloads/libraries\n\nI'll teach short courses:\nAdvanced Programming in S-PLUS: San Antonio TX, March 26-27, 2008.\nBootstrap Methods and Permutation Tests: San Antonio, March 28, 2008.",
+      "body_snippet": "Dear S-news readers:\n\nWe wish to draw your attention to a problem with set.seed(),\nthis affects people who use multiple streams of random numbers.\nThe sequences obtained after\n        set.seed(i1)\n   ",
+      "thread_id": "thread-76784f7a23b5",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-27ee0dd3285c",
+      "message_id": "<C3D9E25D.4EE8%lourdes@disca.upv.es>",
+      "from_name": "Lourdes Pe ñ alver",
+      "from_email_hash": "0a0093d4b59bb49e9b4cdbea975936169c85858687df057e85a213291a5d61e4",
+      "date": "2008-02-14T11:19:41Z",
+      "subject": "SECURWARE 2008 || August 25-31, 2008 - Cap Esterel, France",
+      "subject_clean": "SECURWARE 2008 || August 25-31, 2008 - Cap Esterel, France",
+      "in_reply_to": "<21169978.1201327976656.JavaMail.Onitza@Oana2>",
+      "references": [
+        "<21169978.1201327976656.JavaMail.Onitza@Oana2>"
+      ],
+      "body_plain": "Invitation:\n\nPlease consider to contribute to and distribute to the appropriate groups\nthe following\n\n \nCALL FOR PAPERS, TUTORIALS, PANELS\n=================================\n\nSECURWARE 2008, The Second International Conference on Emerging Security\nInformation, Systems, and Technologies\n\nAugust 25-31, 2008 - Cap Esterel, France\n\nGeneral page: http://www.iaria.org/conferences2008/SECURWARE08.html\n\n \nCall for Papers: http://www.iaria.org/conferences2008/CfPSECURWARE08.html\n \nSubmission deadline: April 5, 2008\n \n\nSubmissions will be peer-reviewed, published by IEEE CPS, posted in IEEE\nDigital Library, and indexed with the major indexes.\n\nExtended versions of selected papers will be invited for specialized\njournals.\n\nSECURWARE 2008 Special Area Tracks (details in the CfP on site):\n\nARCH: Security frameworks, architectures, and protocols\n\nSECMAN: Security management\n\nSECTECH: Security technologies\n\nSYSSEC: System security\n\nINFOSEC: Information security\n\nTHREATS: Security threats\n\nANTIFO: Anti-forensics\n\nPRODAM: Profiling data mining\n\nSECHOME: Smart home security\n\nSECDYN: Security and privacy in dynamic environments\n\nECOSEC: Ecosystem security and trust\n\nCRYPTO: Cryptography\n \n========================================\n\nIARIA Publicity Board\n\n========================================\n\n------ Fin del mensaje reenviado",
+      "body_snippet": "Invitation:\n\nPlease consider to contribute to and distribute to the appropriate groups\nthe following\n\n \nCALL FOR PAPERS, TUTORIALS, PANELS\n=================================\n\nSECURWARE 2008, The Second",
+      "thread_id": "thread-27ee0dd3285c",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-f36e3f37e651",
+      "message_id": "<C3DB2D35.4F47%lourdes@disca.upv.es>",
+      "from_name": "Lourdes Pe ñ alver",
+      "from_email_hash": "0a0093d4b59bb49e9b4cdbea975936169c85858687df057e85a213291a5d61e4",
+      "date": "2008-02-15T10:51:17Z",
+      "subject": "ADVCOMP 2008 || September 29 - October 4, Valencia, Spain || The Second International Conference on Advanced Engineering Computing and Applications in Sciences",
+      "subject_clean": "ADVCOMP 2008 || September 29 - October 4, Valencia, Spain || The Second International Conference on Advanced Engineering Computing and Applications in Sciences",
+      "in_reply_to": "<9963055.1201329516796.JavaMail.Onitza@Oana2>",
+      "references": [
+        "<9963055.1201329516796.JavaMail.Onitza@Oana2>"
+      ],
+      "body_plain": "=================\n\nPlease consider to contribute to and/or forward to the appropriate groups\nthe following opportunity to submit and publish original scientific results.\n\n=================\n \n \n============== ADVCOMP 2008 Call for Papers ===============\n \nCALL FOR PAPERS, TUTORIALS, PANELS\n \n \nADVCOMP 2008, The Second International Conference on Advanced Engineering\nComputing and Applications in Sciences\n\nSeptember 29 - October 4, Valencia, Spain\n\nGeneral page: http://www.iaria.org/conferences2008/ADVCOMP08.html\n\nCall for Papers: http://www.iaria.org/conferences2008/CfPADVCOMP08.html\n \nSubmission deadline: May 5, 2008\n \n\nSubmissions will be peer-reviewed, published by IEEE CPS, posted in IEEE\nDigital Library, and indexed with the major indexes.\n\nExtended versions of selected papers will be invited for specialized\njournals.\n \n\nADVCOMP 2008 Special Area Tracks (details in the CfP on site):\n\nComputing techniques:\n\nHybrid computational methods, Advanced numerical algorithms, Parallel and\ngrid computing, Autonomic computing, Computational logics, Neuronal\nnetworks, Genetic algorithms, Fractals & Superfractal algorithms, Random\ngraph dynamics, Clustering large and high dimensional data, Computation\nGenomic, Biological Sequence analysis, Biomecatronics, System theory and\ncontrol\n\nComputing support:\n\nSupport for scientific problem-solving, Support for decisions,\nAgent-assisted workflow support, Middleware computation support, High\nperformance computing, Problem solving environments, Computational science\nand education\n\nApplication domains:\n\nAdvanced scientific computing, Development of numerical and scientific\nsoftware-based systems, Management of scientific data and knowledge,\nAdvanced computing in bioinformatics and biophysics, Advanced computing in\nmolecular systems and biological systems, Application of engineering methods\nto genetics, Medical computation and graphics, Advanced computing in\nsimulation systems, Advanced computing in mathematics, Advanced computing\nfor statistics and optimization, Advanced computing in operation research,\nAdvanced computing in mechanics and quantum mechanics, Advanced computing in\ncivil engineering, Advanced computing in physics science, Advanced computing\nin chemistry science, Advanced computing for geosciences and meteorology,\nMaps and geo-images building, Curve and surface reconstruction, Financial\ncomputing and forecasting, Advanced computing in economics, Advanced\ncomputing in robotics and manufacturing, Advanced computing on Earth\nscience, geosciences and meteorology, Advanced computing in electronics and\nelectrical science, Advanced computing in power systems, Environmental\nadvanced computing\n\nSemantic processing\n\nFundamental of semantic processing (storing, computing, representation,\ncommunications, etc.) , Semantic-driven system design, Syntactic and\nsemantic processing models, Semantic networking and routing, Hardware and\nsoftware support for semantic processing, Microprocessors for semantic\nprocessing, Multi-model semantic systems, Semantic annotation of multimedia\nsupports, Semantic multimedia information retrieval, Natural language\nsemantic processing, Context-based semantic processing, Content-based\nsemantic processing, Performance in semantic processing, Information\nsecurity in semantic processing, Applications, services and systems based on\nsemantic processing, Speech, text and picture recognition, Semantic email\nworkflow and content, Semantic blogs and wikis, Semantic email addressing,\nSemantic web and digital libraries, Semantic processing for biomedical\nknowledge, Semantic processing in e-Health, Semantic-driven tutoring\nsystems, Semantic processing platforms , Lessons learnt\n\nAdvanced searching for video, voice and speech [VVS]:\n\nEngines and methods for VVS advanced searching, Advanced process for\nmultimedia information mining, Searching using metadata, semantics, and\nontology, Advanced searching in digital libraries, Advanced use of  RDF and\nOWL, Patterns in VVS searching, Contextual VVS searching, Rapid VVS\nsearching, Accuracy in VVS searching, Noise in VVS searching, Performance in\nVVS searching, Metrics for VVS searching, Text and VVS searching,\nApplications of VVS\n\n========================================\n\nIARIA Publicity Board\n\n========================================\n\n------ Fin del mensaje reenviado",
+      "body_snippet": "=================\n\nPlease consider to contribute to and/or forward to the appropriate groups\nthe following opportunity to submit and publish original scientific results.\n\n=================\n \n \n=======",
+      "thread_id": "thread-f36e3f37e651",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-b3a77321d1cc",
+      "message_id": "<0JWE008C0JHN2B20@msg-mx5.usc.edu>",
+      "from_name": "Madeline Bauer",
+      "from_email_hash": "5e2af66884b7a16087c4d8587969617063835bd9b07c64be1ddadc89ef896aef",
+      "date": "2008-02-15T17:31:45Z",
+      "subject": "ASA Southern California Chapter Applied Statistics Workshop",
+      "subject_clean": "ASA Southern California Chapter Applied Statistics Workshop",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "The Southern California\nChapter of the American Statistical Association invites you to attend the\n27th annual Applied Statistics Workshop on Friday March 28, 2008 in The\nPointe at the Pyramid at California State University, Long Beach. \nThe topic is \"The Vital Importance of Adjusting for Patient\nRisk:  Risk Adjustment in Health Services Research\" by\nProfessor Arlene Ash of Boston University. For more information, go to\nwww.sc-asa.org.\nEarly registration deadline is March 11, 2008.\n\n===\n\nMadeline Bauer, Ph.D.       \nUniversity of Southern California\n\nKeck School of Medicine (Infectious Diseases)\n\nIRD Room 620 (MC9520), 2020 Zonal Ave, Los Angeles 90033\n\n(323) 226-2775 [Voice] (FAX by appointment ;-)\n\nmbauer at usc.edu  [Fastest communication method]",
+      "body_snippet": "The Southern California\nChapter of the American Statistical Association invites you to attend the\n27th annual Applied Statistics Workshop on Friday March 28, 2008 in The\nPointe at the Pyramid at Calif",
+      "thread_id": "thread-b3a77321d1cc",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-5dfcacdc0f98",
+      "message_id": "<850510.52893.qm@web53205.mail.re2.yahoo.com>",
+      "from_name": "meteor_shahab at yahoo.com",
+      "from_email_hash": "3e00599c09e7cadc2817705d4e5881dbc10f69046bf76687e01750a7a280a724",
+      "date": "2008-02-17T20:58:44Z",
+      "subject": "NHPP",
+      "subject_clean": "NHPP",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Dear all,\n\nIs there any function or library for simulating\n\nthe Non-Homogenous Poisson Process?\n\n \n\n \n\nSend instant messages to your online friends http://uk.messenger.yahoo.com",
+      "body_snippet": "Dear all,\n\nIs there any function or library for simulating\n\nthe Non-Homogenous Poisson Process?\n\n \n\n \n\nSend instant messages to your online friends http://uk.messenger.yahoo.com",
+      "thread_id": "thread-5dfcacdc0f98",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-174e4ca93c8a",
+      "message_id": "<47B8B29D.7080803@earthlink.net>",
+      "from_name": "Data Analytics Corp.",
+      "from_email_hash": "443479c0b721da0dac0fa3876e0e3e3a1e5a4473b12d210b69baaeb9f46d9845",
+      "date": "2008-02-17T22:18:05Z",
+      "subject": "Tukey-Kramer HSD stat",
+      "subject_clean": "Tukey-Kramer HSD stat",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hi,\n\nDoes anyone have a function to calculate the Tukey-Kramer HSD for an \nANOVA based aov(Y ~ trt, data = x)?\n\nThanks,\n\nWalt Paczkowski",
+      "body_snippet": "Hi,\n\nDoes anyone have a function to calculate the Tukey-Kramer HSD for an \nANOVA based aov(Y ~ trt, data = x)?\n\nThanks,\n\nWalt Paczkowski",
+      "thread_id": "thread-174e4ca93c8a",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-3cc4589d15d8",
+      "message_id": "<ee4b1650802190347k5e229665udb2aea3733bc2bfd@mail.gmail.com>",
+      "from_name": "John Pitchard",
+      "from_email_hash": "27b8cd2553faec1eab2a8d4ddae1744c812a7f632491fa825ecfa79c3a605cf4",
+      "date": "2008-02-19T11:47:32Z",
+      "subject": "running cumulative product",
+      "subject_clean": "running cumulative product",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Dear All,\n\nI want to produce a running cumulative product. For example, if I have \n\n \n\nx <- seq(0.1, 2, 0.1)\n> x\n [1] 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0\n \n\n \n\nThen I want a sequence taking each pair of numbers, i.e. 0.1 and 0.2 (calculate the product), 0.2 and 0.3 (calculate the product), 0.3 and 0.4 (calculate the product),..., 1.9 and 2.0 (calculate the product). So I get a vector of length 18 in this example (20 -2). The vector will look something like this:\n\n \n\n0.02  0.06.... 3.8\n\n \n\nDoes anyone know an efficient way to generate this sequence?\n\n \n\nMany thanks in advance.\n\nRegards,\n\nJohn",
+      "body_snippet": "Dear All,\n\nI want to produce a running cumulative product. For example, if I have \n\n \n\nx <- seq(0.1, 2, 0.1)\n> x\n [1] 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0\n \n",
+      "thread_id": "thread-3cc4589d15d8",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-8aaabacc9e3e",
+      "message_id": "<47BAC222.8080401@mango-solutions.com>",
+      "from_name": "Romain Francois",
+      "from_email_hash": "b9d2e46d3033f07ff80e5a76fd7ec7d72d03566990f3afa71d2947985c4eb48d",
+      "date": "2008-02-19T11:48:50Z",
+      "subject": "Re: running cumulative product",
+      "subject_clean": "running cumulative product",
+      "in_reply_to": "<ee4b1650802190347k5e229665udb2aea3733bc2bfd@mail.gmail.com>",
+      "references": [
+        "<ee4b1650802190347k5e229665udb2aea3733bc2bfd@mail.gmail.com>"
+      ],
+      "body_plain": "Hi,\n\nYou can do this:\n\n> x[-1]*x[-length(x)]\n[1] 0.02 0.06 0.12 0.20 0.30 0.42 0.56 0.72 0.90 1.10 1.32 1.56 1.82 \n2.10 2.40\n\n[16] 2.72 3.06 3.42 3.80\n\nIn (recent version of) R, you could do:\n\n> head(x,-1)*tail(x,-1)\n[1] 0.02 0.06 0.12 0.20 0.30 0.42 0.56 0.72 0.90 1.10 1.32 1.56 1.82 \n2.10 2.40\n\n[16] 2.72 3.06 3.42 3.80\n\nCheers,\n\nRomain\n\n--\nMango Solutions\ndata analysis that delivers\n\nIntroduction to R training course :: London :: 06-07 March 2008\nhttp://www.mango-solutions.com/services/rtraining/r_intro.html\n\nJohn Pitchard wrote:\n>\n> Dear All,\n>\n> I want to produce a running cumulative product. For example, if I have\n>\n> x <- seq(0.1, 2, 0.1)\n>\n> > x\n>  [1] 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6\n> 1.7 1.8 1.9 2.0\n>\n>\n> Then I want a sequence taking each pair of numbers, i.e. 0.1 and 0.2\n> (calculate the product), 0.2 and 0.3 (calculate the product), 0.3 and\n> 0.4 (calculate the product),..., 1.9 and 2.0 (calculate the product).\n> So I get a vector of length 18 in this example (20 -2). The vector\n> will look something like this:\n>\n> 0.02  0.06.... 3.8\n>\n> Does anyone know an efficient way to generate this sequence?\n>\n> Many thanks in advance.\n>\n> Regards,\n> John\n>",
+      "body_snippet": "Hi,\n\nYou can do this:\n\n> x[-1]*x[-length(x)]\n[1] 0.02 0.06 0.12 0.20 0.30 0.42 0.56 0.72 0.90 1.10 1.32 1.56 1.82 \n2.10 2.40\n\n[16] 2.72 3.06 3.42 3.80\n\nIn (recent version of) R, you could do:\n\n> head(",
+      "thread_id": "thread-3cc4589d15d8",
+      "thread_depth": 1,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-58d93c0fc913",
+      "message_id": "<71FCE11FBF31DF4D86510341A13496E602C92277@rbamsem2.emea.roche.com>",
+      "from_name": "Jordan, Paul",
+      "from_email_hash": "7992eba4f35bd1af3548ae10ddc345e8233be465c6cb366d654edcf4ccb8766e",
+      "date": "2008-02-19T15:35:00Z",
+      "subject": "Re: running cumulative product",
+      "subject_clean": "running cumulative product",
+      "in_reply_to": "<ee4b1650802190347k5e229665udb2aea3733bc2bfd@mail.gmail.com>",
+      "references": [
+        "<ee4b1650802190347k5e229665udb2aea3733bc2bfd@mail.gmail.com>"
+      ],
+      "body_plain": "Hi John,\n \ntry:\n \nx[-length(x)]*x[-1]\n \nHave Fun!\nPaul\n\n________________________________\n\nFrom: John Pitchard [mailto:johnpitchard at googlemail.com] \nSent: Tuesday, February 19, 2008 12:48 PM\nTo: s-news at lists.biostat.wustl.edu\nSubject: running cumulative product\n\n\n \nDear All,\nI want to produce a running cumulative product. For example, if I have \n \nx <- seq(0.1, 2, 0.1)\n> x\n [1] 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7\n1.8 1.9 2.0\n \n \nThen I want a sequence taking each pair of numbers, i.e. 0.1 and 0.2\n(calculate the product), 0.2 and 0.3 (calculate the product), 0.3 and\n0.4 (calculate the product),..., 1.9 and 2.0 (calculate the product). So\nI get a vector of length 18 in this example (20 -2). The vector will\nlook something like this:\n \n0.02  0.06.... 3.8\n \nDoes anyone know an efficient way to generate this sequence?\n \nMany thanks in advance.\nRegards,\nJohn",
+      "body_snippet": "Hi John,\n \ntry:\n \nx[-length(x)]*x[-1]\n \nHave Fun!\nPaul\n\n________________________________\n\nFrom: John Pitchard [mailto:johnpitchard at googlemail.com] \nSent: Tuesday, February 19, 2008 12:48 PM\nTo: s-n",
+      "thread_id": "thread-3cc4589d15d8",
+      "thread_depth": 1,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-4671581c7189",
+      "message_id": "<uablw79d2.fsf@insightful.com>",
+      "from_name": "Tim Hesterberg",
+      "from_email_hash": "006d6c7dc32bd30d08b3192457126eabf59f5d9c77c66b3f4bd6b70dafb4738c",
+      "date": "2008-02-20T00:35:37Z",
+      "subject": "Re: NHPP",
+      "subject_clean": "NHPP",
+      "in_reply_to": "<850510.52893.qm@web53205.mail.re2.yahoo.com>",
+      "references": [
+        "<850510.52893.qm@web53205.mail.re2.yahoo.com>"
+      ],
+      "body_plain": ">Is there any function or library for simulating\n>the Non-Homogenous Poisson Process?\n\nYou can generate observations from a homogeneous Poisson\nprocess, then transform the times.\n\nIf the intensity is given by f(t), with F(t) = \\int_0^t f(u) du,\nand (u1, u2, ...) are generated from a Poisson process\nwith constant rate 1, then solve\n        F(tk) = uk\nfor k = 1, 2, ...\n\nThe 'solveNonlinear' function in library(resample) would be\nuseful for this.  If you can't express F in in closed form,\nthen a combination of 'approx' and 'CumIntegrate' could be used.\n\nCumIntegrate <- function(f, a = 0, b = 1, nintervals = 5, ...){\n  # Cumulative integral.  f is a function, a and b are endpoints\n  # return list(x,y) of two vectors,    \n  # where x = seq(a, b, length = nintervals)\n  # and   y = \\int_a^{x} f(t) dt\n  #\n  # 10-point Gaussian on each of nintervals subintervals\n  # Assume that f can take a vector argument\n  ends <- seq(a, b, len = nintervals + 1)\n  h <- (b - a)/(2 * nintervals)    #half-width of a single subinterval\n  mids <- (ends[-1] + ends[1:nintervals])/2\n  x <- c(0.14887433898163099, 0.43339539412924699, 0.67940956829902399,\n        0.86506336668898498, 0.97390652851717197)\n  wt <- c(0.29552422471475298, 0.26926671930999602, 0.21908636251598201,\n         0.149451349150581, 0.066671344308687999)\n  xvalues <- outer(h * c( - x, x), mids, \"+\")\n  list( x = ends,\n       y = c(0,h*cumsum(colSums( matrix( wt*f(c(xvalues), ...), 10)))))\n}\n\n========================================================\n| Tim Hesterberg       Senior Research Scientist       |\n| timh at insightful.com  Insightful Corp.                |\n| (206)802-2319        1700 Westlake Ave. N, Suite 500 |\n| (206)283-8691 (fax)  Seattle, WA 98109-3044, U.S.A.  |\n|                      www.insightful.com/Hesterberg   |\n========================================================\nDownload S+Resample from www.insightful.com/downloads/libraries\n\nI'll teach short courses:\n  Advanced Programming in S-PLUS: San Antonio TX, March 26-27, 2008.\n  Bootstrap Methods and Permutation Tests: San Antonio, March 28, 2008.\nLinks for more info are at www.insightful.com/Hesterberg",
+      "body_snippet": ">Is there any function or library for simulating\n>the Non-Homogenous Poisson Process?\n\nYou can generate observations from a homogeneous Poisson\nprocess, then transform the times.\n\nIf the intensity is ",
+      "thread_id": "thread-5dfcacdc0f98",
+      "thread_depth": 1,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-a0a451df6c3b",
+      "message_id": "<002d01c87376$87100b90$9602a8c0@cgglappie>",
+      "from_name": "Christopher G. Green (L)",
+      "from_email_hash": "220f1d706d8804628a129c11710f4cd9b6f94e75e14e894d870be4f18323b54f",
+      "date": "2008-02-20T04:10:27Z",
+      "subject": "documentation for 'minimal' option of 'sample' command",
+      "subject_clean": "documentation for 'minimal' option of 'sample' command",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Does any one know of a reference that explains the algorithm used for the\n'minimal' option to the 'sample' command in S-Plus 7 and higher? The help\npage for 'sample' does not give a reference; nor does the source code for\n'sample.default'.\n\nThanks,\n\nChris Green",
+      "body_snippet": "Does any one know of a reference that explains the algorithm used for the\n'minimal' option to the 'sample' command in S-Plus 7 and higher? The help\npage for 'sample' does not give a reference; nor doe",
+      "thread_id": "thread-a0a451df6c3b",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-a18dc7abd68a",
+      "message_id": "<uprusmera.fsf@insightful.com>",
+      "from_name": "Tim Hesterberg",
+      "from_email_hash": "006d6c7dc32bd30d08b3192457126eabf59f5d9c77c66b3f4bd6b70dafb4738c",
+      "date": "2008-02-20T04:30:01Z",
+      "subject": "Re: documentation for 'minimal' option of 'sample' command",
+      "subject_clean": "documentation for 'minimal' option of 'sample' command",
+      "in_reply_to": "<002d01c87376$87100b90$9602a8c0@cgglappie>",
+      "references": [
+        "<002d01c87376$87100b90$9602a8c0@cgglappie>"
+      ],
+      "body_plain": ">Does any one know of a reference that explains the algorithm used for the\n>'minimal' option to the 'sample' command in S-Plus 7 and higher? The help\n>page for 'sample' does not give a reference; nor does the source code for\n>'sample.default'.\n\nFirst a quick plug - sampling with minimal replacement would be useful\nin many situations that people currently use sampling with replacement,\nfor example in SIR (sampling importance-resampling), to convert\na set of observations with unequal weights to a set with equal weights.\n\nIn the case of sampling with equal probabilities:\n\nIf 'minimal=TRUE', then\nsampling is with minimal replacement--if 'size>n' then\neach observation is included 'size %/% n' times,\nthen the remaining draws taken without replacement.\n\nIn the case of unequal probabilities:\n\nIf 'minimal=TRUE', then the probability of selecting observation 'j'\nequals 'size*j', and every permutation of a set of outcomes has the\nsame probability of being chosen (assuming 'order=T').  The algorithm\nrandomly permutes the values and corresponding probabilities, divides\nthe unit interval into blocks of length proportional to 'prob', does a\nsystematic sample of 'size' random numbers uniformly on the unit\ninterval, selects the observations for which the uniform numbers fall\ninto the corresponding blocks, then does a final random permutation\n(if 'order=TRUE').  \"Minimal replacement\" is not taken literally in\nthe unequal probability case - if 'size*max(prob)>1' than duplicates\nmay occur, and if '>2' then duplicates are guaranteed.\n\nThe above text is from the help file for the next version of S-PLUS.\nIf you have suggestions for improvement please let me know.\n\nTim Hesterberg\n\n========================================================\n| Tim Hesterberg       Senior Research Scientist       |\n| timh at insightful.com  Insightful Corp.                |\n| (206)802-2319        1700 Westlake Ave. N, Suite 500 |\n| (206)283-8691 (fax)  Seattle, WA 98109-3044, U.S.A.  |\n|                      www.insightful.com/Hesterberg   |\n========================================================\nDownload S+Resample from www.insightful.com/downloads/libraries\n\nI'll teach short courses:\n  Advanced Programming in S-PLUS: San Antonio TX, March 26-27, 2008.\n  Bootstrap Methods and Permutation Tests: San Antonio, March 28, 2008.\nLinks for more info are at www.insightful.com/Hesterberg",
+      "body_snippet": ">Does any one know of a reference that explains the algorithm used for the\n>'minimal' option to the 'sample' command in S-Plus 7 and higher? The help\n>page for 'sample' does not give a reference; nor ",
+      "thread_id": "thread-a0a451df6c3b",
+      "thread_depth": 1,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-a0ffa683e053",
+      "message_id": "<47BD5766.5860.00D0.0@commerce.nsw.gov.au>",
+      "from_name": "Debabrata Midya",
+      "from_email_hash": "8246958c275f16788fea57b6b1c0336f00c8f29527ceb91095c0918cf2e8cfa9",
+      "date": "2008-02-20T23:50:15Z",
+      "subject": "To convert a R package (gafit) to S-PLUS",
+      "subject_clean": "To convert a R package (gafit) to S-PLUS",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Dear S-PLUS users,\n\nI need you assistance to convert a R package (gafit) to S-PLUS and\nthanks in advance.\n\nI have described below the steps followed.\n\nI am using Enterprise Developer Version 8.0.4  of S-PLUS on Microsoft\nWindows : 2007\n\nSTEP 1:\n\nI have installed pkgutis and loaded using library(pkgutils).\n\nSTEP 2:\n\nI have downloaded gafit_0.4.tar.gz and unpacked the package using tar\ncommand:\n\ntar -xzf gafit_0.4.tar.gz\n\nIt creates a directory D:\\Analytics\\gafit with the sub-directries,\n\\man, \\src and \\R, etc.\n\nSTEP 3:\n\nAt the DOS prompt:\n\nD:\\Analytics>Splus CMD check gafit\n\n1. Log file\n\nThe file 00check.log appears in the directory,\nD:\\Analytics\\gafit.Rcheck\n\nThe contents of the file 00check.log (start):\n\n* using log directory 'D:/Analytics/gafit.Rcheck'                      \n        \n* using S-PLUS Enterprise Developer Version 8.0.4  for Microsoft\nWindows : 2007 \n* checking for file 'gafit/DESCRIPTION' ... OK                         \n        \n* this is package 'gafit' version '0.4'                                \n        \n* checking if this is a source package ... OK                          \n        \n* checking package directory ... OK                                    \n        \n* checking for portable file names ... OK                              \n        \n* checking DESCRIPTION meta-information ... OK                         \n        \n* checking index information ... OK                                    \n        \n* checking package subdirectories ... OK                               \n        \n* checking R files for syntax errors ... OK                            \n        \n* checking R files for library.dynam ... OK                            \n        \n* checking Rd \\usage sections ... OK                                   \n        \n* checking for CRLF line endings in C/C++/Fortran sources/headers ...\nOK\n\nThe contents of the file 00check.log (end):\n\nThe following lines also appear (not recorded in 00check.log) while\nexecuting Splus CMD check gafit\n----------------------------------------------------------------------------------------------------\n\nC:\\Program Files\\Insightful\\splus80\\share\\perl\\INSTALL.pl: Splus\noutput:\n\n'nmake' is not recognized as an internal or external command, operable\nprogram or batch file.\n\nSHLIB: make_clean ...\n\nProblem in SHLIB: Problem running the make command at C:\\Program\nFiles\\Insightful\\splus80\\share\\perl/Splus/SHLIB.pm line 270\n\nSTEP 4:\n\nD:\\Analytics>Splus CMD build gafit\n\npkgdir=gafit, pkgname=gafit\n  adding: gafit/ (244 bytes security) (stored 0%)\n  adding: gafit/COPYING (164 bytes security) (deflated 62%)\n  adding: gafit/DESCRIPTION (164 bytes security) (deflated 40%)\n  adding: gafit/man/ (244 bytes security) (stored 0%)\n  adding: gafit/man/gafit.Rd (164 bytes security) (deflated 58%)\n  adding: gafit/R/ (244 bytes security) (stored 0%)\n  adding: gafit/R/gafit.R (164 bytes security) (deflated 48%)\n  adding: gafit/R/zzz.R (164 bytes security) (deflated 9%)\n  adding: gafit/src/ (244 bytes security) (stored 0%)\n  adding: gafit/src/gafit.c (164 bytes security) (deflated 65%)\nCompressed package is D:\\Analytics\\gafit_0.4.zip\nRemoving temporary directory\nC:/DOCUME~1/MidyaD/LOCALS~1/Temp/Spkg1948f63a00\nD:\\Analytics\\gafit_0.4.zip\n\nSTEP 5:\n\nD:\\Analytics>Splus CMD INSTALL -l gafit gafit_0.4.zip\n\nArchive:  gafit_0.4.zip\n   creating: gafit/                \n  inflating: gafit/COPYING           \n  inflating: gafit/DESCRIPTION       \n   creating: gafit/man/            \n  inflating: gafit/man/gafit.Rd      \n   creating: gafit/R/              \n  inflating: gafit/R/gafit.R         \n  inflating: gafit/R/zzz.R           \n   creating: gafit/src/            \n  inflating: gafit/src/gafit.c       \nInstalling S code to directory C:/DOCUME~1/MidyaD/LOCALS~1/Temp/gafit\nfrom the 2 file(s) gafit.R, zzz.R\nC:\\Program Files\\Insightful\\splus80\\share\\perl\\INSTALL.pl: Splus\noutput:\n\n'nmake' is not recognized as an internal or external command, operable\nprogram or batch file.\n\nSHLIB: make_clean ...\n\nProblem in SHLIB: Problem running the make command at C:\\Program\nFiles\\Insightful\\splus80\\share\\perl/Splus/SHLIB.pm line 270\n\nThis does not create a library called gafit in C:\\Program\nFiles\\Insightful\\splus80\\library\n\nOnce again, thank you very much for the time you have given.\n\nRegards,\n\nDebabrata Midya (Deb)\nNSW Department of Commerce\nPolicy Support Services\nLevel 11\nMcKell Building\n2-24 Rawson Place\nSydney NSW 2000\n\nPh.  (02) 9372 8918\nFax. (02) 9372 8844\nE-mail: debabrata.midya at commerce.nsw.gov.au \n\n******************************************************************************\n\nThis email message, including any attached files, is confidential and\nintended solely for the use of the individual or entity to whom it is\naddressed. \n\nThe NSW Department of Commerce prohibits the right to publish, \ncopy, distribute or disclose any information contained in this email, \nor its attachments, by any party other than the intended recipient. \nIf you have received this email in error please notify the sender and\ndelete it from your system.\n\nNo employee or agent is authorised to conclude any binding \nagreement on behalf of the NSW Department of Commerce by email. The\nviews or opinions presented in this email are solely those of the author\nand do not necessarily represent those of the Department, \nexcept where the sender expressly, and with authority, states them to be\nthe views of NSW Department of Commerce.  \n\nThe NSW Department of Commerce accepts no liability for any loss or\ndamage arising from the use of this email and recommends that the\nrecipient check this email and any attached files for the presence of\nviruses. \n\n******************************************************************************",
+      "body_snippet": "Dear S-PLUS users,\n\nI need you assistance to convert a R package (gafit) to S-PLUS and\nthanks in advance.\n\nI have described below the steps followed.\n\nI am using Enterprise Developer Version 8.0.4  of",
+      "thread_id": "thread-a0ffa683e053",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-f3049f076db4",
+      "message_id": "<BAY105-W2497D54F0906B854805378B61D0@phx.gbl>",
+      "from_name": "jose Bartolomei",
+      "from_email_hash": "c78bb848e0f845900be6d71f5a84ef857ef3eaa50f9ee85c3a213bfbb39d0446",
+      "date": "2008-02-22T15:43:29Z",
+      "subject": "BRFSS & SPlus",
+      "subject_clean": "BRFSS & SPlus",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Dear S-Plus users,\n\n \n\nI will like to contact anyone who has work with the \n\nBehavioral Risk Factor Surveillance Survey (BRFSS) data in S-Plus.\n\n \n\nSpecifically, how you have use the weight vector for the prevalence calculation and for generalized lineal modeling\n\n \n\nIn addition to the above e-mail you can write to me at jbartolomei at salud.gov.pr\n\n \n\nThanks in advance,\n\nJose\n\nClimb to the top of the charts! Play the word scramble challenge with star power. Play now!",
+      "body_snippet": "Dear S-Plus users,\n\n \n\nI will like to contact anyone who has work with the \n\nBehavioral Risk Factor Surveillance Survey (BRFSS) data in S-Plus.\n\n \n\nSpecifically, how you have use the weight vector for",
+      "thread_id": "thread-f3049f076db4",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-d6191c894350",
+      "message_id": "<47C223D7.2020607@earthlink.net>",
+      "from_name": "Data Analytics Corp.",
+      "from_email_hash": "443479c0b721da0dac0fa3876e0e3e3a1e5a4473b12d210b69baaeb9f46d9845",
+      "date": "2008-02-25T02:11:35Z",
+      "subject": "subsetting a dataframe",
+      "subject_clean": "subsetting a dataframe",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hi,\n\nI wrote a function, say foo, part of which subsets a dataframe.  Let's \nsay the dataframe is df with columns\n\nx   y   z\n1   1   1\n1   1   0\n1   0   1\n1   0   0\n0   1   1\n0   1   0\n0   0   1\n0   0   0\n\nand I want the subset such that x == 1.  I normally just use\n\ndf[df$x == 1, ]\n\nBut what if I want to include the subsetting variable in an argument \nlist so that I could switch between x, y and z depending on the \nproblem?  Let the argument be sub and the call be, say, foo(sub = \"x\") \nor foo(sub = \"z\").  I can't figure out what to write in place of df[df$x \n== 1,].  Does anyone know how to do this?\n\nThanks,\n\nWalt Paczkowski",
+      "body_snippet": "Hi,\n\nI wrote a function, say foo, part of which subsets a dataframe.  Let's \nsay the dataframe is df with columns\n\nx   y   z\n1   1   1\n1   1   0\n1   0   1\n1   0   0\n0   1   1\n0   1   0\n0   0   1\n0   0",
+      "thread_id": "thread-d6191c894350",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-443985c51c40",
+      "message_id": "<47C2AD2C.1040403@earthlink.net>",
+      "from_name": "Data Analytics Corp.",
+      "from_email_hash": "443479c0b721da0dac0fa3876e0e3e3a1e5a4473b12d210b69baaeb9f46d9845",
+      "date": "2008-02-25T11:57:32Z",
+      "subject": "subsetting question",
+      "subject_clean": "subsetting question",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Good morning,\n\nI posted a query last night about subsetting a dataframe within a \nfunction.  I received several replies all of which told me to use\n\n               df[df[, sub] == 1, , drop = FALSE]\n\nwhere sub is an argument to the function.  This may be of interest to \nothers.\n\nThanks for the help.\n\nWalt Paczkowski",
+      "body_snippet": "Good morning,\n\nI posted a query last night about subsetting a dataframe within a \nfunction.  I received several replies all of which told me to use\n\n               df[df[, sub] == 1, , drop = FALSE]\n\n",
+      "thread_id": "thread-443985c51c40",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-592e8af33ef9",
+      "message_id": "<98BC938D4C400844A6AC00C6952BD523019817@Pegasus.germany.evotecoai.com>",
+      "from_name": "Ilouga, Pierre",
+      "from_email_hash": "c29c9581558c8e34fa6ce2075a370835a63c8ec2c1e6e77eb566dd1304cef51c",
+      "date": "2008-02-25T14:05:43Z",
+      "subject": "NLS: Error with the summary function",
+      "subject_clean": "NLS: Error with the summary function",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Dear all,\n\nI’m wondering what is going on in this simple example. Sorry for the length of the e-mail. There was no other way to describe the problem.\n\nLet  the 4x2 data frame X <- data.frame(Log.conc= c(-4.04920,  -3.61423,  -3.17926,  -2.74429), inh= c(9.930, 20.345, 23.915, 50.495) ).\n\nThe objective is to perform a simple nonlinear regression with “Log.conc” being the design and “inh” the dependent variable. \n\nFor this purpose the two models (resulting in sigmoidal shaped curves)  mdl.1 and mdl.2 were tried.\n\nThe start points for both runs are p1.start = 20.34500;   p3.start = -3.61423;   p4.start = 1.00000\n\nRUN_1:\n\nmdl.1 <-   inh ~ (p1 + (50.495 - p1)/(1 + 10^((p3 - Log.conc) * p4)))\n\nM1 <- nls(mdl.1  , data=\"\" start=list(p1=p1.start, p3=p3.start, p4=p4.start) )    yields \n\n> M1\n\nResidual sum of squares : 53.89067 \n\nparameters:\n\n       p1        p3       p4 \n\n 15.05986 -3.087366 5.115297\n\n> names(summary(M1))\n\n[1] \"parameters\"   \"sigma\"        \"df\"           \"cov.unscaled\" \"correlation\" \n\n[6] \"formula\"     \n\nas  expected.\n\nRUN_2: (replacing  “p1” by the “expected value”  p1 = 20.345   in  mdl.1)\n\nmdl.2 <-  inh ~ (20.345 + (50.495 - 20.345)/(1 + 10^((p3 - Log.conc) * p4)))\n\nM2 <- nls(mdl.2  , data=\"\" start=list(p3=p3.start, p4=p4.start) )    results in  \n\nResidual sum of squares : 108.4723 \n\nparameters:\n\n        p3       p4 \n\n -3.141419 23.02177\n\nBut \n\n> summary(M2)\n\nProblem in backsolve(R, rinv): Zero diagonal in column 2 \n\nUse traceback() to see the call stack\n\nThe question is: what is the reason for this error message?\n\nS-PLUS : Copyright (c) 1988, 2002 Insightful Corp.\n\nS : Copyright Lucent Technologies, Inc.\n\nVersion 6.1.2 Release 2 for Linux 2.2.12 : 2002\n\nWorking data will be in .Data\n\nDr. Pierre Ilouga\n\nScreening Operations/Discovery Informatics\n\nEVOTEC AG\n\nSchnackenburgallee 114\n\n22525 Hamburg\n\nGermany\n\npierre.ilouga at evotec.com\n\nwww.evotec.com\n\nEvotec AG Hamburg. Amtsgericht Hamburg HRB 68223\nVorstand: \nJörn Aldag (Vorsitzender), Dr. Klaus Maleck und Dr. Mario \nPolywka\nAufsichtsratsvorsitzender: Prof. Dr. Dr. h.c. mult. Heinz \nRiesenhuber",
+      "body_snippet": "Dear all,\n\nI’m wondering what is going on in this simple example. Sorry for the length of the e-mail. There was no other way to describe the problem.\n\nLet  the 4x2 data frame X <- data.frame(Log.conc=",
+      "thread_id": "thread-592e8af33ef9",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-e0cf4b67f295",
+      "message_id": "<98E71350C6A4B04CB82CDCAF06D73070039C2D@wpcmail.hotwater.aosmith.org>",
+      "from_name": "Overstreet, Jason",
+      "from_email_hash": "c32c8e49ae3662b759996f99998601e7c90bf71b5b0160a2f811adf6591af2fb",
+      "date": "2008-02-25T14:40:18Z",
+      "subject": "WinBugs",
+      "subject_clean": "WinBugs",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Two part question here:\n\n1)      Is there a basic methods book that teaches statistics from a Bayesian point of view (undergraduate level would okay).  Looking for recommendations to show non-statisticians these methods.\n\n2)      What is the best applied Bayesian methods book that uses WinBugs as the software to employee techniques (graduate or senior level undergraduate here). Teach myself Winbugs…\n\nThanks in advance.\n\nJason Overstreet\n\nStatistician\n\nASQ: CRE, CQE\n\nA.O. Smith\n\n106 Adkisson Street\n\nAshland City, TN 37015\n\nOffice: (615) 792-6253\n\nCell: (615) 495-6144\n\nFax: (615) 792-2121\n\nEmail: joverstreet at hotwater.com\n\n______________________________________________________________________\n\nThis email has been scanned by the MessageLabs Email Security System.\n\nFor more information please visit http://www.messagelabs.com/email \n\n______________________________________________________________________",
+      "body_snippet": "Two part question here:\n\n1)      Is there a basic methods book that teaches statistics from a Bayesian point of view (undergraduate level would okay).  Looking for recommendations to show non-statisti",
+      "thread_id": "thread-e0cf4b67f295",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-e903e85122eb",
+      "message_id": "<61D7107976B46045BFCAA8BD301E8295525DA1@nc2kexch01.insightful.com>",
+      "from_name": "Michael O'Connell",
+      "from_email_hash": "b5f586d4cb47fc8efed167d873c229738132362f92f7a88c7a971b04fb1ad3e9",
+      "date": "2008-02-25T15:41:42Z",
+      "subject": "Re: WinBugs",
+      "subject_clean": "WinBugs",
+      "in_reply_to": "<98E71350C6A4B04CB82CDCAF06D73070039C2D@wpcmail.hotwater.aosmith.org>",
+      "references": [
+        "<98E71350C6A4B04CB82CDCAF06D73070039C2D@wpcmail.hotwater.aosmith.org>"
+      ],
+      "body_plain": "Hi Jason\n\n \n\nwe have a new offering, S+flexBayes, that is about to go in \nto beta testing. Let me know if you want to be a part of \nthis.\n\n \n\nRe. a methods book, we \nrecommend Bayesian Data Analysis \nby Gelman, Carlin, Stern, and Rubin.  This text does require an \nunderstanding of basic calculus. \n\n \n\ngood \nluck!\n\nMichael\n\nFrom: s-news-owner at lists.biostat.wustl.edu \n[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Overstreet, \nJason\nSent: Monday, February 25, 2008 9:40 AM\nTo: \ns-news at lists.biostat.wustl.edu\nSubject: [S] \nWinBugs\n\nTwo part question here:\n\n1)      Is there a basic methods \nbook that teaches statistics from a Bayesian point of view (undergraduate level would okay).  Looking for recommendations to \nshow non-statisticians these methods.\n\n2)      What is the best applied Bayesian methods \nbook that uses \nWinBugs as \nthe software to employee techniques (graduate or senior level undergraduate \nhere). Teach myself Winbugs…\n\n  \n    \n\nThanks in advance.\n\nJason \nOverstreet\n\nStatistician\n\nASQ: CRE, \nCQE\n\nA.O. \nSmith\n\n106 Adkisson \nStreet\n\nAshland City, TN \n37015\n\nOffice: (615) \n792-6253\n\nCell: (615) \n495-6144\n\nFax: (615) \n792-2121\n\nEmail: \njoverstreet at hotwater.com\n\n______________________________________________________________________\nThis \nemail has been scanned by the MessageLabs Email Security System.\nFor more \ninformation please visit http://www.messagelabs.com/email \n\n______________________________________________________________________",
+      "body_snippet": "Hi Jason\n\n \n\nwe have a new offering, S+flexBayes, that is about to go in \nto beta testing. Let me know if you want to be a part of \nthis.\n\n \n\nRe. a methods book, we \nrecommend Bayesian Data Analysis \n",
+      "thread_id": "thread-e0cf4b67f295",
+      "thread_depth": 1,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-5dab197a2fc4",
+      "message_id": "<D962B26776D94847B80C849281F4838401256221@MAPIUDEM.sim.umontreal.ca>",
+      "from_name": "Kassir Nastya",
+      "from_email_hash": "35714c48cf0e7ae7e160daf4890c82fbabec2068ffca46acf732b17cccf3397a",
+      "date": "2008-02-25T15:54:29Z",
+      "subject": "Interrupted time series analysis",
+      "subject_clean": "Interrupted time series analysis",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hi everyone,\nI'm trying to study the impact of different interventions, applied over 3 \nyears, on the rate of a disease. Previous studies used the interrupted time \nseries analysis. How can i do this type of analysis with S-plus?\n \nThanks in advance and i appreciate any help in this concern. \n \nNastya Kassir\nÉtudiante Ph.D. Sciences Pharmaceutiques\nUniversité de Montréal\nFaculté de Pharmacie\nPavillon Jean-Coutu\nLocal 3173\nTel : 343-6111 ext 0388\nFAX : 343-7073",
+      "body_snippet": "Hi everyone,\nI'm trying to study the impact of different interventions, applied over 3 \nyears, on the rate of a disease. Previous studies used the interrupted time \nseries analysis. How can i do this ",
+      "thread_id": "thread-5dab197a2fc4",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-7c8f8bba3332",
+      "message_id": "<b1f16d9d0802251422lca98076l6d63f8207bc45c3e@mail.gmail.com>",
+      "from_name": "Michael",
+      "from_email_hash": "9db5456bdbd462ce558cd231699c4bfef6bfaa397ef665c21f632fc946726963",
+      "date": "2008-02-25T22:22:08Z",
+      "subject": "Can Splus Workbench do a good job for debugging?",
+      "subject_clean": "Can Splus Workbench do a good job for debugging?",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hi all,\n\nI used to use R, and I felt that the major disadvantage of R\n(comparing to other programming environment) is its lack of good\ndebugging facility.\n\nAs an experienced programmer, the first thing I look at when working\nwith a programming language and/or a programming environment is its\ndebugging facility.\n\nA good debugging facility can sharply reduce the learning curve and\nimprove productivity.\n\nNow I am experimenting with Splus Workbench.\n\nIt seems like a good starting point.\n\nHowever, how can I set those breakpoints? I \"toggled\" many times the\nbreakpoints following the \"Run\" menu, but I just couldn't figure out\nhow to toggle a break point.\n\nAnd how to debug into a function, line by line?\n\nI couldn't figure these things out.\n\nPlease help!\n\nThanks a lot!",
+      "body_snippet": "Hi all,\n\nI used to use R, and I felt that the major disadvantage of R\n(comparing to other programming environment) is its lack of good\ndebugging facility.\n\nAs an experienced programmer, the first thin",
+      "thread_id": "thread-7c8f8bba3332",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-34c06a8c590d",
+      "message_id": "<133133.31044.qm@web36205.mail.mud.yahoo.com>",
+      "from_name": "Nicola Koper",
+      "from_email_hash": "b763fe0315fe1be6c399cb95cefb988e72b9fc182963efb5ee12ac4ed2717e4a",
+      "date": "2008-02-25T22:41:23Z",
+      "subject": "importing data into Splus - numbers changing",
+      "subject_clean": "importing data into Splus - numbers changing",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hi everyone,\n\nOne of my students has found that when she imports\ndata into Splus from Excel, it's changing some of the\nnumbers, such as changing 101.3 to 101.299999. It is\nnot a result of equations or rounding in Excel. Any\nsuggestions for solving this problem?\n\nNicky\n\n      \n____________________________________________________________________________________\nNever miss a thing.  Make Yahoo your home page. \nhttp://www.yahoo.com/r/hs",
+      "body_snippet": "Hi everyone,\n\nOne of my students has found that when she imports\ndata into Splus from Excel, it's changing some of the\nnumbers, such as changing 101.3 to 101.299999. It is\nnot a result of equations or",
+      "thread_id": "thread-34c06a8c590d",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-d6b5b7bc3dc8",
+      "message_id": "<BF6EA021B2A77C46B86FF9112F45972102223BE3@E2K3VS02.lsc.local>",
+      "from_name": "Jimenez-Leal William",
+      "from_email_hash": "68c557605a82ac5ab9e33f06c45697ad2606e6f2bedfd46f5ecb5d8978951a48",
+      "date": "2008-02-26T10:22:15Z",
+      "subject": "Multivariate Multiple Regression",
+      "subject_clean": "Multivariate Multiple Regression",
+      "in_reply_to": "<b1f16d9d0802251422lca98076l6d63f8207bc45c3e@mail.gmail.com>",
+      "references": [
+        "<b1f16d9d0802251422lca98076l6d63f8207bc45c3e@mail.gmail.com>"
+      ],
+      "body_plain": "Hello all,\n\nI am unsuccessfully trying to fit a Multivariate Response Model in S\nplus 7. \nI have students' scores in two exams (A and B) and I want to calculate\nrandom intercepts and slopes for each exam together with their\nVariance-Covariance matrix. In glm (and related functions) it seems I am\nonly allowed to specify one outcome variable (either A or B). Any\nthoughts?\n\nI can do this very easily in MlWin, but can't run it easily in a batch\nmode, which is my final objective. \n\nThanks in adavance\n\nWilliam\n\nConfidentiality and Disclaimer:  This email and its attachments are intended \nfor the addressee \nonly and may be confidential or the subject of legal privilege.  \nIf this email and its attachments have come to you in error you must take no \naction based on \nthem, nor must you copy them, distribute them or show them to anyone.\nPlease contact the sender to notify them of the error.  \nThis email and any attached files have been scanned for the presence of \ncomputer viruses. \n However, you are advised that you open any attachments at your own risk.  \nPlease note that electronic mail may be monitored in accordance with the \nTelecommunications (Lawful Business Practices)(Interception of Communications) \nRegulations \n2000.",
+      "body_snippet": "Hello all,\n\nI am unsuccessfully trying to fit a Multivariate Response Model in S\nplus 7. \nI have students' scores in two exams (A and B) and I want to calculate\nrandom intercepts and slopes for each e",
+      "thread_id": "thread-7c8f8bba3332",
+      "thread_depth": 1,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-2fe0aa2fd3c4",
+      "message_id": "<A23B682083FD8248ADFE1317C82CBD67036D80AA@exchange.branznt.org.nz>",
+      "from_name": "Michael Camilleri",
+      "from_email_hash": "61e5a3d2701ae415abd63bbe6abc4d777214ffc9cb2f7c22840d0ce08198f1b7",
+      "date": "2008-02-26T20:09:40Z",
+      "subject": "Re: importing data into Splus - numbers changing",
+      "subject_clean": "importing data into Splus - numbers changing",
+      "in_reply_to": "<133133.31044.qm@web36205.mail.mud.yahoo.com>",
+      "references": [
+        "<133133.31044.qm@web36205.mail.mud.yahoo.com>"
+      ],
+      "body_plain": "It is possible that Excel has stored the number with all the trailing\nnines. If you expand the number of decimal places you can find out.\n\nSPlus interprets any formatting that Excel has when it decides how to\nimport the data. You could try removing all formatting from Excel. \n\nIf you use the import data menu there is an option for rounding. You can\nround to anything from 1-5 decimal places. You can call this function\nfrom a script as guiImportData()\n\nWhat type of data object are you importing to? If it has single\nprecision floating point it might cause the type of problem you are\nhaving (although you usually have to specifically define this - the\ndefault is double precision).\n\nComputers generally store numbers as double precision floating point,\nand as soon as you start to do anything but the most basic of\nmathematical operations small errors creep in. To illustrate this, run\nthese in SPlus\n\n101.3-101.3\n\n101.3-101-0.3\n\nThe first gives the correct answer of 0, as the double precision\nrepresentation of 101.3 is always the same, so subtracting it from\nitself gives exactly zero.\n\nThe second gives the answer -2.831069e-015, which shows the effect of\ndouble precision calculations.\n\nInterestingly this expression\n\n101.3-0.3-101.0\n\nGives 0 as the result. Order of operation can be important.\n\nThis level of error is not usually a problem, unless you are concerned\nwith very small difference between large numbers, are combining very\nsmall and very large numbers, or need dates accurate to fractions of a\nsecond. \n\nMichael",
+      "body_snippet": "It is possible that Excel has stored the number with all the trailing\nnines. If you expand the number of decimal places you can find out.\n\nSPlus interprets any formatting that Excel has when it decide",
+      "thread_id": "thread-34c06a8c590d",
+      "thread_depth": 1,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-ababc8acdf26",
+      "message_id": "<40E02871B8B84F4FB46FA9F3D898B9DA814162@mb-exch.ensco.win>",
+      "from_name": "Lambert.Winnie",
+      "from_email_hash": "341f36122a2b45d31873dd3b311e715e8a66bd4ebad163754ad185300bce7121",
+      "date": "2008-02-27T13:24:09Z",
+      "subject": "Online Manuals in Help",
+      "subject_clean": "Online Manuals in Help",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "All,\n\n \n\nI have S-Plus 8.0 for Windows Enterprise Developer in the\nWindows XP operating system. I assumed that the Big Data library came with this\nversion, but when I go into Help -> Online Manuals, the Big Data User’s\nGuide is grayed out. However, the pdf file for this guide is in the same\ndirectory as the other manuals. I can open it by going through Windows Explorer,\nbut would prefer to access it through S-Plus. Can someone tell me how to “un-gray”\nthe Big Data User’s Guide link in help? Thanks.\n\n \n\n*****************************************************************\n\nWinifred\nC. Lambert  Senior Scientist/Meteorologist\n\nENSCO,\nInc.\n\nAerospace\nSciences and Engineering Division\n\n1980\nN. Atlantic Ave., Suite 230\n\nCocoa\nBeach, FL  32931\n\nVOICE: \n321.853.8130  FAX:  321.853.8415\n\nEMAIL: \nlambert.winnie at ensco.com\n\n \n\nAMU\nQuarterly Reports are available online:\n\nhttp://science.ksc.nasa.gov/amu\n\n*****************************************************************\n\n \n\nThe information contained in this email message is intended only for the use of the individuals to whom it is\n\naddressed and may contain information that is privileged and sensitive. If the reader of this message is not\n\nthe intended recipient, you are hereby notified that any dissemination, distribution or copying of this\n\ncommunication is strictly prohibited. If you have received this communication in error, please notify the\n\nsender immediately by email at the above referenced address. Thank you.",
+      "body_snippet": "All,\n\n \n\nI have S-Plus 8.0 for Windows Enterprise Developer in the\nWindows XP operating system. I assumed that the Big Data library came with this\nversion, but when I go into Help -> Online Manuals, t",
+      "thread_id": "thread-ababc8acdf26",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-5231342d1092",
+      "message_id": "<47C71598.5030809@noaa.gov>",
+      "from_name": "Kim Elmore",
+      "from_email_hash": "3cd6671ef932770cc8d1186ae3ebf1aa7f121e069148949e0825595f39cb6687",
+      "date": "2008-02-28T20:12:08Z",
+      "subject": "Supersmoother port to C?",
+      "subject_clean": "Supersmoother port to C?",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "This is a bit off topic, but I don't know where else to ask: does anyone \nknow of or have a port of the super smoother routine from FORTRAN to C?\n\nKim Elmore\n\n--\nKim Elmore, Ph.D. (PP SEL/MEL/Gllider, N5OP, 2nd Class Radiotelegraph, GROL)\n\"All weather is divided into three parts: Yes, No and Maybe. The greatest of these \nis maybe.\" -- The original Latin appears to be garbled.",
+      "body_snippet": "This is a bit off topic, but I don't know where else to ask: does anyone \nknow of or have a port of the super smoother routine from FORTRAN to C?\n\nKim Elmore\n\n--\nKim Elmore, Ph.D. (PP SEL/MEL/Gllider,",
+      "thread_id": "thread-5231342d1092",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-c3616f272fd9",
+      "message_id": "<b1f16d9d0802281245r455f7e4dve0a118403bdbb41b@mail.gmail.com>",
+      "from_name": "Michael",
+      "from_email_hash": "9db5456bdbd462ce558cd231699c4bfef6bfaa397ef665c21f632fc946726963",
+      "date": "2008-02-28T20:45:23Z",
+      "subject": "is there a way to compile Splus program into standalone executables?",
+      "subject_clean": "is there a way to compile Splus program into standalone executables?",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hi all,\n\nIs there a way to compile SPlus program into standalone executables?\n\nThe reason for asking this is that I want to have a overall scheduler\nsitting on top of the bottom level functional blocks.\n\nSome functional blocks have to be in Splus. Some have to be in R. And\nsome other blocks have to be in Matlab.\n\nMy overall scheduler will make sure they all run in an orderly fashion.\n\nThus it's important to be able to compile Splus into some sort of\nstandalone executable code.\n\nThanks\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
+      "body_snippet": "Hi all,\n\nIs there a way to compile SPlus program into standalone executables?\n\nThe reason for asking this is that I want to have a overall scheduler\nsitting on top of the bottom level functional block",
+      "thread_id": "thread-c3616f272fd9",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-a91126c0972e",
+      "message_id": "<88a2333a0802281314y4f728049leb4c43d1c2d7947@mail.gmail.com>",
+      "from_name": "James P. Howard, II",
+      "from_email_hash": "350b0697d05a1268822c777678c43f2eda3c1ad385eaa851a10850817164a4b7",
+      "date": "2008-02-28T21:14:56Z",
+      "subject": "Re: is there a way to compile Splus program into standalone executables?",
+      "subject_clean": "is there a way to compile Splus program into standalone executables?",
+      "in_reply_to": "<b1f16d9d0802281245r455f7e4dve0a118403bdbb41b@mail.gmail.com>",
+      "references": [
+        "<b1f16d9d0802281245r455f7e4dve0a118403bdbb41b@mail.gmail.com>"
+      ],
+      "body_plain": "What platform will be using?  Does the scheduler have to be written in\nS-Plus?  Would simply automating the run process be sufficient?  Will\nthe end user have S-Plus installed?\n\nJames\n\nOn 2/28/08, Michael <comtech.usa at gmail.com> wrote:\n> Hi all,\n>\n> Is there a way to compile SPlus program into standalone executables?\n>\n> The reason for asking this is that I want to have a overall scheduler\n> sitting on top of the bottom level functional blocks.\n>\n> Some functional blocks have to be in Splus. Some have to be in R. And\n> some other blocks have to be in Matlab.\n>\n> My overall scheduler will make sure they all run in an orderly fashion.\n>\n> Thus it's important to be able to compile Splus into some sort of\n> standalone executable code.\n>\n> Thanks\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>\n\n-- \nJames P. Howard, II\njh at jameshoward.us\nhttp://jameshoward.us",
+      "body_snippet": "What platform will be using?  Does the scheduler have to be written in\nS-Plus?  Would simply automating the run process be sufficient?  Will\nthe end user have S-Plus installed?\n\nJames\n\nOn 2/28/08, Mic",
+      "thread_id": "thread-c3616f272fd9",
+      "thread_depth": 1,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-f37e8e532f25",
+      "message_id": "<b1f16d9d0802281337p244fe019u2e1263a81305fe66@mail.gmail.com>",
+      "from_name": "Michael",
+      "from_email_hash": "9db5456bdbd462ce558cd231699c4bfef6bfaa397ef665c21f632fc946726963",
+      "date": "2008-02-28T21:37:57Z",
+      "subject": "Re: is there a way to compile Splus program into standalone executables?",
+      "subject_clean": "is there a way to compile Splus program into standalone executables?",
+      "in_reply_to": "<88a2333a0802281314y4f728049leb4c43d1c2d7947@mail.gmail.com>",
+      "references": [
+        "<b1f16d9d0802281245r455f7e4dve0a118403bdbb41b@mail.gmail.com>",
+        "<88a2333a0802281314y4f728049leb4c43d1c2d7947@mail.gmail.com>"
+      ],
+      "body_plain": "The scheduler will not be in Splus. Probably it will be some Script language.\n\nIt's sure that one subblock will be in SPlus, and others will be in R\nor Matlab, or other language.\n\nNeed to automate their runs smoothly...\n\nI am the end user myself. Of course it might be better to run without Splus.\n\nAny thoughts?\n\nOn Thu, Feb 28, 2008 at 1:14 PM, James P. Howard, II <jh at jameshoward.us> wrote:\n> What platform will be using?  Does the scheduler have to be written in\n>  S-Plus?  Would simply automating the run process be sufficient?  Will\n>  the end user have S-Plus installed?\n>\n>  James\n>\n>\n>\n>\n>\n>  On 2/28/08, Michael <comtech.usa at gmail.com> wrote:\n>  > Hi all,\n>  >\n>  > Is there a way to compile SPlus program into standalone executables?\n>  >\n>  > The reason for asking this is that I want to have a overall scheduler\n>  > sitting on top of the bottom level functional blocks.\n>  >\n>  > Some functional blocks have to be in Splus. Some have to be in R. And\n>  > some other blocks have to be in Matlab.\n>  >\n>  > My overall scheduler will make sure they all run in an orderly fashion.\n>  >\n>  > Thus it's important to be able to compile Splus into some sort of\n>  > standalone executable code.\n>  >\n>  > Thanks\n>  > --------------------------------------------------------------------\n>  > This message was distributed by s-news at lists.biostat.wustl.edu.  To\n>  > unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n>  > the BODY of the message:  unsubscribe s-news\n>  >\n>\n>\n>  --\n>  James P. Howard, II\n>  jh at jameshoward.us\n>  http://jameshoward.us\n>",
+      "body_snippet": "The scheduler will not be in Splus. Probably it will be some Script language.\n\nIt's sure that one subblock will be in SPlus, and others will be in R\nor Matlab, or other language.\n\nNeed to automate the",
+      "thread_id": "thread-c3616f272fd9",
+      "thread_depth": 2,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-a0448701fc6d",
+      "message_id": "<47C72D8D.6000703@noaa.gov>",
+      "from_name": "Kim Elmore",
+      "from_email_hash": "3cd6671ef932770cc8d1186ae3ebf1aa7f121e069148949e0825595f39cb6687",
+      "date": "2008-02-28T21:54:21Z",
+      "subject": "Re: Supersmoother port to C?",
+      "subject_clean": "Supersmoother port to C?",
+      "in_reply_to": "<47C71598.5030809@noaa.gov>",
+      "references": [
+        "<47C71598.5030809@noaa.gov>"
+      ],
+      "body_plain": "Earlier I asked for a any ports of Supersmoother to C. We've \naccomplished the port locally, so there is now no need. We used f2c, but \nthere was a formatting error on the first line of the Supersmoother \nroutine that pretty much wigged-out the f2c converter. The formatting \nerror is fixed and everyone is happy.\n\nKim Elmore\n\nKim Elmore wrote:\n> This is a bit off topic, but I don't know where else to ask: does\n> anyone know of or have a port of the super smoother routine from\n> FORTRAN to C?\n>\n>\n> Kim Elmore\n\n--\nKim Elmore, Ph.D. (PP SEL/MEL/Gllider, N5OP, 2nd Class Radiotelegraph, GROL)\n\"All weather is divided into three parts: Yes, No and Maybe. The greatest of these \nis maybe.\" -- The original Latin appears to be garbled.",
+      "body_snippet": "Earlier I asked for a any ports of Supersmoother to C. We've \naccomplished the port locally, so there is now no need. We used f2c, but \nthere was a formatting error on the first line of the Supersmoot",
+      "thread_id": "thread-5231342d1092",
+      "thread_depth": 1,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-94c9c59f32b9",
+      "message_id": "<88a2333a0802290555s7f570378k89e8b76c13ddff5d@mail.gmail.com>",
+      "from_name": "James P. Howard, II",
+      "from_email_hash": "350b0697d05a1268822c777678c43f2eda3c1ad385eaa851a10850817164a4b7",
+      "date": "2008-02-29T13:55:37Z",
+      "subject": "Re: is there a way to compile Splus program into standalone executables?",
+      "subject_clean": "is there a way to compile Splus program into standalone executables?",
+      "in_reply_to": "<b1f16d9d0802281337p244fe019u2e1263a81305fe66@mail.gmail.com>",
+      "references": [
+        "<b1f16d9d0802281245r455f7e4dve0a118403bdbb41b@mail.gmail.com>",
+        "<88a2333a0802281314y4f728049leb4c43d1c2d7947@mail.gmail.com>",
+        "<b1f16d9d0802281337p244fe019u2e1263a81305fe66@mail.gmail.com>"
+      ],
+      "body_plain": "On Thu, Feb 28, 2008 at 4:37 PM, Michael <comtech.usa at gmail.com> wrote:\n> The scheduler will not be in Splus. Probably it will be some Script language.\n>\n>  It's sure that one subblock will be in SPlus, and others will be in R\n>  or Matlab, or other language.\n>\n>  Need to automate their runs smoothly...\n>\n>  I am the end user myself. Of course it might be better to run without Splus.\n>\n>  Any thoughts?\n\nMost likely, it would be sufficient to automate S-Plus to run a\nscript, which is relatively easy, rather than compiling to binary.  So\nin your scheduler script, under Unix, you do this:\n\n  Splus < foo.s\n\nor\n\n  Splus BATCH foo.s foo.out\n\nUnder Windows, something similar ought to work.\n\nJames\n\n-- \nJames P. Howard, II\njh at jameshoward.us\nhttp://jameshoward.us",
+      "body_snippet": "On Thu, Feb 28, 2008 at 4:37 PM, Michael <comtech.usa at gmail.com> wrote:\n> The scheduler will not be in Splus. Probably it will be some Script language.\n>\n>  It's sure that one subblock will be in S",
+      "thread_id": "thread-c3616f272fd9",
+      "thread_depth": 3,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-a2a4058dd9d3",
+      "message_id": "<47C82B6F.4050502@noaa.gov>",
+      "from_name": "Kim Elmore",
+      "from_email_hash": "3cd6671ef932770cc8d1186ae3ebf1aa7f121e069148949e0825595f39cb6687",
+      "date": "2008-02-29T15:57:35Z",
+      "subject": "SuperSmoother (again)",
+      "subject_clean": "SuperSmoother (again)",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "I'm back to square one on this one. While f2c generated C code, the \ngenerated C doesn't compile, which didn't seem so bad at first. But, f2c \ngenerates C code that is pretty ugly and extremely difficult to debug. \nSo, I'll ask again if anyone has or knows of a port of SuperSmoother to \nC or C++.\n\nKim Elmore\n\n--\nKim Elmore, Ph.D. (PP SEL/MEL/Gllider, N5OP, 2nd Class Radiotelegraph, GROL)\n\"All weather is divided into three parts: Yes, No and Maybe. The greatest of these \nis maybe.\" -- The original Latin appears to be garbled.",
+      "body_snippet": "I'm back to square one on this one. While f2c generated C code, the \ngenerated C doesn't compile, which didn't seem so bad at first. But, f2c \ngenerates C code that is pretty ugly and extremely diffic",
+      "thread_id": "thread-a2a4058dd9d3",
+      "thread_depth": 0,
+      "month": "2008-02"
+    },
+    {
+      "id": "msg-590006d166b7",
+      "message_id": "<47C85B5B.9030305@aon.at>",
+      "from_name": "cstrato",
+      "from_email_hash": "84962443a13e43e007ab9d69a1c992a2a96fdd7459e4d6a89edf29c18a8df2e7",
+      "date": "2008-02-29T19:22:03Z",
+      "subject": "Re: SuperSmoother (again)",
+      "subject_clean": "SuperSmoother (again)",
+      "in_reply_to": "<47C82B6F.4050502@noaa.gov>",
+      "references": [
+        "<47C82B6F.4050502@noaa.gov>"
+      ],
+      "body_plain": "Kim Elmore wrote:\n> I'm back to square one on this one. While f2c generated C code, the \n> generated C doesn't compile, which didn't seem so bad at first. But, \n> f2c generates C code that is pretty ugly and extremely difficult to \n> debug. So, I'll ask again if anyone has or knows of a port of \n> SuperSmoother to C or C++.\n>\n> Kim Elmore\n>\nSee:\nhttp://root.cern.ch/root/html/TGraphSmooth.html\n\nRegards\nChristian\n_._._._._._._._._._._._._._._._\nC.h.i.s.t.i.a.n S.t.r.a.t.o.w.a\nV.i.e.n.n.a       A.u.s.t.r.i.a\ne.m.a.i.l:    cstrato at aon.at\n_._._._._._._._._._._._._._._._\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
+      "body_snippet": "Kim Elmore wrote:\n> I'm back to square one on this one. While f2c generated C code, the \n> generated C doesn't compile, which didn't seem so bad at first. But, \n> f2c generates C code that is pretty u",
+      "thread_id": "thread-a2a4058dd9d3",
+      "thread_depth": 1,
+      "month": "2008-02"
+    }
+  ],
+  "threads": [
+    {
+      "id": "thread-dc792ab5b36d",
+      "subject": "prediction function",
+      "message_count": 1,
+      "participants": [
+        "Saadi, Samir"
+      ],
+      "started": "2008-02-04T12:47:26Z",
+      "last_reply": "2008-02-04T12:47:26Z",
+      "root_message_id": "msg-dc792ab5b36d"
+    },
+    {
+      "id": "thread-2d0ab8acbb34",
+      "subject": "Bar chart breaks - solution",
+      "message_count": 1,
+      "participants": [
+        "Jim Daley"
+      ],
+      "started": "2008-02-04T13:16:03Z",
+      "last_reply": "2008-02-04T13:16:03Z",
+      "root_message_id": "msg-2d0ab8acbb34"
+    },
+    {
+      "id": "thread-5bc50aaf4611",
+      "subject": "Multicomp and letter assignments",
+      "message_count": 2,
+      "participants": [
+        "Data Analytics Corp.",
+        "Spencer Graves"
+      ],
+      "started": "2008-02-04T14:36:16Z",
+      "last_reply": "2008-02-04T17:18:44Z",
+      "root_message_id": "msg-5bc50aaf4611"
+    },
+    {
+      "id": "thread-3476f68095cc",
+      "subject": "stationary, or not stationary: time series dilemma",
+      "message_count": 4,
+      "participants": [
+        "Eric Zivot",
+        "Lambert.Winnie",
+        "Padhye, Nikhil S",
+        "eggraid"
+      ],
+      "started": "2008-02-05T16:01:57Z",
+      "last_reply": "2008-02-05T19:06:50Z",
+      "root_message_id": "msg-3476f68095cc"
+    },
+    {
+      "id": "thread-029e04783490",
+      "subject": "Draft paper submission deadline is extended: BCBGC-08",
+      "message_count": 1,
+      "participants": [
+        "John Edward"
+      ],
+      "started": "2008-02-05T19:58:50Z",
+      "last_reply": "2008-02-05T19:58:50Z",
+      "root_message_id": "msg-029e04783490"
+    },
+    {
+      "id": "thread-b010d5bf0e20",
+      "subject": "Continuous covariates interpretation in glme",
+      "message_count": 5,
+      "participants": [
+        "Ali & Hind Lazrak",
+        "Frank E Harrell Jr",
+        "Stella Karuri"
+      ],
+      "started": "2008-02-06T01:57:20Z",
+      "last_reply": "2008-02-06T19:12:22Z",
+      "root_message_id": "msg-b010d5bf0e20"
+    },
+    {
+      "id": "thread-ec210a216d58",
+      "subject": "comparing bootstrapped confidence intervals",
+      "message_count": 1,
+      "participants": [
+        "Data Analytics Corp."
+      ],
+      "started": "2008-02-06T19:49:06Z",
+      "last_reply": "2008-02-06T19:49:06Z",
+      "root_message_id": "msg-ec210a216d58"
+    },
+    {
+      "id": "thread-bec42203acba",
+      "subject": "stable distribution",
+      "message_count": 1,
+      "participants": [
+        "meteor_shahab at yahoo.com"
+      ],
+      "started": "2008-02-07T18:24:24Z",
+      "last_reply": "2008-02-07T18:24:24Z",
+      "root_message_id": "msg-bec42203acba"
+    },
+    {
+      "id": "thread-3305a8bb8b04",
+      "subject": "GAM p-values",
+      "message_count": 7,
+      "participants": [
+        "Ali & Hind Lazrak",
+        "Stella Karuri",
+        "Tim Hesterberg",
+        "Wensui Liu",
+        "kate.bassil at utoronto.ca"
+      ],
+      "started": "2008-02-07T19:43:43Z",
+      "last_reply": "2008-02-13T17:32:04Z",
+      "root_message_id": "msg-3305a8bb8b04"
+    },
+    {
+      "id": "thread-cae702a1b572",
+      "subject": "Use of weights in a GAM",
+      "message_count": 1,
+      "participants": [
+        "Weinberg, Janice M"
+      ],
+      "started": "2008-02-07T22:29:25Z",
+      "last_reply": "2008-02-07T22:29:25Z",
+      "root_message_id": "msg-cae702a1b572"
+    },
+    {
+      "id": "thread-8ff7b0f11d72",
+      "subject": "tree of functions",
+      "message_count": 2,
+      "participants": [
+        "QUATAERT, Paul",
+        "Tim Hesterberg"
+      ],
+      "started": "2008-02-08T08:33:33Z",
+      "last_reply": "2008-02-08T19:47:35Z",
+      "root_message_id": "msg-8ff7b0f11d72"
+    },
+    {
+      "id": "thread-c4c71f2f4c68",
+      "subject": "stable distribution",
+      "message_count": 1,
+      "participants": [
+        "meteor_shahab at yahoo.com"
+      ],
+      "started": "2008-02-09T19:40:28Z",
+      "last_reply": "2008-02-09T19:40:28Z",
+      "root_message_id": "msg-c4c71f2f4c68"
+    },
+    {
+      "id": "thread-c79c09d849da",
+      "subject": "powerpoint",
+      "message_count": 3,
+      "participants": [
+        "Data Analytics Corp.",
+        "Overstreet, Jason",
+        "QUATAERT, Paul"
+      ],
+      "started": "2008-02-11T20:14:47Z",
+      "last_reply": "2008-02-11T20:24:08Z",
+      "root_message_id": "msg-c79c09d849da"
+    },
+    {
+      "id": "thread-76784f7a23b5",
+      "subject": "Multiple streams of random numbers",
+      "message_count": 1,
+      "participants": [
+        "Tim Hesterberg"
+      ],
+      "started": "2008-02-13T19:08:21Z",
+      "last_reply": "2008-02-13T19:08:21Z",
+      "root_message_id": "msg-76784f7a23b5"
+    },
+    {
+      "id": "thread-27ee0dd3285c",
+      "subject": "SECURWARE 2008 || August 25-31, 2008 - Cap Esterel, France",
+      "message_count": 1,
+      "participants": [
+        "Lourdes Pe ñ alver"
+      ],
+      "started": "2008-02-14T11:19:41Z",
+      "last_reply": "2008-02-14T11:19:41Z",
+      "root_message_id": "msg-27ee0dd3285c"
+    },
+    {
+      "id": "thread-f36e3f37e651",
+      "subject": "ADVCOMP 2008 || September 29 - October 4, Valencia, Spain || The Second International Conference on Advanced Engineering Computing and Applications in Sciences",
+      "message_count": 1,
+      "participants": [
+        "Lourdes Pe ñ alver"
+      ],
+      "started": "2008-02-15T10:51:17Z",
+      "last_reply": "2008-02-15T10:51:17Z",
+      "root_message_id": "msg-f36e3f37e651"
+    },
+    {
+      "id": "thread-b3a77321d1cc",
+      "subject": "ASA Southern California Chapter Applied Statistics Workshop",
+      "message_count": 1,
+      "participants": [
+        "Madeline Bauer"
+      ],
+      "started": "2008-02-15T17:31:45Z",
+      "last_reply": "2008-02-15T17:31:45Z",
+      "root_message_id": "msg-b3a77321d1cc"
+    },
+    {
+      "id": "thread-5dfcacdc0f98",
+      "subject": "NHPP",
+      "message_count": 2,
+      "participants": [
+        "Tim Hesterberg",
+        "meteor_shahab at yahoo.com"
+      ],
+      "started": "2008-02-17T20:58:44Z",
+      "last_reply": "2008-02-20T00:35:37Z",
+      "root_message_id": "msg-5dfcacdc0f98"
+    },
+    {
+      "id": "thread-174e4ca93c8a",
+      "subject": "Tukey-Kramer HSD stat",
+      "message_count": 1,
+      "participants": [
+        "Data Analytics Corp."
+      ],
+      "started": "2008-02-17T22:18:05Z",
+      "last_reply": "2008-02-17T22:18:05Z",
+      "root_message_id": "msg-174e4ca93c8a"
+    },
+    {
+      "id": "thread-3cc4589d15d8",
+      "subject": "running cumulative product",
+      "message_count": 3,
+      "participants": [
+        "John Pitchard",
+        "Jordan, Paul",
+        "Romain Francois"
+      ],
+      "started": "2008-02-19T11:47:32Z",
+      "last_reply": "2008-02-19T15:35:00Z",
+      "root_message_id": "msg-3cc4589d15d8"
+    },
+    {
+      "id": "thread-a0a451df6c3b",
+      "subject": "documentation for 'minimal' option of 'sample' command",
+      "message_count": 2,
+      "participants": [
+        "Christopher G. Green (L)",
+        "Tim Hesterberg"
+      ],
+      "started": "2008-02-20T04:10:27Z",
+      "last_reply": "2008-02-20T04:30:01Z",
+      "root_message_id": "msg-a0a451df6c3b"
+    },
+    {
+      "id": "thread-a0ffa683e053",
+      "subject": "To convert a R package (gafit) to S-PLUS",
+      "message_count": 1,
+      "participants": [
+        "Debabrata Midya"
+      ],
+      "started": "2008-02-20T23:50:15Z",
+      "last_reply": "2008-02-20T23:50:15Z",
+      "root_message_id": "msg-a0ffa683e053"
+    },
+    {
+      "id": "thread-f3049f076db4",
+      "subject": "BRFSS & SPlus",
+      "message_count": 1,
+      "participants": [
+        "jose Bartolomei"
+      ],
+      "started": "2008-02-22T15:43:29Z",
+      "last_reply": "2008-02-22T15:43:29Z",
+      "root_message_id": "msg-f3049f076db4"
+    },
+    {
+      "id": "thread-d6191c894350",
+      "subject": "subsetting a dataframe",
+      "message_count": 1,
+      "participants": [
+        "Data Analytics Corp."
+      ],
+      "started": "2008-02-25T02:11:35Z",
+      "last_reply": "2008-02-25T02:11:35Z",
+      "root_message_id": "msg-d6191c894350"
+    },
+    {
+      "id": "thread-443985c51c40",
+      "subject": "subsetting question",
+      "message_count": 1,
+      "participants": [
+        "Data Analytics Corp."
+      ],
+      "started": "2008-02-25T11:57:32Z",
+      "last_reply": "2008-02-25T11:57:32Z",
+      "root_message_id": "msg-443985c51c40"
+    },
+    {
+      "id": "thread-592e8af33ef9",
+      "subject": "NLS: Error with the summary function",
+      "message_count": 1,
+      "participants": [
+        "Ilouga, Pierre"
+      ],
+      "started": "2008-02-25T14:05:43Z",
+      "last_reply": "2008-02-25T14:05:43Z",
+      "root_message_id": "msg-592e8af33ef9"
+    },
+    {
+      "id": "thread-e0cf4b67f295",
+      "subject": "WinBugs",
+      "message_count": 2,
+      "participants": [
+        "Michael O'Connell",
+        "Overstreet, Jason"
+      ],
+      "started": "2008-02-25T14:40:18Z",
+      "last_reply": "2008-02-25T15:41:42Z",
+      "root_message_id": "msg-e0cf4b67f295"
+    },
+    {
+      "id": "thread-5dab197a2fc4",
+      "subject": "Interrupted time series analysis",
+      "message_count": 1,
+      "participants": [
+        "Kassir Nastya"
+      ],
+      "started": "2008-02-25T15:54:29Z",
+      "last_reply": "2008-02-25T15:54:29Z",
+      "root_message_id": "msg-5dab197a2fc4"
+    },
+    {
+      "id": "thread-7c8f8bba3332",
+      "subject": "Can Splus Workbench do a good job for debugging?",
+      "message_count": 2,
+      "participants": [
+        "Jimenez-Leal William",
+        "Michael"
+      ],
+      "started": "2008-02-25T22:22:08Z",
+      "last_reply": "2008-02-26T10:22:15Z",
+      "root_message_id": "msg-7c8f8bba3332"
+    },
+    {
+      "id": "thread-34c06a8c590d",
+      "subject": "importing data into Splus - numbers changing",
+      "message_count": 2,
+      "participants": [
+        "Michael Camilleri",
+        "Nicola Koper"
+      ],
+      "started": "2008-02-25T22:41:23Z",
+      "last_reply": "2008-02-26T20:09:40Z",
+      "root_message_id": "msg-34c06a8c590d"
+    },
+    {
+      "id": "thread-ababc8acdf26",
+      "subject": "Online Manuals in Help",
+      "message_count": 1,
+      "participants": [
+        "Lambert.Winnie"
+      ],
+      "started": "2008-02-27T13:24:09Z",
+      "last_reply": "2008-02-27T13:24:09Z",
+      "root_message_id": "msg-ababc8acdf26"
+    },
+    {
+      "id": "thread-5231342d1092",
+      "subject": "Supersmoother port to C?",
+      "message_count": 2,
+      "participants": [
+        "Kim Elmore"
+      ],
+      "started": "2008-02-28T20:12:08Z",
+      "last_reply": "2008-02-28T21:54:21Z",
+      "root_message_id": "msg-5231342d1092"
+    },
+    {
+      "id": "thread-c3616f272fd9",
+      "subject": "is there a way to compile Splus program into standalone executables?",
+      "message_count": 4,
+      "participants": [
+        "James P. Howard, II",
+        "Michael"
+      ],
+      "started": "2008-02-28T20:45:23Z",
+      "last_reply": "2008-02-29T13:55:37Z",
+      "root_message_id": "msg-c3616f272fd9"
+    },
+    {
+      "id": "thread-a2a4058dd9d3",
+      "subject": "SuperSmoother (again)",
+      "message_count": 2,
+      "participants": [
+        "Kim Elmore",
+        "cstrato"
+      ],
+      "started": "2008-02-29T15:57:35Z",
+      "last_reply": "2008-02-29T19:22:03Z",
+      "root_message_id": "msg-a2a4058dd9d3"
+    }
+  ]
+}
