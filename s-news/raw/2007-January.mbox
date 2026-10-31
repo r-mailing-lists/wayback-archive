@@ -1,0 +1,2941 @@
+From WUY at DAL.CA  Wed Jan  3 03:36:48 2007
+From: WUY at DAL.CA (wuy)
+Date: Tue, 02 Jan 2007 23:36:48 -0400
+Subject: What?s the best way to deal with ?iteration limit reached? when running glm.nb()?
+Message-ID: <20070102233648.pmmyzuhz9yskw8ko@my3.dal.ca>
+
+Hello S+ers,
+
+Happy New Year to everyone!
+
+I'm a newbie in S+, please forgive me if my question appears trivial, but I do
+need some help from you.
+
+I'm trying to fit a negative binomial regression model under S-Plus 6.1 for
+Windows, and the function I use is glm.nb() from MASS library for Venables &
+Ripley (2002) version 7.0. First, I didn't give any control values to the
+model, my model was like
+
+> negb.test <- glm.nb (Y ~ X1 + X2 + X3 +X4 + X5 +X6, data=mydata)
+Warning in theta.ml(Y, mu, n, limit = control$maxit, trace = control$trace > 2):
+iteration limit reached
+Warning in theta.ml(Y, mu, n, limit = control$maxit, trace = control$trace > 2):
+iteration limit reached
+Warning in theta.ml(Y, mu, n, limit = control$maxit, trace = control$trace > 2):
+iteration limit reached
+Warning in theta.ml(Y, mu, n, limit = control$maxit, trace = control$trace > 2):
+iteration limit reached
+
+Thought some control might help a bit, I re-coded it as
+
+> negb.test2 <- glm.nb (Y ~..., init.theta=0.85, link=log, data=mydata)
+The same warning message, and it repeats four times again.
+
+I'm just wondering must I give a limit number for the iteration to reach an
+"optimal" result, and what is the maximum number of iteration. Also, what
+does the "trace = control$trace > 2" mean, I thought trace is a logic
+value, how to interpret (and possibility fix) this problem?
+
+Oh, the length of my data is over 30000, is it too big for S+ to handle? If so,
+what can I do with it?
+
+Many thanks in advance, and humbly awaiting illumination!
+
+Helen Wu
+
+From rmh at temple.edu  Wed Jan  3 04:32:09 2007
+From: rmh at temple.edu (Richard M. Heiberger)
+Date: Tue, 02 Jan 2007 23:32:09 -0500
+Subject: Fwd: Vertical boxplot
+Message-ID: <20070102233209.BRF79666@po-d.temple.edu>
+
+Yes, download the HH package.  These are functions associated with
+my recent book
+                Statistical Analysis and Data Display
+                Richard M. Heiberger and Burt Holland
+
+This is the August 21, 2006 version of the HH online files from
+   http://springeronline.com/0-387-40270-5
+
+The January 2007 version, which will be distributed as a package for S-Plus 8,
+is almost ready.
+
+When you attach the HH library, you will have access to the t.trellis
+function which interchanges the x and y axes within the panels of any trellis 
+plot.
+
+>From the documentation
+?bwplot
+we have the example
+      bwplot(voice.part ~ height, data=singer, xlab="Height (inches)") 
+The transpose gives the vertical box plots.
+    t(bwplot(voice.part ~ height, data=singer, xlab="Height (inches)"))
+
+---- Original message ----
+>Date: Thu, 14 Dec 2006 12:04:10 +0100
+>From: Paul Matthias Diderichsen <paulmatthias.diderichsen at abbott.com>  
+>Subject: [S] Vertical boxplot  
+>   Is there a way to create vertical boxplots in the trellis framework - 
+> without writing a
+>   custom panel function?
+
+From Bill.Venables at csiro.au  Wed Jan  3 06:07:13 2007
+From: Bill.Venables at csiro.au
+Date: Wed, 03 Jan 2007 16:07:13 +1000
+Subject: Re: What?s the best way to deal with ?iteration limit reached? whenrunning glm.nb()?
+Message-ID: <B998A44C8986644EA8029CFE6396A924840AB6@exqld2-bne.qld.csiro.au>
+
+Hi Helen,
+
+This could be an indication that the negative binomial you are trying to fit is 
+not a good model for the process that generated the data.  glm.nb uses an 
+alternating estimation process, alternately fixing mu and estimating theta, 
+then fixing theta and estimating mu.  There is an iteration limit on both 
+cycles and occasionally it happens that early on in the process, when mu is not 
+very good, the estimation for theta runs to the limit, but the next time round 
+when mu is closer to the MLE, it can be OK.  I suspect the problem is that the 
+NB model is not a good one, though.
+
+You can check this to some extent by supplying an initial value for theta using 
+        init.theta = <value>
+
+on the call to glm.nb, choosing a value suggested by previous runs.  If it is 
+the true mle, you should not get those warning messages.
+
+If the estimate of theta is just getting larger and larger, then it suggests a 
+Poisson model may be appropriate.  If it's getting smaller and smaller, I'm not 
+sure what's going on.
+
+Also, I would suggest you always call glm.nb (and glm, too) setting trace = 
+TRUE.  This gives more insight on what's going on during the iteration process.
+
+Bill Venables
+CMIS, CSIRO Laboratories,
+PO Box 120, Cleveland, Qld. 4163
+AUSTRALIA
+Office Phone (email preferred): +61 7 3826 7251
+Fax (if absolutely necessary):    +61 7 3826 7304
+Mobile (rarely used):                +61 4 1963 4642
+Home Phone:                          +61 7 3286 7700
+mailto:Bill.Venables at csiro.au
+http://www.cmis.csiro.au/bill.venables/ 
+ 
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu 
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of wuy
+Sent: Wednesday, 3 January 2007 1:37 PM
+To: s-news at lists.biostat.wustl.edu
+Subject: [S] What?s the best way to deal with ?iteration limit reached? 
+whenrunning glm.nb()?
+
+Hello S+ers,
+
+Happy New Year to everyone!
+
+I'm a newbie in S+, please forgive me if my question appears trivial, but I do
+need some help from you.
+
+I'm trying to fit a negative binomial regression model under S-Plus 6.1 for
+Windows, and the function I use is glm.nb() from MASS library for Venables &
+Ripley (2002) version 7.0. First, I didn't give any control values to the
+model, my model was like
+
+> negb.test <- glm.nb (Y ~ X1 + X2 + X3 +X4 + X5 +X6, data=mydata)
+Warning in theta.ml(Y, mu, n, limit = control$maxit, trace = control$trace > 2):
+iteration limit reached
+Warning in theta.ml(Y, mu, n, limit = control$maxit, trace = control$trace > 2):
+iteration limit reached
+Warning in theta.ml(Y, mu, n, limit = control$maxit, trace = control$trace > 2):
+iteration limit reached
+Warning in theta.ml(Y, mu, n, limit = control$maxit, trace = control$trace > 2):
+iteration limit reached
+
+Thought some control might help a bit, I re-coded it as
+
+> negb.test2 <- glm.nb (Y ~..., init.theta=0.85, link=log, data=mydata)
+The same warning message, and it repeats four times again.
+
+I'm just wondering must I give a limit number for the iteration to reach an
+"optimal" result, and what is the maximum number of iteration. Also, what
+does the "trace = control$trace > 2" mean, I thought trace is a logic
+value, how to interpret (and possibility fix) this problem?
+
+Oh, the length of my data is over 30000, is it too big for S+ to handle? If so,
+what can I do with it?
+
+Many thanks in advance, and humbly awaiting illumination!
+
+Helen Wu
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From simona.costanzo at ubs.com  Wed Jan  3 11:50:10 2007
+From: simona.costanzo at ubs.com
+Date: Wed, 03 Jan 2007 11:50:10 +0000
+Subject: Cor.test function
+Message-ID: <B4DB35647B608744A45D3150D27F4B3608827144@NLDNC102PEX1.ubsw.net>
+
+Dear all, 
+
+I am calculating kendall's tau coefficients using the cor.test function and Splus 6.2. I am encountering the following problems:
+
+1. the correlation coefficient is different from the one obtained using "cor.test" function in R  
+
+2. in many cases the p-value is returned as "NA"
+
+Can anyone help to explain this? 
+
+Many thanks 
+
+Simona
+
+______________________________
+
+Simona Costanzo
+
+UBS IB Credit Risk Control 
+
+100 Liverpool Street, London EC2M 2RH
+
+Tel.: +44 (0)20 7567 8089
+
+Internal extension: 19 31 78089 
+
+ 
+
+Visit our website at http://www.ubs.com
+
+This message contains confidential information and is intended only 
+for the individual named.  If you are not the named addressee you 
+should not disseminate, distribute or copy this e-mail.  Please 
+notify the sender immediately by e-mail if you have received this 
+e-mail by mistake and delete this e-mail from your system.
+
+E-mail transmission cannot be guaranteed to be secure or error-free 
+as information could be intercepted, corrupted, lost, destroyed, 
+arrive late or incomplete, or contain viruses.  The sender therefore 
+does not accept liability for any errors or omissions in the contents 
+of this message which arise as a result of e-mail transmission.  If 
+verification is required please request a hard-copy version.  This 
+message is provided for informational purposes and should not be 
+construed as a solicitation or offer to buy or sell any securities or 
+related financial instruments.
+
+UBS Limited is a company registered in England & Wales under company
+number 2035362, whose registered office is at 1 Finsbury Avenue,
+London, EC2M 2PP, United Kingdom.
+
+UBS AG (London Branch) is registered as a branch of a foreign company
+under number BR004507, whose registered office is at
+1 Finsbury Avenue, London, EC2M 2PP, United Kingdom.
+
+UBS Clearing and Execution Services Limited is a company registered
+in England & Wales under company number 03123037, whose registered
+office is at 1 Finsbury Avenue, London, EC2M 2PP, United Kingdom.
+
+From sarajan82 at gmail.com  Wed Jan  3 15:23:15 2007
+From: sarajan82 at gmail.com (sara janos)
+Date: Wed, 03 Jan 2007 07:23:15 -0800
+Subject: on Survreg function
+Message-ID: <5a879650701030723r52a66907gb68cc1b222124b8d@mail.gmail.com>
+
+Hi, 
+ I have a question on Survreg() function. I want to fit an exponential 
+ function to a survival object and then draw both the survival curve and the fitted exponential. Is it 
+
+ possible that you help me? 
+ 
+Thanks.
+
+From hanthony at insightful.com  Fri Jan  5 23:24:58 2007
+From: hanthony at insightful.com (Heather Anthony)
+Date: Fri, 05 Jan 2007 15:24:58 -0800
+Subject: COURSE: Upcoming S-PLUS courses and Web casts from Insightful Corporation
+In-Reply-To: <5386D894248D32458B1D9B5638A074480720E1@sewinexch00.insightful.com>
+References: <5386D894248D32458B1D9B5638A074480720E1@sewinexch00.insightful.com>
+Message-ID: <5386D894248D32458B1D9B5638A074481B676F@sewinexch00.insightful.com>
+
+Here is some information about upcoming courses from Insightful's training
+department that may be of interest to s-news subscribers.  
+Additional information is available at the links provided. Please direct any
+enquiries to me <hanthony at insightful.com>
+
+# Heather Anthony/Insightful Corporation Training Coordinator
+
+Insightful Training -- Featured Courses!       
+============================
+
+Traditional and Modern Approaches to Statistical Modelling with S-PLUS®
+Presented by Dr. Bill Venables
+Mar 21-23, New York, NY
+Mar 26-28, San Francisco, CA
+http://www.insightful.com/services/course.asp?CID=36
+
+This three-day course will present classical and modern approaches to
+statistical modelling using the facilities provided by S-PLUS. The course
+will
+present S-PLUS as a complete data analysis and graphics environment and will
+use both the standard software and the S programming language to offer
+strategies for handling both standard and non-standard statistical modelling
+problems.
+
+Dr. Bill Venables is a well-known identity in the S-PLUS community, both
+through his active membership of the S-news mailing list and the two books
+he has written with Professor Brian Ripley, namely MASS and S Programming,
+both of which have become minor classics and perhaps the most widely used
+third party books for the S software system, used by S-PLUS...
+
+Advanced Programming Methods in S-PLUS
+May 17-18, Philadelphia, PA
+Oct 8-9, San Francisco, CA
+http://www.insightful.com/services/course.asp?CID=37
+
+This two-day hands-on course includes a blend of theory, concepts and
+practical examples. We discuss efficient programming, debugging, graphics,
+simulations, object-oriented programming, help files, creating libraries for
+others, and other topics...
+
+Bootstrap Methods and Permutation Tests
+May 21-22, Philadelphia, PA
+Oct 10-11, San Francisco, CA
+http://www.insightful.com/services/course.asp?CID=38
+
+This two-day hands-on course begins with a graphical approach to
+bootstrapping and permutation testing, illuminating basic statistical
+concepts of standard errors, confidence intervals, p-values and significance
+tests. We consider graphical and numerical diagnostic checks for the validity
+of traditional Gaussian-based inferences...
+
+UPCOMING WEB CASTS
+============================
+
+The Convergence of Business Issues and Analytics: Framing Marketing
+Objectives as Optimization Problems
+February 6, 2007
+http://www.insightful.com/news_events/webcasts/2007/02lytix/default.asp
+
+Time Inc. Delivers Mission-Critical Market Intelligence Using S-PLUS® Server
+February 7, 2007
+http://www.insightful.com/news_events/webcasts/2007/02time/default.asp
+
+Visualize Data in Population and PK/PD Analysis for Exposure Response
+February 15, 2007
+http://www.insightful.com/news_events/webcasts/2007/02pkpd/default.asp
+
+OTHER UPCOMING 2007 COURSES
+============================
+ 
+Statistical Modeling in S-PLUS
+January 29-31, New York, NY
+http://www.insightful.com/services/course.asp?CID=11
+
+C201: S-PLUS Programming
+February 1-2, New York, NY
+http://www.insightful.com/services/course.asp?CID=41
+
+C210: Working with Big Data
+February 22-23, New York, NY
+http://www.insightful.com/services/course.asp?CID=44
+
+D101: Data Mining with Insightful Miner
+February 26-27, Edison, NJ
+http://www.insightful.com/services/course.asp?CID=39
+
+G101: S-PLUS Graphical User Interface Jumpstart 
+March 6, Los Angeles, CA
+http://www.insightful.com/services/course.asp?CID=32 
+
+ 
+C102: S-PLUS Essentials Command Line 
+March 7-9, Los Angeles, CA
+http://www.insightful.com/services/course.asp?CID=10
+
+Statistical Modeling in S-PLUS
+March 12-14, Los Angeles, CA
+http://www.insightful.com/services/course.asp?CID=11
+
+C201: S-PLUS Programming
+March 15-16, Los Angeles, CA
+http://www.insightful.com/services/course.asp?CID=41
+
+Register NOW! http://www.insightful.com/services/register.asp
+
+For a complete 2007 training schedule go to:
+http://www.insightful.com/services/schedule.asp
+
+-- 
+Heather Anthony <hanthony at insightful.com>
+Training Coordinator, Insightful Corp, Seattle WA
+Tel: +1 (206) 802 2223
+Fax: +1 (206) 283 8691
+
+Insightful Corporation (www.insightful.com) provides analytical solutions for
+text and data using S-PLUS, Insightful Miner, InFact and consulting services.
+
+From rfrancois at mango-solutions.com  Mon Jan  8 12:23:44 2007
+From: rfrancois at mango-solutions.com (Romain Francois)
+Date: Mon, 08 Jan 2007 12:23:44 +0000
+Subject: R Training Course in Paris
+Message-ID: <45A237D0.8070706@mango-solutions.com>
+
+Mango Solutions are pleased to announce the above course in Paris as 
+part of our schedule for Q1 2007.
+
+-----------------------------------------------------------------------
+Introduction to R and R Programming - 12th February 2008-14th February
+-----------------------------------------------------------------------
+
+(Please find a french version of this announcement from 
+http://www.mango-solutions.com/services/rtraining/r_paris_training_07_french.html)
+
+* Who Should Attend ?
+
+This is a course suitable for beginners and improvers in the R language 
+and is ideal for people wanting an all round introduction to R
+
+* Course Goals
+
+- To allow attendees to understand the technology behind the R package
+- Improve attendees programming style and confidence
+- To enable users to access a wide range of available functionality
+- To enable attendees to program in R within their own environment
+- To understand how to embed R routines within other applications
+
+* Course Outline
+
+1. Introduction to the R language and the R community
+2. The R Environment
+3. R data objects
+4. Using R functions
+5. The "apply" family of functions
+6. Writing R functions
+7. Standard Graphics
+8. Advanced Graphics
+9. R Statistics
+10. R Applications
+
+The cost of these courses is €1800 for commercial attendees and €850 for 
+academic attendees. A €100 discount will be offered to members of the R 
+Foundation (http://www.r-project.org/foundation/main.html).
+
+Should your organization have more than 3 possible attendees why not 
+talk to us about hosting a customized and focused course delivered at 
+your premises? Details of further courses in alternative locations are 
+available at http://www.mango-solutions.com/services/training.html
+
+More details about this course :
+- in french : 
+http://www.mango-solutions.com/services/rtraining/r_paris_training_07_french.html
+- in english : 
+http://www.mango-solutions.com/services/rtraining/r_paris_training_07.html
+
+Should you want to book a place on this course or have any questions 
+please contact training at mango-solutions.com
+
+Cordialement,
+
+Romain Francois
+
+--
+Mango Solutions
+Tel +44 (0)1249 467 467
+Mob +44 (0)7813 526 123
+Fax +44 (0)1249 467 468
+
+data analysis that delivers
+
+From jkrobert at bcm.tmc.edu  Tue Jan  9 15:23:57 2007
+From: jkrobert at bcm.tmc.edu (Roberts, J. Kyle)
+Date: Tue, 09 Jan 2007 09:23:57 -0600
+Subject: Help with function
+In-Reply-To: <223239.17207.qm@web90312.mail.mud.yahoo.com>
+References: <223239.17207.qm@web90312.mail.mud.yahoo.com>
+Message-ID: <3FC0430478C30B4A9AF0AFF7863418F130EF71@BCMEVS6.ad.bcm.edu>
+
+Dear 
+All,
+
+ 
+
+I need to know how 
+to create different pieces of a function that I have created.  For example, 
+in aov, one could type aov$contrasts to obtain the contrasts.  I want to 
+use this for another application, but have simplified it 
+here.
+
+ 
+
+Suppose that I have 
+the following:
+
+new.data<-matrix(c(1:10, rep(1:5, each=2)), 
+ncol=2)
+
+ 
+
+average<-function(x,y){
+
+     out<-lapply(split(x,y), 
+mean)
+
+     mean(unlist(out))
+
+}
+
+ 
+
+new.out<-average(new.data[,1], 
+new.data[,2])
+
+new.out
+
+ 
+
+This is just a 
+simple function that produces the mean from a group of means (in this case they 
+all have the same no. of observations).  Suppose, however, that after I run 
+the function, I would like to actually see the means of each of the groups based 
+on the factor variable (new.data[,2]).  In other words, I want to see the 
+output from the command lapply(split(x,y), mean) 
+.
+
+ 
+
+How do I need to 
+change my function so that I can obtain this by just typing something 
+like:
+
+new$out
+
+ 
+
+Thanks,
+
+Kyle
+
+ 
+
+***************************************
+
+J. Kyle Roberts, Ph.D.
+
+Baylor College of Medicine
+
+Center for Educational 
+Outreach
+
+One Baylor Plaza, MS:  
+BCM411
+
+Houston, TX   
+77030-3411
+
+713-798-6672 - 713-798-8201 
+Fax
+
+jkrobert at bcm.edu
+
+***************************************
+
+From steffen at barembruch.de  Tue Jan  9 16:32:03 2007
+From: steffen at barembruch.de (Steffen Barembruch)
+Date: Tue, 09 Jan 2007 17:32:03 +0100
+Subject: 'Prompt to save graph sheets' as argument for options()
+Message-ID: <000601c7340b$b1d50200$2ada5382@steffen>
+
+Hello!
+
+ 
+
+Just a short 
+question. I need to disable the option "Prompt to save graph sheets" which is 
+available in the menu General settings on the tab General. Can this also be done 
+with the help of any command? For example, does there exist an argument to 
+options() which changes this option?
+
+ 
+
+Thanks a 
+lot
+
+Steffen 
+Barembruch
+
+From alan.hochberg at prosanos.com  Tue Jan  9 16:51:36 2007
+From: alan.hochberg at prosanos.com (Alan Hochberg)
+Date: Tue, 09 Jan 2007 11:51:36 -0500
+Subject: Re: 'Prompt to save graph sheets' as argument for options()
+In-Reply-To: <000601c7340b$b1d50200$2ada5382@steffen>
+References: <000601c7340b$b1d50200$2ada5382@steffen>
+Message-ID: <011101c7340e$6df77970$481414ac@prosanos.local>
+
+Steffen,
+
+ 
+
+Just about every command calls a function,
+and you can see these by using the “History” window.  It looks like
+the command you need is:
+
+ 
+
+guiSetOption(
+option.name="SaveGraphPrompt", value.string="F" )
+
+ 
+
+Hope this helps,
+
+ 
+
+Alan
+
+ 
+
+Alan
+Hochberg
+
+Vice
+President, Research
+
+ProSanos
+Corp.
+
+225 Market Street
+
+Suite 502
+
+Harrisburg, PA 17101
+
+Tel.
+717-635-2124
+
+Fax
+717-635-2575
+
+alan.hochberg at prosanos.com
+
+www.prosanos.com
+
+ 
+
+ 
+
+ 
+
+From steffen at barembruch.de  Tue Jan  9 17:11:40 2007
+From: steffen at barembruch.de (Steffen Barembruch)
+Date: Tue, 09 Jan 2007 18:11:40 +0100
+Subject: Re: 'Prompt to save graph sheets' as argument for options()
+In-Reply-To: <000601c7340b$b1d50200$2ada5382@steffen>
+References: <000601c7340b$b1d50200$2ada5382@steffen>
+Message-ID: <001901c73411$3b5800e0$2ada5382@steffen>
+
+Thanks to Alan Hochberg 
+and Chuck Taylor! They both provided me with the 
+solution
+
+ 
+
+guiSetOption( 
+option.name="SaveGraphPrompt", value.string="F" )
+
+Thanks
+Steffen 
+Barembruch
+
+Von: s-news-owner at lists.biostat.wustl.edu 
+[mailto:s-news-owner at lists.biostat.wustl.edu] Im Auftrag von Steffen 
+Barembruch
+Gesendet: Dienstag, 9. Januar 2007 17:32
+An: 
+s-news at lists.biostat.wustl.edu
+Betreff: [S] 'Prompt to save graph 
+sheets' as argument for options()
+
+Hello!
+
+ 
+
+Just a short 
+question. I need to disable the option "Prompt to save graph sheets" which is 
+available in the menu General settings on the tab General. Can this also be done 
+with the help of any command? For example, does there exist an argument to 
+options() which changes this option?
+
+ 
+
+Thanks a 
+lot
+
+Steffen 
+Barembruch
+
+From Andreas.Johansson at raidllp.com  Tue Jan  9 18:00:40 2007
+From: Andreas.Johansson at raidllp.com (Andreas Johansson)
+Date: Tue, 09 Jan 2007 18:00:40 +0000
+Subject: S-Plus Memory
+Message-ID: <18E73B32A046C141A752E6DA39B1EB5202DCE538@MBAMMAIL.mbam.local>
+
+Have been playing 
+around with S-Plus memory in S-Plus 8 (on 32-bit XP). Have noticed a few 
+problems especially when using the Workbench. 
+
+  Have 4GB of RAM 
+  with the /3GB switch (in boot.ini) enabling me to allocate 3GB to a single 
+  process. Still I can never manage to allocate more than 2GB to S-Plus. Even 
+  though some background processes takes up some memory I have about 2.7GB out 
+  of those 3GB available for sure, have also turned paging off (should not 
+  matter here).
+
+  Using the workbench 
+  I cannot allocate more than 1GB for same setup. Have also tried 
+  setting options("memory") to higher values but changes 
+  nothing.
+
+Does anyone 
+know of why S-Plus cannot grab all available RAM? 
+
+Is anyone using the 
+64-bit version on a Linux platform with more than 4GB of RAM and would like to 
+share some performance stats?
+
+ 
+
+Andreas  
+
+ 
+
+Andreas 
+Johansson
+
+Quantitative Analyst
+
+ 
+
+MBAM
+4th Floor, 11 Old 
+Jewry
+London EC2R 8DU
+
+Andreas.Johansson at mbamfunds.com
+
+Tel. (+44)20 7071 3351 
+Fax. (+44)20 7509 
+7454
+
+ 
+
+This message is intended only for the use of the person(s) to whom it is addressed. It may contain information which is privileged and confidential. Accordingly any unauthorised use is strictly prohibited. If you are not the intended recipient, please contact the sender as soon as possible.
+
+It is not intended as an offer or solicitation for the purchase or sale of any financial instrument or as an official confirmation of any transaction, unless specifically agreed otherwise. All market prices, data and other information are not warranted as to completeness or accuracy and are subject to change without notice. Any opinions or advice contained in this Internet email are subject to the terms and conditions expressed in any applicable governing Marble Bar Asset Management LLP's  terms and conditions of business or client agreement letter. Any comments or statements made herein do not necessarily reflect those of Marble Bar Asset Management LLP.
+
+Marble Bar Asset Management LLP is regulated and authorised by the FSA.
+
+From statman1957 at hotmail.com  Tue Jan  9 20:37:34 2007
+From: statman1957 at hotmail.com (statman)
+Date: Tue, 09 Jan 2007 20:37:34 +0000
+Subject: Re: S-Plus Memory
+In-Reply-To: <18E73B32A046C141A752E6DA39B1EB5202DCE538@MBAMMAIL.mbam.local>
+References: <18E73B32A046C141A752E6DA39B1EB5202DCE538@MBAMMAIL.mbam.local>
+Message-ID: <BAY130-DAV6C27772F6A4D561C29A97B5B30@phx.gbl>
+
+IIRC, this is a 'feature' of WinXP 32 bit. That is, you 
+cannot have more than 2 gigs available for your process. Check out the R 
+archives for the reasons etc. When I did my Chemistry Degree (a billion years 
+ago - well not really, but a while), my Physical Chemistry textbook (Moore) had 
+an alternative version of the 3 laws of thermodynamics which went (if my memory 
+didn't):
+
+ 
+
+You can't win, you can only break even.
+
+You can only break even at absolute 
+zero.
+
+You can't reach absolute zero.
+
+ 
+
+Go figure.......................... 
+8¬)
+
+From: s-news-owner at lists.biostat.wustl.edu 
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Andreas 
+Johansson
+Sent: 09 January 2007 18:01
+To: 
+s-news at lists.biostat.wustl.edu
+Subject: [S] S-Plus 
+Memory
+
+Have been playing 
+around with S-Plus memory in S-Plus 8 (on 32-bit XP). Have noticed a few 
+problems especially when using the Workbench. 
+
+  Have 4GB of RAM 
+  with the /3GB switch (in boot.ini) enabling me to allocate 3GB to a single 
+  process. Still I can never manage to allocate more than 2GB to S-Plus. Even 
+  though some background processes takes up some memory I have about 2.7GB out 
+  of those 3GB available for sure, have also turned paging off (should not 
+  matter here). 
+  Using the workbench 
+  I cannot allocate more than 1GB for same setup. Have also tried 
+  setting options("memory") to higher values but changes 
+  nothing.
+
+Does anyone 
+know of why S-Plus cannot grab all available RAM? 
+
+Is anyone using the 
+64-bit version on a Linux platform with more than 4GB of RAM and would like to 
+share some performance stats?
+
+ 
+
+Andreas  
+
+ 
+
+Andreas 
+Johansson
+
+Quantitative Analyst
+
+ 
+
+MBAM
+4th Floor, 11 Old 
+Jewry
+London EC2R 8DU
+
+Andreas.Johansson at mbamfunds.com
+
+Tel. (+44)20 7071 3351 
+Fax. (+44)20 7509 
+7454
+
+ 
+
+This message is intended only for the use of the person(s) 
+to whom it is addressed. It may contain information which is privileged and 
+confidential. Accordingly any unauthorised use is strictly prohibited. If you 
+are not the intended recipient, please contact the sender as soon as 
+possible.
+
+It is not intended as an offer or solicitation for the purchase 
+or sale of any financial instrument or as an official confirmation of any 
+transaction, unless specifically agreed otherwise. All market prices, data and 
+other information are not warranted as to completeness or accuracy and are 
+subject to change without notice. Any opinions or advice contained in this 
+Internet email are subject to the terms and conditions expressed in any 
+applicable governing Marble Bar Asset Management LLP's terms and conditions of 
+business or client agreement letter. Any comments or statements made herein do 
+not necessarily reflect those of Marble Bar Asset Management LLP.
+
+Marble 
+Bar Asset Management LLP is regulated and authorised by the 
+FSA.
+
+From tplate at blackmesacapital.com  Tue Jan  9 23:52:43 2007
+From: tplate at blackmesacapital.com (Tony Plate)
+Date: Tue, 09 Jan 2007 16:52:43 -0700
+Subject: Re: S-Plus Memory
+In-Reply-To: <18E73B32A046C141A752E6DA39B1EB5202DCE538@MBAMMAIL.mbam.local>
+References: <18E73B32A046C141A752E6DA39B1EB5202DCE538@MBAMMAIL.mbam.local>
+Message-ID: <45A42ACB.2090905@blackmesacapital.com>
+
+Just as a data point, using S-PLUS 7.0, running under Windows XP SP2, 
+with the /3GB switch in boot.ini, I was able to allocate close to 3Gb in 
+an S-PLUS session.  One thing I found that was necessary to get larger 
+amounts of memory allocated was to make sure that the bigdata library 
+was not loaded.  (There is an option in the GUI to not load the bigdata 
+library.)
+
+Here's the function I use to quickly test how much memory can be allocated:
+
+exhaust.mem <- function(from = 128, to = 1, units = 2^20, verbose = F)
+{
+        # Exhaust memory by allocating as many vectors as possible,
+        # starting with vectors of (from*units) bytes, and halving
+        # the size of vectors when no more can be allocated.  Stop
+        # when we get down to vectors of less than (to*units) bytes.
+        # Return a summary of the memory allocated.
+        mem.tally.reset()
+        # find a nice name for the units (which are in bytes)
+        i <- which(2^c(30, 20, 10, 0) <= units)[1]
+        m <- units/2^(10 * (4 - i))
+	units.desc <- paste(if(m != 1) format(round(m, digits = 2)), c("G", 
+"M", "K", "")[i], "b", sep = "")
+
+        # how many different sized chunks? set up a vector to count them
+        n <- floor(log(from/to)/log(2)) + 1
+        count <- integer(n)
+	names(count) <- format(round(from/2^seq(len = n, from = 0), digits = 
+2), justify = "none")
+
+        total <- 0
+        k <- 1
+        # indexes count
+        # a list to store all the memory chunks we allocate
+        chunks <- vector("list", 1000)
+        chunk.i <- 1
+        # start trying to allocate the biggest chunks first
+        size <- from
+        while(size >= to) {
+                while(!is(try(x <- double((size * units)/8)), "Error")) {
+                        if(verbose)
+				cat("Allocated ", size, units.desc, ", mem.tally=", 
+round(mem.tally.report()[2]/units), "\n", sep = "")
+
+                        chunks[[chunk.i]] <- x
+                        chunk.i <- chunk.i + 1
+                        if(chunk.i > length(chunks))
+                                chunks <- c(chunks, vector("list", 1000))
+                        total <- total + size
+                        count[k] <- count[k] + 1
+                }
+                # get ready for the next iteration
+                size <- size/2
+                k <- k + 1
+        }
+	list(units = c(size = units.desc, bytes = units), count = count, total 
+= total, mem.tally = mem.tally.report()[2]/units)
+
+}
+
+-- Tony Plate
+
+Andreas Johansson wrote:
+> Have been playing around with S-Plus memory in S-Plus 8 (on 32-bit XP).
+> Have noticed a few problems especially when using the Workbench.
+>
+>
+>    1. Have 4GB of RAM with the /3GB switch (in boot.ini) enabling me to
+>       allocate 3GB to a single process. Still I can never manage to
+>       allocate more than 2GB to S-Plus. Even though some background
+>       processes takes up some memory I have about 2.7GB out of those 3GB
+>       available for sure, have also turned paging off (should not matter
+>       here).
+>    2. Using the workbench I cannot allocate more than 1GB for same
+>       setup. Have also tried setting options("memory") to higher values
+>       but changes nothing.
+>
+> Does anyone know of why S-Plus cannot grab all available RAM?
+> Is anyone using the 64-bit version on a Linux platform with more than
+> 4GB of RAM and would like to share some performance stats?
+>
+> Andreas
+>
+> *Andreas Johansson*
+>
+> Quantitative Analyst
+>
+> MBAM
+>
+> 4th Floor, 11 Old Jewry
+> London EC2R 8DU
+> Andreas.Johansson at mbamfunds.com <mailto:Andreas.Johansson at mbamfunds.com>
+> Tel. (+44)20 7071 3351
+> Fax. (+44)20 7509 7454
+>
+>
+> This message is intended only for the use of the person(s) to whom it is
+> addressed. It may contain information which is privileged and
+> confidential. Accordingly any unauthorised use is strictly prohibited.
+> If you are not the intended recipient, please contact the sender as soon
+> as possible.
+>
+>
+> It is not intended as an offer or solicitation for the purchase or sale
+> of any financial instrument or as an official confirmation of any
+> transaction, unless specifically agreed otherwise. All market prices,
+> data and other information are not warranted as to completeness or
+> accuracy and are subject to change without notice. Any opinions or
+> advice contained in this Internet email are subject to the terms and
+> conditions expressed in any applicable governing Marble Bar Asset
+> Management LLP's terms and conditions of business or client agreement
+> letter. Any comments or statements made herein do not necessarily
+> reflect those of Marble Bar Asset Management LLP.
+>
+>
+> Marble Bar Asset Management LLP is regulated and authorised by the FSA.
+
+From cmgast at gmail.com  Wed Jan 10 17:09:17 2007
+From: cmgast at gmail.com (Chris Gast)
+Date: Wed, 10 Jan 2007 09:09:17 -0800
+Subject: multicomp function problems
+Message-ID: <635b97d60701100909u5349c298nf7b84352708de7f6@mail.gmail.com>
+
+Hello everyone,
+
+I'm new to the list, but could really use some assistance.
+
+My problem concerns the multicomp() function S-Plus (version 7.0).
+
+I am trying to generate some random data, assign them to groups, run a
+one-way anova with group as the factor, and then perform Dunnett's
+method for multiple comparisons, as part of a simulation I am
+performing.  I cannot seem to get the multicomp function working
+properly.
+
+Can anyone take a look at it, and offer some hints or guidance?  I
+would be much obliged.  The code, as well as the error output is
+pasted below.
+
+dunnettsim=function(seedval,groups,n,a){
+        
+        #seedval=5; n=c(5,5,5,4); groups=4; a=.05; set.seed(seedval)
+        
+alphabet=c("a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z")
+        
+        groupvar=matrix("z",max(n),groups)
+        
+        for(j in 1:groups){
+                for(i in 1:n[j]){
+                        
+                        groupvar[i,j]=alphabet[j]
+                }
+        }
+        
+        dat=rnorm(sum(n))
+
+        groupvec=rep("a",n[1])
+        for(k in 2:groups){
+                groupvec=c(groupvec,groupvar[,k])
+        }
+        
+        groupvec=as.factor(groupvec[groupvec!="z"])
+        #groupvec=groupvec[groupvec!="z"]
+        output=lm(dat~groupvec)
+
+        multicomp.lm(output,focus="a",comparisons="mcc",alpha=a, 
+method="dunnett")
+
+}
+
+dunnettsim(seedval=5,groups=4,n=c(5,5,5,4),a=.05)
+
+OUTPUT:
+
+Problem in multicomp.lm(output, focus = "a", comparisons = "mcc",
+alpha = a, method = "dunnett"): focus = a must be one of the factors =
+groupvec
+
+--
+Chris Gast
+cmgast at gmail.com
+(206) 271-6418
+
+From shirsh at volterra.co.uk  Thu Jan 11 15:08:30 2007
+From: shirsh at volterra.co.uk (Said Hirsh)
+Date: Thu, 11 Jan 2007 15:08:30 +0000
+Subject: SPLUS Interface
+Message-ID: <EB7B25C3C6D42F499985FB9CC75817792F2B26@volterrasbs.Volterra.local>
+
+Hi
+
+ 
+
+I am looking to use S-plus as a background 'hidden' 
+software to perform calculations and report results on another software 
+package.  Is that possible with S-plus? I know it is possible with other 
+packages such as OxMetrics.
+
+ 
+
+Apologies for my amateurish description but I am 
+not and IT professional.
+
+ 
+
+Many thanks for any help.
+
+ 
+
+Said
+
+From hurley.gj at pg.com  Thu Jan 11 15:40:34 2007
+From: hurley.gj at pg.com
+Date: Thu, 11 Jan 2007 10:40:34 -0500
+Subject: Re: SPLUS Interface
+Message-ID: <OF02CBB04F.8E896DDE-ON85257260.00548697-85257260.00561837@pg.com>
+
+Said,
+
+I'm not sure if you are looking to deploy something to a number of users, or rather are doing some sort of analysis at your desk, so I will give you two answers:
+
+If this is something you would like to deploy via the web to a large number of people, I believe it would not be terribly hard using the StatServer package from Insightful.  This would be the type of situation where users upload some data S-Plus can handle and get returned results (perhaps in Excel).  StatServer would be an additional purchase from Insightful if you do not have it.
+
+If this is something you are doing som type of statistical analysis at your desk and simply find the combination of the two software packages optimal as compared to one alone, depending on the "other" software package, I would consider writing an S-Plus script that would essentially involve your analysis and a location for some form of input and output (depending on what you wanted to do).  The script from the other software package writes the input for S-Plus to the location in a format your S-Plus script expects.  It then calls the S-Plus script in Batch Mode via a DOS command (I'm assuming you are on a PC).  From there, the S-Plus script runs as anticipated, creating the desired output in some format that can be read in the next line of code back into your other software package and modified for output.  I have done this type of thing before using SAS and S-Plus.  I have a conference paper in the SUGI 3!
+ 1 proceedings (note example 2 if you look it up) that gives some details on how to do this from SAS (these proceedings are available freely on their website).  I don't think the process would be incredibly different for a different statistical software package to execute an S-Plus script so long as it had some type of scripting capability and was not just a GUI.
+
+Good Luck!
+
+George.
+
+George J. Hurley
+
+The Procter and Gamble Company
+
+Miami Valley Innovation Center, Box 30
+
+11810 East Miami River Road
+
+Cincinnati, OH 45252
+
+P: (513) 627-0692
+
+F: (513) 945-3441
+
+"Said Hirsh" <shirsh at volterra.co.uk>
+
+Sent by: s-news-owner at lists.biostat.wustl.edu
+01/11/2007 10:08 AM
+
+        
+
+        To:        <s-news at lists.biostat.wustl.edu>
+
+        cc:        
+
+        Subject:        [S] SPLUS Interface
+
+Hi
+
+ 
+
+I am looking to use S-plus as a background 'hidden' software to perform calculations and report results on another software package.  Is that possible with S-plus? I know it is possible with other packages such as OxMetrics.
+
+ 
+
+Apologies for my amateurish description but I am not and IT professional.
+
+ 
+
+Many thanks for any help.
+
+ 
+
+Said
+
+From Alex.Asiimwe at port.ac.uk  Thu Jan 11 15:46:33 2007
+From: Alex.Asiimwe at port.ac.uk (Alex Asiimwe)
+Date: Thu, 11 Jan 2007 15:46:33 +0000
+Subject: Hey,
+Message-ID: <45A65BD9.DA93.00D4.3@port.ac.uk>
+
+Hey,
+I ve used Cox regression to develop a model for prediction. However, I
+would also want to calculate the AUC or ROC. How do I go about? Its is
+easy when using logistic regression but I am using Cox regression.
+Thanks
+Alex
+
+From f.harrell at vanderbilt.edu  Thu Jan 11 16:33:29 2007
+From: f.harrell at vanderbilt.edu (Frank E Harrell Jr)
+Date: Thu, 11 Jan 2007 10:33:29 -0600
+Subject: Re: Hey,
+In-Reply-To: <45A65BD9.DA93.00D4.3@port.ac.uk>
+References: <45A65BD9.DA93.00D4.3@port.ac.uk>
+Message-ID: <45A666D9.1080708@vanderbilt.edu>
+
+Alex Asiimwe wrote:
+> Hey,
+> I ve used Cox regression to develop a model for prediction. However, I
+> would also want to calculate the AUC or ROC. How do I go about? Its is
+> easy when using logistic regression but I am using Cox regression.
+> Thanks
+> Alex
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+
+In the Design library see the documentation for validate.cph, and in the 
+Hmisc library see the rcorr.cens function.   Generalized ROC area C and 
+Somers' Dxy rank correlation are related by Dxy=2(C-.5).
+
+--
+Frank E Harrell Jr   Professor and Chair           School of Medicine
+                     Department of Biostatistics   Vanderbilt University
+
+From elvis at xlsolutions-corp.com  Thu Jan 11 17:51:59 2007
+From: elvis at xlsolutions-corp.com
+Date: Thu, 11 Jan 2007 10:51:59 -0700
+Subject: February Courses: (1) Prof Frank Harrell *** Regression Modeling Strategies in R/Splus, (2) R/Splus Advanced Programming, (3) R/Splus Fundamentals and Programming Techniques
+Message-ID: <20070111105159.9f08cc34deb45d78e54b3b5664e21546.19d0043642.wbe@email.secureserver.net>
+
+XLSolutions Corporation (www.xlsolutions-corp.com) is proud to announce
+February courses:
+ 
+(1) Regression Modeling Strategies in R/Splus --- by Prof Frank Harrell
+ 
+                   http://www.xlsolutions-corp.com/Rstats2.htm
+                         
+                       *** New York, February 22-23, 2007 ***
+                       *** San Francisco, March 8-9, 2007 ***
+                       
+ 
+(2) R/Splus Advanced Programming  --- by the R Development Core Team
+Guru!
+ 
+                  http://www.xlsolutions-corp.com/Radv.htm
+ 
+                    *** Seattle & San Francisco  in March / Dates TBD
+***
+ 
+(3) R/Splus Fundamentals and Programming Techniques  
+         
+                 http://www.xlsolutions-corp.com/Rfund.htm
+ 
+                   *** Chicago / February 1-2, 2007, ***
+                   *** Seattle / February 1-2, 2007, ***
+                   *** San Diego / February 8-9, 2007, ***
+                   *** Princeton / February 15-16, 2007, ***
+                   *** Salt Lake City /  February 15-16, 2007 ***
+ 
+Ask for group discount and reserve your seat Now - Earlybird Rates
+Payment due after the class! Email Sue Turner:  sue at xlsolutions-corp.com
+
+ 
+Email us for group discounts: sue at xlsolutions-corp.com
+Phone:  206 686 1578
+ 
+Visit us: www.xlsolutions-corp.com/training.htm
+ 
+Please let us know if you and your colleagues are interested in this
+class to take advantage of group discount. Register now to secure your
+seat!
+ 
+Cheers,
+ 
+Elvis Miller, PhD
+Manager Training
+XLSolutions Corporation
+206 686 1578
+www.xlsolutions-corp.com/training.htm
+elvis at xlsolutions-corp.com
+
+From martyncollins10 at yahoo.com  Fri Jan 12 15:43:48 2007
+From: martyncollins10 at yahoo.com (Martyn Colins)
+Date: Fri, 12 Jan 2007 07:43:48 -0800
+Subject: fitting a linear model
+Message-ID: <30410.8343.qm@web90309.mail.mud.yahoo.com>
+
+Dear members,
+   
+  I would like to fit a linear model using the lm function in the usual way, i.e. y= X*beta + error. However, I have two restrictions on my model. The first is the the sum of the y(i)'s is equal to 1 and the second is the sum of each row in the X matrix is also equal to 1. In the light of these restrictions, is it appropriate to fit a linear model? If not, what type of model should I be fitting?
+   
+  Many thanks in advance for your help.
+  Regards,
+  Martyn
+ 
+
+No need to miss a message. Get email on-the-go 
+with Yahoo! Mail for Mobile. Get started.
+
+From lisas at salford-systems.com  Fri Jan 12 22:06:50 2007
+From: lisas at salford-systems.com (Lisa Solomon)
+Date: Fri, 12 Jan 2007 14:06:50 -0800
+Subject: Free Webinar: Vendor Neutral Intro to Data Mining for Absolute Beginners, January 26, 2007
+Message-ID: <Q0NHQjhQViZVOSpgIC8pMTU4ODU2OTUz@sspc-lisa>
+
+ONLINE VENDOR NEUTRAL INTRO TO DATA MINING FOR ABSOLUTE BEGINNERS
+(no charge)
+
+A non-technical data mining introduction for absolute beginners
+January 26, 2007, 10AM - 11AM PST
+Future Sessions (May 23, June 14, Sept 7)
+To register: contact lisas at salford-systems.com
+
+This one-hour webinar is a perfect place to start if you are new to data mining 
+and have little-to-no background in statistics or machine learning. 
+
+In one hour, we will discuss:
+
+**Data basics: what kind of data is required for data mining and predictive 
+analytics; In what format must the data be; what steps are necessary to prepare 
+data appropriately 
+
+**What kinds of questions can we answer with data mining
+
+**How data mining models work: the inputs, the outputs, and the nature of the 
+predictive mechanism 
+
+**Evaluation criteria: how predictive models can be assessed and their value 
+measured 
+
+**Specific background knowledge to prepare you to begin a data mining project.
+
+Please do not hesitate to contact me if you have any questions or if you wish 
+to register.
+
+Sincerely,
+Lisa Solomon
+lisas at salford-systems.com
+
+From steffen at barembruch.de  Sun Jan 14 14:01:39 2007
+From: steffen at barembruch.de (Steffen Barembruch)
+Date: Sun, 14 Jan 2007 15:01:39 +0100
+Subject: Display a GUI dialog to get a filenam
+Message-ID: <000301c737e4$84010900$2ada5382@steffen>
+
+Hello!
+
+ 
+
+Within my S-Plus 
+scripts I want to show a GUI dialog which enables me to browse through the 
+folders in Windows to select a file. But different from 
+guiExecuteBuiltIn("$$Standard$Open$") which almost does what I want, I do not 
+want to actually open the file, I just want to return the filename, including 
+the pathname.
+
+ 
+
+As a further 
+explanation: The scripts are to be run by several users, which have to specify a 
+file which has to be imported. I dont wan to show the FileImport dialog for that 
+purpose, because it is to complicated. I know exactly what the file looks like, 
+thats why it is a lot easier to import it after knowing the filename with 
+ImportData and specified options. Furthermore I need the pathname to export some 
+results into that folder.
+
+ 
+
+Thanks a 
+lot
+
+Steffen 
+Barembruch
+
+From dataanalytics at earthlink.net  Sun Jan 14 20:48:06 2007
+From: dataanalytics at earthlink.net (Walter R. Paczkowski)
+Date: Sun, 14 Jan 2007 15:48:06 -0500
+Subject: creating a table composed of smaller tables
+Message-ID: <E1H6CFW-0001RZ-BZ@elasmtp-dupuy.atl.sa.earthlink.net>
+
+Hi,
+
+I'm looking for a simple way to create a table that is actually the 
+cbind of two (or more) smaller tables.  Suppose I have a table of 
+willingness to buy X gender that looks like
+
+        1       2
+1       59      53
+2       53      59
+
+where the columns are the gender (1 = Male) and the rows are 
+willingness to buy (1 = Yes).  Consider another table of willingness 
+to buy X income that looks like
+
+        1       2       3       4
+1       31      28      24      29
+2       25      28      32      27
+
+I want
+
+        1       2       1       2       3       4
+1       59      53      31      28      24      29
+2       53      59      25      28      32      27
+
+I can get partway there with a simple function
+
+                lapply(lapply(list(x$gender, x$income), table, x$buy), t)
+
+which results in a list with the two small tables from above.  How do 
+I get  the single combined table I want without using a for-loop and 
+the repeated application of cbind?  It seems there should be an easy way.
+
+Any suggestions?
+
+Thanks,
+
+Walt Paczkowski
+
+From MichaelCamilleri at branz.co.nz  Mon Jan 15 19:13:25 2007
+From: MichaelCamilleri at branz.co.nz (Michael Camilleri)
+Date: Tue, 16 Jan 2007 08:13:25 +1300
+Subject: Re: Display a GUI dialog to get a filenam
+In-Reply-To: <000301c737e4$84010900$2ada5382@steffen>
+References: <000301c737e4$84010900$2ada5382@steffen>
+Message-ID: <A23B682083FD8248ADFE1317C82CBD67021D2926@exchange.branznt.org.nz>
+
+Finally, an S+ user that uses the GUI! I was
+beginning to think I I was the only one! Once you get the hang of the GUI you
+can do a lot of useful things, including custom dialog boxes for analysis, and
+complex graphs, even interactive graphs.
+
+ 
+
+The function you want is guiDisplayFileDialog().
+I think it does exactly what you want.
+
+ 
+
+Cheers!
+
+Michael
+
+ 
+
+ 
+  
+  
+
+  
+ 
+
+ 
+  
+   
+
+  
+ 
+
+ 
+  
+  MICHAEL CAMILLERI BSc, MSc, PhD
+
+  
+ 
+
+ 
+  
+  BUILDING PHYSICIST
+
+  
+ 
+
+ 
+  
+  
+  T +64 4 237 1170
+
+  
+
+  
+  DDI +64 4 237 1174
+
+  
+
+  
+ 
+
+ 
+  
+  PRIVATE BAG 50908
+
+  
+ 
+
+ 
+  
+  PORIRUA CITY 5240
+
+  
+ 
+
+ 
+  
+  WWW.BRANZ.CO.NZ
+
+  
+ 
+
+ 
+
+From yiwu21111958 at yahoo.com  Fri Jan 19 00:38:42 2007
+From: yiwu21111958 at yahoo.com (yiwu ye)
+Date: Thu, 18 Jan 2007 16:38:42 -0800
+Subject: factor levels
+Message-ID: <20070119003842.30907.qmail@web57105.mail.re3.yahoo.com>
+
+Dear list,
+
+I have the following problem. Could anyone help?
+
+x_as.factor(letters[1:5])
+x_x[-4]
+levels(x)
+The levels(x) still gives you 5 rather than 4 levels. Of course, I can do levels(as.factor(as.character(x)) to  get rid of the non-existing factor level. But, I think there must be a simpler way.
+
+Thanks
+
+Yiwu
+
+No need to miss a message. Get email on-the-go 
+with Yahoo! Mail for Mobile. Get started.
+
+From Bill.Venables at csiro.au  Fri Jan 19 05:27:38 2007
+From: Bill.Venables at csiro.au
+Date: Fri, 19 Jan 2007 15:27:38 +1000
+Subject: Re: factor levels
+References: <20070119003842.30907.qmail@web57105.mail.re3.yahoo.com>
+Message-ID: <B998A44C8986644EA8029CFE6396A924840BC5@exqld2-bne.qld.csiro.au>
+
+ 
+
+ 
+
+Ye Yiwu
+asks:
+
+From:
+s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On
+Behalf Of yiwu ye
+
+Sent: Friday, 19 January 2007
+10:39 AM
+
+To: s-news at lists.biostat.wustl.edu
+
+Subject: [S] factor levels
+
+ 
+
+Dear list,
+
+I have the following problem. Could anyone help?
+
+x
+<- as.factor(letters[1:5])
+
+x <- x[-4]
+
+levels(x)
+
+The levels(x) still gives you 5 rather than 4 levels. Of course, I can do
+levels(as.factor(as.character(x)) to  get rid of the non-existing factor
+level. But, I think there must be a simpler way.
+
+[WNV] it’s
+not clear that there is, or even should be, a simpler way.  It depends
+entirely on what you want to happen when you alter the factor by removing a
+component.
+
+ 
+
+In principle a
+factor is used to define a classification.  There are two parts to it that
+in principle operate independently, namely the names of the classes into which
+the factor can define membership (i.e. the factor levels) and the membership of
+each candidate for which the factor does its job.  It’s not clear
+that if you remove one of the candidates, and by so doing make the membership
+of a particular group empty, that the levels should change to exclude it.
+
+ 
+
+Even the
+solution you propose will not completely do what you want to happen, anyway,
+since it will re-order the levels so that their names are in sorted
+order.  If the original names were not in sorted order, you would have altered
+that as well.
+
+ 
+
+I take it what
+you would like to happen is that when you make one or more of the levels of a
+factor empty the new factor has a reduces levels attribute.
+
+ 
+
+Here is a
+function that will do this, but I emphasise that it is quite arbitrary:
+
+ 
+
+fixFactor
+<- function(x) {
+
+   
+newLevels <- levels(x)[table(x) > 0]
+
+   
+factor(as.character(x), levels = newLevels)
+
+}
+
+ 
+
+Here is a brief
+demo
+
+ 
+
+> x
+
+ [1] a b
+c d e a b c d e
+
+> table(x) 
+# levels in reverse alpha order
+
+ e d c b
+a 
+
+ 2 2 2 2
+2
+
+> y <-
+x[-c(1,6)]
+
+> y  # note that the printout implicitly warns levels missing
+
+[1] b c d e b
+c d e
+
+Levels:
+
+[1]
+"e" "d" "c" "b" "a"
+
+> table(y)
+
+ e d c b
+a 
+
+ 2 2 2 2
+0
+
+> y <-
+fixFactor(y)
+
+> table(y)
+
+ e d c b 
+
+ 2 2 2 2
+
+> 
+
+Thanks
+
+Yiwu
+
+ 
+
+Bill Venables
+
+CMIS, CSIRO Laboratories,
+
+PO Box 120, Cleveland, Qld. 4163
+
+AUSTRALIA
+
+Office Phone (email preferred): +61 7 3826 7251
+
+Fax (if absolutely necessary):    +61 7 3826 7304
+
+Mobile (rarely
+used):               
++61 4 1963 4642
+
+Home
+Phone:                         
++61 7 3286 7700
+
+mailto:Bill.Venables at csiro.au
+
+http://www.cmis.csiro.au/bill.venables/
+
+From gregor.gorjanc at bfro.uni-lj.si  Fri Jan 19 11:55:52 2007
+From: gregor.gorjanc at bfro.uni-lj.si (Gregor Gorjanc)
+Date: Fri, 19 Jan 2007 11:55:52 +0000
+Subject: Re: factor levels
+References: <20070119003842.30907.qmail@web57105.mail.re3.yahoo.com>
+Message-ID: <loom.20070119T125335-960@post.gmane.org>
+
+yiwu ye <yiwu21111958 <at> yahoo.com> writes:
+> Dear list,I have the following problem. Could anyone
+help?x_as.factor(letters[1:5])x_x[-4]levels(x)The levels(x) still gives you 5
+rather than 4 levels. Of course, I can do levels(as.factor(as.character(x)) to 
+get rid of the non-existing factor level. But, I think there must be a simpler
+way.ThanksYiwu
+
+Not sure about S-plus, but in R you can simply do
+
+myFac <- factor(myFac)
+
+and unused levels will be dropped. Package gdata has drop.levels function, 
+which 
+also works on data.frames. I use it in my work flow like this:
+
+1. import data
+2. massage it if neccesarry
+3. use drop.levels at the end and it will remove all unused levels in a 
+   data.frame
+
+Gregor
+
+From lorenz at usgs.gov  Fri Jan 19 13:30:20 2007
+From: lorenz at usgs.gov (David L Lorenz)
+Date: Fri, 19 Jan 2007 07:30:20 -0600
+Subject: Re: factor levels
+In-Reply-To: <20070119003842.30907.qmail@web57105.mail.re3.yahoo.com>
+References: <20070119003842.30907.qmail@web57105.mail.re3.yahoo.com>
+Message-ID: <OFF71BAC61.7A81255D-ON86257268.0049A4E6-86257268.004A2FC5@usgs.gov>
+
+Yiwu,
+
+  I think that you want the new
+object x to have only 4 levels rather than having a function that reports
+only the levels that are used. In S-PLUS the former is easy:
+
+x <- x[-4, drop=T]
+
+  
+
+Dave
+
+yiwu ye <yiwu21111958 at yahoo.com>
+
+Sent by: s-news-owner at lists.biostat.wustl.edu
+01/18/2007 06:38 PM
+
+To
+
+s-news at lists.biostat.wustl.edu
+
+cc
+
+Subject
+
+[S] factor levels
+
+Dear list,
+
+I have the following problem. Could anyone help?
+
+x_as.factor(letters[1:5])
+
+x_x[-4]
+
+levels(x)
+
+The levels(x) still gives you 5 rather than 4 levels. Of course, I can
+do levels(as.factor(as.character(x)) to  get rid of the non-existing
+factor level. But, I think there must be a simpler way.
+
+Thanks
+
+Yiwu
+
+No need to miss a message. Get
+email on-the-go 
+
+with Yahoo! Mail for Mobile. Get
+started.
+
+From therneau at mayo.edu  Fri Jan 19 14:38:36 2007
+From: therneau at mayo.edu (Terry Therneau)
+Date: Fri, 19 Jan 2007 08:38:36 -0600
+Subject: Re: factor levels
+Message-ID: <200701191438.l0JEcai10026@hsrnfs-101.mayo.edu>
+
+ I think the better way to deal with this problem is a global fix:
+        options(stringsAsFactors=F)
+ 
+  Set this as your permanent global default, and life with Splus or R will
+be much better.  Turning strings into factors presumes a particular 
+viewpoint about what your analysis of them is going-to-be, and in my
+experience the assumption is almost always wrong.
+
+    The default in S, like many defaults, corresponds to the analysis that
+was being done at the time, by the package author, when the default was chosen.
+(I'm not throwing rocks here: the survival package, which I wrote, has many
+defaults with exactly the same justification).   My gripe is that S/R turn 
+strings into factors, without warning, far too often.  Thankfully the global 
+option fixes this.
+
+    For the Mayo installation (approx 150 users), both na.action=na.omit and
+stringsAsFactors=F are the global default for all users.  Doing so has made
+life considerably simpler for those of us who support them.  
+
+        Terry Therneau
+        
+
+From fisher at plessthan.com  Sun Jan 21 17:51:10 2007
+From: fisher at plessthan.com (Dennis Fisher)
+Date: Sun, 21 Jan 2007 09:51:10 -0800
+Subject: hairlines in graphics
+In-Reply-To: <20070120112004.A9A94126C62@smtp.biostat.wustl.edu>
+References: <20070120112004.A9A94126C62@smtp.biostat.wustl.edu>
+Message-ID: <982788A7-46B4-41CE-AC6B-82528C7B6F7A@plessthan.com>
+
+Colleagues
+I am running Splus version 6.0 on a Linux box (RedHat 9).  In certain graphics that I create, I display many lines.  In R, setting lwd to a small number (e.g, 0.2) allows for thin lines.  However, with Splus, the lwd command (my version, my OS) appears to not support lines thinner than 1.  Is this a function of Splus, version, or OS?  If the solution is to purchase a newer version of Splus, I will need to do so.  Thanks.
+
+Dennis
+ 
+
+ Dennis Fisher MD
+ P < (The "P Less Than" Company)
+ Phone: 1-866-PLessThan (1-866-753-7784)
+ Fax: 1-415-564-2220
+ www.PLessThan.com
+
+From santosh2005 at gmail.com  Mon Jan 22 06:54:07 2007
+From: santosh2005 at gmail.com (Santosh)
+Date: Sun, 21 Jan 2007 22:54:07 -0800
+Subject: Indirect references in SPLUS
+Message-ID: <816b5ce40701212254m52dc49c9q8c83e27aeed8d2d6@mail.gmail.com>
+
+Dear SPlus Users,
+
+Is there a way to work with indirect references in SPlus?
+
+For example,
+
+DataColumn <-  "Resist"
+MatrixColumn <- "ExpnsnCoeff"'
+ScalarColumn <- "Voltage"
+
+As I don't know the syntax, I would like illustrate using the examples given below.
+
+In conventional SPLUS notation, if "df" is a generic dataframe that consists of vectors
+"Resist", "ExpnsnCoeff", "Voltage", 
+
+"df$Resist", "df$ExpnsnCoeff", "df$Voltage" notation may be used to for data handling in respective vectors of the data frame.
+
+Instead of the above notation, I would like to use an indirect reference like:
+
+Assuming that the syntax to provide indirect references is curly braces, e.g. ${DataColumn},
+ 
+"df${DataColumn}" indirectly accesses the vector "df$Resist";
+ similarly "df${MatrixColumn}" calls  "df$ExpnsnCoeff" vector indirectly, and so on..
+
+Hope the above question is clear; please do feel free to ask if you have any additional questions.
+
+Regards,
+Santosh 
+
+From ripley at stats.ox.ac.uk  Mon Jan 22 08:01:23 2007
+From: ripley at stats.ox.ac.uk (Prof Brian Ripley)
+Date: Mon, 22 Jan 2007 08:01:23 +0000
+Subject: Re: hairlines in graphics
+In-Reply-To: <982788A7-46B4-41CE-AC6B-82528C7B6F7A@plessthan.com>
+References: <20070120112004.A9A94126C62@smtp.biostat.wustl.edu> <982788A7-46B4-41CE-AC6B-82528C7B6F7A@plessthan.com>
+Message-ID: <Pine.LNX.4.64.0701220749150.12210@gannet.stats.ox.ac.uk>
+
+The help for par in my version of S-PLUS says
+
+  lwd:
+  line width, device dependent. Width 1 is the standard width for the
+  device
+
+and you have not told us the device you are using.
+
+In R it says
+
+  The line width, a positive number, defaulting to 1. The interpretation
+  is device-specific, and some devices do not implement line widths
+  less than  one.
+
+so the same comment applies.  R does say on the help for each device what 
+the interpretation is, though.  E.g., for the X11 device it says
+
+     Line widths as controlled by 'par(lwd=)' are in multiples of the
+     pixel size, and multiples < 1 are silently converted to 1.
+
+Just which devices are you comparing?
+
+On Sun, 21 Jan 2007, Dennis Fisher wrote:
+
+> Colleagues
+>
+> I am running Splus version 6.0 on a Linux box (RedHat 9).  In certain
+> graphics that I create, I display many lines.  In R, setting lwd to a small
+> number (e.g, 0.2) allows for thin lines.  However, with Splus, the lwd
+> command (my version, my OS) appears to not support lines thinner than 1.  Is
+> this a function of Splus, version, or OS?  If the solution is to purchase a
+> newer version of Splus, I will need to do so.  Thanks.
+>
+>
+> Dennis
+>
+> Dennis Fisher MD
+> P < (The "P Less Than" Company)
+> Phone: 1-866-PLessThan (1-866-753-7784)
+> Fax: 1-415-564-2220
+> www.PLessThan.com
+
+--
+Brian D. Ripley,                  ripley at stats.ox.ac.uk
+Professor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/
+University of Oxford,             Tel:  +44 1865 272861 (self)
+1 South Parks Road,                     +44 1865 272866 (PA)
+Oxford OX1 3TG, UK                Fax:  +44 1865 272595
+
+From rich at mango-solutions.com  Mon Jan 22 09:30:27 2007
+From: rich at mango-solutions.com
+Date: Mon, 22 Jan 2007 09:30:27 +0000
+Subject: Re: Indirect references in SPLUS
+In-Reply-To: <816b5ce40701212254m52dc49c9q8c83e27aeed8d2d6@mail.gmail.com>
+References: <816b5ce40701212254m52dc49c9q8c83e27aeed8d2d6@mail.gmail.com>
+Message-ID: <20070122093018.65112136FCD@mailgate.biostat.wustl.edu>
+
+If I understand your question correctly, you can use:
+
+ 
+
+ 
+
+>
+df <- data.frame(Resist = 1:10, ExpnsnCoeff = 1:10, Voltage = 1:10)
+
+ 
+
+>
+DataColumn <- "Resist"
+
+>
+MatrixColumn <- "ExpnsnCoeff"
+
+>
+ScalarColumn <- "Voltage"
+
+ 
+
+>
+df[[DataColumn]]   # Same as df$Resist
+
+ [1] 
+1  2  3  4  5  6  7  8  9 10
+
+ 
+
+ 
+
+Hope
+this helps,
+
+Rich.
+
+ 
+
+mangosolutions
+
+S-PLUS
+& R Consulting & Training
+
+ 
+
+Tel   
++44 1249 467 467
+
+Fax   +44
+1249 467 468
+
+ 
+
+ 
+
+From: Santosh
+[mailto:santosh2005 at gmail.com] 
+
+Sent: 22 January 2007 06:54
+
+To: s-news at lists.biostat.wustl.edu
+
+Subject: [S] Indirect references
+in SPLUS
+
+ 
+
+Dear SPlus Users,
+
+Is there a way to work with indirect references in SPlus?
+
+For example,
+
+DataColumn <-  "Resist"
+
+MatrixColumn <- "ExpnsnCoeff"'
+
+ScalarColumn <- "Voltage" 
+
+As I don't know the syntax, I would like illustrate using the examples given
+below.
+
+In conventional SPLUS notation, if "df" is a generic dataframe that
+consists of vectors
+
+"Resist", "ExpnsnCoeff", "Voltage", 
+
+"df$Resist", "df$ExpnsnCoeff", "df$Voltage"
+notation may be used to for data handling in respective vectors of the data
+frame.
+
+Instead of the above notation, I would like to use an indirect reference like: 
+
+Assuming that the syntax to provide indirect references is curly braces, e.g.
+${DataColumn},
+
+ 
+
+"df${DataColumn}" indirectly accesses the vector
+"df$Resist";
+
+ similarly "df${MatrixColumn}" calls 
+"df$ExpnsnCoeff" vector indirectly, and so on.. 
+
+Hope the above question is clear; please do feel free to ask if you have any
+additional questions.
+
+Regards,
+
+Santosh  
+
+From kamiltoth at yahoo.com  Mon Jan 22 18:00:49 2007
+From: kamiltoth at yahoo.com (Kamil Toth)
+Date: Mon, 22 Jan 2007 10:00:49 -0800
+Subject: ANOVA or what?
+Message-ID: <173026.8008.qm@web35811.mail.mud.yahoo.com>
+
+Folks:
+  I need an urgent help. I need to analyze the dataset in the field that sort of new to me, but I am sure is fairly transparent for many of you, bio-statistical and epidemiological gurus. 
+  I have two data sets which we will call "treatment" and "control". Each of them contains 24 data points subdivided into four categories called: "weak", "mild", "moderate", "strong". There is no quantitative measure associated with these names but they assumed to be ordered. There are 6 (unordered) replicates in each of theses categories.  I need to estimate the effect of treatment vs control. I understand that there are many approaches possible (I thought about ANOVA, logistic regression,...). In the situation I currently find myself now, the preference would be toward method which is readily available in S-PLUS, and easy to interpret: first I need to understand myself what I am doing and then to
+ clearly explain to non-statistical people.
+   
+  What would you, smart people, recommend?
+   
+  Looking forward for an advise, examples, references, ideas.
+   
+   
+  Thanks
+   
+  Kamil Toth  
+   
+   
+ 
+
+No need to miss a message. Get email on-the-go 
+with Yahoo! Mail for Mobile. Get started.
+
+From Calvin.King at patrick.af.mil  Mon Jan 22 18:28:46 2007
+From: Calvin.King at patrick.af.mil (King, Calvin Civ AFTAC/THD)
+Date: Mon, 22 Jan 2007 13:28:46 -0500
+Subject: Correlation Coefficient for Weighted Regression
+Message-ID: <A57E54C24C2801428660457002D110937D63C1@ENPAEX04.aftac.patrick.afspc.ds.af.mil>
+
+Hello Statistics Experts,
+
+I have a rather basic question on correlation coefficient for weighted regression. For linear regression, R^2 = SSR/SST. Can this equation be extended to weighted regression? In other words, is R^2 = SSRw/SSTw. Any insight and/or a pointer to references would be much appreciated.
+
+Thanks, in advance.
+
+Calvin King
+
+Calvin.King at patrick.af.mil
+
+From jhf2 at bellsouth.net  Tue Jan 23 04:13:02 2007
+From: jhf2 at bellsouth.net (John Fennick)
+Date: Mon, 22 Jan 2007 23:13:02 -0500
+Subject: var(x) vs E{x^2] - [E{x}]^2
+Message-ID: <20070123041308.GVMB20155.ibm57aec.bellsouth.net@jeff.bellsouth.net>
+
+Hi Group,
+Can anyone explain the vast differences between the Variance.A  and 
+Variance.B or Variance.C below?
+>From the last 4 calls, my problem appears to be in the x^2 terms. Am 
+I just having a bad day?
+I get similar performance with rhyper and others as well as the rnorm 
+used here.
+
+thanks,
+john
+
+> xx <- rnorm( 50000, 1, 5)
+>       pp <- dnorm( xx , 1, 5)
+>       pp <- pp / sum( pp )
+>       paste( 'Variance.A = ', round( var( xx ), 2 ) , sep='')
+[1] "Variance.A = 24.97"
+>       paste( 'Variance.B = ', round( sum(xx^2 * pp ) - (sum( xx*pp 
+) )^2, 2 ) , sep='' )
+
+[1] "Variance.B = 12.52"
+>       paste( 'Variance.C = ', round( sum( (xx - sum( xx * pp ) )^2 
+* pp), 2 ) , sep='' )
+
+[1] "Variance.C = 12.52"
+>       paste( 'Mean.A = ', round( sum( xx * pp ), 2 ) , sep=''
+[1] "Mean.A = 0.99"
+>       paste( 'Mean.B = ', round( mean( xx ), 2 ) , sep='')
+[1] "Mean.B = 1"
+>       paste( 'E{xx^2}.A = ', round( var( xx ) + mean( xx )^2, 2 ) , sep='' )
+[1] "E{xx^2}.A = 25.97"
+>       paste( 'E{xx^2}.B = ', round( sum( xx^2 * pp) , 2 ) , sep='' )
+[1] "E{xx^2}.B = 13.49"
+
+John Fennick
+jhf2 at bellsouth.net
+alt: j.fennick at ieee.org
+Tel: 770 949-9132
+7045 Fletcher Drive
+Winston, GA 30187
+USA 
+
+From Bill.Venables at csiro.au  Tue Jan 23 06:04:13 2007
+From: Bill.Venables at csiro.au
+Date: Tue, 23 Jan 2007 16:04:13 +1000
+Subject: Re: var(x) vs E{x^2] - [E{x}]^2
+References: <20070123041308.GVMB20155.ibm57aec.bellsouth.net@jeff.bellsouth.net>
+Message-ID: <B998A44C8986644EA8029CFE6396A924840C0B@exqld2-bne.qld.csiro.au>
+
+The reason is that the density is not the appropriate weight to use -
+you need some kind of estimate of the probability.
+
+Here is one way to show the near equivalence, computationally (using
+S-PLUS 8.0)
+
+> set.seed(57)   # Heinz varieties...
+> xx <- rnorm(50000, 1, 5)
+> m0 <- mean(xx)
+> m0
+[1] 1.008457
+> v0 <- var(xx)
+> v0
+[1] 24.74718
+
+Now to do it the hard way...
+
+> sx <- sort(xx)         # string them out on an axis
+> mx <- (sx[-1] + sx[-length(x)])/2      # mid points
+> px <- diff(pnorm(c(-Inf, mx, Inf), 1, 5))   # probs
+> m1 <- sum(px * sx)
+> m1
+[1] 0.9992542
+> v1 <- sum(px * sx^2) - m1^2
+> v1
+[1] 24.99694
+
+Hmm, not bad.  When the exact results are 1 and 25.  It's a bit of
+cheat, though when you put the results you want into the calculation of
+the weights!
+
+Bill Venables.
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of John Fennick
+Sent: Tuesday, 23 January 2007 2:13 PM
+To: S-News List
+Subject: [S] var(x) vs E{x^2] - [E{x}]^2
+
+Hi Group,
+Can anyone explain the vast differences between the Variance.A  and 
+Variance.B or Variance.C below?
+ From the last 4 calls, my problem appears to be in the x^2 terms. Am 
+I just having a bad day?
+I get similar performance with rhyper and others as well as the rnorm 
+used here.
+
+thanks,
+john
+
+ > xx <- rnorm( 50000, 1, 5)
+ >       pp <- dnorm( xx , 1, 5)
+ >       pp <- pp / sum( pp )
+ >       paste( 'Variance.A = ', round( var( xx ), 2 ) , sep='')
+[1] "Variance.A = 24.97"
+ >       paste( 'Variance.B = ', round( sum(xx^2 * pp ) - (sum( xx*pp 
+) )^2, 2 ) , sep='' )
+[1] "Variance.B = 12.52"
+ >       paste( 'Variance.C = ', round( sum( (xx - sum( xx * pp ) )^2 
+* pp), 2 ) , sep='' )
+[1] "Variance.C = 12.52"
+ >       paste( 'Mean.A = ', round( sum( xx * pp ), 2 ) , sep=''
+[1] "Mean.A = 0.99"
+ >       paste( 'Mean.B = ', round( mean( xx ), 2 ) , sep='')
+[1] "Mean.B = 1"
+ >       paste( 'E{xx^2}.A = ', round( var( xx ) + mean( xx )^2, 2 ) ,
+sep='' )
+[1] "E{xx^2}.A = 25.97"
+ >       paste( 'E{xx^2}.B = ', round( sum( xx^2 * pp) , 2 ) , sep='' )
+[1] "E{xx^2}.B = 13.49"
+
+John Fennick
+jhf2 at bellsouth.net
+alt: j.fennick at ieee.org
+Tel: 770 949-9132
+7045 Fletcher Drive
+Winston, GA 30187
+USA 
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From p.murrell at auckland.ac.nz  Tue Jan 23 20:28:25 2007
+From: p.murrell at auckland.ac.nz (Paul Murrell)
+Date: Wed, 24 Jan 2007 09:28:25 +1300
+Subject: DSC 2007 Additional Funding
+Message-ID: <45B66FE9.30401@stat.auckland.ac.nz>
+
+Hi
+
+DSC 2007, a conference on systems and environments for statistical
+computing, will take place in Auckland, New Zealand on February 15 & 16,
+2007.
+
+               *** Travel and Accommodation Support ***
+
+Additional NSF funding to provide partial support for travel and
+accommodation for graduate students and junior faculty at
+U.S. post-secondary institutions to attend DSC 2007 may be available.
+If you wish to apply for this support, please send an application to
+dsc2007 at stat.auckland.ac.nz.  Your application should include
+
+    a brief CV
+
+    a statement that demonstrates your eligibility, your need for
+    support, and an amount of support requested
+
+    students should include a brief letter of support from their
+    supervisor
+
+    faculty or post-doc applicants should include a brief statement
+    about other funding sources
+
+The allocation will be based on merit and need; women and minority
+candidates are encouraged to apply.
+
+Applications must be made by February 2 (2007-02-02) and successful
+applicants will be notified by email soon thereafter.
+
+Please visit the conference web page at
+http://www.stat.auckland.ac.nz/dsc-2007/
+
+Paul
+(on behalf of the Organising Committee)
+-- 
+Dr Paul Murrell
+Department of Statistics
+The University of Auckland
+Private Bag 92019
+Auckland
+New Zealand
+64 9 3737599 x85392
+paul at stat.auckland.ac.nz
+http://www.stat.auckland.ac.nz/~paul/
+
+From santosh2005 at gmail.com  Wed Jan 24 04:18:20 2007
+From: santosh2005 at gmail.com (Santosh)
+Date: Tue, 23 Jan 2007 20:18:20 -0800
+Subject: Re: Indirect references in SPLUS
+In-Reply-To: <45B4905E.5020602@pburns.seanet.com>
+References: <816b5ce40701212254m52dc49c9q8c83e27aeed8d2d6@mail.gmail.com> <45B4905E.5020602@pburns.seanet.com>
+Message-ID: <816b5ce40701232018x70981201v3adc476866a7c68c@mail.gmail.com>
+
+Great!! Thank you so much for your suggestions, Patrick and Rich!
+
+That got me workin!
+-Santosh
+
+On 1/22/07, Patrick Burns <
+pburns at pburns.seanet.com> wrote:> You could have found '[[' in the subscripting section
+>
+> of chapter 1 of S Poetry.
+>
+> Actually I would prefer:
+>
+> df[, DataColumn]
+>
+> as it works with matrices and data frames, and it doesn't
+> presume to know how data frames are implemented.
+>
+> Patrick Burns
+>
+> patrick at burns-stat.com
+> +44 (0)20 8525 0696
+> http://www.burns-stat.com
+> (home of S Poetry and "A Guide for the Unwilling S User")
+>
+>
+> Santosh wrote:
+>
+> > Dear SPlus Users,
+> >
+> > Is there a way to work with indirect references in SPlus?
+> >
+> > For example,
+> >
+> > DataColumn <-  "Resist"
+> > MatrixColumn <- "ExpnsnCoeff"'
+>
+> > ScalarColumn <- "Voltage"
+> >
+> > As I don't know the syntax, I would like illustrate using the examples
+> > given below.
+> >
+> > In conventional SPLUS notation, if "df" is a generic dataframe that
+>
+> > consists of vectors
+> > "Resist", "ExpnsnCoeff", "Voltage",
+> >
+> > "df$Resist", "df$ExpnsnCoeff", "df$Voltage" notation may be used to
+> > for data handling in respective vectors of the data frame.
+>
+> >
+> > Instead of the above notation, I would like to use an indirect
+> > reference like:
+> >
+> > Assuming that the syntax to provide indirect references is curly
+> > braces, e.g. ${DataColumn},
+>
+> >
+> > "df${DataColumn}" indirectly accesses the vector "df$Resist";
+> >  similarly "df${MatrixColumn}" calls  "df$ExpnsnCoeff" vector
+> > indirectly, and so on..
+> >
+>
+> >
+> > Hope the above question is clear; please do feel free to ask if you
+> > have any additional questions.
+> >
+> > Regards,
+> > Santosh
+
+From noramuda at yahoo.com  Wed Jan 24 08:52:14 2007
+From: noramuda at yahoo.com (Nora Muda)
+Date: Wed, 24 Jan 2007 00:52:14 -0800
+Subject: problem in substring()
+Message-ID: <958649.32857.qm@web61024.mail.yahoo.com>
+
+Dear S-Plus users,
+
+ 
+
+I have problems in using substring ( ) function. My question may looked simple to all of you, since I am new to Splus. I have problems to get back my 2 digits number after did paste ( ) function. 
+
+ 
+
+Let say I have 10 numbers.
+
+ 
+
+>y <- c(1:10)
+
+>a <- as.numeric(paste(y[1],y[10],sep=""))
+
+$a:
+
+[1] 110
+
+ 
+
+then I want to separate it back apart;
+
+>as.numeric(substring(a,1,1))
+
+[1] 1
+
+>as.numeric(substring(a,2,2)) 
+
+[1]  1    <------------   suppose I want '10' not '1'
+
+ 
+
+I noticed that substring( ) separate one string at a time, how to do if we want 2 strings as my example above?
+
+ 
+
+Hopefully someone will help to answer my questions. 
+
+ 
+
+Thank you in advance.
+
+ 
+
+--Nora.
+
+Need a quick answer? Get one in minutes from people who know. Ask your question on
+ Yahoo! Answers.
+
+From noramuda at yahoo.com  Wed Jan 24 09:40:15 2007
+From: noramuda at yahoo.com (Nora Muda)
+Date: Wed, 24 Jan 2007 01:40:15 -0800
+Subject: Re: substring()'s problem
+Message-ID: <68466.60977.qm@web61013.mail.yahoo.com>
+
+Thank you Romain and Steffen for your answered. Actually I know if defined as first, second and third character. But I want it  become first and second character only; 1 and 10.
+ 
+
+below are my programs that the last output should be like the blue one:
+
+n <- 10
+
+label <- array(dim=n,NA)
+
+for(i in 1:n) label[i] <- i
+
+small <- 3
+
+big <- 4
+
+label[small] <- as.numeric(paste(label[small],label[big],sep=""))
+
+labelSmall <- label[small]
+
+label[big] <- NA
+
+lengLabel <- array(dim=n-1,NA)
+
+cell <- array(dim=nchar(labelSmall),NA)
+
+for(j in 1:nchar(labelSmall)){
+
+cell[j] <- as.numeric(substring(labelSmall,j,j))
+
+}
+
+for(i in 1:n){
+
+if(i!=small && i!=big ){
+
+labelOther <- label[i]
+
+lengOther <- nchar(labelOther)
+
+index <- array(dim=length(lengOther),NA)
+
+weight <- length(lengOther)*length(cell)
+
+d <- matrix(NA,length(cell),length(lengOther))
+
+for(j in 1:length(cell)){
+
+for(k in 1:length(lengOther)){
+
+index[k] <- as.numeric(substring(labelOther,k,k))
+
+d[j,k] <- as.numeric(paste(index[k],cell[j],sep=""))
+
+}
+
+}
+
+print(d)
+
+}
+
+}
+
+outputs:
+
+[,1] 
+
+[1,] 13
+
+[2,] 14
+
+[,1] 
+
+[1,] 23
+
+[2,] 24
+
+[,1] 
+
+[1,] 53
+
+[2,] 54
+
+[,1] 
+
+[1,] 63
+
+[2,] 64
+
+[,1] 
+
+[1,] 73
+
+[2,] 74
+
+[,1] 
+
+[1,] 83
+
+[2,] 84
+
+[,1] 
+
+[1,] 93
+
+[2,] 94
+
+[,1] 
+
+[1,] 13        --------->    [1,] 103
+
+[2,] 14                            [2,] 104
+
+ 
+
+The outputs will be used in future clustering process where any number can be clustered together following the rule given; let say after this "110" joined with number 8, so it can be "1810". I want it become first, second and third character only, here '0' not a fourth character.
+
+ 
+
+Is there any way to modified it?
+
+ 
+
+ 
+
+ 
+
+--Nora .
+
+Don't get soaked.  Take a quick peak at the forecast 
+ with theYahoo! Search weather shortcut.
+
+From M.Cortina at ich.ucl.ac.uk  Wed Jan 24 09:44:12 2007
+From: M.Cortina at ich.ucl.ac.uk (Mario Cortina Borja)
+Date: Wed, 24 Jan 2007 09:44:12 +0000
+Subject: Re: problem in substring()
+In-Reply-To: <958649.32857.qm@web61024.mail.yahoo.com>
+References: <958649.32857.qm@web61024.mail.yahoo.com>
+Message-ID: <003e01c73f9c$342ef850$cbf652c2@Dell>
+
+Dear Nora, 
+
+ 
+
+Try 
+
+ 
+
+as.numeric(substring( a, nchar(y[1])+1, nchar(y[1])+nchar(y[10])))
+
+ 
+
+Best
+wishes,
+
+ 
+
+Mario
+
+ 
+
+Dr Mario Cortina Borja
+
+Senior Lecturer in
+Statistics
+
+Centre for Paediatric
+Epidemiology and Biostatistics
+
+Institute of Child
+Health, University College London
+
+M.Cortina at ich.ucl.ac.uk
+
+Tel - 020 7905 2113
+
+FAX - 020 7905 2381
+
+ 
+
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On
+Behalf Of Nora Muda
+
+Sent: 24 January 2007 08:52
+
+To: s-news at lists.biostat.wustl.edu
+
+Subject: [S] problem in
+substring()
+
+ 
+
+Dear S-Plus users,
+
+ 
+
+I have problems in using substring ( ) function. My question may looked
+simple to all of you, since I am new to Splus. I have problems to get back my 2
+digits number after did paste ( ) function. 
+
+ 
+
+Let say I have 10 numbers.
+
+ 
+
+>y <- c(1:10)
+
+>a <- as.numeric(paste(y[1],y[10],sep=""))
+
+$a:
+
+[1] 110
+
+ 
+
+then I want to separate it back apart;
+
+>as.numeric(substring(a,1,1))
+
+[1] 1
+
+>as.numeric(substring(a,2,2)) 
+
+[1]  1    <------------   suppose I want '10'
+not '1'
+
+ 
+
+I noticed that substring( ) separate one string at a time, how to do if
+we want 2 strings as my example above?
+
+ 
+
+Hopefully someone will help to answer my questions. 
+
+ 
+
+Thank you in advance.
+
+ 
+
+--Nora.
+
+ 
+
+Need a quick answer? Get one in minutes from people who know. Ask your
+question on Yahoo!
+Answers.
+
+From jrgold at insightful.com  Wed Jan 24 21:29:58 2007
+From: jrgold at insightful.com (Jill Goldschneider)
+Date: Wed, 24 Jan 2007 13:29:58 -0800
+Subject: JOB: LARS Package Developer
+Message-ID: <ECBC2BF14033C0458FDA3C695E14F5F607B009@sewinexch00.insightful.com>
+
+Insightful is seeking a Research Scientist with a strong background in
+statistical methodology, algorithms development, data analysis, and software
+development.  The primary responsibilities are to develop software for
+high-dimensional regression and machine learning applications using least
+angle regression (LARS).
+
+The official position is listed at:
+        http://www.insightful.com/company/jobdescription.asp?JobID=118
+
+More information about the project is at:
+        http://www.insightful.com/Hesterberg/glars
+
+For technical questions contact Tim Hesterberg timh at insightful.com.
+
+To apply, please contact Jill Goldschneider jrgold at insightful.com or Human
+Resources HR at insightful.com.
+
+Thank you,
+Jill
+
+----
+
+Jill R. Goldschneider, Ph.D.
+Director of Research
+Insightful Corporation
+1700 Westlake Ave. N. Suite 500
+Seattle WA 98109
+(206) 802-2327 (office)
+(206) 953-9355 (mobile)
+(206) 802-2500 (fax) 
+
+From jrgold at insightful.com  Wed Jan 24 21:37:26 2007
+From: jrgold at insightful.com (Jill Goldschneider)
+Date: Wed, 24 Jan 2007 13:37:26 -0800
+Subject: JOB: LARS internships
+Message-ID: <ECBC2BF14033C0458FDA3C695E14F5F607B00A@sewinexch00.insightful.com>
+
+Insightful is seeking a pre-doctoral student and an undergraduate student for
+two internship positions.  The primary responsibilities are to assist in the
+development of software for high-dimensional regression and machine learning
+applications using least angle regression (LARS).
+
+The pre-doctoral candidate should have a background and interest in
+statistical methodology, algorithms, data analysis, simulation studies and
+software development and documentation.  The candidate should be currently
+pursuing a Ph.D. degree.  
+
+The undergraduate intern position requires a person with at least three years
+of undergraduate training and a solid background in mathematics and interest
+in statistical methodology, algorithms, data analysis, simulation studies and
+software development and documentation.  The candidate should be currently
+pursuing a bachelor's degree. 
+
+The official positions are listed at:
+        http://www.insightful.com/company/jobdescription.asp?JobID=116
+        http://www.insightful.com/company/jobdescription.asp?JobID=117
+
+More information about the project can be found at:
+        http://www.insightful.com/Hesterberg/glars
+
+For technical questions contact Tim Hesterberg timh at insightful.com.
+
+To apply, please contact Jill Goldschneider jrgold at insightful.com or Human
+Resources HR at insightful.com.
+
+Thank you,
+Jill
+
+----
+
+Jill R. Goldschneider, Ph.D.
+Director of Research
+Insightful Corporation
+1700 Westlake Ave. N. Suite 500
+Seattle WA 98109
+(206) 802-2327 (office)
+(206) 953-9355 (mobile)
+(206) 802-2500 (fax) 
+
+From yang_eric9 at yahoo.com  Thu Jan 25 14:25:53 2007
+From: yang_eric9 at yahoo.com (Eric yang)
+Date: Thu, 25 Jan 2007 06:25:53 -0800
+Subject: write.table simple question
+Message-ID: <983785.28390.qm@web33908.mail.mud.yahoo.com>
+
+ 
+  Does anyone know how to surpress the "row.names" appearing in the top left hand corner of a matrix/table when using write.table() to write the matrix/table to an external file? I can change the row names and column names but the row names themselves have a heading "row.names" which I don't actually require.
+   
+  I would be grateful for any help.
+   
+  Thanks in advance.
+  Regards,
+  Eric
+ 
+
+It's here! Your new message!
+Get
+ new email alerts with the free Yahoo! Toolbar.
+
+From PKyveryga at iasoybeans.com  Thu Jan 25 21:37:55 2007
+From: PKyveryga at iasoybeans.com (Peter Kyveryga)
+Date: Thu, 25 Jan 2007 15:37:55 -0600
+Subject: Incorporating spatial correlation in logistic modeling in S-Plus
+Message-ID: <DE0C56850EA82D47AB43E3A29661093D01B06804@isadsm1.iasoybeans.local>
+
+Did anyone deal with a need to include
+spatial correlation into logistic models?
+
+ 
+
+I am running logistic regressions to
+determine significant factors affecting distribution crop yield categories within
+fields. 
+
+The yield observations tend to spatial
+correlate within fields that validates the assumption that the response
+variables are independent.
+
+ 
+
+There is an  Option in Spatial
+Regression to consider spatial or covariance structure by building a neighbor
+grids for ordinary linear regression.
+
+Is it possible to do the same with
+Logistic Regression?
+
+ 
+
+Thanks,
+
+ 
+
+Peter
+
+ 
+
+From Mike.Li at fda.hhs.gov  Fri Jan 26 14:08:40 2007
+From: Mike.Li at fda.hhs.gov (Li, Mike)
+Date: Fri, 26 Jan 2007 09:08:40 -0500
+Subject: Command line functions to open menu dialogs?
+Message-ID: <27CA3827C6B33E40874682C469E774DD04BCD68C@FMD3CT001.fda.gov>
+
+Hi, 
+
+Does anyone know how to use command line functions to open the dialog in menu Graph/2D plot… for S+7.0?
+
+Thanks,
+
+Mike
+
+From mhs208 at bangor.ac.uk  Mon Jan 29 09:47:01 2007
+From: mhs208 at bangor.ac.uk (Dr. Takashi Kikuchi)
+Date: Mon, 29 Jan 2007 09:47:01 +0000
+Subject: S-Plus or R codes for ICER and CEACs
+Message-ID: <45BDC295.9000107@bangor.ac.uk>
+
+Dear S-plus and R users for Health economics
+
+If you have S-Plus or R codes for the calculation for Incremental cost 
+effectiveness ratio (ICER) and Cost effectiveness acceptability curve 
+(CEAC), please introduce them to me. Parametric and non-parametric 
+methods are welcome.
+
+All the best
+Takashi
+
+--
+        mhs208 at bangor.ac.uk 
+
+--
+Gall y neges e-bost hon, ac unrhyw atodiadau a anfonwyd gyda hi,
+gynnwys deunydd cyfrinachol ac wedi eu bwriadu i'w defnyddio'n unig
+gan y sawl y cawsant eu cyfeirio ato (atynt). Os ydych wedi derbyn y
+neges e-bost hon trwy gamgymeriad, rhowch wybod i'r anfonwr ar
+unwaith a dilëwch y neges. Os na fwriadwyd anfon y neges atoch chi,
+rhaid i chi beidio â defnyddio, cadw neu ddatgelu unrhyw wybodaeth a
+gynhwysir ynddi. Mae unrhyw farn neu safbwynt yn eiddo i'r sawl a'i
+hanfonodd yn unig  ac nid yw o anghenraid yn cynrychioli barn
+Prifysgol Cymru, Bangor. Nid yw Prifysgol Cymru, Bangor yn gwarantu
+bod y neges e-bost hon neu unrhyw atodiadau yn rhydd rhag firysau neu
+100% yn ddiogel. Oni bai fod hyn wedi ei ddatgan yn uniongyrchol yn
+nhestun yr e-bost, nid bwriad y neges e-bost hon yw ffurfio contract
+rhwymol - mae rhestr o lofnodwyr awdurdodedig ar gael o Swyddfa
+Cyllid Prifysgol Cymru, Bangor.  www.bangor.ac.uk
+
+This email and any attachments may contain confidential material and
+is solely for the use of the intended recipient(s).  If you have
+received this email in error, please notify the sender immediately
+and delete this email.  If you are not the intended recipient(s), you
+must not use, retain or disclose any information contained in this
+email.  Any views or opinions are solely those of the sender and do
+not necessarily represent those of the University of Wales, Bangor.
+The University of Wales, Bangor does not guarantee that this email or
+any attachments are free from viruses or 100% secure.  Unless
+expressly stated in the body of the text of the email, this email is
+not intended to form a binding contract - a list of authorised
+signatories is available from the University of Wales, Bangor Finance
+Office.  www.bangor.ac.uk
+
+From timh at insightful.com  Mon Jan 29 16:18:22 2007
+From: timh at insightful.com (Tim Hesterberg)
+Date: Mon, 29 Jan 2007 16:18:22 +0000
+Subject: Interface 2007 Conference - Philadelphia May 23-27
+Message-ID: <20070129161822.E310F137090@mailgate.biostat.wustl.edu>
+
+Announcement and Call for Papers:  Interface 2007
+
+The 39th Conference on Interface of Statistics and Computing Science
+will take place
+        May 23-26, Philadelphia, Doubletree Hotel
+The general theme is "Systems Biology".
+
+For more information, see the conference website
+        http://sbm.temple.edu/interface07/
+or contact Alan J. Izenman, Department of Statistics, Speakman
+Hall, 1810 North 13th Street, Philadelphia, PA 19122-6083, 
+(215) 204-8166, alan at temple.edu.
+
+Tim Hesterberg
+Secretary, Interface Foundation
+
+========================================================
+| Tim Hesterberg       Senior Research Scientist       |
+| timh at insightful.com  Insightful Corp.                |
+| (206)802-2319        1700 Westlake Ave. N, Suite 500 |
+| (206)283-8691 (fax)  Seattle, WA 98109-3044, U.S.A.  |
+|                      www.insightful.com/Hesterberg   |
+========================================================
+Download S+Resample from www.insightful.com/downloads/libraries
+
+From Russell.Ivory at MerrickBank.com  Tue Jan 30 23:21:24 2007
+From: Russell.Ivory at MerrickBank.com (Russell Ivory)
+Date: Tue, 30 Jan 2007 16:21:24 -0700
+Subject: class and inheritance
+Message-ID: <C8D9459E0E12A04D9CD897043F52F74903F461AE@MBCEXCHANGE.MBC.com>
+
+Hi S list.
+
+I need to define a new class for credit bureau data so that I can create
+new methods for dealing with special missing codes, etc. If I assign the
+new class to each vector, and then make a data frame out of these new
+class vectors, all seems to work well.  However, if I assign columns of
+a data frame to the new class (cb.data) after the data frame exists,
+things blow up. For example, I cannot get a correlation matrix as
+follows:
+(I'm using S-Plus 7.0 Professional Developer)
+ 
+#Creating both integer and numeric data vectors and a data frame
+> test1 <- c(4, 6, 5, 7, 5, 4, 5, 3, 5)
+> test2 <- c(21, 65, 54, 87, 65, 32, 21, 54, 87)
+> test3 <- rnorm(9, 12, 3)
+> testdata <- data.frame(cbind(test1, test2, test3))
+
+ 
+#Define a new class "cb.data":
+> setClass("cb.data", "numeric")
+      # At least the way I understand it, class cb.data extends class
+        # numeric, i.e. it is a prototype of and inherits all that
+        # numeric has to offer.
+        # But knowing some data may be integer, I instruct that as well:
+
+> setIs("cb.data", "integer")
+
+#getClass shows that cb.data extends both integer and numeric:
+> getClass("cb.data")
+
+No slots; prototype of class "numeric"
+
+Extends:
+Class "integer" by direct inclusion
+Class "numeric" by direct inclusion
+Class "vector" indirectly through class "numeric"
+Class "positionsNumeric" indirectly through class "numeric"
+Class "complex" indirectly through class "numeric"
+Class "positions" indirectly through class "positionsNumeric"
+
+#Now I assign the class to each column:
+> for(i in 1:3)
+           class(testdata[, i]) <- "cb.data"
+
+#Correlations seem to be complex, if I read the output correctly
+> cor(testdata[, 1], testdata[, 2])
+[1] 0.5611317+0i
+> cor(testdata[, 1], testdata[, 3])
+[1] -0.08105978+0i
+
+ 
+#And I get an error trying to create the correlation matrix:
+> cor(testdata)
+Problem in numerical.matrix(x): Non-atomic (list) variables are not
+allowed 
+Use traceback() to see the call stack
+
+Any suggestions are greatly appreciated.
+
+Russell Ivory | AVP Modeling Manager | Merrick Bank | (801) 545-6640 |
+russell.ivory at merrickbank.com
+
+10705 South Jordan Gateway
+Suite 200
+South Jordan, UT 84095
+****************************************************************************This
+ e-mail and any files transmitted with it are confidential and are intended 
+solely for the use of the individual or entity to whom it is addressed. If you 
+are not the intended recipient or the person responsible for delivering the 
+e-mail to the intended recipient, be advised that you have received this e-mail 
+in error, and that any use, dissemination, forwarding, printing, or copying of 
+this e-mail is strictly prohibited. If you received this e-mail in error, 
+please return the e-mail to the sender at Merrick Bank and delete it from your 
+computer. Although Merrick Bank attempts to sweep e-mail and attachments for 
+viruses, it does not guarantee that either are virus-free and accepts no 
+liability for any damage sustained as a result of viruses.
+

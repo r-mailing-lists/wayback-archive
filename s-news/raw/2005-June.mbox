@@ -1,0 +1,6174 @@
+From jorgen.meisfjord at bio.uib.no  Wed Jun  1 12:56:52 2005
+From: jorgen.meisfjord at bio.uib.no (=?utf-8?q?J=C3=B8rgen_Meisfjord?=)
+Date: Wed, 01 Jun 2005 14:56:52 +0200
+Subject: panel order in trellis plot of nlme fit
+Message-ID: <1117630612.429db0942d385@webmail.uib.no>
+
+Dear S+ list members;
+
+To individual growth histories I have fitted the following five-parameter 
+model;
+
+> data.gd <- groupedData(body.size~age|individual, data=data.df)
+> m.nlme <- nlme( (growth model), fixed=a1+a2+a3+a4~1, a5~AREA, ..., 
+data=data.gd, ...)
+
+where ?AREA? is a categorical ?treatment? covariate factor with levels ?East? 
+and ?West?. 
+
+I now wish to produce a trellis plot similar to the one in Pinheiro & Bates 
+(2000, FIGURE 8.19, p. 377), so that I ?seen from bottom left in the trellis 
+plot- first get the panels for the individuals from stratum ?East? and 
+thereafter the panels for stratum ?West? (or vice versa). So I try
+
+> plot(augPred(m.nlme, level=0:1), layout=...) 
+
+which is analogue to the command used to produce FIGURE 8.19 in Pinheiro & 
+Bates (2000,  p. 377), or so it seems to me. However, the panels in my plot 
+appear in the order of highest value of the response variable (i.e. the 
+individual that reached the lowest terminal body length in the lower left 
+panel and the individual that reached the highest terminal body length in the 
+upper right panel), independently of them belonging to stratum East or West.
+
+I?ve checked the object  augPred(m.nlme, level=0:1) but it holds no clues to 
+the order of appearence of the panels in the trellis plot.
+
+I?ve also searched the Help function and the s-news archives without finding a 
+way to control the order of appearance of the panels (except for reversing the 
+order), so can anyone help?
+
+(I?m using S-PLUS® 6.1 for Windows, PROFESSIONAL EDITION, Release 1 and 
+Windows XP)
+
+Jørgen
+
+-- 
+Jørgen Meisfjord
+
+Dpt. Biology
+University of Bergen
+PB. 7800
+5020 Bergen
+Norway
+
+From bates at stat.wisc.edu  Wed Jun  1 13:09:59 2005
+From: bates at stat.wisc.edu (Douglas Bates)
+Date: Wed, 01 Jun 2005 08:09:59 -0500
+Subject: Re: panel order in trellis plot of nlme fit
+In-Reply-To: <1117630612.429db0942d385@webmail.uib.no>
+References: <1117630612.429db0942d385@webmail.uib.no>
+Message-ID: <429DB3A7.7030101@stat.wisc.edu>
+
+Jørgen Meisfjord wrote:
+> Dear S+ list members;
+> 
+> To individual growth histories I have fitted the following five-parameter 
+> model;
+> 
+> 
+>>data.gd <- groupedData(body.size~age|individual, data=data.df)
+>>m.nlme <- nlme( (growth model), fixed=a1+a2+a3+a4~1, a5~AREA, ..., 
+> 
+> data=data.gd, ...)
+> 
+> where “AREA” is a categorical “treatment” covariate factor with levels “East” 
+> and “West”. 
+> 
+> I now wish to produce a trellis plot similar to the one in Pinheiro & Bates 
+> (2000, FIGURE 8.19, p. 377), so that I –seen from bottom left in the trellis 
+> plot- first get the panels for the individuals from stratum “East” and 
+> thereafter the panels for stratum “West” (or vice versa). So I try
+> 
+> 
+>>plot(augPred(m.nlme, level=0:1), layout=...) 
+> 
+> 
+> which is analogue to the command used to produce FIGURE 8.19 in Pinheiro & 
+> Bates (2000,  p. 377), or so it seems to me. However, the panels in my plot 
+> appear in the order of highest value of the response variable (i.e. the 
+> individual that reached the lowest terminal body length in the lower left 
+> panel and the individual that reached the highest terminal body length in the 
+> upper right panel), independently of them belonging to stratum East or West.
+> 
+> I’ve checked the object  augPred(m.nlme, level=0:1) but it holds no clues to 
+> the order of appearence of the panels in the trellis plot.
+> 
+> I’ve also searched the Help function and the s-news archives without finding 
+> a 
+> way to control the order of appearance of the panels (except for reversing 
+> the 
+> order), so can anyone help?
+> 
+> (I’m using S-PLUS® 6.1 for Windows, PROFESSIONAL EDITION, Release 1 and 
+> Windows XP)
+> 
+> Jørgen
+> 
+
+If you convert your data to a groupedData object you can specify the
+ordering with respect to an outer factor, which could be the stratum
+East or West in your case.
+
+From bill.shipley at usherbrooke.ca  Wed Jun  1 13:36:27 2005
+From: bill.shipley at usherbrooke.ca (Bill Shipley)
+Date: Wed, 01 Jun 2005 09:36:27 -0400
+Subject: making grouped barplots with barplot()
+Message-ID: <004001c566ae$e985a640$b01ad284@BIO041>
+
+Hello.  I would like to use the barplot() function
+(not the GUI) to make a grouped barplot graph (i.e. 12 barplots grouped into 4
+groups of 3).  The help file for barplot allows stacked barplots but I can’t
+find out how to make them side by side rather than stacked.
+
+Thanks.
+
+ 
+
+Bill Shipley
+
+ 
+
+From atorreblanca at tegperu.org  Wed Jun  1 15:22:33 2005
+From: atorreblanca at tegperu.org (Alberto M. Torreblanca Villavicencio)
+Date: Wed, 01 Jun 2005 10:22:33 -0500
+Subject: Re: making grouped barplots with barplot()
+In-Reply-To: <004001c566ae$e985a640$b01ad284@BIO041>
+References: <004001c566ae$e985a640$b01ad284@BIO041>
+Message-ID: <429DD2B9.1030603@tegperu.org>
+
+You can do this,
+
+barplot(c(1,2,3,0,4,5,6,0), # You can put the series separate with 0
+space=.1,
+names=c("Type I","Type II","Type III","", # First group
+"Type I","Type II","Type III",""), # Second group, the same as data
+col=c(3,2,1,0,3,2,1,0)) # repeat colors for groups
+
+'u can make a function to do this using a matrix to pass data in groups ...
+
+Bill Shipley escribió:
+
+> Hello. I would like to use the barplot() function (not the GUI) to
+> make a grouped barplot graph (i.e. 12 barplots grouped into 4 groups
+> of 3). The help file for barplot allows stacked barplots but I can’t
+> find out how to make them side by side rather than stacked.
+>
+>
+> Thanks.
+>
+> Bill Shipley
+
+--
+
+__________________________________________________________________
+/"Great spirits have always encountered violent opposition from mediocre 
+minds."/
+/"Only two things are infinite, the universe and the human stupidity."/
+*Albert Einstein (1879-1955)*
+
+From jenndu31 at yahoo.com  Thu Jun  2 03:12:35 2005
+From: jenndu31 at yahoo.com (Jennifer Duoph)
+Date: Wed, 01 Jun 2005 20:12:35 -0700
+Subject: Tool help you to write metadata document to specify analysis variables and datatsets when prepare statistical analysis plan for clinical trials
+Message-ID: <20050602031235.13905.qmail@web53502.mail.yahoo.com>
+
+SapMaker Metadata 1.0 is a tool that will help
+statisticians or SAS programmers to create metadata
+documents of SAS datasets of clinical studies or
+metadata for converting SAS datasets to other derived
+SAS datasets.   It is usful when statistiains are
+prepareing statistical analysis plan
+ 
+http://www.sapmaker.com/SapMakerMetadataIntro/Introduction.htm
+
+__________________________________________________
+Do You Yahoo!?
+Tired of spam?  Yahoo! Mail has the best spam protection around 
+http://mail.yahoo.com 
+
+From icdm at wi-lab.com  Thu Jun  2 08:06:07 2005
+From: icdm at wi-lab.com (ICDM)
+Date: Thu, 02 Jun 2005 17:06:07 +0900
+Subject: Final CFP : IEEE ICDM'05
+Message-ID: <005d01c56749$ee834120$9332a8c0@pc7kenji>
+
+[Apologies if you receive this more than once]
+
+==================================================================
+Final Call for Papers
+
+ICDM '05: The 5th IEEE International Conference on Data Mining
+
+Sponsored by the IEEE Computer Society
+New Orleans, Louisiana, USA
+27-30 November 2005
+
+http://www.cacs.louisiana.edu/~icdm05/
+
+(Papers Due: 15 June 2005)
+===================================================================
+
+The 2005 IEEE International Conference on Data Mining (IEEE ICDM '05)
+provides a premier forum for the dissemination of innovative,
+practical development experiences as well as original research results
+in data mining, spanning applications, algorithms, software and
+systems. The conference draws researchers and application developers
+from a wide range of data mining related areas such as statistics,
+machine learning, pattern recognition, databases and data warehousing,
+data visualization, knowledge-based systems and high performance
+computing. By promoting high quality and novel research findings, and
+innovative solutions to challenging data mining problems, the
+conference seeks to continuously advance the state of the art in data
+mining. As an important part of the conference, the workshops program
+will focus on new research challenges and initiatives, and the
+tutorials program will cover emerging data mining technologies and the
+latest developments in data mining.
+
+Topics of Interest
+------------------
+
+Topics related to the design, analysis and implementation of data
+mining theory, systems and applications are of interest. These
+include, but are not limited to the following areas:
+
+   * Foundations of data mining
+   * Data mining and machine learning algorithms and methods in traditional
+     areas (such as classification, regression, clustering, probabilistic
+     modeling, and association analysis), and in new areas
+   * Mining text and semi-structured data, and mining temporal, spatial and
+     multimedia data
+   * Mining data streams
+   * Pattern recognition and trend analysis
+   * Collaborative filtering/personalization
+   * Data and knowledge representation for data mining
+   * Query languages and user interfaces for mining
+   * Complexity, efficiency, and scalability issues in data mining
+   * Data pre-processing, data reduction, feature selection and feature
+     transformation
+   * Post-processing of data mining results
+   * Statistics and probability in large-scale data mining
+   * Soft computing (including neural networks, fuzzy logic, evolutionary
+     computation, and rough sets) and uncertainty management for data mining
+   * Integration of data warehousing, OLAP and data mining
+   * Human-machine interaction and visual data mining
+   * High performance and parallel/distributed data mining
+   * Quality assessment and interestingness metrics of data mining results
+   * Security, privacy and social impact of data mining
+   * Data mining applications in bioinformatics, electronic commerce, Web,
+     intrusion detection, finance, marketing, healthcare, telecommunications
+     and other fields
+
+Conference Publications and ICDM Best Paper Awards
+--------------------------------------------------
+
+High quality papers in all data mining areas are solicited. Original
+papers exploring new directions will receive especially careful and
+supportive reviews. Papers that have already been accepted or are
+currently under review at other conferences or journals will not be
+considered for publication at ICDM '05.
+
+Paper submissions should be limited to a maximum of 8 pages in the
+IEEE 2-column format (see the IEEE Computer Society Press Proceedings
+Author Guidelines at http://www.computer.org/cspress/instruct.htm),
+and will be reviewed by the Program Committee on the basis of
+technical quality, relevance to data mining, originality,
+significance, and clarity. Please use the Submission Form on the ICDM
+'05 website to submit your paper.  Accepted papers will be published
+in the conference proceedings by the IEEE Computer Society Press.
+
+A selected number of IEEE ICDM '05 accepted papers will be invited for
+possible inclusion, in an expanded and revised form, in the Knowledge
+and Information Systems journal (http://www.cs.uvm.edu/~kais/)
+published by Springer-Verlag.
+
+IEEE ICDM Best Paper Awards will be conferred at the conference on the
+authors of (1) the best research paper and (2) the best application
+paper.  Application-oriented submissions will be considered for the
+best application paper award.
+
+Important Dates
+---------------
+
+       June 15, 2005  Paper submissions
+                      Tutorial proposals
+                      Workshop proposals
+                      Panel proposals
+
+     August 20, 2005  Paper acceptance notices
+   September 7, 2005  Final camera-readies
+   November 27, 2005  Tutorials and Workshops
+November 28-30, 2005  Conference
+
+All paper submissions will be handled electronically. Detailed
+instructions are provided on the conference home page at
+http://www.cacs.louisiana.edu/~icdm05
+
+Conference Co-Chairs:
+
+   *  Vijay Raghavan, University of Louisiana, Lafayette, USA
+      (raghavan at cacs.louisiana.edu)
+   *  Rajeev Rastogi, Bell Laboratories, Lucent, USA
+      (rastogi at research.bell-labs.com)
+
+Program Committee Chairs:
+
+   * Jaiwei Han, University of Illinois at Urbana-Champaign, USA
+     (hanj at cs.uiuc.edu)
+   * Benjamin Wah, University of Illinois at Urbana-Champaign, USA
+     (wah at uiuc.edu)
+
+Program Committee Vice-Chairs:
+
+   * Daniel Barbara, George Mason University, USA
+   * Tamraparni Dasu, AT&T Research, USA
+   * Inderjit Dhillon, University of Texas, USA
+   * Venkatesh Ganti, Microsoft Research, USA
+   * Bart Goethals, University of Antwerp, Belgium
+   * Dimitris Gunopulos, University of California, Riverside, USA
+   * George Karypis, University of Minnesota, USA
+   * Hillol Kargupta, University of Maryland, Baltimore County, USA
+   * S. Muthu Muthukrishnan, Rutgers University, USA
+   * Dino Pedreschi, University of Pisa, Italy
+   * Jian Pei, Simon Fraser University, Canada
+   * Raghu Ramakrishnan, University of Wisconsin-Madison, USA
+   * Sunita Sarawagi, IIT-Bombay, India
+   * Arno Siebes, Utrecht University, Netherlands
+   * Jeffrey X. Yu, Chinese University of Hong Kong, Hong Kong
+
+Panels Chair/Co-Chair
+
+   * Lee Giles, Pennsylvania State University, USA
+     (giles at ist.psu.edu)
+   * Gary Flake, Yahoo Research Labs, USA
+     (flakeg at yahoo-inc.com)
+
+Publicity Chairs
+
+   * Ning Zhong, Maebashi Institute of Technology, Japan
+     (zhong at maebashi-it.ac.jp)
+   * Zonghuan Wu, University of Louisiana, Lafayette, USA
+     (zwu at cacs.louisiana.edu)
+
+Proceedings Chair
+
+   * Xindong Wu, University of Vermont, USA
+     (xwu at emba.uvm.edu)
+
+Registrations Chair/Co-chair
+
+   * Elizabeth Diaz, University of Louisiana, Lafayette, USA
+     (elidiaz at bellsouth.net)
+   * Ying Xie, University of Louisiana, Lafayette, USA
+     (yxx2098 at cacs.louisiana.edu)
+
+Workshops Chair
+
+   * Pawan Lingras, Saint Mary's University, Canada
+     (pawan at cs.stmarys.ca)
+
+Tutorials Chair
+
+   * Haesun Park, University of Minnesota, Twin Cities, USA
+     (hpark at cs.umn.edu)
+
+Budget Manager
+
+   * Biren Shah, University of Louisiana, Lafayette, USA
+     (bshah at cacs.louisiana.edu)
+
+Local Arrangements Chair/Co-chairs
+
+   * Elizabeth Diaz, University of Louisiana, Lafayette, USA
+     (elidiaz at bellsouth.net)
+   * Anna Robin, University of Louisiana, Lafayette, USA
+     (arobin at centurytel.net)
+   * Anca Doloc-Mihu, University of Louisiana, Lafayette, USA
+     (anca at louisiana.edu)
+
+ICDM Steering Committee
+
+   * Max Bramer, University of Portsmouth (UK)
+   * Nick Cercone, Dalhousie University (Canada)
+   * Ramamohanarao Kotagiri, University of Melbourne (Australia)
+   * Vipin Kumar, University of Minnesota (USA)
+   * Katharina Morik, University of Dortmund (Germany)
+   * Gregory Piatetsky-Shapiro, KDnuggets (USA)
+   * Benjamin W. Wah, University of Illinois, Urbana-Champaign (USA)
+   * Xindong Wu (Chair), University of Vermont (USA)
+   * Philip S. Yu, IBM T.J. Watson Research Center (USA)
+   * Ning Zhong, Maebashi Institute of Technology (Japan)
+
+Further Information
+
+Vijay Raghavan
+University of Louisiana, Lafayette, USA
+
+Phone: 337-482-6603
+Fax: 337-482-5791
+E-mail: raghavan at cacs.louisiana.edu
+
+From jvadams at usgs.gov  Thu Jun  2 18:27:38 2005
+From: jvadams at usgs.gov (Jean V Adams)
+Date: Thu, 02 Jun 2005 14:27:38 -0400
+Subject: problem with help() ? function
+Message-ID: <OF1E0967DF.A2F632B6-ON85257014.006473E3-85257014.00656837@usgs.gov>
+
+I just upgraded to S-PLUS Professional Developer for Windows 7.0, and am
+unable to open up the help files from the command line.  When I issue a
+help command, such as
+      help(anova)
+or
+      ?anova
+an empty notepad window opens up with the error message, "Access is
+denied".
+
+There is a work around, because I am able to access the help file from the
+menu,
+      Help
+      Available Help
+      Language Reference
+      Index
+      anova
+
+But, I miss the convenience of the command line access.  Is there a fix for
+this?
+
+JVA
+
+P.S.  I tried checking the s-news archives on-line before sending this
+message, but when I tried to access this page
+      http://www.biostat.wustl.edu/archives/html/s-news/
+I received this message,
+      Forbidden
+      You don't have permission to access /archives/html/s-news/ on this
+server.
+      Additionally, a 403 Forbidden error was encountered while trying to
+use an ErrorDocument to handle the request.
+      Apache/2.0.52 (Fedora) Server at www.biostat.wustl.edu Port 80
+Perhaps it's just not my day.  :)
+
+`·.,,  ><(((º>   `·.,,  ><(((º>   `·.,,  ><(((º>
+
+Jean V. Adams
+Statistician
+U.S. Geological Survey
+Great Lakes Science Center
+c/o Marquette Biological Station
+1924 Industrial Parkway
+Marquette, MI 49855  USA
+phone: 906-226-1212
+FAX: 906-226-3632
+web site: www.glsc.usgs.gov
+e-mail: jvadams at usgs.gov
+
+From rmh at temple.edu  Thu Jun  2 18:52:48 2005
+From: rmh at temple.edu (Richard M. Heiberger)
+Date: Thu, 02 Jun 2005 14:52:48 -0400
+Subject: Re: problem with help() ? function
+Message-ID: <bc4a5b5c.63d5854.81ee500@po-d.temple.edu>
+
+?anova at the GUI Commands window for S-Plus 7.0 works normally for
+me.  This makes me ask if there was an installation glitch on your system.
+Check whether the access permissions for the help files are correct.
+
+Rich
+
+From jvadams at usgs.gov  Thu Jun  2 19:05:01 2005
+From: jvadams at usgs.gov (Jean V Adams)
+Date: Thu, 02 Jun 2005 15:05:01 -0400
+Subject: Re: problem with help() ? function
+In-Reply-To: <OF1E0967DF.A2F632B6-ON85257014.006473E3-85257014.00656837@usgs.gov>
+References: <OF1E0967DF.A2F632B6-ON85257014.006473E3-85257014.00656837@usgs.gov>
+Message-ID: <OF9A05580A.BE667A5B-ON85257014.0067ED25-85257014.0068D480@usgs.gov>
+
+Thanks for the quick reply from Stephen Kaluzny at Insightful.  He
+correctly surmised that I had the hmisc library ahead of splus in the
+search list.  I simply attached the hmisc library after splus in the search
+list, and my problem was solved.  (He suggested an alternative approach,
+see his original message below).  Thanks, Stephen!
+
+Thanks also to Richard Heiberger and Stephen Smith who also offered help.
+
+JVA
+
+P.S. As for the s-news archives.  I can now access site, and browse, but I
+cannot search.  My guess is that whatever is wrong will return to normal
+eventually.
+
+---
+
+His message:
+
+Do you have library Hmisc attached ahead of splus in the search list?
+
+The Hmisc library in S-PLUS 7.0 has a version of help that is not
+compatible with S-PLUS 7.0. You can remove or rename the help function
+in library Hmisc and things should work OK:
+
+             library(Hmisc, first=T)
+             setDBStatus("Hmisc", T)
+             assign("help.orig", get("help", where="Hmisc"), where="Hmisc")
+             remove("help", where="Hmisc")
+
+                                                                                
+                                                              
+                      Jean V Adams                                              
+                                                              
+                      <jvadams at usgs.gov>               To:       
+s-news at wubios.wustl.edu                                                      
+                      Sent by:                         cc:                      
+                                                              
+                      s-news-owner at lists.biosta        Subject:  [S] problem 
+with help() ? function                                           
+                      t.wustl.edu                                               
+                                                              
+                                                                                
+                                                              
+                                                                                
+                                                              
+                      06/02/2005 02:27 PM                                       
+                                                              
+                                                                                
+                                                              
+
+I just upgraded to S-PLUS Professional Developer for Windows 7.0, and am
+unable to open up the help files from the command line.  When I issue a
+help command, such as
+      help(anova)
+or
+      ?anova
+an empty notepad window opens up with the error message, "Access is
+denied".
+
+There is a work around, because I am able to access the help file from the
+menu,
+      Help
+      Available Help
+      Language Reference
+      Index
+      anova
+
+But, I miss the convenience of the command line access.  Is there a fix for
+this?
+
+JVA
+
+P.S.  I tried checking the s-news archives on-line before sending this
+message, but when I tried to access this page
+      http://www.biostat.wustl.edu/archives/html/s-news/
+I received this message,
+      Forbidden
+      You don't have permission to access /archives/html/s-news/ on this
+server.
+      Additionally, a 403 Forbidden error was encountered while trying to
+use an ErrorDocument to handle the request.
+      Apache/2.0.52 (Fedora) Server at www.biostat.wustl.edu Port 80
+Perhaps it's just not my day.  :)
+
+`·.,,  ><(((º>   `·.,,  ><(((º>   `·.,,  ><(((º>
+
+Jean V. Adams
+Statistician
+U.S. Geological Survey
+Great Lakes Science Center
+c/o Marquette Biological Station
+1924 Industrial Parkway
+Marquette, MI 49855  USA
+phone: 906-226-1212
+FAX: 906-226-3632
+web site: www.glsc.usgs.gov
+e-mail: jvadams at usgs.gov
+
+From dkaplan at UDel.Edu  Sat Jun  4 01:53:57 2005
+From: dkaplan at UDel.Edu (David Kaplan)
+Date: Fri, 03 Jun 2005 21:53:57 -0400
+Subject: Complex sample designs in S-plus (and R)
+Message-ID: <000801c568a8$452404b0$6502a8c0@IBM03F534730B4>
+
+Greetings all,
+
+Are there functions in S-plus (or R) that handle complex sampling designs 
+such as multi-stage sampling?  Are there also ways to have statistical 
+analyses (e.g. regression) handle complex sampling designs.
+
+Thanks in advance,
+
+David
+
+=====================================
+David Kaplan, PhD
+Professor of Education
+School of Education
+University of Delaware
+Newark DE 19716
+
+Voice:             302-831-8696
+Fax:                302-831-4110
+email:              mailto:dkaplan at udel.edu
+Homepage:     http://www.udel.edu/dkaplan
+SOE page:      http://www.udel.edu/educ
+======================================
+
+From zaslavsk at hcp.med.harvard.edu  Sat Jun  4 02:59:14 2005
+From: zaslavsk at hcp.med.harvard.edu (Alan Zaslavsky)
+Date: Fri, 03 Jun 2005 22:59:14 -0400
+Subject: Re: Complex sample designs in S-plus (and R)
+In-Reply-To: <000801c568a8$452404b0$6502a8c0@IBM03F534730B4>
+References: <000801c568a8$452404b0$6502a8c0@IBM03F534730B4>
+Message-ID: <Pine.GSO.4.60.0506032256290.22034@hcp>
+
+Yes, see links to Tom Lumley's R package (believed to work with minor 
+modifications at most in S-Plus) at
+
+        http://www.hcp.med.harvard.edu/statistics/survey-soft/r.html
+
+On Fri, 3 Jun 2005, David Kaplan wrote:
+> Are there functions in S-plus (or R) that handle complex sampling designs
+> such as multi-stage sampling?  Are there also ways to have statistical
+> analyses (e.g. regression) handle complex sampling designs.
+
+From phlasky at earthlink.net  Sat Jun  4 15:20:19 2005
+From: phlasky at earthlink.net (Paul Lasky)
+Date: Sat, 04 Jun 2005 08:20:19 -0700
+Subject: Find the K largest & smallest entries in a Correlation Matrix
+Message-ID: <001d01c56918$eb6a7000$98c1b3d1@D6WVZ821>
+
+ 
+
+ 
+
+How do I find the k largest and smallest entries in a large correlation
+matrix and their addresses ( excluding the main diagonal entries of 1?)
+
+ 
+
+For example, given the correlation matrix for all SP500 stocks, find
+the l0 largest and smallest pairs of different symbols.
+
+ 
+
+   Paul H. Lasky
+
+   P & B Consultants 
+
+ 
+
+From pburns at pburns.seanet.com  Sat Jun  4 18:16:01 2005
+From: pburns at pburns.seanet.com (Patrick Burns)
+Date: Sat, 04 Jun 2005 19:16:01 +0100
+Subject: Re: Find the K largest & smallest entries in a Correlation Matrix
+In-Reply-To: <001d01c56918$eb6a7000$98c1b3d1@D6WVZ821>
+References: <001d01c56918$eb6a7000$98c1b3d1@D6WVZ821>
+Message-ID: <42A1EFE1.8040604@pburns.seanet.com>
+
+You could do something like:
+
+k <- 10
+lt.cor <- spcor[lower.tri(spcor, diag=FALSE)]
+ltc.sort <- sort(lt.cor)
+lower.cor <- ltc.sort[k]
+upper.cor <- ltc.sort[length(ltc.sort) - k + 1]
+
+corloc <- array(FALSE, dim(spcor), dimnames(spcor))
+corloc[lower.tri(corloc, diag=FALSE)] <- lt.cor <= lower.cor
+
+If S-PLUS has an 'arr.ind' argument in 'which'  like R does,
+then you can just do:
+
+which(corloc, arr.ind=TRUE)
+
+Patrick Burns
+
+Burns Statistics
+patrick at burns-stat.com
++44 (0)20 8525 0696
+http://www.burns-stat.com
+(home of S Poetry and "A Guide for the Unwilling S User")
+
+Paul Lasky wrote:
+
+>
+>
+>
+>
+>
+>
+>
+>
+> How do I find the k largest and smallest entries in a large
+> correlation matrix and their addresses ( excluding the main diagonal
+> entries of 1?)
+>
+>
+>
+>
+>
+>
+>
+> For example, given the correlation matrix for all SP500 stocks, find
+> the l0 largest and smallest pairs of different symbols.
+>
+>
+>
+>
+>
+>
+>
+>    Paul H. Lasky
+>
+>    P & B Consultants
+>
+>
+
+From riadh_aloui at hotmail.com  Sun Jun  5 08:01:00 2005
+From: riadh_aloui at hotmail.com (riadh alaoui)
+Date: Sun, 05 Jun 2005 08:01:00 +0000
+Subject: pseudo ML
+Message-ID: <BAY14-F2866DD29A81A778302F9F98F80@phx.gbl>
+
+how to perform pseudo maximum likelihood method to estimate garch model?
+
+_________________________________________________________________
+
+MSN Hotmail : antivirus et antispam intégrés 
+http://www.msn.fr/newhotmail/Default.asp?Ath=f
+
+From xao_ping at yahoo.com  Mon Jun  6 14:27:20 2005
+From: xao_ping at yahoo.com (Xao Ping)
+Date: Mon, 06 Jun 2005 07:27:20 -0700
+Subject: Data import from excel revisited
+Message-ID: <20050606142721.76002.qmail@web54005.mail.yahoo.com>
+
+Dear All:
+
+This question should be probably addressed to the Insightful people, but maybe somebody else can elucidate the issue. In the S-PLUS 2000, it was very easy to import an Excel file using GUI. You just click File->Import Data, select file type which is ".xls", and indicate the path using browser. The same procedure in S-PLUS 6.2 invites you to fill out two dozen fields in the message box "by hands", without any automation of selecting the available options. The procedure is pretty tedious and completely equivalent to providing the arguments to the "importData" function, and it is not clear why in this case the GUI function is built in at all. I hope that I am missing something here and in fact the 6.2 version of this GUI item is a step forward, not back. If not, then, I guess, my question to Insightful is this:
+
+ 
+
+What is the rationale behind the decision that so simple and so traditional functionality has been dropped from the S+6.2?
+
+ 
+
+thank you in advance
+
+ 
+
+Xao Ping
+
+R&R Pharmakinetics 
+
+Taiwan
+
+		Discover Yahoo!
+ 
+Get on-the-go sports scores, stock quotes, news & more. Check it out!
+
+From cj5815 at yahoo.com  Mon Jun  6 14:30:06 2005
+From: cj5815 at yahoo.com (Joe Cerniglia)
+Date: Mon, 06 Jun 2005 07:30:06 -0700
+Subject: extraction method question
+Message-ID: <20050606143006.90437.qmail@web50205.mail.yahoo.com>
+
+I extended the time series class to form a new class
+called data.analysis class.  I would like a
+extraction method on this new class to be well
+defined.  I am getting an error message when I run
+this method.  I also include the code for my new
+class.
+
+Thanks.
+
+Joe
+
+setMethod("[", "data.analysis" ,function(x, ..., drop
+= T)
+        # drop argument is ignored when subscripting time
+series!
+        ndots <- nDotArgs(...)
+        if(ndots < 1)
+                return(x)
+        args <- match.call(function(x, i, j, drop)
+        {
+        }
+        )
+        if(!is.null(args$i)) {
+                i <- eval(args$i, sys.parent(1))
+                if(is.null(i))
+                        i <- 0
+        }
+        else i <- NULL
+                
+        if(!is.null(args$j)) {
+                j <- eval(args$j, sys.parent(1))
+                if(is.null(j))
+                        j <- 0
+        }
+        else j <- NULL
+                
+        # if i,j args are time series, convert them
+        if(is(i, "series")) i <- seriesData(i)
+        if(is(j, "series"))     j <- seriesData(j)
+        if(!is.null(i)) x@positions <- x@positions[i]
+                
+        oldnames <- colIds(x@data)
+        names(oldnames) <- oldnames
+
+        if(!is.null(i) && !is.null(j))
+                x@data <- asSeriesData(sub(x@data, i, j))
+        else if(is.null(i) && !is.null(j))
+                x@data <- asSeriesData(sub(x@data,  , j))
+        else if(!is.null(i) && is.null(j))
+                x@data <- asSeriesData(sub(x@data, i,  ))
+
+        if(!is.null(j))
+                newnames <- oldnames[j]
+        else newnames <- oldnames
+
+        names(newnames) <- NULL
+
+        nc <- numCols(x@data)
+
+        # may have ended up with a null data matrix here
+        if(!is.data.frame(x@data) && !is.null(newnames))
+rowIds(x@data) <- character(0)
+        if(nc && !is.null(newnames))
+                colIds(x@data) <- newnames[1:nc]
+        x
+)
+
+#############################################3
+new class to use the extraction method
+setClass("data.analysis", representation=
+representation("series",factors= "character"),
+         prototype = list("data" = matrix(NULL, nrow = 0,
+ncol = 1)
+        , "positions" = NULL
+        , "start.position" = NULL
+        , "end.position" = NULL
+        , "future.positions" = NULL
+        , "units" = character(0)
+        , "title" = character(0)
+        , "documentation" = character(0)
+        , "attributes" = NULL
+        , contains = list("seriesVirtual" = numeric(0))
+                        ) )
+
+                
+__________________________________ 
+Yahoo! Mail 
+Stay connected, organized, and protected. Take the tour: 
+http://tour.mail.yahoo.com/mailtour.html 
+
+From Saadi at management.uottawa.ca  Mon Jun  6 22:32:25 2005
+From: Saadi at management.uottawa.ca (Samir Saadi)
+Date: Mon, 06 Jun 2005 18:32:25 -0400
+Subject: Comparing volatility
+In-Reply-To: <BAY14-F2866DD29A81A778302F9F98F80@phx.gbl>
+References: <BAY14-F2866DD29A81A778302F9F98F80@phx.gbl>
+Message-ID: <42A496B9.4215.1BFBAB6@management.uottawa.ca>
+
+Hi S-Plus users !
+I have a data file (of 850 000 observations) which has two colums:
+- Colum 1: Monday returns of thousands of different stocks
+- Colum 2: Dummy variable: 0 for stocks with option and 1 for stocks without 
+option
+
+I would like to see whether Options have any effect on Monday returns' 
+volatility.
+My question is: Using S-PLUS, how can I test which stocks have a higher 
+volatility ?
+I thought about Multivariate GARCH, but I don't know how to program it on 
+S-Plus :(
+
+I would really appreciate your help.
+
+Samir
+
+On 5 Jun 2005 at 8:01, riadh alaoui wrote:
+
+> how to perform pseudo maximum likelihood method to estimate garch model?
+>
+> _________________________________________________________________
+> MSN Hotmail : antivirus et antispam intégrés
+> http://www.msn.fr/newhotmail/Default.asp?Ath=f
+>
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+
+Saadi at management.uottawa.ca
+
+From vkpanch at yahoo.com  Mon Jun  6 22:54:25 2005
+From: vkpanch at yahoo.com (Vignesh Panchanatham)
+Date: Mon, 06 Jun 2005 15:54:25 -0700
+Subject: Size for .data directory
+Message-ID: <20050606225426.1328.qmail@web31412.mail.mud.yahoo.com>
+
+Hi,
+
+Is there a maximum size for the .Data directory on
+S-Plus for Windows? If so, what is it? My version of
+S-Plus was working properly but recently I am unable
+to open certain directories but not others. Are there
+any workarounds?
+
+Thanks,
+vkpanch
+
+__________________________________________________
+Do You Yahoo!?
+Tired of spam?  Yahoo! Mail has the best spam protection around 
+http://mail.yahoo.com 
+
+From luis.apiolaza at forestrytas.com.au  Tue Jun  7 05:08:44 2005
+From: luis.apiolaza at forestrytas.com.au (Luis Apiolaza)
+Date: Tue, 07 Jun 2005 15:08:44 +1000
+Subject: Using apply for functions with more than one argument
+Message-ID: <s2a5b886.096@ft-gateway.forestrytas.com.au>
+
+Hi,
+
+Let's say that I have an array with 100,000 rows and two columns (total
+height and stem diameter for trees), and that I have defined a
+stem.volume (non-linear, by the way) function that requires total height
+and stem diameter as arguments.
+
+Is it possible to use apply in some way to calculate stem.volume? 
+
+All examples that I have seen for 'apply' use functions with only a
+single argument. Is there a more general way of using apply for more
+complex functions? I just want to avoid using an explicit loop.
+
+Cheers,
+
+Luis
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Dr Luis A. Apiolaza
+Principal Forest Biometrician
+Forestry Tasmania
+GPO Box 207
+Hobart Tas 7001
+Australia
+
+email:    Luis.Apiolaza at forestrytas.com.au
+phone: +61-3-6233 8127
+web:     http://www.forestrytas.com.au
+             http://uncronopio.org
+"All I want is a warm bed, a kind word,
+ and unlimited power" --Ashleigh Brilliant
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------------------------
+This transmission is intended solely for the person or 
+organisation to whom it is addressed.
+It is confidential and may contain legally privileged 
+information. If you have received this transmission in 
+error,you may not use, copy or distribute it.
+Please advise us by return e-mail or by phoning 61 3 62338203 
+and immediately delete the transmission in its entirety.
+We will meet your reasonable expenses of notifying us.
+Despite our use of anti-virus software, Forestry Tasmania 
+cannot guarantee that this transmission is virus-free. 
+-----------------------------------------------------
+
+From rmh at temple.edu  Tue Jun  7 12:26:54 2005
+From: rmh at temple.edu (Richard M. Heiberger)
+Date: Tue, 07 Jun 2005 08:26:54 -0400
+Subject: Re: Using apply for functions with more
+Message-ID: <ecce1c5e.8ad2dd3.81a0600@po-d.temple.edu>
+
+Yes, it is easy by using the ... arguments.
+
+Here are two ways of approaching your example.
+
+> tmp <- cbind(h=10:13, d=5:6)
+> tmp
+      h d 
+[1,] 10 5
+[2,] 11 6
+[3,] 12 5
+[4,] 13 6
+> apply(tmp, 1, function(x) {x["h"] * x["d"]^2 * pi/4})
+[1] 196.34954 311.01767 235.61945 367.56634
+> sapply(1:nrow(tmp), function(i, h, d) {h[i] * d[i]^2 * pi/4}, h=tmp[,"h"], 
+> d=tmp[,"d"])
+[1] 196.34954 311.01767 235.61945 367.56634
+> 
+
+The first uses the apply() function on the matrix and no extra arguments.
+
+The second uses the sapply() function on the vector of indices and
+uses that to index into the extra arguments.
+
+From sarah.goslee at gmail.com  Tue Jun  7 12:39:26 2005
+From: sarah.goslee at gmail.com (Sarah Goslee)
+Date: Tue, 07 Jun 2005 08:39:26 -0400
+Subject: Re: Using apply for functions with more than one argument
+In-Reply-To: <s2a5b886.096@ft-gateway.forestrytas.com.au>
+References: <s2a5b886.096@ft-gateway.forestrytas.com.au>
+Message-ID: <efb536d5050607053955078558@mail.gmail.com>
+
+On 6/7/05, Luis Apiolaza <luis.apiolaza at forestrytas.com.au> wrote:
+
+> All examples that I have seen for 'apply' use functions with only a
+> single argument. Is there a more general way of using apply for more
+> complex functions? I just want to avoid using an explicit loop.
+
+Did you look at the help for apply? 
+
+It gives an example for what you are trying to do.
+     x <- cbind(x1 = 3, x2 = c(4:1, 2:5))
+     ##- function with extra args:
+     cave <- function(x, c1,c2) c(mean(x[c1]),mean(x[c2]))
+     apply(x,1, cave,  c1="x1", c2=c("x1","x2"))
+
+You do need to provide an argument x to your function even if you
+don't use it, because of the way apply functions. I think.
+
+Sarah
+-- 
+Sarah Goslee 
+http://www.stringpage.com
+
+From Saadi at management.uottawa.ca  Tue Jun  7 14:03:41 2005
+From: Saadi at management.uottawa.ca (Samir Saadi)
+Date: Tue, 07 Jun 2005 10:03:41 -0400
+Subject: Re: Comparing volatility
+In-Reply-To: <CA871298CD1882459F7859BD08DC06E4C530A3@slumail.ad.slu.se>
+References: <CA871298CD1882459F7859BD08DC06E4C530A3@slumail.ad.slu.se>
+Message-ID: <42A570FC.28898.71DB85@management.uottawa.ca>
+
+Thank you Mark and Yingfu for your help:
+
+Here what I am trying to do 
+
+1- Run the returns series as a random walk with drift : rt = constant + error 
+
+2- take the error series and model it with a GARCH type model while
+introducing the option dummy variables in the conditional variance equation) 
+
+3- The sign of the dummy vairables will show whether volatility is lower when
+a stock has an option 
+
+How can I make S-Plus introduce the second column as a dummy variable in the
+conditon variance equation?
+
+By the way my file has two colums:
+
+ Column 1: Monday returns of thousands of different stocks
+
+ Column 2: Dummy variable: 0 for stocks with option and 1 for stocks without option
+
+ 
+
+Thanks everyone for your time
+
+Samir
+
+> Hello, Samir,
+
+> The S-plus module finmetrics has a built-in function called mgarch, which suits your purpose,
+I believe.
+
+> 
+
+> HTH,
+
+> Yingfu
+
+> 
+
+> Ps. The help file:
+
+> Fit Multivariate GARCH Model
+
+> DESCRIPTION: 
+
+> Fits one of a wide variety of multivariate GARCH models, including not only the basic
+diagonal vec models of Bollerslev, Engle, and Nelson (1994), but also the complete set of models given in Ding (1994). 
+
+> USAGE: 
+
+> mgarch(formula.mean=~arma(0,0), formula.var=~garch(0,0),  
+
+>        series=NULL, series.start=1, x=NULL, x.start=1, 
+
+>        xlag=0, z=NULL, z.start=1, model=NULL, leverage=F, 
+
+>        n.predict=1, trace=T, cond.dist="gaussian", 
+
+>        dist.par=NULL, dist.est=T, cccor.choice=1, 
+
+>        cccor.value=NULL, armaType="diag",
+control=NULL, 
+
+>        algorithm="bhhh", ...) 
+
+> 
+
+> REQUIRED ARGUMENTS: 
+
+> formula.mean 
+
+> a formula specifying the conditional mean equation structure of ARMA form. Can have the
+form y~arma(p,q), where y is a matrix of time series observations. In the formula, arma(p,q) can be replaced by ar(p), ma(q). If a mean term is to be removed, -1+arma(p,q) must
+be used. Also in the formula.mean, y can be present or absent. In the case y does not appear, it must be specified by the series argument. Exogenous variables are also allowed. 
+
+> formula.var 
+
+> a formula specifying a GARCH model to fit, namely one of the following: 
+
+> 
+
+> ~dvec(p,q), the basic diagonal vec model that does not force positive definiteness of
+the conditional covariance matrices. 
+
+> 
+
+> ~dvec.x.y(p,q), with x and y being either mat, vec, or scalar. For example, the matrix
+diagonal model can be specified by ~dvec.mat.mat(1,1). 
+
+> 
+
+> ~dvecac.x.y(p,q), with x and y being either mat, vec, or scalar. There is a correspondence
+between models in the group dvec and those in the group dvecac. The difference is that a model in the group dvecac replaces the constant matrix C by its asymptotically estimated
+form. 
+
+> 
+
+> ~ewma1, exponentially weighted model of type 1. 
+
+> 
+
+> ~ewma2, exponentially weighted model of type 2. 
+
+> 
+
+> ~bekk(p,q), the BEKK model. 
+
+> 
+
+> ~diag.g(p,q), a collection of uncorrelated univariate GARCH models, with g being a name
+of one of the univariate models, e.g., ~diag.egarch(2,2). 
+
+> 
+
+> ~ccc.g(p,q), the conditional constant correlation model, with g being a name of one of
+the univariate models, e.g., ~ccc.tgarch(2,2). 
+
+> 
+
+> ~prcomp.g(p,q), the principal components model, with g being a name of one of the univariate
+models, e.g., ~prcomp.pgarch(2,2). 
+
+> 
+
+> In the three models above, if the univariate garch(p,q) is used, there is no need to specify
+g, e.g., diag(p,q) uses a garch(p,q) model. Exogenous variables are also allowed in the formula. 
+
+> series 
+
+> a matrix of time series observations. The number of columns of the matrix series is the
+number of time series to be modeled and the number of rows of the series is the length of the time series observations. If y is a vector, a univariate model is fitted. 
+
+> model 
+
+> a list specifying the model as returned by mgarch.model. The required arguments are formula.mean
+and formula.var, or model. If both formula.mean and formula.var are specified by the user, mgarch will call mgarch.model to generate a model list specification. If one but not
+both of formula.mean or formula.var is missing, the missing equation will be specified as the default: arma(0,0) for the mean equation, and garch(0,0) for the variance equation.
+If neither formula.mean nor formula.var is specified by the
+user, then a model list with the components specified as in the object created by mgarch.model must be supplied through the model argument, which has the default NULL. If the
+matrix of time series y in formula.mean is not specified, then it must be supplied in the argument series, which also has the default value NULL. 
+
+> OPTIONAL ARGUMENTS: 
+
+> series.start 
+
+> the element of series to begin with. For example, if series.start=10, the observations
+of series will start from the tenth row of series. 
+
+> x 
+
+> a vector or matrix of exogenous variables in the mean equation. The default is NULL. Preferably
+this should be specified in formula.mean. 
+
+> x.start 
+
+> the element of x to begin with. For example, if x.start=10, the observations of x will
+start from the tenth row of x. 
+
+> xlag 
+
+> maximum number of lags in exogenous variables x. 
+
+> z 
+
+> a vector or matrix of exogenous variables in the variance equation. Preferably this should
+be specified in formula.var. 
+
+> z.start 
+
+> the element of z to begin with. For example, if z.start=10, the observations of z will
+start from the tenth row of z. 
+
+> leverage 
+
+> logical flag: if TRUE, a leverage term is included for models DIAG.g, CCC.g, or PRCOMP.g. 
+
+> n.predict 
+
+> the number of steps ahead predicted from the current time. 
+
+> cccor.choice 
+
+> for ccc type models only, an integer specifying the correlation estimation: 
+
+> 
+
+> 0 - use sample correlation matrix and perform no further MLE estimation of the correlation
+matrix; 
+
+> 
+
+> 1 - use sample correlation matrix as the initial values and estimate the correlation matrix
+via MLE; 
+
+> 
+
+> 2 - use user supplied correlation matrix as the initial values and estimate the correlation
+matrix via MLE. 
+
+> cccor.value 
+
+> specifies the correlation matrix supplied by the user for cccor.choice=2. 
+
+> cond.dist 
+
+> conditional distribution given the past. The default is "gaussian" for multivariate
+Gaussian. An alternative is "t" for the multivariate t-distribution. 
+
+> dist.par 
+
+> the parameter for the conditional distribution. 
+
+> dist.est 
+
+> logical flag: if TRUE, the parameters of the conditional distribution will be estimated.
+The default is FALSE. 
+
+> trace 
+
+> logical flag: if TRUE, step-by-step optimization results will be printed on the screen,
+otherwise see opt.index for convergence information. The default is TRUE. 
+
+> armaType 
+
+> parameter that determines the type of ARMA coefficient matrix. Valid choices are "diag"
+for diagonal matrix, "full" for a full matrix, and "lower" for a lower triangular matrix. 
+
+> control 
+
+> a list of control parameters to be used in the numerical algorithms. See bhhh.control
+for the possible control parameters and their default settings. 
+
+> algorithm 
+
+> parameter that determines the algorithm used for maximum likelihood estimation. Currently
+only "bhhh" is available. 
+
+> VALUE: 
+
+> an S version 3 object of class "mgarch", including the following components: 
+
+> coef 
+
+> the estimated coefficients in the model. 
+
+> likelihood 
+
+> the log-likelihood value at the optimum. 
+
+> residuals 
+
+> a numeric matrix, or a "timeSeries" object, which represents residuals from
+the fitted multivariate model. 
+
+> R.t 
+
+> an array of dimension (n, m, m), with m being the dimension of the model and n being the
+length of the series. This represents the estimated sequence of conditional correlation matrix. 
+
+> S.t 
+
+> an array of dimension (n, m, m), with m being the dimension of the model and n being the
+length of the series. This represents the estimated sequence of conditional covariance matrix. 
+
+> sigma.t 
+
+> a numeric matrix, or a "timeSeries" object, which represents the estimated conditional
+standard deviation sequence. 
+
+> series 
+
+> a numeric matrix, or a "timeSeries" object, which represents the original multivariate
+time series. 
+
+> model 
+
+> the model list of the fitted model. 
+
+> opt.index 
+
+> convergence indicator: 
+
+> 
+
+> 1 indicating BHHH convergence has been reached. 
+
+> 
+
+> 2 indicating the likelihood value has converged. 
+
+> 
+
+> 3 indicating a local maximum has been reached. 
+
+> 
+
+> 4 indicating the maximum number of iterations has been reached. 
+
+> REFERENCES: 
+
+> Bollerslev, T., Engle, R. F., and Nelson, D. B. (1994). ARCH models. In Handbook of Econometrics,
+Vol. IV, Engle and McFadden, eds., Elsevces Science B.V. pp. 2959-3038, 
+
+> 
+
+> Ding, Z. (1994). Time Series Analysis of Speculative Returns. Ph.D. dissertation, Dept.
+of Economics, University of California, San Diego. 
+
+> 
+
+> 
+
+> -----Original Message-----
+
+> From: s-news-owner at lists.biostat.wustl.edu [mailto:s-news-owner at lists.biostat.wustl.edu]
+On Behalf Of Samir Saadi
+
+> Sent: den 7 juni 2005 00:32
+
+> To: s-news at lists.biostat.wustl.edu
+
+> Subject: [S] Comparing volatility
+
+> 
+
+> Hi S-Plus users !
+
+> I have a data file (of 850 000 observations) which has two colums:
+
+> - Colum 1: Monday returns of thousands of different stocks
+
+> - Colum 2: Dummy variable: 0 for stocks with option and 1 for stocks without option
+
+> 
+
+> I would like to see whether Options have any effect on Monday returns' volatility.
+
+> My question is: Using S-PLUS, how can I test which stocks have a higher volatility ?
+
+> I thought about Multivariate GARCH, but I don't know how to program it on S-Plus :(
+
+> 
+
+> I would really appreciate your help.
+
+> 
+
+> 
+
+> 
+
+> Samir
+
+> 
+
+> 
+
+> 
+
+> On 5 Jun 2005 at 8:01, riadh alaoui wrote:
+
+> 
+
+> > how to perform pseudo maximum likelihood method to estimate garch model?
+
+> >
+
+> > _________________________________________________________________
+
+> > MSN Hotmail : antivirus et antispam intégrés
+
+> > http://www.msn.fr/newhotmail/Default.asp?Ath=f
+
+> >
+
+> > --------------------------------------------------------------------
+
+> > This message was distributed by s-news at lists.biostat.wustl.edu.  To
+
+> > unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+
+> > the BODY of the message:  unsubscribe s-news
+
+> 
+
+> Saadi at management.uottawa.ca
+
+> 
+
+> --------------------------------------------------------------------
+
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+
+> the BODY of the message:  unsubscribe s-news
+
+> ###########################################
+
+> 
+
+> This message has been scanned by F-Secure Anti-Virus for Microsoft Exchange.
+
+> For more information, connect to http://www.f-secure.com/
+
+Saadi at management.uottawa.ca
+
+From Rich at Mango-Solutions.com  Tue Jun  7 14:28:14 2005
+From: Rich at Mango-Solutions.com
+Date: Tue, 07 Jun 2005 15:28:14 +0100
+Subject: Re: Using apply for functions with more than one argument
+In-Reply-To: <s2a5b886.096@ft-gateway.forestrytas.com.au>
+References: <s2a5b886.096@ft-gateway.forestrytas.com.au>
+Message-ID: <20050607142806.CD4791008508@mailgate.biostat.wustl.edu>
+
+If you want to use apply in the way you describe, something like this should
+work ...
+
+> myMat <- matrix(rpois(20, 3), ncol=2)    # Create some data
+> myFun <- function(x, y) x + y                # Create a function taking 2
+numbers
+> apply(myMat, 1, function(x) do.call("myFun", as.list(x))) # Make the call
+
+Cheers,
+Rich.
+
+S & R Training and Consulting
+mangosolutions
+Tel   +44 118 902 6617
+Fax  +44 118 902 6401
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Luis Apiolaza
+Sent: 07 June 2005 06:09
+To: s-news at lists.biostat.wustl.edu
+Subject: [S] Using apply for functions with more than one argument
+
+Hi,
+
+Let's say that I have an array with 100,000 rows and two columns (total
+height and stem diameter for trees), and that I have defined a
+stem.volume (non-linear, by the way) function that requires total height
+and stem diameter as arguments.
+
+Is it possible to use apply in some way to calculate stem.volume? 
+
+All examples that I have seen for 'apply' use functions with only a
+single argument. Is there a more general way of using apply for more
+complex functions? I just want to avoid using an explicit loop.
+
+Cheers,
+
+Luis
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Dr Luis A. Apiolaza
+Principal Forest Biometrician
+Forestry Tasmania
+GPO Box 207
+Hobart Tas 7001
+Australia
+
+email:    Luis.Apiolaza at forestrytas.com.au
+phone: +61-3-6233 8127
+web:     http://www.forestrytas.com.au
+             http://uncronopio.org
+"All I want is a warm bed, a kind word,
+ and unlimited power" --Ashleigh Brilliant
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------------------------
+This transmission is intended solely for the person or 
+organisation to whom it is addressed.
+It is confidential and may contain legally privileged 
+information. If you have received this transmission in 
+error,you may not use, copy or distribute it.
+Please advise us by return e-mail or by phoning 61 3 62338203 
+and immediately delete the transmission in its entirety.
+We will meet your reasonable expenses of notifying us.
+Despite our use of anti-virus software, Forestry Tasmania 
+cannot guarantee that this transmission is virus-free. 
+-----------------------------------------------------
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From lorenz at usgs.gov  Tue Jun  7 15:48:13 2005
+From: lorenz at usgs.gov (David L Lorenz)
+Date: Tue, 07 Jun 2005 10:48:13 -0500
+Subject: gls question
+In-Reply-To: <20050607142806.CD4791008508@mailgate.biostat.wustl.edu>
+References: <20050607142806.CD4791008508@mailgate.biostat.wustl.edu>
+Message-ID: <OFC1424899.A0659CE2-ON86257019.0055A698-86257019.0056D06C@usgs.gov>
+
+Hi,
+
+  Is there any way to extract the
+final correlation or covariance matrix defined by the correlation and weights
+arguments from a gls model? Thanks.
+
+Dave
+
+From luis.apiolaza at forestrytas.com.au  Tue Jun  7 22:51:26 2005
+From: luis.apiolaza at forestrytas.com.au (Luis Apiolaza)
+Date: Wed, 08 Jun 2005 08:51:26 +1000
+Subject: Summary: Using apply for functions with more than one argument
+Message-ID: <s2a6b19d.034@ft-gateway.forestrytas.com.au>
+
+Thanks a lot to all people that reply to the list and personally: Mark
+Leeds, Jo Jiao, Martin Studer, Christopher Green, Frank Harrell, Xao
+Ping, Richard Heiberger, Sarah Goslee, Gerald Jean, Greg Johnson and
+Rich from Mango.
+
+Most solutions are variations of the same theme: change the function
+definition, so it receives an array as an argument and then access the
+elements of the array inside the function, either using names or the
+position number of the array. Using Martin's code :
+
+# Defining the data to use as test
+my.a <- array(data = c(15, 10, 9, 11, 7.5, 10.5, 8.25, 9, 7.6, 10.7,
+1.5,
+1.0, 0.8, 1.3, 2.7, 1.0, 1.9, 1.4, 0.9, 1.55), dim = c(10, 2), dimnames
+= list(NULL, c("Height", "Diameter")))
+
+# A funny looking fake volume function
+stem.volume <- function(datarow)
+{
+        return(datarow["Height"]^2 / datarow["Diameter"])
+}
+
+# Using apply by rows (1), so it passes an array to the function
+res <- apply(my.a, 1, stem.volume)
+
+It is also possible to pass additional arguments to the functions (like
+a constant) just appending them to the call, like:
+
+res <- apply(my.a, 1, stem.volume, const = 3, z = 5)
+
+Gerald Jean, pointed out something that I discovered when first
+implementing the code sent by Martin: apply is slow, and in fact did not
+perform very differently from a for() loop calling the function.
+
+Other alternative codings:
+
+- Frank Harrell suggests having a look at the mApply function in the
+Hmisc package.
+
+- Christopher Green offers this call:
+
+apply(my.a, 1, function(x) stem.volume(x[1],x[2])), which would work
+without the need for redefining the stem.volume function.
+
+- Rich from Mango (yummy!) Solutions offers this alternative:
+
+  myMat <- matrix(rpois(20, 3), ncol=2)    # Create some data
+  myFun <- function(x, y) x + y                # Create a function
+taking 2 numbers
+  apply(myMat, 1, function(x) do.call("myFun", as.list(x))) # Make the
+call
+
+- Richard Heiberger does something like:
+# Tiny dataset
+ tmp <- cbind(h=10:13, d=5:6)
+apply(tmp, 1, function(x) {x["h"] * x["d"]^2 * pi/4})
+or
+sapply(1:nrow(tmp), function(i, h, d) {h[i] * d[i]^2 * pi/4},
+h=tmp[,"h"], d=tmp[,"d"])
+
+Thanks again,
+
+Luis
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Dr Luis A. Apiolaza
+Principal Forest Biometrician
+Forestry Tasmania
+GPO Box 207
+Hobart Tas 7001
+Australia
+
+email:    Luis.Apiolaza at forestrytas.com.au
+phone: +61-3-6233 8127
+web:     http://www.forestrytas.com.au
+             http://uncronopio.org
+"All I want is a warm bed, a kind word,
+ and unlimited power" --Ashleigh Brilliant
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------------------------
+This transmission is intended solely for the person or 
+organisation to whom it is addressed.
+It is confidential and may contain legally privileged 
+information. If you have received this transmission in 
+error,you may not use, copy or distribute it.
+Please advise us by return e-mail or by phoning 61 3 62338203 
+and immediately delete the transmission in its entirety.
+We will meet your reasonable expenses of notifying us.
+Despite our use of anti-virus software, Forestry Tasmania 
+cannot guarantee that this transmission is virus-free. 
+-----------------------------------------------------
+
+From sasdhd at unx.sas.com  Tue Jun  7 23:07:32 2005
+From: sasdhd at unx.sas.com (David Duling)
+Date: Tue, 07 Jun 2005 19:07:32 -0400
+Subject: KDD-2005 Call for Participation
+Message-ID: <200506072307.TAA24514@login006.unx.sas.com>
+
+**** Knowledge Discovery and Data Mining ****
+********** CALL FOR PARTICIPATION ***********
+************ EARLY REGISTRATION *************
+
+The Eleventh ACM SIGKDD International Conference on Knowledge
+Discovery and Data Mining will take place in Chicago,
+Illinois, USA from August 21 through 24, 2005.
+
+Early registration deadline is July 15. After that date
+registration fees increase by approximately $100.
+
+Visit the conference web site at http://www.kdd2005.com
+or http://www.acm.org/sigkdd/kdd2005/
+
+KDD is the premier international conference on knowledge
+discovery and data mining.  The conference will provide a
+forum for academic researchers and industry and government
+innovators to share in their results and experience. The
+program will include keynote presentations, oral paper
+presentations, poster presentations, workshops, tutorials,
+and panels, as well as the KDD Cup competition.
+
+CONFERENCE HIGHLIGHTS 
+=====================
+Technical papers
+- Research track: 40 presentations and 36 posters
+- Industry/Gov. track: 14 presentations and 11 posters 
+
+Full Day Workshops
+- Data Mining Methods for Anomaly Detection 
+- Workshop on Open Source Data Mining (OSDM 2005) 
+- Workshop on Utility-Based Data Mining (UBDM-2005) 
+- 4th Workshop on Multi-Relational Data Mining (MRDM 2005) 
+- 5th Workshop on Data Mining in Bioinformatics (BIOKDD 2005) 
+- Workshop on Data Mining Standards, Services and Platforms (DM-SSP 2005) 
+- WebKDD'05: Taming Evolving, Expanding and Multi-faceted Web Clickstreams 
+- Workshop on Link Discovery: Issues, Approaches and Applications 
+(LinkKDD-2005) 
+
+Half Day Workshops
+- Data Mining Success Stories and KDD Practice Prize (KDDSS-2005) 
+- 6th International Workshop on Multimedia Data Mining: "Mining Integrated 
+Media and Complex Data" 
+
+Tutorials
+- Introduction to Logistic Regression 
+- Data Visualization and Mining using the GPU 
+- Randomized Algorithms for Matrices and Massive Data Sets 
+- Principles and Applications of Probabilistic Learning 
+
+CONFERENCE VENUE
+================ 
+Come and join us at KDD and enjoy your stay in Chicago. 
+
+The conference will take place at the Hyatt Regency Chicago 
+Hotel.  Area attractions include the easy-to-navigate Museum 
+Campus; lively Navy Pier; a resurrected North Loop theater 
+district; and a "who's who" of luxury shopping destinations 
+along the city's fabled Magnificent Mile. A busy convention 
+trade has sparked hotel construction, and the city's eclectic 
+mix of restaurants has gained an international reputation
+for excellence.
+
+Chicago Air and Water Show
+The oldest and biggest exhibition of its kind in the country, 
+the Air and Water Show displays daredevil acrobatics both in 
+the air and water. It can be viewed from many lakeside locations, 
+but the main hub is above and beyond North Avenue Beach. 
+Both civilian and military demonstrations take place and 
+electrifying stunts are performed, the highlight being the 
+US Navy Blue Angels' jet formation. 
+North Avenue Beach; Date: 20-21 August 2005; Time: 9am to 4pm 
+
+The cut-off date for conference room rates is July 20, 2005.
+
+INFORMATION
+===========
+Please visit our web site for more details about the program. 
+http://www.acm.org/sigkdd/kdd2005/ 
+
+The registration is on-line or by fax. The early-bird
+registration is due by Friday July 15, 2005. 
+
+From Yingfu.Xie at sekon.slu.se  Wed Jun  8 08:35:33 2005
+From: Yingfu.Xie at sekon.slu.se (Yingfu Xie)
+Date: Wed, 08 Jun 2005 10:35:33 +0200
+Subject: Re: Comparing volatility
+Message-ID: <CA871298CD1882459F7859BD08DC06E4C530A5@slumail.ad.slu.se>
+
+Hello, Samir,
+
+ 
+
+I think it is quite straightforward to
+impose exogenous variable into either the mean structure or the conditional
+variance equation in GARCH or MGARCH. For your purpose, I believe you need
+something like (not tested)
+
+mgarch(formula.mean=rt~1, formula.var= ~typeOFmgarch+optionDummyVariable);
+
+provided your rt and dummy variable have the proper format. If possible, see
+the manual for Finmetrics:
+
+Eric Zivot and Jiahua
+Wang, 2001, Modeling financial time series with S-plus.
+
+There is a similar example in pp.498-499.
+
+ 
+
+HTH,
+
+Yingfu
+
+ 
+
+-----Original Message-----
+
+From: Samir Saadi
+[mailto:Saadi at management.uottawa.ca] 
+
+Sent: den 7 juni 2005 16:04
+
+To: Yingfu Xie;
+s-news at lists.biostat.wustl.edu
+
+Subject: RE: [S] Comparing
+volatility
+
+ 
+
+Thank you Mark and Yingfu for your
+help:
+
+ 
+
+Here what I am trying to do 
+
+1- Run the returns series as a random walk with drift
+: rt = constant + error 
+
+2- take the error series and model it with a GARCH
+type model while introducing the option dummy variables in the conditional
+variance equation) 
+
+3- The sign of the dummy vairables will show whether
+volatility is lower when a stock has an option 
+
+ 
+
+How can I make S-Plus introduce the
+second column as a dummy variable in the conditon variance equation?
+
+ 
+
+By the way my file has two colums:
+
+Column
+1: Monday returns of thousands of different stocks
+
+Column
+2: Dummy variable: 0 for stocks with option and 1 for stocks without option
+
+Thanks everyone for your time
+
+ 
+
+Samir
+
+ 
+
+ 
+
+ 
+
+###########################################
+
+This message has been scanned by F-Secure Anti-Virus for Microsoft Exchange.
+For more information, connect to http://www.f-secure.com/
+
+From tonyqu7 at hotmail.com  Wed Jun  8 13:42:24 2005
+From: tonyqu7 at hotmail.com (tony qui)
+Date: Wed, 08 Jun 2005 08:42:24 -0500
+Subject: Implied volatilities
+Message-ID: <BAY23-F200AD6A5AC51F4AE082F89F0FD0@phx.gbl>
+
+Dear members,
+
+Is there a function in S-Plus to calculate the implied volatilities or do I 
+have to buy the S+FinMetrics module?
+
+TIA
+
+Tony
+
+_________________________________________________________________
+FREE pop-up blocking with the new MSN Toolbar ? get it now! 
+http://toolbar.msn.click-url.com/go/onm00200415ave/direct/01/
+
+From phlasky at earthlink.net  Wed Jun  8 14:07:25 2005
+From: phlasky at earthlink.net (Paul Lasky)
+Date: Wed, 08 Jun 2005 07:07:25 -0700
+Subject: Find the Largest and Smallest Entries in a Correlation Matrix
+Message-ID: <000001c56c33$65f3b710$30fbb3d1@D6WVZ821>
+
+  Thanks to Patrick Burns  of Burns Statistics
+who suggested use of the function lower.tri( ).  This function extracts
+the lower
+
+Part of the matrix and renders it a vector.  So to effectively 
+find the column & row names of the largest and smallest entries ( after a
+sort on lower.tri(correlation matrix), a “decode” operation is required. 
+I used :
+
+    
+
+    sp500.cormatrix <- cor(data) 
+
+    n <- 500
+
+    temp  <- lower.tri(sp500.cormatrix)         
+
+    #
+
+    ## find addresses of smallest 10 entries
+
+   # 
+
+   ksmall = which(sort(temp)[1:10] <= temp) 
+
+    #
+
+     ## decode addresses to find row no and col. no.            
+
+   
+address <- sapply( 1:10, function( i ) c(rowno <- ( ksmall [ i ] -1) %% n
++ 1, colno <- ksmall [ i ]  % / % n + 1 ) )
+
+  #
+
+   ##
+Extract names of rows and column addresses of smallest 10 entries  
+
+    symbols <- dimnames( sp500.cormatrix )[ [ 1 ] ]
+
+    symbols.smallest.10 <-  sapply( 1:10,
+function( i ) symbols[ address[ i ]  ] )
+
+ 
+
+ 
+
+    
+
+ 
+
+How do I find the k largest and smallest entries in a large correlation
+matrix and their addresses ( excluding the main diagonal entries of 1?)
+
+ 
+
+For example, given the correlation matrix for all SP500 stocks, find
+the l0 largest and smallest pairs of different symbols.
+
+ 
+
+   Paul H. Lasky
+
+   P & B Consultants 
+
+ 
+
+ 
+
+ 
+
+From Michael.Slattery at epa.state.oh.us  Wed Jun  8 18:51:46 2005
+From: Michael.Slattery at epa.state.oh.us (Michael Slattery)
+Date: Wed, 08 Jun 2005 14:51:46 -0400
+Subject: import database question
+Message-ID: <s2a7061c.015@mail.epa.state.oh.us>
+
+Hello all!
+Using 7.0 on XP w/ 3Ghz and 1 GB ram,
+
+I can successfully import (using the resident Oracle ODBC driver and
+"Import Database") whole tables using the GUI. I run into a few problems
+when I :
+
+1) try to import larger databases (300K rows x 60 cols) - For this I
+get a "dynamic memory" error. Is this a limitation of my machine, or
+something I need to reset in SPlus?
+
+2) try to use the column selector of the Columns tab of the Import
+Database dialogue box. In this case, if I try selecting certain columns,
+I get: Problem in parse(text = sCommand): Syntax error: illegal name
+("guiOpenView") on input line 2 
+Use traceback() to see the call stack
+
+Is the column select feature conflicting with the "select * ..." which
+is still in the SQL window?
+
+Also, I don't find where guiOpenView is even used. Modifying the gui
+command (from History) and running in the command window gets the same
+result.
+
+Any ideas are welcome!
+
+thanks
+mike slattery
+
+Michael W. Slattery
+Geologist, Ohio EPA
+122 S. Front Street
+Lazarus Government Center
+Columbus OH 43215
+michael.slattery at epa.state.oh.us
+614-728-1221 (Ph)
+614-644-2909 (Fax)
+
+From elvis at xlsolutions-corp.com  Wed Jun  8 19:18:27 2005
+From: elvis at xlsolutions-corp.com
+Date: Wed, 08 Jun 2005 12:18:27 -0700
+Subject: Course***R/S-plus Programming at 4 locations - July 2005
+Message-ID: <20050608191827.18374.qmail@webmail14.mesa1.secureserver.net>
+
+XLSolutions Corporation (www.xlsolutions-corp.com) is proud to
+announce  2-day "R/S-plus Fundamentals and Programming
+Techniques" at 4 locations nationwide.
+www.xlsolutions-corp.com/courselist.htm
+
+****Seattle, WA ------------------------- July 11th-12th, 2005
+****San Francisco ---------------------- July 14th-15th, 2005
+****New York, NY ---------------------- July 25th - 26th,2005
+****Boston, MA ------------------------- July 28th - 29th, 2005
+
+Reserve your seat now at the early bird rates! Payment due AFTER
+the class
+
+Course Description:
+
+This two-day beginner to intermediate R/S-plus course focuses on a
+broad spectrum of topics, from reading raw data to a comparison of R
+and S. We will learn the essentials of data manipulation, graphical
+visualization and R/S-plus programming. We will explore statistical
+data analysis tools,including graphics with data sets. How to enhance
+your plots, build your own packages (librairies) and connect via
+ODBC,etc.
+We will perform some statistical modeling and fit linear regression
+models. Participants are encouraged to bring data for interactive
+sessions
+
+With the following outline:
+
+- An Overview of R and S
+- Data Manipulation and Graphics
+- Using Lattice Graphics
+- A Comparison of R and S-Plus
+- How can R Complement SAS?
+- Writing Functions
+- Avoiding Loops
+- Vectorization
+- Statistical Modeling
+- Project Management
+- Techniques for Effective use of R and S
+- Enhancing Plots
+- Using High-level Plotting Functions
+- Building and Distributing Packages (libraries)
+- Connecting; ODBC, Rweb, Orca via sockets and via Rjava
+
+Interested in R/Splus Advanced course? email us.
+
+Email us for group discounts.
+Email Sue Turner: sue at xlsolutions-corp.com
+Phone: 206-686-1578
+Visit us: www.xlsolutions-corp.com/training.htm
+Please let us know if you and your colleagues are interested in this
+classto take advantage of group discount. Register now to secure your
+seat!
+
+Interested in R/Splus Advanced course? email us.
+
+Cheers,
+Elvis Miller, PhD
+Manager Training.
+XLSolutions Corporation
+206 686 1578
+www.xlsolutions-corp.com
+elvis at xlsolutions-corp.com 
+
+From arjun_bhandari at yahoo.com  Wed Jun  8 20:04:53 2005
+From: arjun_bhandari at yahoo.com (Arjun Bhandari)
+Date: Wed, 08 Jun 2005 13:04:53 -0700
+Subject: Database connectivity
+Message-ID: <20050608200453.68959.qmail@web50609.mail.yahoo.com>
+
+Hi,
+
+I have an sql server running on my machine, but when I
+try to use the import data feature to import from one
+of the databases i have created on the server, i
+cannot see the database. is there any change that
+needs to be done to the settings such that i can see
+that database and write sql queries on the tables in
+that database.
+
+I am using s+ version 6.2
+Best Regards,
+Arjun 
+
+__________________________________________________
+Do You Yahoo!?
+Tired of spam?  Yahoo! Mail has the best spam protection around 
+http://mail.yahoo.com 
+
+From roger.bos at gmail.com  Thu Jun  9 13:10:06 2005
+From: roger.bos at gmail.com (roger bos)
+Date: Thu, 09 Jun 2005 09:10:06 -0400
+Subject: Re: Database connectivity
+In-Reply-To: <20050608200453.68959.qmail@web50609.mail.yahoo.com>
+References: <20050608200453.68959.qmail@web50609.mail.yahoo.com>
+Message-ID: <1db726800506090610f688c57@mail.gmail.com>
+
+S+ has a native SQL Server driver, so it should be pretty easy.  Here
+is some code I used on version 6.2 to connect to a database on a
+server.  Since your running the database on the local machine you will
+have to adjust that, but I am not sure how.
+
+sqlText <- paste("select trt, datadate from roger_return_1m where
+gvkey='",gvkey,"' order by datadate",sep="")
+
+output <- importData(type="DIRECT-SQL", user="xfl", password="xfl",
+server="rinnycs0059", database="xf", table="", sqlQuery=sqlText)
+
+HTH,
+
+Roger
+
+On 6/8/05, Arjun Bhandari <arjun_bhandari at yahoo.com> wrote:
+> Hi,
+> 
+> I have an sql server running on my machine, but when I
+> try to use the import data feature to import from one
+> of the databases i have created on the server, i
+> cannot see the database. is there any change that
+> needs to be done to the settings such that i can see
+> that database and write sql queries on the tables in
+> that database.
+> 
+> I am using s+ version 6.2
+> Best Regards,
+> Arjun
+> 
+> __________________________________________________
+> Do You Yahoo!?
+> Tired of spam?  Yahoo! Mail has the best spam protection around
+> http://mail.yahoo.com
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+>
+
+From RoyHaicheng_Tang at ml.com  Fri Jun 10 14:04:59 2005
+From: RoyHaicheng_Tang at ml.com (Tang, Roy Haicheng (Corp Credit - NY))
+Date: Fri, 10 Jun 2005 10:04:59 -0400
+Subject: [Q]: R^2 in lm
+Message-ID: <17EA796340230948802BA1BC6D88085C05C343C8@mlnyb701mb.amrs.win.ml.com>
+
+Hi all,
+
+I have a very simple question on linear regression: does Splus function
+lm provide R^2? I checked help but could not find it. Of course one can
+always get it by using the residual to calculate ESS and using original
+Y to get TSS, but it just feels strange to me that Splus does not
+provide such a basic statistic.
+
+Thanks for any help!
+
+-Haicheng
+--------------------------------------------------------
+
+If you are not an intended recipient of this e-mail, please notify the sender, 
+delete it and do not read, act upon, print, disclose, copy, retain or 
+redistribute it. Click here for important additional terms relating to this 
+e-mail.     http://www.ml.com/email_terms/
+--------------------------------------------------------
+
+From ccleland at optonline.net  Fri Jun 10 14:36:24 2005
+From: ccleland at optonline.net (Chuck Cleland)
+Date: Fri, 10 Jun 2005 10:36:24 -0400
+Subject: Re: [Q]: R^2 in lm
+In-Reply-To: <17EA796340230948802BA1BC6D88085C05C343C8@mlnyb701mb.amrs.win.ml.com>
+References: <17EA796340230948802BA1BC6D88085C05C343C8@mlnyb701mb.amrs.win.ml.com>
+Message-ID: <42A9A568.5040806@optonline.net>
+
+> x <- rnorm(10)
+> y <- rnorm(10)
+> summary(lm(y ~ x))
+> summary(lm(y ~ x))$r.squared
+[1] 0.03490228
+
+Tang, Roy Haicheng (Corp Credit - NY) wrote:
+> Hi all,
+>
+> I have a very simple question on linear regression: does Splus function
+> lm provide R^2? I checked help but could not find it. Of course one can
+> always get it by using the residual to calculate ESS and using original
+> Y to get TSS, but it just feels strange to me that Splus does not
+> provide such a basic statistic.
+>
+> Thanks for any help!
+>
+> -Haicheng
+> --------------------------------------------------------
+>
+> If you are not an intended recipient of this e-mail, please notify the sender,
+> delete it and do not read, act upon, print, disclose, copy, retain or
+> redistribute it. Click here for important additional terms relating to this
+> e-mail.     http://www.ml.com/email_terms/
+> --------------------------------------------------------
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+
+--
+Chuck Cleland, Ph.D.
+NDRI, Inc.
+71 West 23rd Street, 8th floor
+New York, NY 10010
+tel: (212) 845-4495 (Tu, Th)
+tel: (732) 452-1424 (M, W, F)
+fax: (917) 438-0894
+
+From jvadams at usgs.gov  Fri Jun 10 15:13:11 2005
+From: jvadams at usgs.gov (Jean V Adams)
+Date: Fri, 10 Jun 2005 11:13:11 -0400
+Subject: FYI: s-plus 7.0 with docking stations
+Message-ID: <OF17672C48.3A3AC6A2-ON8525701C.00520EDE-8525701C.00539AE8@usgs.gov>
+
+For your information ... if you use a docking station, you should check
+that S-PLUS 7 works both when your laptop is docked and when it is not
+docked.
+
+I recently installed S-PLUS® 7.0 for Windows PROFESSIONAL DEVELOPER on my
+PC, a laptop in a docking station.  The installation and license
+authorization went fine, and I was able to use the new version immediately.
+However, I discovered later, that I was unable to use S-PLUS 7 on my laptop
+when it was not connected to the docking station (I was flying back from a
+meeting, trying to get a little work done).  Fortunately, I had not yet
+removed S-PLUS 6, and was able to continue my work using the older version.
+Back at my office, I called Insightful, and they modified my license so
+that it would work whether I was docked or not.  (Insightful was very
+helpful ... many thanks to the early riser on Bainbridge Island!)
+
+Just a heads up to others out there that may find themselves in a similar
+situation.
+
+JVA
+
+`·.,,  ><(((º>   `·.,,  ><(((º>   `·.,,  ><(((º>
+
+Jean V. Adams
+Statistician
+U.S. Geological Survey
+Great Lakes Science Center
+c/o Marquette Biological Station
+1924 Industrial Parkway
+Marquette, MI 49855  USA
+phone: 906-226-1212
+FAX: 906-226-3632
+web site: www.glsc.usgs.gov
+e-mail: jvadams at usgs.gov
+
+From dsmith at insightful.com  Fri Jun 10 15:53:35 2005
+From: dsmith at insightful.com (David Smith)
+Date: Fri, 10 Jun 2005 08:53:35 -0700
+Subject: Re: FYI: s-plus 7.0 with docking stations
+Message-ID: <EDAC416B87ECCA44BEAB4D0CF48034EF6B9DC8@se2kexch01.insightful.com>
+
+I'll re-iterate what Jean said (thanks, Jean).  There's no new restriction
+with the license for S-PLUS regarding laptops whether docked or undocked, but
+there is a quirk with the license manager when a laptop moves from docked to
+undocked state that appears to have been causing problems for some.  If you
+experience this problem, please contact support at insightful.com, who will be
+able to fix the problem for you.
+
+# David Smith
+
+-- 
+David M Smith <dsmith at insightful.com>
+Senior Product Manager, Insightful Corp, Seattle WA
+Tel: +1 (206) 802 2360
+Fax: +1 (206) 283 6310
+
+New S-PLUS 7! Create advanced statistical applications with large data sets.
+www.insightful.com/splus
+
+> -----Original Message-----
+> From: Jean V Adams [mailto:jvadams at usgs.gov]
+> Sent: Friday, June 10, 2005 8:13 AM
+> To: s-news at wubios.wustl.edu
+> Subject: [S] FYI: s-plus 7.0 with docking stations
+> 
+> 
+> For your information ... if you use a docking station, you 
+> should check
+> that S-PLUS 7 works both when your laptop is docked and when it is not
+> docked.
+> 
+> I recently installed S-PLUS® 7.0 for Windows PROFESSIONAL 
+> DEVELOPER on my
+> PC, a laptop in a docking station.  The installation and license
+> authorization went fine, and I was able to use the new 
+> version immediately.
+> However, I discovered later, that I was unable to use S-PLUS 
+> 7 on my laptop
+> when it was not connected to the docking station (I was 
+> flying back from a
+> meeting, trying to get a little work done).  Fortunately, I 
+> had not yet
+> removed S-PLUS 6, and was able to continue my work using the 
+> older version.
+> Back at my office, I called Insightful, and they modified my 
+> license so
+> that it would work whether I was docked or not.  (Insightful was very
+> helpful ... many thanks to the early riser on Bainbridge Island!)
+> 
+> Just a heads up to others out there that may find themselves 
+> in a similar
+> situation.
+> 
+> JVA
+> 
+> `·.,,  ><(((º>   `·.,,  ><(((º>   `·.,,  ><(((º>
+> 
+> Jean V. Adams
+> Statistician
+> U.S. Geological Survey
+> Great Lakes Science Center
+> c/o Marquette Biological Station
+> 1924 Industrial Parkway
+> Marquette, MI 49855  USA
+> phone: 906-226-1212
+> FAX: 906-226-3632
+> web site: www.glsc.usgs.gov
+> e-mail: jvadams at usgs.gov
+> 
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+> 
+
+From Thom.Burnett at cognigencorp.com  Fri Jun 10 16:20:18 2005
+From: Thom.Burnett at cognigencorp.com (Thom Burnett)
+Date: Fri, 10 Jun 2005 12:20:18 -0400
+Subject: getting a dataframe name
+Message-ID: <42A9BDC2.5000302@cognigencorp.com>
+
+How do I get a character string of a dataframe name.
+
+I have a function that recieves a dataframe as a parameter:
+Can I then get the name of the data frame that was passed in?
+How?
+
+How it might be used:
+--------------------------------------
+
+foo <- function(newDataFrame) {
+   frameName <- what(newDataFrame)
+   plotTitle <- frameName
+   .# I don't want plotTitle to be 'newDataFrame'
+}
+
+From rmh at temple.edu  Fri Jun 10 16:40:08 2005
+From: rmh at temple.edu (Richard M. Heiberger)
+Date: Fri, 10 Jun 2005 12:40:08 -0400
+Subject: Re: getting a dataframe name
+Message-ID: <cf854772.a4fdc17.81be000@po-d.temple.edu>
+
+> foo <- function(newDataFrame) {
++     frameName <- deparse(substitute(newDataFrame))
++     plotTitle <- frameName
++     plotTitle
++ }
+> foo(abcd)
+[1] "abcd"
+> 
+
+From mleeds at mlp.com  Fri Jun 10 18:22:07 2005
+From: mleeds at mlp.com (Leeds, Mark)
+Date: Fri, 10 Jun 2005 14:22:07 -0400
+Subject: another vector question
+Message-ID: <54668D97C0199943A454516A5FF6481E58AED7@EXCHUS001.AD.MLP.COM>
+
+I have a vector called longentryindex which
+
+might be (26, 45, 67 ).
+
+ 
+
+I then do
+
+ 
+
+pos1amt=currpos[longentryindex]/totalcaplong         (
+totalcaplong is a scalar )
+
+ 
+
+Then I do :
+
+ 
+
+badindices=which((pos1amt) > maxstockpercent ) 
+
+ 
+
+my problem is that, since, I already am dealing with a sub
+vector ( longentryindex ),
+
+I think the badindices are gonna be 1,2,3 ( if any of them
+meet the criterial ) rather than 26,45,67. I haven’t
+
+checked this but I am fairly certain that’s going to
+be the case.
+
+ 
+
+Is there a way around this so that badindices returns  26,45
+or 67 rather than 1,2,3 ?
+
+ 
+
+Thanks.
+
+From rmh at temple.edu  Fri Jun 10 20:30:32 2005
+From: rmh at temple.edu (Richard M. Heiberger)
+Date: Fri, 10 Jun 2005 16:30:32 -0400
+Subject: Re: another vector question
+Message-ID: <772176a.a64f3c3.81a0600@po-d.temple.edu>
+
+> x <- sample(12)
+> x
+ [1] 10  5  3  1  9 11  8  2 12  6  4  7
+> which(x>9)
+[1] 1 6 9
+> ii <- 5:7
+> ii
+[1] 5 6 7
+> which(x[ii] > 9)
+[1] 2
+> jj <- which(x > 9)
+> jj
+[1] 1 6 9
+> ii[which(x[ii] > 9)]
+[1] 6
+
+From b.jacobs at pandora.be  Sat Jun 11 15:07:51 2005
+From: b.jacobs at pandora.be (Bert Jacobs)
+Date: Sat, 11 Jun 2005 17:07:51 +0200
+Subject: A subset question
+In-Reply-To: <772176a.a64f3c3.81a0600@po-d.temple.edu>
+References: <772176a.a64f3c3.81a0600@po-d.temple.edu>
+Message-ID: <000701c56e97$583b1030$ab99c254@CPQ27059153428>
+
+Hi,
+
+I was wondering if I could create a subset of an existing dataframe
+based on a vector.
+I have a dataframe (y) with 124 variables and I'd like to create a
+subset of this dataframe by selecting a number of "factors" of the
+variable "HOSP".
+The "factors" I wish to use in the subset can be found in a vector x.
+
+I've tried to do the following but it didn't work properly
+
+subset(y,"HOSP==x",save.name="Z")
+
+Because the vector x contains e.g 2 "factors" the above formulae
+returned
+an indexed result. Every even row contained the first factor and every
+uneven row contained the second factor.
+
+This was not the result I expected to have. I would like to have all the
+values for the two factors. What am I doing wrong?
+
+Thx for your help
+
+Using S-Plus 6.2 for Windows.
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Richard M.
+Heiberger
+Sent: 10 June 2005 22:31
+To: Leeds, Mark; s-news at lists.biostat.wustl.edu
+Cc: cspark at clemson.edu
+Subject: Re: [S] another vector question
+
+> x <- sample(12)
+> x
+ [1] 10  5  3  1  9 11  8  2 12  6  4  7
+> which(x>9)
+[1] 1 6 9
+> ii <- 5:7
+> ii
+[1] 5 6 7
+> which(x[ii] > 9)
+[1] 2
+> jj <- which(x > 9)
+> jj
+[1] 1 6 9
+> ii[which(x[ii] > 9)]
+[1] 6
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From rmh at temple.edu  Sun Jun 12 01:50:18 2005
+From: rmh at temple.edu (Richard M. Heiberger)
+Date: Sat, 11 Jun 2005 21:50:18 -0400
+Subject: Re: A subset question
+Message-ID: <9cb30dec.b060f3b.81a0300@po-d.temple.edu>
+
+## You are not using the word "factor" as it is used in standard S
+## language terminology.  I translate your question as follows:
+## 
+## I have a dataframe y with 124 variables.  I would like to create a
+## subset of rows of this dataframe by selecting a number of levels of
+## the data.frame factor "HOSP".  The levels I wish to use in the subset
+## can be found in a vector x.
+## 
+## If I have interpreted your question correctly, here is the answer.
+## 
+## If this is not what you want then please resubmit your request to the
+## list with a simple executable set of S statements for a smaller
+## example.  Show the y data.frame including the factor HOSP.  Give the
+## vector x.  Show us exactly what you expect to see in your result.
+
+y <- data.frame(aa=rnorm(12),
+                bb=factor(rep(letters[1:3],4)),
+                HOSP=factor(rep(LETTERS[1:4],3)),
+                dd=factor(sample(letters[1:5], 12, replace=T)))
+
+x <- c("A","B")
+
+subset.rows <- (match(y$HOSP, x, 0) > 0)
+
+result <- y[subset.rows, ]
+result
+
+From mleeds at mlp.com  Sun Jun 12 03:48:14 2005
+From: mleeds at mlp.com (Leeds, Mark)
+Date: Sat, 11 Jun 2005 23:48:14 -0400
+Subject: simple function
+Message-ID: <54668D97C0199943A454516A5FF6481E58AEE1@EXCHUS001.AD.MLP.COM>
+
+I have a vector that
+
+Has names 
+
+ 
+
+So it might be
+
+ 
+
+AAA   BBB     AAA  CCC       
+BBB
+
+ 3         4         
+3        2           
+4
+
+ 
+
+so I want a function that  returns as 
+
+below ( just the unique names ).
+
+ 
+
+AAA      BBB     CCCC
+
+ 
+
+ 3           
+4            2
+
+ 
+
+also, if it has the same name it will
+
+always have the same #  so
+
+the case of same name with different
+
+number doesn’t have to be dealt with.
+
+ 
+
+ 
+
+                                    thanks
+
+From christos at nuverabio.com  Sun Jun 12 04:05:09 2005
+From: christos at nuverabio.com (Christos Hatzis)
+Date: Sun, 12 Jun 2005 00:05:09 -0400
+Subject: Re: simple function
+In-Reply-To: <54668D97C0199943A454516A5FF6481E58AEE1@EXCHUS001.AD.MLP.COM>
+References: <54668D97C0199943A454516A5FF6481E58AEE1@EXCHUS001.AD.MLP.COM>
+Message-ID: <200506120406.j5C46TH19324@drac.host4u.net>
+
+Try
+
+ 
+
+> x <- c(a=3, b=4, c=5, a=3, c=5)
+
+> x
+ a b c a c 
+ 3 4 5 3 
+5
+
+ 
+
+> 
+x[!duplicated(x)]
+ a b c 
+ 3 4 5
+
+-Christos
+
+From: s-news-owner at lists.biostat.wustl.edu 
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Leeds, 
+Mark
+Sent: Saturday, June 11, 2005 11:48 PM
+To: 
+s-news at lists.biostat.wustl.edu
+Cc: 
+cspark at ces.clemson.edu
+Subject: [S] simple 
+function
+
+I have a vector 
+that
+
+Has names 
+
+ 
+
+So it might be
+
+ 
+
+AAA 
+  BBB     AAA  
+CCC        BBB
+
+ 3         
+4          
+3        
+2            
+4
+
+ 
+
+so I want a function that 
+ returns as 
+
+below ( just the unique names 
+).
+
+ 
+
+AAA      
+BBB     CCCC
+
+ 
+
+ 3            
+4            
+2
+
+ 
+
+also, if it has the same name it 
+will
+
+always have the same # 
+ so
+
+the case of same name with 
+different
+
+number doesn’t have to be dealt 
+with.
+
+ 
+
+ 
+
+                                    
+thanks
+
+From rmh at temple.edu  Sun Jun 12 14:41:12 2005
+From: rmh at temple.edu (Richard M. Heiberger)
+Date: Sun, 12 Jun 2005 10:41:12 -0400
+Subject: Re: simple function
+Message-ID: <6191a3d0.b4ca2a7.81a0300@po-d.temple.edu>
+
+Almost.  The original query claimed that given a name, the number was
+unique, it didn't claim that given a number the name was unique.
+Therefore the test needs to be on the names, not the values.
+
+x <- c(a=3, b=4, c=5, a=3, c=5, d=3)
+x
+x[!duplicated(names(x))]
+
+> x <- c(a=3, b=4, c=5, a=3, c=5, d=3)
+> x
+ a b c a c d 
+ 3 4 5 3 5 3
+> x[!duplicated(names(x))]
+ a b c d 
+ 3 4 5 3
+> 
+> 
+
+From cj5815 at yahoo.com  Mon Jun 13 02:53:01 2005
+From: cj5815 at yahoo.com (Joe Cerniglia)
+Date: Sun, 12 Jun 2005 19:53:01 -0700
+Subject: cov.wt
+Message-ID: <20050613025301.7344.qmail@web50201.mail.yahoo.com>
+
+I am using cov.wt to calculate the covariance matrix. 
+I have several alternative methods for calculating the
+weights of observations in this function.  
+
+Is there a method available to determine which of my
+weigthing methods is optimal?
+
+Thanks.
+
+__________________________________________________
+Do You Yahoo!?
+Tired of spam?  Yahoo! Mail has the best spam protection around 
+http://mail.yahoo.com 
+
+From hussains at medmail2.bham.ac.uk  Mon Jun 13 15:35:53 2005
+From: hussains at medmail2.bham.ac.uk (Shakir Hussain)
+Date: Mon, 13 Jun 2005 16:35:53 +0100
+Subject: Unbalanced nesting S+ code for design variables
+Message-ID: <9CEE59265CA87F43B58651B08FE926E22D3003@medmail2.adf.bham.ac.uk>
+
+Dear friends,
+For the following unbalanced design:
+
+  L3  L2 L1
+1  1   1  1
+2  1   1  2
+3  1   1  3 
+4  1   2  1
+5  1   2  2
+6  1   3  1
+7  1   4  1
+8  1   4  2
+9  1   4  3
+10 2   1  1
+11 2   1  2
+12 2   2  1
+13 2   2  2
+14 2   2  3
+15 2   3  1
+
+I use,
+list( 
+L3=c(1,1,1,...,2,2,2),L2=c(1,1,1,2,2,3,...,2,2,2,3),L1=c(1,2,3,1,2,...,1,2,3,1)).
+
+Wonder how can I generate unbalance-nesting structure for (L3, L2, L1) by using 
+S+ code?
+
+Thanks in advance.
+Shakir
+
+From tlumley at u.washington.edu  Mon Jun 13 20:58:17 2005
+From: tlumley at u.washington.edu (Thomas Lumley)
+Date: Mon, 13 Jun 2005 13:58:17 -0700
+Subject: DSC 2005 registration.
+Message-ID: <Pine.A41.4.61b.0506131356220.16708@homer12.u.washington.edu>
+
+Online registration is now open for DSC 2005: Directions in Statistical 
+Computing, to be held in Seattle, August 13-14, 2005.
+
+This is a workshop emphasizing the development of software systems and 
+computing environments for interactive statistics, predominatly in the S 
+language(s).
+
+        -thomas
+
+Thomas Lumley                   Assoc. Professor, Biostatistics
+tlumley at u.washington.edu        University of Washington, Seattle
+
+From tlumley at u.washington.edu  Mon Jun 13 23:16:30 2005
+From: tlumley at u.washington.edu (Thomas Lumley)
+Date: Mon, 13 Jun 2005 16:16:30 -0700
+Subject: Re: DSC 2005 registration.
+In-Reply-To: <Pine.A41.4.61b.0506131356220.16708@homer12.u.washington.edu>
+References: <Pine.A41.4.61b.0506131356220.16708@homer12.u.washington.edu>
+Message-ID: <Pine.LNX.4.43.0506131616300.15864@hymn04.u.washington.edu>
+
+This message would have been more useful if it included the URL
+
+   http://depts.washington.edu/dsc2005
+
+Apologies for any confusion
+
+       -thomas
+
+On Mon, 13 Jun 2005, Thomas Lumley wrote:
+
+> Online registration is now open for DSC 2005: Directions in Statistical
+> Computing, to be held in Seattle, August 13-14, 2005.
+>
+>
+> This is a workshop emphasizing the development of software systems and
+> computing environments for interactive statistics, predominatly in the S
+> language(s).
+>
+>
+>
+>         -thomas
+>
+> Thomas Lumley                   Assoc. Professor, Biostatistics
+> tlumley at u.washington.edu        University of Washington, Seattle
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+
+Thomas Lumley                   Assoc. Professor, Biostatistics
+tlumley at u.washington.edu        University of Washington, Seattle
+
+From Andries.Potgieter at dpi.qld.gov.au  Tue Jun 14 05:56:45 2005
+From: Andries.Potgieter at dpi.qld.gov.au (Potgieter, Andries B)
+Date: Tue, 14 Jun 2005 15:56:45 +1000
+Subject: Re: simple function
+Message-ID: <200506140556.j5E5umUB004537@dpi-gw1.dpi.qld.gov.au>
+
+try
+
+ 
+
+t
+ AAA BBB AAA CCC BBB 
+   3   
+4   3   2   4
+> unique(names(t))
+[1] 
+"AAA" "BBB" "CCC"
+
+>   -----Original Message-----
+> From:
+>   s-news-owner at lists.biostat.wustl.edu
+>   [mailto:s-news-owner at lists.biostat.wustl.edu]On Behalf Of Leeds,
+>   Mark
+> Sent: Sunday, 12 June 2005 1:48 PM
+> To:
+>   s-news at lists.biostat.wustl.edu
+> Cc:
+>   cspark at ces.clemson.edu
+> Subject: [S] simple
+>   function
+>
+>
+>
+>
+>   I have a vector
+>   that
+>
+>   Has names
+>
+>
+>
+>   So it might be
+>
+>
+>
+>   AAA
+>     BBB     AAA
+>   CCC        BBB
+>
+>    3
+>   4
+>   3
+>   2
+>   4
+>
+>
+>
+>   so I want a function that
+>    returns as
+>
+>   below ( just the unique names
+>   ).
+>
+>
+>
+>   AAA
+>   BBB     CCCC
+>
+>
+>
+>    3
+>   4
+>   2
+>
+>
+>
+>   also, if it has the same name it
+>   will
+>
+>   always have the same #
+>    so
+>
+>   the case of same name with
+>   different
+>
+>   number doesn’t have to be dealt
+>   with.
+>
+>
+>
+>
+>
+>
+>   thanks
+
+********************************DISCLAIMER****************************
+The information contained in the above e-mail message or messages 
+(which includes any attachments) is confidential and may be legally 
+privileged.  It is intended only for the use of the person or entity 
+to which it is addressed.  If you are not the addressee any form of 
+disclosure, copying, modification, distribution or any action taken 
+or omitted in reliance on the information is unauthorised.  Opinions 
+contained in the message(s) do not necessarily reflect the opinions 
+of the Queensland Government and its authorities.  If you received 
+this communication in error, please notify the sender immediately and 
+delete it from your computer system network.
+
+From Jo.Jiao at csiro.au  Tue Jun 14 06:40:14 2005
+From: Jo.Jiao at csiro.au
+Date: Tue, 14 Jun 2005 16:40:14 +1000
+Subject: output from function mclass()
+Message-ID: <DFF82EE1A56CB24698934FE115EFDAD1050608@exqld2-bne.qld.csiro.au>
+
+ 
+
+Hi, a maybe simple question on the output of 
+function mclass(). 
+
+I am trying to cluster on 330 objects into 
+10 clusters. I have run the function mclust() on my data set, say the output is 
+saved as zz.mclust.
+
+And then I run the function mclass() on 
+zz.mclust as follow:
+
+ 
+
+mclass(zz.mclust, 10).
+
+ 
+
+The content of classification component of 
+output of mclass(zz.mclust,10) is given below:
+
+ 
+
+$classification:
+  [1]   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1
+ [34]   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1
+ [67]   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1
+[100]   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1
+[133]   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1
+[166]   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1
+[199]   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1
+[232]   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1
+[265]   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1
+[298]   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1   1   1   1   
+1   1 321 322 323 324 325 326 327 328 329 329
+
+ 
+
+Suppose this component gives the cluster 
+membership of each object(there are 330 objects in this case). There were 10 
+clusters specified but there appears 11 labels in the classification component. 
+Can some one give me a clue what actually was given in this classification? 
+Thank you in advance for your help.
+
+ 
+
+Regards
+
+ 
+
+Jo Jiao
+
+ 
+
+ 
+
+ 
+
+ 
+
+From devens8765 at yahoo.com  Tue Jun 14 10:24:43 2005
+From: devens8765 at yahoo.com (Dave Evens)
+Date: Tue, 14 Jun 2005 03:24:43 -0700
+Subject: comparing NA values
+Message-ID: <20050614102444.61907.qmail@web61325.mail.yahoo.com>
+
+Is it possible to make comparisons between numeric NAs
+and other numeric values?
+
+For example, if I have two vectors
+
+> x<-c(1:10,1:10,rep(NA,20))
+> y<-c(1:30,rep(NA,10))
+
+I want to compare them
+
+> x==y
+ [1]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE 
+TRUE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+FALSE FALSE FALSE    NA    NA    NA    NA    NA
+[26]    NA    NA    NA    NA    NA    NA    NA    NA  
+ NA    NA    NA    NA    NA    NA    NA
+
+What I would like is to have TRUE for the first 10,
+FALSE for the next 20, and NA for the last 10. Is this
+possible?
+
+Thanks in advance for any help.
+
+Dave
+
+__________________________________________________
+Do You Yahoo!?
+Tired of spam?  Yahoo! Mail has the best spam protection around 
+http://mail.yahoo.com 
+
+From petr.pikal at precheza.cz  Tue Jun 14 11:03:41 2005
+From: petr.pikal at precheza.cz (Petr Pikal)
+Date: Tue, 14 Jun 2005 13:03:41 +0200
+Subject: Re: comparing NA values
+In-Reply-To: <20050614102444.61907.qmail@web61325.mail.yahoo.com>
+References: <20050614102444.61907.qmail@web61325.mail.yahoo.com>
+Message-ID: <42AED5AD.12421.11C4476@localhost>
+
+Hi
+
+On 14 Jun 2005 at 3:24, Dave Evens wrote:
+
+> 
+> Is it possible to make comparisons between numeric NAs
+> and other numeric values?
+
+everything is possible but I think you will need a special function.
+
+e.g.
+
+mytest<-function(x,y) {
+d<-length(x)
+testvec1<-is.na(x)+is.na(y)
+firstno<-which(x[testvec1==0]==y[testvec1==0])
+secondno<-which(testvec1==2)
+thirdno<-which(testvec1==1)
+
+result<-rep(F,d)
+result[firstno]<-T
+result[secondno]<-NA
+result[thirdno]<-F
+result
+}
+
+Which works with integers , but could give some wrong results 
+with floating point numbers.
+
+HTH
+Petr
+
+> 
+> For example, if I have two vectors
+> 
+> > x<-c(1:10,1:10,rep(NA,20))
+> > y<-c(1:30,rep(NA,10))
+> 
+> I want to compare them
+> 
+> > x==y
+>  [1]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE 
+> TRUE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+> FALSE FALSE FALSE    NA    NA    NA    NA    NA
+> [26]    NA    NA    NA    NA    NA    NA    NA    NA  
+>  NA    NA    NA    NA    NA    NA    NA
+> 
+> What I would like is to have TRUE for the first 10,
+> FALSE for the next 20, and NA for the last 10. Is this
+> possible?
+> 
+> Thanks in advance for any help.
+> 
+> Dave
+> 
+> 
+> 
+> __________________________________________________
+> Do You Yahoo!?
+> Tired of spam?  Yahoo! Mail has the best spam protection around 
+> http://mail.yahoo.com 
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+
+Petr Pikal
+petr.pikal at precheza.cz
+
+From dimitrios.rizopoulos at student.kuleuven.ac.be  Tue Jun 14 11:16:24 2005
+From: dimitrios.rizopoulos at student.kuleuven.ac.be (Dimitris Rizopoulos)
+Date: Tue, 14 Jun 2005 13:16:24 +0200
+Subject: Re: comparing NA values
+References: <42AED5AD.12421.11C4476@localhost>
+Message-ID: <005401c570d2$800ff660$0540210a@www.domain>
+
+or maybe something like this:
+
+x <- c(1:10, 1:10, rep(NA, 20))
+y <- c(1:30, rep(NA, 10))
+################
+ind <- as.logical( (is.na(x) | is.na(y)) - (is.na(x) & is.na(y)) )
+out <- x == y
+out[ind] <- FALSE
+out
+
+could also work.
+
+Best,
+Dimitris
+
+----
+Dimitris Rizopoulos
+Ph.D. Student
+Biostatistical Centre
+School of Public Health
+Catholic University of Leuven
+
+Address: Kapucijnenvoer 35, Leuven, Belgium
+Tel: +32/16/336899
+Fax: +32/16/337015
+Web: http://www.med.kuleuven.ac.be/biostat/
+    http://www.student.kuleuven.ac.be/~m0390867/dimitris.htm
+
+----- Original Message ----- 
+From: "Petr Pikal" <petr.pikal at precheza.cz>
+To: "Dave Evens" <devens8765 at yahoo.com>; 
+<s-news at lists.biostat.wustl.edu>
+
+Sent: Tuesday, June 14, 2005 1:03 PM
+Subject: Re: [S] comparing NA values
+
+> Hi
+>
+> On 14 Jun 2005 at 3:24, Dave Evens wrote:
+>
+> > Is it possible to make comparisons between numeric NAs
+> > and other numeric values?
+>
+>
+> everything is possible but I think you will need a special function.
+>
+> e.g.
+>
+> mytest<-function(x,y) {
+> d<-length(x)
+> testvec1<-is.na(x)+is.na(y)
+> firstno<-which(x[testvec1==0]==y[testvec1==0])
+> secondno<-which(testvec1==2)
+> thirdno<-which(testvec1==1)
+>
+> result<-rep(F,d)
+> result[firstno]<-T
+> result[secondno]<-NA
+> result[thirdno]<-F
+> result
+> }
+>
+> Which works with integers , but could give some wrong results
+> with floating point numbers.
+>
+> HTH
+> Petr
+>
+>
+>
+> > For example, if I have two vectors
+> >
+> > > x<-c(1:10,1:10,rep(NA,20))
+> > > y<-c(1:30,rep(NA,10))
+> >
+> > I want to compare them
+> >
+> > > x==y
+> >  [1]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+> > TRUE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+> > FALSE FALSE FALSE    NA    NA    NA    NA    NA
+> > [26]    NA    NA    NA    NA    NA    NA    NA    NA
+> >  NA    NA    NA    NA    NA    NA    NA
+> >
+> > What I would like is to have TRUE for the first 10,
+> > FALSE for the next 20, and NA for the last 10. Is this
+> > possible?
+> >
+> > Thanks in advance for any help.
+> >
+> > Dave
+> >
+> >
+> >
+> > __________________________________________________
+> > Do You Yahoo!?
+> > Tired of spam?  Yahoo! Mail has the best spam protection around
+> > http://mail.yahoo.com
+> > --------------------------------------------------------------------
+> > This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> > unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu
+> > with
+> >
+> > the BODY of the message:  unsubscribe s-news
+>
+>
+> Petr Pikal
+> petr.pikal at precheza.cz
+>
+>
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu
+> with
+>
+> the BODY of the message:  unsubscribe s-news
+
+From dimitrios.rizopoulos at student.kuleuven.ac.be  Tue Jun 14 11:46:52 2005
+From: dimitrios.rizopoulos at student.kuleuven.ac.be (Dimitris Rizopoulos)
+Date: Tue, 14 Jun 2005 13:46:52 +0200
+Subject: Re: comparing NA values
+References: <20050614113815.59566.qmail@web61324.mail.yahoo.com>
+Message-ID: <007501c570d6$c1e7bfb0$0540210a@www.domain>
+
+What I proposed is based on the position of NAs, so probably it will 
+work. However, note that floating point comparisons are tricky, see 
+e.g.,
+
+4.15 - 3.15 == 1
+all.equal(1, 4.15 - 3.15)
+
+I hope it helps.
+
+Best,
+Dimitris
+
+----
+Dimitris Rizopoulos
+Ph.D. Student
+Biostatistical Centre
+School of Public Health
+Catholic University of Leuven
+
+Address: Kapucijnenvoer 35, Leuven, Belgium
+Tel: +32/16/336899
+Fax: +32/16/337015
+Web: http://www.med.kuleuven.ac.be/biostat/
+    http://www.student.kuleuven.ac.be/~m0390867/dimitris.htm
+
+----- Original Message ----- 
+From: "Dave Evens" <devens8765 at yahoo.com>
+To: "Dimitris Rizopoulos" 
+<dimitrios.rizopoulos at student.kuleuven.ac.be>
+
+Sent: Tuesday, June 14, 2005 1:38 PM
+Subject: Re: [S] comparing NA values
+
+> Is it possible with floating points?
+>
+> Thanks in advance
+>
+> Dave
+>
+>
+> --- Dimitris Rizopoulos
+> <dimitrios.rizopoulos at student.kuleuven.ac.be> wrote:
+>
+> > or maybe something like this:
+> >
+> > x <- c(1:10, 1:10, rep(NA, 20))
+> > y <- c(1:30, rep(NA, 10))
+> > ################
+> > ind <- as.logical( (is.na(x) | is.na(y)) - (is.na(x)
+> > & is.na(y)) )
+> > out <- x == y
+> > out[ind] <- FALSE
+> > out
+> >
+> > could also work.
+> >
+> > Best,
+> > Dimitris
+> >
+> > ----
+> > Dimitris Rizopoulos
+> > Ph.D. Student
+> > Biostatistical Centre
+> > School of Public Health
+> > Catholic University of Leuven
+> >
+> > Address: Kapucijnenvoer 35, Leuven, Belgium
+> > Tel: +32/16/336899
+> > Fax: +32/16/337015
+> > Web: http://www.med.kuleuven.ac.be/biostat/
+>
+> http://www.student.kuleuven.ac.be/~m0390867/dimitris.htm
+> > ----- Original Message -----
+> > From: "Petr Pikal" <petr.pikal at precheza.cz>
+> >
+> > To: "Dave Evens" <devens8765 at yahoo.com>;
+> > <s-news at lists.biostat.wustl.edu>
+> > Sent: Tuesday, June 14, 2005 1:03 PM
+> > Subject: Re: [S] comparing NA values
+> >
+> >
+> > > Hi
+> > >
+> > > On 14 Jun 2005 at 3:24, Dave Evens wrote:
+> > >
+> > >>
+> > >> Is it possible to make comparisons between
+> > numeric NAs
+> > >> and other numeric values?
+> > >
+> > > everything is possible but I think you will need a
+> > special function.
+> > >
+> > > e.g.
+> > >
+> > > mytest<-function(x,y) {
+> > > d<-length(x)
+> > > testvec1<-is.na(x)+is.na(y)
+> > > firstno<-which(x[testvec1==0]==y[testvec1==0])
+> > > secondno<-which(testvec1==2)
+> > > thirdno<-which(testvec1==1)
+> > >
+> > > result<-rep(F,d)
+> > > result[firstno]<-T
+> > > result[secondno]<-NA
+> > > result[thirdno]<-F
+> > > result
+> > > }
+> > >
+> > > Which works with integers , but could give some
+> > wrong results
+> > > with floating point numbers.
+> > >
+> > > HTH
+> > > Petr
+> > >
+> > >
+> > >
+> > >>
+> > >> For example, if I have two vectors
+> > >>
+> > >> > x<-c(1:10,1:10,rep(NA,20))
+> > >> > y<-c(1:30,rep(NA,10))
+> > >>
+> > >> I want to compare them
+> > >>
+> > >> > x==y
+> > >>  [1]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+> > TRUE
+> > >> TRUE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE
+> > FALSE
+> > >> FALSE FALSE FALSE    NA    NA    NA    NA    NA
+> > >> [26]    NA    NA    NA    NA    NA    NA    NA
+> > NA
+> > >>  NA    NA    NA    NA    NA    NA    NA
+> > >>
+> > >> What I would like is to have TRUE for the first
+> > 10,
+> > >> FALSE for the next 20, and NA for the last 10. Is
+> > this
+> > >> possible?
+> > >>
+> > >> Thanks in advance for any help.
+> > >>
+> > >> Dave
+> > >>
+> > >>
+> > >>
+> > >>
+> > __________________________________________________
+> > >> Do You Yahoo!?
+> > >> Tired of spam?  Yahoo! Mail has the best spam
+> > protection around
+> > >> http://mail.yahoo.com
+> > >>
+>
+> --------------------------------------------------------------------
+> > >> This message was distributed by
+> > s-news at lists.biostat.wustl.edu.  To
+> > >> unsubscribe send e-mail to
+> > s-news-request at lists.biostat.wustl.edu
+> > >> with
+> > >> the BODY of the message:  unsubscribe s-news
+> > >
+> > > Petr Pikal
+> > > petr.pikal at precheza.cz
+> > >
+> > >
+> > >
+>
+> --------------------------------------------------------------------
+> > > This message was distributed by
+> > s-news at lists.biostat.wustl.edu.  To
+> > > unsubscribe send e-mail to
+> > s-news-request at lists.biostat.wustl.edu
+> > > with
+> > > the BODY of the message:  unsubscribe s-news
+> > >
+>
+>
+>
+>
+>
+> __________________________________
+> Discover Yahoo!
+> Stay in touch with email, IM, photo sharing and more. Check it out!
+> http://discover.yahoo.com/stayintouch.html
+
+From devens8765 at yahoo.com  Tue Jun 14 11:55:31 2005
+From: devens8765 at yahoo.com (Dave Evens)
+Date: Tue, 14 Jun 2005 04:55:31 -0700
+Subject: comparing NA values with floating points
+Message-ID: <20050614115531.22060.qmail@web61312.mail.yahoo.com>
+
+Following on from my last email. Can I compare two
+floating point vectors which also contain NA values?
+
+Thanks in advance for any help.
+
+Dave
+
+__________________________________________________
+Do You Yahoo!?
+Tired of spam?  Yahoo! Mail has the best spam protection around 
+http://mail.yahoo.com 
+
+From Thierry.ONKELINX at inbo.be  Tue Jun 14 12:09:09 2005
+From: Thierry.ONKELINX at inbo.be (ONKELINX, Thierry)
+Date: Tue, 14 Jun 2005 14:09:09 +0200
+Subject: Re: comparing NA values with floating points
+Message-ID: <2E9C414912813E4EB981326983E0A1049C3803@inexch.instnat.be.grp>
+
+Use (x - y) < threshold if you want to compare floating point vectors.
+The threshold is the smallest possible difference between your data. 
+
+-----Oorspronkelijk bericht-----
+Van: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] Namens Dave Evens
+Verzonden: dinsdag 14 juni 2005 13:56
+Aan: s-news at lists.biostat.wustl.edu
+Onderwerp: [S] comparing NA values with floating points
+
+Following on from my last email. Can I compare two
+floating point vectors which also contain NA values?
+
+Thanks in advance for any help.
+
+Dave
+
+__________________________________________________
+Do You Yahoo!?
+Tired of spam?  Yahoo! Mail has the best spam protection around 
+http://mail.yahoo.com 
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From khan at cshl.edu  Wed Jun 15 16:02:50 2005
+From: khan at cshl.edu (Khan, Sohail)
+Date: Wed, 15 Jun 2005 12:02:50 -0400
+Subject: Removing NAs from a data frame
+Message-ID: <C8696843AE995F4EA4CDC3E2B83482A90DDCAD@mailbox02.cshl.edu>
+
+Dear Members,
+
+I am a novice S-plus user. This is a trivial question, but I would appreciate 
+your help.  I have imported a large file (.txt) in S-Plus, the file is imported 
+as having a blank line after each line.  Therefore, the data frame have NAs for 
+blank lines.  How can I remove all the NAs?  In addition, can I export the file 
+as a tab delimited .txt file??
+Thanks.
+
+Sohail Khan
+Scientific Programmer
+COLD SPRING HARBOR LABORATORY
+Genome Research Center
+500 Sunnyside Boulevard
+Woodbury, NY 11797
+(516)422-4076
+
+From rmh at temple.edu  Wed Jun 15 20:01:39 2005
+From: rmh at temple.edu (Richard M. Heiberger)
+Date: Wed, 15 Jun 2005 16:01:39 -0400
+Subject: Re: Removing NAs from a data frame
+Message-ID: <34b6cd75.cf57898.81e4a00@po-d.temple.edu>
+
+In S-Plus, the answer is always yes, it is possible.
+
+The extra information we need before responding to your query is "How did
+the NA get there?"  Please send a trivial example to the list (3 or 4 lines
+of data) with a clear statement as to trailing blanks and end-of-line
+coding system (CR-LF for DOS or LF for Unix).  Tell us what computer system
+you are using (specifically Windows or Unix), which version of S-Plus, and give 
+us
+the command sequence that generated the data.frame (or click sequence if you 
+did it with
+menus).
+
+Rich
+
+From saviappana at yahoo.com  Wed Jun 15 22:45:46 2005
+From: saviappana at yahoo.com (Savitri Appana)
+Date: Wed, 15 Jun 2005 15:45:46 -0700
+Subject: a trival question on 'lm'
+Message-ID: <20050615224546.38917.qmail@web51910.mail.yahoo.com>
+
+Hello everyone,
+
+I've ran a simple linear model with no intercept.  I
+would like to specify a test, something like 'x = 1
+(instead of 0, the default)'.  How to acheive this in
+Splus?  I was able to do this in SAS with a 'test'
+statement in proc reg, but i'm interested in doing it
+using Splus.  Any help is appreciated, thank you.
+
+e.g. -- 
+> lm(formula = y ~ x , data = data)
+Coefficients:
+              Value Std. Error t value Pr(>|t|) 
+     x       0.4149  0.1668     2.4875  0.0146 
+
+Thanks for yr help,
+Savi
+
+                
+__________________________________ 
+Discover Yahoo! 
+Get on-the-go sports scores, stock quotes, news and more. Check it out! 
+http://discover.yahoo.com/mobile.html
+
+From spencer.graves at pdf.com  Thu Jun 16 00:39:37 2005
+From: spencer.graves at pdf.com (Spencer Graves)
+Date: Wed, 15 Jun 2005 17:39:37 -0700
+Subject: Re: a trival question on 'lm'
+In-Reply-To: <20050615224546.38917.qmail@web51910.mail.yahoo.com>
+References: <20050615224546.38917.qmail@web51910.mail.yahoo.com>
+Message-ID: <42B0CA49.3000405@pdf.com>
+
+          Have you considered the following:
+
+set.seed(1)
+df. <- data.frame(x=1:11, y=1:11+rnorm(11))
+fit <- lm(y-x~x, data=df.)
+anova(fit)
+summary(fit)
+
+          hope this helps.
+          spencer graves
+
+Savitri Appana wrote:
+
+> Hello everyone,
+>
+> I've ran a simple linear model with no intercept.  I
+> would like to specify a test, something like 'x = 1
+> (instead of 0, the default)'.  How to acheive this in
+> Splus?  I was able to do this in SAS with a 'test'
+> statement in proc reg, but i'm interested in doing it
+> using Splus.  Any help is appreciated, thank you.
+>
+> e.g. --
+>
+> > lm(formula = y ~ x , data = data)
+>
+>
+> Coefficients:
+>               Value Std. Error t value Pr(>|t|)
+>      x       0.4149  0.1668     2.4875  0.0146
+>
+>
+>
+> Thanks for yr help,
+> Savi
+>
+>
+>
+> __________________________________
+> Discover Yahoo!
+> Get on-the-go sports scores, stock quotes, news and more. Check it out!
+> http://discover.yahoo.com/mobile.html
+>
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+
+From saviappana at yahoo.com  Thu Jun 16 15:43:40 2005
+From: saviappana at yahoo.com (Savitri Appana)
+Date: Thu, 16 Jun 2005 08:43:40 -0700
+Subject: Re: a trivial question on 'lm'
+Message-ID: <20050616154340.71765.qmail@web51906.mail.yahoo.com>
+
+Many Thanks to Douglas Bates and Spencer Graves for
+their suggestions.
+
+Regards,
+Savi
+
+        
+                
+__________________________________ 
+Do you Yahoo!? 
+Yahoo! Mail - You care about security. So do we. 
+http://promotions.yahoo.com/new_mail
+
+From devens8765 at yahoo.com  Thu Jun 16 16:06:23 2005
+From: devens8765 at yahoo.com (Dave Evens)
+Date: Thu, 16 Jun 2005 09:06:23 -0700
+Subject: problem with workbench
+Message-ID: <20050616160623.38442.qmail@web61318.mail.yahoo.com>
+
+Dear all,
+
+I'm having some problems with the Splus Workbench. For
+example, the following should work
+
+data1 <- vector(mode="list", length=10)
+names(data1) <- paste(LETTERS[1:10])             
+data1 <- lapply(1:length(data1), function(k) {
+      data1[[k]] <- k
+      data1[[k]]
+})
+
+but I get the error
+
+Problem in FUN(...X.sub.i....): object "data1" must be
+assigned locally before replacement 
+
+What does this mean?
+
+Thanks in advance for any help.
+
+Dave
+
+                
+__________________________________ 
+Discover Yahoo! 
+Find restaurants, movies, travel and more fun for the weekend. Check it out! 
+http://discover.yahoo.com/weekend.html 
+
+From rmh at temple.edu  Thu Jun 16 17:57:14 2005
+From: rmh at temple.edu (Richard M. Heiberger)
+Date: Thu, 16 Jun 2005 13:57:14 -0400
+Subject: Re: problem with workbench
+Message-ID: <9579c53d.d6de9b8.81e4c00@po-d.temple.edu>
+
+## I reformatted your example to isolate the function definition.
+
+data1 <- vector(mode="list", length=10)
+names(data1) <- paste(LETTERS[1:10])             
+data1 <- lapply(1:length(data1),
+
+                function(k) {
+                  data1[[k]] <- k
+                  data1[[k]]
+                }
+                
+                )
+
+## Notice that data1 is not in the argument list.  Therefore it is
+## using the globally defined object.  S-Plus allows you to read a
+## global object from within a function, but it does not allow you to
+## change a global object from within a function.
+
+## Look very closely at the documentation for the apply family of
+## functions.  This example from ?lapply in S-Plus 7.0 shows how to use
+## additional arguments.
+## 
+## # To operate on two lists let X be a vector of indices
+## list1 <- lapply(1:6, runif)  # artificial data for this example
+## list2 <- lapply(1:6, runif)
+## lapply(1:6, function(i, x, y) x[[i]] + y[[i]],
+##        x = list1, y = list2)
+
+## The correct way to use lapply for the specific trivial example you
+## asked about is this:
+
+   result <- lapply(LETTERS[1:10], function(k) k)
+   result
+   names(result) <- LETTERS[1:10]
+   result
+
+## Notice that lapply itself created the list.  You don't have to do it.
+
+From willem.talloen at ua.ac.be  Fri Jun 17 11:54:23 2005
+From: willem.talloen at ua.ac.be (willem Talloen)
+Date: Fri, 17 Jun 2005 13:54:23 +0200
+Subject: lda() from MASS
+Message-ID: <42B2B9EF.3060209@ua.ac.be>
+
+hello,
+
+I'm doing analyses with lda() in library section MASS (Splus 6.0).
+
+The lda() function works fine, but the predict.lda and the plot.lda not.
+
+I've been searching for two days now what the problem might be with
+following error messages.
+
+> predict.lda(shape.lda)
+
+Problem in predict.lda(shape.lda): wrong number of variables 
+
+> plot(shape.lda)
+
+Problem in scale(X, means, F): length of center must match number of
+columns of x 
+
+It should be due to "something" of my dataset, as it runs
+perfectly on the Iris dataset.
+
+Could somebody help me out of this?
+
+willem
+-- 
+
+Willem Talloen                 willem.talloen at ua.ac.be
+______________________________________________________
+Laboratory of Animal Ecology      (Biology Department)
+
+University of Antwerp
+Universiteitsplein 1
+B-2610 Wilrijk, BELGIUM
+
+Tel : +32 3 820 22 61            Fax : +32 3 820 22 71
+
+http://webhost.ua.ac.be/deco
+______________________________________________________
+
+From srmillis at yahoo.com  Fri Jun 17 17:38:51 2005
+From: srmillis at yahoo.com (SR Millis)
+Date: Fri, 17 Jun 2005 10:38:51 -0700
+Subject: Whining about price and convenience?
+Message-ID: <20050617173851.58009.qmail@web50907.mail.yahoo.com>
+
+I've a single user licence for v7---and just stupidly
+discovered that I am able to install it on only one
+pc. And, to uninstall it from one machine requires
+emailing Insightful prior to installing it on another
+pc. Guess the days of being able to install software
+on a home and office machine are over. But the cost
+and inconvenience of the latest S+ products are
+certainly a strong incentive for me to make a complete
+move to R. 
+
+SR Millis
+
+From rosenfes at mail.nih.gov  Fri Jun 17 17:56:31 2005
+From: rosenfes at mail.nih.gov (Rosenfeld, Simon (NIH/NCI))
+Date: Fri, 17 Jun 2005 13:56:31 -0400
+Subject: Re: Whining about price and convenience?
+Message-ID: <CE0E73903DB53F43B4B0938747F34F8A7B156D@nihexchange7.nih.gov>
+
+Do you have any idea what it takes to REinstall the S+7 onto the same
+machine (e.g., in case of crash)?
+
+-----Original Message-----
+From: SR Millis [mailto:srmillis at yahoo.com] 
+Sent: Friday, June 17, 2005 1:39 PM
+To: s-news at lists.biostat.wustl.edu
+Subject: [S] Whining about price and convenience?
+
+I've a single user licence for v7---and just stupidly
+discovered that I am able to install it on only one
+pc. And, to uninstall it from one machine requires
+emailing Insightful prior to installing it on another
+pc. Guess the days of being able to install software
+on a home and office machine are over. But the cost
+and inconvenience of the latest S+ products are
+certainly a strong incentive for me to make a complete
+move to R. 
+
+SR Millis
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From srmillis at yahoo.com  Fri Jun 17 20:04:57 2005
+From: srmillis at yahoo.com (SR Millis)
+Date: Fri, 17 Jun 2005 13:04:57 -0700
+Subject: Re: Whining about price and convenience?
+In-Reply-To: <0II8003BBU2TY350@mta1.srv.hcvlny.cv.net>
+References: <0II8003BBU2TY350@mta1.srv.hcvlny.cv.net>
+Message-ID: <20050617200457.16233.qmail@web50904.mail.yahoo.com>
+
+--- "John C. Byrne" <jcbyrne at optonline.net> wrote:
+
+> SR Millis,
+> 
+> The company did (still does ?) offer a second
+> license at a discount for this
+> purpose. 
+
+Thanks, John. Yes, I checked into the discount--I
+believe that it is 80% of the initial price.  Still
+too expensive for me/my department.
+
+I'm concerned that Insightful is will take the same
+path as that other large company in Chicago, ie,
+pricing and pitching its product to the casual
+business user who likes pretty graphs more than 
+advanced algorithms---and is willing to pay a lot
+money for them.  
+
+SR Millis
+
+Scott R Millis, PhD, MEd, ABPP (CN & RP)
+Director of Research - Dept of PM&R
+Wayne State University School of Medicine
+Rehabilitation Institute of Michigan
+261 Mack Blvd
+Detroit, MI 48201
+
+Email:  smillis at med.wayne.edu
+Tel: 313-993-8085
+Fax: 313-745-9854
+
+*********************************************************
+This electronic message may contain information that is confidential
+and/or legally privileged. It is intended only for the use of the
+individual(s) and entity named as recipients in the message. If you are
+not an intended recipient of this message, please notify the sender
+immediately and delete the material from any computer. Do not deliver,
+distribute or copy this message, and do not disclose its contents or
+take any action in reliance on the information it contains. Thank you.
+
+From theforester at comcast.net  Fri Jun 17 20:43:56 2005
+From: theforester at comcast.net (W. Keith Moser)
+Date: Fri, 17 Jun 2005 15:43:56 -0500
+Subject: Re: Whining about price and convenience?
+In-Reply-To: <20050617200457.16233.qmail@web50904.mail.yahoo.com>
+References: <20050617200457.16233.qmail@web50904.mail.yahoo.com>
+Message-ID: <42B3360C.8050601@comcast.net>
+
+SR Millis wrote:
+>   --- "John C. Byrne" <jcbyrne at optonline.net> wrote:
+>
+>
+>   >     SR Millis,
+> >
+> > The company did (still does ?) offer a second
+> > license at a discount for this
+> > purpose.
+> >
+> >
+>
+>
+>
+> Thanks, John. Yes, I checked into the discount--I
+> believe that it is 80% of the initial price.  Still
+> too expensive for me/my department.
+>
+> I'm concerned that Insightful is will take the same
+> path as that other large company in Chicago, ie,
+> pricing and pitching its product to the casual
+> business user who likes pretty graphs more than
+> advanced algorithms---and is willing to pay a lot
+> money for them.
+>
+> SR Millis
+> [snip]
+>
+>
+>
+
+Actually, the home copy purchase price is generally 20% of the regular
+price.  The annual renewal is now 20% of that.  I have had persuaded my
+employers (the last three) to buy S-Plus and the mods and I have paid
+for my own home copy purchase and license renewal for all that time. 
+By using the same disk on two machines up to now, you have been getting
+over.  All of the software companies are cracking down.  Why is this  a
+surprise?
+
+Keith
+
+From Saadi at management.uottawa.ca  Mon Jun 20 02:47:48 2005
+From: Saadi at management.uottawa.ca (Samir Saadi)
+Date: Sun, 19 Jun 2005 22:47:48 -0400
+Subject: Quick question
+Message-ID: <42B5F614.25189.267D9E5@management.uottawa.ca>
+
+Hi,
+
+I have two data files: Ret and Mo  both are matrix of dim [6740,1] . Ret is the daily 
+returns of TSX index, Mo is a dummy variable (1 if it is Monday and 0 otherwise).
+
+I am trying to write a GARCH(1,1) with Ret as dependent variable and Mo explanatory 
+variable (in the mean equation). 
+
+garch(Ret~1, ~garch(1,1)+Mo, na.omit, trace=F)
+
+But I keep having  the following message from SPLUS: 
+
+Problem in garch(Ret ~ 1,  ~ garch(1, 1) + Mo, na.omit, trace = F): Length of Mo 
+(variable 1) is 1 != length of others (6740) 
+
+Any suggestion? What I am doing wrong here?
+
+Thanks !
+
+Sam 
+
+Saadi at management.uottawa.ca
+
+From Saadi at management.uottawa.ca  Mon Jun 20 11:21:14 2005
+From: Saadi at management.uottawa.ca (Samir Saadi)
+Date: Mon, 20 Jun 2005 07:21:14 -0400
+Subject: Re: Quick question
+Message-ID: <42B66E6A.30633.1BEA5C@management.uottawa.ca>
+
+I would like to thank Mark and Jo for their prompt replies. 
+
+Special thanks to Robert:   Mo1 
+<- Mo[[names(Mo)]]   works !!!
+
+Kindest regards,
+
+Samir
+
+Saadi at management.uottawa.ca
+
+From Saadi at management.uottawa.ca  Mon Jun 20 14:05:05 2005
+From: Saadi at management.uottawa.ca (Samir Saadi)
+Date: Mon, 20 Jun 2005 10:05:05 -0400
+Subject: How can I remove the intercept fromt he conditional variance equation
+Message-ID: <42B694D1.21046.B1EAD0@management.uottawa.ca>
+
+This is my second question in less than 24h. I am sorry about that :(  
+
+I am trying to remove the intercept from the GARCH equation (the 
+conditional variance)  ... The (-1) works only to remove the intercept 
+from the mean equation.  
+
+Thks
+
+Saadi at management.uottawa.ca
+
+From dataanalytics at earthlink.net  Tue Jun 21 13:04:00 2005
+From: dataanalytics at earthlink.net (Walter R. Paczkowski)
+Date: Tue, 21 Jun 2005 13:04:00 +0000
+Subject: Permuting a data frame
+Message-ID: <E1DkiQC-0002Hp-7r@smtpauth07.mail.atl.earthlink.net>
+
+Good morning,
+
+I have a trivial problem.  I want to permute the rows of a data frame with, 
+say, five columns, each column having the same sequence of numbers, 1:n.  For 
+example, I want to permute
+
+x1  x2  x3  x4  x5
+1    1     1    1    1
+2    2     2    2    2
+3    3     3    3    3
+4    4     4    4    4
+5    5     5    5    5
+
+But, after the permutation, there can be no duplications in each row and, of 
+course, each number in each column can appear only once in that column of the 
+resulting data frame .  So, I would like something like
+
+x1  x2  x3  x4  x5
+1    5    4    3    2
+2    1     5   4    3
+3    2     1   5    4
+4    3     2   1    5
+5    4     3   2    1
+
+except the problem I'm working on has 30 rows with five columns.
+
+Is there an easy way to do this?  I tried the repeated application of sample 
+with any and duplicated to check for the duplications, but this is very 
+inefficient.
+
+Thanks,
+
+Walt Paczkowski
+________________________
+
+Walter R. Paczkowski, Ph.D.
+Data Analytics Corp.
+44 Hamilton Lane
+Plainsboro, NJ  08536
+(V) 609-936-8999
+(F) 609-936-3733
+
+From dimitrios.rizopoulos at student.kuleuven.ac.be  Tue Jun 21 13:18:59 2005
+From: dimitrios.rizopoulos at student.kuleuven.ac.be (Dimitris Rizopoulos)
+Date: Tue, 21 Jun 2005 15:18:59 +0200
+Subject: Re: Permuting a data frame
+References: <E1DkiQC-0002Hp-7r@smtpauth07.mail.atl.earthlink.net>
+Message-ID: <007601c57663$c8dddbf0$0540210a@www.domain>
+
+maybe you can use something like this:
+
+mat <- matrix(1:10, 10, 5)
+#########3
+n <- nrow(mat)
+for(i in 2:ncol(mat)) mat[, i] <- mat[c(seq(n - i + 2, n), seq(1, n - 
+i + 1)), i]
+
+mat
+
+I hope it helps.
+
+Best,
+Dimitris
+
+----
+Dimitris Rizopoulos
+Ph.D. Student
+Biostatistical Centre
+School of Public Health
+Catholic University of Leuven
+
+Address: Kapucijnenvoer 35, Leuven, Belgium
+Tel: +32/16/336899
+Fax: +32/16/337015
+Web: http://www.med.kuleuven.be/biostat/
+    http://www.student.kuleuven.ac.be/~m0390867/dimitris.htm
+
+----- Original Message ----- 
+From: "Walter R. Paczkowski" <dataanalytics at earthlink.net>
+
+To: "S-News" <s-news at lists.biostat.wustl.edu>
+Sent: Tuesday, June 21, 2005 3:04 PM
+Subject: [S] Permuting a data frame
+
+Good morning,
+
+I have a trivial problem.  I want to permute the rows of a data frame 
+with, say, five columns, each column having the same sequence of 
+numbers, 1:n.  For example, I want to permute
+
+x1  x2  x3  x4  x5
+1    1     1    1    1
+2    2     2    2    2
+3    3     3    3    3
+4    4     4    4    4
+5    5     5    5    5
+
+But, after the permutation, there can be no duplications in each row 
+and, of course, each number in each column can appear only once in 
+that column of the resulting data frame .  So, I would like something 
+like
+
+x1  x2  x3  x4  x5
+1    5    4    3    2
+2    1     5   4    3
+3    2     1   5    4
+4    3     2   1    5
+5    4     3   2    1
+
+except the problem I'm working on has 30 rows with five columns.
+
+Is there an easy way to do this?  I tried the repeated application of 
+sample with any and duplicated to check for the duplications, but this 
+is very inefficient.
+
+Thanks,
+
+Walt Paczkowski
+________________________
+
+Walter R. Paczkowski, Ph.D.
+Data Analytics Corp.
+44 Hamilton Lane
+Plainsboro, NJ  08536
+(V) 609-936-8999
+(F) 609-936-3733
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From Saadi at management.uottawa.ca  Tue Jun 21 13:20:20 2005
+From: Saadi at management.uottawa.ca (Samir Saadi)
+Date: Tue, 21 Jun 2005 09:20:20 -0400
+Subject: Second tentative
+Message-ID: <42B7E9E3.22506.39E7372@management.uottawa.ca>
+
+Could anyone please tell how I can exclude the intercept in the 
+conditional variance equation of a GARCH(1,1) model. I have 
+tried for days but in vain.... The ~ -1 works only for mean 
+equation. 
+
+Thanks in advance,
+
+Saadi at management.uottawa.ca
+
+From elvis at xlsolutions-corp.com  Tue Jun 21 17:36:53 2005
+From: elvis at xlsolutions-corp.com
+Date: Tue, 21 Jun 2005 10:36:53 -0700
+Subject: Course***R/S System: Advanced Programming***July 2005 at 3 locations
+Message-ID: <20050621173653.6430.qmail@webmail14.mesa1.secureserver.net>
+
+XSolutions Corp (www.xlsolutions-corp.com) is proud to announce
+our "Advanced R/Splus programming" course taught by R Development
+Core Team Guru!
+
+www.xlsolutions-corp.com/Radv.htm
+
+*********New York ---------------  July 28th-29th, 2005
+
+*********San Francisco ----------  July 18th-19th, 2005
+
+*********Boston, MA    ----------  TBD
+
+Early-bird discount ends Feb 25th!
+Ask for group discount and reserve your seat Now  (payment due after
+the class)
+
+Email Sue Turner: sue at xlsolutions-corp.com
+Phone: 206-686-1578
+
+Course Outline:
+
+- Overview of R/S fundamentals: Syntax and Semantics
+- Class and Inheritance in R/S-Plus
+- Concepts, Construction and good use of language objects
+- Coercion and efficiency
+- Object-oriented programming in R and S-Plus
+- Advanced manipulation tools: Parse, Deparse, Substitute, etc.
+- How to fully take advantage of Vectorization
+- Generic and Method Functions; S4 (S-Plus 6)
+- Search path, databases and frames Visibility
+- Working with large objects
+- Handling Properly Recursion and iterative calculations
+- Managing loops; For (S-Plus) and for() loops
+- Consequences of Lazy Evaluation
+- Efficient Code practices for large computations
+- Memory management and Resource monitoring
+- Writing R/S-Plus functions to call compiled code
+- Writing and debugging compiled code for R/S-Plus system
+- Connecting R/S-Plus to External Data Sources
+- Understanding the structure of model fitting functions in R/S-Plus
+- Designing and Packaging efficiently a new model function
+
+It'll also deal with lots of S-Plus efficiency issues and any special
+topics
+from participants is welcome.
+
+Please let us know if you and your colleagues are interested in this
+class
+to take advantage of group discount. Over half of the seats in this
+class
+are currently reserved.  Register now to secure your seat in this
+course!
+
+Cheers,
+
+Elvis Miller, PhD
+Manager Training.
+XLSolutions Corporation
+206 686 1578
+www.xlsolutions-corp.com 
+
+From elinder at cisunix.unh.edu  Tue Jun 21 20:40:02 2005
+From: elinder at cisunix.unh.edu (Ernst Linder)
+Date: Tue, 21 Jun 2005 16:40:02 -0400
+Subject: Re: Permuting a data frame
+References: <E1DkiQC-0002Hp-7r@smtpauth07.mail.atl.earthlink.net> <007601c57663$c8dddbf0$0540210a@www.domain>
+Message-ID: <42B87B22.2070401@cisunix.unh.edu>
+
+Hi Walt:
+
+In case you ever want to apply such permutations to large matrices:
+Here is a more elegant solution that avoids a for loop:
+
+nr <- 30  # number rows
+nc <- 5    # number columns
+outer(0:(nr-1),0:(nc-1),"+")%% nr + 1
+
+Ernst Linder
+
+Dimitris Rizopoulos wrote:
+> maybe you can use something like this:
+>
+> mat <- matrix(1:10, 10, 5)
+> #########3
+> n <- nrow(mat)
+> for(i in 2:ncol(mat)) mat[, i] <- mat[c(seq(n - i + 2, n), seq(1, n - i
+> + 1)), i]
+>
+> mat
+>
+>
+> I hope it helps.
+>
+> Best,
+> Dimitris
+>
+> ----
+> Dimitris Rizopoulos
+> Ph.D. Student
+> Biostatistical Centre
+> School of Public Health
+> Catholic University of Leuven
+>
+> Address: Kapucijnenvoer 35, Leuven, Belgium
+> Tel: +32/16/336899
+> Fax: +32/16/337015
+> Web: http://www.med.kuleuven.be/biostat/
+>     http://www.student.kuleuven.ac.be/~m0390867/dimitris.htm
+>
+>
+>
+> ----- Original Message ----- From: "Walter R. Paczkowski"
+> <dataanalytics at earthlink.net>
+>
+> To: "S-News" <s-news at lists.biostat.wustl.edu>
+> Sent: Tuesday, June 21, 2005 3:04 PM
+> Subject: [S] Permuting a data frame
+>
+>
+> Good morning,
+>
+> I have a trivial problem.  I want to permute the rows of a data frame
+> with, say, five columns, each column having the same sequence of
+> numbers, 1:n.  For example, I want to permute
+>
+>
+> x1  x2  x3  x4  x5
+> 1    1     1    1    1
+> 2    2     2    2    2
+> 3    3     3    3    3
+> 4    4     4    4    4
+> 5    5     5    5    5
+>
+> But, after the permutation, there can be no duplications in each row
+> and, of course, each number in each column can appear only once in that
+> column of the resulting data frame .  So, I would like something like
+>
+>
+> x1  x2  x3  x4  x5
+> 1    5    4    3    2
+> 2    1     5   4    3
+> 3    2     1   5    4
+> 4    3     2   1    5
+> 5    4     3   2    1
+>
+> except the problem I'm working on has 30 rows with five columns.
+>
+> Is there an easy way to do this?  I tried the repeated application of
+> sample with any and duplicated to check for the duplications, but this
+> is very inefficient.
+>
+>
+> Thanks,
+>
+> Walt Paczkowski
+> ________________________
+>
+> Walter R. Paczkowski, Ph.D.
+> Data Analytics Corp.
+> 44 Hamilton Lane
+> Plainsboro, NJ  08536
+> (V) 609-936-8999
+> (F) 609-936-3733
+>
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+>
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+
+--
+****************************************************************
+Ernst Linder                        elinder at math.unh.edu
+Department of Mathematics and Statistics     603 - 862- 2687
+University of New Hampshire            Fax:  603 - 862 - 4096
+Durham, NH 03824                www.math.unh.edu/~elinder
+****************************************************************
+
+From devens8765 at yahoo.com  Wed Jun 22 13:08:56 2005
+From: devens8765 at yahoo.com (Dave Evens)
+Date: Wed, 22 Jun 2005 06:08:56 -0700
+Subject: simple list question
+Message-ID: <20050622130856.36894.qmail@web61313.mail.yahoo.com>
+
+Dear all,
+
+My problem involves naming elements of list within a
+list using lapply. For example, if I have a list of
+lists of matrices
+
+x <- lapply(1:5, function(k) {lapply(1:k, function(i,
+k) {matrix(rnorm(i*i, 1*k, 1), nrow=i, ncol=i)}, k)})
+
+I would like to name the only element in the first
+list "A", the elements in the second list "A" and "B"
+etc 
+
+I thought the following would work - but it doesn't
+change the names in x
+
+lapply(1:5, function(k, list.mat)
+{return(names(list.mat[[k]]) <- LETTERS[1:k])}, x)
+
+also 
+names(x) <- lapply(1:5, function(k, list.mat)
+{return(names(list.mat[[k]]) <- LETTERS[1:k])}, x)
+
+doesn't work.
+
+How can I label the names in x using lapply rather
+than a for loop?
+
+Thanks in advance for any help.
+
+Dave
+
+__________________________________________________
+Do You Yahoo!?
+Tired of spam?  Yahoo! Mail has the best spam protection around 
+http://mail.yahoo.com 
+
+From xao_ping at yahoo.com  Wed Jun 22 17:20:27 2005
+From: xao_ping at yahoo.com (Xao Ping)
+Date: Wed, 22 Jun 2005 10:20:27 -0700
+Subject: AR for short, not equally spaced TS
+Message-ID: <20050622172027.59783.qmail@web54007.mail.yahoo.com>
+
+Dear All:
+
+I am analyzing a time course microarray experiment. I have only 6 chips taken in the moments of time 1,2, 10, 50, 85, 100 (relative units). I am thinking to apply time series analysis methods, such as AR or ARMA or ARIMA. I have several questions 
+
+1. Is it appropriate at all to think about autoregressive methods when the TS are not equally spaced? If the answer is "NO", then are there any alternative approaches? 
+
+2. Is it possible to extract any useful information having only 6 data points?
+
+ 
+
+Any relevant experience or advice are highly appreciated
+
+ 
+
+thank you in advance
+
+Xao Ping
+
+R&R Pharmakinetics 
+
+Taiwan
+
+__________________________________________________
+Do You Yahoo!?
+Tired of spam?  Yahoo! Mail has the best spam protection around 
+http://mail.yahoo.com 
+
+From ezivot at u.washington.edu  Wed Jun 22 17:41:33 2005
+From: ezivot at u.washington.edu (Eric Zivot)
+Date: Wed, 22 Jun 2005 10:41:33 -0700
+Subject: Re: AR for short, not equally spaced TS
+In-Reply-To: <20050622172027.59783.qmail@web54007.mail.yahoo.com>
+References: <20050622172027.59783.qmail@web54007.mail.yahoo.com>
+Message-ID: <200506221740.j5MHepX3020642@mailhost1.u.washington.edu>
+
+One way to think of the irregular spacing is in terms of 
+missing data. The true process works on equally spaced data but you ony observe 
+data on specific dates. An AR type model can be fit using Kalman Filter 
+techniques that automatically take care of the missing data.
+
+ 
+
+From: s-news-owner at lists.biostat.wustl.edu 
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Xao 
+Ping
+Sent: Wednesday, June 22, 2005 10:20 AM
+To: s-plus user 
+list
+Subject: [S] AR for short, not equally spaced 
+TS
+
+Dear All:
+
+I am analyzing a time course microarray experiment. I have only 6 chips 
+taken in the moments of time 1,2, 10, 50, 85, 100 (relative units). I am 
+thinking to apply time series analysis methods, such as AR or ARMA or 
+ARIMA. I have several questions 
+
+1. Is it appropriate at all to think about autoregressive methods when the 
+TS are not equally spaced? If the answer is "NO", then are there any alternative 
+approaches? 
+
+2. Is it possible to extract any useful information having only 6 
+data points?
+
+ 
+
+Any relevant experience or advice are highly appreciated
+
+ 
+
+thank you in advance
+
+Xao Ping
+
+R&R Pharmakinetics 
+
+Taiwan
+
+__________________________________________________
+Do You Yahoo!?
+Tired 
+of spam? Yahoo! Mail has the best spam protection around 
+
+http://mail.yahoo.com 
+
+From spencer.graves at pdf.com  Wed Jun 22 18:00:02 2005
+From: spencer.graves at pdf.com (Spencer Graves)
+Date: Wed, 22 Jun 2005 11:00:02 -0700
+Subject: Re: AR for short, not equally spaced TS
+In-Reply-To: <200506221740.j5MHepX3020642@mailhost1.u.washington.edu>
+References: <200506221740.j5MHepX3020642@mailhost1.u.washington.edu>
+Message-ID: <42B9A722.5060806@pdf.com>
+
+	  ERIC:  Does S-Plus have Kalman filtering software that would work 
+with 6 short irregular time series?
+
+	  Xao Ping:  What do your 36 numbers look like?  For example, do you 
+get crudely a straight line with "qqnorm"?  If yes, I think "lme" with 
+"correlation=corCAR1" might give you something useful.  I haven't used 
+"corCAR1", but it looks like that should work.  Of course, it would help 
+to consult Pinheiro and Bates (2000) Mixed-Effects Models in S and 
+S-Plus (Springer, esp. sec. 5.3).  For testing, I think I would want to 
+use "simulate.lme" as described in Pinheiro and Bates (sec. 2.4), in 
+part because some of the things you might want to test would have 
+parameters at a boundary, which would create problems with the usual 
+asymptotics.
+
+          spencer graves
+
+Eric Zivot wrote:
+
+> One way to think of the irregular spacing is in terms of missing data.
+> The true process works on equally spaced data but you ony observe data
+> on specific dates. An AR type model can be fit using Kalman Filter
+> techniques that automatically take care of the missing data.
+>
+>
+>
+> ------------------------------------------------------------------------
+> From: s-news-owner at lists.biostat.wustl.edu
+> [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Xao Ping
+>
+> Sent: Wednesday, June 22, 2005 10:20 AM
+> To: s-plus user list
+> Subject: [S] AR for short, not equally spaced TS
+>
+> Dear All:
+> I am analyzing a time course microarray experiment. I have only 6 chips
+> taken in the moments of time 10, 501,2, , 85, 100 (relative units). I am
+> thinking to apply time series analysis methods, such as AR or ARMA or
+> ARIMA. I have several questions
+> 1. Is it appropriate at all to think about autoregressive methods when
+> the TS are not equally spaced? If the answer is "NO", then are there any
+> alternative approaches?
+> 2. Is it possible to extract any useful information having only 6 data
+> points?
+>
+> Any relevant experience or advice are highly appreciated
+>
+> thank you in advance
+>
+> Xao Ping
+> R&R Pharmakinetics
+> Taiwan
+>
+>
+> __________________________________________________
+> Do You Yahoo!?
+> Tired of spam? Yahoo! Mail has the best spam protection around
+> http://mail.yahoo.com
+
+--
+Spencer Graves, PhD
+Senior Development Engineer
+PDF Solutions, Inc.
+333 West San Carlos Street Suite 700
+San Jose, CA 95110, USA
+
+spencer.graves at pdf.com
+www.pdf.com <http://www.pdf.com>
+Tel:  408-938-4420
+Fax: 408-280-7915
+
+From zhuw at mail.smu.edu  Thu Jun 23 01:05:04 2005
+From: zhuw at mail.smu.edu (Wang, Zhu)
+Date: Wed, 22 Jun 2005 20:05:04 -0500
+Subject: Re: AR for short, not equally spaced TS
+Message-ID: <6F71A693FBC1CA468ED5148A1977DAFE0E6B53@s31xs6.systems.smu.edu>
+
+For not equally spaced TS, you may consider continous model fitting. I have 
+developed an R package. See references and the program at people.smu.edu/zhuw.
+
+Hope this helps.
+
+Regards,
+
+Zhu
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu on behalf of Spencer Graves
+Sent: Wed 6/22/2005 1:00 PM
+To: Eric Zivot
+Cc: 'Xao Ping'; 's-plus user list'
+Subject: Re: [S] AR for short, not equally spaced TS
+ 
+          ERIC:  Does S-Plus have Kalman filtering software that would work 
+with 6 short irregular time series?
+
+          Xao Ping:  What do your 36 numbers look like?  For example, do you 
+get crudely a straight line with "qqnorm"?  If yes, I think "lme" with 
+"correlation=corCAR1" might give you something useful.  I haven't used 
+"corCAR1", but it looks like that should work.  Of course, it would help 
+to consult Pinheiro and Bates (2000) Mixed-Effects Models in S and 
+S-Plus (Springer, esp. sec. 5.3).  For testing, I think I would want to 
+use "simulate.lme" as described in Pinheiro and Bates (sec. 2.4), in 
+part because some of the things you might want to test would have 
+parameters at a boundary, which would create problems with the usual 
+asymptotics.
+
+          spencer graves
+
+Eric Zivot wrote:
+
+> One way to think of the irregular spacing is in terms of missing data. 
+> The true process works on equally spaced data but you ony observe data 
+> on specific dates. An AR type model can be fit using Kalman Filter 
+> techniques that automatically take care of the missing data.
+>  
+> 
+> ------------------------------------------------------------------------
+> From: s-news-owner at lists.biostat.wustl.edu 
+> [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Xao Ping
+> Sent: Wednesday, June 22, 2005 10:20 AM
+> To: s-plus user list
+> Subject: [S] AR for short, not equally spaced TS
+> 
+> Dear All:
+> I am analyzing a time course microarray experiment. I have only 6 chips 
+> taken in the moments of time 10, 501,2, , 85, 100 (relative units). I am 
+> thinking to apply time series analysis methods, such as AR or ARMA or 
+> ARIMA. I have several questions
+> 1. Is it appropriate at all to think about autoregressive methods when 
+> the TS are not equally spaced? If the answer is "NO", then are there any 
+> alternative approaches?
+> 2. Is it possible to extract any useful information having only 6 data 
+> points?
+>  
+> Any relevant experience or advice are highly appreciated
+>  
+> thank you in advance
+> Xao Ping
+> R&R Pharmakinetics 
+> Taiwan
+> 
+> __________________________________________________
+> Do You Yahoo!?
+> Tired of spam? Yahoo! Mail has the best spam protection around
+> http://mail.yahoo.com
+> 
+
+-- 
+Spencer Graves, PhD
+Senior Development Engineer
+PDF Solutions, Inc.
+333 West San Carlos Street Suite 700
+San Jose, CA 95110, USA
+
+spencer.graves at pdf.com
+www.pdf.com <http://www.pdf.com>
+Tel:  408-938-4420
+Fax: 408-280-7915
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From vze2ccy3 at verizon.net  Thu Jun 23 01:59:26 2005
+From: vze2ccy3 at verizon.net (Dr. Thomas Hardie)
+Date: Wed, 22 Jun 2005 21:59:26 -0400
+Subject: Question about MICE library and splus 6.2
+Message-ID: <004901c57797$2f65e0a0$0202a8c0@HardieAMD>
+
+I have tried to load the MICE library as I 
+would any other and have installed as a sub directory as I would any other 
+package but it does not seem to work.  It is not working in either 6.2 
+or 7.0.  I tried library lib.loc from the root and still no 
+luck.  Got the following. The mice directory is there and unziped. 
+
+library(mice, lib.loc = "C:\\mice")
+Problem in 
+library(mice, lib.loc = "C:\\mice"): No section "mice" in the library 
+directories: C:\mice, C:/PROGRAM FILES/INSIGHTFUL/splus62\library 
+Use 
+traceback() to see the call stack
+> traceback ()
+6: eval(action, 
+sys.parent())
+5: doErrorAction("Problem in library(mice, lib.loc = 
+\"C:\\\\mice\"): No section \"mice\" in the library directories: C:\\mice, 
+C:/PROGRAM FILES/INSIGHTFUL/splus62\\library", 1000
+)
+4: stop(paste(sep = 
+"", "No section \"", section, "\" in the library ", ifelse(length(lib.loc) > 
+1, "directories: ", "directory: "), paste(lib.loc, collapse = ", ")))
+3: 
+library(mice, lib.loc = "C:\\mice")
+2: eval(_expression_(library(mice, lib.loc 
+= "C:\\mice")))
+1: 
+Message: Problem in library(mice, lib.loc = 
+"C:\\mice"): No section "mice" in the library directories: C:\mice, C:/PROGRAM 
+FILES/INSIGHTFUL/splus62\library 
+> 
+
+Any advice.  Thanks in advance 
+
+ 
+
+Tom Hardie
+
+From rmh at temple.edu  Thu Jun 23 02:04:50 2005
+From: rmh at temple.edu (Richard M. Heiberger)
+Date: Wed, 22 Jun 2005 22:04:50 -0400
+Subject: Re: Question about MICE library and splus
+Message-ID: <176c214b.10b18bfb.81e4c00@po-d.temple.edu>
+
+The statement
+library(mice, lib.loc = "C:\\mice")
+
+is an instruction to look for c:\\mice\mice
+
+I assume you have stored your library as "c:\\mice", therefore you need
+the statement
+
+library(mice, lib.loc = "C:\\")
+
+From riyantowibowo at yahoo.com.sg  Thu Jun 23 04:15:54 2005
+From: riyantowibowo at yahoo.com.sg (Riyanto Wibowo)
+Date: Thu, 23 Jun 2005 12:15:54 +0800
+Subject: Matrix multiplication
+Message-ID: <20050623041554.54534.qmail@web51904.mail.yahoo.com>
+
+Dear All,
+
+I want to perform matrix multiplication for large size of matrix. I could perform it with this function, unfortunately it takes almost 25 seconds. 
+
+ 
+
+function()
+{
+
+ a <- matrix(runif(100000), 50000, 2)
+ P <- numeric(50000)
+ b <- matrix(0, 2, 1)
+ b[1, 1] <- 10
+ b[2, 1] <- 20
+ for(i in 1:50000) {
+  P[i] <- a[i, 1:2] %*% b
+ }
+}
+
+ 
+
+Could anyone help me how to perform matrix multiplication with the most efficient/fastest way? Is it possible ?
+
+ 
+
+Thank you very much.
+
+ 
+
+Regards,
+
+ 
+
+Ryan
+
+Send instant messages to your online friends http://asia.messenger.yahoo.com 
+
+From bjain at bslindia.com  Thu Jun 23 04:18:46 2005
+From: bjain at bslindia.com (Bikash Jain)
+Date: Thu, 23 Jun 2005 09:48:46 +0530
+Subject: Fw: FIEGARCH
+Message-ID: <001801c577aa$a62b5310$3b22a8c0@bslbjain>
+
+ 
+
+Hi All,
+
+I am attaching the data set. The 
+data set contains daily return series (called ?Variable?). There are more than 
+3900 data points in the series.
+
+Let me again mention that, we could 
+run GARCH, EGARCH and FIEGARCH models on this data set. But, when we give the 
+FIGARCH command [Pjohn.figarch= fgarch(data.file.Pjohn[["Variable"]]~1+ma(1),~figarch(1,1))], we get the following message 
+
+?Initializing model 
+parameters.
+
+Iteration 
+No.   1: 
+log-likelihood=10805.156171
+
+Routine aborted. Try rescaling the 
+series or a different initialization.?
+
+ 
+
+However, when we use FIEGARCH command[Pjohn.fiegarch= fgarch(data.file.Pjohn[["Variable"]]~1+ma(1),~fiegarch(1,1), leverage=T)], we get the following 
+output:
+
+?Initializing model 
+parameters.
+
+Iteration 
+No.   1: 
+log-likelihood=10784.179192
+
+Iteration 
+No.   2: 
+log-likelihood=10799.276870
+
+???????
+
+Iteration 
+No.  18: 
+log-likelihood=10809.027524
+
+Iteration 
+No.  19: 
+log-likelihood=10809.027524
+
+Convergence in function 
+value.?
+
+ 
+
+Thus, the FIEGARCH model could 
+converge, whereas, FIGARCH iteration got aborted after first iteration. We could 
+not find out the reason for this. Can you help?  
+
+Alternatively, are you aware of any 
+statistical software that can model FIGARCH and SV ? We 
+urgently require this information so that we can finish our 
+research.
+
+ 
+
+Waiting for your quick 
+response.
+
+ 
+
+Bikash 
+Jain
+
+From rmh at temple.edu  Thu Jun 23 04:31:32 2005
+From: rmh at temple.edu (Richard M. Heiberger)
+Date: Thu, 23 Jun 2005 00:31:32 -0400
+Subject: Re: Matrix multiplication
+Message-ID: <240d6034.10befa32.81baa00@po-d.temple.edu>
+
+## The most efficient way to multiply two matrixes in S is to
+## use the matrix multiplication function directly.
+
+a <- matrix(runif(100000), 50000, 2)
+b <- c(10, 20)
+date()
+P <- a %*% b
+date()
+
+## This takes less than 1 second
+
+## Do it 1000 times:
+date()
+for (i in 1:1000)
+   P <- a %*% b
+date()
+## This loop takes 26 seconds, or .026 seconds for each multiplication.
+
+Rich
+
+From ida2005 at quinao.com  Thu Jun 23 08:18:48 2005
+From: ida2005 at quinao.com (IDA 2005)
+Date: Thu, 23 Jun 2005 10:18:48 +0200
+Subject: IDA 2005: CALL FOR PARTICIPATION
+Message-ID: <42BA7068.2020608@quinao.com>
+
+Call for Participation
+
+IDA 2005
+
+6th International Symposium on
+
+Intelligent Data Analysis
+
+Madrid, Spain
+
+September 8-10, 2005
+
+http://www.ida2005.org
+
+IDA-2005 will take place in Madrid, September 8-10, 2005, under the
+
+auspices of the IDA council. The conference is organized by researchers
+
+and professors from the National Research Council of Canada, the
+
+Universidad Politécnica de Madrid, Universidad Rey Juan Carlos and the
+
+Universiteit Utrecht. It will consist of a stimulating program of
+
+invited talks by leading international experts in intelligent data
+
+analysis, contributed papers, poster sessions, and an exciting social
+
+program.
+
+Our aim for IDA-2005 is to bring together a wide variety of researchers
+
+- academic, industrial, and otherwise – who are concerned with
+
+extracting knowledge from data, including researchers from statistics,
+
+machine learning, neural networks, computer science, pattern
+
+recognition, database management, and other areas. The strategies
+
+adopted by people working in these areas are often different, and a
+
+synergy results if this is recognised. IDA-2005 is intended to stimulate
+
+interaction between these different areas, so that more powerful
+
+techniques and tools emerge for extracting knowledge from data and a
+
+better understanding is developed for the process of intelligent data
+
+analysis.
+
+In IDA-2005 conference we propose an interesting agenda of social events
+
+that include several tutorial tracks, open panel discussions, and
+
+keynote talks, all based on the following topics of interest:
+
+Algorithms and Techniques (Machine Learning, Data Mining, Statistics, ...):
+
+- Artificial neural networks
+
+- Bayesian networks
+
+- Heuristic methods
+
+- Optimization problems
+
+- Case-based reasoning
+
+- Computational models of human learning
+
+- Computational learning theory
+
+- Cooperative learning
+
+- Unsupervised learning
+
+- Decision and induction
+
+- Evolutionary computation
+
+- Grammatical inference
+
+- Incremental and on-line learning
+
+- Information retrieval and learning
+
+- Knowledge acquisition and learning
+
+- Data pre- and post-processing
+
+- Data visualisation
+
+- Statistical pattern recognition and analysis
+
+- Performance and optimization
+
+Theoretical Contributions (Data Analysis Principles, KDD, Data Modeling,
+
+..):
+
+- Data Mining theories
+
+- Information retrieval restrictions
+
+- Legal data analysis restrictions
+
+- Innovative data analysis (models, information types, and objectives)
+
+- Theoretical IDA issues
+
+- New paradigms
+
+Application Fields (Practical, Applied and Industrial Data Analysis):
+
+- Bio-informatics and bio-surveillance
+
+- Web analysis
+
+- Medical applications
+
+- Industrial data analysis
+
+- Commerce and finance information analysis
+
+- Government, legal analysis (socio-economic data, legal issues)
+
+This is the sixth Symposium on Intelligent Data Analysis after the
+
+successful symposia IDA-2003 (Berlin), IDA-2001 (Lisboa), IDA-99
+
+(Amsterdam), IDA-97 (London), and IDA-95 (Baden-Baden). IDA conferences
+
+series intends to provide an international forum for the discussion of
+
+the innovative outstanding research results in the field of intelligent
+
+data analysis, becoming one of the most significant conferences on this
+
+topic world-wide. Contributions in this field deal with either
+
+theoretical or applied real-world problems making special effort in
+
+introducing novel data analysis techniques.<>
+
+Conference Fees
+Early registration (before 30^th June):
+Regular fee: 400€
+Student fee: 150€
+Registration after 1^st July:
+Regular fee: 450€
+Student fee: 175€
+
+From b.jacobs at pandora.be  Fri Jun 24 12:47:37 2005
+From: b.jacobs at pandora.be (Bert Jacobs)
+Date: Fri, 24 Jun 2005 14:47:37 +0200
+Subject: Stack Column Question
+Message-ID: <000701c578ba$e6f80030$fbbca451@CPQ27059153428>
+
+Hi,
+
+ 
+
+Using S-Plus
+6.2 for Windows.
+
+ 
+
+I have a dataframe
+with appr. 3600 and 164 columns.
+At the moment I stack 160 columns with the add-in function “menuStackColumns”.
+
+This action takes S-Plus more
+than 5 minutes and it uses a lot of memory. Does there exist a more efficient
+way to perform the above action.
+
+ 
+
+Thx,
+
+Bert
+
+ 
+
+___________________________
+
+ 
+
+Bert Jacobs
+
+Marketing Intelligence Engineer
+
+E-mail: B.Jacobs at pandora.be
+
+ 
+
+From rmh at temple.edu  Fri Jun 24 13:30:40 2005
+From: rmh at temple.edu (Richard M. Heiberger)
+Date: Fri, 24 Jun 2005 09:30:40 -0400
+Subject: Re: Stack Column Question
+Message-ID: <c9cc2f2b.11742ae9.827fa00@po-d.temple.edu>
+
+> tmp <- data.frame(matrix(0,3600,164))
+> date()
+[1] "Fri Jun 24 09:29:49 EDT 2005"
+> tmp2 <- unlist(tmp[,1:160])
+> date()
+[1] "Fri Jun 24 09:29:53 EDT 2005"
+> length(tmp2)
+[1] 576000
+> 
+
+4 seconds
+
+From b.jacobs at pandora.be  Fri Jun 24 13:53:38 2005
+From: b.jacobs at pandora.be (Bert Jacobs)
+Date: Fri, 24 Jun 2005 15:53:38 +0200
+Subject: Re: Stack Column Question
+In-Reply-To: <c9cc2f2b.11742ae9.827fa00@po-d.temple.edu>
+References: <c9cc2f2b.11742ae9.827fa00@po-d.temple.edu>
+Message-ID: <000e01c578c4$20a0f630$fbbca451@CPQ27059153428>
+
+Fast Solution but I how do I repeat columns 1:4, stack columns 5:164
+into a column "Data" and create a group column "Period" with the
+colnames.
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Richard M.
+Heiberger
+Sent: 24 June 2005 15:31
+To: Bert Jacobs; s-news at lists.biostat.wustl.edu
+Subject: Re: [S] Stack Column Question
+
+> tmp <- data.frame(matrix(0,3600,164))
+> date()
+[1] "Fri Jun 24 09:29:49 EDT 2005"
+> tmp2 <- unlist(tmp[,1:160])
+> date()
+[1] "Fri Jun 24 09:29:53 EDT 2005"
+> length(tmp2)
+[1] 576000
+> 
+
+4 seconds
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From MUNOZ at surgery.wisc.edu  Fri Jun 24 14:12:47 2005
+From: MUNOZ at surgery.wisc.edu (Alejandro Munoz)
+Date: Fri, 24 Jun 2005 09:12:47 -0500
+Subject: Re: Stack Column Question
+Message-ID: <s2bbce98.063@gw.surgery.wisc.edu>
+
+Bert, 
+
+Sounds like a job for reshape(). I must add that lately I've been using
+R exclusively, so it is possible reshape() may not exist in S-PLUS. See
+also ?stack, which, again, may exist only in R. 
+
+We can be more helpful if you give us a small example of what the
+original and desired data frames look like.
+
+Hope this helps.
+
+alejandro
+
+>>> "Bert Jacobs" <b.jacobs at pandora.be> 6/24/2005 8:53:38 AM >>>
+
+Fast Solution but I how do I repeat columns 1:4, stack columns 5:164
+into a column "Data" and create a group column "Period" with the
+colnames.
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu 
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Richard M.
+Heiberger
+Sent: 24 June 2005 15:31
+To: Bert Jacobs; s-news at lists.biostat.wustl.edu 
+Subject: Re: [S] Stack Column Question
+
+> tmp <- data.frame(matrix(0,3600,164))
+> date()
+[1] "Fri Jun 24 09:29:49 EDT 2005"
+> tmp2 <- unlist(tmp[,1:160])
+> date()
+[1] "Fri Jun 24 09:29:53 EDT 2005"
+> length(tmp2)
+[1] 576000
+> 
+
+4 seconds
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From Rich at Mango-Solutions.com  Fri Jun 24 14:35:33 2005
+From: Rich at Mango-Solutions.com
+Date: Fri, 24 Jun 2005 15:35:33 +0100
+Subject: Re: Stack Column Question
+In-Reply-To: <s2bbce98.063@gw.surgery.wisc.edu>
+References: <s2bbce98.063@gw.surgery.wisc.edu>
+Message-ID: <20050624143514.6D8AF1005EF6@mailgate.biostat.wustl.edu>
+
+Something like this should work ... this function probably exists somewhere
+in S+ or a related library ...
+
+> stackDf <- function(df, repCols, stackCols = setdiff(names(df), repCols),
+groupColName = "Group", newColName = "Value")
+{
+        if(mode(repCols) != "character")
+                repCols <- names(df)[repCols]
+        N <- length(myVec <- unlist(df[, stackCols]))
+        outDf <- cbind(df[rep(1:nrow(df), length = N), repCols],
+rep(stackCols, each = nrow(df)), myVec)
+        names(outDf) <- c(repCols, groupColName, newColName)
+        outDf
+}
+> myData <- data.frame(matrix(rnorm(800), nrow = 100))
+> dos.time(stackDf(myData, 1:7, groupColName = "Period"))
+[1] 0.02
+
+Rich.
+mangosolutions
+S and R Consulting and Training
+Tel   +44 118 902 6617
+Fax  +44 118 902 6401
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Alejandro Munoz
+Sent: 24 June 2005 15:13
+To: s-news at lists.biostat.wustl.edu; b.jacobs at pandora.be; rmh at temple.edu
+Subject: Re: [S] Stack Column Question
+
+Bert, 
+
+Sounds like a job for reshape(). I must add that lately I've been using
+R exclusively, so it is possible reshape() may not exist in S-PLUS. See
+also ?stack, which, again, may exist only in R. 
+
+We can be more helpful if you give us a small example of what the
+original and desired data frames look like.
+
+Hope this helps.
+
+alejandro
+
+>>> "Bert Jacobs" <b.jacobs at pandora.be> 6/24/2005 8:53:38 AM >>>
+
+Fast Solution but I how do I repeat columns 1:4, stack columns 5:164
+into a column "Data" and create a group column "Period" with the
+colnames.
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu 
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Richard M.
+Heiberger
+Sent: 24 June 2005 15:31
+To: Bert Jacobs; s-news at lists.biostat.wustl.edu 
+Subject: Re: [S] Stack Column Question
+
+> tmp <- data.frame(matrix(0,3600,164))
+> date()
+[1] "Fri Jun 24 09:29:49 EDT 2005"
+> tmp2 <- unlist(tmp[,1:160])
+> date()
+[1] "Fri Jun 24 09:29:53 EDT 2005"
+> length(tmp2)
+[1] 576000
+> 
+
+4 seconds
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From xao_ping at yahoo.com  Fri Jun 24 17:40:07 2005
+From: xao_ping at yahoo.com (Xao Ping)
+Date: Fri, 24 Jun 2005 10:40:07 -0700
+Subject: AR for short, unequally spaced TS
+Message-ID: <20050624174007.95328.qmail@web54007.mail.yahoo.com>
+
+Many thanks to Spenser Graves, Eric Zivot and Zhu Wang for help regarding my request 
+
+"AR for short, unequally spaced TS"
+
+ 
+
+Kalman filtering seems to be the only reasonable approach in my case. Zhu Wang provided me with the link to his R-package CAR which handles this situation by fitting the continuous approximation and dealing with missing data through the use of Kalman filter.
+
+ 
+
+Thanks again
+
+Xao Ping
+
+R&R Pharmakinetics
+
+Taiwan
+
+		Yahoo! Sports
+ 
+Rekindle the Rivalries. Sign up for Fantasy Football
+
+From JPhilipMiller at WUstl.edu  Fri Jun 24 19:47:51 2005
+From: JPhilipMiller at WUstl.edu (J. Philip Miller)
+Date: Fri, 24 Jun 2005 14:47:51 -0500
+Subject: archives now working
+Message-ID: <20050624194714.30A09402174@smtp.biostat.wustl.edu>
+
+Thanks to several people reporting the problem, the s-news
+archives at http://www.biostat.wustl.edu/archives/html/s-news/
+is now functioning. If you experience any problems, please let me know.
+
+ 
+
+-phil
+
+ 
+
+ 
+
+J.
+Philip Miller, Professor of Biostatistics
+
+Washington
+ University School
+of Medicine
+
+Director of Biostatistics Core, Siteman
+ Cancer Center
+
+Mail: Campus Box 8067,
+660 S. Euclid Ave
+
+St. Louis, MO 63110
+
+Physical Address: 3349 Barnard
+
+Phone: 314-362-3617, 314-362-3728 (fax)
+
+email: jphilipmiller at wubios.wustl.edu 
+
+web: http://www.biostat.wustl.edu/~phil
+
+-
+
+The materials contained in this e-mail are private and
+confidential and are the property of the sender. If you are not the intended
+recipient, be advised that any unauthorized use, disclosure, copying,
+distribution, or the taking of any action in reliance on the contents of this
+information is strictly prohibited. If you have received this e-mail
+transmission in error, please immediately notify the sender.
+
+ 
+
+From b.jacobs at pandora.be  Sun Jun 26 13:09:18 2005
+From: b.jacobs at pandora.be (Bert Jacobs)
+Date: Sun, 26 Jun 2005 15:09:18 +0200
+Subject: Re: Stack Column Question
+In-Reply-To: <20050624143507.BBF884BDCB@kelmis.telenet-ops.be>
+References: <20050624143507.BBF884BDCB@kelmis.telenet-ops.be>
+Message-ID: <000601c57a50$443714c0$869ac254@CPQ27059153428>
+
+Thx for your responses.
+
+Finally I used Richard's function.
+It takes now approx. 17 sec to run the function. 
+
+Why is there such a difference between the standard method and this
+function?
+
+Bert
+
+-----Original Message-----
+From: Richard Pugh [mailto:rpugh at mango-solutions.com] On Behalf Of
+Rich at Mango-Solutions.com
+Sent: 24 June 2005 16:36
+To: 'Alejandro Munoz'; s-news at lists.biostat.wustl.edu;
+b.jacobs at pandora.be; rmh at temple.edu
+Subject: RE: [S] Stack Column Question
+
+Something like this should work ... this function probably exists
+somewhere in S+ or a related library ...
+
+stackDf <- function(df, repCols, stackCols =
+setdiff(names(df),repCols),groupColName = "Group", newColName = "Value")
+{
+        if(mode(repCols) != "character")
+                repCols <- names(df)[repCols]
+        N <- length(myVec <- unlist(df[, stackCols]))
+        outDf <- cbind(df[rep(1:nrow(df), length = N), repCols],
+rep(stackCols, each = nrow(df)), myVec)
+        names(outDf) <- c(repCols, groupColName, newColName)
+        outDf
+}
+> myData <- data.frame(matrix(rnorm(800), nrow = 100)) 
+> dos.time(stackDf(myData, 1:7, groupColName = "Period"))
+[1] 0.02
+
+Rich.
+mangosolutions
+S and R Consulting and Training
+Tel   +44 118 902 6617
+Fax  +44 118 902 6401
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Alejandro
+Munoz
+Sent: 24 June 2005 15:13
+To: s-news at lists.biostat.wustl.edu; b.jacobs at pandora.be; rmh at temple.edu
+Subject: Re: [S] Stack Column Question
+
+Bert, 
+
+Sounds like a job for reshape(). I must add that lately I've been using
+R exclusively, so it is possible reshape() may not exist in S-PLUS. See
+also ?stack, which, again, may exist only in R. 
+
+We can be more helpful if you give us a small example of what the
+original and desired data frames look like.
+
+Hope this helps.
+
+alejandro
+
+>>> "Bert Jacobs" <b.jacobs at pandora.be> 6/24/2005 8:53:38 AM >>>
+
+Fast Solution but I how do I repeat columns 1:4, stack columns 5:164
+into a column "Data" and create a group column "Period" with the
+colnames.
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu 
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Richard M.
+Heiberger
+Sent: 24 June 2005 15:31
+To: Bert Jacobs; s-news at lists.biostat.wustl.edu 
+Subject: Re: [S] Stack Column Question
+
+> tmp <- data.frame(matrix(0,3600,164))
+> date()
+[1] "Fri Jun 24 09:29:49 EDT 2005"
+> tmp2 <- unlist(tmp[,1:160])
+> date()
+[1] "Fri Jun 24 09:29:53 EDT 2005"
+> length(tmp2)
+[1] 576000
+> 
+
+4 seconds
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From veh4 at cornell.edu  Mon Jun 27 14:48:07 2005
+From: veh4 at cornell.edu (Vivian Hoffmann)
+Date: Mon, 27 Jun 2005 10:48:07 -0400
+Subject: 3-d graphing problem
+Message-ID: <4506.128.84.17.110.1119883687.squirrel@128.84.17.110>
+
+Hello -
+
+I'm new to S-PLUS, so please forgive the basic question.
+
+I'm trying to produce a 3-d data grid graph, and have not had much luck.
+When I attempt to do this using the graphical user interface, a blank grid
+pops up, and I get the following error message:
+
+Problem: Could not commit assignment of ".plot.vec.x" - Data is on file
+        "C:\PROGRA~1\splus70\data/.Data/___c3c0" (rename->-1, errno=13,
+strerror=Permission denied)
+Problem: Could not commit assignment of ".plot.vec.y" - Data is on file
+        "C:\PROGRA~1\splus70\data/.Data/___c3c0" (rename->-1, errno=13,
+strerror=Permission denied)
+Problem: Could not commit assignment of ".plot.vec.z" - Data is on file
+        "C:\PROGRA~1\splus70\data/.Data/___c3c0" (rename->-1, errno=13,
+strerror=Permission denied)
+Problem: Could not commit assignment of ".plot.vec.x" - Data is on file
+        "C:\PROGRA~1\splus70\data/.Data/___c3c0" (rename->-1, errno=13,
+strerror=Permission denied)
+Problem: Could not commit assignment of ".plot.vec.y" - Data is on file
+        "C:\PROGRA~1\splus70\data/.Data/___c3c0" (rename->-1, errno=13,
+strerror=Permission denied)
+Problem: Could not commit assignment of ".plot.vec.z" - Data is on file
+        "C:\PROGRA~1\splus70\data/.Data/___c3c0" (rename->-1, errno=13,
+strerror=Permission denied)
+Problem: Could not commit assignment of ".plot.vec.x" - Data is on file
+        "C:\PROGRA~1\splus70\data/.Data/___c3c0" (rename->-1, errno=13,
+strerror=Permission denied)
+Problem: Could not commit assignment of ".plot.vec.y" - Data is on file
+        "C:\PROGRA~1\splus70\data/.Data/___c3c0" (rename->-1, errno=13,
+strerror=Permission denied)
+Problem: Could not commit assignment of ".plot.vec.z" - Data is on file
+        "C:\PROGRA~1\splus70\data/.Data/___c3c0" (rename->-1, errno=13,
+strerror=Permission denied)
+
+If anyone can suggest what might be causing the problem here, I'd
+appreciate it.
+
+Thanks in advance for your help,
+Vivian
+
+Vivian Hoffmann
+PhD Student
+214 Warren Hall
+Department of Applied Economics and Management
+Cornell University
+(607) 316-7291
+
+From b.jacobs at pandora.be  Tue Jun 28 16:03:26 2005
+From: b.jacobs at pandora.be (Bert Jacobs)
+Date: Tue, 28 Jun 2005 18:03:26 +0200
+Subject: Combine Stacked Column with Unstacked Columns
+Message-ID: <005201c57bfa$eb698a10$509ac254@CPQ27059153428>
+
+Hi,
+
+ 
+
+I’m looking to combine
+two dataframes
+
+The first has two columns
+with info on
+
+Period   Data ( = colnames)
+
+W1        
+4
+
+W2         5
+
+W3        
+6
+
+…
+
+The second dataframe has one
+row with info on
+
+                W1      W2      W3 ( = colnames)
+
+DataBis     “A”      
+“B”       “C”
+
+ 
+
+Now I would like to create a
+dataframe that looks like this,
+
+but I can’t figure it
+out how to do it.
+
+ 
+
+Period   Data     W1      W2      W3 ( = colnames)
+
+ 
+
+W1        
+4       
+“A”        
+0        
+0     
+
+W2         5        
+0         
+“B”       0 
+
+W3         6        
+0          
+0       
+“C”
+
+ 
+
+Is there an easy way to
+create the above example?
+
+ 
+
+Thx for replies
+
+ 
+
+Bert
+
+ 
+
+ 
+
+___________________________
+
+ 
+
+Bert Jacobs
+
+E-mail: B.Jacobs at pandora.be
+
+ 
+
+From rmh at temple.edu  Tue Jun 28 16:59:25 2005
+From: rmh at temple.edu (Richard M. Heiberger)
+Date: Tue, 28 Jun 2005 12:59:25 -0400
+Subject: Re: Combine Stacked Column with Unstacked
+Message-ID: <2b276598.13969bd6.81a0d00@po-d.temple.edu>
+
+Here are two variants of your request.
+
+A <- data.frame(Period=c("W1","W2","W3"),
+                Data=c(4,5,6))
+
+B <- data.frame(W1="A",
+                W2="B",
+                W3="C")
+
+BB <- diag(length(t(B)))
+BBB <- rep("", length(BB))
+BBB[as.logical(BB)] <- t(B)
+BBB
+dim(BBB) <- dim(BB)
+dimnames(BBB) <- list(names(B), names(B))
+BBB
+
+result1 <- cbind(A, BBB)
+result1
+
+CCC <- diag(as.vector(t(B)))
+dimnames(CCC) <- list(names(B), names(B))
+CCC
+result2 <- cbind(A, CCC)
+result2
+
+From elvis at xlsolutions-corp.com  Tue Jun 28 19:35:45 2005
+From: elvis at xlsolutions-corp.com
+Date: Tue, 28 Jun 2005 12:35:45 -0700
+Subject: Course***R/S-plus Fundamentals and Programming Techinques: Seattle July 11-12
+Message-ID: <20050628193545.13352.qmail@gem-wbe06.prod.mesa1.secureserver.net>
+
+XLSolutions Corporation (www.xlsolutions-corp.com) is proud to
+announce  2-day "R/S-plus Fundamentals and Programming
+Techniques" at 4 locations nationwide.
+www.xlsolutions-corp.com/Rfund.htm
+
+****Seattle, WA ------------------------- July 11th-12th, 2005
+
+Reserve your seat now at the early bird rates! Ends June 30th.
+Payment due AFTER the class
+
+Course Description:
+
+This two-day beginner to intermediate R/S-plus course focuses on a
+broad spectrum of topics, from reading raw data to a comparison of R
+and S. We will learn the essentials of data manipulation, graphical
+visualization and R/S-plus programming. We will explore statistical
+data analysis tools,including graphics with data sets. How to enhance
+your plots, build your own packages (librairies) and connect via
+ODBC,etc.
+We will perform some statistical modeling and fit linear regression
+models. Participants are encouraged to bring data for interactive
+sessions
+
+With the following outline:
+
+- An Overview of R and S
+- Data Manipulation and Graphics
+- Using Lattice Graphics
+- A Comparison of R and S-Plus
+- How can R Complement SAS?
+- Writing Functions
+- Avoiding Loops
+- Vectorization
+- Statistical Modeling
+- Project Management
+- Techniques for Effective use of R and S
+- Enhancing Plots
+- Using High-level Plotting Functions
+- Building and Distributing Packages (libraries)
+- Connecting; ODBC, Rweb, Orca via sockets and via Rjava
+
+Interested in R/Splus Advanced course? email us.
+
+Email us for group discounts.
+Email Sue Turner: sue at xlsolutions-corp.com
+Phone: 206-686-1578
+Visit us: www.xlsolutions-corp.com/training.htm
+Please let us know if you and your colleagues are interested in this
+classto take advantage of group discount. Register now to secure your
+seat!
+
+Interested in R/Splus Advanced course? email us.
+
+Cheers,
+Elvis Miller, PhD
+Manager Training.
+XLSolutions Corporation
+206 686 1578
+www.xlsolutions-corp.com
+elvis at xlsolutions-corp.com 
+
+From b.jacobs at pandora.be  Tue Jun 28 21:44:54 2005
+From: b.jacobs at pandora.be (Bert Jacobs)
+Date: Tue, 28 Jun 2005 23:44:54 +0200
+Subject: Re: Combine Stacked Column with Unstacked Columns
+In-Reply-To: <2b276598.13969bd6.81a0d00@po-d.temple.edu>
+References: <2b276598.13969bd6.81a0d00@po-d.temple.edu>
+Message-ID: <006701c57c2a$9f88cae0$509ac254@CPQ27059153428>
+
+Thx you all for helping me
+out.
+
+ 
+
+The code below worked
+perfectly, but was a bit slow
+
+ 
+
+newDF <- merge(SDF1,
+SDF2)
+
+d1 <- dim(SDF1)[2]
+
+s <- seq(dim(newDF)[2])
+
+for(i in 1:dim(newDF)[1]) {
+
+   newDF[i,
+which((s > d1) & (s != (i + d1)))]  <- 0
+
+}
+
+ 
+
+I have the impression that the
+methods below from Richard were faster.
+
+ 
+
+Possibility 1
+
+ 
+
+A <- data.frame(Period=c("W1","W2","W3"),
+
+               
+Data="" class=GramE>c(4,5,6))
+
+ 
+
+B <- data.frame(W1="A",
+
+               
+W2="B",
+
+               
+W3="C")
+
+ 
+
+BB <- diag(length(t(B)))
+
+BBB <- rep("",
+length(BB))
+
+BBB[as.logical(BB)] <- t(B)
+
+BBB
+
+dim(BBB) <- dim(BB)
+
+dimnames(BBB) <- list(names(B), names(B))
+
+BBB
+
+ 
+
+result1 <- cbind(A,
+BBB)
+
+result1
+
+ 
+
+Possibility 2
+
+ 
+
+CCC <- diag(as.vector(t(B)))
+
+dimnames(CCC) <- list(names(B), names(B))
+
+CCC
+
+result2 <- cbind(A,
+CCC)
+
+result2
+
+ 
+
+ 
+
+Sy
+
+Bert
+
+From mleeds at mlp.com  Wed Jun 29 14:18:39 2005
+From: mleeds at mlp.com (Leeds, Mark)
+Date: Wed, 29 Jun 2005 10:18:39 -0400
+Subject: setting indices to true or false
+Message-ID: <54668D97C0199943A454516A5FF6481E010B3843@EXCHUS001.AD.MLP.COM>
+
+I have a vector of trues and falses
+
+Called longentryindex and I want to set some of them
+
+myself but I can’t find the syntax
+
+In any book and I have three of them.
+
+ 
+
+Would it be Longentryindex[3]_F
+
+ 
+
+Or 
+
+ 
+
+Longentryindex[3]_FALSE
+
+ 
+
+ 
+
+Or  something like
+
+ 
+
+Longentryindex[3]_(1 == 0 )
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+From Agin.Patrick at hydro.qc.ca  Wed Jun 29 14:35:09 2005
+From: Agin.Patrick at hydro.qc.ca
+Date: Wed, 29 Jun 2005 10:35:09 -0400
+Subject: Re: setting indices to true or false
+Message-ID: <A6BA75E72CCB724ABA1B3A885F928BD802922742@msxcentral4.hydroqc.hydro.qc.ca>
+
+Longentryindex[3]_F or Longentryindex[3]_FALSE
+
+(and T or TRUE)
+
+Regards,
+
+Patrick
+
+ 
+
+ 
+
+From:
+s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On
+Behalf Of Leeds, Mark
+
+Sent: Wednesday, June 29, 2005
+10:19 AM
+
+To: s-news at lists.biostat.wustl.edu
+
+Subject: [S] setting indices to
+true or false
+
+ 
+
+I have a vector of trues and falses
+
+Called longentryindex and I want to set some of them
+
+myself but I can’t find the syntax
+
+In any book and I have three of them.
+
+ 
+
+Would it be Longentryindex[3]_F
+
+ 
+
+Or 
+
+ 
+
+Longentryindex[3]_FALSE
+
+ 
+
+ 
+
+Or  something like
+
+ 
+
+Longentryindex[3]_(1 == 0 )
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+From tplate at blackmesacapital.com  Wed Jun 29 15:42:50 2005
+From: tplate at blackmesacapital.com (Tony Plate)
+Date: Wed, 29 Jun 2005 09:42:50 -0600
+Subject: Re: setting indices to true or false
+In-Reply-To: <54668D97C0199943A454516A5FF6481E010B3843@EXCHUS001.AD.MLP.COM>
+References: <54668D97C0199943A454516A5FF6481E010B3843@EXCHUS001.AD.MLP.COM>
+Message-ID: <42C2C17A.3050405@blackmesacapital.com>
+
+I noted that your question had already been answered, but it's also 
+worth pointing out once in a while that it is not a good idea to use the 
+underscore "_" as an assignment operator (use "<-" instead).  The help 
+for "<-" in S-PLUS 6.2 states:
+
+> Because the underscore _ is an S-PLUS assignment operator,
+> it is extremely important to remember it cannot be used in
+> function and object names, unlike in many other languages.
+> It is also deprecated as an assignment operator, so it may
+> not be supported in future releases of S-PLUS.
+
+Reputedly, the original reason that the underscore was an assignment 
+operator was that that ascii code was actually a left arrow on the Bell 
+labs teletypewriters where S was first developed.  That would imply that 
+no one ever intended usage that was so confusing & inconsistent wrt 
+other computer languages.
+
+-- Tony Plate
+
+Leeds, Mark wrote:
+> I have a vector of trues and falses
+>
+> Called longentryindex and I want to set some of them
+>
+> myself but I can’t find the syntax
+>
+> In any book and I have three of them.
+>
+>
+>
+>
+> Would it be Longentryindex[3]_F
+>
+>
+>
+>
+> Or
+>
+>
+>
+>
+> Longentryindex[3]_FALSE
+>
+>
+>
+>
+>
+>
+> Or  something like
+>
+>
+>
+>
+> Longentryindex[3]_(1 == 0 )
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+
+From mleeds at mlp.com  Thu Jun 30 10:00:04 2005
+From: mleeds at mlp.com (Leeds, Mark)
+Date: Thu, 30 Jun 2005 06:00:04 -0400
+Subject: time series question
+Message-ID: <54668D97C0199943A454516A5FF6481E010B385F@EXCHUS001.AD.MLP.COM>
+
+I have a data series where
+
+I want to model it is an arima(0,1,1)
+
+with a known/given MA parameter and
+
+all I want to do is estimate the variance
+
+of epsilon.
+
+ 
+
+Does anyone know if there is
+
+a way to do this in Splus or
+
+SplusFinmetrics ? Thanks.
+
+ 
+
+                                    Mark
+
+ 
+
+From peter at archfunds.com  Thu Jun 30 15:10:04 2005
+From: peter at archfunds.com
+Date: Thu, 30 Jun 2005 16:10:04 +0100
+Subject: Exclude rows. from a dataframe
+Message-ID: <3BBA56F84C6152428A18B2770F778930047E36C1@THHS2EXBE1X.hostedservice2.net>
+
+Apologies if this is a dumb question, but have been
+searching and experimenting for a while without success. I have a dataframe
+with dates and returns in it (2 columns) and want to create a new dataframe
+with only positive returns in it. 
+
+ 
+
+Thanks in advance
+
+ 
+
+Peter
+
+ 
+
+Peter Leathers
+
+ARCH Financial Products
+
+17 Albemarle Street, Mayfair,
+
+London W1S 4HP, United Kingdom
+
+ 
+
+Direct Dial :
+          +44 (0)207 290 8145 
+
+Mobile :
+                
++44 (0)779 644 6963 
+
+Direct Fax :
+           +44 (0)20 7495 4005
+
+Reception Tel :    
++44 (0)207 290 8141 
+
+E-Mail :
+                 
+peter at archfunds.com
+
+ 
+
+Arch
+Financial Products LLP is authorised and regulated by the UK FSA.
+
+This email and any attachments are confidential
+and may be legally privileged. If you are not the intended recipient please
+note that any disclosure, copying, distribution or any action taken or omitted
+to be taken in reliance on it, is prohibited and may be unlawful. Please notify
+the sender immediately and destroy the message and all copies. E-mail
+transmission cannot be guaranteed as secure or error-free as information can be
+intercepted, corrupted, lost, destroyed, arrive late or incomplete, or contain
+viruses. The sender does not accept liability for any errors or omissions in
+the contents of this message which arise as a result of email transmission. The
+views and opinions expressed herein and any attachments are the sender's own,
+and may not reflect the views and opinions of Arch Group or any of its
+subsidiaries or associated companies. This message is provided for
+informational purposes and should not be construed as a solicitation or offer
+to buy or sell any investment funds, securities or related financial
+instruments.
+
+ 
+
+From sundar.dorai-raj at pdf.com  Thu Jun 30 15:13:29 2005
+From: sundar.dorai-raj at pdf.com (Sundar Dorai-Raj)
+Date: Thu, 30 Jun 2005 10:13:29 -0500
+Subject: Re: Exclude rows. from a dataframe
+In-Reply-To: <3BBA56F84C6152428A18B2770F778930047E36C1@THHS2EXBE1X.hostedservice2.net>
+References: <3BBA56F84C6152428A18B2770F778930047E36C1@THHS2EXBE1X.hostedservice2.net>
+Message-ID: <42C40C19.2040901@pdf.com>
+
+peter at archfunds.com wrote:
+> Apologies if this is a dumb question, but have been searching and
+> experimenting for a while without success. I have a dataframe with dates
+> and returns in it (2 columns) and want to create a new dataframe with
+> only positive returns in it.
+>
+>
+>
+>
+>
+> Thanks in advance
+>
+>
+>
+>
+> Peter
+
+(An example would be nice.)
+
+Would the following work for you?
+
+# assume `x' is your data.frame
+# with `return' your column of returns
+pos.x <- x[x$return > 0, ]
+
+HTH,
+
+--sundar
+
+From peter at archfunds.com  Thu Jun 30 15:17:35 2005
+From: peter at archfunds.com
+Date: Thu, 30 Jun 2005 16:17:35 +0100
+Subject: Re: Exclude rows. from a dataframe
+Message-ID: <3BBA56F84C6152428A18B2770F778930047E36F3@THHS2EXBE1X.hostedservice2.net>
+
+Perfect, I had something very similar but didn't pass syntax - this
+works fine. Will give an example next time.
+ 
+-----Original Message-----
+From: Sundar Dorai-Raj [mailto:sundar.dorai-raj at pdf.com] 
+Sent: 30 June 2005 16:13
+To: Peter Leathers (peter at archfunds.com)
+Cc: s-news at lists.biostat.wustl.edu
+Subject: Re: [S] Exclude rows. from a dataframe
+
+peter at archfunds.com wrote:
+> Apologies if this is a dumb question, but have been searching and 
+> experimenting for a while without success. I have a dataframe with
+dates 
+> and returns in it (2 columns) and want to create a new dataframe with 
+> only positive returns in it.
+> 
+>  
+> 
+> Thanks in advance
+> 
+>  
+> 
+> Peter
+
+(An example would be nice.)
+
+Would the following work for you?
+
+# assume `x' is your data.frame
+# with `return' your column of returns
+pos.x <- x[x$return > 0, ]
+
+HTH,
+
+--sundar
+

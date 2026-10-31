@@ -1,0 +1,956 @@
+From gerald.jean at dgag.ca  Tue May 26 15:58:16 2009
+From: gerald.jean at dgag.ca
+Date: Tue, 26 May 2009 11:58:16 -0400
+Subject: impute.transcan from the Hmisc library
+Message-ID: <OF7ACF971E.1BC44C1C-ON852575C2.0055A01E-852575C2.0057BBB7@dgag.ca>
+
+Hello there,
+
+TIBCO Spotfire S+ Version 8.1.1 for Linux 2.6.9-34.EL, 64-bit : 2008
+
+I am trying to impute missing values from roughly 100 variables in a data.
+frame.  Running "transcan" is no problem, is converges and gives sensible
+results.  The problem arises when trying to impute the missing values from
+the original data set.  The goal is getting a new data frame from the old
+one, with all missing values imputed.  Due to the large number of variables
+to be imputed it is not practical to use, as in the help file,
+
+> var.name <- impute(x.trans, var.name)
+
+I know that I can use, to impute all variables at once:
+
+> impute(x.trans)
+
+But with a large number of variables and a large number of objects in the
+working directory it clutters this directory with too many objects.  The
+method suggested in the help file:
+
+## Not run:
+xt <- transcan(~. , data=mine,
+               imputed=TRUE, shrink=TRUE, n.impute=10, trantab=TRUE)
+attach(mine, pos=1, use.names=FALSE)
+impute(xt, imputation=1) # use first imputation
+detach(1, 'mine2')
+## End(Not run)
+
+may work in R but not in S+, the "save" argument to "detach" is not
+currently supported.
+
+I then tried setting the "list.out" argument to TRUE.
+
+ttt.impute <- impute(RTA.Socio.transcan, data = TelePV.RTA.Socio, list.out
+= TRUE)
+
+According to the help file:
+
+   list.out
+          If var is not specified, you can set list.out=TRUE to have
+          impute.transcan return a list containing variables with needed
+          values imputed. This list will contain a single imputation.
+
+It runs OK but the values are not imputed:
+
+> lapply(ttt.impute, FUN = function(x) sum(is.na(x)))
+$adhesion:
+[1] 161
+$X1.c06poparea:
+[1] 8
+$X2.c06dwlgarea:
+[1] 8
+$X3.pctpop0.14:
+[1] 9
+$X40.avg.persfam:
+[1] 8
+$X41.pct.move1an:
+[1] 11
+...
+
+exactly the original missing values?  Am I missing something, I am banging
+my head since yesterday trying to do this, to no avail?  I can do it
+manually through a loop but I thought this was the purpose of "impute".
+
+Thanks for any insights,
+
+Gérald Jean
+Conseiller senior en statistiques,
+VP Planification et Développement des Marchés,
+Desjardins Groupe d'Assurances Générales
+télephone            : (418) 835-4900 poste (7639)
+télecopieur          : (418) 835-6657
+courrier électronique: gerald.jean at dgag.ca
+
+"In God we trust, all others must bring data"  W. Edwards Deming
+
+Le message ci-dessus, ainsi que les documents l'accompagnant, sont destinés
+uniquement aux personnes identifiées et peuvent contenir des informations
+privilégiées, confidentielles ou ne pouvant être divulguées. Si vous avez
+reçu ce message par erreur, veuillez le détruire.
+
+This communication ( and/or the attachments ) is intended for named
+recipients only and may contain privileged or confidential information
+which is not to be disclosed. If you received this communication by mistake
+please destroy all copies.
+
+Faites bonne impression et imprimez seulement au besoin !
+Think green before you print !
+
+Le message ci-dessus, ainsi que les documents l'accompagnant, sont destinés 
+uniquement aux personnes identifiées et peuvent contenir des informations 
+privilégiées, confidentielles ou ne pouvant être divulguées. Si vous avez reçu 
+ce message par erreur, veuillez le détruire.
+
+This communication (and/or the attachments) is intended for named recipients 
+only and may contain privileged or confidential information which is not to be 
+disclosed. If you received this communication by mistake please destroy all 
+copies.
+
+From f.harrell at vanderbilt.edu  Tue May 26 22:05:29 2009
+From: f.harrell at vanderbilt.edu (Frank E Harrell Jr)
+Date: Tue, 26 May 2009 17:05:29 -0500
+Subject: Re: impute.transcan from the Hmisc library
+In-Reply-To: <OF7ACF971E.1BC44C1C-ON852575C2.0055A01E-852575C2.0057BBB7@dgag.ca>
+References: <OF7ACF971E.1BC44C1C-ON852575C2.0055A01E-852575C2.0057BBB7@dgag.ca>
+Message-ID: <4A1C67A9.8080306@vanderbilt.edu>
+
+gerald.jean at dgag.ca wrote:
+> Hello there,
+>
+> TIBCO Spotfire S+ Version 8.1.1 for Linux 2.6.9-34.EL, 64-bit : 2008
+>
+> I am trying to impute missing values from roughly 100 variables in a data.
+> frame.  Running "transcan" is no problem, is converges and gives sensible
+> results.  The problem arises when trying to impute the missing values from
+> the original data set.  The goal is getting a new data frame from the old
+> one, with all missing values imputed.  Due to the large number of variables
+> to be imputed it is not practical to use, as in the help file,
+>
+> > var.name <- impute(x.trans, var.name)
+>
+>
+> I know that I can use, to impute all variables at once:
+>
+> > impute(x.trans)
+>
+>
+> But with a large number of variables and a large number of objects in the
+> working directory it clutters this directory with too many objects.  The
+> method suggested in the help file:
+>
+> ## Not run:
+> xt <- transcan(~. , data=mine,
+>                imputed=TRUE, shrink=TRUE, n.impute=10, trantab=TRUE)
+> attach(mine, pos=1, use.names=FALSE)
+> impute(xt, imputation=1) # use first imputation
+> detach(1, 'mine2')
+> ## End(Not run)
+
+Gerald,
+
+# Here is how to create a completed dataset
+d <- data.frame(x1, x2)
+z <- transcan(~x1 + I(x2), n.impute=5, data=d)
+imputed <- impute(z, imputation=1, data=d,
+                  list.out=TRUE, pr=FALSE, check=FALSE)
+sapply(imputed, function(x)sum(is.imputed(x)))
+sapply(imputed, function(x)sum(is.na(x)))
+
+In my test NAs are imputed.  I don't know if there is a difference 
+between S+ and R here.  Before doing anything else give a data= argument 
+to transcan and see what happens.
+
+Frank
+
+> may work in R but not in S+, the "save" argument to "detach" is not
+> currently supported.
+>
+> I then tried setting the "list.out" argument to TRUE.
+>
+> ttt.impute <- impute(RTA.Socio.transcan, data = TelePV.RTA.Socio, list.out
+> = TRUE)
+>
+> According to the help file:
+>
+>    list.out
+>           If var is not specified, you can set list.out=TRUE to have
+>           impute.transcan return a list containing variables with needed
+>           values imputed. This list will contain a single imputation.
+>
+> It runs OK but the values are not imputed:
+>
+> > lapply(ttt.impute, FUN = function(x) sum(is.na(x)))
+>
+> $adhesion:
+> [1] 161
+> $X1.c06poparea:
+> [1] 8
+> $X2.c06dwlgarea:
+> [1] 8
+> $X3.pctpop0.14:
+> [1] 9
+> $X40.avg.persfam:
+> [1] 8
+> $X41.pct.move1an:
+> [1] 11
+> ...
+>
+> exactly the original missing values?  Am I missing something, I am banging
+> my head since yesterday trying to do this, to no avail?  I can do it
+> manually through a loop but I thought this was the purpose of "impute".
+>
+> Thanks for any insights,
+>
+> Gérald Jean
+> Conseiller senior en statistiques,
+> VP Planification et Développement des Marchés,
+> Desjardins Groupe d'Assurances Générales
+> télephone            : (418) 835-4900 poste (7639)
+> télecopieur          : (418) 835-6657
+> courrier électronique: gerald.jean at dgag.ca
+>
+> "In God we trust, all others must bring data"  W. Edwards Deming
+
+--
+Frank E Harrell Jr   Professor and Chair           School of Medicine
+                     Department of Biostatistics   Vanderbilt University
+
+From gerald.jean at dgag.ca  Wed May 27 13:53:50 2009
+From: gerald.jean at dgag.ca
+Date: Wed, 27 May 2009 09:53:50 -0400
+Subject: Re: impute.transcan from the Hmisc library
+In-Reply-To: <4A1C67A9.8080306@vanderbilt.edu>
+References: <4A1C67A9.8080306@vanderbilt.edu>
+Message-ID: <OF0FCEC63D.BCF21224-ON852575C3.004AB060-852575C3.004C5750@dgag.ca>
+
+Hello Frank,
+
+Frank E Harrell Jr <f.harrell at vanderbilt.edu> a écrit sur 2009/05/26
+18:05:29 :
+
+> gerald.jean at dgag.ca wrote:
+> > Hello there,
+> >
+> > TIBCO Spotfire S+ Version 8.1.1 for Linux 2.6.9-34.EL, 64-bit : 2008
+> >
+> > I am trying to impute missing values from roughly 100 variables in a
+data.
+> > frame.  Running "transcan" is no problem, is converges and gives
+sensible
+> > results.  The problem arises when trying to impute the missing values
+from
+> > the original data set.  The goal is getting a new data frame from the
+old
+> > one, with all missing values imputed.  Due to the large number of
+variables
+> > to be imputed it is not practical to use, as in the help file,
+> >
+> >> var.name <- impute(x.trans, var.name)
+> >
+> > I know that I can use, to impute all variables at once:
+> >
+> >> impute(x.trans)
+> >
+> > But with a large number of variables and a large number of objects in
+the
+> > working directory it clutters this directory with too many objects.
+The
+> > method suggested in the help file:
+> >
+> > ## Not run:
+> > xt <- transcan(~. , data=mine,
+> >                imputed=TRUE, shrink=TRUE, n.impute=10, trantab=TRUE)
+> > attach(mine, pos=1, use.names=FALSE)
+> > impute(xt, imputation=1) # use first imputation
+> > detach(1, 'mine2')
+> > ## End(Not run)
+>
+> Gerald,
+>
+> # Here is how to create a completed dataset
+> d <- data.frame(x1, x2)
+> z <- transcan(~x1 + I(x2), n.impute=5, data=d)
+> imputed <- impute(z, imputation=1, data=d,
+>                    list.out=TRUE, pr=FALSE, check=FALSE)
+> sapply(imputed, function(x)sum(is.imputed(x)))
+> sapply(imputed, function(x)sum(is.na(x)))
+>
+> In my test NAs are imputed.  I don't know if there is a difference
+> between S+ and R here.  Before doing anything else give a data= argument
+> to transcan and see what happens.
+>
+> Frank
+>
+first thanks for your reply, I tested your example and it works like a
+charm in S+.  This puzzled me since I was using the "data" argument of the
+impute function.  Hence I searched what was different in your use of
+transcan and impute than my own use.  I saw that you were using the
+"n.impute" argument of transcan and the "imputation" argument of impute.  I
+didn't use those since my application didn't require multiple imputation, I
+then tried to re-run my problem with those arguments and it worked no
+problem.  I then re-run your example without doing multiple imputation and
+it did not work?  Here is exactly what I did:
+
+ttt.x1 <- rnorm(20, 0, 1)
+ttt.x2 <- rnorm(20, 0.25, 1)
+ttt.x2[c(2, 8, 11, 20)] <- NA
+ttt.x2
+library(section = "Hmisc", pos = 3)
+ttt.d <- data.frame(ttt.x1, ttt.x2)
+ttt.z <- transcan(~ttt.x1 + I(ttt.x2), imputed = TRUE, data = ttt.d)
+ttt.imputed <- impute(ttt.z, data = ttt.d,
+                   list.out=TRUE, pr=FALSE, check=FALSE)
+sapply(ttt.imputed, function(x)sum(is.imputed(x)))
+ ttt.x1 ttt.x2
+      0      0
+sapply(ttt.imputed, function(x)sum(is.na(x)))
+ ttt.x1 ttt.x2
+      0      4
+
+Hence, if I get this right, the "n.impute" argument to transcan MUST be
+used for this type of application?
+
+Thanks again, and thanks for such great librairies, I use them,
+particularly Hmisc, all the time!
+
+Gérald
+
+> >
+> > may work in R but not in S+, the "save" argument to "detach" is not
+> > currently supported.
+> >
+> > I then tried setting the "list.out" argument to TRUE.
+> >
+> > ttt.impute <- impute(RTA.Socio.transcan, data = TelePV.RTA.Socio,
+list.out
+> > = TRUE)
+> >
+> > According to the help file:
+> >
+> >    list.out
+> >           If var is not specified, you can set list.out=TRUE to have
+> >           impute.transcan return a list containing variables with
+needed
+> >           values imputed. This list will contain a single imputation.
+> >
+> > It runs OK but the values are not imputed:
+> >
+> >> lapply(ttt.impute, FUN = function(x) sum(is.na(x)))
+> > $adhesion:
+> > [1] 161
+> > $X1.c06poparea:
+> > [1] 8
+> > $X2.c06dwlgarea:
+> > [1] 8
+> > $X3.pctpop0.14:
+> > [1] 9
+> > $X40.avg.persfam:
+> > [1] 8
+> > $X41.pct.move1an:
+> > [1] 11
+> > ...
+> >
+> > exactly the original missing values?  Am I missing something, I am
+banging
+> > my head since yesterday trying to do this, to no avail?  I can do it
+> > manually through a loop but I thought this was the purpose of "impute".
+> >
+> > Thanks for any insights,
+> >
+> > Gérald Jean
+> > Conseiller senior en statistiques,
+> > VP Planification et Développement des Marchés,
+> > Desjardins Groupe d'Assurances Générales
+> > télephone            : (418) 835-4900 poste (7639)
+> > télecopieur          : (418) 835-6657
+> > courrier électronique: gerald.jean at dgag.ca
+> >
+> > "In God we trust, all others must bring data"  W. Edwards Deming
+> >
+> >
+>
+> --
+> Frank E Harrell Jr   Professor and Chair           School of Medicine
+>                       Department of Biostatistics   Vanderbilt University
+>
+Gérald Jean
+Conseiller senior en statistiques,
+VP Planification et Développement des Marchés,
+Desjardins Groupe d'Assurances Générales
+télephone            : (418) 835-4900 poste (7639)
+télecopieur          : (418) 835-6657
+courrier électronique: gerald.jean at dgag.ca
+
+"In God we trust, all others must bring data"  W. Edwards Deming
+
+Le message ci-dessus, ainsi que les documents l'accompagnant, sont destinés 
+uniquement aux personnes identifiées et peuvent contenir des informations
+privilégiées, confidentielles ou ne pouvant être divulguées. Si vous avez reçu 
+ce message par erreur, veuillez le détruire.
+
+This communication ( and/or the attachments ) is intended for named recipients 
+only and may contain privileged or confidential information which is
+not to be disclosed. If you received this communication by mistake please 
+destroy all copies.
+
+Faites bonne impression et imprimez seulement au besoin !
+Think green before you print !
+
+Le message ci-dessus, ainsi que les documents l'accompagnant, sont destinés 
+uniquement aux personnes identifiées et peuvent contenir des informations 
+privilégiées, confidentielles ou ne pouvant être divulguées. Si vous avez reçu 
+ce message par erreur, veuillez le détruire.
+
+This communication (and/or the attachments) is intended for named recipients 
+only and may contain privileged or confidential information which is not to be 
+disclosed. If you received this communication by mistake please destroy all 
+copies.
+
+From barrett.joe at ensco.com  Thu May 28 19:41:25 2009
+From: barrett.joe at ensco.com (Barrett.Joe)
+Date: Thu, 28 May 2009 15:41:25 -0400
+Subject: cannot use more than 10 predictors in step function with lmRob
+Message-ID: <9CCF5909C0BD8444A73AA400374C62DA0A9C5F27@mb-ex07.ensco.win>
+
+I have not been able to use more than 10 predictors, when using the step function with lmRob. I get an error message that contains “rank(x)”, where x is the number of predictors. I can use more than 10 predictors with the non-robust function,
+ lm. The lmRobMM function will accept more than 10 predictors, but the lmRobMM.object is not compatible with the step function. The problem seems to be occurring because the version of step that works with lmRob, ignores the “scope” argument. The scope argument
+ allows you to use more than the default limit of predictors.
+
+ 
+
+So, is there a way to use the step function with lmRob, if there are more than 10 predictors. If not, is there another way to use robust stepwise regression with another function that accepts more than 10 predictors?
+
+ 
+
+I’m using S-PLUS 8.0 Enterprise Developer for Windows.
+
+ 
+
+Here is an excerpt from my S-PLUS code (if the number of predictors exceeds 10 in the formula, I get an error message):
+
+multRegression <- function(lmobj)
+
+{
+
+  temp.lm <- step(lmobj)
+
+ 
+
+  return(temp.lm)
+
+}     # end function
+
+.
+
+.
+
+.
+
+temp.formula <- "ave.spd ~ br1mod + inv.str.C. + inv.depth + X16...1000 + X100...1000 + maxspdT + max.sfc.3k + max.2k.3k + ave.2.3k + X2500.ft"
+
+finalPhrase <- paste("lmRob(", temp.formula, ", ", temp.phrase, ", data = "" sep="")
+
+lm.result <- eval(parse(text=finalPhrase))
+
+temp.lm <- multRegression(lm.result)
+
+ 
+
+Joe Barrett
+
+Scientist
+
+ENSCO, Inc.
+
+Cocoa Beach, FL
+
+ 
+
+The information contained in this email message is intended only for the use of the individual(s) to whom it is addressed and may contain information that is privileged and sensitive. If you are not the intended recipient,
+ or otherwise have received this communication in error, please notify the sender immediately by email at the above referenced address and note that any further dissemination, distribution or copying of this communication is strictly prohibited.
+
+The U.S. Export Control Laws regulate the export and re-export of technology originating in the United States. This includes the electronic transmission of information and software to foreign countries and to certain foreign nationals. Recipient agrees to abide
+ by these laws and their regulations -- including the U.S. Department of Commerce Export Administration Regulations and the U.S. Department of State International Traffic in Arms Regulations -- and not to transfer, by electronic transmission or otherwise, any
+ content derived from this email to either a foreign national or a foreign destination in violation of such laws.
+
+From f.harrell at vanderbilt.edu  Thu May 28 22:38:14 2009
+From: f.harrell at vanderbilt.edu (Frank E Harrell Jr)
+Date: Thu, 28 May 2009 17:38:14 -0500
+Subject: Re: impute.transcan from the Hmisc library
+In-Reply-To: <OF0FCEC63D.BCF21224-ON852575C3.004AB060-852575C3.004C5750@dgag.ca>
+References: <OF0FCEC63D.BCF21224-ON852575C3.004AB060-852575C3.004C5750@dgag.ca>
+Message-ID: <4A1F1256.2050304@vanderbilt.edu>
+
+gerald.jean at dgag.ca wrote:
+> Hello Frank,
+>
+> Frank E Harrell Jr <f.harrell at vanderbilt.edu> a écrit sur 2009/05/26
+> 18:05:29 :
+>
+> > gerald.jean at dgag.ca wrote:
+> > > Hello there,
+> > >
+> > > TIBCO Spotfire S+ Version 8.1.1 for Linux 2.6.9-34.EL, 64-bit : 2008
+> > >
+> > > I am trying to impute missing values from roughly 100 variables in a
+>
+> data.
+> > > frame.  Running "transcan" is no problem, is converges and gives
+>
+> sensible
+> > > results.  The problem arises when trying to impute the missing values
+>
+> from
+> > > the original data set.  The goal is getting a new data frame from the
+>
+> old
+> > > one, with all missing values imputed.  Due to the large number of
+>
+> variables
+> > > to be imputed it is not practical to use, as in the help file,
+> > >
+> > > > var.name <- impute(x.trans, var.name)
+> > >
+> > > I know that I can use, to impute all variables at once:
+> > >
+> > > > impute(x.trans)
+> > >
+> > > But with a large number of variables and a large number of objects in
+>
+> the
+> > > working directory it clutters this directory with too many objects.
+>
+> The
+> > > method suggested in the help file:
+> > >
+> > > ## Not run:
+> > > xt <- transcan(~. , data=mine,
+> > >                imputed=TRUE, shrink=TRUE, n.impute=10, trantab=TRUE)
+> > > attach(mine, pos=1, use.names=FALSE)
+> > > impute(xt, imputation=1) # use first imputation
+> > > detach(1, 'mine2')
+> > > ## End(Not run)
+> >
+> > Gerald,
+> >
+> > # Here is how to create a completed dataset
+> > d <- data.frame(x1, x2)
+> > z <- transcan(~x1 + I(x2), n.impute=5, data=d)
+> > imputed <- impute(z, imputation=1, data=d,
+> >                    list.out=TRUE, pr=FALSE, check=FALSE)
+> > sapply(imputed, function(x)sum(is.imputed(x)))
+> > sapply(imputed, function(x)sum(is.na(x)))
+> >
+> > In my test NAs are imputed.  I don't know if there is a difference
+> > between S+ and R here.  Before doing anything else give a data= argument
+> > to transcan and see what happens.
+> >
+> > Frank
+>
+> first thanks for your reply, I tested your example and it works like a
+> charm in S+.  This puzzled me since I was using the "data" argument of the
+> impute function.  Hence I searched what was different in your use of
+> transcan and impute than my own use.  I saw that you were using the
+> "n.impute" argument of transcan and the "imputation" argument of impute.  I
+> didn't use those since my application didn't require multiple imputation, I
+> then tried to re-run my problem with those arguments and it worked no
+> problem.  I then re-run your example without doing multiple imputation and
+> it did not work?  Here is exactly what I did:
+>
+> ttt.x1 <- rnorm(20, 0, 1)
+> ttt.x2 <- rnorm(20, 0.25, 1)
+> ttt.x2[c(2, 8, 11, 20)] <- NA
+> ttt.x2
+> library(section = "Hmisc", pos = 3)
+> ttt.d <- data.frame(ttt.x1, ttt.x2)
+> ttt.z <- transcan(~ttt.x1 + I(ttt.x2), imputed = TRUE, data = ttt.d)
+> ttt.imputed <- impute(ttt.z, data = ttt.d,
+>                    list.out=TRUE, pr=FALSE, check=FALSE)
+> sapply(ttt.imputed, function(x)sum(is.imputed(x)))
+>  ttt.x1 ttt.x2
+>       0      0
+> sapply(ttt.imputed, function(x)sum(is.na(x)))
+>  ttt.x1 ttt.x2
+>       0      4
+>
+> Hence, if I get this right, the "n.impute" argument to transcan MUST be
+> used for this type of application?
+
+I tried your example in R and it worked fine without n.impute.  If you 
+want to see if there were any updates to R that fixed an old problem, 
+run 
+source('http://biostat.mc.vanderbilt.edu/cgi-bin/viewvc.cgi/*checkout*/Hmisc/trunk/R/transcan.s?rev=611')
+
+and then re-try your code.
+
+Next time preface your code with set.seed(1).
+
+> Thanks again, and thanks for such great librairies, I use them,
+> particularly Hmisc, all the time!
+
+You're welcome Gerald.
+Frank
+
+> Gérald
+>
+> > > may work in R but not in S+, the "save" argument to "detach" is not
+> > > currently supported.
+> > >
+> > > I then tried setting the "list.out" argument to TRUE.
+> > >
+> > > ttt.impute <- impute(RTA.Socio.transcan, data = TelePV.RTA.Socio,
+>
+> list.out
+> > > = TRUE)
+> > >
+> > > According to the help file:
+> > >
+> > >    list.out
+> > >           If var is not specified, you can set list.out=TRUE to have
+> > >           impute.transcan return a list containing variables with
+>
+> needed
+> > >           values imputed. This list will contain a single imputation.
+> > >
+> > > It runs OK but the values are not imputed:
+> > >
+> > > > lapply(ttt.impute, FUN = function(x) sum(is.na(x)))
+> > >
+> > > $adhesion:
+> > > [1] 161
+> > > $X1.c06poparea:
+> > > [1] 8
+> > > $X2.c06dwlgarea:
+> > > [1] 8
+> > > $X3.pctpop0.14:
+> > > [1] 9
+> > > $X40.avg.persfam:
+> > > [1] 8
+> > > $X41.pct.move1an:
+> > > [1] 11
+> > > ...
+> > >
+> > > exactly the original missing values?  Am I missing something, I am
+>
+> banging
+> > > my head since yesterday trying to do this, to no avail?  I can do it
+> > > manually through a loop but I thought this was the purpose of "impute".
+> > >
+> > > Thanks for any insights,
+> > >
+> > > Gérald Jean
+> > > Conseiller senior en statistiques,
+> > > VP Planification et Développement des Marchés,
+> > > Desjardins Groupe d'Assurances Générales
+> > > télephone            : (418) 835-4900 poste (7639)
+> > > télecopieur          : (418) 835-6657
+> > > courrier électronique: gerald.jean at dgag.ca
+> > >
+> > > "In God we trust, all others must bring data"  W. Edwards Deming
+> >
+> > --
+> > Frank E Harrell Jr   Professor and Chair           School of Medicine
+> >                       Department of Biostatistics   Vanderbilt University
+>
+> Gérald Jean
+> Conseiller senior en statistiques,
+> VP Planification et Développement des Marchés,
+> Desjardins Groupe d'Assurances Générales
+> télephone            : (418) 835-4900 poste (7639)
+> télecopieur          : (418) 835-6657
+> courrier électronique: gerald.jean at dgag.ca
+>
+> "In God we trust, all others must bring data"  W. Edwards Deming
+>
+>
+> Le message ci-dessus, ainsi que les documents l'accompagnant, sont destinés
+> uniquement aux personnes identifiées et peuvent contenir des informations
+> privilégiées, confidentielles ou ne pouvant être divulguées. Si vous avez reçu ce
+> message par erreur, veuillez le détruire.
+>
+> This communication ( and/or the attachments ) is intended for named recipients
+> only and may contain privileged or confidential information which is
+> not to be disclosed. If you received this communication by mistake please
+> destroy all copies.
+>
+>
+>
+>
+> Faites bonne impression et imprimez seulement au besoin !
+> Think green before you print !
+>
+> Le message ci-dessus, ainsi que les documents l'accompagnant, sont destinés uniquement aux personnes
+> identifiées et peuvent contenir des informations privilégiées, confidentielles ou ne pouvant être
+> divulguées. Si vous avez reçu ce message par erreur, veuillez le détruire.
+>
+> This communication (and/or the attachments) is intended for named recipients
+> only and may contain privileged or confidential information which is not to be
+> disclosed. If you received this communication by mistake please destroy all
+> copies.
+
+--
+Frank E Harrell Jr   Professor and Chair           School of Medicine
+                     Department of Biostatistics   Vanderbilt University
+
+From gerald.jean at dgag.ca  Fri May 29 17:49:24 2009
+From: gerald.jean at dgag.ca
+Date: Fri, 29 May 2009 13:49:24 -0400
+Subject: Re: impute.transcan from the Hmisc library
+In-Reply-To: <4A1F1256.2050304@vanderbilt.edu>
+References: <4A1F1256.2050304@vanderbilt.edu>
+Message-ID: <OF2372003D.4B24903F-ON852575C5.0061C3BD-852575C5.0061E85C@dgag.ca>
+
+Hello all,
+
+yes, updating the "transcan", and associated functions, did the trick.
+
+Thanks again to Frank Harrel for his kind support,
+
+Gérald Jean
+Conseiller senior en statistiques,
+VP Planification et Développement des Marchés,
+Desjardins Groupe d'Assurances Générales
+télephone            : (418) 835-4900 poste (7639)
+télecopieur          : (418) 835-6657
+courrier électronique: gerald.jean at dgag.ca
+
+"In God we trust, all others must bring data"  W. Edwards Deming
+
+Frank E Harrell Jr <f.harrell at vanderbilt.edu> a écrit sur 2009/05/28
+18:38:14 :
+
+> gerald.jean at dgag.ca wrote:
+> > Hello Frank,
+> >
+> > Frank E Harrell Jr <f.harrell at vanderbilt.edu> a écrit sur 2009/05/26
+> > 18:05:29 :
+> >
+> >> gerald.jean at dgag.ca wrote:
+> >>> Hello there,
+> >>>
+> >>> TIBCO Spotfire S+ Version 8.1.1 for Linux 2.6.9-34.EL, 64-bit : 2008
+> >>>
+> >>> I am trying to impute missing values from roughly 100 variables in a
+> > data.
+> >>> frame.  Running "transcan" is no problem, is converges and gives
+> > sensible
+> >>> results.  The problem arises when trying to impute the missing values
+> > from
+> >>> the original data set.  The goal is getting a new data frame from the
+> > old
+> >>> one, with all missing values imputed.  Due to the large number of
+> > variables
+> >>> to be imputed it is not practical to use, as in the help file,
+> >>>
+> >>>> var.name <- impute(x.trans, var.name)
+> >>> I know that I can use, to impute all variables at once:
+> >>>
+> >>>> impute(x.trans)
+> >>> But with a large number of variables and a large number of objects in
+> > the
+> >>> working directory it clutters this directory with too many objects.
+> > The
+> >>> method suggested in the help file:
+> >>>
+> >>> ## Not run:
+> >>> xt <- transcan(~. , data=mine,
+> >>>                imputed=TRUE, shrink=TRUE, n.impute=10, trantab=TRUE)
+> >>> attach(mine, pos=1, use.names=FALSE)
+> >>> impute(xt, imputation=1) # use first imputation
+> >>> detach(1, 'mine2')
+> >>> ## End(Not run)
+> >> Gerald,
+> >>
+> >> # Here is how to create a completed dataset
+> >> d <- data.frame(x1, x2)
+> >> z <- transcan(~x1 + I(x2), n.impute=5, data=d)
+> >> imputed <- impute(z, imputation=1, data=d,
+> >>                    list.out=TRUE, pr=FALSE, check=FALSE)
+> >> sapply(imputed, function(x)sum(is.imputed(x)))
+> >> sapply(imputed, function(x)sum(is.na(x)))
+> >>
+> >> In my test NAs are imputed.  I don't know if there is a difference
+> >> between S+ and R here.  Before doing anything else give a data=
+argument
+> >> to transcan and see what happens.
+> >>
+> >> Frank
+> >>
+> > first thanks for your reply, I tested your example and it works like a
+> > charm in S+.  This puzzled me since I was using the "data" argument of
+the
+> > impute function.  Hence I searched what was different in your use of
+> > transcan and impute than my own use.  I saw that you were using the
+> > "n.impute" argument of transcan and the "imputation" argument of
+impute.  I
+> > didn't use those since my application didn't require multiple
+imputation, I
+> > then tried to re-run my problem with those arguments and it worked no
+> > problem.  I then re-run your example without doing multiple imputation
+and
+> > it did not work?  Here is exactly what I did:
+> >
+> > ttt.x1 <- rnorm(20, 0, 1)
+> > ttt.x2 <- rnorm(20, 0.25, 1)
+> > ttt.x2[c(2, 8, 11, 20)] <- NA
+> > ttt.x2
+> > library(section = "Hmisc", pos = 3)
+> > ttt.d <- data.frame(ttt.x1, ttt.x2)
+> > ttt.z <- transcan(~ttt.x1 + I(ttt.x2), imputed = TRUE, data = ttt.d)
+> > ttt.imputed <- impute(ttt.z, data = ttt.d,
+> >                    list.out=TRUE, pr=FALSE, check=FALSE)
+> > sapply(ttt.imputed, function(x)sum(is.imputed(x)))
+> >  ttt.x1 ttt.x2
+> >       0      0
+> > sapply(ttt.imputed, function(x)sum(is.na(x)))
+> >  ttt.x1 ttt.x2
+> >       0      4
+> >
+> > Hence, if I get this right, the "n.impute" argument to transcan MUST be
+> > used for this type of application?
+>
+> I tried your example in R and it worked fine without n.impute.  If you
+> want to see if there were any updates to R that fixed an old problem,
+> run
+> source('http://biostat.mc.vanderbilt.edu/cgi-bin/viewvc.
+> cgi/*checkout*/Hmisc/trunk/R/transcan.s?rev=611')
+> and then re-try your code.
+>
+> Next time preface your code with set.seed(1).
+>
+>
+> >
+> > Thanks again, and thanks for such great librairies, I use them,
+> > particularly Hmisc, all the time!
+>
+> You're welcome Gerald.
+> Frank
+>
+> >
+> > Gérald
+> >
+> >>> may work in R but not in S+, the "save" argument to "detach" is not
+> >>> currently supported.
+> >>>
+> >>> I then tried setting the "list.out" argument to TRUE.
+> >>>
+> >>> ttt.impute <- impute(RTA.Socio.transcan, data = TelePV.RTA.Socio,
+> > list.out
+> >>> = TRUE)
+> >>>
+> >>> According to the help file:
+> >>>
+> >>>    list.out
+> >>>           If var is not specified, you can set list.out=TRUE to have
+> >>>           impute.transcan return a list containing variables with
+> > needed
+> >>>           values imputed. This list will contain a single imputation.
+> >>>
+> >>> It runs OK but the values are not imputed:
+> >>>
+> >>>> lapply(ttt.impute, FUN = function(x) sum(is.na(x)))
+> >>> $adhesion:
+> >>> [1] 161
+> >>> $X1.c06poparea:
+> >>> [1] 8
+> >>> $X2.c06dwlgarea:
+> >>> [1] 8
+> >>> $X3.pctpop0.14:
+> >>> [1] 9
+> >>> $X40.avg.persfam:
+> >>> [1] 8
+> >>> $X41.pct.move1an:
+> >>> [1] 11
+> >>> ...
+> >>>
+> >>> exactly the original missing values?  Am I missing something, I am
+> > banging
+> >>> my head since yesterday trying to do this, to no avail?  I can do it
+> >>> manually through a loop but I thought this was the purpose of
+"impute".
+> >>>
+> >>> Thanks for any insights,
+> >>>
+> >>> Gérald Jean
+> >>> Conseiller senior en statistiques,
+> >>> VP Planification et Développement des Marchés,
+> >>> Desjardins Groupe d'Assurances Générales
+> >>> télephone            : (418) 835-4900 poste (7639)
+> >>> télecopieur          : (418) 835-6657
+> >>> courrier électronique: gerald.jean at dgag.ca
+> >>>
+> >>> "In God we trust, all others must bring data"  W. Edwards Deming
+> >>>
+> >>>
+> >> --
+> >> Frank E Harrell Jr   Professor and Chair           School of Medicine
+> >>                       Department of Biostatistics   Vanderbilt
+University
+> >>
+> > Gérald Jean
+> > Conseiller senior en statistiques,
+> > VP Planification et Développement des Marchés,
+> > Desjardins Groupe d'Assurances Générales
+> > télephone            : (418) 835-4900 poste (7639)
+> > télecopieur          : (418) 835-6657
+> > courrier électronique: gerald.jean at dgag.ca
+> >
+> > "In God we trust, all others must bring data"  W. Edwards Deming
+> >
+> >
+> > Le message ci-dessus, ainsi que les documents l'accompagnant, sont
+> destinés uniquement aux personnes identifiées et peuvent contenir
+> des informations
+> > privilégiées, confidentielles ou ne pouvant être divulguées. Si
+> vous avez reçu ce message par erreur, veuillez le détruire.
+> >
+> > This communication ( and/or the attachments ) is intended for
+> named recipients only and may contain privileged or confidential
+> information which is
+> > not to be disclosed. If you received this communication by mistake
+> please destroy all copies.
+> >
+> >
+> >
+> >
+> > Faites bonne impression et imprimez seulement au besoin !
+> > Think green before you print !
+> >
+> > Le message ci-dessus, ainsi que les documents l'accompagnant, sont
+> destinés uniquement aux personnes identifiées et peuvent contenir
+> des informations privilégiées, confidentielles ou ne pouvant être
+> divulguées. Si vous avez reçu ce message par erreur, veuillez le
+détruire.
+> >
+> > This communication (and/or the attachments) is intended for named
+> recipients only and may contain privileged or confidential
+> information which is not to be disclosed. If you received this
+> communication by mistake please destroy all copies.
+> >
+>
+>
+> --
+> Frank E Harrell Jr   Professor and Chair           School of Medicine
+>                       Department of Biostatistics   Vanderbilt University
+
+Le message ci-dessus, ainsi que les documents l'accompagnant, sont destinés
+uniquement aux personnes identifiées et peuvent contenir des informations
+privilégiées, confidentielles ou ne pouvant être divulguées. Si vous avez
+reçu ce message par erreur, veuillez le détruire.
+
+This communication ( and/or the attachments ) is intended for named
+recipients only and may contain privileged or confidential information
+which is not to be disclosed. If you received this communication by mistake
+please destroy all copies.
+
+Faites bonne impression et imprimez seulement au besoin !
+Think green before you print !
+
+Le message ci-dessus, ainsi que les documents l'accompagnant, sont destinés 
+uniquement aux personnes identifiées et peuvent contenir des informations 
+privilégiées, confidentielles ou ne pouvant être divulguées. Si vous avez reçu 
+ce message par erreur, veuillez le détruire.
+
+This communication (and/or the attachments) is intended for named recipients 
+only and may contain privileged or confidential information which is not to be 
+disclosed. If you received this communication by mistake please destroy all 
+copies.
+

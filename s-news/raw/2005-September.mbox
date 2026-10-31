@@ -1,0 +1,5482 @@
+From Thierry.ONKELINX at inbo.be  Thu Sep  1 12:08:20 2005
+From: Thierry.ONKELINX at inbo.be (ONKELINX, Thierry)
+Date: Thu, 01 Sep 2005 14:08:20 +0200
+Subject: Color error bar
+Message-ID: <2E9C414912813E4EB981326983E0A104D4DB80@inexch.instnat.be.grp>
+
+Is it possible to change the colour of error bars? Adding ‘col = 4’ to the arguments
+of the error.bar functions has no effect.
+
+ 
+
+Thierry
+
+ 
+
+--------------------------------------------------------
+
+ir. Thierry Onkelinx
+
+Instituut
+voor Bosbouw en Wildbeheer (Institute for Forestry and Game Management)
+
+Team
+BMK
+
+Gaverstraat
+4
+
+9500
+Geraardsbergen
+
+Belgium
+
+tel. + 32 54/436 185
+
+fax. + 32 54/436 160
+
+Thierry.Onkelinx at inbo.be
+
+http://ibw.inbo.be
+
+ 
+
+From b.jacobs at pandora.be  Thu Sep  1 12:28:48 2005
+From: b.jacobs at pandora.be (Bert Jacobs)
+Date: Thu, 01 Sep 2005 14:28:48 +0200
+Subject: Fill Matrix with Vector of Row Numbers
+In-Reply-To: <20050824085828.CF69F44316@adicia.telenet-ops.be>
+References: <20050824085828.CF69F44316@adicia.telenet-ops.be>
+Message-ID: <20050901122848.DCFBA3BC2B3@poros.telenet-ops.be>
+
+Using S-Plus for Windows XP
+
+ 
+
+Probably a basic question, but I’ll
+give it a try.
+
+ 
+
+I have a vector with row numbers
+
+ 
+
+Col 1
+
+4
+
+6
+
+8
+
+9
+
+12
+
+ 
+
+I have another vector with “Period”
+Info
+
+ 
+
+Col 1
+
+W1
+
+W2
+
+W3
+
+…
+
+W160
+
+ 
+
+Now I’m trying to achieve the
+following:
+
+ 
+
+Col1      Col2      Col3      Col4      Col5      Col12
+
+W1       0          0          0          0          0
+
+W2       0          0          0          0          0
+
+W3       0          0          0          0          0
+
+W4       1          0          0          0          0
+
+W5       0          0          0          0          0
+
+W6       0          1          0          0          0
+
+W7       0          0          0          0          0
+
+W8       0          0          1          0          0          
+
+W9       0          0          0          1          0
+
+W10     0          0          0          0          0
+
+W11     0          0          0          0          0
+
+W12     0          0          0          0          1
+
+W13     0          0          0          0          0
+
+…
+
+W160    0          0          0          0          0
+
+ 
+
+Is there an easy way to do this?
+
+Thx for helping my out.
+
+ 
+
+Bert
+
+ 
+
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On
+Behalf Of Bert Jacobs
+
+Sent: 24 August 2005 10:58
+
+To: s-news at lists.biostat.wustl.edu
+
+Subject: [S] Importing Excel Data
+Problem
+
+ 
+
+Using S-Plus 6.2 Under Windows XP (Excel 2003)
+
+ 
+
+I’m trying to import several excel files into S-Plus.
+The problem is that the first row (rownames not included) might or might not
+have data. All Columns contain blanc or factor info. If the first rowfield is
+“blanc” S-Plus imports the columns as “double” and all
+“factor” information is removed in the imported column. I can
+resolve it in Excel by replacing all the “blancs” into e.g.
+“NA”, but this is I hope just a temporarly solution. Has someone
+experience with this issue?
+
+ 
+
+Thx,
+
+Bert
+
+From rmh at temple.edu  Thu Sep  1 13:52:48 2005
+From: rmh at temple.edu (Richard M. Heiberger)
+Date: Thu, 01 Sep 2005 09:52:48 -0400
+Subject: Re: Fill Matrix with Vector of Row Numbers
+Message-ID: <1aa4a9ac.34fea252.820c900@po-d.temple.edu>
+
+vv <- c(4,6,8,9,12)
+
+pp <- 1:160
+
+mm <- matrix(0, length(pp), length(vv))
+dimnames(mm) <- list(paste("W", pp, sep=""),
+                     paste("C", vv, sep=""))
+
+mm[vv,] <- diag(length(vv))
+
+mm[c(1:15,158:160),]
+
+Rich
+
+From rmh at temple.edu  Thu Sep  1 14:04:13 2005
+From: rmh at temple.edu (Richard M. Heiberger)
+Date: Thu, 01 Sep 2005 10:04:13 -0400
+Subject: Re: Color error bar
+Message-ID: <437a16cf.34ffaded.822c000@po-d.temple.edu>
+
+x <- rep(1:10,3)
+y <- rnorm(30)
+
+error.bar(x, y, lower=1)
+
+error.bar(x, y, lower=1, col=4)
+
+old.col <- par(col=8)
+error.bar(x, y, lower=1, col=4)
+par(old.col)
+
+From b.jacobs at pandora.be  Thu Sep  1 14:43:40 2005
+From: b.jacobs at pandora.be (Bert Jacobs)
+Date: Thu, 01 Sep 2005 16:43:40 +0200
+Subject: Re: Fill Matrix with Vector of Row Numbers: Summary
+Message-ID: <20050901144344.D29AC3BC193@poros.telenet-ops.be>
+
+Apparently their are a number of ways to solve my question.
+Here are the inputs I've received. In a way they all seem to be alike, but
+there are differences. I've used the first option because it's the shortest
+one. 
+
+First option:
+
+ind <- c(4,6,8,9,12)
+w <- matrix(0, 20, length(ind))
+w[seq(0, length(w) - 1, nrow(w)) + ind] <- 1 w
+
+Second option:
+
+rownumbers<- c(4, 6, 8, 9, 12)
+period <- paste("W", 1:160, sep = "")
+final.matrix <- matrix(0, nrow = length(period), ncol = length(rownumbers))
+dimnames(final.matrix)[[2]] <- paste("Col", 1:length(rownumbers))
+dimnames(final.matrix)[[1]] <- period
+for(i in 1:length(rownumbers)){
+final.matrix[rownumbers[i],i] <- 1
+}
+
+Third Option:
+
+vv <- c(4,6,8,9,12)
+pp <- 1:160
+mm <- matrix(0, length(pp), length(vv))
+dimnames(mm) <- list(paste("W", pp, sep=""),
+                     paste("C", vv, sep=""))
+mm[vv,] <- diag(length(vv))
+mm[c(1:15,158:160),]
+
+Thx a lot
+Bert
+
+_____________________________
+ 
+Bert Jacobs
+Marketing Intelligence Engineer
+Plasveldlaan 5
+9400 Ninove
+Tel: 0477/68.74.07
+Fax: 054/25.00.35
+E-mail: b.jacobs at pandora.be
+-----Original Message-----
+From: Dimitris Rizopoulos [mailto:dimitrios.rizopoulos at student.kuleuven.be] 
+Sent: 01 September 2005 14:50
+To: Bert Jacobs
+Cc: s-news at lists.biostat.wustl.edu
+Subject: Re: [S] Fill Matrix with Vector of Row Numbers
+
+probably something alon these lines could be helpful:
+
+ind <- c(4,6,8,9,12)
+w <- matrix(0, 20, length(ind))
+w[seq(0, length(w) - 1, nrow(w)) + ind] <- 1
+w
+
+I hope it helps.
+
+Best,
+Dimitris
+
+----
+Dimitris Rizopoulos
+Ph.D. Student
+Biostatistical Centre
+School of Public Health
+Catholic University of Leuven
+
+Address: Kapucijnenvoer 35, Leuven, Belgium
+Tel: +32/16/336899
+Fax: +32/16/337015
+Web: http://www.med.kuleuven.be/biostat/
+     http://www.student.kuleuven.be/~m0390867/dimitris.htm
+
+----- Original Message ----- 
+From: "Bert Jacobs" <b.jacobs at pandora.be>
+To: <s-news at lists.biostat.wustl.edu>
+Sent: Thursday, September 01, 2005 2:28 PM
+Subject: [S] Fill Matrix with Vector of Row Numbers
+
+> Using S-Plus for Windows XP
+>
+>
+>
+> Probably a basic question, but I'll give it a try.
+>
+>
+>
+> I have a vector with row numbers
+>
+>
+>
+> Col 1
+>
+> 4
+>
+> 6
+>
+> 8
+>
+> 9
+>
+> 12
+>
+>
+>
+> I have another vector with "Period" Info
+>
+>
+>
+> Col 1
+>
+> W1
+>
+> W2
+>
+> W3
+>
+> .
+>
+> W160
+>
+>
+>
+> Now I'm trying to achieve the following:
+>
+>
+>
+> Col1      Col2      Col3      Col4      Col5      Col12
+>
+> W1       0          0          0          0          0
+>
+> W2       0          0          0          0          0
+>
+> W3       0          0          0          0          0
+>
+> W4       1          0          0          0          0
+>
+> W5       0          0          0          0          0
+>
+> W6       0          1          0          0          0
+>
+> W7       0          0          0          0          0
+>
+> W8       0          0          1          0          0
+>
+> W9       0          0          0          1          0
+>
+> W10     0          0          0          0          0
+>
+> W11     0          0          0          0          0
+>
+> W12     0          0          0          0          1
+>
+> W13     0          0          0          0          0
+>
+> .
+>
+> W160    0          0          0          0          0
+>
+>
+>
+> Is there an easy way to do this?
+>
+> Thx for helping my out.
+>
+>
+>
+> Bert
+>
+>
+>
+>  _____
+>
+> From: s-news-owner at lists.biostat.wustl.edu
+> [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Bert 
+> Jacobs
+> Sent: 24 August 2005 10:58
+> To: s-news at lists.biostat.wustl.edu
+> Subject: [S] Importing Excel Data Problem
+>
+>
+>
+> Using S-Plus 6.2 Under Windows XP (Excel 2003)
+>
+>
+>
+> I'm trying to import several excel files into S-Plus. The problem is 
+> that
+> the first row (rownames not included) might or might not have data. 
+> All
+> Columns contain blanc or factor info. If the first rowfield is 
+> "blanc"
+> S-Plus imports the columns as "double" and all "factor" information 
+> is
+> removed in the imported column. I can resolve it in Excel by 
+> replacing all
+> the "blancs" into e.g. "NA", but this is I hope just a temporarly 
+> solution.
+> Has someone experience with this issue?
+>
+>
+>
+> Thx,
+>
+> Bert
+>
+> 
+
+From cj15 at humboldt.edu  Thu Sep  1 16:47:57 2005
+From: cj15 at humboldt.edu (Casey Justice)
+Date: Thu, 01 Sep 2005 09:47:57 -0700
+Subject: model selection with mixed-effects models
+Message-ID: <1131.137.150.17.184.1125593277.squirrel@137.150.17.184>
+
+I want to compare a set of mixed-effects models with different
+fixed-effect structures using AIC or corrected AIC, but there seems to be
+some controversy over the validity of AIC as a model selection criteria
+for these types of models.  I came across a paper entitled ?Model
+Selection in Linear Mixed Effects Models Using SASâ PROC MIXED? in which
+the authors, Long Ngo and Richard Brand endorse the use of AIC in
+comparing mixed-effects models.  However, Pinheiro and Bates warn against
+the use of AIC in comparing mixed-effects models with different fixed
+effects structures.  Is this topic unresolved among statisticians, or is
+there a definitive solution to model selection with mixed-effects models?
+What are some options for model selection?
+
+I am greatful for any advice.
+
+Casey Justice
+MS Student, Fisheries Biology
+Graduate Research Assistant
+California Cooperative Fish Research Unit
+Humboldt State University
+707-498-7300 (cell)
+707-826-3516 (office)
+
+Casey Justice
+MS Student, Fisheries Biology
+Graduate Research Assistant
+California Cooperative Fish Research Unit
+Humboldt State University
+707-498-7300 (cell)
+707-826-3516 (office)
+
+From tibs at stanford.edu  Thu Sep  1 18:52:41 2005
+From: tibs at stanford.edu (Rob Tibshirani)
+Date: Thu, 01 Sep 2005 11:52:41 -0700
+Subject: tools for tall and wide data
+Message-ID: <43174DF9.7000405@stanford.edu>
+
+Short course: Statistical Learning and Data Mining II:
+              tools for tall and wide data
+
+Trevor Hastie and Robert Tibshirani, Stanford University
+
+The Conference Center at Harvard Medical School
+Boston, MA,
+
+Oct 31-Nov 1, 2005
+
+This two-day course gives a detailed overview of statistical models
+for data mining, inference and prediction.  With the rapid
+developments in internet technology, genomics, financial risk
+modeling, and other high-tech industries, we rely increasingly more on
+data analysis and statistical models to exploit the vast amounts of
+data at our fingertips.
+
+This course is the third in a series, and follows our popular past
+offerings "Modern Regression and Classification", and "Statistical
+Learning and Data Mining".
+
+The two earlier courses are not a prerequisite for this new course.
+
+In this course we emphasize the tools useful for tackling modern-day
+data analysis problems. These include gradient boosting, SVMs and
+kernel methods, random forests, lasso and LARS, ridge regression and
+GAMs, supervised principal components, and cross-validation.  We also
+present some interesting case studies in a variety of application
+areas.
+
+This course focuses on both "tall" data ( N>p where N=#cases,
+p=#features) and "wide" data (p>N).  Typical examples of tall data are
+credit risk and churn prediction, and email spam filtering.  Topics
+include linear and ridge regression, lasso, and LARS, support vector
+machines, random forests and boosting.  We give in-depth discussion of
+validation, cross-validation and test set issues.
+
+For wide data, typical examples are gene expression and protein mass
+spectrometry data, and data from signals and images. Topics include
+clustering and data visualization, false discovery rates and SAM,
+regularized logistic regression and discriminant analysis, supervised
+and unsupervised principal components, support vector machines and the
+kernel trick, and the careful use of model selection strategies.
+
+The material is based on recent papers by the authors and other
+researchers, as well as the best selling book:
+
+################################################### Elements of
+Statistical Learning: data mining, inference and prediction
+
+Hastie, Tibshirani & Friedman, Springer-Verlag, 2001
+
+http://www-stat.stanford.edu/ElemStatLearn/
+
+A copy of this book will be given to all attendees.
+###################################################
+
+New draft chapters of our upcoming 2nd edition will also be given
+exclusively to attendees!
+
+The lectures will consist of video-projected presentations and discussion.
+
+Go to the site
+http://www-stat.stanford.edu/~hastie/sldm.html
+for more information and registration details.
+
+--
+Prof. Robert Tibshirani
+Depts of Health Research and Policy, and Statistics
+Stanford Univ
+Stanford CA 94305
+tibs at stat.stanford.edu
+http://www-stat.stanford.edu/~tibs
+
+From Jordão  Thu Sep  1 22:00:25 2005
+From: Jordão
+Date: Thu, 01 Sep 2005 18:00:25 -0400
+Subject: Different fonts in plots
+Message-ID: <CDBE3ADAFCB39F41A19FF2BE650978FF01C3282D@mdynycmsx03.ad.moodys.net>
+
+ 
+
+Hi all,
+
+ 
+
+I am plotting a chart using plot() and then using lines()
+and text() to put in some additional information. I would like to mix and match
+the fonts so I can have Greek symbols with subscripts as well as the regular
+text. Could someone point me in the right direction? I can put the plots in
+PowerPoint then ungroup the objects and change the font, but I’d love to automate
+this within S-PLUS.
+
+ 
+
+thanks,
+
+Felipe
+
+ 
+
+ 
+
+ 
+
+---------------------------------------
+
+The information contained in this e-mail message, and any attachment thereto, is confidential and may not be disclosed without our express permission.  If you are not the intended recipient or an employee or agent responsible for delivering this message to the intended recipient, you are hereby notified that you have received this message in error and that any review, dissemination, distribution or copying of this message, or any attachment thereto, in whole or in part, is strictly prohibited.  If you have received this message in error, please immediately notify us by telephone, fax or e-mail and delete the message and all of its attachments.  Thank you.
+
+Every effort is made to keep our network free from viruses.  You should, however, review this e-mail message, as well as any attachment thereto, for viruses.  We take no responsibility and have no liability for any computer virus which may be transferred via this e-mail message.
+
+From andreas.krause at novartis.com  Fri Sep  2 07:59:15 2005
+From: andreas.krause at novartis.com
+Date: Fri, 02 Sep 2005 09:59:15 +0200
+Subject: Re: Aliasing Splus and using BATCH or SBATCH
+Message-ID: <OF2DAB65D0.12128A76-ONC1257070.002B1088-C1257070.002BE0A0@EU.novartis.net>
+
+Hmm. I get the impression that the conclusion is
+
+a) there is a user need - (command retrieval from the command line - for 
+those who use it)
+b) that need can not be fulfilled in a straightforward way, as default 
+setting without interference with other uses like BATCH, ESS,  or newer OS 
+kernels, etc.
+
+Thank you to Brian Ripley and Martin Maechler for the contributions.
+
+        Andreas Krause
+
+PS. Does anyone who knows (e.g., Insightful) want to comment on what the 
+binary <splushome>/cmd/cled does precisely?
+
+Prof Brian Ripley <ripley at stats.ox.ac.uk>
+08/31/2005 11:58 AM
+
+ 
+        To:     Andreas Krause/PH/Novartis@PH
+        cc:     s-news at lists.biostat.wustl.edu
+        Subject:        Re: [S] Aliasing Splus and using BATCH or SBATCH
+        Category: 
+
+On Wed, 31 Aug 2005 andreas.krause at novartis.com wrote:
+
+> Thank you, this sheds more light on what's going on.
+> Not being a real unix/bash guru the way I understand this is that cled
+> (command line editor?), called from the script Splus, exits silently if
+> called with BATCH in out.
+
+Without the code of cled, I can't be sure but I believe so.
+
+> Makes me wonder if that could and should not be filtered out by the 
+Splus
+> script.
+> Actually I wonder why anyone would not want the command retrieval
+> functionality for the command line and why one needs the "-e" option.
+
+See my comment about it not working on 2.6.x kernels.  You do not want a 
+non-functional basic option.  Also, you do not want it in non-interactive 
+use.  (R has been taught to distinguish such uses, but does have a 
+command-line flag to turn the command-line editing off in case it gets 
+it wrong.)
+
+>
+>        Andreas Krause
+>
+>
+>
+>
+>
+> Prof Brian Ripley <ripley at stats.ox.ac.uk>
+> 08/30/2005 07:09 PM
+>
+>
+>        To:     Andreas Krause/PH/Novartis@PH
+>        cc:     s-news at lists.biostat.wustl.edu
+>        Subject:        Re: [S] Aliasing Splus and using BATCH or SBATCH
+>        Category:
+>
+>
+>
+> I cannot run Splus -e for 6.2 any more (it does not work with a 2.6.x
+> kernel).  With 7.0 I get an empty test.log.  This is not surprising as 
+if
+> you run
+>
+> Splus -e BATCH test.ssc test.log
+>
+> you get the same.  If you read the script file you will see if it
+> encounters -e it uses
+>                  S_FRONT_END="$CLED $CLEDJCTL --"
+> in
+>
+>         exec $S_FRONT_END "$c" ${1+"$@"}
+>
+> do it runs cled and not the batch script.
+>
+> On Tue, 30 Aug 2005 andreas.krause at novartis.com wrote:
+>
+>> S-Plus 6.2.1 for Linux using Red Hat and bash.
+>>
+>> I have aliased Splus to Splus -e and want to run Splus in batch mode.
+>> This seems to prevent Splus from running BATCH properly.
+>> Details:
+>>
+>>> From the Unix (bash) command line, enter
+>>
+>> # set the alias
+>> alias Splus="Splus -e"
+>>
+>> # generate a command file
+>> cat > test.ssc
+>> print(1:11)
+>> <Ctrl-D>
+>>
+>> # run it
+>> Splus BATCH test.ssc test.log
+>>
+>> No visible effect of anything being done, no file test.log created.
+>> However,
+>>
+>> Splus SBATCH -input test.ssc
+>>
+>> works as I expect it, creating files test.slg and test.txt.
+>>
+>> It seems that the problem is in the script execution, <Splus
+>> directory>/cmd/BATCH but if I add a line
+>> echo $1 in the beginning, I get the name of the script file (so things
+>> seem to be fine).
+>> Any idea what's going on and how I can still alias Splus as above?
+>> Btw, without the alias set all works fine.
+>>
+>> Thanks in advance!
+>>
+>>        Andreas
+>>
+>> --------------------------------------------------------------------
+>> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+>> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+>> the BODY of the message:  unsubscribe s-news
+>>
+>
+> -- 
+> Brian D. Ripley,                  ripley at stats.ox.ac.uk
+> Professor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/
+> University of Oxford,             Tel:  +44 1865 272861 (self)
+> 1 South Parks Road,                     +44 1865 272866 (PA)
+> Oxford OX1 3TG, UK                Fax:  +44 1865 272595
+>
+>
+>
+>
+
+-- 
+Brian D. Ripley,                  ripley at stats.ox.ac.uk
+Professor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/
+University of Oxford,             Tel:  +44 1865 272861 (self)
+1 South Parks Road,                     +44 1865 272866 (PA)
+Oxford OX1 3TG, UK                Fax:  +44 1865 272595
+
+From lisas at salford-systems.com  Tue Sep  6 11:51:39 2005
+From: lisas at salford-systems.com (Lisa Solomon)
+Date: Tue, 06 Sep 2005 04:51:39 -0700
+Subject: Three Data Mining Conferences: Princeton, NJ; San Diego, California; Sydney, Australia
+Message-ID: <431D82CB.3040805@salford-systems.com>
+
+October 26th and October 27th in Princeton, New Jersey
+INSIGHTFUL USER GROUP CONFERENCE
+http://www.insightful.com/news_events/2005uc/
+
+March 29 - March 31, 2006 in San Diego, California
+DATA MINING 2006 CONFERENCE sponsored by Salford Systems
+Pre-Conference Training: March 27 - March 29, 2006
+Conference Program: http://www.salforddatamining.com/program-sd.htm
+
+June 6 - June 8, 2006 in Sydney, Australia
+DATA MINING 2006 CONFERENCE sponsored by Salford Systems
+Pre-Conference Training: June 5 - June 6, 2006
+http://www.salforddatamining.com
+
+**
+
+DATA MINING 2006 CONFERENCES sponsored by Salford Systems
+These Conferences will offer Real-World Case Study Presentations
+including Cutting Edge Topics:  Crime Prevention * Anti-Terrorism *
+Gambling * Sports * Video Games * Food & Water Science * Diet Research *
+Standardized Testing
+
+There will be special courses available for attendees who are new to
+Data Mining.
+
+See how Data Mining is Used for Business, Biomedical, and Environmental
+applications. Find out why previous attendees rate our conferences the
+most informative in the industry.
+
+To be placed on the Salford conference mailing list, please click here:
+http://www.salforddatamining.com/2006InfoRequest.php
+
+Best regards,
+Lisa Solomon
+Ph: (619)543-8880
+http://www.salforddatamining.com
+
+From asanquer at virbac.fr  Tue Sep  6 12:33:39 2005
+From: asanquer at virbac.fr
+Date: Tue, 06 Sep 2005 14:33:39 +0200
+Subject: Coercing to character
+Message-ID: <OFBB1765FD.2178DAB6-ONC1257074.00443BD1-C1257074.0045049C@virbac.fr>
+
+Hi,
+
+I've got a problem when I coerce a numeric value to a character: I loose
+some decimal digits after the decimal point.
+
+Example:
+
+> x <- c(3.45,3.40)
+> as.character(x)
+[1] "3.45" "3.4"
+
+I really want to keep the 2 decimal digits. Does someone can give me a
+tip-off?
+
+I had also noted that when I export some data frame to an ASCII file, I
+loose the null decimal digit (with numeric data). An explanation and may be
+a solution?
+
+Thank a lot,
+
+Annaële Sanquer
+
+From bjain at bslindia.com  Tue Sep  6 19:04:47 2005
+From: bjain at bslindia.com (Bikash Jain)
+Date: Tue, 06 Sep 2005 15:04:47 -0400
+Subject: GAM Procedure
+Message-ID: <00dd01c5b315$d9c68b80$3b22a8c0@bslpradeepy>
+
+We were to use Splus for 
+GAM procedure with smooth terms using cubic splines, knots and for specifying 
+df, we need to include in our output p-values for parametric coefficients, 
+significance of smooth terms, R-sq, and GCV score.
+
+ 
+
+We want S plus to run 
+GAM procedure for this analysis.
+
+ 
+
+The formula we want to 
+create should mimic R SOFTWARE output for the following model:
+
+ 
+
+response~ variable1 + 
+factor(variable2) +factor(variable3)+ s(variable4,k=25,fx=true)+
+
+s(variable5, k=4, 
+fx=true)+ s(variable6, k=25, fx=true)
+
+ 
+
+ I have attached here the basic model I 
+have run in Splus, and SAS along with dummy Splus dataset which we are using for 
+this model.
+
+ 
+
+Your advice and 
+suggestions to get the above specified model and output will be highly 
+appreciated.
+
+dummy.mortality.sdd
+
+Description: Binary data
+
+From dimitris.rizopoulos at med.kuleuven.be  Tue Sep  6 12:48:29 2005
+From: dimitris.rizopoulos at med.kuleuven.be (Dimitris Rizopoulos)
+Date: Tue, 06 Sep 2005 14:48:29 +0200
+Subject: Re: Coercing to character
+References: <OFBB1765FD.2178DAB6-ONC1257074.00443BD1-C1257074.0045049C@virbac.fr>
+Message-ID: <00fd01c5b2e1$47b90260$0540210a@www.domain>
+
+you could try format(), e.g.,
+
+x <- c(3.45, 3.40)
+format(x)
+
+see ?format for more info and options.
+
+I hope it helps.
+
+Best,
+Dimitris
+
+----
+Dimitris Rizopoulos
+Ph.D. Student
+Biostatistical Centre
+School of Public Health
+Catholic University of Leuven
+
+Address: Kapucijnenvoer 35, Leuven, Belgium
+Tel: +32/16/336899
+Fax: +32/16/337015
+Web: http://www.med.kuleuven.be/biostat/
+    http://www.student.kuleuven.be/~m0390867/dimitris.htm
+
+----- Original Message ----- 
+From: <asanquer at virbac.fr>
+
+To: <s-news at wubios.wustl.edu>
+Sent: Tuesday, September 06, 2005 2:33 PM
+Subject: [S] Coercing to character
+
+Hi,
+
+I've got a problem when I coerce a numeric value to a character: I 
+loose
+
+some decimal digits after the decimal point.
+
+Example:
+
+> x <- c(3.45,3.40)
+> as.character(x)
+
+[1] "3.45" "3.4"
+
+I really want to keep the 2 decimal digits. Does someone can give me a
+tip-off?
+
+I had also noted that when I export some data frame to an ASCII file, 
+I
+loose the null decimal digit (with numeric data). An explanation and 
+may be
+
+a solution?
+
+Thank a lot,
+
+Annaële Sanquer
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+Disclaimer: http://www.kuleuven.be/cwis/email_disclaimer.htm
+
+From rmh at temple.edu  Tue Sep  6 12:54:51 2005
+From: rmh at temple.edu (Richard M. Heiberger)
+Date: Tue, 06 Sep 2005 08:54:51 -0400
+Subject: Re: Coercing to character
+Message-ID: <dfe84f97.378c7d8c.81a0a00@po-d.temple.edu>
+
+> x <- c(3.45,3.40)
+> format(x, nsmall=2)
+[1] "3.45" "3.40"
+> exportData(c(3.45, 3.40, .40), file="tmp.txt")
+[1] 3
+> exportData(c(3.45, 3.40, .40), file="tmp.txtf", type="FASCII", format="%5.2")
+Warning messages:
+  The 'colNames' argument of exportData() is ignored for this export file
+        type. Column names will NOT be exported.
+         in: openDataForWrite(file = file, type = type, keep = keep, drop =
+        drop, filter =  ....
+[1] 3
+> 
+
+exportData is designed for machine legibility.  The trailing 0 and the lead 0
+are redundant.  Since you have a specific format of people legibility as your 
+goal,
+it is necessary to tell the program about your requirements.
+
+Rich
+
+From yang_eric9 at yahoo.com  Wed Sep  7 10:43:26 2005
+From: yang_eric9 at yahoo.com (Eric yang)
+Date: Wed, 07 Sep 2005 03:43:26 -0700
+Subject: writing to Excel files
+Message-ID: <20050907104326.68420.qmail@web33904.mail.mud.yahoo.com>
+
+ 
+
+Dear all,
+
+ 
+
+I'm writing SPLUS objects to various sheets in Excel files. I'm using the commands call.ole.method to define the range and set.ole.property to write the data, i.e.
+
+ 
+
+pRange <- call.ole.method(pSheet, "Range", target.ranges)
+
+set.ole.property(pRange, list(Value=x)
+
+ 
+
+where target.ranges are the range of cells to write the data x to.
+
+ 
+
+Does anyone know how to change the colour of the data to be written to the Excel files and how to change the background colour of the cells as well?
+
+ 
+
+Thanks in advance for any help.
+
+ 
+
+Eric 
+
+ 
+
+ 
+
+		 Click here to donate to the Hurricane Katrina relief effort.
+
+From mullodi at yahoo.fr  Wed Sep  7 07:52:01 2005
+From: mullodi at yahoo.fr (Odile)
+Date: Wed, 07 Sep 2005 09:52:01 +0200
+Subject: cv.tree in a function
+Message-ID: <20050907075201.47222.qmail@web32812.mail.mud.yahoo.com>
+
+Hello,
+
+My s-plus programm does not work and I do not know why! The problem may come from the function cv.tree.
+
+ 
+
+Here is my function :
+
+ 
+
+"bagging"<-
+
+function(learning,test)
+
+{
+
+n <- nrow(learning)
+
+m <- nrow(test)
+
+K <- 25
+
+predi <- matrix(nrow = m, ncol = K)
+
+arbre <- tree(learning)
+
+cval <- cv.tree(arbre FUN = prune.tree)  # It stops here!
+
+print("here") # That is not printed...
+
+for (i in 1:K){
+
+XXX <- learning[sample(n,n,T),]
+
+arb <- tree(XXX,control=tree.control(nrow(learning),mindev=0.005))
+
+cval <- cv.tree(arb, FUN = prune.tree)
+
+mi <- min(cval$dev)
+
+p <- min(cval$size[cval$dev==mi]) # (number of nodes when the deviance is min) 
+
+elag <- prune.tree(arb, best=p)
+
+predi[,i] <- predict.tree(elag,newdata=test)
+
+}
+
+pred <- rowMeans(predi)
+
+errors(pred,test[,1])
+
+}
+
+bagging(app1,test1)
+
+S-plus reply is : 
+
+"Error: Object "learning" not found" 
+
+or if I just run what is inside for {}, I get "missing values are not allowed"
+
+app1 and test1 are dataframes I get with the funtion read.table and they do not contain any missing values. Actually, if I type :
+
+arbre <- tree(app1)
+
+cval <- cv.tree(arbre, FUN = prune.tree) 
+
+in the command window, it works (cval is calculated).
+
+Thanks for your help,
+
+odile.
+
+		 
+Appel audio GRATUIT partout dans le monde avec le nouveau Yahoo! Messenger
+ 
+Téléchargez le ici ! 
+ 
+
+From TzamouranisY at LouisDreyfus.com  Wed Sep  7 14:00:15 2005
+From: TzamouranisY at LouisDreyfus.com
+Date: Wed, 07 Sep 2005 10:00:15 -0400
+Subject: Changing a read-only data frame to read/write
+Message-ID: <OF31E45A50.B70DBC97-ON85257075.004CBF58-85257075.004CED94@ldcorp.com>
+
+I need to change a data frame from read-only to read-write.
+
+Doing this through the GUI will not do it in my case - it has to be done through code.
+
+Any ideas how to do this?
+
+I tried simple things such as "as.data.frame" and reassigning it to a new name but failed.
+
+Thanks,
+
+Yannis Tzamouranis
+
+From kingroi at hotmail.com  Wed Sep  7 16:55:39 2005
+From: kingroi at hotmail.com (paul king)
+Date: Wed, 07 Sep 2005 16:55:39 +0000
+Subject: Re: Course***R/Splus Programming Techniques***New York, September 2005
+Message-ID: <BAY107-F214918383E0C3F24BFC235B0A60@phx.gbl>
+
+FYI
+
+XLSolutions Corporation (www.xlsolutions-corp.com) is proud to
+announce  2-day "R/S-plus Fundamentals and Programming
+Techniques" in New York City.
+www.xlsolutions-corp.com/Rfund.htm
+
+**** New York City ------------------------ September 22nd-23rd, 2005
+
+Reserve your seat now at the early bird rates!
+Payment due AFTER the class
+
+Course Description:
+
+This two-day beginner to intermediate R/S-plus course focuses on a
+broad spectrum of topics, from reading raw data to a comparison of R
+and S. We will learn the essentials of data manipulation, graphical
+visualization and R/S-plus programming. We will explore statistical
+data analysis tools,including graphics with data sets. How to enhance
+your plots, build your own packages (librairies) and connect via
+ODBC,etc.
+We will perform some statistical modeling and fit linear regression
+models. Participants are encouraged to bring data for interactive
+sessions
+
+With the following outline:
+
+- An Overview of R and S
+- Data Manipulation and Graphics
+- Using Lattice Graphics
+- A Comparison of R and S-Plus
+- How can R Complement SAS?
+- Writing Functions
+- Avoiding Loops
+- Vectorization
+- Statistical Modeling
+- Project Management
+- Techniques for Effective use of R and S
+- Enhancing Plots
+- Using High-level Plotting Functions
+- Building and Distributing Packages (libraries)
+- Connecting; ODBC, Rweb, Orca via sockets and via Rjava
+
+Interested in R/Splus Advanced course? email us.
+
+Email us for group discounts.
+Email Sue Turner: sue at xlsolutions-corp.com
+Phone: 206-686-1578
+Visit us: www.xlsolutions-corp.com/training.htm
+Please let us know if you and your colleagues are interested in this
+classto take advantage of group discount. Register now to secure your
+seat!
+
+Interested in R/Splus Advanced course? email us.
+
+Cheers,
+Elvis Miller, PhD
+Manager Training.
+XLSolutions Corporation
+206 686 1578
+www.xlsolutions-corp.com
+elvis at xlsolutions-corp.com
+
+_________________________________________________________________
+
+Don?t just search. Find. Check out the new MSN Search! 
+http://search.msn.click-url.com/go/onm00200636ave/direct/01/
+
+From TzamouranisY at LouisDreyfus.com  Wed Sep  7 19:31:32 2005
+From: TzamouranisY at LouisDreyfus.com
+Date: Wed, 07 Sep 2005 15:31:32 -0400
+Subject: Re: Changing a read-only data frame to read/write
+Message-ID: <OFB4A5D696.2F822567-ON85257075.006B20AB-85257075.006B420E@ldcorp.com>
+
+While the original question did not find an answer, the problem was solved by checking for columns of class 'named' and changing them to numeric.
+
+This ensures that the data frame will be writeable.
+
+Nevertheless, I am still unsure if there is a way to change a data frame to writeable from the command line.
+
+YT
+
+TzamouranisY at LouisDreyfus.com
+
+Sent by: s-news-owner at lists.biostat.wustl.edu
+09/07/2005 10:00 AM
+
+        
+
+        To:        s-news at lists.biostat.wustl.edu
+
+        cc:        
+
+        Subject:        [S] Changing a read-only data frame to read/write
+
+I need to change a data frame from read-only to read-write. 
+
+Doing this through the GUI will not do it in my case - it has to be done through code. 
+
+Any ideas how to do this? 
+
+I tried simple things such as "as.data.frame" and reassigning it to a new name but failed. 
+
+Thanks, 
+
+Yannis Tzamouranis
+
+From mullodi at yahoo.fr  Wed Sep  7 21:16:42 2005
+From: mullodi at yahoo.fr (Odile)
+Date: Wed, 07 Sep 2005 23:16:42 +0200
+Subject: Re: cv.tree in a function
+In-Reply-To: <431ED4D0.4080704@pburns.seanet.com>
+References: <431ED4D0.4080704@pburns.seanet.com>
+Message-ID: <20050907211642.16295.qmail@web32801.mail.mud.yahoo.com>
+
+Thanks for your help, I'll try this. S poetry seems to
+be a very interesting guide.
+
+Of course, there is a comma here :
+cv.tree(arbre, FUN = prune.tree)
+
+Just a mistake in the copy-paste procedure...
+
+--- Patrick Burns <pburns at pburns.seanet.com> a écrit :
+
+> It should work if you assign 'learning' to frame 1.
+> S Poetry explains this -- I think mostly in the
+> chapter
+> on Formulas.
+> 
+> Patrick Burns
+> patrick at burns-stat.com
+> +44 (0)20 8525 0696
+> http://www.burns-stat.com
+> (home of S Poetry and "A Guide for the Unwilling S
+> User")
+> 
+> Odile wrote:
+> 
+> > Hello,
+> > My s-plus programm does not work and I do not know
+> why! The problem 
+> > may come from the function cv.tree.
+> >  
+> > Here is my function :
+> >  
+> >
+> > "bagging"<-
+> >
+> > function(learning,test)
+> >
+> > {
+> >
+> > n <- nrow(learning)
+> >
+> > m <- nrow(test)
+> >
+> > K <- 25
+> >
+> > predi <- matrix(nrow = m, ncol = K)
+> >
+> > arbre <- tree(learning)
+> >
+> > cval <- cv.tree(arbre FUN = prune.tree)  # It
+> stops here!
+> >
+> > print("here") # That is not printed...
+> >
+> > for (i in 1:K){
+> >
+> > XXX <- learning[sample(n,n,T),]
+> >
+> > arb <-
+>
+tree(XXX,control=tree.control(nrow(learning),mindev=0.005))
+> >
+> > cval <- cv.tree(arb, FUN = prune.tree)
+> >
+> > mi <- min(cval$dev)
+> >
+> > p <- min(cval$size[cval$dev==mi]) # (number of
+> nodes when the deviance 
+> > is min)
+> >
+> > elag <- prune.tree(arb, best=p)
+> >
+> > predi[,i] <- predict.tree(elag,newdata=test)
+> >
+> > }
+> >
+> > pred <- rowMeans(predi)
+> >
+> > errors(pred,test[,1])
+> >
+> > }
+> >
+> > bagging(app1,test1)
+> >
+> > S-plus reply is :
+> >
+> > "Error: Object "learning" not found"
+> >
+> > or if I just run what is inside for {}, I get
+> "missing values are not 
+> > allowed"
+> >
+> > app1 and test1 are dataframes I get with the
+> funtion read.table and 
+> > they do not contain any missing values. Actually,
+> if I type :
+> >
+> > arbre <- tree(app1)
+> >
+> > cval <- cv.tree(arbre, FUN = prune.tree) 
+> >
+> > in the command window, it works (cval is
+> calculated).
+> >
+> > Thanks for your help,
+> >
+> > odile.
+> >
+> >
+> 
+
+        
+
+        
+                
+___________________________________________________________________________ 
+Appel audio GRATUIT partout dans le monde avec le nouveau Yahoo! Messenger 
+Téléchargez cette version sur http://fr.messenger.yahoo.com
+
+From simona.costanzo at ubs.com  Thu Sep  8 08:22:33 2005
+From: simona.costanzo at ubs.com
+Date: Thu, 08 Sep 2005 09:22:33 +0100
+Subject: subscripting factors
+Message-ID: <B4DB35647B608744A45D3150D27F4B3624E5AF@NLDNC102PEX1.ubsw.net>
+
+Hi,
+
+in a data.frame of the form
+
+  X1 X2 
+1  A  1
+2  A  2
+3  B  3
+4  C  4
+>
+
+I would like to extract elements of X2, with X1="A". Where X1 is a factor and 
+X2 is a numeric vector.
+
+Your help is very much appreciated
+
+Thank you and kind regards,
+
+Simona
+
+Visit our website at http://www.ubs.com
+
+This message contains confidential information and is intended only
+for the individual named.  If you are not the named addressee you
+should not disseminate, distribute or copy this e-mail.  Please
+notify the sender immediately by e-mail if you have received this
+e-mail by mistake and delete this e-mail from your system.
+
+E-mail transmission cannot be guaranteed to be secure or error-free
+as information could be intercepted, corrupted, lost, destroyed,
+arrive late or incomplete, or contain viruses.  The sender therefore
+does not accept liability for any errors or omissions in the contents
+of this message which arise as a result of e-mail transmission.  If
+verification is required please request a hard-copy version.  This
+message is provided for informational purposes and should not be
+construed as a solicitation or offer to buy or sell any securities or
+related financial instruments.
+
+From simona.costanzo at ubs.com  Thu Sep  8 08:40:21 2005
+From: simona.costanzo at ubs.com
+Date: Thu, 08 Sep 2005 09:40:21 +0100
+Subject: FW: subscripting factors
+Message-ID: <B4DB35647B608744A45D3150D27F4B3624E5B3@NLDNC102PEX1.ubsw.net>
+
+Thanks to all who respoded so promptly.
+
+I received similar answers... here is one of them
+
+-----Original Message-----
+From: Chalvatzis, Dimitrios (Energy Wholesale)
+[mailto:Dimitrios.Chalvatzis at eon-uk.com]
+Sent: 08 September 2005 09:32
+To: Costanzo, Simona
+Subject: RE: [S] subscripting factors
+
+Simona,
+
+If your data frame is named DF then
+
+DF$X2[DF$X1=="A"]
+
+Dimitrios Chalvatzis 
+Risk Analyst 
+Energy Wholesale/Risk Policies & Methods 
+T +44 (0)24 7642 5429 
+F +44 (0)24 7642 5479 
+Dimitrios.Chalvatzis at eon-uk.com 
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of
+simona.costanzo at ubs.com
+Sent: Thursday, September 08, 2005 9:23 AM
+To: s-news at lists.biostat.wustl.edu
+Subject: [S] subscripting factors
+
+Hi,
+
+in a data.frame of the form
+
+  X1 X2 
+1  A  1
+2  A  2
+3  B  3
+4  C  4
+>
+
+I would like to extract elements of X2, with X1="A". Where X1 is a
+factor and X2 is a numeric vector.
+
+Your help is very much appreciated
+
+Thank you and kind regards,
+
+Simona
+
+Visit our website at http://www.ubs.com
+
+This message contains confidential information and is intended only
+for the individual named.  If you are not the named addressee you
+should not disseminate, distribute or copy this e-mail.  Please
+notify the sender immediately by e-mail if you have received this
+e-mail by mistake and delete this e-mail from your system.
+
+E-mail transmission cannot be guaranteed to be secure or error-free
+as information could be intercepted, corrupted, lost, destroyed,
+arrive late or incomplete, or contain viruses.  The sender therefore
+does not accept liability for any errors or omissions in the contents
+of this message which arise as a result of e-mail transmission.  If
+verification is required please request a hard-copy version.  This
+message is provided for informational purposes and should not be
+construed as a solicitation or offer to buy or sell any securities or
+related financial instruments.
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+___________________________ Disclaimer Notice ____________________
+This message and any attachments are confidential and should only 
+be read by those to whom they are addressed. If you are not the 
+intended recipient, please contact us, delete the message from your
+computer and destroy any copies. Any distribution or copying without
+our prior permission is prohibited.
+
+Internet communications are not always secure and therefore the 
+E.ON Group does not accept legal responsibility for this message.
+The recipient is responsible for verifying its authenticity before
+acting on the contents. Any views or opinions presented are solely
+those of the author and do not necessarily
+represent those of the E.ON Group.
+
+E.ON UK plc, Westwood Way, Westwood Business Park,
+Coventry, CV4 8LG.
+Registered in England & Wales No. 2366970
+
+E.ON UK Trading Ltd, Westwood Way, Westwood Business Park,
+Coventry, CV4 8LG
+Registered in England & Wales No. 4178314
+
+E.ON UK Trading Ltd is regulated by the Financial Services 
+Authority to carry out investment activities.
+
+Telephone +44 (0) 2476 42 4000
+Fax +44 (0) 2476 42 5432
+
+Visit our website at http://www.ubs.com
+
+This message contains confidential information and is intended only
+for the individual named.  If you are not the named addressee you
+should not disseminate, distribute or copy this e-mail.  Please
+notify the sender immediately by e-mail if you have received this
+e-mail by mistake and delete this e-mail from your system.
+
+E-mail transmission cannot be guaranteed to be secure or error-free
+as information could be intercepted, corrupted, lost, destroyed,
+arrive late or incomplete, or contain viruses.  The sender therefore
+does not accept liability for any errors or omissions in the contents
+of this message which arise as a result of e-mail transmission.  If
+verification is required please request a hard-copy version.  This
+message is provided for informational purposes and should not be
+construed as a solicitation or offer to buy or sell any securities or
+related financial instruments.
+
+From kimmerer at sfsu.edu  Thu Sep  8 14:19:45 2005
+From: kimmerer at sfsu.edu (Wim Kimmerer)
+Date: Thu, 08 Sep 2005 07:19:45 -0700
+Subject: Re: Changing a read-only data frame to read/write
+Message-ID: <6.2.1.2.2.20050908071053.01dc62e0@sfsu.edu>
+
+The "named" data class has been a thorn in my side (and probably everybody 
+else's) since it was introduced in V.6.  I was disappointed that it has not 
+changed in v.7.  That, coupled with several extra bugs and the lack of 
+response by Insightful to my request to lighten up on the licensing rules, 
+led me to go back to V. 6.
+
+You have to use "as.numeric" to get rid of the named class before you can 
+put it in a data frame if you want to avoid that "read-only" 
+problem.  Sure, it is a small thing, but it is very annoying and a frequent 
+source of error (since nowhere are  the rules written about what produces a 
+named class and what doesn't).  Plus it is not mentioned in the 
+documentation as far as I know.
+
+Wim
+
+======================
+
+Dr. Wim Kimmerer
+
+Research Professor of Biology
+
+Romberg Tiburon Center
+
+San Francisco State University
+
+3152 Paradise Drive
+
+Tiburon CA 94920
+
+Ph. (415) 338-3515
+
+Fax (415) 435-7120
+
+http://online.sfsu.edu/~kimmerer/ 
+
+From dataanalytics at earthlink.net  Fri Sep  9 17:13:00 2005
+From: dataanalytics at earthlink.net (Walter R. Paczkowski)
+Date: Fri, 09 Sep 2005 17:13:00 +0000
+Subject: writing to a graphsheet
+Message-ID: <E1EDmRQ-0001bY-Pf@smtpauth09.mail.atl.earthlink.net>
+
+Hi,
+
+I have a question on something I'd like to do, but have a feeling that it can't 
+be done.  I wrote a simple function to generate HTML code to produce a table.  
+The function just uses cat with append = T repeatedly to output the correct 
+HTML code to a file which I open in IE  The function produces a nice table 
+(simple, but adequate) which I cut and paste into PowerPoint for my clients.  
+When there are many tables, the production of each table, one at a time, 
+becomes a pain.  I'd like to automate that production,  which is easy to do by 
+stacking the function calls in another function and just calling that second 
+function once.  But rather than have the resulting tables go to a file which I 
+open with IE, I'd like to have the tables go to a graphsheet because I can then 
+just export this to PowerPoint directly.  Can I write the tables to a 
+graphsheet?  I don't think so, but who knows?  Any thoughts?
+
+I'm using S-Plus 7 on Windows XP.
+
+Thanks,
+
+Walt  
+________________________
+
+Walter R. Paczkowski, Ph.D.
+Data Analytics Corp.
+44 Hamilton Lane
+Plainsboro, NJ  08536
+(V) 609-936-8999
+(F) 609-936-3733
+
+From parkhurs at imap.iu.edu  Sat Sep 10 22:42:02 2005
+From: parkhurs at imap.iu.edu (David Parkhurst)
+Date: Sat, 10 Sep 2005 17:42:02 -0500
+Subject: printing a series of stem plots
+Message-ID: <4323613A.1020707@imap.iu.edu>
+
+I want to generate a series of different datasets to send to students in 
+a stats class, so each group works with different data.  One of their 
+assignments is to produce a stemplot (by hand), and I would like, as I 
+generate the data, to print out a stemplot of each dataset for my 
+teaching assistant to use in grading.
+
+So, is there a way within a loop to create a dataset 
+(x<-rlnorm(30,log(10),0.7)), then to stemplot that, and then to have 
+that stemplot printed, or saved to a file?
+
+Thanks for help.
+
+Dave Parkhurst
+
+From rmh at temple.edu  Sun Sep 11 02:36:15 2005
+From: rmh at temple.edu (Richard M. Heiberger)
+Date: Sat, 10 Sep 2005 22:36:15 -0400
+Subject: Re: printing a series of stem plots
+Message-ID: <d0400432.39e70553.81ee300@po-d.temple.edu>
+
+N <- 20
+
+x <- matrix(rlnorm(30*N, log(10), 0.7),
+            30, N)
+
+for (i in 1:N) {
+  cat("\n\nColumn",i,"\n")
+  stem(x[,i])
+}
+
+From xao_ping at yahoo.com  Sun Sep 11 23:25:49 2005
+From: xao_ping at yahoo.com (Xao Ping)
+Date: Sun, 11 Sep 2005 16:25:49 -0700
+Subject: absolutele the fastest computer for S=
+Message-ID: <20050911232549.71400.qmail@web54002.mail.yahoo.com>
+
+Dear All:
+
+I need your urgent advise. My lab asked me to provide the specification of absolutely the best desktop computer currently available on the market, which would be able to do the fastest S+6 & 7 job. My colleagues would like (at this point) to avoid  Unix boxes. This requirement may seem, I believe, unreasonable to many of you, but the thing is that we need to cope with a very big and urgent project, and our people simply do not have time to study anything new. The emphasis is on speed of computation, not on the size of data, although the gigabyte size data will be pretty typical . Please give me your recommendations/experiences ASAP. I've heard something about "dual core" or "multiple core" processors, but not quite sure what it is and whether or not current versions of S+ are able to work with this new staff. I have also heard about 3.8 GigaHerz and even 6.2 GigaHerz processors but do not have any details. The question poped ou
+ t quite
+ unexpectedly. Please, do not hesitate to share any experience, whatever it is. My own level in understanding hardware issues is miserable.
+
+Thank you in advance
+
+ 
+
+Xao Ping
+
+ 
+
+R&R Pharmakinetics
+
+Taiwan  
+
+__________________________________________________
+Do You Yahoo!?
+Tired of spam?  Yahoo! Mail has the best spam protection around 
+http://mail.yahoo.com 
+
+From TzamouranisY at LouisDreyfus.com  Mon Sep 12 12:52:38 2005
+From: TzamouranisY at LouisDreyfus.com
+Date: Mon, 12 Sep 2005 08:52:38 -0400
+Subject: Re: Changing a read-only data frame to read/write
+Message-ID: <OFB5B334D5.E7EAC09F-ON8525707A.00447AF7-8525707A.0046BCD9@ldcorp.com>
+
+Thank you all for your suggestions (listed below).
+
+First off, the problem with creating the read-only frame was an unexpected "named" class for one of the columns of my data frame, as I noted before.  I am not clear why "named" and not "double", given that all the items that rowMeans, colMeans, min, max and mean operated on to create the additional columns in the original frame were doubles.  Wrapping the results of these functions with an "as.double" resolved the issue and the data frame was now read/write.
+
+Steve Smith (and others) suggested writing a function to check that none of the columns were of class named
+
+One such function, contributed by Brad Biggerstaff, would be:
+
+if (any(nmd <- sapply(db, class) == "named")) 
+
+db <- convert.col.type(db, which(nmd),"numeric")
+
+Thanks to all for their suggestions (I hope that I have not skipped any names but some email glitch has cost me some loss of communications which I tried to fill through notes I had).
+
+Yannis Tzamouranis
+
+--------------------
+
+Paul's suggestion:
+attach(X,pos=2)
+database.status(where=2) <- "readwrite"
+
+--------------
+
+Brad Biggerstaff:
+
+It's not clear (to me) that a particular data frame is read-only or read-write.  But this is true for databases (in particular, folders attached in the search path).  To change the "status" of a database named db to read-write, use
+
+ 
+
+database.status("db") <- "readwrite"
+
+ 
+
+This should permit writing to objects in db.  Now, should there be a read-only file in there, as restricted by the system, not S-Plus, you might need, it seems, to execute a system command to change that; but I suspect that this change might not be visible to the current S-Plus session.  (I'm only guessing on this part.)
+
+ 
+
+Other utilities for databases can be found on the (common) help page for database.status.  There are also some other database functions for manipulating databases: see the help page for dbread, for example.
+
+--------------------
+
+Wim Kimmerer:
+
+The "named" data class has been a thorn in my side (and probably everybody 
+
+else's) since it was introduced in V.6.  I was disappointed that it has not 
+
+changed in v.7.  That, coupled with several extra bugs and the lack of 
+
+response by Insightful to my request to lighten up on the licensing rules, 
+
+led me to go back to V. 6.
+
+You have to use "as.numeric" to get rid of the named class before you can 
+
+put it in a data frame if you want to avoid that "read-only" 
+
+problem.  Sure, it is a small thing, but it is very annoying and a frequent 
+
+source of error (since nowhere are  the rules written about what produces a 
+
+named class and what doesn't).  Plus it is not mentioned in the 
+
+documentation as far as I know.
+
+----------------
+
+-----Original Message-----
+
+From: TzamouranisY at LouisDreyfus.com [mailto:TzamouranisY at LouisDreyfus.com] 
+
+Sent: Wednesday, September 07, 2005 4:00 PM
+
+To: s-news at lists.biostat.wustl.edu
+
+Subject: Changing a read-only data frame to read/write
+
+I need to change a data frame from read-only to read-write. 
+
+Doing this through the GUI will not do it in my case - it has to be done through code. 
+
+Any ideas how to do this? 
+
+I tried simple things such as "as.data.frame" and reassigning it to a new name but failed. 
+
+Thanks, 
+
+Yannis Tzamouranis
+
+From devens8765 at yahoo.com  Tue Sep 13 09:23:27 2005
+From: devens8765 at yahoo.com (Dave Evens)
+Date: Tue, 13 Sep 2005 02:23:27 -0700
+Subject: finding substrings
+Message-ID: <20050913092327.19791.qmail@web61324.mail.yahoo.com>
+
+Dear all,
+
+I would like to find the exact match of a
+substring(/sub-vector) within a string (/vector). For
+example, suppose I have
+
+x <- c(F, F, F, T, T, F, F, T, T, F, F, T, T, T, F, F,
+F, F, F, T, T, T, F, F, T, T, F, F, T, T, T)
+
+y <- c(F, F, T, T, F)
+
+What I would like to do is find the exact match of y
+in x with possible overlapping, i.e. 
+
+return back
+
+2 6 23
+
+I couldn't get it to work with matchList.
+
+Thanks for any help in advance.
+
+Dave
+
+                
+__________________________________ 
+Yahoo! Mail - PC Magazine Editors' Choice 2005 
+http://mail.yahoo.com
+
+From sundar.dorai-raj at pdf.com  Tue Sep 13 09:40:30 2005
+From: sundar.dorai-raj at pdf.com (Sundar Dorai-Raj)
+Date: Tue, 13 Sep 2005 04:40:30 -0500
+Subject: Re: finding substrings
+In-Reply-To: <20050913092327.19791.qmail@web61324.mail.yahoo.com>
+References: <20050913092327.19791.qmail@web61324.mail.yahoo.com>
+Message-ID: <43269E8E.3040304@pdf.com>
+
+Dave Evens wrote:
+> Dear all,
+>
+> I would like to find the exact match of a
+> substring(/sub-vector) within a string (/vector). For
+> example, suppose I have
+>
+> x <- c(F, F, F, T, T, F, F, T, T, F, F, T, T, T, F, F,
+> F, F, F, T, T, T, F, F, T, T, F, F, T, T, T)
+>
+> y <- c(F, F, T, T, F)
+>
+> What I would like to do is find the exact match of y
+>
+> in x with possible overlapping, i.e.
+>
+>
+>
+> return back
+>
+> 2 6 23
+>
+> I couldn't get it to work with matchList.
+>
+> Thanks for any help in advance.
+>
+> Dave
+How about:
+
+x <- paste(as.numeric(x), collapse = "")
+y <- paste(as.numeric(y), collapse = "")
+
+loc <- NULL
+while((indx <- regexpr(y, x)) > 0) {
+  loc <- c(loc, indx + if(length(loc)) loc[length(loc)] else 0)
+  x <- substring(x, indx + 1)
+}
+
+loc
+
+You'll have to modify this if your vectors are not single characters or 
+cannot pass as.numeric.
+
+HTH,
+
+--sundar
+
+From dimitris.rizopoulos at med.kuleuven.be  Tue Sep 13 10:10:42 2005
+From: dimitris.rizopoulos at med.kuleuven.be (Dimitris Rizopoulos)
+Date: Tue, 13 Sep 2005 12:10:42 +0200
+Subject: Re: finding substrings
+References: <20050913092327.19791.qmail@web61324.mail.yahoo.com>
+Message-ID: <003701c5b84b$66646280$0540210a@www.domain>
+
+you could try something like this:
+
+x <- paste(as.numeric(x), collapse = "")
+y <- paste(as.numeric(y), collapse = "")
+
+nx <- nchar(x)
+ny <- nchar(y)
+out <- substring(x, seq(1, nx - ny + 1), seq(ny, nx))
+which(!is.na(charmatch(out, y)))
+
+I hope it helps.
+
+Best,
+Dimitris
+
+----
+Dimitris Rizopoulos
+Ph.D. Student
+Biostatistical Centre
+School of Public Health
+Catholic University of Leuven
+
+Address: Kapucijnenvoer 35, Leuven, Belgium
+Tel: +32/16/336899
+Fax: +32/16/337015
+Web: http://www.med.kuleuven.be/biostat/
+    http://www.student.kuleuven.be/~m0390867/dimitris.htm
+
+----- Original Message ----- 
+From: "Dave Evens" <devens8765 at yahoo.com>
+
+To: <s-news at lists.biostat.wustl.edu>
+
+Sent: Tuesday, September 13, 2005 11:23 AM
+
+Subject: [S] finding substrings
+
+> Dear all,
+>
+> I would like to find the exact match of a
+> substring(/sub-vector) within a string (/vector). For
+> example, suppose I have
+>
+> x <- c(F, F, F, T, T, F, F, T, T, F, F, T, T, T, F, F,
+> F, F, F, T, T, T, F, F, T, T, F, F, T, T, T)
+>
+> y <- c(F, F, T, T, F)
+>
+> What I would like to do is find the exact match of y
+> in x with possible overlapping, i.e.
+>
+> return back
+>
+> 2 6 23
+>
+> I couldn't get it to work with matchList.
+>
+> Thanks for any help in advance.
+>
+> Dave
+>
+>
+>
+>
+>
+> __________________________________
+>
+> Yahoo! Mail - PC Magazine Editors' Choice 2005
+>
+> http://mail.yahoo.com
+>
+> --------------------------------------------------------------------
+>
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+>
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu
+> with
+>
+> the BODY of the message:  unsubscribe s-news
+
+Disclaimer: http://www.kuleuven.be/cwis/email_disclaimer.htm
+
+From Olivier.Renaud at pse.unige.ch  Tue Sep 13 11:36:54 2005
+From: Olivier.Renaud at pse.unige.ch (Olivier Renaud)
+Date: Tue, 13 Sep 2005 13:36:54 +0200
+Subject: Funny bug-ish interaction between Excel and S-Plus when importing a file
+Message-ID: <6.2.1.2.0.20050913133124.01c523b0@mail.pse.unige.ch>
+
+I have found this funny bug-ish interaction between Excel and S-Plus 
+(Professional Edition Version 6.2.1  for Microsoft Windows : 2003)
+
+Suppose you have a excel spreadsheet with the following lines:
+
+        C1      C2
+VRAI    1       4
+TRUE    2       5
+VERO    3       6
+
+I want to import it in S+ with the menu: command equivalent (I only selected 
+NameColAuto = "1"):
+
+> guiImportData(FileName = "F:\\BugTRUE.xls", FileTypes = "Excel Worksheet 
+> (xl?)", TargetDataFrame = "BugTRUExls", TargetStartCol = "<END>", 
+> TargetInsertOverwrite = "Create new data set", NameRowAuto = "Auto", 
+> NameColAuto = "1", StartCol = 1, EndCol = "<END>", StartRow = 1, EndRow = 
+> "<END>", PageNumberAuto = "Auto", StringsAsFactors = T, SortFactorLevels = T, 
+> LabelsAsNumbers = F, CenturyCutoffYear = 1930, KeepOrDropList = "<ALL>", 
+> SeparateDelimiters = T, ASCIIDateInFormat = "dd.MM.yyyy", ASCIITimeInFormat = 
+> "HH:mm:ss", ASCIIDecimalPoint = "Period (.)", ASCIIThousandsSeparator = 
+> "None")
+
+> BugTRUExls
+   C1 C2 
+NA  1  4
+ 1  2  5
+NA  3  6
+
+#(In my original setting I cannot reproduce, all the other names get correct
+# and the TRUE was changed to 1)
+
+#If you save the spreadsheet to text first, this does not happen:
+
+> guiImportData(FileName = "F:\\BugTRUE.txt", FileTypes = "ASCII file - 
+> whitespace delim (asc;dat;txt;prn)", TargetDataFrame = "BugTRUEtxt", 
+> TargetStartCol = "<END>", TargetInsertOverwrite = "Create new data set", 
+> NameRowAuto = "Auto", NameColAuto = "1", StartCol = 1, EndCol = "<END>", 
+> StartRow = 1, EndRow = "<END>", PageNumberAuto = "Auto", StringsAsFactors = 
+> T, SortFactorLevels = T, LabelsAsNumbers = F, CenturyCutoffYear = 1930, 
+> ASCIIDelimiters = "Tabs (\\t) and/or spaces ( )", KeepOrDropList = "<ALL>", 
+> SeparateDelimiters = F, ASCIIDateInFormat = "dd.MM.yyyy", ASCIITimeInFormat = 
+> "HH:mm:ss", ASCIIDecimalPoint = "Period (.)", ASCIIThousandsSeparator = 
+> "None")
+
+> BugTRUEtxt
+     C1 C2 
+VRAI  1  4
+TRUE  2  5
+VERO  3  6
+
+Olivier.Renaud at pse.unige.ch        http://www.unige.ch/~renaud/ 
+Methodology and Data Analysis  -   Section of Psychology - FPSE      
+University of Geneva - 40, Bd du Pont d'Arve - CH-1211 Geneva 4 
+
+From lorenz at usgs.gov  Tue Sep 13 13:51:49 2005
+From: lorenz at usgs.gov (David L Lorenz)
+Date: Tue, 13 Sep 2005 08:51:49 -0500
+Subject: Re: finding substrings
+In-Reply-To: <20050913092327.19791.qmail@web61324.mail.yahoo.com>
+References: <20050913092327.19791.qmail@web61324.mail.yahoo.com>
+Message-ID: <OFE76D8DA4.84C909D3-ON8625707B.004B623D-8625707B.004C2803@usgs.gov>
+
+Dave,
+
+  This is probably best done by
+using the ability of aggregateSeries to compute running statistics.  I
+did not make this a generic function, but with some work, that could be
+done.  Here's the concrete example:
+
+  aggregateSeries(timeSeries(c(F,
+F, F, T, T, F, F, T, T, F, F, T, T, T, F, F,
+
+ F, F, F, T, T, T, F, F, T, T,
+F, F, T, T, T), pos=1:31)
+
+ ,moving=5,FUN=function(x) all(x
+== c(F, F, T, T, F)))@data
+
+  The idea is to create a timeSeries
+object of relative time, do a moving computation of length = the length
+of the test vector, and extract the data, which is a logical vector of
+length 31 - 5 + 1 (in this case). The index numbers that you want can be
+gotten by using which.
+
+  Note that most everything can
+be converted to a timeSeries object (numeric, logical, character, factor,
+more?).
+
+Dave
+
+Dave Evens <devens8765 at yahoo.com>
+
+Sent by: s-news-owner at lists.biostat.wustl.edu
+09/13/2005 04:23 AM
+
+To
+
+s-news at lists.biostat.wustl.edu
+
+cc
+
+Subject
+
+[S] finding substrings
+
+Dear all,
+
+I would like to find the exact match of a
+
+substring(/sub-vector) within a string (/vector). For
+
+example, suppose I have
+
+x <- c(F, F, F, T, T, F, F, T, T, F, F, T, T, T, F, F,
+
+F, F, F, T, T, T, F, F, T, T, F, F, T, T, T)
+
+y <- c(F, F, T, T, F)
+
+What I would like to do is find the exact match of y
+
+in x with possible overlapping, i.e. 
+
+return back
+
+2 6 23
+
+I couldn't get it to work with matchList.
+
+Thanks for any help in advance.
+
+Dave
+
+                
+                 
+
+__________________________________ 
+
+Yahoo! Mail - PC Magazine Editors' Choice 2005 
+
+http://mail.yahoo.com
+
+--------------------------------------------------------------------
+
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+
+the BODY of the message:  unsubscribe s-news
+
+From kingroi at hotmail.com  Tue Sep 13 15:32:23 2005
+From: kingroi at hotmail.com (paul king)
+Date: Tue, 13 Sep 2005 15:32:23 +0000
+Subject: Any S-plus/R doc or manual for SAS user out there?
+In-Reply-To: <6.2.1.2.0.20050913133124.01c523b0@mail.pse.unige.ch>
+References: <6.2.1.2.0.20050913133124.01c523b0@mail.pse.unige.ch>
+Message-ID: <BAY107-F8B9A6E549C4F27B0249CEB09C0@phx.gbl>
+
+Dear list,
+
+I am looking for an Splus or R doc / manual for SAS user.
+
+Thank you in advance. PK
+
+_________________________________________________________________
+
+Express yourself instantly with MSN Messenger! Download today - it's FREE! 
+http://messenger.msn.click-url.com/go/onm00200471ave/direct/01/
+
+From f.harrell at vanderbilt.edu  Tue Sep 13 16:40:07 2005
+From: f.harrell at vanderbilt.edu (Frank E Harrell Jr)
+Date: Tue, 13 Sep 2005 11:40:07 -0500
+Subject: Re: Any S-plus/R doc or manual for SAS user out there?
+In-Reply-To: <BAY107-F8B9A6E549C4F27B0249CEB09C0@phx.gbl>
+References: <BAY107-F8B9A6E549C4F27B0249CEB09C0@phx.gbl>
+Message-ID: <432700E7.5040406@vanderbilt.edu>
+
+paul king wrote:
+> Dear list,
+>
+> I am looking for an Splus or R doc / manual for SAS user.
+>
+> Thank you in advance. PK
+
+Somewhat helpful in that regard: 
+http://biostat.mc.vanderbilt.edu/twiki/pub/Main/RS/sintro.pdf
+
+--
+Frank E Harrell Jr   Professor and Chair           School of Medicine
+                     Department of Biostatistics   Vanderbilt University
+
+From seth3116 at gmail.com  Tue Sep 13 17:00:24 2005
+From: seth3116 at gmail.com (Seth O'Beeth)
+Date: Tue, 13 Sep 2005 13:00:24 -0400
+Subject: central limit theorem
+Message-ID: <188150fa050913100059e17884@mail.gmail.com>
+
+Folks:
+
+Please help with quick reference regarding central limit theorem.
+
+It is my undrstanding that 
+
+ 
+
+If {x[i]} i=1,...,N are iid with bounded moments, 
+
+ 
+
+and  
+
+y is a mlutivriate normal with vector of means E(y) and variance-covariance matrix S[n,n]
+
+ 
+
+then the sums sum(x*y) = x[1]*y[1] + x[2]*y[2] + ...+ x[n] * y[n]
+
+are asymtotically (n->inf) normal.
+
+ 
+
+Is this statement correct? 
+
+If yes, then can anybody please provide me with reference on some kind of text book or paper or Internet resource?
+
+ 
+
+thank you in advance
+
+ 
+
+Seth O'Beeth
+
+ 
+
+Statistical Consultant
+
+From william.stewart at rbc.com  Tue Sep 13 17:11:24 2005
+From: william.stewart at rbc.com (Stewart, William)
+Date: Tue, 13 Sep 2005 13:11:24 -0400
+Subject: Error Message in S+7 (Enterprise Developer version)
+Message-ID: <BE129D1A0A253A4BA526C4500064850AFCE659@sew01065.maple.fg.rbc.com>
+
+Hi All,
+
+        I am being plagued by the following error message in the new S+ 7 Workbench interface and was wondering if anyone else has had similar issues.
+
+-------------------- ERROR START --------------------
+
+Unexpected Signal : EXCEPTION_ACCESS_VIOLATION (0xc0000005) occurred at PC=0x8036182
+
+Function=[Unknown.]
+
+Library=D:\Program Files\Insightful\spluz70\java\jre\bin\client\jvm.dll
+
+NOTE: We are unable to locate the function name symbol for the error
+
+      just occurred. Please refer to release documentation for possible
+
+      reason and solutions.
+
+Current Java thread:
+
+        at com.insightful.splus.SplusWinSessionImpl$EvalThread.run(SplusWinSessionImpl.java:703)
+
+... {memory dump removed}
+
+-------------------- ERROR END --------------------
+
+Thanks in advance,
+
+        Will
+
+-------------------------
+
+William A. Stewart
+
+Manager, Operational Risk
+
+RBC Financial Group
+
+william.stewart at rbc.com
+
+phone: 416-974-3019
+
+ <<Stewart, William.vcf>> 
+
+__________________________________________________________________________________________________________________________________
+
+This e-mail may be privileged and/or confidential, and the sender does not waive any related rights and obligations.
+Any distribution, use or copying of this e-mail or the information it contains by other than an intended recipient is unauthorized.
+If you received this e-mail in error, please advise me (by return e-mail or otherwise) immediately.  
+
+Ce courrier électronique est confidentiel et protégé. L'expéditeur ne renonce pas aux droits et obligations qui s'y rapportent.
+Toute diffusion, utilisation ou copie de ce message ou des renseignements qu'il contient par une personne autre que le (les) destinataire(s) désigné(s) est interdite.
+Si vous recevez ce courrier électronique par erreur, veuillez m'en aviser immédiatement, par retour de courrier électronique ou par un autre moyen.
+
+Stewart, William.vcf
+
+Description: Stewart, William.vcf
+
+From william.stewart at rbc.com  Tue Sep 13 18:28:30 2005
+From: william.stewart at rbc.com (Stewart, William)
+Date: Tue, 13 Sep 2005 14:28:30 -0400
+Subject: Re: Error Message in S+7 (Enterprise Developer version)
+Message-ID: <BE129D1A0A253A4BA526C4500064850AFCE65A@sew01065.maple.fg.rbc.com>
+
+A 
+quick follow-up on the message I posted earlier...
+
+ 
+
+In 
+trying to figure out why this was happening I noticed that S+ uses it's own copy 
+of the Java jvm.dll file which appears to be at least a year out of 
+date. Replacing the version of jvm.dll with the current version available from 
+the SUN website seems to have fixed the error.
+
+ 
+
+Will
+
+>   -----Original Message-----
+> Subject: [S] Error Message in S+7
+>   (Enterprise Developer version)
+>
+>
+>
+>   Hi All,
+>
+>           I am
+>   being plagued by the following error message in the new S+ 7 Workbench
+>   interface and was wondering if anyone else has had similar issues.
+>
+>   -------------------- ERROR START
+>   --------------------
+>
+>   Unexpected Signal :
+>   EXCEPTION_ACCESS_VIOLATION (0xc0000005) occurred at PC=0x8036182
+>
+> Function=[Unknown.]
+> Library=D:\Program
+>   Files\Insightful\spluz70\java\jre\bin\client\jvm.dll
+>
+>   NOTE: We are unable to locate the function
+>   name symbol for the error
+>       just occurred. Please refer to release
+>   documentation for possible
+>       reason and solutions.
+>
+>
+>   Current Java thread:
+>
+>         at
+>   com.insightful.splus.SplusWinSessionImpl$EvalThread.run(SplusWinSessionImpl.java:703)
+>
+>
+>   ... {memory dump removed}
+>
+>   -------------------- ERROR END
+>   --------------------
+>
+>   Thanks in advance,
+>
+>           Will
+>
+>   -------------------------
+> William A. Stewart
+> Manager, Operational Risk
+>
+> RBC Financial Group
+>
+> william.stewart at rbc.com
+>
+> phone: 416-974-3019
+>
+>   <<Stewart, William.vcf>>
+>
+> __________________________________________________________________________________________________________________________________
+>
+> This e-mail may be privileged and/or confidential, and the sender does not waive any related rights and obligations.
+> Any distribution, use or copying of this e-mail or the information it contains by other than an intended recipient is unauthorized.
+> If you received this e-mail in error, please advise me (by return e-mail or otherwise) immediately.
+>
+> Ce courrier électronique est confidentiel et protégé. L'expéditeur ne renonce pas aux droits et obligations qui s'y rapportent.
+> Toute diffusion, utilisation ou copie de ce message ou des renseignements qu'il contient par une personne autre que le (les) destinataire(s) désigné(s) est interdite.
+> Si vous recevez ce courrier électronique par erreur, veuillez m'en aviser immédiatement, par retour de courrier électronique ou par un autre moyen.
+__________________________________________________________________________________________________________________________________
+
+This e-mail may be privileged and/or confidential, and the sender does not waive any related rights and obligations.
+Any distribution, use or copying of this e-mail or the information it contains by other than an intended recipient is unauthorized.
+If you received this e-mail in error, please advise me (by return e-mail or otherwise) immediately.  
+
+Ce courrier électronique est confidentiel et protégé. L'expéditeur ne renonce pas aux droits et obligations qui s'y rapportent.
+Toute diffusion, utilisation ou copie de ce message ou des renseignements qu'il contient par une personne autre que le (les) destinataire(s) désigné(s) est interdite.
+Si vous recevez ce courrier électronique par erreur, veuillez m'en aviser immédiatement, par retour de courrier électronique ou par un autre moyen.
+
+Stewart, William.vcf
+
+Description: Stewart, William.vcf
+
+From yiwu21111958 at yahoo.com  Wed Sep 14 02:13:04 2005
+From: yiwu21111958 at yahoo.com (yiwu ye)
+Date: Tue, 13 Sep 2005 19:13:04 -0700
+Subject: numerical Derivative
+Message-ID: <20050914021304.43745.qmail@web52701.mail.yahoo.com>
+
+Dear list,
+
+I have a pair of data x and y, which have a curve
+relationship. How can I caculate the derivative of y
+against x at a certain point of x without knowing the
+function using S+? Any help is highly appreciated.
+
+Yiwu
+
+                
+__________________________________ 
+Yahoo! Mail - PC Magazine Editors' Choice 2005 
+http://mail.yahoo.com
+
+From KINLEY_ROBERT at LILLY.COM  Wed Sep 14 13:24:15 2005
+From: KINLEY_ROBERT at LILLY.COM (Robert Kinley)
+Date: Wed, 14 Sep 2005 14:24:15 +0100
+Subject: non-central t : R v.Splus
+Message-ID: <OF502E8887.DB3685DC-ON8025707C.004426FE-8025707C.0049A6B9@EliLilly.lilly.com>
+
+Hi
+
+For bureaucratic reasons beyond my control
+I need to rewrite an R function (for producing operating characteristic
+curves) as an Splus function  ( version 6 , windows XP ).
+
+The R function makes extensive use of
+the fact that the student's t distribution function  pt()  has
+a non-centrality parameter built in ... sadly that parameter is not present
+in the Splus pt() function .
+
+However, the Splus f distribution function
+pf() does have such a parameter , so I have tried to write my own non-central
+version of pt() based around  pf() , using the relationship between
+the t and F distributions.
+
+Unfortunately my success has been limited
+ ... I can only get correct probabilities for part of the range of
+the quantile space , failing when the quantile becomes small ... and I'm
+beginning to wonder whether it's actually possible to do what I want at
+all , given that the range of x in F(x) is [ 0:Inf ] while that in t(x)
+is [-Inf , Inf ] , and the non-central t  distribution is not symmetric
+...
+
+Do any wiser heads than mine have any
+experience or advice to offer   ... ?
+
+        thanks
+               Bob
+Kinley
+
+From dimitris.rizopoulos at med.kuleuven.be  Wed Sep 14 13:42:10 2005
+From: dimitris.rizopoulos at med.kuleuven.be (Dimitris Rizopoulos)
+Date: Wed, 14 Sep 2005 15:42:10 +0200
+Subject: Re: non-central t : R v.Splus
+References: <OF502E8887.DB3685DC-ON8025707C.004426FE-8025707C.0049A6B9@EliLilly.lilly.com>
+Message-ID: <00d901c5b932$1b014aa0$0540210a@www.domain>
+
+I think that you might find the following usefull:
+
+http://www.biostat.wustl.edu/archives/html/s-news/2002-11/msg00079.html
+
+I hope this helps.
+
+Best,
+Dimitris
+
+----
+Dimitris Rizopoulos
+Ph.D. Student
+Biostatistical Centre
+School of Public Health
+Catholic University of Leuven
+
+Address: Kapucijnenvoer 35, Leuven, Belgium
+Tel: +32/16/336899
+Fax: +32/16/337015
+Web: http://www.med.kuleuven.be/biostat/
+    http://www.student.kuleuven.be/~m0390867/dimitris.htm
+
+----- Original Message ----- 
+From: "Robert Kinley" <KINLEY_ROBERT at LILLY.COM>
+
+To: <s-news at lists.biostat.wustl.edu>; <r-help at stat.math.ethz.ch>
+
+Sent: Wednesday, September 14, 2005 3:24 PM
+
+Subject: [S] non-central t : R v.Splus
+
+> Hi
+>
+> For bureaucratic reasons beyond my control I need to rewrite an R
+> function
+>
+> (for producing operating characteristic curves) as an Splus function
+> (
+>
+> version 6 , windows XP ).
+>
+>
+>
+> The R function makes extensive use of the fact that the student's t
+>
+> distribution function  pt()  has a non-centrality parameter built in
+> ...
+>
+> sadly that parameter is not present in the Splus pt() function .
+>
+>
+>
+> However, the Splus f distribution function pf() does have such a
+> parameter
+>
+> , so I have tried to write my own non-central version of pt() based
+> around
+>
+> pf() , using the relationship between the t and F distributions.
+>
+>
+>
+> Unfortunately my success has been limited  ... I can only get
+> correct
+>
+> probabilities for part of the range of the quantile space , failing
+> when
+>
+> the quantile becomes small ... and I'm beginning to wonder whether
+> it's
+>
+> actually possible to do what I want at all , given that the range of
+> x in
+>
+> F(x) is [ 0:Inf ] while that in t(x) is [-Inf , Inf ] , and the
+>
+> non-central t  distribution is not symmetric ...
+>
+>
+>
+> Do any wiser heads than mine have any experience or advice to offer
+> ...
+>
+> ?
+>
+>
+>
+>        thanks          Bob Kinley
+
+Disclaimer: http://www.kuleuven.be/cwis/email_disclaimer.htm
+
+From jwlbright at yahoo.com  Wed Sep 14 18:27:18 2005
+From: jwlbright at yahoo.com (Jewel Bright)
+Date: Wed, 14 Sep 2005 11:27:18 -0700
+Subject: S-functions in S-PLUS
+Message-ID: <20050914182718.54630.qmail@web80905.mail.scd.yahoo.com>
+
+Dear Colleagues:
+
+ 
+
+I am just wondering,  whether or not anybody in the S-PLUS world did anything with the so called S-functions, the iniversal approximators for non-linear dynamical systems ( in the sprit of Savegeau,  Voit, etc)?
+
+thanks
+
+jewel 
+
+		Yahoo! for Good
+ 
+Click here to donate to the Hurricane Katrina relief effort. 
+
+From timh at insightful.com  Wed Sep 14 19:18:39 2005
+From: timh at insightful.com (Tim Hesterberg)
+Date: Wed, 14 Sep 2005 12:18:39 -0700
+Subject: Re: numerical Derivative
+Message-ID: <SE2KEXCH01tLch9wPiy000000dd@se2kexch01.insightful.com>
+
+"yiwu ye" <yiwu21111958 at yahoo.com> wrote:
+>I have a pair of data x and y, which have a curve
+>relationship. How can I caculate the derivative of y
+>against x at a certain point of x without knowing the
+>function using S+? Any help is highly appreciated.
+
+Is there noise in the data or not?  Do you want to smooth or interpolate?
+
+There are a variety of smoothers in S-PLUS; the predict() method
+for smooth.spline() allows derivatives, I'm not sure about others such
+as loess, lowess, supsmu, ksmooth.
+
+For interpolation, the version of spline() in library(resample)
+allows derivatives.
+
+You might also use the S+FunctionalData library, but that is probably 
+overkill.
+
+resample and FunctionalData are available from
+        www.insightful.com/downloads/libraries
+
+Tim Hesterberg
+
+========================================================
+| Tim Hesterberg       Research Scientist              |
+| timh at insightful.com  Insightful Corp.                |
+| (206)802-2319        1700 Westlake Ave. N, Suite 500 |
+| (206)283-8691 (fax)  Seattle, WA 98109-3012, U.S.A.  |
+|                      www.insightful.com/Hesterberg   |
+========================================================
+Insightful 2005 User Conference
+Princeton, NJ, Oct. 26-27, 2005
+Don't miss the keynote by Dr. Bill Meeker!
+Special Pricing: $199 Commercial/$99 Academic
+www.insightful.com/news_events/2005uc
+
+From chakra.budhathoki at okstate.edu  Wed Sep 14 22:05:20 2005
+From: chakra.budhathoki at okstate.edu (Budhathoki, Chakra)
+Date: Wed, 14 Sep 2005 17:05:20 -0500
+Subject: S-Plus Error message
+Message-ID: <2D3421D57AF3564287969BEE78B13EF9427E5E@EXS2.ad.okstate.edu>
+
+Hi 
+List:
+
+ 
+
+I am 
+trying to use nlsList command with self-staring function SSlogis. I have 
+grouped data with only one grouping factor. But S-Plus returns the 
+following error message:
+
+ 
+
+Problem in split.default(1.:nrow(data), gro..: Group 
+length is 
+
+0 
+but data length > 0 
+
+ 
+
+I 
+don't understand what this means. Could anyone please explain 
+what this error means?
+
+ 
+
+Thanks,
+
+ 
+
+Chakra
+
+From jreid at myriad.com  Wed Sep 14 22:35:24 2005
+From: jreid at myriad.com (Julia Reid)
+Date: Wed, 14 Sep 2005 16:35:24 -0600
+Subject: multiple comparisons for logistic regression
+Message-ID: <4328A5AC.8090809@myriad.com>
+
+Is it valid to use multiple comparisons the results of logistic 
+regression? Multicomp() works on glm objects, but I'm just wondering 
+whether the results are valid. I would appreciate any insight.
+
+Also, there appears to be a bug in this function in SPlus 7 for Unix. A 
+call to multicomp gets the following error:
+
+Problem in multicomp.lm(bull1aov): Couldn't find a function definition 
+for "arg.names"
+
+It works fine in SPlus 6.2.
+
+Thanks to everyone!
+Julia Reid
+
+From yiwu21111958 at yahoo.com  Thu Sep 15 06:35:12 2005
+From: yiwu21111958 at yahoo.com (yiwu ye)
+Date: Wed, 14 Sep 2005 23:35:12 -0700
+Subject: Summary of the answers to numerical derivative
+Message-ID: <20050915063512.38099.qmail@web52714.mail.yahoo.com>
+
+Dear list members,
+
+Yesterday, I asked about how to do numerical
+derivatives.
+Bill Shipley and Tim Hesterber suggested to use
+predict() for smooth.spline(). David Parkhurst
+suggested using a approximation method. They all work
+well and produced exaxtly what I want. Thank you all
+very much. 
+
+Best wishes
+
+Yiwu
+
+                
+__________________________________ 
+Yahoo! Mail - PC Magazine Editors' Choice 2005 
+http://mail.yahoo.com
+
+From Charles.Annis at StatisticalEngineering.com  Thu Sep 15 12:13:33 2005
+From: Charles.Annis at StatisticalEngineering.com (Charles Annis, P.E.)
+Date: Thu, 15 Sep 2005 08:13:33 -0400
+Subject: Re: central limit theorem
+In-Reply-To: <188150fa050913100059e17884@mail.gmail.com>
+References: <188150fa050913100059e17884@mail.gmail.com>
+Message-ID: <20050915121336.A31E1100660E@mailgate.biostat.wustl.edu>
+
+I have a summary with several animated examples
+here: http://www.StatisticalEngineering.com/central_limit_theorem.htm
+
+ 
+
+Charles Annis, P.E.
+
+Charles.Annis at StatisticalEngineering.com
+
+phone: 561-352-9699
+
+eFax:  614-455-3265
+
+http://www.StatisticalEngineering.com
+
+ 
+
+From:
+s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On
+Behalf Of Seth O'Beeth
+
+Sent: Tuesday, September 13, 2005
+1:00 PM
+
+To: s-news at lists.biostat.wustl.edu
+
+Subject: [S] central limit theorem
+
+ 
+
+Folks:
+
+Please help with quick reference regarding central limit theorem.
+
+It is my undrstanding that 
+
+ 
+
+If {x[i]} i=1,...,N are iid with bounded moments, 
+
+ 
+
+and  
+
+y is a mlutivriate normal with vector of means E(y) and
+variance-covariance matrix S[n,n]
+
+ 
+
+then the sums sum(x*y) = x[1]*y[1] + x[2]*y[2] + ...+ x[n] * y[n]
+
+are asymtotically (n->inf) normal.
+
+ 
+
+Is this statement correct? 
+
+If yes, then can anybody please provide me with reference on some kind
+of text book or paper or Internet resource?
+
+ 
+
+thank you in advance
+
+ 
+
+Seth O'Beeth
+
+ 
+
+Statistical Consultant
+
+From yang_eric9 at yahoo.com  Thu Sep 15 13:50:37 2005
+From: yang_eric9 at yahoo.com (Eric yang)
+Date: Thu, 15 Sep 2005 06:50:37 -0700
+Subject: bs() function
+Message-ID: <20050915135037.81021.qmail@web33912.mail.mud.yahoo.com>
+
+Dear all,
+
+ 
+
+For some unknown reason i'm having difficulties accessing the BEST library in version 7.0. Ideally, I would like to use spline() from the resample library in BEST but not currently possible. So i'm trying to replicate this with the bs(), essentially all i'm after is to calculate a column of first dervatives for my x-values at the known y values using a cublic spline. However, not sure how to convert the output matrix from bs() to the desired output (i.e. just a column of first derivatives).
+
+ 
+
+Would appreciate any help on how to specify the bs() options to do the above.
+
+ 
+
+Thanks in advance.
+
+ 
+
+Eric
+
+		Yahoo! for Good
+ 
+Click here to donate to the Hurricane Katrina relief effort. 
+
+From Thom.Burnett at cognigencorp.com  Thu Sep 15 14:37:46 2005
+From: Thom.Burnett at cognigencorp.com (Thom Burnett)
+Date: Thu, 15 Sep 2005 10:37:46 -0400
+Subject: Error when using sas.get()
+Message-ID: <4329873A.7080305@cognigencorp.com>
+
+Hi,
+
+When using sas.get() to import a SAS dataset on our network file system, 
+I get the error message listed below. We have versions of S-Plus on Unix 
+and Windows, and I'm getting errors on all installations. Is this error 
+something generated by S-Plus, SAS, or the operating system? What does 
+it mean?
+
+The input is:
+>getDir <- "/home/me/"
+>getFile <- "myData"
+>sas.get("getDir", "getFile")
+
+S-Plus 6.2 on Unix error is:
+sas: '_temp_.log' - No such file or directory.
+Problem in sas.get(getDir, getFile): SAS job failed with status 256
+Use traceback() to see the call stack
+
+S-Plus 7.0 on Windows 2000 error is:
+
+Invoking SAS for Windows.  Click the SAS icon if you want to watch.
+
+Problem in  - attr(system(...), "exec.status"): Unable to execute 'sas 
+C:\DOCUME~1\tumb\LOCALS~1\Temp\in00310C.tmp.sas -log _temp_.log -icon', 
+exec.status = 2 (The system cannot find the file specified. Full path 
+needed?)
+
+Use traceback() to see the call stack
+
+Thanks in advance,
+Thom
+
+From elvis at xlsolutions-corp.com  Thu Sep 15 20:47:45 2005
+From: elvis at xlsolutions-corp.com
+Date: Thu, 15 Sep 2005 13:47:45 -0700
+Subject: Course***R/Splus Programming *** 6 cities Nationwide / October 2005
+Message-ID: <20050915134745.a108dc04937c07ba67766dad37185406.956243c445.wbe@email.email.secureserver.net>
+
+XLSolutions Corporation (www.xlsolutions-corp.com) is proud to
+announce  2-day "R/S-plus Fundamentals and Programming
+Techniques" in 6 cities.
+www.xlsolutions-corp.com/Rfund.htm
+
+**** Seattle ---------------------------------- October 24th-25th, 2005
+**** San Francisco -----------------------  October 27th-28th, 2005
+
+**** New York City -----------------------  October 20th-21st, 2005
+**** Boston ---------------------------------- October 20th-21st, 2005 
+
+**** Chicago --------------------------------- October 27th-28th, 2005
+**** Washington ---------------------------- October 27th-28th, 2005
+
+Ask for our next class in your city.
+
+Reserve your seat now at the early bird rates!  Payment due AFTER the
+class
+
+Course Description:
+
+This two-day beginner to intermediate R/S-plus course focuses on a
+broad spectrum of topics, from reading raw data to a comparison of R
+and S. We will learn the essentials of data manipulation, graphical
+visualization and R/S-plus programming. We will explore statistical
+data analysis tools,including graphics with data sets. How to enhance
+your plots, build your own packages (librairies) and connect via
+ODBC,etc.
+We will perform some statistical modeling and fit linear regression
+models. Participants are encouraged to bring data for interactive
+sessions
+
+With the following outline:
+
+- An Overview of R and S
+- Data Manipulation and Graphics
+- Using Lattice Graphics
+- A Comparison of R and S-Plus
+- How can R Complement SAS?
+- Writing Functions
+- Avoiding Loops
+- Vectorization
+- Statistical Modeling
+- Project Management
+- Techniques for Effective use of R and S
+- Enhancing Plots
+- Using High-level Plotting Functions
+- Building and Distributing Packages (libraries)
+- Connecting; ODBC, Rweb, Orca via sockets and via Rjava
+
+Interested in R/Splus Advanced course? email us.
+
+Email us for group discounts.
+Email Sue Turner: sue at xlsolutions-corp.com
+Phone: 206-686-1578
+Visit us: www.xlsolutions-corp.com/training.htm
+Please let us know if you and your colleagues are interested in this
+classto take advantage of group discount. Register now to secure your
+seat!
+
+Interested in R/Splus Advanced course? email us.
+
+Cheers,
+Elvis Miller, PhD
+Manager Training.
+XLSolutions Corporation
+206 686 1578
+www.xlsolutions-corp.com
+elvis at xlsolutions-corp.com 
+
+From tplate at blackmesacapital.com  Fri Sep 16 15:13:41 2005
+From: tplate at blackmesacapital.com (Tony Plate)
+Date: Fri, 16 Sep 2005 09:13:41 -0600
+Subject: bug in timeAlign in S-PLUS 7.0
+Message-ID: <432AE125.5060106@blackmesacapital.com>
+
+I noticed that timeAlign() seems broken in S-PLUS 7.0: when given 
+dir=-1, it aligns some days that are the 31st of a month to the next 
+day.  S-PLUS 6.X does not have this problem.
+
+E.g.:
+
+> d <- timeDate("08/31/2000", format="%Y/%02m/%02d %02H:%02M:%02S %z", 
+in.format="[%m[/][.]%d[/][,]%y] [%H[:%M[:%S[.%N]]][%p][[(]%3Z[)]]]", 
+zone="GMT")
+
+> # Wrong behavior in S-PLUS 7.0
+
+> version
+
+Enterprise Developer Version 7.0.3  for Microsoft Windows : 2005
+
+> d
+
+[1] 2000/08/31 00:00:00 GMT
+
+> timeAlign(d, by="days", dir=-1)
+
+[1] 2000/09/01 00:00:00 GMT
+
+> q()
+
+> # Correct behavior in S-PLUS 6.2
+> version
+Professional Edition Version 6.2.1  for Microsoft Windows : 2003
+> d
+[1] 2000/08/31 00:00:00 GMT
+> timeAlign(d, by="days", dir=-1)
+[1] 2000/08/31 00:00:00 GMT
+
+The timeAlign function has changed from 6.2.1 to 7.0, and I found that 
+using the old timeAlign function from 6.2.1 seems to work ok in 7.0 and 
+give correct answers in these cases.
+
+AFAICS, this behavior happens for all days that are the 31st of the 
+month, except for July 31st and Dec 31st.
+
+So, I was wondering if anyone had any insights on the following:
+
+(1) is using the old timeAlign function in 7.0 going to be OK, or are 
+there other functions in 7.0 that depend on some aspects of the new 
+(buggy) timeAlign function?
+
+(2) does anyone know of any other bugs introduced in timeDate handling 
+in 7.0?
+
+-- Tony Plate
+
+PS: in case anyone was wondering, I did submit a report on this to 
+Insightful (some time ago) but I have not heard any response from them.
+
+From jhallman at frb.gov  Fri Sep 16 18:32:00 2005
+From: jhallman at frb.gov
+Date: Fri, 16 Sep 2005 14:32:00 -0400
+Subject: Job opening at the Fed
+Message-ID: <20050916183200.63A6F53583@mail.rsma.frb.gov>
+
+The Money and Reserves Analysis section in the Division of Monetary Affairs at
+the Federal Reserve Board in Washington has an opening for an Information
+Systems Analyst (ISA).  The job listing can be found here: 
+
+http://careers.peopleclick.com/jobposts/Client40_FRBOG/BU1/External/281-813.htm
+
+This is not really a statistics position, although it does involve SAS (and
+possibly R, see below) programming.  Much of the daily work will be in SAS and
+shell scripts, and some SQL experience would also be helpful.  The retiring
+analyst we are trying to replace worked mostly in SAS, but there is quite a
+lot of R (and some Splus) code in the section, and because it is a small shop
+we can be flexible about how things get done.  Make no mistake, whoever
+we hire for this position will have to write and maintain some SAS programs,
+but it is all Basic SAS (data step, procs sql, summary, print, etc...) and not
+the complicated SAS AF GUI programming. (Of course, knowing the harder stuff
+won't hurt your chances.)  Part of the job consists of running and maintaining
+programs that clean up and extrapolate reported data in various ways, as well
+as handling problems that occur.  
+
+Over time I am moving to put more stuff in Smalltalk, R and relational
+databases, so there will be opportunities to work with those environments if
+you want to.  We will consider new graduates who can plausibly claim some SAS
+experience through coursework. 
+
+This is a nice place to work, with good people and a pretty good variety of
+stuff to do.  Our section usually has about 22 members, about half of them
+economists and three or four each of financial analysts, information systems
+analysts, and research assistant.  Since the programming part of the shop is
+quite small, and the section chief is not a programmer, there is quite a bit
+of scope to tailor some of your work to suit your interests.   You do have to
+be able to get along with colleagues and with sometimes-clueless users.  A
+sense of humor goes a long way. 
+
+Jeff Hallman
+Senior Economist
+
+From b.jacobs at pandora.be  Fri Sep 16 18:41:39 2005
+From: b.jacobs at pandora.be (Bert Jacobs)
+Date: Fri, 16 Sep 2005 20:41:39 +0200
+Subject: Stepwise regression
+Message-ID: <20050916184143.BABC338085@hoboe2bl1.telenet-ops.be>
+
+Using S-Plus 6.2 for Windows XP
+
+ 
+
+I'm trying to fit a simple linear regression model:
+
+ 
+
+The issue is the following:
+
+I have a dataframe with several "response variables" (each
+with 200 observations) who should be checked against a number of possible predictors
+variables (approx. 50 dummy variables).
+
+Of the 50 dummy variables I know that only 5 – 10 will have
+significant effect on a response variable, but I don’t know which ones. For
+another predictor I have the same predictor variables, but again I don’t
+know in advance witch ones will be significant. It’s my purpose to have
+at the end an idea (by means of a matrix) witch variables have a significant impact
+on which response variable). The model should not have predictive power and in
+the end I’m only interest in a well calculated intercept. 
+
+ 
+
+In order to figure this out I thought the best way to do it is by using
+a simple stepwise Regression. 
+
+ 
+
+Before integrating a loop over the several “response variables”,
+I’ve tried to fit it on a single response, so:
+
+ 
+
+menuStep(formula = DATA~VAR5+VAR2+VAR3+…VAR55),formula.lower =
+NULL, data = "" na.omit.p = T, direction = "forward", trace.p =
+T, print.short.p = F, print.long.p = T, print.anova.p = F, print.correlation.p
+= F)
+
+ 
+
+but I got an error if I tried to subscript the model:
+
+ 
+
+menuStep(formula = DATA~as.matrix(FINAL[,5:55]),formula.lower = NULL,
+data = "" na.omit.p = T, direction = "forward", trace.p = T,
+print.short.p = F, print.long.p = T, print.anova.p = F, print.correlation.p =
+F)
+
+ 
+
+Any ideas why this doesn’t work and is the menustep function the best
+way to handle my problem.
+
+Comments are well appreciated.
+
+ 
+
+Bert
+
+ 
+
+ 
+
+ 
+
+ 
+
+From Jason.Overstreet at honeywell.com  Fri Sep 16 20:25:41 2005
+From: Jason.Overstreet at honeywell.com (Overstreet, Jason (FL51))
+Date: Fri, 16 Sep 2005 13:25:41 -0700
+Subject: Sub setting data
+Message-ID: <67BDC44EE870F04183CA36084D53EA9B1282B92A@fl51m01a.space.honeywell.com>
+
+I have a list of several hundred observations in one data frame that has several dozen variables.  In a second data frame, I have a subset of the first data frame containing only the serial number (primary key) of the first data frame.  I want to build a data frame that has all the variables in the first data frame, but only for the observations that are listed in the second data frame.  Thanks in advance for any help. 
+
+Jason Overstreet
+
+Statistician
+
+Honeywell DSES
+
+(727) 539-3964 
+
+From rolf at math.unb.ca  Fri Sep 16 20:35:57 2005
+From: rolf at math.unb.ca (Rolf Turner)
+Date: Fri, 16 Sep 2005 17:35:57 -0300
+Subject: Re: Sub setting data
+Message-ID: <200509162035.j8GKZvLD002647@erdos.math.unb.ca>
+
+s1 <- df1$ser.no
+s2 <- df2$ser.no
+ii <- match(s2,s1)
+df.new <- df1[ii,]
+
+                        cheers,
+
+                                Rolf Turner
+                                rolf at math.unb.ca
+
+Original message:
+
+> I have a list of several hundred observations in one data frame that
+> has several dozen variables.  In a second data frame, I have a subset
+> of the first data frame containing only the serial number (primary
+> key) of the first data frame.  I want to build a data frame that has
+> all the variables in the first data frame, but only for the
+> observations that are listed in the second data frame.  Thanks in
+> advance for any help.
+
+From william.stewart at rbc.com  Fri Sep 16 20:43:37 2005
+From: william.stewart at rbc.com (Stewart, William)
+Date: Fri, 16 Sep 2005 16:43:37 -0400
+Subject: Re: Sub setting data
+Message-ID: <BE129D1A0A253A4BA526C4500064850AFCE674@sew01065.maple.fg.rbc.com>
+
+Jason,
+
+ 
+
+    The following should do what you 
+want:
+
+ 
+
+test.df1 <- data.frame(key=c(1:10), 
+data="">test.df2 <- 
+data.frame(to.get=c(2,4,6,8,10))
+
+test.df1[test.df2$to.get,]
+
+ 
+
+------------------------- 
+William A. Stewart 
+Manager, Operational Risk 
+RBC Financial Group 
+william.stewart at rbc.com 
+phone: 416-974-3019 
+
+>   -----Original Message-----
+> From:
+>   s-news-owner at lists.biostat.wustl.edu
+>   [mailto:s-news-owner at lists.biostat.wustl.edu]On Behalf Of Overstreet,
+>   Jason (FL51)
+> Sent: Friday, September 16, 2005 4:26 PM
+> To:
+>   s-news at lists.biostat.wustl.edu
+> Subject: [S] Sub setting
+>   data
+>
+>
+>
+>   I have a list of several hundred observations
+>   in one data frame that has several dozen
+>   variables.  In a second data frame, I have a subset of the first data frame containing only the serial number (primary
+>   key) of the first data frame.  I want to build a data
+>   frame that has all the variables in the first data frame, but only
+>   for the observations that are listed in the second data frame.
+>   Thanks in advance for any help.
+>
+>
+>   Jason
+>   Overstreet
+>
+>   Statistician
+>
+>   Honeywell DSES
+>
+>   (727) 539-3964
+>
+>
+__________________________________________________________________________________________________________________________________
+
+This e-mail may be privileged and/or confidential, and the sender does not waive any related rights and obligations.
+Any distribution, use or copying of this e-mail or the information it contains by other than an intended recipient is unauthorized.
+If you received this e-mail in error, please advise me (by return e-mail or otherwise) immediately.  
+
+Ce courrier électronique est confidentiel et protégé. L'expéditeur ne renonce pas aux droits et obligations qui s'y rapportent.
+Toute diffusion, utilisation ou copie de ce message ou des renseignements qu'il contient par une personne autre que le (les) destinataire(s) désigné(s) est interdite.
+Si vous recevez ce courrier électronique par erreur, veuillez m'en aviser immédiatement, par retour de courrier électronique ou par un autre moyen.
+
+Stewart, William.vcf
+
+Description: Stewart, William.vcf
+
+From davidson at cs.albany.edu  Mon Sep 19 15:13:28 2005
+From: davidson at cs.albany.edu (Ian Davidson)
+Date: Mon, 19 Sep 2005 10:13:28 -0500
+Subject: CFP/CFW/CFT Sixth SIAM International Conference on Data Mining
+In-Reply-To: <KDEHKGODBLIHMLJFKOEIAEGDCHAA.davidson@cs.albany.edu>
+References: <KDEHKGODBLIHMLJFKOEIAEGDCHAA.davidson@cs.albany.edu>
+Message-ID: <KDEHKGODBLIHMLJFKOEIIEGECHAA.davidson@cs.albany.edu>
+
+Apologies if you get this more than once.
+
+-------------------------------------------------------------
+
+        CALL FOR PAPERS, WORKSHOPS AND TUTORIALS
+
+  Sixth SIAM International Conference on Data Mining
+        http://www.siam.org/meetings/sdm06
+
+              Washington, DC, USA
+               April 20-22, 2006
+             Hyatt Regency Bethesda
+               Bethesda, Maryland
+
+The Sixth SIAM International Conference on Data Mining will
+provide  a forum for the presentation of peer-reviewed recent
+results in all aspects of data mining.  The conference program
+will also include keynote talks and tutorials by leading
+experts, as well as several workshops on topics of current
+interest.
+
+Proceedings of the conference will be available both online at
+the SIAM  Web site and in hard copy form.  The online proceedings
+of the last SIAM data mining conference, which was held in
+Newport Beach, CA, is available at:
+http://www.siam.org/meetings/sdm05.
+
+Conference Co-Chairs: David Skillicorn, Queen?s University,
+                            Jaideep Srivastava, University of Minnesota,
+Program Co-Chairs:    Joydeep Ghosh, Univesity of Texas,
+                            Diane Lambert, Lucent Technologies
+
+Program Vice-Chairs
+        Charles Elkan (U.C., San Diego)
+        Johannes Gehrke (Cornell University)
+        Daniel Keim (University of Konstanz)
+        Zoran Obradovic (Temple University)
+        Srini Parthasarathy (Ohio State University)
+        Philip Yu (IBM T.J. Watson)
+
+Paper submission dead-line:                 October 3rd, 2005.
+Tutorial proposal submission dead-line:     October 3rd, 2005.
+Workshop proposal submission dead-line:     October 3rd, 2005.
+
+Further details regarding submission requirements can be found at:
+http://www.siam.org/meetings/sdm06
+
+-----------------------------------------------------------------------
+
+From devens8765 at yahoo.com  Mon Sep 19 15:01:26 2005
+From: devens8765 at yahoo.com (Dave Evens)
+Date: Mon, 19 Sep 2005 08:01:26 -0700
+Subject: apply question
+Message-ID: <20050919150126.9670.qmail@web61319.mail.yahoo.com>
+
+Dear all,
+
+I have a list of arrays and I would like to produce a
+list of all the values in the arrays along with the
+names of the values and the other dimension names. For
+example, I have arrays
+
+my.arrays <- list(array(rnorm(720, 10, 2), 8:10),
+array(rnorm(336, 20, 6), 6:8), array(rnorm(120, 7, 1),
+4:6))
+
+with dimension names
+
+dimnames(my.arrays[[1]]) <- list(LETTERS[1:8],
+LETTERS[6:14], LETTERS[17:26]) 
+dimnames(my.arrays[[2]]) <- list(LETTERS[1:6],
+LETTERS[7:13], LETTERS[14:21])                  
+dimnames(my.arrays[[3]]) <- list(LETTERS[5:8],
+LETTERS[10:14], LETTERS[16:21])
+
+I can produce a list of all the values, values- column
+mean and the name of the value, i.e.
+unlist(lapply(seq(length(my.arrays)), function(k,
+my.arrays) {apply(my.arrays[[k]], c(2,3), function(x)
+{
+                        x.mean <- mean(x)
+                        cbind(paste(round(x,3), round(x-x.mean,3),
+names(x)))
+                })
+}, my.arrays))
+
+What I would like is the names of the other two
+dimensions in the list, e.g. first component
+
+ "11.713 0.984 A  F  Q"  instead of 
+ "11.713 0.984 A"
+
+Is this possible using the apply command as it doesn't
+track the indices of the other dimensions?
+
+Thanks in advance for any help.
+
+Dave
+
+                
+__________________________________ 
+Yahoo! Mail - PC Magazine Editors' Choice 2005 
+http://mail.yahoo.com
+
+From dsmith at insightful.com  Tue Sep 20 00:48:27 2005
+From: dsmith at insightful.com (David Smith)
+Date: Mon, 19 Sep 2005 17:48:27 -0700
+Subject: Re: bug in timeAlign in S-PLUS 7.0
+Message-ID: <EDAC416B87ECCA44BEAB4D0CF48034EF81BE1C@se2kexch01.insightful.com>
+
+> I noticed that timeAlign() seems broken in S-PLUS 7.0: when given 
+> dir=-1, it aligns some days that are the 31st of a month to the next 
+> day.  S-PLUS 6.X does not have this problem.
+
+We've looked into it, and it turns out that the actual bug is related to use
+of relative dates.  I've posted additional information at:
+
+http://www.insightful.com/insightful_faq/dsp_article.asp?articleID=304
+
+It seems like the underlying bug with relative time arithmatic has existed
+for a while, but hadn't been reported before. We made a change in the S code
+for timeAlign from 6.2 to 7.0 which tickled the underlying bug.  We've fixed
+the problem in the C code of our internal builds, and it also fixes the
+timeAlign issue.  That fix will be included in a forthcoming patch.
+
+> (1) is using the old timeAlign function in 7.0 going to be OK, or are 
+> there other functions in 7.0 that depend on some aspects of the new 
+> (buggy) timeAlign function?
+
+Using the version of timeAlign from S-PLUS 6.2 is fine for now.  The 6.2
+version doesn't use relative dates in its internal computations, which is the
+underlying source of the bug.  
+
+> (2) does anyone know of any other bugs introduced in timeDate 
+> handling in 7.0?
+
+It turns out the bug was already there, but a fix is forthcoming. I'm not
+aware of any other issues with date handling at present.
+
+# David Smith
+
+-- 
+David M Smith <dsmith at insightful.com>
+Product Manager, Insightful Corp, Seattle WA
+Tel: +1 (206) 802 2360
+Fax: +1 (206) 283 6310
+
+Insightful 2005 User Conference
+Princeton, NJ, Oct. 26-27, 2005
+Don't miss the keynote by Dr. William Meeker
+Special Pricing: $199 commercial/$99 academic
+www.insightful.com/news_events/2005uc
+
+> -----Original Message-----
+> From: Tony Plate [mailto:tplate at blackmesacapital.com]
+> Sent: Friday, September 16, 2005 8:14 AM
+> To: S-news
+> Subject: [S] bug in timeAlign in S-PLUS 7.0
+> 
+> 
+> I noticed that timeAlign() seems broken in S-PLUS 7.0: when given 
+> dir=-1, it aligns some days that are the 31st of a month to the next 
+> day.  S-PLUS 6.X does not have this problem.
+> 
+> E.g.:
+> 
+>  > d <- timeDate("08/31/2000", format="%Y/%02m/%02d 
+> %02H:%02M:%02S %z", 
+> in.format="[%m[/][.]%d[/][,]%y] [%H[:%M[:%S[.%N]]][%p][[(]%3Z[)]]]", 
+> zone="GMT")
+>  > # Wrong behavior in S-PLUS 7.0
+>  > version
+> Enterprise Developer Version 7.0.3  for Microsoft Windows : 2005
+>  > d
+> [1] 2000/08/31 00:00:00 GMT
+>  > timeAlign(d, by="days", dir=-1)
+> [1] 2000/09/01 00:00:00 GMT
+>  > q()
+> 
+>  > # Correct behavior in S-PLUS 6.2
+>  > version
+> Professional Edition Version 6.2.1  for Microsoft Windows : 2003
+>  > d
+> [1] 2000/08/31 00:00:00 GMT
+>  > timeAlign(d, by="days", dir=-1)
+> [1] 2000/08/31 00:00:00 GMT
+> 
+> 
+> The timeAlign function has changed from 6.2.1 to 7.0, and I 
+> found that 
+> using the old timeAlign function from 6.2.1 seems to work ok 
+> in 7.0 and 
+> give correct answers in these cases.
+> 
+> AFAICS, this behavior happens for all days that are the 31st of the 
+> month, except for July 31st and Dec 31st.
+> 
+> So, I was wondering if anyone had any insights on the following:
+> 
+> (1) is using the old timeAlign function in 7.0 going to be OK, or are 
+> there other functions in 7.0 that depend on some aspects of the new 
+> (buggy) timeAlign function?
+> 
+> (2) does anyone know of any other bugs introduced in timeDate 
+> handling 
+> in 7.0?
+> 
+> -- Tony Plate
+> 
+> PS: in case anyone was wondering, I did submit a report on this to 
+> Insightful (some time ago) but I have not heard any response 
+> from them.
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+> 
+
+From alain.yamakana at rogers.com  Tue Sep 20 02:05:51 2005
+From: alain.yamakana at rogers.com (Alain Yamakana)
+Date: Mon, 19 Sep 2005 22:05:51 -0400
+Subject: Help with guiModify()
+Message-ID: <20050920020551.46758.qmail@web88112.mail.re2.yahoo.com>
+
+Hello!
+
+ 
+
+I used guiPlot() to create five different graphs. Next, I would like to layout those 5 graphs on a page. How could I get this done using guiModify() or any other function?
+
+ 
+
+Thanks for your prompt and valuable reply,
+
+Alain
+
+From james.dartnall at gmail.com  Tue Sep 20 14:16:17 2005
+From: james.dartnall at gmail.com (James Dartnall)
+Date: Tue, 20 Sep 2005 15:16:17 +0100
+Subject: asymptotic standard errors
+Message-ID: <705ac2cd050920071665e72d43@mail.gmail.com>
+
+Dear all,
+
+ 
+
+Does anyone know of a function in S-Plus or S+Finmetrics which calculates asymptotic standard errors on parameters in ARIMA models or hyperparameters in state space models?  I am using S-Plus 6.1 and S+Finmetrics for windows.
+
+ 
+
+James Dartnall
+
+From jefe_goode at yahoo.com  Tue Sep 20 14:45:55 2005
+From: jefe_goode at yahoo.com (jefe goode)
+Date: Tue, 20 Sep 2005 15:45:55 +0100
+Subject: Date conversions
+Message-ID: <20050920144555.93082.qmail@web61014.mail.yahoo.com>
+
+S+ is giving me a strange error in some previously
+working code (simple code).
+
+cat("\n Time conversion from dd/mm/year to dd-mon-yy
+\n")
+MyTime  <- as.character(MyTime)
+cat("\n --- MyTime --- \n")
+print(MyTime[1:10])
+cat("\n")
+MyTime  <- dates(MyTime, format="dd/mm/year",   
+out.format="dd-mon-yy")
+MyTime  <- as.character(MyTime) 
+
+The data MyTime is printed as:
+ --- MyTime --- 
+ [1] "09/09/2005" "08/09/2005" "07/09/2005"
+"06/09/2005" "05/09/2005" "04/09/2005" "03/09/2005"
+ [8] "02/09/2005" "01/09/2005" "31/08/2005"
+
+whereas S+ is claiming it is seeing mm/dd/year 
+
+the exact error message is:
+1: wrong number of fields in entry(ies) 1, 2 in:
+unpaste(dates., sep = fmt$sep, fnames =
+        fmt$periods, nfields = 3)
+2: 2701 missing values generated coercing from
+character to numeric in: as.numeric(out$y)
+Problem in convert.dates(dates., format = fmt, origin
+= origin..: format mm/dd/year may be
+        incorrect
+
+Are there any global flags which could result in this
+error?
+The MyTime variable originally derives from an excel
+file and this code has regularly worked previously,
+further restarting S+ results in the same error
+messages.
+
+Any help appreciated
+
+TIA
+
+Jefe
+
+        
+        
+                
+___________________________________________________________ 
+Yahoo! Messenger - NEW crystal clear PC to PC calling worldwide with voicemail 
+http://uk.messenger.yahoo.com
+
+From ivanouw at post8.tele.dk  Wed Sep 21 01:32:12 2005
+From: ivanouw at post8.tele.dk (Jan Ivanouw)
+Date: Wed, 21 Sep 2005 03:32:12 +0200
+Subject: Problem with library Resample
+References: <20050920144555.93082.qmail@web61014.mail.yahoo.com>
+Message-ID: <002101c5be4c$4afcca80$0201a8c0@elev>
+
+After using the library Resample for some time suddenly the basic bootstrap 
+function gives the following error message:
+
+"Did  1000  replications, saving results in .bootstrap.partial.results, 
+interrupt again to abort completely.
+Problem in bootstats(replicates = reps, observed = ..: Couldn't find a function 
+definition for "anyMissing" 
+Use traceback() to see the call stack
+
+Error during wrapup: Array subscript (1000) out of bounds, should be at most 1
+Problem: Invalid random number seed: numbers must be between 0 and 63 
+Use traceback() to see the call stack"
+
+This problem appears on different machines which have S+ 6.1 (release 1) and S+ 
+6.2 even if I set the seed to a number between 0 and 63.
+
+I hope someone knows what may be wrong.
+
+Sincerely
+
+Jan Ivanouw PhD
+University of Copenhagen
+
+From post at lehnen.cc  Wed Sep 21 09:47:48 2005
+From: post at lehnen.cc (Jens)
+Date: Wed, 21 Sep 2005 11:47:48 +0200
+Subject: equidistant time series for fft
+Message-ID: <43312C44.7030301@lehnen.cc>
+
+Hello,
+
+I found nothing in the archives, so I hope you can help me.
+
+As far as I know one of the precondition for the Fast Fourier 
+Transformation is the equidistance of the time series (beside the 
+stationarity).
+
+The time series is the interbeat intervall of the heartbeats in millisec.
+
+Is this the correct procedure to gain a equidistant time series?
+
+1. detect the shortest distance between two heartbeats
+2. the correct sampling rate is the shortest distance devided by two 
+(Nyquist-Frequency)
+3. the new time series with the equidistanten intervall has a 1 for a 
+beat and 0 for no beat
+
+Thanks in advance for any help.
+
+jens
+
+From immhan at student.dtu.dk  Wed Sep 21 11:45:40 2005
+From: immhan at student.dtu.dk (Henrik Aalborg Nielsen)
+Date: Wed, 21 Sep 2005 13:45:40 +0200
+Subject: Re: asymptotic standard errors
+In-Reply-To: <705ac2cd050920071665e72d43@mail.gmail.com>
+References: <705ac2cd050920071665e72d43@mail.gmail.com>
+Message-ID: <Pine.GSO.4.58.0509211343420.10890@bohr.gbar.dtu.dk>
+
+James,
+
+arima.mle() will calculate the variance-covariance matrix for the
+autoregressive and moving average coefficients (citing the help-page).
+
+Regards,
+Henrik
+
+--------------------------------------------------------------------------
+   Henrik Aalborg Nielsen
+   Informatics and Mathematical Modelling
+   Section for Statistics, Time Series Group
+   Technical University of Denmark
+   Richard Petersens Plads, Build.321,
+   DK-2800 Kgs. Lyngby, Denmark.
+   Phone:  +45 4525 3418
+   Fax.:   +45 4588 2673
+   E-mail: han at imm.dtu.dk
+   URL:    http://www.imm.dtu.dk/~han
+--------------------------------------------------------------------------
+
+On Tue, 20 Sep 2005, James Dartnall wrote:
+
+> Dear all,
+>  Does anyone know of a function in S-Plus or S+Finmetrics which calculates
+> asymptotic standard errors on parameters in ARIMA models or hyperparameters
+> in state space models? I am using S-Plus 6.1 and S+Finmetrics for windows.
+>  James Dartnall
+>
+
+From kkiely at insightful.com  Wed Sep 21 16:18:18 2005
+From: kkiely at insightful.com (Kathy Kiely)
+Date: Wed, 21 Sep 2005 17:18:18 +0100
+Subject: =?utf-8?q?Jos=C3=A9_C=2E_Pinheiro_Training_in_UK_-_Analyzing_Mixed-Effects_Models_with_S-PLUS?=
+Message-ID: <B796B8C05975394DA24E457D1985BDB466E5BF@uk2kexch01.insightful.com>
+
+José C. Pinheiro Training in UK - Analyzing Mixed-Effects Models with S-PLUS
+ 
+
+Mixed-effects models provide a powerful tool for analyzing grouped data. This
+course will overview the application of linear and nonlinear mixed-effects
+models in the analysis of grouped data, using the NLME software in S-PLUS to
+illustrate the different stages of model fitting. A new element to the course
+will cover the functionality for fitting generalized linear mixed models
+(GLMM's) which is now available in S-PLUS 7.
+ 
+Ideal attendees would be Statisticians and, more broadly scientists, who
+utilize or would like to utilize the mixed-effects model capabilities
+provided in the NLME library in S-PLUS, for the analysis of correlated data.
+ 
+This three day course includes methodological aspects and practical
+application of mixed-effects models and is presented by one of the subject
+areas leading researchers.  José C. Pinheiro is the co-author of the NLME
+software in S-PLUS and of the excellent text book "Mixed Effects Models in S
+and S-PLUS", which is supplied as part of the course materials.
+ 
+Full details on the training course are as follows:-
+ 
+Title: Analyzing Mixed-Effects Models with S-PLUS 
+ 
+Presenter: José C. Pinheiro
+Date: Nov 7-9, 2005
+Location: Brighton, England
+ 
+Abstract:
+A unified model-building strategy for both linear and nonlinear models will
+be presented and applied to the analysis of real datasets from a variety of
+areas, including pharmacokinetics, agriculture, and manufacturing. Strong
+emphasis will be placed on the use of graphical displays at the various
+phases of the model-building process, starting with exploratory plots of the
+data and concluding with diagnostic plots to assess the adequacy of a fitted
+model.
+ 
+Full details and registration link can be found at:- 
+ 
+http://www.insightful.com/services/training/pinheiro_7nov05.asp
+
+ 
+Please contact me if you would like any more information or have any
+questions.
+ 
+Regards
+ 
+Kathy Kiely
+Sales & Marketing Administrator
+Insightful Limited
+Network House, Basing View Basingstoke, Hampshire, RG21 4HG
+Tel : +44 (0)1256 339822
+Fax : +44 (0)1256 339839
+email : kkiely at insightful.com
+  
+ 
+ 
+
+From Marin.Greenwood at MyFWC.com  Wed Sep 21 21:34:37 2005
+From: Marin.Greenwood at MyFWC.com (Greenwood, Marin)
+Date: Wed, 21 Sep 2005 17:34:37 -0400
+Subject: Plot.gam x-axis function
+Message-ID: <BA6FF017E924044A9BF748AFAEEA6F3049EB52@FWC-TLEX3.fwc.state.fl.us>
+
+Dear S-News list
+
+I have a multiple-plot page generated from plot.gam, with all variables modelled as splines except for year (a factor). I'd like to please learn how to move the factor labels (in this case years, from 2000 to 2004) from above the plot to below the plot (i.e., to make it similar to the continuous variables). Also, how can I change the x-axis titles for each plot separately so that they can include symbols (e.g., degrees Celsius), etc.
+
+Thanks in advance, I couldn't find these answers after much web-searching.
+
+Marin Greenwood.
+
+ 
+
+From elvis at xlsolutions-corp.com  Wed Sep 21 21:53:18 2005
+From: elvis at xlsolutions-corp.com
+Date: Wed, 21 Sep 2005 14:53:18 -0700
+Subject: Course*** S-PLUS / R: Complementing and Extending Statistical Computing for SAS Users*** October 2005
+Message-ID: <20050921145318.9f08cc34deb45d78e54b3b5664e21546.79f817e2bb.wbe@email.email.secureserver.net>
+
+ 
+
+ 
+
+XSolutions Corp (www.xlsolutions-corp.com) is
+proud to announce
+our   October 2005 "S-PLUS / R:
+Complementing and Extending Statistical Computing for SAS Users" in
+Raleigh
+
+and Washington, DC
+
+http://xlsolutions-corp.com/Rsas.htm
+
+ 
+
+********* Raleigh
+ ------------------------ October 24th-25th, 2005
+
+********* Washington, DC ------------ October
+27th-28th, 2005
+
+ 
+
+ 
+
+Ask for group discount and reserve your seat
+Now  (payment due after
+the class)
+
+Email Sue Turner:  sue at xlsolutions-corp.com
+
+ 
+
+ 
+
+This course is designed for users who want to
+learn how to complement and extend statistical computing of SAS with the
+S or R system. The course will give SAS users a strong foundation for
+becoming a versatile R/Splus programmer. 
+
+ 
+
+Course Topics
+
+> Day 1
+>
+> An Overview of resources: installation and demonstration, the R
+> project/core; CRAN; the distribution for UNIX and windows systems; the
+> package concept; literature: Venables and Ripley, Chambers and Hastie,
+> other publications.
+> A Comparison of R and S-PLUS
+> Quick review of the SAS environment: the OS interface, the data
+> step, macros, procs, reports. Issues of data archiving with SSD format;
+> interfaces to DBMS
+> Data manipulations in S and R (data frame and matrix operations) and
+> SAS (the data step) -- issues of importing, formatting, transformation,
+> cataloging, exporting
+> Functions vs macros in SAS for programming repetitive processes.
+> The iteration models of SAS vs whole-object modeling
+>
+> Day 2
+>
+> Statistical modeling support in R/S vs SAS PROCS.
+> Integrated documentation and example processing in R/S.
+> Post-processing of function output in R/S vs OUTPUT datasets in SAS.
+>
+> Specific comparisons: linear modeling, glms, gees, lmes
+> Report Writing
+> Extending the systems for new data structures and new algorithms
+>
+>
+>
+>
+> Please let us know if you and your colleagues are interested in
+> this
+> class
+> to take advantage of group discount. Register now to
+> secure your seat in this
+> course!
+>
+>
+>
+>
+>
+> Cheers,
+>
+> Elvis Miller, PhD
+> Manager Training.
+> XLSolutions
+> Corporation
+> 206 686 1578
+> www.xlsolutions-corp.com
+
+From elvis at xlsolutions-corp.com  Wed Sep 21 21:53:32 2005
+From: elvis at xlsolutions-corp.com
+Date: Wed, 21 Sep 2005 14:53:32 -0700
+Subject: Course *** R/Splus Advanced Programming *** Seattle, November 10th-11th, 2005
+Message-ID: <20050921145332.a108dc04937c07ba67766dad37185406.7398a88942.wbe@email.email.secureserver.net>
+
+XSolutions Corp (www.xlsolutions-corp.com) is proud to announce
+our  November, 2005 "Advanced R/Splus programming" in Seattle
+
+www.xlsolutions-corp.com/Radv.htm
+
+********* Seattle ------------------------ November 10th-11th, 2005
+
+Ask for group discount and reserve your seat Now  (payment due after
+the class)
+
+Email Sue Turner:  sue at xlsolutions-corp.com
+
+Course Outline:
+
+- Overview of R/S fundamentals: Syntax and Semantics
+- Class and Inheritance in R/S-Plus
+- Concepts, Construction and good use of language objects
+- Coercion and efficiency
+- Object-oriented programming in R and S-Plus
+- Advanced manipulation tools: Parse, Deparse, Substitute, etc.
+- How to fully take advantage of Vectorization
+- Generic and Method Functions; S4 (S-Plus 6)
+- Search path, databases and frames Visibility
+- Working with large objects
+- Handling Properly Recursion and iterative calculations
+- Managing loops; For (S-Plus) and for() loops
+- Consequences of Lazy Evaluation
+- Efficient Code practices for large computations
+- Memory management and Resource monitoring
+- Writing R/S-Plus functions to call compiled code
+- Writing and debugging compiled code for R/S-Plus system
+- Connecting R/S-Plus to External Data Sources
+- Understanding the structure of model fitting functions in R/S-Plus
+- Designing and Packaging efficiently a new model function
+
+It'll also deal with lots of S-Plus efficiency issues and any special
+topics
+from participants is welcome.
+
+Please let us know if you and your colleagues are interested in this
+class
+to take advantage of group discount.  Register now to secure your seat
+in this
+course!
+
+Cheers,
+
+Elvis Miller, PhD
+Manager Training.
+XLSolutions Corporation
+206 686 1578
+www.xlsolutions-corp.com 
+
+From timh at insightful.com  Thu Sep 22 04:30:04 2005
+From: timh at insightful.com (Tim Hesterberg)
+Date: Wed, 21 Sep 2005 21:30:04 -0700
+Subject: Re: Problem with library Resample
+Message-ID: <EEF8736EDA4962479208961401D6A02C1AB018@se2kexch01.insightful.com>
+
+My guess is that you are using the newest version of the resample library,
+which requires S+7.0 (because functions like anyMissing have been moved
+out of resample and into S+7.0).
+
+Tim Hesterberg
+
+-----Original Message-----
+From:   Jan Ivanouw [mailto:ivanouw at post8.tele.dk]
+Sent:   Tue 9/20/2005 6:32 PM
+To:     s-news at lists.biostat.wustl.edu
+Cc:     
+Subject:        [S] Problem with library Resample
+After using the library Resample for some time suddenly the basic bootstrap
+function gives the following error message:
+
+"Did  1000  replications, saving results in .bootstrap.partial.results,
+interrupt again to abort completely.
+Problem in bootstats(replicates = reps, observed = ..: Couldn't find a
+function definition for "anyMissing" 
+Use traceback() to see the call stack
+
+Error during wrapup: Array subscript (1000) out of bounds, should be at most
+1
+Problem: Invalid random number seed: numbers must be between 0 and 63 
+Use traceback() to see the call stack"
+
+This problem appears on different machines which have S+ 6.1 (release 1) and
+S+ 6.2 even if I set the seed to a number between 0 and 63.
+
+I hope someone knows what may be wrong.
+
+Sincerely
+
+Jan Ivanouw PhD
+University of Copenhagen
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From pjohn at bslindia.com  Thu Sep 22 04:04:47 2005
+From: pjohn at bslindia.com (Pradeep John)
+Date: Thu, 22 Sep 2005 09:34:47 +0530
+Subject: Models with some specified Lags
+Message-ID: <005901c5bf2a$c5bebab0$da22a8c0@binarysemantics.com>
+
+Dear All,
+
+In estimating parameters of AR 
+(Autoregressive) or MA (Moving Average) models, Finmetric provides the following command:
+
+arima.mle(x, 
+model=list(ar=?, ma=?)) 
+where, ?= some initial value. 
+
+For MA(1) 
+model, one needs to give one initial value. For MA(2), 
+one needs to add 2 initial values etc.
+
+However, if one wants to choose an 
+AR/MA model with some specified lags (e.g., lag 1, 3, 5 etc) and not continuous 
+lags (e.g., 1,2,3,4,5 etc.), what are the commands for 
+such models?
+
+Can anyone help me on 
+this?
+
+John
+
+Statistician
+
+ 
+
+ 
+
+From kkiely at insightful.com  Thu Sep 22 10:39:24 2005
+From: kkiely at insightful.com (Kathy Kiely)
+Date: Thu, 22 Sep 2005 11:39:24 +0100
+Subject: 2005 APPLIED QUANTITATIVE ANALYTICS IN FINANCE EVENT o OCTOBER 6, 2005 o LONDON
+Message-ID: <B796B8C05975394DA24E457D1985BDB466E5C7@uk2kexch01.insightful.com>
+
+2005 APPLIED QUANTITATIVE ANALYTICS IN FINANCE EVENT o OCTOBER 6, 2005 o
+LONDON
+ 
+ 
+Please join us at the Museum of London  for a series of guru-led
+presentations, networking, and demonstrations by academic and business
+thought leaders in finance from Basel II Committee, Swiss Union of Raiffeisen
+Banks, Swiss Federal Institute of Technology (ETH) in Zurich, UBS Warburg,
+Ingenious Media Plc. and Zurich Financial Services.
+ 
+The series is intended for risk managers, portfolio managers, fund-of-funds
+managers, and business decision-makers who are interested in getting more
+perfromant trading and risk models into the enterprise.
+ 
+Agenda
+
+Join us for this free event!
+ 
+
+9:00 AM Registration & Coffee
+9:45 AM Welcome and Opening Address
+
+Colin Magee
+VP Europe, Insightful Corporation
+10:00 AM Keynote Address 
+
+Tom Jones
+Vice Chair Basel II committee
+Abstract to follow
+10:45 AM One Factor Credit Portfolio Models with S-PLUS
+
+Dr. Dirk Ocker
+Head of Quantitative Research, Swiss Union of Raiffeisen Banks
+The so-called one factor credit portfolio model is the underlying of Basel II
+regulatory capital rules coming into force in 2007. In this talk we briefly
+present the mathematical background and give a detailed analysis of the
+computational aspect based on S-PLUS. An overview of the S-PLUS library will
+be given, in particular:
+" Computation of the loss distribution for a credit portfolio and its
+approximations 
+" Calculation of different risk measures 
+" Derivation of the economic capital charges and its risk contributions. 
+11:30 PM Beyond Excel(r): Quantitative Data Analysis with Insightful
+
+David Smith
+Senior Finance Product Manager, Insightful Corporation 
+Microsoft(r) Excel(r) is commonly used to store and send financial data, but
+many people run into limitations when using it for large-scale quantitative
+analysis of financial data. Complex workbooks with multiple tabs and
+intertwined cell references can easily become difficult to maintain and
+validate. And of course, once the data grows beyond 65,000 records, Excel can
+no longer handle it.
+In this presentation, you'll learn how Insightful software can help you deal
+with these limitations in Excel(r), by allowing you to analyze large data
+sets and quickly create reliable, maintainable analytic applications. An
+introduction to Insightful's data analysis products and description of how to
+integrate scalable quantitative data analysis in an Excel(r)-based
+environment will also be discussed. 
+
+12:15 PM Business Lunch
+
+1:15 PM Self-Exciting Models for Extremes in Financial Time Series
+
+Prof. Dr. Alexander McNeil
+Professor of Mathematics, Swiss Federal Institute of Technology (ETH) in
+Zurich
+The application of extreme value theory (EVT) methods to time series of
+financial returns has been a subject of interest in recent years. In this
+talk we propose a new class of dynamic models for the occurrence of extremes
+above some high threshold in a financial time series. The model attempts to
+describe both the temporal occurrence and the magnitude of threshold
+exceedances and does so by employing a self-exciting structure with a
+parameterization inspired by standard EVT models. The models have been
+implemented in S-PLUS and will be applied to financial data and used to
+estimate Value-at-Risk and other risk measures.
+
+2:00 PM Backtesting with S-PLUS
+Dr. David Jessop
+UBS Warburg
+Backtesting an investment strategy is a computationally intensive process. It
+involves downloading a significant amount of data, calculating risk models
+back through time and the ability to create optimized portfolios and
+calculate the performance of these through time. This talk discusses how at
+UBS we have wrapped all this functionality into a set of S-PLUS functions and
+classes. 
+" Connecting to the UBS database 
+" Linking S-PLUS to a selection of optimizers
+" Constructing the strategy
+" Using classes to encapsulate the data 
+
+2:45 PM Coffee Break
+
+3:15 PM Common Applications of Resampling Techniques in Finance
+
+Bevan Blair, Ingenious Media Plc. 
+Resampling techniques are becoming more common place in computational
+finance. This talk discusses two common applications of resampling in
+finance. The first uses resampling techniques to differentiate between
+manager skill and luck. The second resamples portfolios to produce
+alternative asset allocations and to provide rules for rebalancing. In each
+case 
+S-PLUS, coupled with S+NuOpt are in a unique position to provide quick
+computational solutions to these problems.
+4:00 PM Douglas Niemann, Zurich Financial Services
+
+Abstract to follow
+
+4:45 PM Closing Remarks
+
+5:00 PM Cocktail Reception
+ 
+ 
+ 
+Register Now! http://www.insightful.com/news_events/UKfinance05/default.asp
+ 
+
+There are limited spaces for the event, so please register ASAP.  If
+additional places are needed please ensure colleages register as this is an
+inviation only event.
+ 
+Venue : Museum of London, London Wall, London, EC2Y 5HN
+ 
+
+Do you have any questions about the event? Contact us by phone or email, we'd
+be happy to answer any questions you have.
+Kathy Kiely
+Sales & Marketing Administrator
+Insightful Limited
+Network House, Basing View Basingstoke, Hampshire, RG21 4HG
+Tel : 01256 339822
+Fax : 01256 339839
+e mail : kkiely at insightful.com
+ 
+ 
+ 
+Kathy Kiely
+Sales & Marketing Administrator
+Insightful Limited
+Network House, Basing View Basingstoke, Hampshire, RG21 4HG
+Tel : 01256 339822
+Fax : 01256 339839
+e mail : kkiely at insightful.com
+ 
+Applied Quantitative Analytics in Finance:
+October 6th, Museum of London:
+http://www.insightful.com/news_events/UKfinance05/default.asp
+<http://www.insightful.com/news_events/UKfinance05/default.asp> 
+
+From philip.gladwin at citigroup.com  Thu Sep 22 15:49:19 2005
+From: philip.gladwin at citigroup.com (Gladwin, Philip [FI])
+Date: Thu, 22 Sep 2005 16:49:19 +0100
+Subject: Help required with the stl function
+Message-ID: <7811642C5B54DB42A282ED4BF9FEEC43B9C7AE@Exukmb31.eur.nsroot.net>
+
+Good afternoon,
+
+I am using S plus (windows 2000) to investigate seasonality.
+I am using the command
+
+myData.stl <- stl(myData$ts, "periodic")
+ts.plot(myData$ts, myData.stl$sea, myData.stl$rem)
+
+to decompose the data into a seasonal and remainder components and I am very 
+pleased
+with the plot.  
+
+However I would like to add error bars / confidence intervals to the plot.
+For the life of me I can't work out how to do it.
+
+Can anyone out there help me?
+
+kind regards,
+Philip Gladwin
+
+From ad at cs.uu.nl  Fri Sep 23 08:50:35 2005
+From: ad at cs.uu.nl
+Date: Fri, 23 Sep 2005 10:50:35 +0200
+Subject: Exporting data from Splus 4.5
+Message-ID: <1226.131.211.81.207.1127465435.squirrel@mail.cs.uu.nl>
+
+Dear all,
+
+I have some splus 4.5 (windows) data objects that I want to
+convert to splus 6 for windows. When I export the data from
+splus 4.5 to a data file (e.g. txt or xls format) all floating
+point numbers are for some reason rounded to two decimal places!
+I've tried a lot of things, but there seems to be no way around
+this problem.
+
+Does anybody know how to solve this problem?
+
+Bye,
+
+-Ad Feelders
+
+From ripley at stats.ox.ac.uk  Fri Sep 23 12:24:19 2005
+From: ripley at stats.ox.ac.uk (Prof Brian Ripley)
+Date: Fri, 23 Sep 2005 13:24:19 +0100
+Subject: Re: Exporting data from Splus 4.5
+In-Reply-To: <1226.131.211.81.207.1127465435.squirrel@mail.cs.uu.nl>
+References: <1226.131.211.81.207.1127465435.squirrel@mail.cs.uu.nl>
+Message-ID: <Pine.LNX.4.61.0509231321250.28924@gannet.stats>
+
+data.dump() is designed for just this purpose.  Use data.restore() to read 
+the dumps on the newer system.
+
+On Fri, 23 Sep 2005 ad at cs.uu.nl wrote:
+
+> I have some splus 4.5 (windows) data objects that I want to
+> convert to splus 6 for windows. When I export the data from
+> splus 4.5 to a data file (e.g. txt or xls format) all floating
+> point numbers are for some reason rounded to two decimal places!
+> I've tried a lot of things, but there seems to be no way around
+> this problem.
+>
+> Does anybody know how to solve this problem?
+--
+Brian D. Ripley,                  ripley at stats.ox.ac.uk
+Professor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/
+University of Oxford,             Tel:  +44 1865 272861 (self)
+1 South Parks Road,                     +44 1865 272866 (PA)
+Oxford OX1 3TG, UK                Fax:  +44 1865 272595
+
+From rmh at temple.edu  Fri Sep 23 13:39:06 2005
+From: rmh at temple.edu (Richard M. Heiberger)
+Date: Fri, 23 Sep 2005 09:39:06 -0400
+Subject: Fwd: Exporting data from Splus 4.5
+Message-ID: <839d49ec.40520335.81edd00@po-d.temple.edu>
+
+The easiest way is let S-Plus do all the work.
+attach() the old _Data to to S-Plus 6 and copy the objects you need.
+
+> attach("../rmh/12.s99/_Data")
+> search()[1:2]
+ [1] "c:\\HOME\\hh-user"   "../rmh/12.s99/_Data" 
+> find(ex2)
+[1] "../rmh/12.s99/_Data"
+> objects(2, pat="ex2")
+[1] "ex2" 
+> ex2[1:5]
+ [1] 46 14 38 62 91
+> ex2 <- ex2
+> find(ex2)
+[1] "c:\\HOME\\hh-user"   "../rmh/12.s99/_Data"
+> 
+
+---- Original message ----
+>Date: Fri, 23 Sep 2005 10:50:35 +0200 (CEST)
+>From: ad at cs.uu.nl
+>Subject: [S] Exporting data from Splus 4.5  
+>To: s-news at lists.biostat.wustl.edu
+>
+>Dear all,
+>
+>I have some splus 4.5 (windows) data objects that I want to
+>convert to splus 6 for windows. When I export the data from
+>splus 4.5 to a data file (e.g. txt or xls format) all floating
+>point numbers are for some reason rounded to two decimal places!
+>I've tried a lot of things, but there seems to be no way around
+>this problem.
+>
+>Does anybody know how to solve this problem?
+>
+>Bye,
+>
+>-Ad Feelders
+>
+>
+>--------------------------------------------------------------------
+>This message was distributed by s-news at lists.biostat.wustl.edu.  To
+>unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+>the BODY of the message:  unsubscribe s-news
+
+From jhf2 at adelphia.net  Sat Sep 24 17:38:23 2005
+From: jhf2 at adelphia.net (John Fennick)
+Date: Sat, 24 Sep 2005 13:38:23 -0400
+Subject: strange sums
+Message-ID: <6.2.3.4.0.20050924133144.02e0cfc0@mail.adelphia.net>
+
+Hi Group,
+
+Using S-Plus version 7.2 under Win 2000
+
+Can anyone explain this?
+
+> sum(1.2, 2.8, 0.2, 3.2, 1.8)
+
+[1] 9.2
+
+> sum(-1.2, 2.8, -0.2, -3.2, 1.8)
+
+[1] -2.220446e-016
+
+# Same call with numbers concatenated (for amusement)
+
+> sum(c(-1.2, 2.8, -0.2, -3.2, 1.8))
+
+[1] -2.220446e-016
+
+# Now: as a vector
+
+> sum(as.vector(c(-1.2, 2.8, 0.2, -3.2, 1.8)))
+
+[1] 0.4
+
+(These were repeatable after shut
+down and cold restart.)
+
+thanks
+
+john
+
+John Fennick
+
+jhf2 at adelphia.net
+
+alt: j.fennick at ieee.org
+
+Tel: 603.526.4023
+
+134 Brookside Drive
+
+New London, NH 03257
+
+USA
+
+From jhf2 at adelphia.net  Sat Sep 24 17:50:34 2005
+From: jhf2 at adelphia.net (John Fennick)
+Date: Sat, 24 Sep 2005 13:50:34 -0400
+Subject: strange sums
+Message-ID: <6.2.3.4.0.20050924135014.02e0a268@mail.adelphia.net>
+
+Sorry about that, not a good day
+
+john
+
+Hi Group,
+
+Using S-Plus version 7.2 under Win 2000
+
+Can anyone explain this?
+
+> sum(1.2, 2.8, 0.2, 3.2, 1.8)
+
+[1] 9.2
+
+> sum(-1.2, 2.8, -0.2, -3.2, 1.8)
+
+[1] -2.220446e-016
+
+# Same call with numbers concatenated (for amusement)
+
+> sum(c(-1.2, 2.8, -0.2, -3.2, 1.8))
+
+[1] -2.220446e-016
+
+# Now: as a vector
+
+> sum(as.vector(c(-1.2, 2.8, 0.2, -3.2, 1.8)))
+
+[1] 0.4
+
+(These were repeatable after shut
+down and cold restart.)
+
+thanks
+
+john
+
+John Fennick
+
+jhf2 at adelphia.net
+
+alt: j.fennick at ieee.org
+
+Tel: 603.526.4023
+
+134 Brookside Drive
+
+New London, NH 03257
+
+USA 
+
+From rmh at temple.edu  Sat Sep 24 19:29:06 2005
+From: rmh at temple.edu (Richard M. Heiberger)
+Date: Sat, 24 Sep 2005 15:29:06 -0400
+Subject: Fwd: strange sums
+Message-ID: <84fada5c.40f5e332.81b2f00@po-d.temple.edu>
+
+This is perfectly normal and correct behavior.
+Computers use base 2 arithmetic, and your numbers are multiples of
+1/5 which doesn't come out even in base 2.
+
+> print(c(1.2, 2.8, 0.2, 3.2, 1.8), digits=17)
+[1] 1.20000000000000000 2.79999999999999980 0.20000000000000001
+[4] 3.20000000000000020 1.80000000000000000
+> print(sum(1.2, 2.8, 0.2, 3.2, 1.8), digits=17)
+[1] 9.1999999999999993
+> print(c(-1.2, 2.8, -0.2, -3.2, 1.8), digits=17)
+[1] -1.20000000000000000  2.79999999999999980 -0.20000000000000001
+[4] -3.20000000000000020  1.80000000000000000
+> print(sum(-1.2, 2.8, -0.2, -3.2, 1.8), digits=17)
+[1] -2.2204460492503131e-016
+> 
+> ## For your last example, you inadvertently didn't flip the sign of the .2,
+> print(sum(c(-1.2, 2.8, 0.2, -3.2, 1.8)), digits=17)
+[1] 0.39999999999999969
+> print(sum(c(-1.2, 2.8, -0.2, -3.2, 1.8)), digits=17)
+[1] -2.2204460492503131e-016
+> 
+
+---- Original message ----
+>Date: Sat, 24 Sep 2005 13:50:34 -0400
+>From: John Fennick <jhf2 at adelphia.net>  
+>Subject: [S] strange sums  
+>To: "S-News List" <s-news at lists.biostat.wustl.edu>
+
+>   Using S-Plus version 7.2 under Win 2000
+>   Can anyone explain this?
+>
+>   > sum(1.2, 2.8, 0.2, 3.2, 1.8)
+>   [1] 9.2
+>
+>   > sum(-1.2, 2.8, -0.2, -3.2, 1.8)
+>   [1] -2.220446e-016
+>
+>   # Same call with numbers concatenated (for amusement)
+>   > sum(c(-1.2, 2.8, -0.2, -3.2, 1.8))
+>   [1] -2.220446e-016
+>
+>   # Now: as a vector
+>   > sum(as.vector(c(-1.2, 2.8, 0.2, -3.2, 1.8)))
+>   [1] 0.4
+>
+>   (These were repeatable after shut down and cold restart.)
+
+From att3380 at garnet.acns.fsu.edu  Sat Sep 24 20:37:35 2005
+From: att3380 at garnet.acns.fsu.edu (Ahmet Turhan)
+Date: Sat, 24 Sep 2005 16:37:35 -0400
+Subject: Reading Dichotomous Data as a Matrix in Splus
+In-Reply-To: <839d49ec.40520335.81edd00@po-d.temple.edu>
+References: <839d49ec.40520335.81edd00@po-d.temple.edu>
+Message-ID: <200509242037.j8OKbY0p2721080@garnet.acns.fsu.edu>
+
+Is there any easy way to read a dichotomous response data as matrix such
+that each column is a variable? 
+
+An example data set is
+1011111000011
+1001110001111
+1011111000011
+1001110001111
+
+Thank you,
+
+A. Turhan
+
+From ivanouw at post8.tele.dk  Sat Sep 24 23:26:21 2005
+From: ivanouw at post8.tele.dk (Jan Ivanouw)
+Date: Sun, 25 Sep 2005 01:26:21 +0200
+Subject: Resample library for S+ 6.x ?
+Message-ID: <000f01c5c15f$5fac2be0$0201a8c0@elev>
+
+Using S+ version 6.1 I had a working version of the 
+library Resample, but I was foolish enough to overwrite it by downloading the 
+updated version, which is for S+ 7.0. And this version of the library does not 
+work with 6.1.
+
+ 
+
+Can anyone help me with a Resample library usable 
+with S+ version 6.x? 
+
+ 
+
+Sincerely
+
+ 
+
+Jan Ivanouw, PhD
+
+University of Copenhagen
+
+From mcheang at mac.com  Sun Sep 25 09:39:23 2005
+From: mcheang at mac.com (Maggie Cheang)
+Date: Sun, 25 Sep 2005 02:39:23 -0700
+Subject: calculating weighted kappa statistics
+Message-ID: <C2D4A756-6C08-4737-BBBE-E0894B0B0A34@mac.com>
+
+Hi, I would like to calculate a kappa statistics for two tests that  
+rate the same samples on a scale of 0,1,2 and 3.
+
+However, I would like to penalize less if one test gives 2 and the  
+other test gives 3, in short, the closer the "scale" of the test,  
+less penalty.
+
+i am wondering how I can achieve this in s-plus?
+
+thank you very much
+
+Maggie Cheang
+mcheang at mac.com
+
+From rmh at temple.edu  Sun Sep 25 16:32:09 2005
+From: rmh at temple.edu (Richard M. Heiberger)
+Date: Sun, 25 Sep 2005 12:32:09 -0400
+Subject: Re: Reading Dichotomous Data as a Matrix
+Message-ID: <29e06b0e.41698521.81a0600@po-d.temple.edu>
+
+> Date: Sat, 24 Sep 2005 16:37:35 -0400
+> From: "Ahmet Turhan" <att3380 at garnet.acns.fsu.edu>
+> Subject: [S] Reading Dichotomous Data as a Matrix in Splus 
+> To: <s-news at lists.biostat.wustl.edu> 
+> 
+> Is there any easy way to read a dichotomous response data as matrix such
+> that each column is a variable? 
+> 
+> An example data set is
+> 1011111000011
+> 1001110001111
+> 1011111000011
+> 1001110001111
+> 
+> Thank you,
+> 
+> A. Turhan
+
+## In S-Plus use
+example <- read.table("example.dat", sep=1:13)
+
+## In R use
+example <- read.fwf("example.dat", widths=rep(1,13))
+
+From philip.gladwin at citigroup.com  Mon Sep 26 10:32:46 2005
+From: philip.gladwin at citigroup.com (Gladwin, Philip [FI])
+Date: Mon, 26 Sep 2005 11:32:46 +0100
+Subject: A question regarding Loess smoothing and understanding the information concerning the errors on the method
+Message-ID: <7811642C5B54DB42A282ED4BF9FEEC43248502@Exukmb31.eur.nsroot.net>
+
+Good morning,
+
+I am using the Loess algorithm in Splus to perform some smoothing.
+
+According to the Insightful S-Plus 6 'Guide to Statistics Vol. 1' page
+435 I can obtain some diagnosticse, e.g. Residual Standard Error, and
+Multiple R-Squared error.
+
+Could somebody pleases tell me exactly what is meant by
+Residual Standard Error
+Multiple R-Squared
+and residuals 
+presented in this example?
+
+I am surprised that these parameters are not described in more detail.
+
+Alternatively could somebody suggest a good place to go to find out?
+
+I am using Splus 2000 Professional Rlease 2 on a Windows 2000 machine.  I dip 
+in and out of Splus
+every so often and consider myself to be a novice.
+
+kind regards,
+Philip Gladwin
+FX Analytics
+
+From mullodi at yahoo.fr  Mon Sep 26 15:15:26 2005
+From: mullodi at yahoo.fr (Odile)
+Date: Mon, 26 Sep 2005 17:15:26 +0200
+Subject: Path of the directory of the current script
+Message-ID: <20050926151526.20942.qmail@web32811.mail.mud.yahoo.com>
+
+Hello,
+
+I am trying to do my own GUI under S-plus. When the GUI is launched by running a script situated in a certain directory, I would need to know the path of the directory where the script is. Is it possible?
+
+ 
+
+ 
+
+The reason why I need it is the fact that the GUI uses data which are located in the same directory as its script. The directory contains the GUI and the data, and its path must be able to change, if I want to give the application to someone else (to put it on another computer). However, the GUI must be able to identify the new path in order to be able to read the data.
+
+ 
+
+Thank you very much!
+
+Odile
+
+ 
+
+		 
+Appel audio GRATUIT partout dans le monde avec le nouveau Yahoo! Messenger
+ 
+Téléchargez le ici ! 
+ 
+
+From jose.pinheiro at novartis.com  Mon Sep 26 15:16:03 2005
+From: jose.pinheiro at novartis.com
+Date: Mon, 26 Sep 2005 11:16:03 -0400
+Subject: ASA Stat. Computing and Stat. Graphics 2006 Student Paper competition
+Message-ID: <OFAA22785B.324501E6-ON85257088.0053BD5C-85257088.0053DF02@EU.novartis.net>
+
+The Statistical Computing and Statistical Graphics Sections of the ASA
+
+are co-sponsoring a student paper competition on the topics of
+
+Statistical Computing and Statistical Graphics.  Students are
+
+encouraged to submit a paper in one of these areas, which might be
+
+original methodological research, some novel computing or graphical
+
+application in statistics, or any other suitable contribution (for
+
+example, a software-related project).  The selected winners will
+
+present their papers in a topic-contributed session at the 2006 Joint
+
+Statistical Meetings.  The Sections will pay registration fees for the
+
+winners as well as a substantial allowance for transportation to the
+
+meetings and lodging. Enclosed below is the full text of the award announcement.
+
+More details can be found at the Stat. Computing Section website at
+
+http://www.statcomputing.org. 
+
+Best Regards,
+
+--José Pinheiro
+
+Awards Chair
+
+ASA Statistical Computing Section
+
+StudentPaper2006.txt
+
+Description: Text document
+
+From timh at insightful.com  Tue Sep 27 00:05:42 2005
+From: timh at insightful.com (Tim Hesterberg)
+Date: Mon, 26 Sep 2005 17:05:42 -0700
+Subject: Re: bs() function
+In-Reply-To: <20050915135037.81021.qmail@web33912.mail.mud.yahoo.com>
+References: <20050915135037.81021.qmail@web33912.mail.mud.yahoo.com>
+Message-ID: <SE2KEXCH01YGNuVZWGq000006d9@se2kexch01.insightful.com>
+
+Clarification: S+Resample and S+BEST are separate libraries.
+Both are available from 
+        www.insightful.com/downloads/libraries
+
+S+Resample contains a version of spline() with a `derivative'
+argument, that could be used for the specific request below.
+
+S+Best contains functions for density estimation, hazard regression,
+and adaptive generalized linear modeling, all based on splines.
+I don't think it has code for the specific request below.
+
+There is a third library available from the same site, S+FunctionalData,
+that could be used here, though it is probably overkill.
+
+Tim Hesterberg
+
+>For some unknown reason i'm having difficulties accessing the BEST
+>library in version 7.0. Ideally, I would like to use spline() from
+>the resample library in BEST but not currently possible. So i'm
+>trying to replicate this with the bs(), essentially all i'm after is
+>to calculate a column of first dervatives for my x-values at the
+>known y values using a cublic spline. However, not sure how to
+>convert the output matrix from bs() to the desired output (i.e. just
+>a column of first derivatives).
+
+========================================================
+| Tim Hesterberg       Research Scientist              |
+| timh at insightful.com  Insightful Corp.                |
+| (206)802-2319        1700 Westlake Ave. N, Suite 500 |
+| (206)283-8691 (fax)  Seattle, WA 98109-3012, U.S.A.  |
+|                      www.insightful.com/Hesterberg   |
+========================================================
+Download the S+Resample library from www.insightful.com/downloads/libraries
+
+Insightful 2005 User Conference
+Princeton, NJ, Oct. 26-27, 2005
+Don't miss the keynote by Dr. Bill Meeker!
+Special Pricing: $199 Commercial/$99 Academic
+www.insightful.com/news_events/2005uc
+
+From kathryn.jones at jcu.edu.au  Tue Sep 27 00:37:12 2005
+From: kathryn.jones at jcu.edu.au (Kathryn Jones)
+Date: Tue, 27 Sep 2005 10:37:12 +1000
+Subject: Boxplot Confidence Intervals
+Message-ID: <20050927103712.AXJ42367@mirapoint-ms1.jcu.edu.au>
+
+Hi,
+I need to know how the confidence intervals are calculated for
+the median when used in the boxplot() command.
+Does anyone know where I can look, or does anyone have a
+reference?
+
+Thank you very much,
+K Jones
+
+From rmh at temple.edu  Tue Sep 27 02:32:41 2005
+From: rmh at temple.edu (Richard M. Heiberger)
+Date: Mon, 26 Sep 2005 22:32:41 -0400
+Subject: Fwd: Boxplot Confidence Intervals
+Message-ID: <ab2923c0.4224549c.81b2d00@po-d.temple.edu>
+
+The reference is given in the help file
+?boxplot
+
+as 
+McGill, R., Tukey, J. W., and Larsen, W. A. (1978). Variations of box plots. 
+The American 
+Statistician, 32, 12-16. 
+
+---- Original message ----
+>Date: Tue, 27 Sep 2005 10:37:12 +1000 (EST)
+>From: Kathryn Jones <kathryn.jones at jcu.edu.au>  
+>Subject: [S] Boxplot Confidence Intervals  
+>To: s-news at wubios.wustl.edu
+>
+>Hi,
+>I need to know how the confidence intervals are calculated for
+>the median when used in the boxplot() command.
+>Does anyone know where I can look, or does anyone have a
+>reference?
+>
+>Thank you very much,
+>K Jones
+
+From mcheang at mac.com  Tue Sep 27 05:04:52 2005
+From: mcheang at mac.com (Maggie Cheang)
+Date: Mon, 26 Sep 2005 22:04:52 -0700
+Subject: instant hazard rate/survival
+Message-ID: <3E5AEF01-51B8-43CD-A405-08CDC3B6AA65@mac.com>
+
+Hi, I would like to calculate and plot the instantaneous hazard rate  
+(not the cumulative hazard function, or the survival estimates) of  
+two groups?
+
+How I can do that in s-plus?
+
+thanks
+
+Maggie Cheang
+
+mcheang at mac.com
+
+From therneau at mayo.edu  Tue Sep 27 13:22:22 2005
+From: therneau at mayo.edu (Terry Therneau)
+Date: Tue, 27 Sep 2005 08:22:22 -0500
+Subject: Re: instant hazard rate/survival
+Message-ID: <200509271322.j8RDMM919742@prolapse.mayo.edu>
+
+ The simplest way that I know to get an estimate of the
+ hazard is to use smoothing splines.
+ 
+ fit <- survfit(Surv(time, status) ~ sex, data=lung)
+ 
+ temp1 <- smooth.spline(fit[1]$time, 1-fit[1]$surv, df=5)
+ temp2 <- smooth.spline(fit[2]$time, 1-fit[2]$surv, df=5)
+ 
+ plot( predict(temp1, deriv=1), type='l')
+ lines(predict(temp2, deriv=1), col=2)
+ 
+ 
+------
+  The lung cancer data set is part of Splus (it's used in several
+ manual pages as an example).  The plot shows the males to have a 
+ higher initial hazard than the females.
+  
+  You choice of 5 degrees of freedom for the spline was completely
+arbitrary.
+
+        Terry Therneau
+        
+
+From mlisiecki at ccesearch.com  Tue Sep 27 17:57:16 2005
+From: mlisiecki at ccesearch.com (Megan Lisiecki)
+Date: Tue, 27 Sep 2005 13:57:16 -0400
+Subject: 
+Message-ID: <20050927175710.768E01005B23@mailgate.biostat.wustl.edu>
+
+"I am a clinical 
+recruiter with the Life Sciences space and I am looking for multiple 
+Biostatisticians and Statistical Scientists.  These opportunities exist in 
+the RTP NC area and are with attractive CRO's.  Please contact me via email 
+if you are interested in learning more about the opportunities or know of 
+someone that I should speak with in the industry.  I can be reached at mlisiecki at ccesearch.com"
+
+ 
+
+ 
+
+ 
+
+ 
+
+From jrangrej at yahoo.com  Tue Sep 27 20:27:59 2005
+From: jrangrej at yahoo.com (Jagadish Rangrej)
+Date: Tue, 27 Sep 2005 13:27:59 -0700
+Subject: Removing duplicates from Rows
+In-Reply-To: <200509271322.j8RDMM919742@prolapse.mayo.edu>
+References: <200509271322.j8RDMM919742@prolapse.mayo.edu>
+Message-ID: <20050927202759.77723.qmail@web54414.mail.yahoo.com>
+
+hi!
+I have duplicates in a table, using two columns to
+identify the duplicity. How can I remove the
+duplicates is there any single line trick ?
+
+Thanks,
+Jag
+
+                
+__________________________________ 
+Yahoo! Mail - PC Magazine Editors' Choice 2005 
+http://mail.yahoo.com
+
+From sundar.dorai-raj at pdf.com  Tue Sep 27 20:42:15 2005
+From: sundar.dorai-raj at pdf.com (Sundar Dorai-Raj)
+Date: Tue, 27 Sep 2005 15:42:15 -0500
+Subject: Re: Removing duplicates from Rows
+In-Reply-To: <20050927202759.77723.qmail@web54414.mail.yahoo.com>
+References: <20050927202759.77723.qmail@web54414.mail.yahoo.com>
+Message-ID: <4339AEA7.9010101@pdf.com>
+
+Jagadish Rangrej wrote:
+> hi!
+> I have duplicates in a table, using two columns to
+> identify the duplicity. How can I remove the
+> duplicates is there any single line trick ?
+>
+> Thanks,
+> Jag
+See ?unique or ?duplicated.
+
+Probably you want:
+
+data[!duplicated(data[c("col1", "col2")]), ]
+
+If "col1" and "col2" are the only columns in data, then you simply need:
+
+unique(data)
+
+HTH,
+
+--sundar
+
+From jrangrej at yahoo.com  Tue Sep 27 20:58:14 2005
+From: jrangrej at yahoo.com (Jagadish Rangrej)
+Date: Tue, 27 Sep 2005 13:58:14 -0700
+Subject: Re: Removing duplicates from Rows : Summary
+In-Reply-To: <4339AEA7.9010101@pdf.com>
+References: <4339AEA7.9010101@pdf.com>
+Message-ID: <20050927205815.3139.qmail@web54407.mail.yahoo.com>
+
+Hi !!
+
+Thanks to Sundar and Brad and John for their replies.
+use of "unique" and "duplicated" functions can help.
+
+as well as the the function by John Walter:
+
+ToRemoveDups<-function(foo3, Locx,Locy)
+{
+        x <- foo3[, Locx]
+        y <- foo3[, Locy]
+        x.pairs <- paste(x, y)  # create vector of the
+pairs
+        x.dup <- duplicated(x.pairs)    # vector
+indicating the duplicates
+        removedups <- cbind(foo3, x.dup)
+        removedups[removedups[, dim(removedups)[2]] ==
+FALSE,  ]
+}
+
+can be useful.
+
+Thanks to everybody,
+Jag
+
+                
+__________________________________ 
+Yahoo! Mail - PC Magazine Editors' Choice 2005 
+http://mail.yahoo.com
+
+From ken.pierce at oregonstate.edu  Tue Sep 27 21:49:43 2005
+From: ken.pierce at oregonstate.edu (Pierce, Ken)
+Date: Tue, 27 Sep 2005 14:49:43 -0700
+Subject: Multiple plots in R
+Message-ID: <4D5DA98A54374044B7CC3F40A157B98B12EE2B@thuja>
+
+When I do a bunch of 
+plots in S-plus 6.2 I can have it loop through my data and produce any number of 
+graphsheets required to finsih all my plots. perhaps I put 6 plots to a 
+screen s 36 plots ends up on 6 tabs. If I do something similar in R my 
+graphsheet is replaced every six graphs and I only get my last sheet. Is there a 
+way to get R to generate a new graphsheet when it runs out of space on the 
+page?
+
+ 
+
+thanks,
+
+ 
+
+Ken 
+
+ 
+
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Kenneth B. Pierce Jr. 
+
+Research Ecologist
+
+Forestry Sciences 
+Laboratory
+
+3200 SW Jefferson Way
+
+Corvallis, OR 97331
+
+ken.pierce at oregonstate.edu
+
+541 750-7393
+
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+ 
+
+From mcheang at mac.com  Tue Sep 27 22:13:56 2005
+From: mcheang at mac.com (Maggie Cheang)
+Date: Tue, 27 Sep 2005 15:13:56 -0700
+Subject: Re: instant hazard rate/survival
+In-Reply-To: <200509271322.j8RDMM919742@prolapse.mayo.edu>
+References: <200509271322.j8RDMM919742@prolapse.mayo.edu>
+Message-ID: <9406000.1127859236895.JavaMail.mcheang@mac.com>
+
+Thanks for Terry to reply for my qustion.
+That comes to my second question, is there a simple way to plot the Hazard 
+ratio from a coxph?
+anyone familiar with the muhaz package? 
+thanks a bunch
+Maggie
+On Tuesday, September 27, 2005, at 06:24AM, Terry Therneau <therneau at mayo.edu> 
+wrote:
+
+> The simplest way that I know to get an estimate of the
+> hazard is to use smoothing splines.
+> 
+> fit <- survfit(Surv(time, status) ~ sex, data=lung)
+> 
+> temp1 <- smooth.spline(fit[1]$time, 1-fit[1]$surv, df=5)
+> temp2 <- smooth.spline(fit[2]$time, 1-fit[2]$surv, df=5)
+> 
+> plot( predict(temp1, deriv=1), type='l')
+> lines(predict(temp2, deriv=1), col=2)
+> 
+> 
+>------
+>  The lung cancer data set is part of Splus (it's used in several
+> manual pages as an example).  The plot shows the males to have a 
+> higher initial hazard than the females.
+>  
+>  You choice of 5 degrees of freedom for the spline was completely
+>arbitrary.
+>
+>       Terry Therneau
+>       
+>--------------------------------------------------------------------
+>This message was distributed by s-news at lists.biostat.wustl.edu.  To
+>unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+>the BODY of the message:  unsubscribe s-news
+>
+>
+
+From rmh at temple.edu  Tue Sep 27 22:38:36 2005
+From: rmh at temple.edu (Richard M. Heiberger)
+Date: Tue, 27 Sep 2005 18:38:36 -0400
+Subject: Re: Multiple plots in R
+Message-ID: <83bd6251.4292bb87.81bbb00@po-d.temple.edu>
+
+You can add the following line to your .First function
+
+options(graphics.record=T)
+
+You can get the same effect by clicking on the graphics window menu.
+
+From ripley at stats.ox.ac.uk  Wed Sep 28 08:18:11 2005
+From: ripley at stats.ox.ac.uk (Prof Brian Ripley)
+Date: Wed, 28 Sep 2005 09:18:11 +0100
+Subject: Re: instant hazard rate/survival
+In-Reply-To: <9406000.1127859236895.JavaMail.mcheang@mac.com>
+References: <200509271322.j8RDMM919742@prolapse.mayo.edu> <9406000.1127859236895.JavaMail.mcheang@mac.com>
+Message-ID: <Pine.LNX.4.61.0509280909460.4513@gannet.stats>
+
+On Tue, 27 Sep 2005, Maggie Cheang wrote:
+
+> Thanks for Terry to reply for my qustion.
+Note that it is implicit in Terry's answer that the hazard is smooth.
+You have to make some asssumption here, and his includes how smooth it is.
+
+> That comes to my second question,
+> is there a simple way to plot the Hazard ratio from a coxph?
+
+What hazard ratio is that?  Note the theory underlying coxph does not 
+assume that hazards are smooth but that they are very rough.
+
+> anyone familiar with the muhaz package?
+
+Yes, and it is discussed (alongside similar ideas) in the MASS on-line 
+complements.  See http://www.stats.ox.ac.uk/pub/MASS4/#Complements .
+
+> thanks a bunch
+> Maggie
+> On Tuesday, September 27, 2005, at 06:24AM, Terry Therneau <therneau at mayo.edu>
+> wrote:
+>
+> > The simplest way that I know to get an estimate of the
+> > hazard is to use smoothing splines.
+> >
+> > fit <- survfit(Surv(time, status) ~ sex, data=lung)
+> >
+> > temp1 <- smooth.spline(fit[1]$time, 1-fit[1]$surv, df=5)
+> > temp2 <- smooth.spline(fit[2]$time, 1-fit[2]$surv, df=5)
+> >
+> > plot( predict(temp1, deriv=1), type='l')
+> > lines(predict(temp2, deriv=1), col=2)
+> >
+> > ------
+> >  The lung cancer data set is part of Splus (it's used in several
+> > manual pages as an example).  The plot shows the males to have a
+> > higher initial hazard than the females.
+> >
+> >  You choice of 5 degrees of freedom for the spline was completely
+> > arbitrary.
+> >
+> >         Terry Therneau
+> >
+> > --------------------------------------------------------------------
+> > This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> > unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> > the BODY of the message:  unsubscribe s-news
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+--
+Brian D. Ripley,                  ripley at stats.ox.ac.uk
+Professor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/
+University of Oxford,             Tel:  +44 1865 272861 (self)
+1 South Parks Road,                     +44 1865 272866 (PA)
+Oxford OX1 3TG, UK                Fax:  +44 1865 272595
+
+From mcheang at mac.com  Wed Sep 28 08:54:43 2005
+From: mcheang at mac.com (Maggie Cheang)
+Date: Wed, 28 Sep 2005 01:54:43 -0700
+Subject: Re: instant hazard rate/survival
+In-Reply-To: <Pine.LNX.4.61.0509280909460.4513@gannet.stats>
+References: <200509271322.j8RDMM919742@prolapse.mayo.edu> <9406000.1127859236895.JavaMail.mcheang@mac.com> <Pine.LNX.4.61.0509280909460.4513@gannet.stats>
+Message-ID: <C28F84D0-9AD3-410C-920F-7CF911F4861D@mac.com>
+
+I really appreciate your advice. I am a beginner in survival  
+analysis, in fact, in S/R.
+
+Maybe i should clarify what I would like to do.
+
+I would like to look to plot both the instant hazard rate of a  
+biomarker positive and negative expression respectively, and also the  
+hazard ratio of the positive in respect to the negative expression,  
+adjusting with other factors, such as tumor size and age.
+
+I read this reference paper (Estrogen receptors and distinct patterns  
+of breast cancer relapse, by Kenneth R. Hess et al, Breast cancer  
+research and treatment 78: 105-118, 2003). In the paper, the authors  
+plot the a smooth hazard graph, and also hazard ratio.
+
+I am not quite sure how the author draw the smooth hazard ratio, but  
+I like the idea that plotting the hazard ratio across time, to  
+visualize the changes.
+
+Thanks in advance.
+Maggie
+
+On 28-Sep-05, at 1:18 AM, Prof Brian Ripley wrote:
+
+> On Tue, 27 Sep 2005, Maggie Cheang wrote:
+>
+>
+>
+> > Thanks for Terry to reply for my qustion.
+>
+> Note that it is implicit in Terry's answer that the hazard is smooth.
+>
+> You have to make some asssumption here, and his includes how smooth
+> it is.
+>
+>
+>
+>
+>
+> > That comes to my second question,
+> > is there a simple way to plot the Hazard ratio from a coxph?
+>
+> What hazard ratio is that?  Note the theory underlying coxph does
+> not assume that hazards are smooth but that they are very rough.
+>
+>
+>
+>
+>
+> > anyone familiar with the muhaz package?
+>
+> Yes, and it is discussed (alongside similar ideas) in the MASS on-
+> line complements.  See http://www.stats.ox.ac.uk/pub/MASS4/
+> #Complements .
+>
+>
+>
+>
+>
+> > thanks a bunch
+> >
+> > Maggie
+> >
+> > On Tuesday, September 27, 2005, at 06:24AM, Terry Therneau
+> > <therneau at mayo.edu> wrote:
+> >
+> >
+> >
+> >
+> >
+> > > The simplest way that I know to get an estimate of the
+> > > hazard is to use smoothing splines.
+> > >
+> > > fit <- survfit(Surv(time, status) ~ sex, data=lung)
+> > >
+> > > temp1 <- smooth.spline(fit[1]$time, 1-fit[1]$surv, df=5)
+> > > temp2 <- smooth.spline(fit[2]$time, 1-fit[2]$surv, df=5)
+> > >
+> > > plot( predict(temp1, deriv=1), type='l')
+> > > lines(predict(temp2, deriv=1), col=2)
+> > >
+> > > ------
+> > >  The lung cancer data set is part of Splus (it's used in several
+> > > manual pages as an example).  The plot shows the males to have a
+> > > higher initial hazard than the females.
+> > >
+> > >  You choice of 5 degrees of freedom for the spline was completely
+> > > arbitrary.
+> > >
+> > >     Terry Therneau
+> > >
+> > > --------------------------------------------------------------------
+> > >
+> > > This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> > >
+> > > unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu
+> > > with
+> > >
+> > > the BODY of the message:  unsubscribe s-news
+> > --------------------------------------------------------------------
+> >
+> > This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> >
+> > unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu
+> > with
+> >
+> > the BODY of the message:  unsubscribe s-news
+> --
+> Brian D. Ripley,                  ripley at stats.ox.ac.uk
+> Professor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/
+> University of Oxford,             Tel:  +44 1865 272861 (self)
+> 1 South Parks Road,                     +44 1865 272866 (PA)
+> Oxford OX1 3TG, UK                Fax:  +44 1865 272595
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+Maggie Cheang
+mcheang at mac.com
+
+From conrvhgv at az.vub.ac.be  Wed Sep 28 09:46:38 2005
+From: conrvhgv at az.vub.ac.be (vincent vinh-hung)
+Date: Wed, 28 Sep 2005 11:46:38 +0200
+Subject: Re: instant hazard rate/survival
+In-Reply-To: <C28F84D0-9AD3-410C-920F-7CF911F4861D@mac.com>
+References: <C28F84D0-9AD3-410C-920F-7CF911F4861D@mac.com>
+Message-ID: <200509280935.j8S9Z2uS028366@pluto.az.vub.ac.be>
+
+Many thanks for your question that I did not dare asking
+and for the instructive responses.
+Another example of plotting hazard can be found in
+Retsky M et al, breast cancer research:
+http://breast-cancer-research.com/content/6/4/R372
+Regarding plot of hazard ratio across time,
+perhaps most convenient is:
+somefittedcoxmodel <- coxph(yourmodel)
+plot(cox.zph (somefittedcoxmodel, transform='identity'))
+Regards,
+Vincent Vinh-Hung
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu 
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Maggie Cheang
+Sent: Wednesday, September 28, 2005 10:55 AM
+To: Prof Brian Ripley
+Cc: Terry Therneau; s-news at lists.biostat.wustl.edu
+Subject: Re: [S] instant hazard rate/survival
+
+I really appreciate your advice. I am a beginner in survival  
+analysis, in fact, in S/R.
+Maybe i should clarify what I would like to do.
+I would like to look to plot both the instant hazard rate of a  
+biomarker positive and negative expression respectively, and also the  
+hazard ratio of the positive in respect to the negative expression,  
+adjusting with other factors, such as tumor size and age.
+I read this reference paper (Estrogen receptors and distinct patterns  
+of breast cancer relapse, by Kenneth R. Hess et al, Breast cancer  
+research and treatment 78: 105-118, 2003). In the paper, the authors  
+plot the a smooth hazard graph, and also hazard ratio.
+I am not quite sure how the author draw the smooth hazard ratio, but  
+I like the idea that plotting the hazard ratio across time, to  
+visualize the changes.
+
+Thanks in advance.
+Maggie
+
+On 28-Sep-05, at 1:18 AM, Prof Brian Ripley wrote:
+
+> On Tue, 27 Sep 2005, Maggie Cheang wrote:
+>
+>
+>> Thanks for Terry to reply for my qustion.
+>>
+>
+> Note that it is implicit in Terry's answer that the hazard is smooth.
+> You have to make some asssumption here, and his includes how smooth  
+> it is.
+>
+>
+>> That comes to my second question,
+>> is there a simple way to plot the Hazard ratio from a coxph?
+>>
+>
+> What hazard ratio is that?  Note the theory underlying coxph does  
+> not assume that hazards are smooth but that they are very rough.
+>
+>
+>> anyone familiar with the muhaz package?
+>>
+>
+> Yes, and it is discussed (alongside similar ideas) in the MASS on- 
+> line complements.  See http://www.stats.ox.ac.uk/pub/MASS4/ 
+> #Complements .
+>
+>
+>
+>> thanks a bunch
+>> Maggie
+>> On Tuesday, September 27, 2005, at 06:24AM, Terry Therneau  
+>> <therneau at mayo.edu> wrote:
+>>
+>>
+>>> The simplest way that I know to get an estimate of the
+>>> hazard is to use smoothing splines.
+>>>
+>>> fit <- survfit(Surv(time, status) ~ sex, data=lung)
+>>>
+>>> temp1 <- smooth.spline(fit[1]$time, 1-fit[1]$surv, df=5)
+>>> temp2 <- smooth.spline(fit[2]$time, 1-fit[2]$surv, df=5)
+>>>
+>>> plot( predict(temp1, deriv=1), type='l')
+>>> lines(predict(temp2, deriv=1), col=2)
+>>>
+>>>
+>>> ------
+>>>  The lung cancer data set is part of Splus (it's used in several
+>>> manual pages as an example).  The plot shows the males to have a
+>>> higher initial hazard than the females.
+>>>
+>>>  You choice of 5 degrees of freedom for the spline was completely
+>>> arbitrary.
+>>>
+>>>     Terry Therneau
+>>>
+>>> --------------------------------------------------------------------
+>>> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+>>> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu  
+>>> with
+>>> the BODY of the message:  unsubscribe s-news
+>>>
+>>>
+>>>
+>> --------------------------------------------------------------------
+>> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+>> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu  
+>> with
+>> the BODY of the message:  unsubscribe s-news
+>>
+>>
+>
+> -- 
+> Brian D. Ripley,                  ripley at stats.ox.ac.uk
+> Professor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/
+> University of Oxford,             Tel:  +44 1865 272861 (self)
+> 1 South Parks Road,                     +44 1865 272866 (PA)
+> Oxford OX1 3TG, UK                Fax:  +44 1865 272595
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+>
+
+Maggie Cheang
+mcheang at mac.com
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From Chuanpu.Hu at sanofi-aventis.com  Wed Sep 28 12:17:13 2005
+From: Chuanpu.Hu at sanofi-aventis.com
+Date: Wed, 28 Sep 2005 08:17:13 -0400
+Subject: corClasses in lme()
+Message-ID: <OF17537155.C85AF6A9-ON8525708A.0042AACD@sanofi-aventis.com>
+
+Hello,
+
+I am trying to implement a spatial correlation structure (var power in SAS)
+of the form rho^(time difference) in lme (using S-PLUS 6.2 professional).
+The closest I found from the online help was
+                                                                       
+ corCAR1                                         S-PLUS Language Reference
+                                                                       
+
+Continuous AR(1) Correlation Structure
+DESCRIPTION:
+This function is a constructor for the corCAR1 class, representing an
+autocorrelation structure of order 1, with a continuous time covariate.
+
+Is this the one that I need? How do I know for sure?
+
+Thanks in advance,
+Chuanpu
+-------------------------------------------------------------------
+Chuanpu Hu, Ph.D.
+Biostatistics
+sanofi-aventis
+9 Great Valley Parkway, Room 242
+Malvern, PA 19355-1304
+Tel: (610) 889-6774
+Fax: (610) 889-6932
+-------------------------------------------------------------------
+
+----------------------------------------------------------
+Le présent message ainsi que ses éventuelles pièces jointes est
+exclusivement destiné au(x) destinataire(s), personnes physiques ou
+morales, qu'il désigne.
+Il constitue de ce fait une correspondance à caractère privé et peut
+contenir des informations confidentielles.
+Si ce message vous est parvenu par erreur, nous vous remercions d'en aviser
+immédiatement l'expéditeur par retour de courrier électronique puis de le
+détruire, ainsi que ses éventuelles pièces jointes, sans en conserver de
+copie.
+
+This message, including any attachment, is intended for the use of the
+individual or entity to which it is addressed.
+It is therefore to be considered as a private correspondence which may
+contain confidential information.
+If you are not the intended recipient, please advise the sender immediately
+by reply e.mail and delete this message and any attachment thereto without
+retaining a copy.
+----------------------------------------------------------
+
+From widad_c at hotmail.com  Wed Sep 28 15:49:33 2005
+From: widad_c at hotmail.com (Widad Chergui)
+Date: Wed, 28 Sep 2005 15:49:33 +0000
+Subject: subscipbe
+Message-ID: <BAY104-F14F3B16F4F6988A670DF728C8D0@phx.gbl>
+
+ 
+
+accept F305-1347-1645
+
+>
+
+From KINLEY_ROBERT at LILLY.COM  Wed Sep 28 16:52:37 2005
+From: KINLEY_ROBERT at LILLY.COM (Robert Kinley)
+Date: Wed, 28 Sep 2005 17:52:37 +0100
+Subject: responses to my question on non-central t
+Message-ID: <OFE0D99785.DBADE7FA-ON8025708A.005B19E5-8025708A.005CB54A@EliLilly.lilly.com>
+
+The original question is attached at the end of this message
+...
+
+In the world of R the excellent  mvtnorm  package
+answers my original 
+
+question and many more that I didn't know I needed to
+ask.
+
+In the world of Splus ( version 6 , Windows XP )  this
+link :-
+
+        http://www.biostat.wustl.edu/archives/html/s-news/2002-11/msg00079.html
+
+which was provided by Dimitris Rizopoulos, is useful.
+
+Sadly in Splus there seems to be no library equivalent
+to the R mvtnorm package...
+
+... unless someone out there has ported it, or has something
+similar up their sleeve ??
+
+             
+  cheers            
+   Bob
+
+----- Forwarded by Robert
+Kinley/EMA/LLY on 28/09/2005 17:35 -----
+
+Robert Kinley <KINLEY_ROBERT at lilly.com>
+
+Sent by: r-help-bounces at stat.math.ethz.ch
+14/09/2005 14:24
+
+To
+
+s-news at lists.biostat.wustl.edu, r-help at stat.math.ethz.ch
+
+cc
+
+Subject
+
+[R] non-central t   : R v.Splus
+
+Hi
+
+For bureaucratic reasons beyond my control I need to rewrite an R function
+
+(for producing operating characteristic curves) as an Splus function  (
+
+version 6 , windows XP ).
+
+The R function makes extensive use of the fact that the student's t 
+
+distribution function  pt()  has a non-centrality parameter built
+in ... 
+
+sadly that parameter is not present in the Splus pt() function .
+
+However, the Splus f distribution function pf() does have such a parameter
+
+, so I have tried to write my own non-central version of pt() based around
+
+ pf() , using the relationship between the t and F distributions.
+
+Unfortunately my success has been limited  ... I can only get correct
+
+probabilities for part of the range of the quantile space , failing when
+
+the quantile becomes small ... and I'm beginning to wonder whether it's
+
+actually possible to do what I want at all , given that the range of x
+in 
+
+F(x) is [ 0:Inf ] while that in t(x) is [-Inf , Inf ] , and the 
+
+non-central t  distribution is not symmetric ...
+
+Do any wiser heads than mine have any experience or advice to offer  
+... 
+
+?
+
+        thanks          Bob
+Kinley
+
+                
+[[alternative HTML version deleted]]
+
+______________________________________________
+
+R-help at stat.math.ethz.ch mailing list
+
+https://stat.ethz.ch/mailman/listinfo/r-help
+
+PLEASE do read the posting guide! http://www.R-project.org/posting-guide.html
+
+From khchoi at sfsu.edu  Thu Sep 29 18:36:03 2005
+From: khchoi at sfsu.edu (Keun-Hyung Choi)
+Date: Thu, 29 Sep 2005 11:36:03 -0700
+Subject: extracting subset
+Message-ID: <000401c5c524$a8e5e3a0$edd8d482@sfsu5096qxj6c3>
+
+Hello,
+
+ 
+
+Suppose I have a data frame of 20 X 10, in which the columns
+can be regrouped differently by different categories. Let’s say I have
+three categories, which were stored as lists. 
+
+Then how  can I extract a column subset of A in
+category 1 & B in category 2, or a subset of B in category 2 & C in
+category 3, or a subset of  A in category 1 & B in category 2 & C
+in category 3?
+
+ 
+
+Thanks. Keun-Hyung
+
+ 
+
+ 
+
+From andreas.krause at novartis.com  Fri Sep 30 09:42:11 2005
+From: andreas.krause at novartis.com
+Date: Fri, 30 Sep 2005 11:42:11 +0200
+Subject: Re: responses to my question on non-central t
+Message-ID: <OF7DCEC2A3.0A53D86E-ONC125708C.0034E4D4-C125708C.00354D1F@EU.novartis.net>
+
+Bob -
+
+see if you are interested in the plain S-Plus implementation of
+ptnoncent.ssc
+on the web page of our book (chapter 11, Bock on power and sample size
+calculations):
+http://www.elmo.ch/doc/statistics-in-pharma/code/index.html
+
+Best regards,
+
+      Andreas
+
+                                                      
+      To: s-news at lists.biostat.wustl.edu,             
+          r-help at stat.math.ethz.ch                    
+                                                      
+ Subject: responses to my question on non-central t   
+                                                      
+
+The original question is attached at the end of this message ...
+
+In the world of R the excellent  mvtnorm  package answers my original
+question and many more that I didn't know I needed to ask.
+
+In the world of Splus ( version 6 , Windows XP )  this link :-
+http://www.biostat.wustl.edu/archives/html/s-news/2002-11/msg00079.html
+which was provided by Dimitris Rizopoulos, is useful.
+
+Sadly in Splus there seems to be no library equivalent to the R mvtnorm
+package...
+
+... unless someone out there has ported it, or has something similar up
+their sleeve ??
+
+                cheers                Bob
+
+From adrianlerch at yahoo.de  Fri Sep 30 18:28:49 2005
+From: adrianlerch at yahoo.de (Adrian Lerch)
+Date: Fri, 30 Sep 2005 20:28:49 +0200
+Subject: Finmetrics 2.0: Markov Switching AR Model
+Message-ID: <20050930182849.88151.qmail@web26606.mail.ukl.yahoo.com>
+
+Hallo 
+
+ 
+
+I would like to estimate a  Markov Switching Model with no autoregressive coefficient (AR(0)), but with intercept terms that are regime switching. Regarding the Function MSAR(), I can't figure out how to specify the AR(0) part. Does anyone know how this can be done with Finmetrics 2.0?
+
+ 
+
+Thanks for any help.
+
+ 
+
+Regards
+
+ 
+
+Adrian
+
+ 
+
+  
+
+		Gesendet von Yahoo! Mail - Jetzt mit 1GB kostenlosem Speicher
+

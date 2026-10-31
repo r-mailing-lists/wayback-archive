@@ -1,0 +1,598 @@
+{
+  "list": "s-news",
+  "description": "",
+  "month": "2009-04",
+  "messages": [
+    {
+      "id": "msg-b361633e4b4f",
+      "message_id": "<49D472AB.1090908@elmo.ch>",
+      "from_name": "Andreas Krause",
+      "from_email_hash": "c616c743636c073ea72d771351741005c0aa140744e9c34744a9f1841fb12659",
+      "date": "2009-04-02T08:09:15Z",
+      "subject": "Re: Trellis help",
+      "subject_clean": "Trellis help",
+      "in_reply_to": "<0552C65FE0AE49458A43BB6538148C920124AAF9@SAGE.forestry.oregonstate.edu>",
+      "references": [
+        "<49CB7853.30402@earthlink.net>",
+        "<0552C65FE0AE49458A43BB6538148C920124AAF9@SAGE.forestry.oregonstate.edu>"
+      ],
+      "body_plain": "Manuela,\n\nnot all details are given to give a precise answer, but here is a \ngeneric answer.\n\nCombine your 3 time series into one and add an indicator variable \nsimilar to this:\n\nvalue time dataset\n11    0    1\nwhere dataset is either 1, 2, or 3 to indicate the original data set.\n\nThen you can do anything you want if you do something like this:\n\nxyplot(value ~ time | z, data=x, alldata=x,\n  colors=c(\"red\", \"green\", \"blue\", \"orange\"),\n  panel=function(x, y, ..., subscripts, alldata, colors=1:99)\n  {\n    this.data <- alldata[subscripts, ...]\n    # gets you the data for the current panel\n\n    # Now you can do whatever you want inside the panel, for example:\n    for(index in unique(this.data$dataset))\n    {\n      data.sub <- this.data[this.data$dataset==index, ] # get one series\n      panel.lines(data.sub$x, data.sub$y, col=colors[index]) # lines\n  }\n)\n\n# The trick is to just pass the entire data set to the panel function \nand then extract the ones you want.\n\nNote that you can calculate standard errors beforehand,\n\nsdv <- aggregate(list(\"sdv\"=x[, \"value\"]), x[, c(\"time\", \"dataset\")],\n        function(x) { x <- x[!is.na(x)]; return(sqrt(var(x))/length(x)) } )\nx2 <- merge(x, sdv, all=TRUE)\n\nor you do the calculation inside the panel function (!).\n\nAn extended example of such customization is shown in our book, The \nBasics of S-Plus, in the exercises and solutions of the chapter on \n\"Trellis Graphics\".\n\nHope this helps.\n\n  Andreas\n\nHuso, Manuela wrote:\n> Hello, all,\n>\n> I would like to  make a trellis plot that has 3 lines (plus error bars\n> at certain points in each of the panels).  I have not seen an example of\n> this... Every example I have seen has only one line per plot.  I have\n> the equivalent of 3 time series measured on each experimental unit, and\n> I have 18 units, so I am looking to produce a panel of 6 rows X 3\n> columns, each with 3 lines (with vertical error bars at about 7\n> locations along each line).  Can anyone point me to a parallel example,\n> please?\n>\n> Many thanks in advance!\n>\n> Manuela\n>\n> > ::<>::<>::<>::<>::<>::<>::<>::<>::<>::<>::<\n>\n> Manuela Huso\n> Consulting Statistician\n> Department of Forest Ecosystems and Society\n> 201H Richardson Hall\n> Oregon State University\n> Corvallis, OR   97331\n> ph: 541.737.6232\n> fx: 541.737.1393\n>\n> -----Original Message-----\n> From: s-news-owner at lists.biostat.wustl.edu\n> [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Data\n> Analytics Corp.\n> Sent: Thursday, March 26, 2009 5:43 AM\n> To: s-news at lists.biostat.wustl.edu\n> Subject: [S] function miss is missing\n>\n> Hi,\n>\n> I discovered documentation for the function miss() in the language help\n> for S+ 8.0.  This is suppose to show a missing data pattern display.\n> When I copied the example to a script window, I got an error message\n>\n> that miss can't be found.  What happened to miss?\n>\n> Thanks,\n>\n> Walt\n>\n>\n>\n> --\n> ________________________\n>\n> Walter R. Paczkowski, Ph.D.\n> Data Analytics Corp.\n> 44 Hamilton Lane\n> Plainsboro, NJ 08536\n> ________________________\n> (V) 609-936-8999\n> (F) 609-936-3733\n> dataanalytics at earthlink.net\n> www.dataanalyticscorp.com\n>\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news",
+      "body_snippet": "Manuela,\n\nnot all details are given to give a precise answer, but here is a \ngeneric answer.\n\nCombine your 3 time series into one and add an indicator variable \nsimilar to this:\n\nvalue time dataset\n11",
+      "thread_id": "thread-b361633e4b4f",
+      "thread_depth": 0,
+      "month": "2009-04"
+    },
+    {
+      "id": "msg-2aac66369697",
+      "message_id": "<0552C65FE0AE49458A43BB6538148C920124AB22@SAGE.forestry.oregonstate.edu>",
+      "from_name": "Huso, Manuela",
+      "from_email_hash": "1eb9992fda477f2e667e23261eec8d7163f60f8a63d1e042bdefa9d13add8299",
+      "date": "2009-04-02T18:29:01Z",
+      "subject": "Re: Trellis help summary of responses",
+      "subject_clean": "Trellis help summary of responses",
+      "in_reply_to": "<0552C65FE0AE49458A43BB6538148C920124AAF9@SAGE.forestry.oregonstate.edu>",
+      "references": [
+        "<49CB7853.30402@earthlink.net>",
+        "<0552C65FE0AE49458A43BB6538148C920124AAF9@SAGE.forestry.oregonstate.edu>"
+      ],
+      "body_plain": "Many thanks to Naomi Robbins, Christopher Green, Brad Biggerstaff and\nAndreas Kraus for timely and useful responses to my question.  A summary\nof their responses follows:\n\nNaomi Robbins wrote:\n> Suppose you had only one unit. Can you draw what you want\n> in that case? If so, put those commands in a panel function for\n> your trellis plot and then the trellis commands take care of the \n> framework; i.e., the rows, cols, and layout.\n\nChristopher G. Green wrote:\n> xyplot with panel=panel.superpose and a groups argument can help you \n> put multiple series on each panel. Don't know about the error \n> bars...maybe you need a custom panel function.\n\nBrad Biggerstaff wrote:\n> Look at the xYplot function (using Cbind) in the Hmisc library (and\nits help page), \n> distributed with S-Plus (and available in R).  Also, to have multiple\nlines per panel, look \n> into using the groups parameter with panel.superpose or a custom panel\nfunction. \n\nAndreas Krause wrote:\nnot all details are given to give a precise answer, but here is a\ngeneric answer.\n\nCombine your 3 time series into one and add an indicator variable\nsimilar to this:\nvalue time dataset\n11    0    1\nwhere dataset is either 1, 2, or 3 to indicate the original data set.\n\nThen you can do anything you want if you do something like this:\n\nxyplot(value ~ time | z, data=x, alldata=x,\n   colors=c(\"red\", \"green\", \"blue\", \"orange\"),\n   panel=function(x, y, ..., subscripts, alldata, colors=1:99)\n   {\n     this.data <- alldata[subscripts, ...]\n     # gets you the data for the current panel\n\n     # Now you can do whatever you want inside the panel, for example:\n     for(index in unique(this.data$dataset))\n     {\n       data.sub <- this.data[this.data$dataset==index, ] # get one\nseries\n       panel.lines(data.sub$x, data.sub$y, col=colors[index]) # lines\n   }\n)\n\n# The trick is to just pass the entire data set to the panel function\nand then extract the ones you want.\n\nNote that you can calculate standard errors beforehand,\n\nsdv <- aggregate(list(\"sdv\"=x[, \"value\"]), x[, c(\"time\", \"dataset\")],\n        function(x) { x <- x[!is.na(x)]; return(sqrt(var(x))/length(x))\n} )\nx2 <- merge(x, sdv, all=TRUE)\n\nor you do the calculation inside the panel function (!).\n\nAn extended example of such customization is shown in our book, The\nBasics of S-Plus, in the exercises and solutions of the chapter on\n\"Trellis Graphics\".\n\n-----Original Message-----\nFrom: Huso, Manuela \nSent: Monday, March 30, 2009 10:26 AM\nTo: s-news at lists.biostat.wustl.edu\nSubject: Trellis help\n\nHello, all,\n\nI would like to  make a trellis plot that has 3 lines (plus error bars\nat certain points in each of the panels).  I have not seen an example of\nthis... Every example I have seen has only one line per plot.  I have\nthe equivalent of 3 time series measured on each experimental unit, and\nI have 18 units, so I am looking to produce a panel of 6 rows X 3\ncolumns, each with 3 lines (with vertical error bars at about 7\nlocations along each line).  Can anyone point me to a parallel example,\nplease?\n\nMany thanks in advance!\n\nManuela\n\n>::<>::<>::<>::<>::<>::<>::<>::<>::<>::<>::<\nManuela Huso\nConsulting Statistician\nDepartment of Forest Ecosystems and Society 201H Richardson Hall Oregon\nState University\nCorvallis, OR   97331\nph: 541.737.6232\nfx: 541.737.1393",
+      "body_snippet": "Many thanks to Naomi Robbins, Christopher Green, Brad Biggerstaff and\nAndreas Kraus for timely and useful responses to my question.  A summary\nof their responses follows:\n\nNaomi Robbins wrote:\n> Suppo",
+      "thread_id": "thread-2aac66369697",
+      "thread_depth": 0,
+      "month": "2009-04"
+    },
+    {
+      "id": "msg-1384c8363c39",
+      "message_id": "<49DBFE32.8020708@wi-consortium.org>",
+      "from_name": "wiiat",
+      "from_email_hash": "d5e75bbefecbeb1b051b75f7da986e5ec561ee92c1db8aeba057c1db22564357",
+      "date": "2009-04-08T01:30:26Z",
+      "subject": "WI 2009 - Call for Papers - Extended Deadline",
+      "subject_clean": "WI 2009 - Call for Papers - Extended Deadline",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "[Apologies if you receive this more than once]\n\nPapers and Tutorials Due: *** 20 April 2009 ***NEW DEADLINE***\nDue to repeated requests, the deadlines are extended to 20th April.\n\n#####################################################################\nIEEE/WIC/ACM WEB INTELLIGENCE 2009\nCALL FOR PAPERS\n#####################################################################\n\n2009 IEEE/WIC/ACM International Conference on Web Intelligence (WI-09)\n\nSeptember 15-18, 2009, University of Milano - Bicocca, Milano, Italy\n\nhttp://www.wi-iat09.disco.unimib.it\n\nSponsored By\nIEEE Computer Society\nWeb Intelligence Consortium (WIC)\nAssociation for Computing Machinery (ACM)\n\n##################################################################\n# (Papers Due: *** 20 April 2009 *** NEW DEADLINE\n# Accepted papers will be published in the conference proceedings\n# by the IEEE Computer Society Press, which are indexed by EI.\n##################################################################\n\nWI 2009 will provide a leading international forum of scientific\nresearch and development to explore the fundamental interactions\nbetween AI-engineering and Advanced Information Technology\n(e.g., wireless networks, ubiquitous devices, social networks, and\ndata/knowledge grids), and their role on the next generation of\nWeb-empowered products, Web systems and services. AI-engineering\nrefers to a new area, slightly beyond tradional AI, which encompasses:\nbrain informatics, human level AI, intelligent agents, social network\nintelligence, knowledge engineering, representation, planning, data\nmining and discovery.\n\nWI 2009 will be jointly held with the 2009 IEEE/WIC/ACM International\nConference on Intelligent Agent Technology (IAT-09). The two\nconferences will have a joint opening, keynote, reception, and\nbanquet. Attendees only need to register for one conference and can\nattend workshops, sessions, tutorials, panels, exhibits and\ndemonstrations across the two conferences. We are also planning a\njoint panel, joint paper sessions, and a doctoral mentoring program to\ndiscuss common problems in the two areas.\n\n+++++++++++++++++++\nTopics of Interest\n+++++++++++++++++++\n\nWe invite submissions in all WI related areas. Papers exploring new\ndirections or areas will receive a careful and supportive review.\nAreas of interest include, but are not limited to:\n\n* WI Foundations\n- Brain Informatics for WI\n- Human Level WI\n- New Cognitive Models and Computational Models for WI\n- Granular Computing (GrC) for WI\n- Soft Computing for WI\n- Autonomy-Oriented Computing (AOC) for WI\n- Human-Inspired WI Computing\n\n* World Wide Wisdom Web (W4)\n- Meta-Knowledge Discovery and Representation\n- Problem Solver Markup Language (PSML)\n- Search of Best Means and Ends\n- Goal-Directed Services Support\n- Distributed Resources Optimization\n- Service Self-Aggregation\n- Web Inference Engine\n- Information and Knowledge Markets\n- New Social Interaction Paradigms\n- Social and Psychological Contexts Regularities and Laws of W4\n\n* Web Information Retrieval and Filtering\n- Web Information Retrieval in context\n- Multimedia Indexing\n- Personalization\n- Location-based Information Retrieval\n- Geographic information retrieval\n- Content-based Information Filtering\n- Collaborative Filtering and Recommendation\n- Hybrid Recommendation\n- Clustering-Based Recommender Systems\n- Information Retrieval Models and Evaluations\n- Web Information Categorization\n- Ranking Techniques\n- Proxy and Cache Techniques\n- Web Prediction and Pre-fetching\n- Distributed Web Search\n- Specifications for Web Information Extraction Process\n- Web Crawling Systems\n- Search Engines and Meta-search Engines\n\n* Semantics and Ontology Engineering\n- Semantic Web\n- Ontology-Based Information Extraction and Retrieval\n- Ontology-Based Web Mining\n- Web-Based Ontology Learning\n- Web Scale Reasoning\n\n* Web Mining and Farming\n- Text Mining\n- Data Stream Mining\n- Multimedia Data Mining\n- Web Content Mining\n- Web Log and Usage Mining\n- Context Sensitive Web Mining\n- Web Information Clustering\n- Web Page Clustering and Mining\n- Data Warehousing\n- Web Farming and Warehousing\n\n* Social Networks and Social Intelligence\n- Social Networks Mining\n- Web Site Clustering\n- Web 2.0\n- Link Topology and Site Hierarchy\n- Theories of Small-World Web\n- Virtual and Web Communities\n- Web-Based Cooperative Work\n- Knowledge Community Formation and Support\n- Ubiquitous Computing\n- Intelligent Wireless Web\n- Ubiquitous Learning Systems\n- Entertainment\n\n* Knowledge Grids and Grid Intelligence\n- Semantic Grids\n- Knowledge Resources and Services Discovery\n- On-Demand Planning and Routing\n- Brokering and Scheduling\n- Middleware Architectures and Tools\n\n* Web Agents\n- Global Information Foraging\n- Distributed Problem Solving\n- Coordination\n- Resource Intermediary and Coordination Mechanisms\n- Self-Organization and Reproduction\n- Agent Networks and Topologies\n- Mobile Agents\n- Macroscopic Behavior Modeling\n- Trust Models for Web Agents\n\n* Web Services\n- Service-Oriented Computing\n- Matchmaking\n- Web Service Reconfiguration\n- Web Service Workflow Composition\n- Middleware-Based Ubiquitous Services\n- Grid Services\n\n* Intelligent Human-Web Interaction\n- Adaptive Web Interfaces\n- Context-Aware Computing\n- Emotional Factor\n- Learning User Profiles\n- Multimedia Representation\n- Personalized Interfaces\n- Personalized Websites\n- Remembrance Agents\n- Visualization of Information and Knowledge\n- Social and Psychological Issues\n\n* Web Support Systems\n- Information Retrieval Support Systems\n- Web Site Navigation Support Systems\n- Recommender Support Systems\n- Web-Based Decision Support Systems\n- Soft Computing (including neural networks, fuzzy logic,\nevolutionary computation, rough sets, and granular computing)\nand Uncertainty Management for WI\n\n* Intelligent e-Technology\n- Business Intelligence\n- Intelligent Enterprise Portals\n- Web-Based Direct Marketing and CRM\n- Web-Based EDI\n- Digital Libraries\n- e-Publishing\n- e-Business and e-Commerce\n- e-Finance\n- e-Community Decentralized Community Communication Techniques\n- e-Learning\n- e-Medicine\n- e-Science\n- e-Government\n- Web Security, Integrity, Privacy and Trust\n\n++++++++++++++++++++++++++++++++++++\nOn-Line Submissions and Publication\n++++++++++++++++++++++++++++++++++++\n\nHigh-quality papers in all WI related areas are solicited.\nPaper submissions should be limited to a maximum of 8 pages in the\nIEEE 2-column format, the same as the camera-ready format (see the\nAuthor Guidelines of last year at\nhttp://www.ieeeconfpublishing.org/cpir/AuthorKit.asp?Community=CPS&Facility=CPS_Dec&ERoom=WI%2DIAT+2008).\n\nAll submitted papers will be reviewed by the Program Committee\non the basis of technical quality, relevance, significance, and clarity.\n\nNote that WI'09 will accept ONLY on-line submissions, containing\nPDF versions. Please use the Submission Form on the WI'09\nwebsite to submit your paper. Accepted papers will be published in the\nconference proceedings by the IEEE Computer Society Press that are\nindexed by EI.\n\nSubmissions accepted as regular papers will be allocated 8 pages in the\nproceedings and accorded oral presentation in the main conference.\nSubmissions accepted as short papers will be allocated 4\npages in the proceedings and will have a shorter presentation time at\nthe conference than regular papers.\n\nAll co-authors will be notified for the submission,\nnotification, and confirmation on the attendance. Submitting a paper\nto the conference and workshops means that, if the paper is accepted,\nat least one author should attend the conference to present the\npaper. The acceptance list and no-show list will be openly published\non-line. For no-show authors, their affiliations will receive a\nnotification.\n\nA selected number of WI'09 accepted papers will be expanded\nand revised for inclusion in Web Intelligence and Agent Systems:\nAn International Journal (http://wi-consortium.org/journal.html) and in\nAnnual Review of Intelligent Informatics\n(http://www.wi-consortium.org/annual.html).\n\nThe best paper awards will be conferred at the conference on the\nauthors of (1) the best research paper and (2) the best application\npaper. Application-oriented submissions will be considered for the\nbest application paper award.\n\nMore detailed instructions and the On-Line Submission Form will be\nfound on the WI'09 homepage:\nhttp://www.wi-iat09.disco.unimib.it/WI09/WIhome.htm\n\n++++++++++\nWorkshops\n++++++++++\n\nAs an important part of the conference, the workshop program will\nfocus on new research challenges and initiatives. All papers accepted\nfor workshops will be included in the Workshop Proceedings published\nby the IEEE Computer Society Press that are indexed by EI, and will be\navailable at the workshops. Detailed information is available at the\nconference homepage.\n\nNote: we will not have a separate workshop registration fee\n(i.e., conference registration covers everything).\n\n++++++++++\nTutorials\n++++++++++\n\nWI'09 also welcomes Tutorial proposals. WI'09 will include tutorials\nproviding in-depth background on subjects that are of broad interest\nto the Web intelligence community. Both short (2 hours) and long (half\nday) tutorials will be considered. The tutorials will be part of the\nmain conference technical program. Detailed information is available\nat the conference homepage.\n\nNote: we will not have a separate tutorials registration fee\n(i.e., only one conference registration covers everything).\n\n++++++++++++++++++++\nIndustry/Demo-Track\n++++++++++++++++++++\n\nWe solicit Industry/Demo-Track papers by the following methods.\n\n(1) Industry papers of 4 pages can be submitted on the same schedule as\nthe research track.\n(2) Separate 2 page demo proposals can submitted at a later schedule.\n(3) Full regular paper submissions can include a demo option.\nThat is, a full paper submissions will be asked to\nspecify if they would like to give a demonstration; choice of\ndemonstrations (while utilizing information from the regular reviewing\nprocess) will be selected based on value as a demonstration.\n\nFor options (1) and (2), more detailed instructions will be found at\nthe homepage: http://www.wi-iat09.disco.unimib.it/WI09/WIhome.htm\n\n++++++++++++++++\nImportant Dates\n++++++++++++++++\n\n* Electronic paper submission (8 pages): April 20, 2009\n* Tutorial proposal submission: April 20, 2009\n* Workshop paper submission: April 30, 2008\n* Author notification: June 3, 2009\n* Conference dates: September 15-18, 2009\n\n++++++++++++++++++++++++\nConference Organization\n++++++++++++++++++++++++\n\nConference General Chair:\n* Gabriella Pasi, University of Milano - Bicocca, Milano, Italy\n\nProgram Chair:\n* Ricardo Baeza-Yates, Yahoo! Research, Barcelona, Spain\n\nWI Program Co-Chairs:\n* Bettina Berendt, K.U. Leuven, Leuven, Belgium\n* Elisa Bertino, Purdue University, West Lafayette, USA\n* Lim Ee Peng, Singapore Management University, Singapore\n\nIAT Program Co-Chairs:\n* Jerome Lang, CNRS, LAMSADE, Paris, France\n* Sushmita Mitra, Indian Statistical Institute, Kolkata, India\n* Simon Parsons, Brooklyn College, City University of New York, USA\n\nOrganizing Co-Chairs:\n* Gloria Bordogna, National Council of Research, Milano, Italy\n* Giancarlo Mauri, University of Milano - Bicocca, Milano, Italy\n\nWorkshop Co-Chairs:\n* Paolo Boldi, University of Milano, Milano. Italy\n* Giuseppe Vizzari, University of Milano - Bicocca, Milano, Italy\n\nTutorial Co-Chairs:\n* Mohand Boughanem, University Paul Sabatier, Toulouse, France\n* Fabrizio Sebastiani, National Council of Research, Pisa, Italy\n\nPublicity Co-Chairs:\n* Jia Hu, The International WIC Institute/BJUT, China\n* Mounia Lalmas, University of Glasgow, UK\n\nIEEE-CS-TCII Chair:\n* Ning Zhong, Maebashi Institute of Technology, Japan\n\nACM-SIGART Chair\n* Maria Gini, University of Minnesota, USA\n\nWIC Co-Chairs/Directors:\n* Ning Zhong, Maebashi Institute of Technology, Japan\n* Jiming Liu, University of Windsor, Canada\n\nWIC Advisory Board:\n* Edward A. Feigenbaum, Stanford University, USA\n* Setsuo Ohsuga, University of Tokyo, Japan\n* Benjamin Wah, University of Illinois, Urbana-Champaign, USA\n* Philip Yu, University of Illinois, Chicago, USA\n* L.A. Zadeh, University of California, Berkeley, USA\n\nWIC Tech. Committee & WI/IAT Steering Committee:\n* Jeffrey Bradshaw, UWF/Institute for Human and Machine Cognition, USA\n* Nick Cercone, York University, Canada\n* Dieter Fensel, University of Innsbruck, Austria\n* Georg Gottlob, Oxford University, UK\n* Lakhmi Jain, University of South Australia, Australia\n* Jianchang Mao, Yahoo! Inc., USA\n* Pierre Morizet-Mahoudeaux, Compiegne University of Technology, France\n* Hiroshi Motoda, Osaka University, Japan\n* Toyoaki Nishida, Kyoto University, Japan\n* Andrzej Skowron, Warsaw University, Poland\n* Jinglong Wu, Okayama University, Japan\n* Xindong Wu, University of Vermont, USA\n* Yiyu Yao, University of Regina, Canada\n\n*** Contact Information ***\n\nGabriella Pasi (Conference General Chair)\nEmail: WI-IAT09 at disco.unimib.it\n\nThe WIC Office\nEmail: wi09 at wi-consortium.org",
+      "body_snippet": "[Apologies if you receive this more than once]\n\nPapers and Tutorials Due: *** 20 April 2009 ***NEW DEADLINE***\nDue to repeated requests, the deadlines are extended to 20th April.\n\n####################",
+      "thread_id": "thread-1384c8363c39",
+      "thread_depth": 0,
+      "month": "2009-04"
+    },
+    {
+      "id": "msg-96e0e14e98ef",
+      "message_id": "<B130A91CAE960240AD7FA52EB156C82E4CFDADEDEF@exchange.sttwin.stt.msu.edu>",
+      "from_name": "James Stapleton",
+      "from_email_hash": "010327a03cfd85ecc3639685a4e5d7e0c87c8a6633fa909e4d076b9cc72ee2eb",
+      "date": "2009-04-08T12:48:09Z",
+      "subject": "Greek in titles",
+      "subject_clean": "Greek in titles",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "How can I insert Greek symbols into the title of a plot?\n\n \n\nJim Stapleton",
+      "body_snippet": "How can I insert Greek symbols into the title of a plot?\n\n \n\nJim Stapleton",
+      "thread_id": "thread-96e0e14e98ef",
+      "thread_depth": 0,
+      "month": "2009-04"
+    },
+    {
+      "id": "msg-57fe76a9938c",
+      "message_id": "<638C98570F713F48A8ED5B7593EFBA660E1190458B@iu-mssg-mbx07.ads.iu.edu>",
+      "from_name": "Noguchi, Takuya",
+      "from_email_hash": "e310224481f6eb8d782c82b16f788de65e989b582b7fd1f29013b8296a9f138d",
+      "date": "2009-04-08T13:00:06Z",
+      "subject": "Re: Greek in titles",
+      "subject_clean": "Greek in titles",
+      "in_reply_to": "<B130A91CAE960240AD7FA52EB156C82E4CFDADEDEF@exchange.sttwin.stt.msu.edu>",
+      "references": [
+        "<B130A91CAE960240AD7FA52EB156C82E4CFDADEDEF@exchange.sttwin.stt.msu.edu>"
+      ],
+      "body_plain": "Dr. Stapleton,\n\n \n\nI use R.\n\n \n\nPlease try as follow:\n\n \n\n> plot(b, main=\"\")\n\n>title(main=_expression_(paste(\"abc\", alpha, beta,\ngamma)))\n\n \n\nThank you\n\n \n\nTakuya\n\n \n\n \n\n******************************************\n\nTakuya Noguchi\n\nStat/Math Center\n\nhttp://www.indiana.edu/~statmath/    \n\nIndiana University\n\n410 N. Park Ave\n\nBloomington, IN 47408\n\n(812)855-2483\n\n******************************************\n\n \n\n \n\nFrom:\ns-news-owner at lists.biostat.wustl.edu [mailto:s-news-owner at lists.biostat.wustl.edu]\nOn Behalf Of James Stapleton\n\nSent: Wednesday, April 08, 2009 8:48 AM\n\nTo: s-news at lists.biostat.wustl.edu\n\nSubject: [S] Greek in titles\n\n \n\nHow\ncan I insert Greek symbols into the title of a plot?\n\n \n\nJim\nStapleton",
+      "body_snippet": "Dr. Stapleton,\n\n \n\nI use R.\n\n \n\nPlease try as follow:\n\n \n\n> plot(b, main=\"\")\n\n>title(main=_expression_(paste(\"abc\", alpha, beta,\ngamma)))\n\n \n\nThank you\n\n \n\nTakuya\n\n \n\n \n\n******************************",
+      "thread_id": "thread-96e0e14e98ef",
+      "thread_depth": 1,
+      "month": "2009-04"
+    },
+    {
+      "id": "msg-e7086390f728",
+      "message_id": "<5B833E900330354F9FDA984D06F9242805AA5DCB@ca-exchange.corp.pharsight.com>",
+      "from_name": "Samer Mouksassi",
+      "from_email_hash": "7c3444da3a210e54e736c5e202c5f8d1ff3e839ca19a7036814f1642b806e73d",
+      "date": "2009-04-08T14:50:45Z",
+      "subject": "Re: Greek in titles",
+      "subject_clean": "Greek in titles",
+      "in_reply_to": "<B130A91CAE960240AD7FA52EB156C82E4CFDADEDEF@exchange.sttwin.stt.msu.edu>",
+      "references": [
+        "<B130A91CAE960240AD7FA52EB156C82E4CFDADEDEF@exchange.sttwin.stt.msu.edu>"
+      ],
+      "body_plain": "You may try the following:\n\n \n\n \n\nplot(0:10,0:10)\n\n guiCreate( \"MainTitle\", Name = \"GSD2$1$1\",\n\n   Title = \"\\\\\\\"Symbol\\\"abes\",\n\n   FillColor = \"Transparent\")\n\n \n\n(you can insert a title from the menu edit\nthe font and format and then see how it writes in the history to learn more\nabout how to write the formats / colors/ sub and superscripts)\n\n \n\nSamer\n\n \n\n \n\n \n\nSamer Mouksassi, Pharm.D.\n\nSenior Associate\nScientist, Reporting and Analysis Services\n\n \n\nPharsight - A\nCertara™ Company\n\n2000 Peel St., Suite 570\n\nMontreal, Quebec\n H3A 2W5\n\nPhone: (514) 789-2184   \n\nMobile:  (514)\n475-9339\n\nFax: (514) 789-2192  \n\nEmail: smouksassi at pharsight.com \n\nFrom: s-news-owner at lists.biostat.wustl.edu\n[mailto:s-news-owner at lists.biostat.wustl.edu] On\nBehalf Of James Stapleton\n\nSent: 2009-04-08 08:48\n\nTo: s-news at lists.biostat.wustl.edu\n\nSubject: [S] Greek in titles\n\n \n\nHow can I insert Greek symbols into the title of a plot?\n\n \n\nJim Stapleton",
+      "body_snippet": "You may try the following:\n\n \n\n \n\nplot(0:10,0:10)\n\n guiCreate( \"MainTitle\", Name = \"GSD2$1$1\",\n\n   Title = \"\\\\\\\"Symbol\\\"abes\",\n\n   FillColor = \"Transparent\")\n\n \n\n(you can insert a title from the menu ",
+      "thread_id": "thread-96e0e14e98ef",
+      "thread_depth": 1,
+      "month": "2009-04"
+    },
+    {
+      "id": "msg-b3e2a2132628",
+      "message_id": "<20090408120626.aa8924c5d28ca71e2a043bb294e795eb.644eb271fc.wbe@email.secureserver.net>",
+      "from_name": "elvis Miller",
+      "from_email_hash": "f5a1d7ffa3c41eb3ba715c56787a90ce278ec16d4012453afddbb46301816a06",
+      "date": "2009-04-08T19:06:26Z",
+      "subject": "April R/Splus Courses: Back2back (1) R/S+ Fundamentals and (2) R/S-Plus Advanced Programming. in San Francisco and New York City",
+      "subject_clean": "April R/Splus Courses: Back2back (1) R/S+ Fundamentals and (2) R/S-Plus Advanced Programming. in San Francisco and New York City",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "By popular demand, XLSolutions has scheduled first back2back courses \nin New York City  and San Francisco taught by top R/S+ gurus!\n\nThis is a first in our 9 years of teaching R/Splus Courses.\n\nWest Coast    <---back2back--->  East Coast\n\n(1) R/S-PLUS Fundamentals and Programming Techniques\nhttp://www.xlsolutions-corp.com/coursedetail.asp?id=30\n\n********* San Francisco ***** April 23-24, 2009\n********* New York City ***** April 27-28, 2009\n\n(2) R/S+ System: Advanced Programming \nhttp://www.xlsolutions-corp.com/coursedetail.asp?id=16\n\n********* San Francisco ***** April 27-28, 2009\n********* New York City ***** April 30-May 1st, 2009\n\nAsk for group discount and reserve your seat Now - Earlybird Rates.\nPayment due after the class! Email Sue Turner: sue at xlsolutions-corp.com\n\nhttp://www.xlsolutions-corp.com/rplus.asp\n\nPlease let us know if you and your colleagues are interested in this\nclass to take advantage of group discount. Register now to secure your\nseat!\n\nCheers,\nElvis Miller, PhD\nManager Training.\nXLSolutions Corporation\n206 686 1578\nwww.xlsolutions-corp.com\nelvis at xlsolutions-corp.com",
+      "body_snippet": "By popular demand, XLSolutions has scheduled first back2back courses \nin New York City  and San Francisco taught by top R/S+ gurus!\n\nThis is a first in our 9 years of teaching R/Splus Courses.\n\nWest C",
+      "thread_id": "thread-b3e2a2132628",
+      "thread_depth": 0,
+      "month": "2009-04"
+    },
+    {
+      "id": "msg-21a4dde8c49f",
+      "message_id": "<37A0A965AB353B4D93AE86C2F16FF382EB0271@IRMAIL134.irvine.allergan.com>",
+      "from_name": "Zheng_Jenny",
+      "from_email_hash": "e9cae63262034ce7cb49bd8943ca50b7a3603997fa0fbfd5f59028d8e1f0dacd",
+      "date": "2009-04-08T20:04:34Z",
+      "subject": "rounding",
+      "subject_clean": "rounding",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hi, everyone,\n\n \n\nI use function signif to report number since it requires 3\nsignificant numbers in my report.  I have two questions: A) according to\nSplus help manual, when rounding off\na 5, the two common conventions are to: 1) go to the higher number, or 2) go to\nthe even digit. The round function obeys convention 2, so round(2.5) is 2 and round(3.5) is 4. The rounding mechanism for signif is machine dependent, but most machines will use the \"round\nto even\" rule.  I am wondering if I can\nselect convention 1 rather than depending on machine.  B) when last digit\nis zero, e.g. 3.50, the output will be 3.5, which is not appropriate for my\nreport.  I am wondering if there is a command I can use so that 3.50 will\nbe reported as 3.50 rather than 3.5.\n\n \n\nThanks for your help.\n\n \n\nJenny\n\n \n\n \n\nThis e-mail, including any attachments, is meant only for the intended recipient and may be a confidential communication or a communication privileged by law.  If you received this e-mail in error, any review, use, dissemination, distribution, or copying of this e-mail is strictly prohibited.  Please notify the sender immediately of the error by return e-mail and please delete this message from your system.  Thank you in advance for your cooperation.",
+      "body_snippet": "Hi, everyone,\n\n \n\nI use function signif to report number since it requires 3\nsignificant numbers in my report.  I have two questions: A) according to\nSplus help manual, when rounding off\na 5, the two ",
+      "thread_id": "thread-21a4dde8c49f",
+      "thread_depth": 0,
+      "month": "2009-04"
+    },
+    {
+      "id": "msg-b8881bd33837",
+      "message_id": "<20090412080523.29293.qmail@earth.azu.com>",
+      "from_name": "wiiat at wi-consortium.org",
+      "from_email_hash": "d5e75bbefecbeb1b051b75f7da986e5ec561ee92c1db8aeba057c1db22564357",
+      "date": "2009-04-12T08:05:23Z",
+      "subject": "IAT 2009 - Call for Papers - Extended Deadline",
+      "subject_clean": "IAT 2009 - Call for Papers - Extended Deadline",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "[Apologies if you receive this more than once]\n\nPapers and Tutorials Due: *** 20 April 2009 ***NEW DEADLINE***\nDue to repeated requests, the deadlines are extended to 20th April.\n\n#####################################################################\n        IEEE/WIC/ACM Intelligent Agent Technology 2009\n                  CALL FOR PAPERS\n#####################################################################\n\n2009 IEEE/WIC/ACM International Conference on \nIntelligent Agent Technology (IAT-09)\n\nSeptember 15-18, 2009, University of Milano - Bicocca, Milano, Italy\n\nhttp://www.wi-iat09.disco.unimib.it/\n\nSponsored By\nIEEE Computer Society\nWeb Intelligence Consortium (WIC)\nAssociation for Computing Machinery (ACM)\n\n##################################################################\n# (Papers Due: *** 20 April 2009 *** NEW DEADLINE\n# Accepted papers will be published in the conference proceedings\n# by the IEEE Computer Society Press, which are indexed by EI.\n##################################################################\n\nIAT 2009 will provide a leading international forum to bring together\nresearchers and practitioners from diverse fields, such as computer\nscience, information technology, business, education, systems\nengineering, and robotics, to (1) examine the design principles and\nperformance characteristics of various approaches in intelligent agent\ntechnology, and (2) increase the cross-fertilization of ideas on the\ndevelopment of autonomous agents and multi-agent systems among\ndifferent domains.  By encouraging idea-sharing and discussions on the\nunderlying logical, cognitive, physical, and sociological foundations\nas well as the enabling technologies of intelligent agents, IAT 2008\nwill foster the development of novel paradigms and advanced solutions\nin agent-based computing.\n\nIAT 2009 will be jointly held with the 2009 IEEE/WIC/ACM International\nConference on Web Intelligence (WI-09).  The two conferences will have\na joint opening, keynote, reception, and banquet. Attendees only need\nto register for one conference and can attend workshops, sessions,\ntutorials, panels, exhibits and demonstrations across the two\nconferences. We are also planning a joint panel, joint paper sessions,\nand a doctoral mentoring program to discuss\ncommon problems in the two areas.\n\n+++++++++++++++++++\nTopics of Interest\n+++++++++++++++++++\n\nWe invite submissions in all IAT related areas. Papers exploring new\ndirections or areas will receive a careful and supportive review.\nAreas of interest include, but are not limited to:\n\n* Autonomy-Oriented Computing (AOC)\n  - Agent-Based Complex Systems Modeling and Development\n  - Agent-Based Simulation\n  - Autonomy-Oriented Modeling and Computation Methods\n  - Behavioral Self-Organization\n  - Complex Behavior Characterization and Engineering\n  - Emergent Behavior\n  - Hard Computational Problem Solving\n  - Nature-Inspired Paradigms\n  - Self-Organized Criticality\n  - Self-Organized Intelligence\n  - Swarm Intelligence\n\n* Autonomous Knowledge and Information Agents\n  - Agent-Based Distributed Data Mining\n  - Agent-Based Knowledge Discovery And Sharing\n  - Autonomous Information Services\n  - Distributed Knowledge Systems\n  - Emergent Natural Law Discovery in Multi-Agent Systems\n  - Evolution of Knowledge Networks\n  - Human-Agent Interaction\n  - Information Filtering Agents\n  - Knowledge Aggregation\n  - Knowledge Discovery\n  - Ontology-Based Information Services\n\n* Agent Systems Modeling and Methodology\n  - Agent Interaction Protocols\n  - Cognitive Architectures\n  - Cognitive Modeling of Agents\n  - Emotional Modeling\n  - Fault-Tolerance in Multi-Agent Systems\n  - Formal Framework for Multi-Agent Systems\n  - Information Exchanges in Multi-Agent Systems\n  - Learning and Self-Adaptation in Multi-Agent Systems\n  - Mobile Agent Languages and Protocols\n  - Multi-Agent Autonomic Architectures\n  - Multi-Agent Coordination Techniques\n  - Multi-Agent Planning and Re-Planning\n  - Neuroeconomics \n  - Peer-to-Peer Models for Multi-Agent Systems\n  - Reinforcement Learning\n  - Social Interactions in Multi-Agent Systems\n  - Task-Based Agent Context\n  - Task-Oriented Agents\n  - Multi-Agent Self-Organization\n  - Sensor Robotic Agents\n  - Hybrid Multi-Agent Systems\n\n* Distributed Problem Solving\n  - Agent-Based Grid Computing\n  - Agent Networks in Distributed Problem Solving\n  - Collective Group Behavior\n  - Coordination and Cooperation\n  - Distributed Intelligence\n  - Distributed Search\n  - Dynamics of Agent Groups and Populations\n  - Efficiency and Complexity Issues\n  - Market-Based Computing\n  - Problem-Solving in Dynamic Environments\n \n* Autonomous Auctions and Negotiation\n  - Agent-Based Marketplaces\n  - Auction Markets\n  - Combinatorial Auctions\n  - Hybrid Negotiation\n  - Integrative Negotiation\n  - Mediating Agents\n  - Pricing Agents\n  - Thin Double Auctions\n\n* Applications\n  - Agent-Based Assistants\n  - Agent-Based Virtual Enterprise\n  - Embodied Agents and Agent-Based Systems Applications\n  - Interface Agents\n  - Knowledge and Data Intensive Systems\n  - Perceptive Animated Interfaces\n  - Scalability\n  - Social Simulation\n  - Socially Situated Planning\n  - Software and Pervasive Agents\n  - Tools and Standards\n  - Ubiquitous Systems and e-Technology Agents\n  - Ubiquitous Software Services\n  - Virtual Humans\n  - XML-Based Agent Systems\n\n++++++++++++++++++++++++++++++++++++\nOn-Line Submissions and Publication\n++++++++++++++++++++++++++++++++++++\n\nHigh-quality papers in all IAT related areas are solicited. \nPaper submissions should be limited to a maximum of 8 pages in the\nIEEE 2-column format, the same as the camera-ready format (see the\nAuthor Guidelines of last year at\nhttp://www.ieeeconfpublishing.org/cpir/AuthorKit.asp?Community=CPS&Facility=CPS_Dec&ERoom=WI%2DIAT+2008).\n  \nAll submitted papers will be reviewed by the Program Committee \non the basis of technical quality, relevance, significance, and clarity. \n\nNote that IAT'09 will accept ONLY on-line submissions, containing\nPDF versions. Please use the Submission Form on the IAT'09\nwebsite to submit your paper. Accepted papers will be published in the\nconference proceedings by the IEEE Computer Society Press that are\nindexed by EI.\n\nSubmissions accepted as regular papers will be allocated 8 pages in the\nproceedings and accorded oral presentation times in the main conference. \nSubmissions accepted as short papers will be allocated 4\npages in the proceedings and will have a shorter presentation time at\nthe conference than regular papers.\n\nAll co-authors will be notified at all time, for the submission,\nnotification, and confirmation on the attendance. Submitting a paper\nto the conference and workshops means that, if the paper is accepted,\nat least one author should attend the conference to present the\npaper. The acceptance list and no-show list will be openly published\non-line. For no-show authors, their affiliations will receive a\nnotification.\n\nA selected number of IAT'09 accepted papers will be expanded and\nrevised for inclusion in Web Intelligence and Agent Systems: \nAn International Journal (http://wi-consortium.org/journal.html) and in\nAnnual Review of Intelligent Informatics\n(http://www.wi-consortium.org/annual.html)\n\nThe best paper awards will be conferred at the conference on the\nauthors of (1) the best research paper and (2) the best application\npaper. Application-oriented submissions will be considered for the\nbest application paper award. \n\nMore detailed instructions and the On-Line Submission Form will be\nfound on the IAT'09 homepage: \nhttp://www.wi-iat09.disco.unimib.it/IAT09/IAThome.htm.\n\n++++++++++\nWorkshops\n++++++++++\n\nAs an important part of the conference, the workshop program will\nfocus on new research challenges and initiatives.  All papers accepted\nfor workshops will be included in the Workshop Proceedings published\nby the IEEE Computer Society Press that are indexed by EI, and will be\navailable at the workshops. Detailed information is available at the\nconference homepage.\n\nNote: we will not have a separate workshop registration fee\n(i.e., conference registration covers everything).\n\n++++++++++\nTutorials\n++++++++++\n\nIAT'09 also welcomes Tutorial proposals. IAT'09 will include tutorials\nproviding in-depth background on subjects that are of broad interest\nto the Web intelligence community. Both short (2 hours) and long (half\nday) tutorials will be considered. The tutorials will be part of the\nmain conference technical program. Detailed information is available\nat the conference homepage.\n\nNote: we will not have a separate tutorials registration fee\n(i.e., only one conference registration covers everything).\n\n++++++++++++++++++++\nIndustry/Demo-Track\n++++++++++++++++++++\n\nWe solicit Industry/Demo-Track papers by the following methods.\n\n(1) Industry papers of 4 pages can be submitted on the same schedule as\n    the research track.\n(2) Separate 2 page demo proposals can submitted at a later schedule.\n(3) Full regular paper submissions can include a demo option.\n    That is, a full paper submissions will be asked to\n    specify if they would like to give a demonstration; choice of\n    demonstrations (while utilizing information from the regular reviewing\n    process) will be selected based on value as a demonstration.\n\nFor options (1) and (2), more detailed instructions will be found at\nthe homepage: http://www.wi-iat09.disco.unimib.it/IAT09/IAThome.htm\n\n++++++++++++++++\nImportant Dates\n++++++++++++++++\n\n * Electronic paper submission (8 pages): April 20, 2009\n * Tutorial proposal submission: April 20, 2009\n * Workshop paper submission: April 30, 2008\n * Author notification: June 3, 2009\n * Conference dates: September 15-18, 2009\n\n++++++++++++++++++++++++\nConference Organization\n++++++++++++++++++++++++\n\nConference General Chair:\n  * Gabriella Pasi, University of Milano - Bicocca, Milano, Italy\n\nProgram Chair:\n  * Ricardo Baeza-Yates, Yahoo! Research, Barcelona, Spain\n\nWI Program Co-Chairs:\n  * Bettina Berendt, K.U. Leuven, Heverlee, Belgium\n  * Elisa Bertino, Purdue University, West Lafayette, USA\n  * Lim Ee Peng, Singapore Management University, Singapore\n\nIAT Program Co-Chairs:\n  * Jerome Lang, CNRS, LAMSADE, Paris, France\n  * Sushmita Mitra, Indian Statistical Institute, Kolkata, India\n  * Simon Parsons, Brooklyn College, City University of New York, USA\n\nOrganizing Co-Chairs:\n  * Gloria Bordogna, National Council of Research, Milano, Italy\n  * Giancarlo Mauri, University of Milano - Bicocca, Milano, Italy\n\nWorkshop Co-Chairs:\n  * Paolo Boldi, University of Milano, Milano. Italy\n  * Giuseppe Vizzari, University of Milano - Bicocca, Milano, Italy\n\nTutorial Co-Chairs:\n  * Mohand Boughanem, University Paul Sabatier, Toulouse, France\n  * Fabrizio Sebastiani, National Council of Research, Pisa, Italy\n\nPublicity Co-Chairs: \n  * Jia Hu, The International WIC Institute/BJUT, China\n  * Mounia Lalmas, University of Glasgow, UK\n\nIEEE-CS-TCII Chair:\n * Ning Zhong, Maebashi Institute of Technology, Japan\n\nACM-SIGART Chair\n * Maria Gini, University of Minnesota, USA\n\nWIC Co-Chairs/Directors:\n * Ning Zhong, Maebashi Institute of Technology, Japan\n * Jiming Liu, University of Windsor, Canada\n\nWIC Advisory Board: \n * Edward A. Feigenbaum, Stanford University, USA\n * Setsuo Ohsuga, University of Tokyo, Japan\n * Benjamin Wah, University of Illinois, Urbana-Champaign, USA\n * Philip Yu, University of Illinois, Chicago, USA\n * L.A. Zadeh, University of California, Berkeley, USA\n\nWIC Tech. Committee & WI/IAT Steering Committee:\n * Jeffrey Bradshaw, UWF/Institute for Human and Machine Cognition, USA\n * Nick Cercone, York University, Canada\n * Dieter Fensel, University of Innsbruck, Austria\n * Georg Gottlob, Oxford University, UK\n * Lakhmi Jain, University of South Australia, Australia\n * Jianchang Mao, Yahoo! Inc., USA\n * Pierre Morizet-Mahoudeaux, Compiegne University of Technology, France\n * Hiroshi Motoda, Osaka University, Japan\n * Toyoaki Nishida, Kyoto University, Japan\n * Andrzej Skowron, Warsaw University, Poland\n * Jinglong Wu, Okayama University, Japan\n * Xindong Wu, University of Vermont, USA\n * Yiyu Yao, University of Regina, Canada\n\n*** Contact Information ***\n\nGabriella Pasi (Conference General Chair)\nEmail: WI-IAT09 at disco.unimib.it\n\nThe WIC Office\nEmail: wi09 at wi-consortium.org",
+      "body_snippet": "[Apologies if you receive this more than once]\n\nPapers and Tutorials Due: *** 20 April 2009 ***NEW DEADLINE***\nDue to repeated requests, the deadlines are extended to 20th April.\n\n####################",
+      "thread_id": "thread-b8881bd33837",
+      "thread_depth": 0,
+      "month": "2009-04"
+    },
+    {
+      "id": "msg-6d7dbff98aac",
+      "message_id": "<49E1AF7F.3040902@elmo.ch>",
+      "from_name": "Andreas Krause",
+      "from_email_hash": "c616c743636c073ea72d771351741005c0aa140744e9c34744a9f1841fb12659",
+      "date": "2009-04-12T09:08:15Z",
+      "subject": "Re: rounding",
+      "subject_clean": "rounding",
+      "in_reply_to": "<37A0A965AB353B4D93AE86C2F16FF382EB0271@IRMAIL134.irvine.allergan.com>",
+      "references": [
+        "<37A0A965AB353B4D93AE86C2F16FF382EB0271@IRMAIL134.irvine.allergan.com>"
+      ],
+      "body_plain": "To avoid any machine-dependent arithmetic and keep trailing zeros, \nconverting to characters helps at times.\n\nThe example here would be\nformat(c(2.5, 3.5), nsmall=2)\n\n  Andreas\n\nZheng_Jenny wrote:\n> Hi, everyone,\n>\n>\n>\n> I use function signif to report number since it requires 3 significant\n> numbers in my report.  I have two questions: A) according to Splus help\n> manual, when rounding off a 5, the two common conventions are to: 1) go\n> to the higher number, or 2) go to the even digit. The |round| function\n> obeys convention 2, so |round(2.5)| is |2| and |round(3.5)| is |4|. The\n> rounding mechanism for |signif| is machine dependent, but most machines\n> will use the \"round to even\" rule.  I am wondering if I can select\n> convention 1 rather than depending on machine.  B) when last digit is\n> zero, e.g. 3.50, the output will be 3.5, which is not appropriate for my\n> report.  I am wondering if there is a command I can use so that 3.50\n> will be reported as 3.50 rather than 3.5.\n>\n>\n>\n>\n>\n> Thanks for your help.\n>\n>\n>\n>\n> Jenny\n>\n>\n>\n>\n>\n> This e-mail, including any attachments, is meant only for the intended\n> recipient and may be a confidential communication or a communication\n> privileged by law. If you received this e-mail in error, any review,\n> use, dissemination, distribution, or copying of this e-mail is strictly\n> prohibited. Please notify the sender immediately of the error by return\n> e-mail and please delete this message from your system. Thank you in\n> advance for your cooperation.",
+      "body_snippet": "To avoid any machine-dependent arithmetic and keep trailing zeros, \nconverting to characters helps at times.\n\nThe example here would be\nformat(c(2.5, 3.5), nsmall=2)\n\n  Andreas\n\nZheng_Jenny wrote:\n> H",
+      "thread_id": "thread-21a4dde8c49f",
+      "thread_depth": 1,
+      "month": "2009-04"
+    },
+    {
+      "id": "msg-d1fab8d9165f",
+      "message_id": "<77EB52C6DD32BA4D87471DCD70C8D700010759C1@NA-PA-VBE03.na.tibco.com>",
+      "from_name": "William Dunlap",
+      "from_email_hash": "f2d7c86f8973847ec833317a92c6bf21dfd137e5fc779a0e1153dd49b8b69516",
+      "date": "2009-04-13T17:33:35Z",
+      "subject": "Re: rounding",
+      "subject_clean": "rounding",
+      "in_reply_to": "<49E1AF7F.3040902@elmo.ch>",
+      "references": [
+        "<37A0A965AB353B4D93AE86C2F16FF382EB0271@IRMAIL134.irvine.allergan.com>",
+        "<49E1AF7F.3040902@elmo.ch>"
+      ],
+      "body_plain": "> From: s-news-owner at lists.biostat.wustl.edu \n> [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of \n> Andreas Krause\n> Sent: Sunday, April 12, 2009 2:08 AM\n> To: Zheng_Jenny\n> Cc: s-news at lists.biostat.wustl.edu\n> Subject: Re: [S] rounding\n> \n> \n> To avoid any machine-dependent arithmetic and keep trailing zeros, \n> converting to characters helps at times.\n> \n> The example here would be\n> format(c(2.5, 3.5), nsmall=2)\n> \n>    Andreas\n\nSince S+ 8.0 there has been an sprintf() function that\nlets you use the formatting strings used in the C sprintf()\nfamily of functions.  E.g.,\n   > sprintf(\"$%4.2f\", c(1.365, 1.375, 1.385, 1.395, 1.405))\n   [1] \"$1.36\" \"$1.38\" \"$1.39\" \"$1.40\" \"$1.41\"\nThis uses the C sprintf function in the machine's native C\nlibrary and the rounding results may vary.\n\n> \n> \n> Zheng_Jenny wrote:\n> > Hi, everyone,\n> > \n> >  \n> > \n> > I use function signif to report number since it requires 3 \n> significant \n> > numbers in my report.  I have two questions: A) according \n> to Splus help \n> > manual, when rounding off a 5, the two common conventions \n> are to: 1) go \n> > to the higher number, or 2) go to the even digit. The \n> |round| function \n> > obeys convention 2, so |round(2.5)| is |2| and |round(3.5)| \n> is |4|. The \n> > rounding mechanism for |signif| is machine dependent, but \n> most machines \n> > will use the \"round to even\" rule.  I am wondering if I can select \n> > convention 1 rather than depending on machine.  B) when \n> last digit is \n> > zero, e.g. 3.50, the output will be 3.5, which is not \n> appropriate for my \n> > report.  I am wondering if there is a command I can use so \n> that 3.50 \n> > will be reported as 3.50 rather than 3.5.\n> > \n> >  \n> > \n> > Thanks for your help.\n> > \n> >  \n> > \n> > Jenny\n> > \n> >  \n> > \n> >  \n> > \n> > This e-mail, including any attachments, is meant only for \n> the intended \n> > recipient and may be a confidential communication or a \n> communication \n> > privileged by law. If you received this e-mail in error, \n> any review, \n> > use, dissemination, distribution, or copying of this e-mail \n> is strictly \n> > prohibited. Please notify the sender immediately of the \n> error by return \n> > e-mail and please delete this message from your system. \n> Thank you in \n> > advance for your cooperation.\n> > \n> \n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>",
+      "body_snippet": "> From: s-news-owner at lists.biostat.wustl.edu \n> [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of \n> Andreas Krause\n> Sent: Sunday, April 12, 2009 2:08 AM\n> To: Zheng_Jenny\n> Cc: s-news",
+      "thread_id": "thread-21a4dde8c49f",
+      "thread_depth": 2,
+      "month": "2009-04"
+    },
+    {
+      "id": "msg-aa9c71e8ef49",
+      "message_id": "<73074920.49207307@noaa.gov>",
+      "from_name": "Kim.Elmore at noaa.gov",
+      "from_email_hash": "3cd6671ef932770cc8d1186ae3ebf1aa7f121e069148949e0825595f39cb6687",
+      "date": "2009-04-13T20:44:31Z",
+      "subject": "limits.tilt and weights",
+      "subject_clean": "limits.tilt and weights",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "I'm trying to figure out how to use limits.tilt when my original\nstatistic doesn't include any weights.  I compute various 2x2\ncontingency table statistics, and would like to use limits.tilt to get a\nbetter CI for them. Unfortunately, the stats that I compute don't\ninclude any weights. In the past, I've kludged in some phantom weights\nsuch that there is a place holder for them in limits.tilt, but that's\nnot very satisfying and can be difficult if I didn't write the function. \n\nI've read the help, and have tried various things, but I can't seem to\nget anything to work. So, I appeal to people a lot smarter than I am: in\ngeneral, if my statistic does not include any \"weights,\" how can I\nsatisfy the requirement for them in limits.tilt?\n\nKim Elmore",
+      "body_snippet": "I'm trying to figure out how to use limits.tilt when my original\nstatistic doesn't include any weights.  I compute various 2x2\ncontingency table statistics, and would like to use limits.tilt to get a\n",
+      "thread_id": "thread-aa9c71e8ef49",
+      "thread_depth": 0,
+      "month": "2009-04"
+    },
+    {
+      "id": "msg-bf0145fb34cd",
+      "message_id": "<uljq3yiub.fsf@gmail.com>",
+      "from_name": "Tim Hesterberg",
+      "from_email_hash": "2de7d52e76054617790beaf3b4a4f25621cb4fbb315e85284226a06f76ea2e97",
+      "date": "2009-04-14T04:12:12Z",
+      "subject": "Re: limits.tilt and weights",
+      "subject_clean": "limits.tilt and weights",
+      "in_reply_to": "<73074920.49207307@noaa.gov>",
+      "references": [
+        "<73074920.49207307@noaa.gov>"
+      ],
+      "body_plain": "There are some techniques described in:\nEllis, Stephen J. and Tim C. Hesterberg (1999), \"Computation of\nWeighted Functional Statistics Using Software That Does Not Support\nWeights\", Technical Report No. 85, Research Department, MathSoft,\nInc., 1700 Westlake Ave. N., Suite 500, Seattle, WA 98109.\nhttp://home.comcast.net/~timhesterberg/articles/tech85-weightedFunc.pdf\n\nThe techniques described there are not included in the S+Resample\nlibrary.  A quick-and-dirty implementation of the first technique there\nwould be to write a function:\n\nf <- function(data, ..., weights = NULL){\n  if(is.null(weights)) {\n    theRealStatistic(data, ...)\n  } else {\n    n <- length(weights) # This should equal the number of observations\n    theRealStatistic(data[rep(1:n, round(100*weights/mean(weights))),], ...)\n  }\n}\n\nand pass that as the statistic to bootstrap().\nChanging 100 to a larger number would improve accuracy at the expense\nof speed and memory.\n\nTim Hesterberg\n\n>I'm trying to figure out how to use limits.tilt when my original\n>statistic doesn't include any weights.  I compute various 2x2\n>contingency table statistics, and would like to use limits.tilt to get a\n>better CI for them. Unfortunately, the stats that I compute don't\n>include any weights. In the past, I've kludged in some phantom weights\n>such that there is a place holder for them in limits.tilt, but that's\n>not very satisfying and can be difficult if I didn't write the function. \n>\n>I've read the help, and have tried various things, but I can't seem to\n>get anything to work. So, I appeal to people a lot smarter than I am: in\n>general, if my statistic does not include any \"weights,\" how can I\n>satisfy the requirement for them in limits.tilt?\n>\n>Kim Elmore",
+      "body_snippet": "There are some techniques described in:\nEllis, Stephen J. and Tim C. Hesterberg (1999), \"Computation of\nWeighted Functional Statistics Using Software That Does Not Support\nWeights\", Technical Report N",
+      "thread_id": "thread-aa9c71e8ef49",
+      "thread_depth": 1,
+      "month": "2009-04"
+    },
+    {
+      "id": "msg-87bd71dd6a9b",
+      "message_id": "<BAY106-W44EB26C1E9D42555FC2F088C780@phx.gbl>",
+      "from_name": "Widad Chergui",
+      "from_email_hash": "0992d77c8ce9e46dbf883e31824516a9ad98dd3f90a491f183ca308de4ed65c3",
+      "date": "2009-04-18T17:40:02Z",
+      "subject": "FW: Private Information",
+      "subject_clean": "Private Information",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "All,\n\n \n\nI have found my personal details on the web : name and email adress,see below\n\n \n\nhttp://www.biostat.wustl.edu/archives/cgi-bin/namazu.cgi?query=%2Bfrom%3Awidad_c at hotmail.com&idxname=s-news&sort=date%3Alate\n\n \n\nFor this thank you for deleting all the contant of this private information as soon as possibble.\n\n \n\nBest Regards,\n\nWidad Chergui\n\n \n\n \n\nVotre correspondant a choisi Hotmail et profite d'un stockage quasiment illimité.  Créez un compte Hotmail gratuitement !",
+      "body_snippet": "All,\n\n \n\nI have found my personal details on the web : name and email adress,see below\n\n \n\nhttp://www.biostat.wustl.edu/archives/cgi-bin/namazu.cgi?query=%2Bfrom%3Awidad_c at hotmail.com&idxname=s-new",
+      "thread_id": "thread-87bd71dd6a9b",
+      "thread_depth": 0,
+      "month": "2009-04"
+    },
+    {
+      "id": "msg-9ce0111053b5",
+      "message_id": "<BAY106-W505455C60A57BC8C0958E38C790@phx.gbl>",
+      "from_name": "Widad Chergui",
+      "from_email_hash": "0992d77c8ce9e46dbf883e31824516a9ad98dd3f90a491f183ca308de4ed65c3",
+      "date": "2009-04-19T13:51:14Z",
+      "subject": "FW: FW: Private Information",
+      "subject_clean": "Private Information",
+      "in_reply_to": "<BAY106-W44EB26C1E9D42555FC2F088C780@phx.gbl>",
+      "references": [
+        "<BAY106-W44EB26C1E9D42555FC2F088C780@phx.gbl>"
+      ],
+      "body_plain": "All,\n\nI have sent this email to the list of  S users and not the owner. Please accept my apologies for any inconvenience caused.\n\nBest Regards,\n\nWidad Chergui\n\n \n\nFrom: widad_c at hotmail.com\nTo: s-news at lists.biostat.wustl.edu\nSubject: [S] FW: Private Information\nDate: Sat, 18 Apr 2009 17:40:02 +0000\n\n  \nAll,\n\n \n\nI have found my personal details on the web : name and email adress,see below\n\n \n\nhttp://www.biostat.wustl.edu/archives/cgi-bin/namazu.cgi?query=%2Bfrom%3Awidad_c at hotmail.com&idxname=s-news&sort=date%3Alate\n\n \n\nFor this thank you for deleting all the contant of this private information as soon as possibble.\n\n \n\nBest Regards,\n\nWidad Chergui\n\n \n\n \n\nVotre correspondant a choisi Hotmail et profite d'un stockage quasiment illimité. Créez un compte Hotmail gratuitement !\n\nDécouvrez toutes les possibilités de communication avec vos proches",
+      "body_snippet": "All,\n\nI have sent this email to the list of  S users and not the owner. Please accept my apologies for any inconvenience caused.\n\nBest Regards,\n\nWidad Chergui\n\n \n\nFrom: widad_c at hotmail.com\nTo: s-ne",
+      "thread_id": "thread-87bd71dd6a9b",
+      "thread_depth": 1,
+      "month": "2009-04"
+    },
+    {
+      "id": "msg-3e9aae910428",
+      "message_id": "<20090421080946.b21645f2bceb2bcc4cba8e709837b1d9.93c6c68f6a.wbe@email.secureserver.net>",
+      "from_name": "courses at zanybooks.com",
+      "from_email_hash": "14b06b91803cb462baba19356b276229fd88f1fdd857d2833ace3b6277b86cc4",
+      "date": "2009-04-21T15:09:46Z",
+      "subject": "Online statistics courses in May",
+      "subject_clean": "Online statistics courses in May",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "http://statcourse.com will be offering the following online interactive\nstatistics courses this May:\n\nHow would you test for correlation greater than 0.8?   What's a\nconfidence interval for the 40th percentile?  Take Applications of\nBootstrap, CART and Permutation Methods from 8 May to 29 May 2009. \n$324.  ($254 for students, faculty, and research workers at academic\ninstitutions, and the self-employed.)  Plus Early Bird discount of $50\nif you register before 1 May 2009. \n\nIntroduction to R.  Three lessons in three weeks. May 8 to May 29 2009.\nR has more functions than any other statistics language, plus a\nworld-wide user base. $304 (or $254 if you register before May 1st 2009)\n (Further discount of $50 for students, faculty, and research workers at\nacademic and research institutions and government employees.)  \n\nFor more information, contact http://statcourse.com.\n\nD. Middleton",
+      "body_snippet": "http://statcourse.com will be offering the following online interactive\nstatistics courses this May:\n\nHow would you test for correlation greater than 0.8?   What's a\nconfidence interval for the 40th p",
+      "thread_id": "thread-3e9aae910428",
+      "thread_depth": 0,
+      "month": "2009-04"
+    },
+    {
+      "id": "msg-d6603120946a",
+      "message_id": "<FDC4D27F92C0C94284C4CBA64AAB17BD01A5CAA6@JNJUSLJGMS01.na.jnj.com>",
+      "from_name": "Robertson, Paul [PRDUS]",
+      "from_email_hash": "23973447a0efefeb00e44f4ff1ff05ef25fc735a630452b56f331d5016546424",
+      "date": "2009-04-21T17:30:27Z",
+      "subject": "",
+      "subject_clean": "",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hi,\n\n \n\nI’m trying to find documentation regarding the \n\nevent.chart procedure in the Hmisc library. \n\n \n\nI looked at some documentation for Hmisc\n\nthat was from 2002 that was referenced by \n\nLibrary(help= ‘Hmisc’) but it did not contain\n\nDetails regarding this event.chart procedure. \n\n \n\nThanks,\n\nPaul Robertson",
+      "body_snippet": "Hi,\n\n \n\nI’m trying to find documentation regarding the \n\nevent.chart procedure in the Hmisc library. \n\n \n\nI looked at some documentation for Hmisc\n\nthat was from 2002 that was referenced by \n\nLibrary(",
+      "thread_id": "thread-d6603120946a",
+      "thread_depth": 0,
+      "month": "2009-04"
+    },
+    {
+      "id": "msg-113ee78ecf2b",
+      "message_id": "<B4A52056BFE1CA40986BB3BADFA48141038F6967@DC0633VMA1.csosa.gov>",
+      "from_name": "David Huffer",
+      "from_email_hash": "b3678160f7b6d4d227c2f959d4e7eebd09a6632d8b35783e44f2fd5edfde7600",
+      "date": "2009-04-21T18:39:55Z",
+      "subject": "Re:",
+      "subject_clean": "",
+      "in_reply_to": "<FDC4D27F92C0C94284C4CBA64AAB17BD01A5CAA6@JNJUSLJGMS01.na.jnj.com>",
+      "references": [
+        "<FDC4D27F92C0C94284C4CBA64AAB17BD01A5CAA6@JNJUSLJGMS01.na.jnj.com>"
+      ],
+      "body_plain": "On Tuesday, April 21, 2009 1:30 PM, Paul Robertson wrote:\n\n > ...I'm   trying   to   find    documentation\n > regarding  the  event.chart procedure in the\n > Hmisc   library.   I    looked    at    some\n > documentation  for  Hmisc that was from 2002\n > that   was   referenced   by   Library(help=\n > 'Hmisc') but  it  did  not  contain  Details\n > regarding this event.chart procedure....\n\nhttp://lib.stat.cmu.edu/S/Harrell/help/Hmisc/html/event.chart.html\n\n--\n David\n \n -----------------------------------------------------\n David Huffer, Ph.D.               Senior Statistician\n CSOSA/Washington, DC           david.huffer at csosa.gov\n -----------------------------------------------------",
+      "body_snippet": "On Tuesday, April 21, 2009 1:30 PM, Paul Robertson wrote:\n\n > ...I'm   trying   to   find    documentation\n > regarding  the  event.chart procedure in the\n > Hmisc   library.   I    looked    at    so",
+      "thread_id": "thread-d6603120946a",
+      "thread_depth": 1,
+      "month": "2009-04"
+    },
+    {
+      "id": "msg-3d4616a759b2",
+      "message_id": "<20090425162403.6645.qmail@earth.azu.com>",
+      "from_name": "wic-office at wi-consortium.org",
+      "from_email_hash": "cedb2bbf3d506afe4615cb971ccafeb76e5ba978d64a8034a082a1e804ff53c7",
+      "date": "2009-04-25T16:24:03Z",
+      "subject": "Brain Informatics 2009 Final Call for Papers",
+      "subject_clean": "Brain Informatics 2009 Final Call for Papers",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "[Apologies if you receive this more than once]\n\n###############################################################\n               Brain Informatics 2009\n\n                  CALL FOR PAPERS\n###############################################################\n\n2009 International Conference on Brain Informatics (BI 2009)\n\nOctober 22-24, 2009, Beijing, China\n\nHomepage: http://www.wici-lab.org/amtbi09/\nMirror page: http://www.iwici.org/amtbi09/\n\nOrganized and sponsored by Web Intelligence Consortium (WIC)\nCo-sponsored by Chinese Society of Radiology,\nBeijing University of Technology (BJUT) and\nNational Natural Science Foundation of China (NSFC)\n\n##################################################################\n# Papers Due: *** May 22, 2009 ***\n# Accepted papers will be published by Springer as a volume of \n# the series of LNCS/LNAI, which are indexed by EI.\n# Extensions of selected papers from the proceedings will be\n# considered for publication in special issues of journals, \n# including Computational Intelligence, An International Journal \n# (Wiley-Blackwell).\n##################################################################\n\nBrain Informatics (BI) has recently emerged as an interdisciplinary\nresearch field that focuses on studying the mechanisms underlying the\nhuman information processing system (HIPS).  It investigates the\nessential functions of the brain, ranging from perception to thinking,\nand encompassing such areas as multi-perception, attention, memory,\nlanguage, computation, heuristic search, reasoning, planning,\ndecision-making, problem-solving, learning, discovery, and creativity.\nThe goal of BI is to develop and demonstrate a systematic approach to\nachieving an integrated understanding of both macroscopic and\nmicroscopic level working principles of the brain, by means of\nexperimental, computational, and cognitive neuroscience studies, as\nwell as utilizing advanced Web Intelligence (WI) centric information\ntechnologies.  BI represents a potentially revolutionary shift in the\nway that research is undertaken.  It attempts to capture new forms of\ncollaborative and interdisciplinary work.  In this vision, new kinds\nof BI methods and global research communities will emerge, through\ninfrastructure on the wisdom Web and knowledge grids that enables high\nspeed and distributed, large-scale analysis and computations, and\nradically new ways of sharing data/knowledge.\n\nBrain Informatics 2009 provides a leading international forum to bring\ntogether researchers and practitioners from diverse fields, such as\ncomputer science, information technology, artificial intelligence, Web\nintelligence, cognitive science, neuroscience, medical science, life\nscience, economics, data mining, data and knowledge engineering,\nintelligent agent technology, human computer interation, complex\nsystems, and system science, to explore the main research problems in\nBI lie in the interplay between the studies of human brain and the\nresearch of informatics.  On the one hand, one models and\ncharacterizes the functions of the human brain based on the notions of\ninformation processing systems. WI centric information technologies\nare applied to support brain science studies.  For instance, the\nwisdom Web and knowledge grids enable high-speed, large-scale\nanalysis, simulation, and computation as well as new ways of sharing\nresearch data and scientific discoveries.  On the other hand,\ninformatics-enabled brain studies, e.g., based on fMRI, EEG, MEG\nsignificantly broaden the spectrum of theories and models of brain\nsciences and offer new insights into the development of human-level\nintelligence on the wisdom Web and knowledge grids.\n\nBrain Informatics 2009 will be jointly held with the 2009\nInternational Conference on Active Media Technology (AMT 2009).  \nThe two conferences will have a joint opening, keynote, reception, and\nbanquet. Attendees only need to register for one conference and can\nattend workshops, sessions, exhibits and demonstrations across the two\nconferences.\n\n+++++++++++++++++++\nTopics of Interest\n+++++++++++++++++++\n\nCONFERENCE TOPICS AND AREAS INCLUDE, BUT NOT LIMITED TO\n\n- Thinking and perception-centric investigations of HIPS:\n\n* Human reasoning mechanisms \n  (e.g., principles of human deductive/inductive reasoning, \n   common-sense reasoning, decision making, and problem solving)\n* Human learning mechanisms (e.g., stability, personalized user/student models)\n* Emotion, heuristic search, information granularity, and autonomy related \n  issues in human reasoning and problem solving\n* Human higher cognitive functions and their relationships\n* Human multi-perception mechanisms and visual, auditory, \n  and tactile information processing\n* Methodologies for systematic design of cognitive experiments\n* Investigating spatiotemporal characteristics and flow in HIPS and\n  the related neural structures and neurobiological process \n* Cognitive architectures \n* ACT-R meets fMRI/EEG/MEG\n* HIPS meets complex systems\n* Modeling brain information processing mechanisms\n  (e.g., neuro-mechanism, mathematical, cognitive and computational models \n   of HIPS).\n\n- Information technologies for the management and use of brain data:\n\n* Human brain data collection, pre-processing, management, and analysis\n* Databasing the brain and constructing data brain models\n* Data brain modeling and formal conceptual models of human brain data\n* Multi-media brain data mining and reasoning\n* Multi-aspect analysis in fMRI/EEG/MEG activations\n* Simulating spatiotemporal characteristics and flow in HIPS\n* Developing brain data grids and brain research support portals\n* Knowledge representation and discovery in neuroimaging\n* Multimodal information fusion for brain image interpretation\n* Statistical analysis and pattern recognition in neuroimaging\n\n- Applications\n\n* Neuro-economics and neuro-marketing\n* Brain-Computer-Interface (BCI) \n* Brain/Cognition inspired artifical systems\n* Wisdom Web systems based on new cognitive and computational models\n* MCI and AD diagnosis \n* e-Science and e-Medicine\n\n++++++++++++++++++++++++++++++++++++\nOn-Line Submissions and Publication\n++++++++++++++++++++++++++++++++++++\n\nHigh-quality papers in all BI related areas are solicited. Papers exploring\nnew directions will receive a careful and supportive review. All submitted\npapers will be reviewed on the basis of technical quality, relevance,\nsignificance, and clarity. \n\nThe proceeding of the conference will be published by Springer as a\nvolume of the series of Lecture Notes in Computer Science/Lecture\nNotes in Artificial Intelligence (LNCS/LNAI).\nExtensions of selected papers from the proceedings will be\nconsidered for publication in special issues of international journals,\nincluding Computational Intelligence: An International Journal \n(Wiley-Blackwell, http://www.wiley.com/bw/journal.asp?ref=0824-7935).\n\nAuthors are strongly encouraged to use Springer LNCS/LNAI manuscript\nsubmission guidelines (available at \nhttp://www.springer.de/comp/lncs/authors.html) for their initial\nsubmissions. All papers must be submitted electronically in PDF format\nonly, using the conference management tool. \n\nWe will also have poster, demonstration, and late breaking result paper\nsessions. More detailed instructions and a paper submission form can be found\nthe BI'09 Web page at http://www.wici-lab.org/amtbi09/\n\n+++++++\nAwards\n+++++++\n\nBI 2009 best paper awards and student paper awards will be conferred on the\nauthors at the conference. Also a selected number of BI 2009 accepted papers\nwill be expanded and revised for inclusion in several international journals,\nincluding Computational Intelligence: An International Journal \n(Wiley-Blackwell, http://www.wiley.com/bw/journal.asp?ref=0824-7935).\n\n++++++++++++++++\nImportant Dates\n++++++++++++++++\n\nElectronic submission of full papers \n(12 pages in Springer LNAI/LNCS style file):  May 22, 2009\n\nNotification of paper acceptance: June 25, 2009\nCamera-ready of accepted papers: July 24, 2009\nConference:  October 22-24, 2009\n\n++++++++++++++++++++++++\nConference Organization\n++++++++++++++++++++++++\n\nConference General Chairs:\n * Setsuo Ohsuga, University of Tokyo, Japan\n * Lin Chen, Chinese Academy of Sciences, China\n\nProgram Chairs:\n * Ning Zhong, Maebashi Institute of Technology, Japan\n * Kuncheng Li, Xuanwu Hospital/Capital Medical University, China\n\nWorkshop Chairs:\n * Yiyu Yao, University of Regina, Canada\n * Runhe Huang, Hosei University, Japan\n\nOrganizing Chairs:\n * Shengfu Lu, International WIC Institute/BJUT, China\n * Yulin Qin, International WIC Institute/BJUT, China\n\nPublicity Chairs:\n * Jian Yang, International WIC Institute/BJUT, China\n * Jiajin Huang, International WIC Institute/BJUT, China\n\nWIC Co-Chairs/Directors:\n * Ning Zhong, Maebashi Institute of Technology, Japan\n * Jiming Liu, Hong Kong Baptist University, HK\n\nWIC Advisory Board:\n * Edward A. Feigenbaum, Stanford University, USA\n * Setsuo Ohsuga, University of Tokyo, Japan\n * Benjamin Wah, University of Illinois, Urbana-Champaign, USA\n * Philip Yu, University of Illinois, Chicago, USA\n * L.A. Zadeh, University of California, Berkeley, USA\n\nWIC Tech. Committee & WI/IAT Steering Committee:\n * Jeffrey Bradshaw, UWF/Institute for Human and Machine Cognition, USA\n * Nick Cercone, York University, Canada\n * Dieter Fensel, University of Innsbruck, Austria\n * Georg Gottlob, Oxford University, UK\n * Lakhmi Jain, University of South Australia, Australia\n * Jianchang Mao, Yahoo! Inc., USA\n * Pierre Morizet-Mahoudeaux, Compiegne University of Technology, France\n * Hiroshi Motoda, Osaka University, Japan\n * Toyoaki Nishida, Kyoto University, Japan\n * Andrzej Skowron, Warsaw University, Poland\n * Jinglong Wu, Okayama University, Japan\n * Xindong Wu, University of Vermont, USA\n * Yiyu Yao, University of Regina, Canada\n\n*** Contact Information ***\n\nEmail: Jia Hu  hujia0601 at gmail.com\n       Jiajin Huang  hjj at emails.bjut.edu.cn",
+      "body_snippet": "[Apologies if you receive this more than once]\n\n###############################################################\n               Brain Informatics 2009\n\n                  CALL FOR PAPERS\n###############",
+      "thread_id": "thread-3d4616a759b2",
+      "thread_depth": 0,
+      "month": "2009-04"
+    },
+    {
+      "id": "msg-cd08c88ce7ae",
+      "message_id": "<002601c9c7a5$518016d0$050aa8c0@solutionmetrics.local>",
+      "from_name": "Robyn Davies",
+      "from_email_hash": "7709ac31a12d0ae07ed028dc3f5bffa1b42e80c693a53669dcc0bb0bd95f6d44",
+      "date": "2009-04-28T02:01:59Z",
+      "subject": "S+ Course: Getting Started - Brisbane, Melbourne & Sydney, May 2009",
+      "subject_clean": "S+ Course: Getting Started - Brisbane, Melbourne & Sydney, May 2009",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hi,\n\nSolutionMetrics is presenting a 2 day course for\nnew & relatively new users of S+. No experience is necessary.  If you\nare already an experienced user, you might know someone else who will benefit\nfrom attending.\n\nDescription:\n\nThe Getting Started course\nprovides users with the knowledge to get the most out of the S+ GUI &\nCommand line. Course content includes Introduction to the S+ GUI, Visualisation\nincluding Trellis Graphics, Data Import/Export, Data Manipulation &\nAnalysis, writing your own simple functions, efficient programming &\nconverting R code to S+.\n\nPersonal computers are\nprovided and course presentations are backed up by frequent practical sessions.\n\nCourse: Getting Started with S+\n\nDate: 5 - 6 May, 2009 - Brisbane (Tue & Wed)\n\n          14 -15 May, 2009 -\nMelbourne (Thu & Fri)\n\n          19 - 20 May, 2009 -\nSydney\n(Tue & Wed)\n\nPrice: $880\n\nAdelaide, Canberra & Perth Courses are in July,\nplease see the schedule page.\n\nFor a detailed agenda, please see the event page\n\nAll prices include GST. To register or\nfor more info, please call 02 9233 6888 or email enquiries at solutionmetrics.com.au\n\nRobyn Davies | Customer Service\nManager| SolutionMetrics\n\nT 02 9233 6888 | F 02 9233 4099 \n\n      Suite 44, Level 9, 88 Pitt Street, Sydney\n NSW 2000\n\n www.solutionmetrics.com.au",
+      "body_snippet": "Hi,\n\nSolutionMetrics is presenting a 2 day course for\nnew & relatively new users of S+. No experience is necessary.  If you\nare already an experienced user, you might know someone else who will benefi",
+      "thread_id": "thread-cd08c88ce7ae",
+      "thread_depth": 0,
+      "month": "2009-04"
+    },
+    {
+      "id": "msg-5c5ca152a9df",
+      "message_id": "<C0CF5802DA312049982061E94F592D390B6AFD5C@MWRAMAIL.mwra.net>",
+      "from_name": "Hersh, Douglas",
+      "from_email_hash": "26ebeed534172c7bd9f66856b1f8805cb76a11ece608919a88860d482543ee6d",
+      "date": "2009-04-28T20:37:36Z",
+      "subject": "Is there a command to clear the command line buffer",
+      "subject_clean": "Is there a command to clear the command line buffer",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "It must be possible to clear the command line buffer using a\ncommand at the command prompt or from a script, but I can not find it in the\ndocumentation.\n\n \n\nI have a need for users to run a script that logs into a\ndatabase to retrieve data into a dataframe, but I need some way to keep the\npassword from persisting on screen or in a file for security reasons.\n\n \n\nI doubt that there is any way to hide the input to\nreadline() as it is typed at the command line, but it would make things more\nsecure if I could clear the screen buffer right after importData has finished.\n\n \n\n# test.ssc\n\nmynewdata <-\nimportData(\n\ntype=\"direct-oracle\",\n\nuser=\"DB_USER\",\n\npassword=readline(prompt=\"Enter\npassword at prompt in command window: \"),\n\nserver=\"BIGDATABASE\",\n\nsqlQuery =\n\"SELECT 'foo' AS foo_bar FROM dual\"\n\n)\n\n \n\nThis came up 9-years ago on this list, but it has not been\nanswered. I opened a service request with Tibco for this. I will post their response\nif I get one.\n\n \n\nThanks very much.\n\n \n\n- Doug\n\n \n\nDouglas Hersh\n\nEnvironmental Quality Department\n\nMassachusetts Water\nResource Authority\n\n100 First Ave. Boston MA 02129\n\nemail: douglas daht hersh ayaht\nmwra.state.ma.us\n\nhttp://www.mwra.state.ma.us/harbor/html/bhrecov.htm",
+      "body_snippet": "It must be possible to clear the command line buffer using a\ncommand at the command prompt or from a script, but I can not find it in the\ndocumentation.\n\n \n\nI have a need for users to run a script tha",
+      "thread_id": "thread-5c5ca152a9df",
+      "thread_depth": 0,
+      "month": "2009-04"
+    },
+    {
+      "id": "msg-5d7425a493e8",
+      "message_id": "<420afa46e354a4a2358ff1d5cd113fdd@localhost.localdomain>",
+      "from_name": "Savi Appana",
+      "from_email_hash": "03fb55fc38d376eca0999d1e20de151d501ba8e149a84185a6be5de31fbeaf41",
+      "date": "2009-04-29T02:03:08Z",
+      "subject": "Savi Appana sent you a Friend Request on Yaari",
+      "subject_clean": "Savi Appana sent you a Friend Request on Yaari",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Savi Appana wants you to join Yaari!\n\nIs Savi your friend?\n\nYes, Savi is my friend! No, Savi isn't my friend.\n\nPlease respond or Savi may think you said no :(\n\nThanks,\n\nThe Yaari Team\n\n-----------------------------------------------------------\n\nYaari Inc., 358 Angier Ave NE Atlanta, GA 30312\n\nPrivacy Policy | Unsubscribe | Terms of Service\n\nYaariTKQ783HKS740LDZ681VPE668",
+      "body_snippet": "Savi Appana wants you to join Yaari!\n\nIs Savi your friend?\n\nYes, Savi is my friend! No, Savi isn't my friend.\n\nPlease respond or Savi may think you said no :(\n\nThanks,\n\nThe Yaari Team\n\n---------------",
+      "thread_id": "thread-5d7425a493e8",
+      "thread_depth": 0,
+      "month": "2009-04"
+    },
+    {
+      "id": "msg-283caf09828c",
+      "message_id": "<20090429080105.b21645f2bceb2bcc4cba8e709837b1d9.a8654802d5.wbe@email.secureserver.net>",
+      "from_name": "courses at zanybooks.com",
+      "from_email_hash": "14b06b91803cb462baba19356b276229fd88f1fdd857d2833ace3b6277b86cc4",
+      "date": "2009-04-29T15:01:05Z",
+      "subject": "Online interactive statistics courses. Early bird discount ends May 1st.",
+      "subject_clean": "Online interactive statistics courses. Early bird discount ends May 1st.",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "How would you test for correlation greater than 0.8?   What's a confidence interval for the 40th percentile?  Take Applications of Bootstrap, CART and Permutation Methods from 8 May to 29 May 2009.  $324.  ($254 for students, faculty, and research workers at academic institutions, and the self-employed.)  Plus Early Bird discount of $50 if you register before 1 May 2009.  \n\n \n\nIntroduction to R.  Three lessons in three weeks. May 8 to May 29 2009. R has more functions than any other statistics language, plus a world-wide user base. $304 (or $254 if you register before May 1st 2009)  (Further discount of $50 for students, faculty, and research workers at academic and research institutions and government employees.)",
+      "body_snippet": "How would you test for correlation greater than 0.8?   What's a confidence interval for the 40th percentile?  Take Applications of Bootstrap, CART and Permutation Methods from 8 May to 29 May 2009.  $",
+      "thread_id": "thread-283caf09828c",
+      "thread_depth": 0,
+      "month": "2009-04"
+    },
+    {
+      "id": "msg-5212a02351a9",
+      "message_id": "<C0CF5802DA312049982061E94F592D390B6AFD62@MWRAMAIL.mwra.net>",
+      "from_name": "Hersh, Douglas",
+      "from_email_hash": "26ebeed534172c7bd9f66856b1f8805cb76a11ece608919a88860d482543ee6d",
+      "date": "2009-04-30T14:30:28Z",
+      "subject": "Re: Is there a command to clear the command line buffer",
+      "subject_clean": "Is there a command to clear the command line buffer",
+      "in_reply_to": "<C0CF5802DA312049982061E94F592D390B6AFD5C@MWRAMAIL.mwra.net>",
+      "references": [
+        "<C0CF5802DA312049982061E94F592D390B6AFD5C@MWRAMAIL.mwra.net>"
+      ],
+      "body_plain": "Control over commands history can only be controlled on a\nsession-by-session basis by setting the S_CMDSAVE environment variable when\nstarting splus.exe. \n\n \n\nKirsten\nSmith                         \n\nTechnical Support\nEngineer               \n\nTIBCO Spotfire Corporation replied:\n\n \n\nCurrently the only way to\nclear the Commands History is to close out of Spotfire S+, which I suspect you\nalready knew.  There is a way, however, to prevent any of the commands to\nbe stored to history.  There is an environment variable called 'S_CMDSAVE'\nthat you can to any number which limits the number of commands saved to\nhistory.\n\nTo set this, close out of S+ and right click on your shortcut icon and click on\n'Properties'.  In the Target field under the Shortcut tab add a space at\nthe end of the string that is already there and add S_CMDSAVE=0.  It\nshould look something like this:\n\n\"D:\\Program Files\\TIBCO\\splus81\\cmd\\SPLUS.exe\" S_CMDSAVE=0\n\nRestart S+ and you should see that none of your commands are saved to history.\n\n \n\nFrom: Hersh, Douglas \n\nSent: Tuesday, April 28, 2009 4:38\nPM\n\nTo: s-news at lists.biostat.wustl.edu\n\nSubject: Is there a command to\nclear the command line buffer\n\n \n\nIt must be possible to clear the command line buffer using a\ncommand at the command prompt or from a script, but I can not find it in the\ndocumentation.\n\n \n\nI have a need for users to run a script that logs into a\ndatabase to retrieve data into a dataframe, but I need some way to keep the\npassword from persisting on screen or in a file for security reasons.\n\n \n\nI doubt that there is any way to hide the input to\nreadline() as it is typed at the command line, but it would make things more\nsecure if I could clear the screen buffer right after importData has finished.\n\n \n\n# test.ssc\n\nmynewdata <-\nimportData(\n\ntype=\"direct-oracle\",\n\nuser=\"DB_USER\",\n\npassword=readline(prompt=\"Enter\npassword at prompt in command window: \"),\n\nserver=\"BIGDATABASE\",\n\nsqlQuery =\n\"SELECT 'foo' AS foo_bar FROM dual\"\n\n)\n\n \n\nThis came up 9-years ago on this list, but it has not been\nanswered. I opened a service request with Tibco for this. I will post their\nresponse if I get one.\n\n \n\nThanks very much.\n\n \n\n- Doug",
+      "body_snippet": "Control over commands history can only be controlled on a\nsession-by-session basis by setting the S_CMDSAVE environment variable when\nstarting splus.exe. \n\n \n\nKirsten\nSmith                         \n\nT",
+      "thread_id": "thread-5c5ca152a9df",
+      "thread_depth": 1,
+      "month": "2009-04"
+    }
+  ],
+  "threads": [
+    {
+      "id": "thread-b361633e4b4f",
+      "subject": "Trellis help",
+      "message_count": 1,
+      "participants": [
+        "Andreas Krause"
+      ],
+      "started": "2009-04-02T08:09:15Z",
+      "last_reply": "2009-04-02T08:09:15Z",
+      "root_message_id": "msg-b361633e4b4f"
+    },
+    {
+      "id": "thread-2aac66369697",
+      "subject": "Trellis help summary of responses",
+      "message_count": 1,
+      "participants": [
+        "Huso, Manuela"
+      ],
+      "started": "2009-04-02T18:29:01Z",
+      "last_reply": "2009-04-02T18:29:01Z",
+      "root_message_id": "msg-2aac66369697"
+    },
+    {
+      "id": "thread-1384c8363c39",
+      "subject": "WI 2009 - Call for Papers - Extended Deadline",
+      "message_count": 1,
+      "participants": [
+        "wiiat"
+      ],
+      "started": "2009-04-08T01:30:26Z",
+      "last_reply": "2009-04-08T01:30:26Z",
+      "root_message_id": "msg-1384c8363c39"
+    },
+    {
+      "id": "thread-96e0e14e98ef",
+      "subject": "Greek in titles",
+      "message_count": 3,
+      "participants": [
+        "James Stapleton",
+        "Noguchi, Takuya",
+        "Samer Mouksassi"
+      ],
+      "started": "2009-04-08T12:48:09Z",
+      "last_reply": "2009-04-08T14:50:45Z",
+      "root_message_id": "msg-96e0e14e98ef"
+    },
+    {
+      "id": "thread-b3e2a2132628",
+      "subject": "April R/Splus Courses: Back2back (1) R/S+ Fundamentals and (2) R/S-Plus Advanced Programming. in San Francisco and New York City",
+      "message_count": 1,
+      "participants": [
+        "elvis Miller"
+      ],
+      "started": "2009-04-08T19:06:26Z",
+      "last_reply": "2009-04-08T19:06:26Z",
+      "root_message_id": "msg-b3e2a2132628"
+    },
+    {
+      "id": "thread-21a4dde8c49f",
+      "subject": "rounding",
+      "message_count": 3,
+      "participants": [
+        "Andreas Krause",
+        "William Dunlap",
+        "Zheng_Jenny"
+      ],
+      "started": "2009-04-08T20:04:34Z",
+      "last_reply": "2009-04-13T17:33:35Z",
+      "root_message_id": "msg-21a4dde8c49f"
+    },
+    {
+      "id": "thread-b8881bd33837",
+      "subject": "IAT 2009 - Call for Papers - Extended Deadline",
+      "message_count": 1,
+      "participants": [
+        "wiiat at wi-consortium.org"
+      ],
+      "started": "2009-04-12T08:05:23Z",
+      "last_reply": "2009-04-12T08:05:23Z",
+      "root_message_id": "msg-b8881bd33837"
+    },
+    {
+      "id": "thread-aa9c71e8ef49",
+      "subject": "limits.tilt and weights",
+      "message_count": 2,
+      "participants": [
+        "Kim.Elmore at noaa.gov",
+        "Tim Hesterberg"
+      ],
+      "started": "2009-04-13T20:44:31Z",
+      "last_reply": "2009-04-14T04:12:12Z",
+      "root_message_id": "msg-aa9c71e8ef49"
+    },
+    {
+      "id": "thread-87bd71dd6a9b",
+      "subject": "Private Information",
+      "message_count": 2,
+      "participants": [
+        "Widad Chergui"
+      ],
+      "started": "2009-04-18T17:40:02Z",
+      "last_reply": "2009-04-19T13:51:14Z",
+      "root_message_id": "msg-87bd71dd6a9b"
+    },
+    {
+      "id": "thread-3e9aae910428",
+      "subject": "Online statistics courses in May",
+      "message_count": 1,
+      "participants": [
+        "courses at zanybooks.com"
+      ],
+      "started": "2009-04-21T15:09:46Z",
+      "last_reply": "2009-04-21T15:09:46Z",
+      "root_message_id": "msg-3e9aae910428"
+    },
+    {
+      "id": "thread-d6603120946a",
+      "subject": "",
+      "message_count": 2,
+      "participants": [
+        "David Huffer",
+        "Robertson, Paul [PRDUS]"
+      ],
+      "started": "2009-04-21T17:30:27Z",
+      "last_reply": "2009-04-21T18:39:55Z",
+      "root_message_id": "msg-d6603120946a"
+    },
+    {
+      "id": "thread-3d4616a759b2",
+      "subject": "Brain Informatics 2009 Final Call for Papers",
+      "message_count": 1,
+      "participants": [
+        "wic-office at wi-consortium.org"
+      ],
+      "started": "2009-04-25T16:24:03Z",
+      "last_reply": "2009-04-25T16:24:03Z",
+      "root_message_id": "msg-3d4616a759b2"
+    },
+    {
+      "id": "thread-cd08c88ce7ae",
+      "subject": "S+ Course: Getting Started - Brisbane, Melbourne & Sydney, May 2009",
+      "message_count": 1,
+      "participants": [
+        "Robyn Davies"
+      ],
+      "started": "2009-04-28T02:01:59Z",
+      "last_reply": "2009-04-28T02:01:59Z",
+      "root_message_id": "msg-cd08c88ce7ae"
+    },
+    {
+      "id": "thread-5c5ca152a9df",
+      "subject": "Is there a command to clear the command line buffer",
+      "message_count": 2,
+      "participants": [
+        "Hersh, Douglas"
+      ],
+      "started": "2009-04-28T20:37:36Z",
+      "last_reply": "2009-04-30T14:30:28Z",
+      "root_message_id": "msg-5c5ca152a9df"
+    },
+    {
+      "id": "thread-5d7425a493e8",
+      "subject": "Savi Appana sent you a Friend Request on Yaari",
+      "message_count": 1,
+      "participants": [
+        "Savi Appana"
+      ],
+      "started": "2009-04-29T02:03:08Z",
+      "last_reply": "2009-04-29T02:03:08Z",
+      "root_message_id": "msg-5d7425a493e8"
+    },
+    {
+      "id": "thread-283caf09828c",
+      "subject": "Online interactive statistics courses. Early bird discount ends May 1st.",
+      "message_count": 1,
+      "participants": [
+        "courses at zanybooks.com"
+      ],
+      "started": "2009-04-29T15:01:05Z",
+      "last_reply": "2009-04-29T15:01:05Z",
+      "root_message_id": "msg-283caf09828c"
+    }
+  ]
+}

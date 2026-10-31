@@ -1,0 +1,1291 @@
+{
+  "list": "s-news",
+  "description": "",
+  "month": "2007-01",
+  "messages": [
+    {
+      "id": "msg-17838c066fb1",
+      "message_id": "<20070102233648.pmmyzuhz9yskw8ko@my3.dal.ca>",
+      "from_name": "wuy",
+      "from_email_hash": "aa54746c14102a7e520df240cda87000f41a5fd400c2e5ff94f53ad08e4af562",
+      "date": "2007-01-03T03:36:48Z",
+      "subject": "What?s the best way to deal with ?iteration limit reached? when running glm.nb()?",
+      "subject_clean": "What?s the best way to deal with ?iteration limit reached? when running glm.nb()?",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hello S+ers,\n\nHappy New Year to everyone!\n\nI'm a newbie in S+, please forgive me if my question appears trivial, but I do\nneed some help from you.\n\nI'm trying to fit a negative binomial regression model under S-Plus 6.1 for\nWindows, and the function I use is glm.nb() from MASS library for Venables &\nRipley (2002) version 7.0. First, I didn't give any control values to the\nmodel, my model was like\n\n> negb.test <- glm.nb (Y ~ X1 + X2 + X3 +X4 + X5 +X6, data=mydata)\nWarning in theta.ml(Y, mu, n, limit = control$maxit, trace = control$trace > 2):\niteration limit reached\nWarning in theta.ml(Y, mu, n, limit = control$maxit, trace = control$trace > 2):\niteration limit reached\nWarning in theta.ml(Y, mu, n, limit = control$maxit, trace = control$trace > 2):\niteration limit reached\nWarning in theta.ml(Y, mu, n, limit = control$maxit, trace = control$trace > 2):\niteration limit reached\n\nThought some control might help a bit, I re-coded it as\n\n> negb.test2 <- glm.nb (Y ~..., init.theta=0.85, link=log, data=mydata)\nThe same warning message, and it repeats four times again.\n\nI'm just wondering must I give a limit number for the iteration to reach an\n\"optimal\" result, and what is the maximum number of iteration. Also, what\ndoes the \"trace = control$trace > 2\" mean, I thought trace is a logic\nvalue, how to interpret (and possibility fix) this problem?\n\nOh, the length of my data is over 30000, is it too big for S+ to handle? If so,\nwhat can I do with it?\n\nMany thanks in advance, and humbly awaiting illumination!\n\nHelen Wu",
+      "body_snippet": "Hello S+ers,\n\nHappy New Year to everyone!\n\nI'm a newbie in S+, please forgive me if my question appears trivial, but I do\nneed some help from you.\n\nI'm trying to fit a negative binomial regression mod",
+      "thread_id": "thread-17838c066fb1",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-8ed3379e2c7d",
+      "message_id": "<20070102233209.BRF79666@po-d.temple.edu>",
+      "from_name": "Richard M. Heiberger",
+      "from_email_hash": "4ce810eab8587777db353ea9d997b9e94d9e73af018121f9a3424238038952df",
+      "date": "2007-01-03T04:32:09Z",
+      "subject": "Fwd: Vertical boxplot",
+      "subject_clean": "Vertical boxplot",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Yes, download the HH package.  These are functions associated with\nmy recent book\n                Statistical Analysis and Data Display\n                Richard M. Heiberger and Burt Holland\n\nThis is the August 21, 2006 version of the HH online files from\n   http://springeronline.com/0-387-40270-5\n\nThe January 2007 version, which will be distributed as a package for S-Plus 8,\nis almost ready.\n\nWhen you attach the HH library, you will have access to the t.trellis\nfunction which interchanges the x and y axes within the panels of any trellis \nplot.\n\n>From the documentation\n?bwplot\nwe have the example\n      bwplot(voice.part ~ height, data=singer, xlab=\"Height (inches)\") \nThe transpose gives the vertical box plots.\n    t(bwplot(voice.part ~ height, data=singer, xlab=\"Height (inches)\"))\n\n---- Original message ----\n>Date: Thu, 14 Dec 2006 12:04:10 +0100\n>From: Paul Matthias Diderichsen <paulmatthias.diderichsen at abbott.com>  \n>Subject: [S] Vertical boxplot  \n>   Is there a way to create vertical boxplots in the trellis framework - \n> without writing a\n>   custom panel function?",
+      "body_snippet": "Yes, download the HH package.  These are functions associated with\nmy recent book\n                Statistical Analysis and Data Display\n                Richard M. Heiberger and Burt Holland\n\nThis is t",
+      "thread_id": "thread-8ed3379e2c7d",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-9f916ca380bd",
+      "message_id": "<B998A44C8986644EA8029CFE6396A924840AB6@exqld2-bne.qld.csiro.au>",
+      "from_name": "Bill.Venables at csiro.au",
+      "from_email_hash": "91e544124c2765f87d45eb89c02b5c30fa81a75ccb6e51328a0445682154a583",
+      "date": "2007-01-03T06:07:13Z",
+      "subject": "Re: What?s the best way to deal with ?iteration limit reached? whenrunning glm.nb()?",
+      "subject_clean": "What?s the best way to deal with ?iteration limit reached? whenrunning glm.nb()?",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hi Helen,\n\nThis could be an indication that the negative binomial you are trying to fit is \nnot a good model for the process that generated the data.  glm.nb uses an \nalternating estimation process, alternately fixing mu and estimating theta, \nthen fixing theta and estimating mu.  There is an iteration limit on both \ncycles and occasionally it happens that early on in the process, when mu is not \nvery good, the estimation for theta runs to the limit, but the next time round \nwhen mu is closer to the MLE, it can be OK.  I suspect the problem is that the \nNB model is not a good one, though.\n\nYou can check this to some extent by supplying an initial value for theta using \n        init.theta = <value>\n\non the call to glm.nb, choosing a value suggested by previous runs.  If it is \nthe true mle, you should not get those warning messages.\n\nIf the estimate of theta is just getting larger and larger, then it suggests a \nPoisson model may be appropriate.  If it's getting smaller and smaller, I'm not \nsure what's going on.\n\nAlso, I would suggest you always call glm.nb (and glm, too) setting trace = \nTRUE.  This gives more insight on what's going on during the iteration process.\n\nBill Venables\nCMIS, CSIRO Laboratories,\nPO Box 120, Cleveland, Qld. 4163\nAUSTRALIA\nOffice Phone (email preferred): +61 7 3826 7251\nFax (if absolutely necessary):    +61 7 3826 7304\nMobile (rarely used):                +61 4 1963 4642\nHome Phone:                          +61 7 3286 7700\nmailto:Bill.Venables at csiro.au\nhttp://www.cmis.csiro.au/bill.venables/ \n \n\n-----Original Message-----\nFrom: s-news-owner at lists.biostat.wustl.edu \n[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of wuy\nSent: Wednesday, 3 January 2007 1:37 PM\nTo: s-news at lists.biostat.wustl.edu\nSubject: [S] What?s the best way to deal with ?iteration limit reached? \nwhenrunning glm.nb()?\n\nHello S+ers,\n\nHappy New Year to everyone!\n\nI'm a newbie in S+, please forgive me if my question appears trivial, but I do\nneed some help from you.\n\nI'm trying to fit a negative binomial regression model under S-Plus 6.1 for\nWindows, and the function I use is glm.nb() from MASS library for Venables &\nRipley (2002) version 7.0. First, I didn't give any control values to the\nmodel, my model was like\n\n> negb.test <- glm.nb (Y ~ X1 + X2 + X3 +X4 + X5 +X6, data=mydata)\nWarning in theta.ml(Y, mu, n, limit = control$maxit, trace = control$trace > 2):\niteration limit reached\nWarning in theta.ml(Y, mu, n, limit = control$maxit, trace = control$trace > 2):\niteration limit reached\nWarning in theta.ml(Y, mu, n, limit = control$maxit, trace = control$trace > 2):\niteration limit reached\nWarning in theta.ml(Y, mu, n, limit = control$maxit, trace = control$trace > 2):\niteration limit reached\n\nThought some control might help a bit, I re-coded it as\n\n> negb.test2 <- glm.nb (Y ~..., init.theta=0.85, link=log, data=mydata)\nThe same warning message, and it repeats four times again.\n\nI'm just wondering must I give a limit number for the iteration to reach an\n\"optimal\" result, and what is the maximum number of iteration. Also, what\ndoes the \"trace = control$trace > 2\" mean, I thought trace is a logic\nvalue, how to interpret (and possibility fix) this problem?\n\nOh, the length of my data is over 30000, is it too big for S+ to handle? If so,\nwhat can I do with it?\n\nMany thanks in advance, and humbly awaiting illumination!\n\nHelen Wu\n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
+      "body_snippet": "Hi Helen,\n\nThis could be an indication that the negative binomial you are trying to fit is \nnot a good model for the process that generated the data.  glm.nb uses an \nalternating estimation process, a",
+      "thread_id": "thread-9f916ca380bd",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-8671ebb814b6",
+      "message_id": "<B4DB35647B608744A45D3150D27F4B3608827144@NLDNC102PEX1.ubsw.net>",
+      "from_name": "simona.costanzo at ubs.com",
+      "from_email_hash": "380750cc70efe470ff21e282b20bf80751c187adb559c5cc1c28a48d28362351",
+      "date": "2007-01-03T11:50:10Z",
+      "subject": "Cor.test function",
+      "subject_clean": "Cor.test function",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Dear all, \n\nI am calculating kendall's tau coefficients using the cor.test function and Splus 6.2. I am encountering the following problems:\n\n1. the correlation coefficient is different from the one obtained using \"cor.test\" function in R  \n\n2. in many cases the p-value is returned as \"NA\"\n\nCan anyone help to explain this? \n\nMany thanks \n\nSimona\n\n______________________________\n\nSimona Costanzo\n\nUBS IB Credit Risk Control \n\n100 Liverpool Street, London EC2M 2RH\n\nTel.: +44 (0)20 7567 8089\n\nInternal extension: 19 31 78089 \n\n \n\nVisit our website at http://www.ubs.com\n\nThis message contains confidential information and is intended only \nfor the individual named.  If you are not the named addressee you \nshould not disseminate, distribute or copy this e-mail.  Please \nnotify the sender immediately by e-mail if you have received this \ne-mail by mistake and delete this e-mail from your system.\n\nE-mail transmission cannot be guaranteed to be secure or error-free \nas information could be intercepted, corrupted, lost, destroyed, \narrive late or incomplete, or contain viruses.  The sender therefore \ndoes not accept liability for any errors or omissions in the contents \nof this message which arise as a result of e-mail transmission.  If \nverification is required please request a hard-copy version.  This \nmessage is provided for informational purposes and should not be \nconstrued as a solicitation or offer to buy or sell any securities or \nrelated financial instruments.\n\nUBS Limited is a company registered in England & Wales under company\nnumber 2035362, whose registered office is at 1 Finsbury Avenue,\nLondon, EC2M 2PP, United Kingdom.\n\nUBS AG (London Branch) is registered as a branch of a foreign company\nunder number BR004507, whose registered office is at\n1 Finsbury Avenue, London, EC2M 2PP, United Kingdom.\n\nUBS Clearing and Execution Services Limited is a company registered\nin England & Wales under company number 03123037, whose registered\noffice is at 1 Finsbury Avenue, London, EC2M 2PP, United Kingdom.",
+      "body_snippet": "Dear all, \n\nI am calculating kendall's tau coefficients using the cor.test function and Splus 6.2. I am encountering the following problems:\n\n1. the correlation coefficient is different from the one o",
+      "thread_id": "thread-8671ebb814b6",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-972617e43177",
+      "message_id": "<5a879650701030723r52a66907gb68cc1b222124b8d@mail.gmail.com>",
+      "from_name": "sara janos",
+      "from_email_hash": "114ebfe09db673ea334b2d5a41623df3d68e5352246fbb35252648e2cb76a16c",
+      "date": "2007-01-03T15:23:15Z",
+      "subject": "on Survreg function",
+      "subject_clean": "on Survreg function",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hi, \n I have a question on Survreg() function. I want to fit an exponential \n function to a survival object and then draw both the survival curve and the fitted exponential. Is it \n\n possible that you help me? \n \nThanks.",
+      "body_snippet": "Hi, \n I have a question on Survreg() function. I want to fit an exponential \n function to a survival object and then draw both the survival curve and the fitted exponential. Is it \n\n possible that you",
+      "thread_id": "thread-972617e43177",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-fda04076c16b",
+      "message_id": "<5386D894248D32458B1D9B5638A074481B676F@sewinexch00.insightful.com>",
+      "from_name": "Heather Anthony",
+      "from_email_hash": "137e82a720ea5ec214ff88487eae71e6743d2d4470695998f0dd41f23fc1b9bb",
+      "date": "2007-01-05T23:24:58Z",
+      "subject": "COURSE: Upcoming S-PLUS courses and Web casts from Insightful Corporation",
+      "subject_clean": "COURSE: Upcoming S-PLUS courses and Web casts from Insightful Corporation",
+      "in_reply_to": "<5386D894248D32458B1D9B5638A074480720E1@sewinexch00.insightful.com>",
+      "references": [
+        "<5386D894248D32458B1D9B5638A074480720E1@sewinexch00.insightful.com>"
+      ],
+      "body_plain": "Here is some information about upcoming courses from Insightful's training\ndepartment that may be of interest to s-news subscribers.  \nAdditional information is available at the links provided. Please direct any\nenquiries to me <hanthony at insightful.com>\n\n# Heather Anthony/Insightful Corporation Training Coordinator\n\nInsightful Training -- Featured Courses!       \n============================\n\nTraditional and Modern Approaches to Statistical Modelling with S-PLUS®\nPresented by Dr. Bill Venables\nMar 21-23, New York, NY\nMar 26-28, San Francisco, CA\nhttp://www.insightful.com/services/course.asp?CID=36\n\nThis three-day course will present classical and modern approaches to\nstatistical modelling using the facilities provided by S-PLUS. The course\nwill\npresent S-PLUS as a complete data analysis and graphics environment and will\nuse both the standard software and the S programming language to offer\nstrategies for handling both standard and non-standard statistical modelling\nproblems.\n\nDr. Bill Venables is a well-known identity in the S-PLUS community, both\nthrough his active membership of the S-news mailing list and the two books\nhe has written with Professor Brian Ripley, namely MASS and S Programming,\nboth of which have become minor classics and perhaps the most widely used\nthird party books for the S software system, used by S-PLUS...\n\nAdvanced Programming Methods in S-PLUS\nMay 17-18, Philadelphia, PA\nOct 8-9, San Francisco, CA\nhttp://www.insightful.com/services/course.asp?CID=37\n\nThis two-day hands-on course includes a blend of theory, concepts and\npractical examples. We discuss efficient programming, debugging, graphics,\nsimulations, object-oriented programming, help files, creating libraries for\nothers, and other topics...\n\nBootstrap Methods and Permutation Tests\nMay 21-22, Philadelphia, PA\nOct 10-11, San Francisco, CA\nhttp://www.insightful.com/services/course.asp?CID=38\n\nThis two-day hands-on course begins with a graphical approach to\nbootstrapping and permutation testing, illuminating basic statistical\nconcepts of standard errors, confidence intervals, p-values and significance\ntests. We consider graphical and numerical diagnostic checks for the validity\nof traditional Gaussian-based inferences...\n\nUPCOMING WEB CASTS\n============================\n\nThe Convergence of Business Issues and Analytics: Framing Marketing\nObjectives as Optimization Problems\nFebruary 6, 2007\nhttp://www.insightful.com/news_events/webcasts/2007/02lytix/default.asp\n\nTime Inc. Delivers Mission-Critical Market Intelligence Using S-PLUS® Server\nFebruary 7, 2007\nhttp://www.insightful.com/news_events/webcasts/2007/02time/default.asp\n\nVisualize Data in Population and PK/PD Analysis for Exposure Response\nFebruary 15, 2007\nhttp://www.insightful.com/news_events/webcasts/2007/02pkpd/default.asp\n\nOTHER UPCOMING 2007 COURSES\n============================\n \nStatistical Modeling in S-PLUS\nJanuary 29-31, New York, NY\nhttp://www.insightful.com/services/course.asp?CID=11\n\nC201: S-PLUS Programming\nFebruary 1-2, New York, NY\nhttp://www.insightful.com/services/course.asp?CID=41\n\nC210: Working with Big Data\nFebruary 22-23, New York, NY\nhttp://www.insightful.com/services/course.asp?CID=44\n\nD101: Data Mining with Insightful Miner\nFebruary 26-27, Edison, NJ\nhttp://www.insightful.com/services/course.asp?CID=39\n\nG101: S-PLUS Graphical User Interface Jumpstart \nMarch 6, Los Angeles, CA\nhttp://www.insightful.com/services/course.asp?CID=32 \n\n \nC102: S-PLUS Essentials Command Line \nMarch 7-9, Los Angeles, CA\nhttp://www.insightful.com/services/course.asp?CID=10\n\nStatistical Modeling in S-PLUS\nMarch 12-14, Los Angeles, CA\nhttp://www.insightful.com/services/course.asp?CID=11\n\nC201: S-PLUS Programming\nMarch 15-16, Los Angeles, CA\nhttp://www.insightful.com/services/course.asp?CID=41\n\nRegister NOW! http://www.insightful.com/services/register.asp\n\nFor a complete 2007 training schedule go to:\nhttp://www.insightful.com/services/schedule.asp\n\n-- \nHeather Anthony <hanthony at insightful.com>\nTraining Coordinator, Insightful Corp, Seattle WA\nTel: +1 (206) 802 2223\nFax: +1 (206) 283 8691\n\nInsightful Corporation (www.insightful.com) provides analytical solutions for\ntext and data using S-PLUS, Insightful Miner, InFact and consulting services.",
+      "body_snippet": "Here is some information about upcoming courses from Insightful's training\ndepartment that may be of interest to s-news subscribers.  \nAdditional information is available at the links provided. Please",
+      "thread_id": "thread-fda04076c16b",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-42c1616f77e0",
+      "message_id": "<45A237D0.8070706@mango-solutions.com>",
+      "from_name": "Romain Francois",
+      "from_email_hash": "b9d2e46d3033f07ff80e5a76fd7ec7d72d03566990f3afa71d2947985c4eb48d",
+      "date": "2007-01-08T12:23:44Z",
+      "subject": "R Training Course in Paris",
+      "subject_clean": "R Training Course in Paris",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Mango Solutions are pleased to announce the above course in Paris as \npart of our schedule for Q1 2007.\n\n-----------------------------------------------------------------------\nIntroduction to R and R Programming - 12th February 2008-14th February\n-----------------------------------------------------------------------\n\n(Please find a french version of this announcement from \nhttp://www.mango-solutions.com/services/rtraining/r_paris_training_07_french.html)\n\n* Who Should Attend ?\n\nThis is a course suitable for beginners and improvers in the R language \nand is ideal for people wanting an all round introduction to R\n\n* Course Goals\n\n- To allow attendees to understand the technology behind the R package\n- Improve attendees programming style and confidence\n- To enable users to access a wide range of available functionality\n- To enable attendees to program in R within their own environment\n- To understand how to embed R routines within other applications\n\n* Course Outline\n\n1. Introduction to the R language and the R community\n2. The R Environment\n3. R data objects\n4. Using R functions\n5. The \"apply\" family of functions\n6. Writing R functions\n7. Standard Graphics\n8. Advanced Graphics\n9. R Statistics\n10. R Applications\n\nThe cost of these courses is €1800 for commercial attendees and €850 for \nacademic attendees. A €100 discount will be offered to members of the R \nFoundation (http://www.r-project.org/foundation/main.html).\n\nShould your organization have more than 3 possible attendees why not \ntalk to us about hosting a customized and focused course delivered at \nyour premises? Details of further courses in alternative locations are \navailable at http://www.mango-solutions.com/services/training.html\n\nMore details about this course :\n- in french : \nhttp://www.mango-solutions.com/services/rtraining/r_paris_training_07_french.html\n- in english : \nhttp://www.mango-solutions.com/services/rtraining/r_paris_training_07.html\n\nShould you want to book a place on this course or have any questions \nplease contact training at mango-solutions.com\n\nCordialement,\n\nRomain Francois\n\n--\nMango Solutions\nTel +44 (0)1249 467 467\nMob +44 (0)7813 526 123\nFax +44 (0)1249 467 468\n\ndata analysis that delivers",
+      "body_snippet": "Mango Solutions are pleased to announce the above course in Paris as \npart of our schedule for Q1 2007.\n\n-----------------------------------------------------------------------\nIntroduction to R and R",
+      "thread_id": "thread-42c1616f77e0",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-7a356969423c",
+      "message_id": "<3FC0430478C30B4A9AF0AFF7863418F130EF71@BCMEVS6.ad.bcm.edu>",
+      "from_name": "Roberts, J. Kyle",
+      "from_email_hash": "88de96a6c2a9d0cf7c5c9055fcd25cf68d8edc8e6550db1c23d6252724ee7877",
+      "date": "2007-01-09T15:23:57Z",
+      "subject": "Help with function",
+      "subject_clean": "Help with function",
+      "in_reply_to": "<223239.17207.qm@web90312.mail.mud.yahoo.com>",
+      "references": [
+        "<223239.17207.qm@web90312.mail.mud.yahoo.com>"
+      ],
+      "body_plain": "Dear \nAll,\n\n \n\nI need to know how \nto create different pieces of a function that I have created.  For example, \nin aov, one could type aov$contrasts to obtain the contrasts.  I want to \nuse this for another application, but have simplified it \nhere.\n\n \n\nSuppose that I have \nthe following:\n\nnew.data<-matrix(c(1:10, rep(1:5, each=2)), \nncol=2)\n\n \n\naverage<-function(x,y){\n\n     out<-lapply(split(x,y), \nmean)\n\n     mean(unlist(out))\n\n}\n\n \n\nnew.out<-average(new.data[,1], \nnew.data[,2])\n\nnew.out\n\n \n\nThis is just a \nsimple function that produces the mean from a group of means (in this case they \nall have the same no. of observations).  Suppose, however, that after I run \nthe function, I would like to actually see the means of each of the groups based \non the factor variable (new.data[,2]).  In other words, I want to see the \noutput from the command lapply(split(x,y), mean) \n.\n\n \n\nHow do I need to \nchange my function so that I can obtain this by just typing something \nlike:\n\nnew$out\n\n \n\nThanks,\n\nKyle\n\n \n\n***************************************\n\nJ. Kyle Roberts, Ph.D.\n\nBaylor College of Medicine\n\nCenter for Educational \nOutreach\n\nOne Baylor Plaza, MS:  \nBCM411\n\nHouston, TX   \n77030-3411\n\n713-798-6672 - 713-798-8201 \nFax\n\njkrobert at bcm.edu\n\n***************************************",
+      "body_snippet": "Dear \nAll,\n\n \n\nI need to know how \nto create different pieces of a function that I have created.  For example, \nin aov, one could type aov$contrasts to obtain the contrasts.  I want to \nuse this for a",
+      "thread_id": "thread-7a356969423c",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-f23513eef4f3",
+      "message_id": "<000601c7340b$b1d50200$2ada5382@steffen>",
+      "from_name": "Steffen Barembruch",
+      "from_email_hash": "9e4d8509a8f703b421b4e6fd1d3bca90e96ffdb5fd2e5cf3ce511974e77c0f1b",
+      "date": "2007-01-09T16:32:03Z",
+      "subject": "'Prompt to save graph sheets' as argument for options()",
+      "subject_clean": "'Prompt to save graph sheets' as argument for options()",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hello!\n\n \n\nJust a short \nquestion. I need to disable the option \"Prompt to save graph sheets\" which is \navailable in the menu General settings on the tab General. Can this also be done \nwith the help of any command? For example, does there exist an argument to \noptions() which changes this option?\n\n \n\nThanks a \nlot\n\nSteffen \nBarembruch",
+      "body_snippet": "Hello!\n\n \n\nJust a short \nquestion. I need to disable the option \"Prompt to save graph sheets\" which is \navailable in the menu General settings on the tab General. Can this also be done \nwith the help ",
+      "thread_id": "thread-f23513eef4f3",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-0226d6108d74",
+      "message_id": "<011101c7340e$6df77970$481414ac@prosanos.local>",
+      "from_name": "Alan Hochberg",
+      "from_email_hash": "fade9529d6134aa88b1d4541ad0befda2cfb7466ce7b2c89acc68d31ccb485c7",
+      "date": "2007-01-09T16:51:36Z",
+      "subject": "Re: 'Prompt to save graph sheets' as argument for options()",
+      "subject_clean": "'Prompt to save graph sheets' as argument for options()",
+      "in_reply_to": "<000601c7340b$b1d50200$2ada5382@steffen>",
+      "references": [
+        "<000601c7340b$b1d50200$2ada5382@steffen>"
+      ],
+      "body_plain": "Steffen,\n\n \n\nJust about every command calls a function,\nand you can see these by using the “History” window.  It looks like\nthe command you need is:\n\n \n\nguiSetOption(\noption.name=\"SaveGraphPrompt\", value.string=\"F\" )\n\n \n\nHope this helps,\n\n \n\nAlan\n\n \n\nAlan\nHochberg\n\nVice\nPresident, Research\n\nProSanos\nCorp.\n\n225 Market Street\n\nSuite 502\n\nHarrisburg, PA 17101\n\nTel.\n717-635-2124\n\nFax\n717-635-2575\n\nalan.hochberg at prosanos.com\n\nwww.prosanos.com",
+      "body_snippet": "Steffen,\n\n \n\nJust about every command calls a function,\nand you can see these by using the “History” window.  It looks like\nthe command you need is:\n\n \n\nguiSetOption(\noption.name=\"SaveGraphPrompt\", va",
+      "thread_id": "thread-f23513eef4f3",
+      "thread_depth": 1,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-09403cb7003c",
+      "message_id": "<001901c73411$3b5800e0$2ada5382@steffen>",
+      "from_name": "Steffen Barembruch",
+      "from_email_hash": "9e4d8509a8f703b421b4e6fd1d3bca90e96ffdb5fd2e5cf3ce511974e77c0f1b",
+      "date": "2007-01-09T17:11:40Z",
+      "subject": "Re: 'Prompt to save graph sheets' as argument for options()",
+      "subject_clean": "'Prompt to save graph sheets' as argument for options()",
+      "in_reply_to": "<000601c7340b$b1d50200$2ada5382@steffen>",
+      "references": [
+        "<000601c7340b$b1d50200$2ada5382@steffen>"
+      ],
+      "body_plain": "Thanks to Alan Hochberg \nand Chuck Taylor! They both provided me with the \nsolution\n\n \n\nguiSetOption( \noption.name=\"SaveGraphPrompt\", value.string=\"F\" )\n\nThanks\nSteffen \nBarembruch\n\nVon: s-news-owner at lists.biostat.wustl.edu \n[mailto:s-news-owner at lists.biostat.wustl.edu] Im Auftrag von Steffen \nBarembruch\nGesendet: Dienstag, 9. Januar 2007 17:32\nAn: \ns-news at lists.biostat.wustl.edu\nBetreff: [S] 'Prompt to save graph \nsheets' as argument for options()\n\nHello!\n\n \n\nJust a short \nquestion. I need to disable the option \"Prompt to save graph sheets\" which is \navailable in the menu General settings on the tab General. Can this also be done \nwith the help of any command? For example, does there exist an argument to \noptions() which changes this option?\n\n \n\nThanks a \nlot\n\nSteffen \nBarembruch",
+      "body_snippet": "Thanks to Alan Hochberg \nand Chuck Taylor! They both provided me with the \nsolution\n\n \n\nguiSetOption( \noption.name=\"SaveGraphPrompt\", value.string=\"F\" )\n\nThanks\nSteffen \nBarembruch\n\nVon: s-news-owner ",
+      "thread_id": "thread-f23513eef4f3",
+      "thread_depth": 1,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-a223b9aeb7cb",
+      "message_id": "<18E73B32A046C141A752E6DA39B1EB5202DCE538@MBAMMAIL.mbam.local>",
+      "from_name": "Andreas Johansson",
+      "from_email_hash": "02aed2801d187d41cef123d94383e8b7cd91ec644d4cb2a264b61fd0b297477d",
+      "date": "2007-01-09T18:00:40Z",
+      "subject": "S-Plus Memory",
+      "subject_clean": "S-Plus Memory",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Have been playing \naround with S-Plus memory in S-Plus 8 (on 32-bit XP). Have noticed a few \nproblems especially when using the Workbench. \n\n  Have 4GB of RAM \n  with the /3GB switch (in boot.ini) enabling me to allocate 3GB to a single \n  process. Still I can never manage to allocate more than 2GB to S-Plus. Even \n  though some background processes takes up some memory I have about 2.7GB out \n  of those 3GB available for sure, have also turned paging off (should not \n  matter here).\n\n  Using the workbench \n  I cannot allocate more than 1GB for same setup. Have also tried \n  setting options(\"memory\") to higher values but changes \n  nothing.\n\nDoes anyone \nknow of why S-Plus cannot grab all available RAM? \n\nIs anyone using the \n64-bit version on a Linux platform with more than 4GB of RAM and would like to \nshare some performance stats?\n\n \n\nAndreas  \n\n \n\nAndreas \nJohansson\n\nQuantitative Analyst\n\n \n\nMBAM\n4th Floor, 11 Old \nJewry\nLondon EC2R 8DU\n\nAndreas.Johansson at mbamfunds.com\n\nTel. (+44)20 7071 3351 \nFax. (+44)20 7509 \n7454\n\n \n\nThis message is intended only for the use of the person(s) to whom it is addressed. It may contain information which is privileged and confidential. Accordingly any unauthorised use is strictly prohibited. If you are not the intended recipient, please contact the sender as soon as possible.\n\nIt is not intended as an offer or solicitation for the purchase or sale of any financial instrument or as an official confirmation of any transaction, unless specifically agreed otherwise. All market prices, data and other information are not warranted as to completeness or accuracy and are subject to change without notice. Any opinions or advice contained in this Internet email are subject to the terms and conditions expressed in any applicable governing Marble Bar Asset Management LLP's  terms and conditions of business or client agreement letter. Any comments or statements made herein do not necessarily reflect those of Marble Bar Asset Management LLP.\n\nMarble Bar Asset Management LLP is regulated and authorised by the FSA.",
+      "body_snippet": "Have been playing \naround with S-Plus memory in S-Plus 8 (on 32-bit XP). Have noticed a few \nproblems especially when using the Workbench. \n\n  Have 4GB of RAM \n  with the /3GB switch (in boot.ini) ena",
+      "thread_id": "thread-a223b9aeb7cb",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-9222c547b34e",
+      "message_id": "<BAY130-DAV6C27772F6A4D561C29A97B5B30@phx.gbl>",
+      "from_name": "statman",
+      "from_email_hash": "6a99c63ada774318c905adfe1d3b843fbfecac157dce12a6ae73e1258b77bba3",
+      "date": "2007-01-09T20:37:34Z",
+      "subject": "Re: S-Plus Memory",
+      "subject_clean": "S-Plus Memory",
+      "in_reply_to": "<18E73B32A046C141A752E6DA39B1EB5202DCE538@MBAMMAIL.mbam.local>",
+      "references": [
+        "<18E73B32A046C141A752E6DA39B1EB5202DCE538@MBAMMAIL.mbam.local>"
+      ],
+      "body_plain": "IIRC, this is a 'feature' of WinXP 32 bit. That is, you \ncannot have more than 2 gigs available for your process. Check out the R \narchives for the reasons etc. When I did my Chemistry Degree (a billion years \nago - well not really, but a while), my Physical Chemistry textbook (Moore) had \nan alternative version of the 3 laws of thermodynamics which went (if my memory \ndidn't):\n\n \n\nYou can't win, you can only break even.\n\nYou can only break even at absolute \nzero.\n\nYou can't reach absolute zero.\n\n \n\nGo figure.......................... \n8¬)\n\nFrom: s-news-owner at lists.biostat.wustl.edu \n[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Andreas \nJohansson\nSent: 09 January 2007 18:01\nTo: \ns-news at lists.biostat.wustl.edu\nSubject: [S] S-Plus \nMemory\n\nHave been playing \naround with S-Plus memory in S-Plus 8 (on 32-bit XP). Have noticed a few \nproblems especially when using the Workbench. \n\n  Have 4GB of RAM \n  with the /3GB switch (in boot.ini) enabling me to allocate 3GB to a single \n  process. Still I can never manage to allocate more than 2GB to S-Plus. Even \n  though some background processes takes up some memory I have about 2.7GB out \n  of those 3GB available for sure, have also turned paging off (should not \n  matter here). \n  Using the workbench \n  I cannot allocate more than 1GB for same setup. Have also tried \n  setting options(\"memory\") to higher values but changes \n  nothing.\n\nDoes anyone \nknow of why S-Plus cannot grab all available RAM? \n\nIs anyone using the \n64-bit version on a Linux platform with more than 4GB of RAM and would like to \nshare some performance stats?\n\n \n\nAndreas  \n\n \n\nAndreas \nJohansson\n\nQuantitative Analyst\n\n \n\nMBAM\n4th Floor, 11 Old \nJewry\nLondon EC2R 8DU\n\nAndreas.Johansson at mbamfunds.com\n\nTel. (+44)20 7071 3351 \nFax. (+44)20 7509 \n7454\n\n \n\nThis message is intended only for the use of the person(s) \nto whom it is addressed. It may contain information which is privileged and \nconfidential. Accordingly any unauthorised use is strictly prohibited. If you \nare not the intended recipient, please contact the sender as soon as \npossible.\n\nIt is not intended as an offer or solicitation for the purchase \nor sale of any financial instrument or as an official confirmation of any \ntransaction, unless specifically agreed otherwise. All market prices, data and \nother information are not warranted as to completeness or accuracy and are \nsubject to change without notice. Any opinions or advice contained in this \nInternet email are subject to the terms and conditions expressed in any \napplicable governing Marble Bar Asset Management LLP's terms and conditions of \nbusiness or client agreement letter. Any comments or statements made herein do \nnot necessarily reflect those of Marble Bar Asset Management LLP.\n\nMarble \nBar Asset Management LLP is regulated and authorised by the \nFSA.",
+      "body_snippet": "IIRC, this is a 'feature' of WinXP 32 bit. That is, you \ncannot have more than 2 gigs available for your process. Check out the R \narchives for the reasons etc. When I did my Chemistry Degree (a billi",
+      "thread_id": "thread-a223b9aeb7cb",
+      "thread_depth": 1,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-11ad6e170155",
+      "message_id": "<45A42ACB.2090905@blackmesacapital.com>",
+      "from_name": "Tony Plate",
+      "from_email_hash": "d81ad61e6cfe141e882914e0113de974bedb1e51a378044bc5302dcd1f64750b",
+      "date": "2007-01-09T23:52:43Z",
+      "subject": "Re: S-Plus Memory",
+      "subject_clean": "S-Plus Memory",
+      "in_reply_to": "<18E73B32A046C141A752E6DA39B1EB5202DCE538@MBAMMAIL.mbam.local>",
+      "references": [
+        "<18E73B32A046C141A752E6DA39B1EB5202DCE538@MBAMMAIL.mbam.local>"
+      ],
+      "body_plain": "Just as a data point, using S-PLUS 7.0, running under Windows XP SP2, \nwith the /3GB switch in boot.ini, I was able to allocate close to 3Gb in \nan S-PLUS session.  One thing I found that was necessary to get larger \namounts of memory allocated was to make sure that the bigdata library \nwas not loaded.  (There is an option in the GUI to not load the bigdata \nlibrary.)\n\nHere's the function I use to quickly test how much memory can be allocated:\n\nexhaust.mem <- function(from = 128, to = 1, units = 2^20, verbose = F)\n{\n        # Exhaust memory by allocating as many vectors as possible,\n        # starting with vectors of (from*units) bytes, and halving\n        # the size of vectors when no more can be allocated.  Stop\n        # when we get down to vectors of less than (to*units) bytes.\n        # Return a summary of the memory allocated.\n        mem.tally.reset()\n        # find a nice name for the units (which are in bytes)\n        i <- which(2^c(30, 20, 10, 0) <= units)[1]\n        m <- units/2^(10 * (4 - i))\n\tunits.desc <- paste(if(m != 1) format(round(m, digits = 2)), c(\"G\", \n\"M\", \"K\", \"\")[i], \"b\", sep = \"\")\n\n        # how many different sized chunks? set up a vector to count them\n        n <- floor(log(from/to)/log(2)) + 1\n        count <- integer(n)\n\tnames(count) <- format(round(from/2^seq(len = n, from = 0), digits = \n2), justify = \"none\")\n\n        total <- 0\n        k <- 1\n        # indexes count\n        # a list to store all the memory chunks we allocate\n        chunks <- vector(\"list\", 1000)\n        chunk.i <- 1\n        # start trying to allocate the biggest chunks first\n        size <- from\n        while(size >= to) {\n                while(!is(try(x <- double((size * units)/8)), \"Error\")) {\n                        if(verbose)\n\t\t\t\tcat(\"Allocated \", size, units.desc, \", mem.tally=\", \nround(mem.tally.report()[2]/units), \"\\n\", sep = \"\")\n\n                        chunks[[chunk.i]] <- x\n                        chunk.i <- chunk.i + 1\n                        if(chunk.i > length(chunks))\n                                chunks <- c(chunks, vector(\"list\", 1000))\n                        total <- total + size\n                        count[k] <- count[k] + 1\n                }\n                # get ready for the next iteration\n                size <- size/2\n                k <- k + 1\n        }\n\tlist(units = c(size = units.desc, bytes = units), count = count, total \n= total, mem.tally = mem.tally.report()[2]/units)\n\n}\n\n-- Tony Plate\n\nAndreas Johansson wrote:\n> Have been playing around with S-Plus memory in S-Plus 8 (on 32-bit XP).\n> Have noticed a few problems especially when using the Workbench.\n>\n>\n>    1. Have 4GB of RAM with the /3GB switch (in boot.ini) enabling me to\n>       allocate 3GB to a single process. Still I can never manage to\n>       allocate more than 2GB to S-Plus. Even though some background\n>       processes takes up some memory I have about 2.7GB out of those 3GB\n>       available for sure, have also turned paging off (should not matter\n>       here).\n>    2. Using the workbench I cannot allocate more than 1GB for same\n>       setup. Have also tried setting options(\"memory\") to higher values\n>       but changes nothing.\n>\n> Does anyone know of why S-Plus cannot grab all available RAM?\n> Is anyone using the 64-bit version on a Linux platform with more than\n> 4GB of RAM and would like to share some performance stats?\n>\n> Andreas\n>\n> *Andreas Johansson*\n>\n> Quantitative Analyst\n>\n> MBAM\n>\n> 4th Floor, 11 Old Jewry\n> London EC2R 8DU\n> Andreas.Johansson at mbamfunds.com <mailto:Andreas.Johansson at mbamfunds.com>\n> Tel. (+44)20 7071 3351\n> Fax. (+44)20 7509 7454\n>\n>\n> This message is intended only for the use of the person(s) to whom it is\n> addressed. It may contain information which is privileged and\n> confidential. Accordingly any unauthorised use is strictly prohibited.\n> If you are not the intended recipient, please contact the sender as soon\n> as possible.\n>\n>\n> It is not intended as an offer or solicitation for the purchase or sale\n> of any financial instrument or as an official confirmation of any\n> transaction, unless specifically agreed otherwise. All market prices,\n> data and other information are not warranted as to completeness or\n> accuracy and are subject to change without notice. Any opinions or\n> advice contained in this Internet email are subject to the terms and\n> conditions expressed in any applicable governing Marble Bar Asset\n> Management LLP's terms and conditions of business or client agreement\n> letter. Any comments or statements made herein do not necessarily\n> reflect those of Marble Bar Asset Management LLP.\n>\n>\n> Marble Bar Asset Management LLP is regulated and authorised by the FSA.",
+      "body_snippet": "Just as a data point, using S-PLUS 7.0, running under Windows XP SP2, \nwith the /3GB switch in boot.ini, I was able to allocate close to 3Gb in \nan S-PLUS session.  One thing I found that was necessar",
+      "thread_id": "thread-a223b9aeb7cb",
+      "thread_depth": 1,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-e8ab79b0f180",
+      "message_id": "<635b97d60701100909u5349c298nf7b84352708de7f6@mail.gmail.com>",
+      "from_name": "Chris Gast",
+      "from_email_hash": "557672f502041f93d2407dc98c223e886b1bc03704d016b676bf1351ff174b40",
+      "date": "2007-01-10T17:09:17Z",
+      "subject": "multicomp function problems",
+      "subject_clean": "multicomp function problems",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hello everyone,\n\nI'm new to the list, but could really use some assistance.\n\nMy problem concerns the multicomp() function S-Plus (version 7.0).\n\nI am trying to generate some random data, assign them to groups, run a\none-way anova with group as the factor, and then perform Dunnett's\nmethod for multiple comparisons, as part of a simulation I am\nperforming.  I cannot seem to get the multicomp function working\nproperly.\n\nCan anyone take a look at it, and offer some hints or guidance?  I\nwould be much obliged.  The code, as well as the error output is\npasted below.\n\ndunnettsim=function(seedval,groups,n,a){\n        \n        #seedval=5; n=c(5,5,5,4); groups=4; a=.05; set.seed(seedval)\n        \nalphabet=c(\"a\",\"b\",\"c\",\"d\",\"e\",\"f\",\"g\",\"h\",\"i\",\"j\",\"k\",\"l\",\"m\",\"n\",\"o\",\"p\",\"q\",\"r\",\"s\",\"t\",\"u\",\"v\",\"w\",\"x\",\"y\",\"z\")\n        \n        groupvar=matrix(\"z\",max(n),groups)\n        \n        for(j in 1:groups){\n                for(i in 1:n[j]){\n                        \n                        groupvar[i,j]=alphabet[j]\n                }\n        }\n        \n        dat=rnorm(sum(n))\n\n        groupvec=rep(\"a\",n[1])\n        for(k in 2:groups){\n                groupvec=c(groupvec,groupvar[,k])\n        }\n        \n        groupvec=as.factor(groupvec[groupvec!=\"z\"])\n        #groupvec=groupvec[groupvec!=\"z\"]\n        output=lm(dat~groupvec)\n\n        multicomp.lm(output,focus=\"a\",comparisons=\"mcc\",alpha=a, \nmethod=\"dunnett\")\n\n}\n\ndunnettsim(seedval=5,groups=4,n=c(5,5,5,4),a=.05)\n\nOUTPUT:\n\nProblem in multicomp.lm(output, focus = \"a\", comparisons = \"mcc\",\nalpha = a, method = \"dunnett\"): focus = a must be one of the factors =\ngroupvec\n\n--\nChris Gast\ncmgast at gmail.com\n(206) 271-6418",
+      "body_snippet": "Hello everyone,\n\nI'm new to the list, but could really use some assistance.\n\nMy problem concerns the multicomp() function S-Plus (version 7.0).\n\nI am trying to generate some random data, assign them t",
+      "thread_id": "thread-e8ab79b0f180",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-7adcf2084e3c",
+      "message_id": "<EB7B25C3C6D42F499985FB9CC75817792F2B26@volterrasbs.Volterra.local>",
+      "from_name": "Said Hirsh",
+      "from_email_hash": "b4092baba7ae6591c397566adc634ec815f8ecbca3d23c1104e22e4938de1870",
+      "date": "2007-01-11T15:08:30Z",
+      "subject": "SPLUS Interface",
+      "subject_clean": "SPLUS Interface",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hi\n\n \n\nI am looking to use S-plus as a background 'hidden' \nsoftware to perform calculations and report results on another software \npackage.  Is that possible with S-plus? I know it is possible with other \npackages such as OxMetrics.\n\n \n\nApologies for my amateurish description but I am \nnot and IT professional.\n\n \n\nMany thanks for any help.\n\n \n\nSaid",
+      "body_snippet": "Hi\n\n \n\nI am looking to use S-plus as a background 'hidden' \nsoftware to perform calculations and report results on another software \npackage.  Is that possible with S-plus? I know it is possible with ",
+      "thread_id": "thread-7adcf2084e3c",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-c752d780a5d6",
+      "message_id": "<OF02CBB04F.8E896DDE-ON85257260.00548697-85257260.00561837@pg.com>",
+      "from_name": "hurley.gj at pg.com",
+      "from_email_hash": "f1599e38b8c5e00568c6557593b2738e8d8c3f5c9e0e64388be9e8dd914ed172",
+      "date": "2007-01-11T15:40:34Z",
+      "subject": "Re: SPLUS Interface",
+      "subject_clean": "SPLUS Interface",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Said,\n\nI'm not sure if you are looking to deploy something to a number of users, or rather are doing some sort of analysis at your desk, so I will give you two answers:\n\nIf this is something you would like to deploy via the web to a large number of people, I believe it would not be terribly hard using the StatServer package from Insightful.  This would be the type of situation where users upload some data S-Plus can handle and get returned results (perhaps in Excel).  StatServer would be an additional purchase from Insightful if you do not have it.\n\nIf this is something you are doing som type of statistical analysis at your desk and simply find the combination of the two software packages optimal as compared to one alone, depending on the \"other\" software package, I would consider writing an S-Plus script that would essentially involve your analysis and a location for some form of input and output (depending on what you wanted to do).  The script from the other software package writes the input for S-Plus to the location in a format your S-Plus script expects.  It then calls the S-Plus script in Batch Mode via a DOS command (I'm assuming you are on a PC).  From there, the S-Plus script runs as anticipated, creating the desired output in some format that can be read in the next line of code back into your other software package and modified for output.  I have done this type of thing before using SAS and S-Plus.  I have a conference paper in the SUGI 3!\n 1 proceedings (note example 2 if you look it up) that gives some details on how to do this from SAS (these proceedings are available freely on their website).  I don't think the process would be incredibly different for a different statistical software package to execute an S-Plus script so long as it had some type of scripting capability and was not just a GUI.\n\nGood Luck!\n\nGeorge.\n\nGeorge J. Hurley\n\nThe Procter and Gamble Company\n\nMiami Valley Innovation Center, Box 30\n\n11810 East Miami River Road\n\nCincinnati, OH 45252\n\nP: (513) 627-0692\n\nF: (513) 945-3441\n\n\"Said Hirsh\" <shirsh at volterra.co.uk>\n\nSent by: s-news-owner at lists.biostat.wustl.edu\n01/11/2007 10:08 AM\n\n        \n\n        To:        <s-news at lists.biostat.wustl.edu>\n\n        cc:        \n\n        Subject:        [S] SPLUS Interface\n\nHi\n\n \n\nI am looking to use S-plus as a background 'hidden' software to perform calculations and report results on another software package.  Is that possible with S-plus? I know it is possible with other packages such as OxMetrics.\n\n \n\nApologies for my amateurish description but I am not and IT professional.\n\n \n\nMany thanks for any help.\n\n \n\nSaid",
+      "body_snippet": "Said,\n\nI'm not sure if you are looking to deploy something to a number of users, or rather are doing some sort of analysis at your desk, so I will give you two answers:\n\nIf this is something you would",
+      "thread_id": "thread-c752d780a5d6",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-f193be3e12b8",
+      "message_id": "<45A65BD9.DA93.00D4.3@port.ac.uk>",
+      "from_name": "Alex Asiimwe",
+      "from_email_hash": "0f06c44509dc7f115970035306fc9a6fc3b14d0fe363998d1a8c381573119977",
+      "date": "2007-01-11T15:46:33Z",
+      "subject": "Hey,",
+      "subject_clean": "Hey,",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hey,\nI ve used Cox regression to develop a model for prediction. However, I\nwould also want to calculate the AUC or ROC. How do I go about? Its is\neasy when using logistic regression but I am using Cox regression.\nThanks\nAlex",
+      "body_snippet": "Hey,\nI ve used Cox regression to develop a model for prediction. However, I\nwould also want to calculate the AUC or ROC. How do I go about? Its is\neasy when using logistic regression but I am using Co",
+      "thread_id": "thread-f193be3e12b8",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-26f15a8e924c",
+      "message_id": "<45A666D9.1080708@vanderbilt.edu>",
+      "from_name": "Frank E Harrell Jr",
+      "from_email_hash": "aac2104e568f1b4bc608deccefed75168aaf244b4de06a96ffe1c917f66b7853",
+      "date": "2007-01-11T16:33:29Z",
+      "subject": "Re: Hey,",
+      "subject_clean": "Hey,",
+      "in_reply_to": "<45A65BD9.DA93.00D4.3@port.ac.uk>",
+      "references": [
+        "<45A65BD9.DA93.00D4.3@port.ac.uk>"
+      ],
+      "body_plain": "Alex Asiimwe wrote:\n> Hey,\n> I ve used Cox regression to develop a model for prediction. However, I\n> would also want to calculate the AUC or ROC. How do I go about? Its is\n> easy when using logistic regression but I am using Cox regression.\n> Thanks\n> Alex\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n\nIn the Design library see the documentation for validate.cph, and in the \nHmisc library see the rcorr.cens function.   Generalized ROC area C and \nSomers' Dxy rank correlation are related by Dxy=2(C-.5).\n\n--\nFrank E Harrell Jr   Professor and Chair           School of Medicine\n                     Department of Biostatistics   Vanderbilt University",
+      "body_snippet": "Alex Asiimwe wrote:\n> Hey,\n> I ve used Cox regression to develop a model for prediction. However, I\n> would also want to calculate the AUC or ROC. How do I go about? Its is\n> easy when using logistic ",
+      "thread_id": "thread-f193be3e12b8",
+      "thread_depth": 1,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-cc7905a8ccae",
+      "message_id": "<20070111105159.9f08cc34deb45d78e54b3b5664e21546.19d0043642.wbe@email.secureserver.net>",
+      "from_name": "elvis at xlsolutions-corp.com",
+      "from_email_hash": "f5a1d7ffa3c41eb3ba715c56787a90ce278ec16d4012453afddbb46301816a06",
+      "date": "2007-01-11T17:51:59Z",
+      "subject": "February Courses: (1) Prof Frank Harrell *** Regression Modeling Strategies in R/Splus, (2) R/Splus Advanced Programming, (3) R/Splus Fundamentals and Programming Techniques",
+      "subject_clean": "February Courses: (1) Prof Frank Harrell *** Regression Modeling Strategies in R/Splus, (2) R/Splus Advanced Programming, (3) R/Splus Fundamentals and Programming Techniques",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "XLSolutions Corporation (www.xlsolutions-corp.com) is proud to announce\nFebruary courses:\n \n(1) Regression Modeling Strategies in R/Splus --- by Prof Frank Harrell\n \n                   http://www.xlsolutions-corp.com/Rstats2.htm\n                         \n                       *** New York, February 22-23, 2007 ***\n                       *** San Francisco, March 8-9, 2007 ***\n                       \n \n(2) R/Splus Advanced Programming  --- by the R Development Core Team\nGuru!\n \n                  http://www.xlsolutions-corp.com/Radv.htm\n \n                    *** Seattle & San Francisco  in March / Dates TBD\n***\n \n(3) R/Splus Fundamentals and Programming Techniques  \n         \n                 http://www.xlsolutions-corp.com/Rfund.htm\n \n                   *** Chicago / February 1-2, 2007, ***\n                   *** Seattle / February 1-2, 2007, ***\n                   *** San Diego / February 8-9, 2007, ***\n                   *** Princeton / February 15-16, 2007, ***\n                   *** Salt Lake City /  February 15-16, 2007 ***\n \nAsk for group discount and reserve your seat Now - Earlybird Rates\nPayment due after the class! Email Sue Turner:  sue at xlsolutions-corp.com\n\n \nEmail us for group discounts: sue at xlsolutions-corp.com\nPhone:  206 686 1578\n \nVisit us: www.xlsolutions-corp.com/training.htm\n \nPlease let us know if you and your colleagues are interested in this\nclass to take advantage of group discount. Register now to secure your\nseat!\n \nCheers,\n \nElvis Miller, PhD\nManager Training\nXLSolutions Corporation\n206 686 1578\nwww.xlsolutions-corp.com/training.htm\nelvis at xlsolutions-corp.com",
+      "body_snippet": "XLSolutions Corporation (www.xlsolutions-corp.com) is proud to announce\nFebruary courses:\n \n(1) Regression Modeling Strategies in R/Splus --- by Prof Frank Harrell\n \n                   http://www.xlso",
+      "thread_id": "thread-cc7905a8ccae",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-aca7582480d3",
+      "message_id": "<30410.8343.qm@web90309.mail.mud.yahoo.com>",
+      "from_name": "Martyn Colins",
+      "from_email_hash": "9c9ed9e78bc51639e8f5339dc359e383d3e02e338e27f56c4bf25527e68b2a61",
+      "date": "2007-01-12T15:43:48Z",
+      "subject": "fitting a linear model",
+      "subject_clean": "fitting a linear model",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Dear members,\n   \n  I would like to fit a linear model using the lm function in the usual way, i.e. y= X*beta + error. However, I have two restrictions on my model. The first is the the sum of the y(i)'s is equal to 1 and the second is the sum of each row in the X matrix is also equal to 1. In the light of these restrictions, is it appropriate to fit a linear model? If not, what type of model should I be fitting?\n   \n  Many thanks in advance for your help.\n  Regards,\n  Martyn\n \n\nNo need to miss a message. Get email on-the-go \nwith Yahoo! Mail for Mobile. Get started.",
+      "body_snippet": "Dear members,\n   \n  I would like to fit a linear model using the lm function in the usual way, i.e. y= X*beta + error. However, I have two restrictions on my model. The first is the the sum of the y(i",
+      "thread_id": "thread-aca7582480d3",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-c5aba85cc166",
+      "message_id": "<Q0NHQjhQViZVOSpgIC8pMTU4ODU2OTUz@sspc-lisa>",
+      "from_name": "Lisa Solomon",
+      "from_email_hash": "375f0ace505fbda9906f09938aec4d544cea2804675c7fc389f42f5ebed96592",
+      "date": "2007-01-12T22:06:50Z",
+      "subject": "Free Webinar: Vendor Neutral Intro to Data Mining for Absolute Beginners, January 26, 2007",
+      "subject_clean": "Free Webinar: Vendor Neutral Intro to Data Mining for Absolute Beginners, January 26, 2007",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "ONLINE VENDOR NEUTRAL INTRO TO DATA MINING FOR ABSOLUTE BEGINNERS\n(no charge)\n\nA non-technical data mining introduction for absolute beginners\nJanuary 26, 2007, 10AM - 11AM PST\nFuture Sessions (May 23, June 14, Sept 7)\nTo register: contact lisas at salford-systems.com\n\nThis one-hour webinar is a perfect place to start if you are new to data mining \nand have little-to-no background in statistics or machine learning. \n\nIn one hour, we will discuss:\n\n**Data basics: what kind of data is required for data mining and predictive \nanalytics; In what format must the data be; what steps are necessary to prepare \ndata appropriately \n\n**What kinds of questions can we answer with data mining\n\n**How data mining models work: the inputs, the outputs, and the nature of the \npredictive mechanism \n\n**Evaluation criteria: how predictive models can be assessed and their value \nmeasured \n\n**Specific background knowledge to prepare you to begin a data mining project.\n\nPlease do not hesitate to contact me if you have any questions or if you wish \nto register.\n\nSincerely,\nLisa Solomon\nlisas at salford-systems.com",
+      "body_snippet": "ONLINE VENDOR NEUTRAL INTRO TO DATA MINING FOR ABSOLUTE BEGINNERS\n(no charge)\n\nA non-technical data mining introduction for absolute beginners\nJanuary 26, 2007, 10AM - 11AM PST\nFuture Sessions (May 23",
+      "thread_id": "thread-c5aba85cc166",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-f2016f20fbac",
+      "message_id": "<000301c737e4$84010900$2ada5382@steffen>",
+      "from_name": "Steffen Barembruch",
+      "from_email_hash": "9e4d8509a8f703b421b4e6fd1d3bca90e96ffdb5fd2e5cf3ce511974e77c0f1b",
+      "date": "2007-01-14T14:01:39Z",
+      "subject": "Display a GUI dialog to get a filenam",
+      "subject_clean": "Display a GUI dialog to get a filenam",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hello!\n\n \n\nWithin my S-Plus \nscripts I want to show a GUI dialog which enables me to browse through the \nfolders in Windows to select a file. But different from \nguiExecuteBuiltIn(\"$$Standard$Open$\") which almost does what I want, I do not \nwant to actually open the file, I just want to return the filename, including \nthe pathname.\n\n \n\nAs a further \nexplanation: The scripts are to be run by several users, which have to specify a \nfile which has to be imported. I dont wan to show the FileImport dialog for that \npurpose, because it is to complicated. I know exactly what the file looks like, \nthats why it is a lot easier to import it after knowing the filename with \nImportData and specified options. Furthermore I need the pathname to export some \nresults into that folder.\n\n \n\nThanks a \nlot\n\nSteffen \nBarembruch",
+      "body_snippet": "Hello!\n\n \n\nWithin my S-Plus \nscripts I want to show a GUI dialog which enables me to browse through the \nfolders in Windows to select a file. But different from \nguiExecuteBuiltIn(\"$$Standard$Open$\") ",
+      "thread_id": "thread-f2016f20fbac",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-3629ff6b0a5e",
+      "message_id": "<E1H6CFW-0001RZ-BZ@elasmtp-dupuy.atl.sa.earthlink.net>",
+      "from_name": "Walter R. Paczkowski",
+      "from_email_hash": "443479c0b721da0dac0fa3876e0e3e3a1e5a4473b12d210b69baaeb9f46d9845",
+      "date": "2007-01-14T20:48:06Z",
+      "subject": "creating a table composed of smaller tables",
+      "subject_clean": "creating a table composed of smaller tables",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hi,\n\nI'm looking for a simple way to create a table that is actually the \ncbind of two (or more) smaller tables.  Suppose I have a table of \nwillingness to buy X gender that looks like\n\n        1       2\n1       59      53\n2       53      59\n\nwhere the columns are the gender (1 = Male) and the rows are \nwillingness to buy (1 = Yes).  Consider another table of willingness \nto buy X income that looks like\n\n        1       2       3       4\n1       31      28      24      29\n2       25      28      32      27\n\nI want\n\n        1       2       1       2       3       4\n1       59      53      31      28      24      29\n2       53      59      25      28      32      27\n\nI can get partway there with a simple function\n\n                lapply(lapply(list(x$gender, x$income), table, x$buy), t)\n\nwhich results in a list with the two small tables from above.  How do \nI get  the single combined table I want without using a for-loop and \nthe repeated application of cbind?  It seems there should be an easy way.\n\nAny suggestions?\n\nThanks,\n\nWalt Paczkowski",
+      "body_snippet": "Hi,\n\nI'm looking for a simple way to create a table that is actually the \ncbind of two (or more) smaller tables.  Suppose I have a table of \nwillingness to buy X gender that looks like\n\n        1     ",
+      "thread_id": "thread-3629ff6b0a5e",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-42728cc58f95",
+      "message_id": "<A23B682083FD8248ADFE1317C82CBD67021D2926@exchange.branznt.org.nz>",
+      "from_name": "Michael Camilleri",
+      "from_email_hash": "61e5a3d2701ae415abd63bbe6abc4d777214ffc9cb2f7c22840d0ce08198f1b7",
+      "date": "2007-01-15T19:13:25Z",
+      "subject": "Re: Display a GUI dialog to get a filenam",
+      "subject_clean": "Display a GUI dialog to get a filenam",
+      "in_reply_to": "<000301c737e4$84010900$2ada5382@steffen>",
+      "references": [
+        "<000301c737e4$84010900$2ada5382@steffen>"
+      ],
+      "body_plain": "Finally, an S+ user that uses the GUI! I was\nbeginning to think I I was the only one! Once you get the hang of the GUI you\ncan do a lot of useful things, including custom dialog boxes for analysis, and\ncomplex graphs, even interactive graphs.\n\n \n\nThe function you want is guiDisplayFileDialog().\nI think it does exactly what you want.\n\n \n\nCheers!\n\nMichael\n\n \n\n \n  \n  \n\n  \n \n\n \n  \n   \n\n  \n \n\n \n  \n  MICHAEL CAMILLERI BSc, MSc, PhD\n\n  \n \n\n \n  \n  BUILDING PHYSICIST\n\n  \n \n\n \n  \n  \n  T +64 4 237 1170\n\n  \n\n  \n  DDI +64 4 237 1174\n\n  \n\n  \n \n\n \n  \n  PRIVATE BAG 50908\n\n  \n \n\n \n  \n  PORIRUA CITY 5240\n\n  \n \n\n \n  \n  WWW.BRANZ.CO.NZ",
+      "body_snippet": "Finally, an S+ user that uses the GUI! I was\nbeginning to think I I was the only one! Once you get the hang of the GUI you\ncan do a lot of useful things, including custom dialog boxes for analysis, an",
+      "thread_id": "thread-f2016f20fbac",
+      "thread_depth": 1,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-df9399e2c962",
+      "message_id": "<20070119003842.30907.qmail@web57105.mail.re3.yahoo.com>",
+      "from_name": "yiwu ye",
+      "from_email_hash": "ec2540c93b5c4d1ac7373c8b1ddce797e0e7aacd561fb6a47b07a7ce0997aa76",
+      "date": "2007-01-19T00:38:42Z",
+      "subject": "factor levels",
+      "subject_clean": "factor levels",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Dear list,\n\nI have the following problem. Could anyone help?\n\nx_as.factor(letters[1:5])\nx_x[-4]\nlevels(x)\nThe levels(x) still gives you 5 rather than 4 levels. Of course, I can do levels(as.factor(as.character(x)) to  get rid of the non-existing factor level. But, I think there must be a simpler way.\n\nThanks\n\nYiwu\n\nNo need to miss a message. Get email on-the-go \nwith Yahoo! Mail for Mobile. Get started.",
+      "body_snippet": "Dear list,\n\nI have the following problem. Could anyone help?\n\nx_as.factor(letters[1:5])\nx_x[-4]\nlevels(x)\nThe levels(x) still gives you 5 rather than 4 levels. Of course, I can do levels(as.factor(as.",
+      "thread_id": "thread-df9399e2c962",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-c4ef3342fb74",
+      "message_id": "<B998A44C8986644EA8029CFE6396A924840BC5@exqld2-bne.qld.csiro.au>",
+      "from_name": "Bill.Venables at csiro.au",
+      "from_email_hash": "91e544124c2765f87d45eb89c02b5c30fa81a75ccb6e51328a0445682154a583",
+      "date": "2007-01-19T05:27:38Z",
+      "subject": "Re: factor levels",
+      "subject_clean": "factor levels",
+      "in_reply_to": null,
+      "references": [
+        "<20070119003842.30907.qmail@web57105.mail.re3.yahoo.com>"
+      ],
+      "body_plain": "Ye Yiwu\nasks:\n\nFrom:\ns-news-owner at lists.biostat.wustl.edu\n[mailto:s-news-owner at lists.biostat.wustl.edu] On\nBehalf Of yiwu ye\n\nSent: Friday, 19 January 2007\n10:39 AM\n\nTo: s-news at lists.biostat.wustl.edu\n\nSubject: [S] factor levels\n\n \n\nDear list,\n\nI have the following problem. Could anyone help?\n\nx\n<- as.factor(letters[1:5])\n\nx <- x[-4]\n\nlevels(x)\n\nThe levels(x) still gives you 5 rather than 4 levels. Of course, I can do\nlevels(as.factor(as.character(x)) to  get rid of the non-existing factor\nlevel. But, I think there must be a simpler way.\n\n[WNV] it’s\nnot clear that there is, or even should be, a simpler way.  It depends\nentirely on what you want to happen when you alter the factor by removing a\ncomponent.\n\n \n\nIn principle a\nfactor is used to define a classification.  There are two parts to it that\nin principle operate independently, namely the names of the classes into which\nthe factor can define membership (i.e. the factor levels) and the membership of\neach candidate for which the factor does its job.  It’s not clear\nthat if you remove one of the candidates, and by so doing make the membership\nof a particular group empty, that the levels should change to exclude it.\n\n \n\nEven the\nsolution you propose will not completely do what you want to happen, anyway,\nsince it will re-order the levels so that their names are in sorted\norder.  If the original names were not in sorted order, you would have altered\nthat as well.\n\n \n\nI take it what\nyou would like to happen is that when you make one or more of the levels of a\nfactor empty the new factor has a reduces levels attribute.\n\n \n\nHere is a\nfunction that will do this, but I emphasise that it is quite arbitrary:\n\n \n\nfixFactor\n<- function(x) {\n\n   \nnewLevels <- levels(x)[table(x) > 0]\n\n   \nfactor(as.character(x), levels = newLevels)\n\n}\n\n \n\nHere is a brief\ndemo\n\n \n\n> x\n\n [1] a b\nc d e a b c d e\n\n> table(x) \n# levels in reverse alpha order\n\n e d c b\na \n\n 2 2 2 2\n2\n\n> y <-\nx[-c(1,6)]\n\n> y  # note that the printout implicitly warns levels missing\n\n[1] b c d e b\nc d e\n\nLevels:\n\n[1]\n\"e\" \"d\" \"c\" \"b\" \"a\"\n\n> table(y)\n\n e d c b\na \n\n 2 2 2 2\n0\n\n> y <-\nfixFactor(y)\n\n> table(y)\n\n e d c b \n\n 2 2 2 2\n\n> \n\nThanks\n\nYiwu\n\n \n\nBill Venables\n\nCMIS, CSIRO Laboratories,\n\nPO Box 120, Cleveland, Qld. 4163\n\nAUSTRALIA\n\nOffice Phone (email preferred): +61 7 3826 7251\n\nFax (if absolutely necessary):    +61 7 3826 7304\n\nMobile (rarely\nused):               \n+61 4 1963 4642\n\nHome\nPhone:                         \n+61 7 3286 7700\n\nmailto:Bill.Venables at csiro.au\n\nhttp://www.cmis.csiro.au/bill.venables/",
+      "body_snippet": "Ye Yiwu\nasks:\n\nFrom:\ns-news-owner at lists.biostat.wustl.edu\n[mailto:s-news-owner at lists.biostat.wustl.edu] On\nBehalf Of yiwu ye\n\nSent: Friday, 19 January 2007\n10:39 AM\n\nTo: s-news at lists.biostat.",
+      "thread_id": "thread-df9399e2c962",
+      "thread_depth": 1,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-d884eb00a966",
+      "message_id": "<loom.20070119T125335-960@post.gmane.org>",
+      "from_name": "Gregor Gorjanc",
+      "from_email_hash": "b39c75688faf9190a17a4a292fdf8f9ec6b9f34cb9f4caf4a9101153bea16442",
+      "date": "2007-01-19T11:55:52Z",
+      "subject": "Re: factor levels",
+      "subject_clean": "factor levels",
+      "in_reply_to": null,
+      "references": [
+        "<20070119003842.30907.qmail@web57105.mail.re3.yahoo.com>"
+      ],
+      "body_plain": "yiwu ye <yiwu21111958 <at> yahoo.com> writes:\n> Dear list,I have the following problem. Could anyone\nhelp?x_as.factor(letters[1:5])x_x[-4]levels(x)The levels(x) still gives you 5\nrather than 4 levels. Of course, I can do levels(as.factor(as.character(x)) to \nget rid of the non-existing factor level. But, I think there must be a simpler\nway.ThanksYiwu\n\nNot sure about S-plus, but in R you can simply do\n\nmyFac <- factor(myFac)\n\nand unused levels will be dropped. Package gdata has drop.levels function, \nwhich \nalso works on data.frames. I use it in my work flow like this:\n\n1. import data\n2. massage it if neccesarry\n3. use drop.levels at the end and it will remove all unused levels in a \n   data.frame\n\nGregor",
+      "body_snippet": "yiwu ye <yiwu21111958 <at> yahoo.com> writes:\n> Dear list,I have the following problem. Could anyone\nhelp?x_as.factor(letters[1:5])x_x[-4]levels(x)The levels(x) still gives you 5\nrather than 4 levels.",
+      "thread_id": "thread-df9399e2c962",
+      "thread_depth": 1,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-479c80f0ce8f",
+      "message_id": "<OFF71BAC61.7A81255D-ON86257268.0049A4E6-86257268.004A2FC5@usgs.gov>",
+      "from_name": "David L Lorenz",
+      "from_email_hash": "a16484f3e79ec693c259d867c374fd5e832a01e253da18a065716c0e7b30ee46",
+      "date": "2007-01-19T13:30:20Z",
+      "subject": "Re: factor levels",
+      "subject_clean": "factor levels",
+      "in_reply_to": "<20070119003842.30907.qmail@web57105.mail.re3.yahoo.com>",
+      "references": [
+        "<20070119003842.30907.qmail@web57105.mail.re3.yahoo.com>"
+      ],
+      "body_plain": "Yiwu,\n\n  I think that you want the new\nobject x to have only 4 levels rather than having a function that reports\nonly the levels that are used. In S-PLUS the former is easy:\n\nx <- x[-4, drop=T]\n\n  \n\nDave\n\nyiwu ye <yiwu21111958 at yahoo.com>\n\nSent by: s-news-owner at lists.biostat.wustl.edu\n01/18/2007 06:38 PM\n\nTo\n\ns-news at lists.biostat.wustl.edu\n\ncc\n\nSubject\n\n[S] factor levels\n\nDear list,\n\nI have the following problem. Could anyone help?\n\nx_as.factor(letters[1:5])\n\nx_x[-4]\n\nlevels(x)\n\nThe levels(x) still gives you 5 rather than 4 levels. Of course, I can\ndo levels(as.factor(as.character(x)) to  get rid of the non-existing\nfactor level. But, I think there must be a simpler way.\n\nThanks\n\nYiwu\n\nNo need to miss a message. Get\nemail on-the-go \n\nwith Yahoo! Mail for Mobile. Get\nstarted.",
+      "body_snippet": "Yiwu,\n\n  I think that you want the new\nobject x to have only 4 levels rather than having a function that reports\nonly the levels that are used. In S-PLUS the former is easy:\n\nx <- x[-4, drop=T]\n\n  \n\nD",
+      "thread_id": "thread-df9399e2c962",
+      "thread_depth": 1,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-3360a5df1ffc",
+      "message_id": "<200701191438.l0JEcai10026@hsrnfs-101.mayo.edu>",
+      "from_name": "Terry Therneau",
+      "from_email_hash": "382b7509cd09524d5383672b54b7679da321b2d7cddcbd90c1ab33e6472aece6",
+      "date": "2007-01-19T14:38:36Z",
+      "subject": "Re: factor levels",
+      "subject_clean": "factor levels",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "I think the better way to deal with this problem is a global fix:\n        options(stringsAsFactors=F)\n \n  Set this as your permanent global default, and life with Splus or R will\nbe much better.  Turning strings into factors presumes a particular \nviewpoint about what your analysis of them is going-to-be, and in my\nexperience the assumption is almost always wrong.\n\n    The default in S, like many defaults, corresponds to the analysis that\nwas being done at the time, by the package author, when the default was chosen.\n(I'm not throwing rocks here: the survival package, which I wrote, has many\ndefaults with exactly the same justification).   My gripe is that S/R turn \nstrings into factors, without warning, far too often.  Thankfully the global \noption fixes this.\n\n    For the Mayo installation (approx 150 users), both na.action=na.omit and\nstringsAsFactors=F are the global default for all users.  Doing so has made\nlife considerably simpler for those of us who support them.  \n\n        Terry Therneau",
+      "body_snippet": "I think the better way to deal with this problem is a global fix:\n        options(stringsAsFactors=F)\n \n  Set this as your permanent global default, and life with Splus or R will\nbe much better.  Turn",
+      "thread_id": "thread-3360a5df1ffc",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-e542edbc240a",
+      "message_id": "<982788A7-46B4-41CE-AC6B-82528C7B6F7A@plessthan.com>",
+      "from_name": "Dennis Fisher",
+      "from_email_hash": "aae8714c70229398df44248b7fcdedd8e16ddfc74206fcd6fc8fe8dab4d942f2",
+      "date": "2007-01-21T17:51:10Z",
+      "subject": "hairlines in graphics",
+      "subject_clean": "hairlines in graphics",
+      "in_reply_to": "<20070120112004.A9A94126C62@smtp.biostat.wustl.edu>",
+      "references": [
+        "<20070120112004.A9A94126C62@smtp.biostat.wustl.edu>"
+      ],
+      "body_plain": "Colleagues\nI am running Splus version 6.0 on a Linux box (RedHat 9).  In certain graphics that I create, I display many lines.  In R, setting lwd to a small number (e.g, 0.2) allows for thin lines.  However, with Splus, the lwd command (my version, my OS) appears to not support lines thinner than 1.  Is this a function of Splus, version, or OS?  If the solution is to purchase a newer version of Splus, I will need to do so.  Thanks.\n\nDennis\n \n\n Dennis Fisher MD\n P < (The \"P Less Than\" Company)\n Phone: 1-866-PLessThan (1-866-753-7784)\n Fax: 1-415-564-2220\n www.PLessThan.com",
+      "body_snippet": "Colleagues\nI am running Splus version 6.0 on a Linux box (RedHat 9).  In certain graphics that I create, I display many lines.  In R, setting lwd to a small number (e.g, 0.2) allows for thin lines.  H",
+      "thread_id": "thread-e542edbc240a",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-0b2413c8b9ec",
+      "message_id": "<816b5ce40701212254m52dc49c9q8c83e27aeed8d2d6@mail.gmail.com>",
+      "from_name": "Santosh",
+      "from_email_hash": "f6d2b55cc32befb842b9a650a3a073f21fda58d0b6e4db9107de255529cd1162",
+      "date": "2007-01-22T06:54:07Z",
+      "subject": "Indirect references in SPLUS",
+      "subject_clean": "Indirect references in SPLUS",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Dear SPlus Users,\n\nIs there a way to work with indirect references in SPlus?\n\nFor example,\n\nDataColumn <-  \"Resist\"\nMatrixColumn <- \"ExpnsnCoeff\"'\nScalarColumn <- \"Voltage\"\n\nAs I don't know the syntax, I would like illustrate using the examples given below.\n\nIn conventional SPLUS notation, if \"df\" is a generic dataframe that consists of vectors\n\"Resist\", \"ExpnsnCoeff\", \"Voltage\", \n\n\"df$Resist\", \"df$ExpnsnCoeff\", \"df$Voltage\" notation may be used to for data handling in respective vectors of the data frame.\n\nInstead of the above notation, I would like to use an indirect reference like:\n\nAssuming that the syntax to provide indirect references is curly braces, e.g. ${DataColumn},\n \n\"df${DataColumn}\" indirectly accesses the vector \"df$Resist\";\n similarly \"df${MatrixColumn}\" calls  \"df$ExpnsnCoeff\" vector indirectly, and so on..\n\nHope the above question is clear; please do feel free to ask if you have any additional questions.\n\nRegards,\nSantosh",
+      "body_snippet": "Dear SPlus Users,\n\nIs there a way to work with indirect references in SPlus?\n\nFor example,\n\nDataColumn <-  \"Resist\"\nMatrixColumn <- \"ExpnsnCoeff\"'\nScalarColumn <- \"Voltage\"\n\nAs I don't know the syntax",
+      "thread_id": "thread-0b2413c8b9ec",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-4b1bf30468a9",
+      "message_id": "<Pine.LNX.4.64.0701220749150.12210@gannet.stats.ox.ac.uk>",
+      "from_name": "Prof Brian Ripley",
+      "from_email_hash": "375ec446f7a1157a4f0268b6dc682d6c2a5b186f57aa61253477aa48159d2329",
+      "date": "2007-01-22T08:01:23Z",
+      "subject": "Re: hairlines in graphics",
+      "subject_clean": "hairlines in graphics",
+      "in_reply_to": "<982788A7-46B4-41CE-AC6B-82528C7B6F7A@plessthan.com>",
+      "references": [
+        "<20070120112004.A9A94126C62@smtp.biostat.wustl.edu>",
+        "<982788A7-46B4-41CE-AC6B-82528C7B6F7A@plessthan.com>"
+      ],
+      "body_plain": "The help for par in my version of S-PLUS says\n\n  lwd:\n  line width, device dependent. Width 1 is the standard width for the\n  device\n\nand you have not told us the device you are using.\n\nIn R it says\n\n  The line width, a positive number, defaulting to 1. The interpretation\n  is device-specific, and some devices do not implement line widths\n  less than  one.\n\nso the same comment applies.  R does say on the help for each device what \nthe interpretation is, though.  E.g., for the X11 device it says\n\n     Line widths as controlled by 'par(lwd=)' are in multiples of the\n     pixel size, and multiples < 1 are silently converted to 1.\n\nJust which devices are you comparing?\n\nOn Sun, 21 Jan 2007, Dennis Fisher wrote:\n\n> Colleagues\n>\n> I am running Splus version 6.0 on a Linux box (RedHat 9).  In certain\n> graphics that I create, I display many lines.  In R, setting lwd to a small\n> number (e.g, 0.2) allows for thin lines.  However, with Splus, the lwd\n> command (my version, my OS) appears to not support lines thinner than 1.  Is\n> this a function of Splus, version, or OS?  If the solution is to purchase a\n> newer version of Splus, I will need to do so.  Thanks.\n>\n>\n> Dennis\n>\n> Dennis Fisher MD\n> P < (The \"P Less Than\" Company)\n> Phone: 1-866-PLessThan (1-866-753-7784)\n> Fax: 1-415-564-2220\n> www.PLessThan.com\n\n--\nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272866 (PA)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595",
+      "body_snippet": "The help for par in my version of S-PLUS says\n\n  lwd:\n  line width, device dependent. Width 1 is the standard width for the\n  device\n\nand you have not told us the device you are using.\n\nIn R it says\n\n",
+      "thread_id": "thread-e542edbc240a",
+      "thread_depth": 1,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-850991556515",
+      "message_id": "<20070122093018.65112136FCD@mailgate.biostat.wustl.edu>",
+      "from_name": "rich at mango-solutions.com",
+      "from_email_hash": "3a257bf7fe2c2e71ee965d4fd61452775eb7241b4453e5942552d449c18c6026",
+      "date": "2007-01-22T09:30:27Z",
+      "subject": "Re: Indirect references in SPLUS",
+      "subject_clean": "Indirect references in SPLUS",
+      "in_reply_to": "<816b5ce40701212254m52dc49c9q8c83e27aeed8d2d6@mail.gmail.com>",
+      "references": [
+        "<816b5ce40701212254m52dc49c9q8c83e27aeed8d2d6@mail.gmail.com>"
+      ],
+      "body_plain": "If I understand your question correctly, you can use:\n\n \n\n \n\n>\ndf <- data.frame(Resist = 1:10, ExpnsnCoeff = 1:10, Voltage = 1:10)\n\n \n\n>\nDataColumn <- \"Resist\"\n\n>\nMatrixColumn <- \"ExpnsnCoeff\"\n\n>\nScalarColumn <- \"Voltage\"\n\n \n\n>\ndf[[DataColumn]]   # Same as df$Resist\n\n [1] \n1  2  3  4  5  6  7  8  9 10\n\n \n\n \n\nHope\nthis helps,\n\nRich.\n\n \n\nmangosolutions\n\nS-PLUS\n& R Consulting & Training\n\n \n\nTel   \n+44 1249 467 467\n\nFax   +44\n1249 467 468\n\n \n\n \n\nFrom: Santosh\n[mailto:santosh2005 at gmail.com] \n\nSent: 22 January 2007 06:54\n\nTo: s-news at lists.biostat.wustl.edu\n\nSubject: [S] Indirect references\nin SPLUS\n\n \n\nDear SPlus Users,\n\nIs there a way to work with indirect references in SPlus?\n\nFor example,\n\nDataColumn <-  \"Resist\"\n\nMatrixColumn <- \"ExpnsnCoeff\"'\n\nScalarColumn <- \"Voltage\" \n\nAs I don't know the syntax, I would like illustrate using the examples given\nbelow.\n\nIn conventional SPLUS notation, if \"df\" is a generic dataframe that\nconsists of vectors\n\n\"Resist\", \"ExpnsnCoeff\", \"Voltage\", \n\n\"df$Resist\", \"df$ExpnsnCoeff\", \"df$Voltage\"\nnotation may be used to for data handling in respective vectors of the data\nframe.\n\nInstead of the above notation, I would like to use an indirect reference like: \n\nAssuming that the syntax to provide indirect references is curly braces, e.g.\n${DataColumn},\n\n \n\n\"df${DataColumn}\" indirectly accesses the vector\n\"df$Resist\";\n\n similarly \"df${MatrixColumn}\" calls \n\"df$ExpnsnCoeff\" vector indirectly, and so on.. \n\nHope the above question is clear; please do feel free to ask if you have any\nadditional questions.\n\nRegards,\n\nSantosh",
+      "body_snippet": "If I understand your question correctly, you can use:\n\n \n\n \n\n>\ndf <- data.frame(Resist = 1:10, ExpnsnCoeff = 1:10, Voltage = 1:10)\n\n \n\n>\nDataColumn <- \"Resist\"\n\n>\nMatrixColumn <- \"ExpnsnCoeff\"\n\n>\nScal",
+      "thread_id": "thread-0b2413c8b9ec",
+      "thread_depth": 1,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-805583befc86",
+      "message_id": "<173026.8008.qm@web35811.mail.mud.yahoo.com>",
+      "from_name": "Kamil Toth",
+      "from_email_hash": "0747ebf1abf868bf381f20f4ce78ab28d7cae97c07a77310f483e25d8c4d91d9",
+      "date": "2007-01-22T18:00:49Z",
+      "subject": "ANOVA or what?",
+      "subject_clean": "ANOVA or what?",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Folks:\n  I need an urgent help. I need to analyze the dataset in the field that sort of new to me, but I am sure is fairly transparent for many of you, bio-statistical and epidemiological gurus. \n  I have two data sets which we will call \"treatment\" and \"control\". Each of them contains 24 data points subdivided into four categories called: \"weak\", \"mild\", \"moderate\", \"strong\". There is no quantitative measure associated with these names but they assumed to be ordered. There are 6 (unordered) replicates in each of theses categories.  I need to estimate the effect of treatment vs control. I understand that there are many approaches possible (I thought about ANOVA, logistic regression,...). In the situation I currently find myself now, the preference would be toward method which is readily available in S-PLUS, and easy to interpret: first I need to understand myself what I am doing and then to\n clearly explain to non-statistical people.\n   \n  What would you, smart people, recommend?\n   \n  Looking forward for an advise, examples, references, ideas.\n   \n   \n  Thanks\n   \n  Kamil Toth  \n   \n   \n \n\nNo need to miss a message. Get email on-the-go \nwith Yahoo! Mail for Mobile. Get started.",
+      "body_snippet": "Folks:\n  I need an urgent help. I need to analyze the dataset in the field that sort of new to me, but I am sure is fairly transparent for many of you, bio-statistical and epidemiological gurus. \n  I ",
+      "thread_id": "thread-805583befc86",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-9eb9fb360556",
+      "message_id": "<A57E54C24C2801428660457002D110937D63C1@ENPAEX04.aftac.patrick.afspc.ds.af.mil>",
+      "from_name": "King, Calvin Civ AFTAC/THD",
+      "from_email_hash": "b6d88fcedbbe312dbce771a4f09dec94066a7b2b8d652f7a04bc21c291ebeccf",
+      "date": "2007-01-22T18:28:46Z",
+      "subject": "Correlation Coefficient for Weighted Regression",
+      "subject_clean": "Correlation Coefficient for Weighted Regression",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hello Statistics Experts,\n\nI have a rather basic question on correlation coefficient for weighted regression. For linear regression, R^2 = SSR/SST. Can this equation be extended to weighted regression? In other words, is R^2 = SSRw/SSTw. Any insight and/or a pointer to references would be much appreciated.\n\nThanks, in advance.\n\nCalvin King\n\nCalvin.King at patrick.af.mil",
+      "body_snippet": "Hello Statistics Experts,\n\nI have a rather basic question on correlation coefficient for weighted regression. For linear regression, R^2 = SSR/SST. Can this equation be extended to weighted regression",
+      "thread_id": "thread-9eb9fb360556",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-243cf642fee9",
+      "message_id": "<20070123041308.GVMB20155.ibm57aec.bellsouth.net@jeff.bellsouth.net>",
+      "from_name": "John Fennick",
+      "from_email_hash": "9710505e9823d8a0b6ce333331d464c2017fc1d782844786911e57a1659140a4",
+      "date": "2007-01-23T04:13:02Z",
+      "subject": "var(x) vs E{x^2] - [E{x}]^2",
+      "subject_clean": "var(x) vs E{x^2] - [E{x}]^2",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hi Group,\nCan anyone explain the vast differences between the Variance.A  and \nVariance.B or Variance.C below?\n>From the last 4 calls, my problem appears to be in the x^2 terms. Am \nI just having a bad day?\nI get similar performance with rhyper and others as well as the rnorm \nused here.\n\nthanks,\njohn\n\n> xx <- rnorm( 50000, 1, 5)\n>       pp <- dnorm( xx , 1, 5)\n>       pp <- pp / sum( pp )\n>       paste( 'Variance.A = ', round( var( xx ), 2 ) , sep='')\n[1] \"Variance.A = 24.97\"\n>       paste( 'Variance.B = ', round( sum(xx^2 * pp ) - (sum( xx*pp \n) )^2, 2 ) , sep='' )\n\n[1] \"Variance.B = 12.52\"\n>       paste( 'Variance.C = ', round( sum( (xx - sum( xx * pp ) )^2 \n* pp), 2 ) , sep='' )\n\n[1] \"Variance.C = 12.52\"\n>       paste( 'Mean.A = ', round( sum( xx * pp ), 2 ) , sep=''\n[1] \"Mean.A = 0.99\"\n>       paste( 'Mean.B = ', round( mean( xx ), 2 ) , sep='')\n[1] \"Mean.B = 1\"\n>       paste( 'E{xx^2}.A = ', round( var( xx ) + mean( xx )^2, 2 ) , sep='' )\n[1] \"E{xx^2}.A = 25.97\"\n>       paste( 'E{xx^2}.B = ', round( sum( xx^2 * pp) , 2 ) , sep='' )\n[1] \"E{xx^2}.B = 13.49\"\n\nJohn Fennick\njhf2 at bellsouth.net\nalt: j.fennick at ieee.org\nTel: 770 949-9132\n7045 Fletcher Drive\nWinston, GA 30187\nUSA",
+      "body_snippet": "Hi Group,\nCan anyone explain the vast differences between the Variance.A  and \nVariance.B or Variance.C below?\n>From the last 4 calls, my problem appears to be in the x^2 terms. Am \nI just having a ba",
+      "thread_id": "thread-243cf642fee9",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-a8ecd83fbbaa",
+      "message_id": "<B998A44C8986644EA8029CFE6396A924840C0B@exqld2-bne.qld.csiro.au>",
+      "from_name": "Bill.Venables at csiro.au",
+      "from_email_hash": "91e544124c2765f87d45eb89c02b5c30fa81a75ccb6e51328a0445682154a583",
+      "date": "2007-01-23T06:04:13Z",
+      "subject": "Re: var(x) vs E{x^2] - [E{x}]^2",
+      "subject_clean": "var(x) vs E{x^2] - [E{x}]^2",
+      "in_reply_to": null,
+      "references": [
+        "<20070123041308.GVMB20155.ibm57aec.bellsouth.net@jeff.bellsouth.net>"
+      ],
+      "body_plain": "The reason is that the density is not the appropriate weight to use -\nyou need some kind of estimate of the probability.\n\nHere is one way to show the near equivalence, computationally (using\nS-PLUS 8.0)\n\n> set.seed(57)   # Heinz varieties...\n> xx <- rnorm(50000, 1, 5)\n> m0 <- mean(xx)\n> m0\n[1] 1.008457\n> v0 <- var(xx)\n> v0\n[1] 24.74718\n\nNow to do it the hard way...\n\n> sx <- sort(xx)         # string them out on an axis\n> mx <- (sx[-1] + sx[-length(x)])/2      # mid points\n> px <- diff(pnorm(c(-Inf, mx, Inf), 1, 5))   # probs\n> m1 <- sum(px * sx)\n> m1\n[1] 0.9992542\n> v1 <- sum(px * sx^2) - m1^2\n> v1\n[1] 24.99694\n\nHmm, not bad.  When the exact results are 1 and 25.  It's a bit of\ncheat, though when you put the results you want into the calculation of\nthe weights!\n\nBill Venables.\n\n-----Original Message-----\nFrom: s-news-owner at lists.biostat.wustl.edu\n[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of John Fennick\nSent: Tuesday, 23 January 2007 2:13 PM\nTo: S-News List\nSubject: [S] var(x) vs E{x^2] - [E{x}]^2\n\nHi Group,\nCan anyone explain the vast differences between the Variance.A  and \nVariance.B or Variance.C below?\n From the last 4 calls, my problem appears to be in the x^2 terms. Am \nI just having a bad day?\nI get similar performance with rhyper and others as well as the rnorm \nused here.\n\nthanks,\njohn\n\n > xx <- rnorm( 50000, 1, 5)\n >       pp <- dnorm( xx , 1, 5)\n >       pp <- pp / sum( pp )\n >       paste( 'Variance.A = ', round( var( xx ), 2 ) , sep='')\n[1] \"Variance.A = 24.97\"\n >       paste( 'Variance.B = ', round( sum(xx^2 * pp ) - (sum( xx*pp \n) )^2, 2 ) , sep='' )\n[1] \"Variance.B = 12.52\"\n >       paste( 'Variance.C = ', round( sum( (xx - sum( xx * pp ) )^2 \n* pp), 2 ) , sep='' )\n[1] \"Variance.C = 12.52\"\n >       paste( 'Mean.A = ', round( sum( xx * pp ), 2 ) , sep=''\n[1] \"Mean.A = 0.99\"\n >       paste( 'Mean.B = ', round( mean( xx ), 2 ) , sep='')\n[1] \"Mean.B = 1\"\n >       paste( 'E{xx^2}.A = ', round( var( xx ) + mean( xx )^2, 2 ) ,\nsep='' )\n[1] \"E{xx^2}.A = 25.97\"\n >       paste( 'E{xx^2}.B = ', round( sum( xx^2 * pp) , 2 ) , sep='' )\n[1] \"E{xx^2}.B = 13.49\"\n\nJohn Fennick\njhf2 at bellsouth.net\nalt: j.fennick at ieee.org\nTel: 770 949-9132\n7045 Fletcher Drive\nWinston, GA 30187\nUSA \n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
+      "body_snippet": "The reason is that the density is not the appropriate weight to use -\nyou need some kind of estimate of the probability.\n\nHere is one way to show the near equivalence, computationally (using\nS-PLUS 8.",
+      "thread_id": "thread-243cf642fee9",
+      "thread_depth": 1,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-122bc9e80ca8",
+      "message_id": "<45B66FE9.30401@stat.auckland.ac.nz>",
+      "from_name": "Paul Murrell",
+      "from_email_hash": "71bf5cc945d7d1be4a537186b0b66a69b1cc63d99d978b8a16f5750506707116",
+      "date": "2007-01-23T20:28:25Z",
+      "subject": "DSC 2007 Additional Funding",
+      "subject_clean": "DSC 2007 Additional Funding",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hi\n\nDSC 2007, a conference on systems and environments for statistical\ncomputing, will take place in Auckland, New Zealand on February 15 & 16,\n2007.\n\n               *** Travel and Accommodation Support ***\n\nAdditional NSF funding to provide partial support for travel and\naccommodation for graduate students and junior faculty at\nU.S. post-secondary institutions to attend DSC 2007 may be available.\nIf you wish to apply for this support, please send an application to\ndsc2007 at stat.auckland.ac.nz.  Your application should include\n\n    a brief CV\n\n    a statement that demonstrates your eligibility, your need for\n    support, and an amount of support requested\n\n    students should include a brief letter of support from their\n    supervisor\n\n    faculty or post-doc applicants should include a brief statement\n    about other funding sources\n\nThe allocation will be based on merit and need; women and minority\ncandidates are encouraged to apply.\n\nApplications must be made by February 2 (2007-02-02) and successful\napplicants will be notified by email soon thereafter.\n\nPlease visit the conference web page at\nhttp://www.stat.auckland.ac.nz/dsc-2007/\n\nPaul\n(on behalf of the Organising Committee)\n-- \nDr Paul Murrell\nDepartment of Statistics\nThe University of Auckland\nPrivate Bag 92019\nAuckland\nNew Zealand\n64 9 3737599 x85392\npaul at stat.auckland.ac.nz\nhttp://www.stat.auckland.ac.nz/~paul/",
+      "body_snippet": "Hi\n\nDSC 2007, a conference on systems and environments for statistical\ncomputing, will take place in Auckland, New Zealand on February 15 & 16,\n2007.\n\n               *** Travel and Accommodation Suppo",
+      "thread_id": "thread-122bc9e80ca8",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-cbc61fe585ed",
+      "message_id": "<816b5ce40701232018x70981201v3adc476866a7c68c@mail.gmail.com>",
+      "from_name": "Santosh",
+      "from_email_hash": "f6d2b55cc32befb842b9a650a3a073f21fda58d0b6e4db9107de255529cd1162",
+      "date": "2007-01-24T04:18:20Z",
+      "subject": "Re: Indirect references in SPLUS",
+      "subject_clean": "Indirect references in SPLUS",
+      "in_reply_to": "<45B4905E.5020602@pburns.seanet.com>",
+      "references": [
+        "<816b5ce40701212254m52dc49c9q8c83e27aeed8d2d6@mail.gmail.com>",
+        "<45B4905E.5020602@pburns.seanet.com>"
+      ],
+      "body_plain": "Great!! Thank you so much for your suggestions, Patrick and Rich!\n\nThat got me workin!\n-Santosh\n\nOn 1/22/07, Patrick Burns <\npburns at pburns.seanet.com> wrote:> You could have found '[[' in the subscripting section\n>\n> of chapter 1 of S Poetry.\n>\n> Actually I would prefer:\n>\n> df[, DataColumn]\n>\n> as it works with matrices and data frames, and it doesn't\n> presume to know how data frames are implemented.\n>\n> Patrick Burns\n>\n> patrick at burns-stat.com\n> +44 (0)20 8525 0696\n> http://www.burns-stat.com\n> (home of S Poetry and \"A Guide for the Unwilling S User\")\n>\n>\n> Santosh wrote:\n>\n> > Dear SPlus Users,\n> >\n> > Is there a way to work with indirect references in SPlus?\n> >\n> > For example,\n> >\n> > DataColumn <-  \"Resist\"\n> > MatrixColumn <- \"ExpnsnCoeff\"'\n>\n> > ScalarColumn <- \"Voltage\"\n> >\n> > As I don't know the syntax, I would like illustrate using the examples\n> > given below.\n> >\n> > In conventional SPLUS notation, if \"df\" is a generic dataframe that\n>\n> > consists of vectors\n> > \"Resist\", \"ExpnsnCoeff\", \"Voltage\",\n> >\n> > \"df$Resist\", \"df$ExpnsnCoeff\", \"df$Voltage\" notation may be used to\n> > for data handling in respective vectors of the data frame.\n>\n> >\n> > Instead of the above notation, I would like to use an indirect\n> > reference like:\n> >\n> > Assuming that the syntax to provide indirect references is curly\n> > braces, e.g. ${DataColumn},\n>\n> >\n> > \"df${DataColumn}\" indirectly accesses the vector \"df$Resist\";\n> >  similarly \"df${MatrixColumn}\" calls  \"df$ExpnsnCoeff\" vector\n> > indirectly, and so on..\n> >\n>\n> >\n> > Hope the above question is clear; please do feel free to ask if you\n> > have any additional questions.\n> >\n> > Regards,\n> > Santosh",
+      "body_snippet": "Great!! Thank you so much for your suggestions, Patrick and Rich!\n\nThat got me workin!\n-Santosh\n\nOn 1/22/07, Patrick Burns <\npburns at pburns.seanet.com> wrote:> You could have found '[[' in the subsc",
+      "thread_id": "thread-cbc61fe585ed",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-915aac5d7354",
+      "message_id": "<958649.32857.qm@web61024.mail.yahoo.com>",
+      "from_name": "Nora Muda",
+      "from_email_hash": "e68d21cf75e6b5d61c451ba882d579170624efdf91cc7f520e7e6be99f1cee0b",
+      "date": "2007-01-24T08:52:14Z",
+      "subject": "problem in substring()",
+      "subject_clean": "problem in substring()",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Dear S-Plus users,\n\n \n\nI have problems in using substring ( ) function. My question may looked simple to all of you, since I am new to Splus. I have problems to get back my 2 digits number after did paste ( ) function. \n\n \n\nLet say I have 10 numbers.\n\n \n\n>y <- c(1:10)\n\n>a <- as.numeric(paste(y[1],y[10],sep=\"\"))\n\n$a:\n\n[1] 110\n\n \n\nthen I want to separate it back apart;\n\n>as.numeric(substring(a,1,1))\n\n[1] 1\n\n>as.numeric(substring(a,2,2)) \n\n[1]  1    <------------   suppose I want '10' not '1'\n\n \n\nI noticed that substring( ) separate one string at a time, how to do if we want 2 strings as my example above?\n\n \n\nHopefully someone will help to answer my questions. \n\n \n\nThank you in advance.\n\n \n\n--Nora.\n\nNeed a quick answer? Get one in minutes from people who know. Ask your question on\n Yahoo! Answers.",
+      "body_snippet": "Dear S-Plus users,\n\n \n\nI have problems in using substring ( ) function. My question may looked simple to all of you, since I am new to Splus. I have problems to get back my 2 digits number after did p",
+      "thread_id": "thread-915aac5d7354",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-e0decb10d663",
+      "message_id": "<68466.60977.qm@web61013.mail.yahoo.com>",
+      "from_name": "Nora Muda",
+      "from_email_hash": "e68d21cf75e6b5d61c451ba882d579170624efdf91cc7f520e7e6be99f1cee0b",
+      "date": "2007-01-24T09:40:15Z",
+      "subject": "Re: substring()'s problem",
+      "subject_clean": "substring()'s problem",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Thank you Romain and Steffen for your answered. Actually I know if defined as first, second and third character. But I want it  become first and second character only; 1 and 10.\n \n\nbelow are my programs that the last output should be like the blue one:\n\nn <- 10\n\nlabel <- array(dim=n,NA)\n\nfor(i in 1:n) label[i] <- i\n\nsmall <- 3\n\nbig <- 4\n\nlabel[small] <- as.numeric(paste(label[small],label[big],sep=\"\"))\n\nlabelSmall <- label[small]\n\nlabel[big] <- NA\n\nlengLabel <- array(dim=n-1,NA)\n\ncell <- array(dim=nchar(labelSmall),NA)\n\nfor(j in 1:nchar(labelSmall)){\n\ncell[j] <- as.numeric(substring(labelSmall,j,j))\n\n}\n\nfor(i in 1:n){\n\nif(i!=small && i!=big ){\n\nlabelOther <- label[i]\n\nlengOther <- nchar(labelOther)\n\nindex <- array(dim=length(lengOther),NA)\n\nweight <- length(lengOther)*length(cell)\n\nd <- matrix(NA,length(cell),length(lengOther))\n\nfor(j in 1:length(cell)){\n\nfor(k in 1:length(lengOther)){\n\nindex[k] <- as.numeric(substring(labelOther,k,k))\n\nd[j,k] <- as.numeric(paste(index[k],cell[j],sep=\"\"))\n\n}\n\n}\n\nprint(d)\n\n}\n\n}\n\noutputs:\n\n[,1] \n\n[1,] 13\n\n[2,] 14\n\n[,1] \n\n[1,] 23\n\n[2,] 24\n\n[,1] \n\n[1,] 53\n\n[2,] 54\n\n[,1] \n\n[1,] 63\n\n[2,] 64\n\n[,1] \n\n[1,] 73\n\n[2,] 74\n\n[,1] \n\n[1,] 83\n\n[2,] 84\n\n[,1] \n\n[1,] 93\n\n[2,] 94\n\n[,1] \n\n[1,] 13        --------->    [1,] 103\n\n[2,] 14                            [2,] 104\n\n \n\nThe outputs will be used in future clustering process where any number can be clustered together following the rule given; let say after this \"110\" joined with number 8, so it can be \"1810\". I want it become first, second and third character only, here '0' not a fourth character.\n\n \n\nIs there any way to modified it?\n\n \n\n \n\n \n\n--Nora .\n\nDon't get soaked.  Take a quick peak at the forecast \n with theYahoo! Search weather shortcut.",
+      "body_snippet": "Thank you Romain and Steffen for your answered. Actually I know if defined as first, second and third character. But I want it  become first and second character only; 1 and 10.\n \n\nbelow are my progra",
+      "thread_id": "thread-e0decb10d663",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-b3c7f76a86d1",
+      "message_id": "<003e01c73f9c$342ef850$cbf652c2@Dell>",
+      "from_name": "Mario Cortina Borja",
+      "from_email_hash": "d0dbd31c7e0c64ee84a12d3727290fc166a71e1784a1a458844cd8b8e60eed62",
+      "date": "2007-01-24T09:44:12Z",
+      "subject": "Re: problem in substring()",
+      "subject_clean": "problem in substring()",
+      "in_reply_to": "<958649.32857.qm@web61024.mail.yahoo.com>",
+      "references": [
+        "<958649.32857.qm@web61024.mail.yahoo.com>"
+      ],
+      "body_plain": "Dear Nora, \n\n \n\nTry \n\n \n\nas.numeric(substring( a, nchar(y[1])+1, nchar(y[1])+nchar(y[10])))\n\n \n\nBest\nwishes,\n\n \n\nMario\n\n \n\nDr Mario Cortina Borja\n\nSenior Lecturer in\nStatistics\n\nCentre for Paediatric\nEpidemiology and Biostatistics\n\nInstitute of Child\nHealth, University College London\n\nM.Cortina at ich.ucl.ac.uk\n\nTel - 020 7905 2113\n\nFAX - 020 7905 2381\n\n \n\nFrom: s-news-owner at lists.biostat.wustl.edu\n[mailto:s-news-owner at lists.biostat.wustl.edu] On\nBehalf Of Nora Muda\n\nSent: 24 January 2007 08:52\n\nTo: s-news at lists.biostat.wustl.edu\n\nSubject: [S] problem in\nsubstring()\n\n \n\nDear S-Plus users,\n\n \n\nI have problems in using substring ( ) function. My question may looked\nsimple to all of you, since I am new to Splus. I have problems to get back my 2\ndigits number after did paste ( ) function. \n\n \n\nLet say I have 10 numbers.\n\n \n\n>y <- c(1:10)\n\n>a <- as.numeric(paste(y[1],y[10],sep=\"\"))\n\n$a:\n\n[1] 110\n\n \n\nthen I want to separate it back apart;\n\n>as.numeric(substring(a,1,1))\n\n[1] 1\n\n>as.numeric(substring(a,2,2)) \n\n[1]  1    <------------   suppose I want '10'\nnot '1'\n\n \n\nI noticed that substring( ) separate one string at a time, how to do if\nwe want 2 strings as my example above?\n\n \n\nHopefully someone will help to answer my questions. \n\n \n\nThank you in advance.\n\n \n\n--Nora.\n\n \n\nNeed a quick answer? Get one in minutes from people who know. Ask your\nquestion on Yahoo!\nAnswers.",
+      "body_snippet": "Dear Nora, \n\n \n\nTry \n\n \n\nas.numeric(substring( a, nchar(y[1])+1, nchar(y[1])+nchar(y[10])))\n\n \n\nBest\nwishes,\n\n \n\nMario\n\n \n\nDr Mario Cortina Borja\n\nSenior Lecturer in\nStatistics\n\nCentre for Paediatric\n",
+      "thread_id": "thread-915aac5d7354",
+      "thread_depth": 1,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-fba7df1c471a",
+      "message_id": "<ECBC2BF14033C0458FDA3C695E14F5F607B009@sewinexch00.insightful.com>",
+      "from_name": "Jill Goldschneider",
+      "from_email_hash": "d9b026f108468bb1d841a93762c2f6365c0c50b3540d882a3183e8a503fea17a",
+      "date": "2007-01-24T21:29:58Z",
+      "subject": "JOB: LARS Package Developer",
+      "subject_clean": "JOB: LARS Package Developer",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Insightful is seeking a Research Scientist with a strong background in\nstatistical methodology, algorithms development, data analysis, and software\ndevelopment.  The primary responsibilities are to develop software for\nhigh-dimensional regression and machine learning applications using least\nangle regression (LARS).\n\nThe official position is listed at:\n        http://www.insightful.com/company/jobdescription.asp?JobID=118\n\nMore information about the project is at:\n        http://www.insightful.com/Hesterberg/glars\n\nFor technical questions contact Tim Hesterberg timh at insightful.com.\n\nTo apply, please contact Jill Goldschneider jrgold at insightful.com or Human\nResources HR at insightful.com.\n\nThank you,\nJill\n\n----\n\nJill R. Goldschneider, Ph.D.\nDirector of Research\nInsightful Corporation\n1700 Westlake Ave. N. Suite 500\nSeattle WA 98109\n(206) 802-2327 (office)\n(206) 953-9355 (mobile)\n(206) 802-2500 (fax)",
+      "body_snippet": "Insightful is seeking a Research Scientist with a strong background in\nstatistical methodology, algorithms development, data analysis, and software\ndevelopment.  The primary responsibilities are to de",
+      "thread_id": "thread-fba7df1c471a",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-95b152c8742d",
+      "message_id": "<ECBC2BF14033C0458FDA3C695E14F5F607B00A@sewinexch00.insightful.com>",
+      "from_name": "Jill Goldschneider",
+      "from_email_hash": "d9b026f108468bb1d841a93762c2f6365c0c50b3540d882a3183e8a503fea17a",
+      "date": "2007-01-24T21:37:26Z",
+      "subject": "JOB: LARS internships",
+      "subject_clean": "JOB: LARS internships",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Insightful is seeking a pre-doctoral student and an undergraduate student for\ntwo internship positions.  The primary responsibilities are to assist in the\ndevelopment of software for high-dimensional regression and machine learning\napplications using least angle regression (LARS).\n\nThe pre-doctoral candidate should have a background and interest in\nstatistical methodology, algorithms, data analysis, simulation studies and\nsoftware development and documentation.  The candidate should be currently\npursuing a Ph.D. degree.  \n\nThe undergraduate intern position requires a person with at least three years\nof undergraduate training and a solid background in mathematics and interest\nin statistical methodology, algorithms, data analysis, simulation studies and\nsoftware development and documentation.  The candidate should be currently\npursuing a bachelor's degree. \n\nThe official positions are listed at:\n        http://www.insightful.com/company/jobdescription.asp?JobID=116\n        http://www.insightful.com/company/jobdescription.asp?JobID=117\n\nMore information about the project can be found at:\n        http://www.insightful.com/Hesterberg/glars\n\nFor technical questions contact Tim Hesterberg timh at insightful.com.\n\nTo apply, please contact Jill Goldschneider jrgold at insightful.com or Human\nResources HR at insightful.com.\n\nThank you,\nJill\n\n----\n\nJill R. Goldschneider, Ph.D.\nDirector of Research\nInsightful Corporation\n1700 Westlake Ave. N. Suite 500\nSeattle WA 98109\n(206) 802-2327 (office)\n(206) 953-9355 (mobile)\n(206) 802-2500 (fax)",
+      "body_snippet": "Insightful is seeking a pre-doctoral student and an undergraduate student for\ntwo internship positions.  The primary responsibilities are to assist in the\ndevelopment of software for high-dimensional ",
+      "thread_id": "thread-95b152c8742d",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-7d6c01df9c73",
+      "message_id": "<983785.28390.qm@web33908.mail.mud.yahoo.com>",
+      "from_name": "Eric yang",
+      "from_email_hash": "73d3235df3de5e077e5ef3ea69c84946f2e9113f15a2c30d9becb52c4c71744a",
+      "date": "2007-01-25T14:25:53Z",
+      "subject": "write.table simple question",
+      "subject_clean": "write.table simple question",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Does anyone know how to surpress the \"row.names\" appearing in the top left hand corner of a matrix/table when using write.table() to write the matrix/table to an external file? I can change the row names and column names but the row names themselves have a heading \"row.names\" which I don't actually require.\n   \n  I would be grateful for any help.\n   \n  Thanks in advance.\n  Regards,\n  Eric\n \n\nIt's here! Your new message!\nGet\n new email alerts with the free Yahoo! Toolbar.",
+      "body_snippet": "Does anyone know how to surpress the \"row.names\" appearing in the top left hand corner of a matrix/table when using write.table() to write the matrix/table to an external file? I can change the row na",
+      "thread_id": "thread-7d6c01df9c73",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-efd719a4b511",
+      "message_id": "<DE0C56850EA82D47AB43E3A29661093D01B06804@isadsm1.iasoybeans.local>",
+      "from_name": "Peter Kyveryga",
+      "from_email_hash": "778935489b3929db5143e4ce5e9679eb003ec96f533642be05bc857ff430112e",
+      "date": "2007-01-25T21:37:55Z",
+      "subject": "Incorporating spatial correlation in logistic modeling in S-Plus",
+      "subject_clean": "Incorporating spatial correlation in logistic modeling in S-Plus",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Did anyone deal with a need to include\nspatial correlation into logistic models?\n\n \n\nI am running logistic regressions to\ndetermine significant factors affecting distribution crop yield categories within\nfields. \n\nThe yield observations tend to spatial\ncorrelate within fields that validates the assumption that the response\nvariables are independent.\n\n \n\nThere is an  Option in Spatial\nRegression to consider spatial or covariance structure by building a neighbor\ngrids for ordinary linear regression.\n\nIs it possible to do the same with\nLogistic Regression?\n\n \n\nThanks,\n\n \n\nPeter",
+      "body_snippet": "Did anyone deal with a need to include\nspatial correlation into logistic models?\n\n \n\nI am running logistic regressions to\ndetermine significant factors affecting distribution crop yield categories wit",
+      "thread_id": "thread-efd719a4b511",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-128f1cbf388e",
+      "message_id": "<27CA3827C6B33E40874682C469E774DD04BCD68C@FMD3CT001.fda.gov>",
+      "from_name": "Li, Mike",
+      "from_email_hash": "b4b292e89b9005d9753c338747ee93d064128eb613de2f3a834abacabd88d3aa",
+      "date": "2007-01-26T14:08:40Z",
+      "subject": "Command line functions to open menu dialogs?",
+      "subject_clean": "Command line functions to open menu dialogs?",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hi, \n\nDoes anyone know how to use command line functions to open the dialog in menu Graph/2D plot… for S+7.0?\n\nThanks,\n\nMike",
+      "body_snippet": "Hi, \n\nDoes anyone know how to use command line functions to open the dialog in menu Graph/2D plot… for S+7.0?\n\nThanks,\n\nMike",
+      "thread_id": "thread-128f1cbf388e",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-9decb3f83932",
+      "message_id": "<45BDC295.9000107@bangor.ac.uk>",
+      "from_name": "Dr. Takashi Kikuchi",
+      "from_email_hash": "cd87f7bac4f8c4ceacb10a512f0badd9618f550bd33bb019211c25560631aca2",
+      "date": "2007-01-29T09:47:01Z",
+      "subject": "S-Plus or R codes for ICER and CEACs",
+      "subject_clean": "S-Plus or R codes for ICER and CEACs",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Dear S-plus and R users for Health economics\n\nIf you have S-Plus or R codes for the calculation for Incremental cost \neffectiveness ratio (ICER) and Cost effectiveness acceptability curve \n(CEAC), please introduce them to me. Parametric and non-parametric \nmethods are welcome.\n\nAll the best\nTakashi\n\n--\n        mhs208 at bangor.ac.uk \n\n--\nGall y neges e-bost hon, ac unrhyw atodiadau a anfonwyd gyda hi,\ngynnwys deunydd cyfrinachol ac wedi eu bwriadu i'w defnyddio'n unig\ngan y sawl y cawsant eu cyfeirio ato (atynt). Os ydych wedi derbyn y\nneges e-bost hon trwy gamgymeriad, rhowch wybod i'r anfonwr ar\nunwaith a dilëwch y neges. Os na fwriadwyd anfon y neges atoch chi,\nrhaid i chi beidio â defnyddio, cadw neu ddatgelu unrhyw wybodaeth a\ngynhwysir ynddi. Mae unrhyw farn neu safbwynt yn eiddo i'r sawl a'i\nhanfonodd yn unig  ac nid yw o anghenraid yn cynrychioli barn\nPrifysgol Cymru, Bangor. Nid yw Prifysgol Cymru, Bangor yn gwarantu\nbod y neges e-bost hon neu unrhyw atodiadau yn rhydd rhag firysau neu\n100% yn ddiogel. Oni bai fod hyn wedi ei ddatgan yn uniongyrchol yn\nnhestun yr e-bost, nid bwriad y neges e-bost hon yw ffurfio contract\nrhwymol - mae rhestr o lofnodwyr awdurdodedig ar gael o Swyddfa\nCyllid Prifysgol Cymru, Bangor.  www.bangor.ac.uk\n\nThis email and any attachments may contain confidential material and\nis solely for the use of the intended recipient(s).  If you have\nreceived this email in error, please notify the sender immediately\nand delete this email.  If you are not the intended recipient(s), you\nmust not use, retain or disclose any information contained in this\nemail.  Any views or opinions are solely those of the sender and do\nnot necessarily represent those of the University of Wales, Bangor.\nThe University of Wales, Bangor does not guarantee that this email or\nany attachments are free from viruses or 100% secure.  Unless\nexpressly stated in the body of the text of the email, this email is\nnot intended to form a binding contract - a list of authorised\nsignatories is available from the University of Wales, Bangor Finance\nOffice.  www.bangor.ac.uk",
+      "body_snippet": "Dear S-plus and R users for Health economics\n\nIf you have S-Plus or R codes for the calculation for Incremental cost \neffectiveness ratio (ICER) and Cost effectiveness acceptability curve \n(CEAC), ple",
+      "thread_id": "thread-9decb3f83932",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-e33e18e0f70f",
+      "message_id": "<20070129161822.E310F137090@mailgate.biostat.wustl.edu>",
+      "from_name": "Tim Hesterberg",
+      "from_email_hash": "006d6c7dc32bd30d08b3192457126eabf59f5d9c77c66b3f4bd6b70dafb4738c",
+      "date": "2007-01-29T16:18:22Z",
+      "subject": "Interface 2007 Conference - Philadelphia May 23-27",
+      "subject_clean": "Interface 2007 Conference - Philadelphia May 23-27",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Announcement and Call for Papers:  Interface 2007\n\nThe 39th Conference on Interface of Statistics and Computing Science\nwill take place\n        May 23-26, Philadelphia, Doubletree Hotel\nThe general theme is \"Systems Biology\".\n\nFor more information, see the conference website\n        http://sbm.temple.edu/interface07/\nor contact Alan J. Izenman, Department of Statistics, Speakman\nHall, 1810 North 13th Street, Philadelphia, PA 19122-6083, \n(215) 204-8166, alan at temple.edu.\n\nTim Hesterberg\nSecretary, Interface Foundation\n\n========================================================\n| Tim Hesterberg       Senior Research Scientist       |\n| timh at insightful.com  Insightful Corp.                |\n| (206)802-2319        1700 Westlake Ave. N, Suite 500 |\n| (206)283-8691 (fax)  Seattle, WA 98109-3044, U.S.A.  |\n|                      www.insightful.com/Hesterberg   |\n========================================================\nDownload S+Resample from www.insightful.com/downloads/libraries",
+      "body_snippet": "Announcement and Call for Papers:  Interface 2007\n\nThe 39th Conference on Interface of Statistics and Computing Science\nwill take place\n        May 23-26, Philadelphia, Doubletree Hotel\nThe general th",
+      "thread_id": "thread-e33e18e0f70f",
+      "thread_depth": 0,
+      "month": "2007-01"
+    },
+    {
+      "id": "msg-7c411458687a",
+      "message_id": "<C8D9459E0E12A04D9CD897043F52F74903F461AE@MBCEXCHANGE.MBC.com>",
+      "from_name": "Russell Ivory",
+      "from_email_hash": "d0f077e5f577dc401560213508faa26455f0130aac1ddabe211e864559e0a4f9",
+      "date": "2007-01-30T23:21:24Z",
+      "subject": "class and inheritance",
+      "subject_clean": "class and inheritance",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Hi S list.\n\nI need to define a new class for credit bureau data so that I can create\nnew methods for dealing with special missing codes, etc. If I assign the\nnew class to each vector, and then make a data frame out of these new\nclass vectors, all seems to work well.  However, if I assign columns of\na data frame to the new class (cb.data) after the data frame exists,\nthings blow up. For example, I cannot get a correlation matrix as\nfollows:\n(I'm using S-Plus 7.0 Professional Developer)\n \n#Creating both integer and numeric data vectors and a data frame\n> test1 <- c(4, 6, 5, 7, 5, 4, 5, 3, 5)\n> test2 <- c(21, 65, 54, 87, 65, 32, 21, 54, 87)\n> test3 <- rnorm(9, 12, 3)\n> testdata <- data.frame(cbind(test1, test2, test3))\n\n \n#Define a new class \"cb.data\":\n> setClass(\"cb.data\", \"numeric\")\n      # At least the way I understand it, class cb.data extends class\n        # numeric, i.e. it is a prototype of and inherits all that\n        # numeric has to offer.\n        # But knowing some data may be integer, I instruct that as well:\n\n> setIs(\"cb.data\", \"integer\")\n\n#getClass shows that cb.data extends both integer and numeric:\n> getClass(\"cb.data\")\n\nNo slots; prototype of class \"numeric\"\n\nExtends:\nClass \"integer\" by direct inclusion\nClass \"numeric\" by direct inclusion\nClass \"vector\" indirectly through class \"numeric\"\nClass \"positionsNumeric\" indirectly through class \"numeric\"\nClass \"complex\" indirectly through class \"numeric\"\nClass \"positions\" indirectly through class \"positionsNumeric\"\n\n#Now I assign the class to each column:\n> for(i in 1:3)\n           class(testdata[, i]) <- \"cb.data\"\n\n#Correlations seem to be complex, if I read the output correctly\n> cor(testdata[, 1], testdata[, 2])\n[1] 0.5611317+0i\n> cor(testdata[, 1], testdata[, 3])\n[1] -0.08105978+0i\n\n \n#And I get an error trying to create the correlation matrix:\n> cor(testdata)\nProblem in numerical.matrix(x): Non-atomic (list) variables are not\nallowed \nUse traceback() to see the call stack\n\nAny suggestions are greatly appreciated.\n\nRussell Ivory | AVP Modeling Manager | Merrick Bank | (801) 545-6640 |\nrussell.ivory at merrickbank.com\n\n10705 South Jordan Gateway\nSuite 200\nSouth Jordan, UT 84095\n****************************************************************************This\n e-mail and any files transmitted with it are confidential and are intended \nsolely for the use of the individual or entity to whom it is addressed. If you \nare not the intended recipient or the person responsible for delivering the \ne-mail to the intended recipient, be advised that you have received this e-mail \nin error, and that any use, dissemination, forwarding, printing, or copying of \nthis e-mail is strictly prohibited. If you received this e-mail in error, \nplease return the e-mail to the sender at Merrick Bank and delete it from your \ncomputer. Although Merrick Bank attempts to sweep e-mail and attachments for \nviruses, it does not guarantee that either are virus-free and accepts no \nliability for any damage sustained as a result of viruses.",
+      "body_snippet": "Hi S list.\n\nI need to define a new class for credit bureau data so that I can create\nnew methods for dealing with special missing codes, etc. If I assign the\nnew class to each vector, and then make a ",
+      "thread_id": "thread-7c411458687a",
+      "thread_depth": 0,
+      "month": "2007-01"
+    }
+  ],
+  "threads": [
+    {
+      "id": "thread-17838c066fb1",
+      "subject": "What?s the best way to deal with ?iteration limit reached? when running glm.nb()?",
+      "message_count": 1,
+      "participants": [
+        "wuy"
+      ],
+      "started": "2007-01-03T03:36:48Z",
+      "last_reply": "2007-01-03T03:36:48Z",
+      "root_message_id": "msg-17838c066fb1"
+    },
+    {
+      "id": "thread-8ed3379e2c7d",
+      "subject": "Vertical boxplot",
+      "message_count": 1,
+      "participants": [
+        "Richard M. Heiberger"
+      ],
+      "started": "2007-01-03T04:32:09Z",
+      "last_reply": "2007-01-03T04:32:09Z",
+      "root_message_id": "msg-8ed3379e2c7d"
+    },
+    {
+      "id": "thread-9f916ca380bd",
+      "subject": "What?s the best way to deal with ?iteration limit reached? whenrunning glm.nb()?",
+      "message_count": 1,
+      "participants": [
+        "Bill.Venables at csiro.au"
+      ],
+      "started": "2007-01-03T06:07:13Z",
+      "last_reply": "2007-01-03T06:07:13Z",
+      "root_message_id": "msg-9f916ca380bd"
+    },
+    {
+      "id": "thread-8671ebb814b6",
+      "subject": "Cor.test function",
+      "message_count": 1,
+      "participants": [
+        "simona.costanzo at ubs.com"
+      ],
+      "started": "2007-01-03T11:50:10Z",
+      "last_reply": "2007-01-03T11:50:10Z",
+      "root_message_id": "msg-8671ebb814b6"
+    },
+    {
+      "id": "thread-972617e43177",
+      "subject": "on Survreg function",
+      "message_count": 1,
+      "participants": [
+        "sara janos"
+      ],
+      "started": "2007-01-03T15:23:15Z",
+      "last_reply": "2007-01-03T15:23:15Z",
+      "root_message_id": "msg-972617e43177"
+    },
+    {
+      "id": "thread-fda04076c16b",
+      "subject": "COURSE: Upcoming S-PLUS courses and Web casts from Insightful Corporation",
+      "message_count": 1,
+      "participants": [
+        "Heather Anthony"
+      ],
+      "started": "2007-01-05T23:24:58Z",
+      "last_reply": "2007-01-05T23:24:58Z",
+      "root_message_id": "msg-fda04076c16b"
+    },
+    {
+      "id": "thread-42c1616f77e0",
+      "subject": "R Training Course in Paris",
+      "message_count": 1,
+      "participants": [
+        "Romain Francois"
+      ],
+      "started": "2007-01-08T12:23:44Z",
+      "last_reply": "2007-01-08T12:23:44Z",
+      "root_message_id": "msg-42c1616f77e0"
+    },
+    {
+      "id": "thread-7a356969423c",
+      "subject": "Help with function",
+      "message_count": 1,
+      "participants": [
+        "Roberts, J. Kyle"
+      ],
+      "started": "2007-01-09T15:23:57Z",
+      "last_reply": "2007-01-09T15:23:57Z",
+      "root_message_id": "msg-7a356969423c"
+    },
+    {
+      "id": "thread-f23513eef4f3",
+      "subject": "'Prompt to save graph sheets' as argument for options()",
+      "message_count": 3,
+      "participants": [
+        "Alan Hochberg",
+        "Steffen Barembruch"
+      ],
+      "started": "2007-01-09T16:32:03Z",
+      "last_reply": "2007-01-09T17:11:40Z",
+      "root_message_id": "msg-f23513eef4f3"
+    },
+    {
+      "id": "thread-a223b9aeb7cb",
+      "subject": "S-Plus Memory",
+      "message_count": 3,
+      "participants": [
+        "Andreas Johansson",
+        "Tony Plate",
+        "statman"
+      ],
+      "started": "2007-01-09T18:00:40Z",
+      "last_reply": "2007-01-09T23:52:43Z",
+      "root_message_id": "msg-a223b9aeb7cb"
+    },
+    {
+      "id": "thread-e8ab79b0f180",
+      "subject": "multicomp function problems",
+      "message_count": 1,
+      "participants": [
+        "Chris Gast"
+      ],
+      "started": "2007-01-10T17:09:17Z",
+      "last_reply": "2007-01-10T17:09:17Z",
+      "root_message_id": "msg-e8ab79b0f180"
+    },
+    {
+      "id": "thread-7adcf2084e3c",
+      "subject": "SPLUS Interface",
+      "message_count": 1,
+      "participants": [
+        "Said Hirsh"
+      ],
+      "started": "2007-01-11T15:08:30Z",
+      "last_reply": "2007-01-11T15:08:30Z",
+      "root_message_id": "msg-7adcf2084e3c"
+    },
+    {
+      "id": "thread-c752d780a5d6",
+      "subject": "SPLUS Interface",
+      "message_count": 1,
+      "participants": [
+        "hurley.gj at pg.com"
+      ],
+      "started": "2007-01-11T15:40:34Z",
+      "last_reply": "2007-01-11T15:40:34Z",
+      "root_message_id": "msg-c752d780a5d6"
+    },
+    {
+      "id": "thread-f193be3e12b8",
+      "subject": "Hey,",
+      "message_count": 2,
+      "participants": [
+        "Alex Asiimwe",
+        "Frank E Harrell Jr"
+      ],
+      "started": "2007-01-11T15:46:33Z",
+      "last_reply": "2007-01-11T16:33:29Z",
+      "root_message_id": "msg-f193be3e12b8"
+    },
+    {
+      "id": "thread-cc7905a8ccae",
+      "subject": "February Courses: (1) Prof Frank Harrell *** Regression Modeling Strategies in R/Splus, (2) R/Splus Advanced Programming, (3) R/Splus Fundamentals and Programming Techniques",
+      "message_count": 1,
+      "participants": [
+        "elvis at xlsolutions-corp.com"
+      ],
+      "started": "2007-01-11T17:51:59Z",
+      "last_reply": "2007-01-11T17:51:59Z",
+      "root_message_id": "msg-cc7905a8ccae"
+    },
+    {
+      "id": "thread-aca7582480d3",
+      "subject": "fitting a linear model",
+      "message_count": 1,
+      "participants": [
+        "Martyn Colins"
+      ],
+      "started": "2007-01-12T15:43:48Z",
+      "last_reply": "2007-01-12T15:43:48Z",
+      "root_message_id": "msg-aca7582480d3"
+    },
+    {
+      "id": "thread-c5aba85cc166",
+      "subject": "Free Webinar: Vendor Neutral Intro to Data Mining for Absolute Beginners, January 26, 2007",
+      "message_count": 1,
+      "participants": [
+        "Lisa Solomon"
+      ],
+      "started": "2007-01-12T22:06:50Z",
+      "last_reply": "2007-01-12T22:06:50Z",
+      "root_message_id": "msg-c5aba85cc166"
+    },
+    {
+      "id": "thread-f2016f20fbac",
+      "subject": "Display a GUI dialog to get a filenam",
+      "message_count": 2,
+      "participants": [
+        "Michael Camilleri",
+        "Steffen Barembruch"
+      ],
+      "started": "2007-01-14T14:01:39Z",
+      "last_reply": "2007-01-15T19:13:25Z",
+      "root_message_id": "msg-f2016f20fbac"
+    },
+    {
+      "id": "thread-3629ff6b0a5e",
+      "subject": "creating a table composed of smaller tables",
+      "message_count": 1,
+      "participants": [
+        "Walter R. Paczkowski"
+      ],
+      "started": "2007-01-14T20:48:06Z",
+      "last_reply": "2007-01-14T20:48:06Z",
+      "root_message_id": "msg-3629ff6b0a5e"
+    },
+    {
+      "id": "thread-df9399e2c962",
+      "subject": "factor levels",
+      "message_count": 4,
+      "participants": [
+        "Bill.Venables at csiro.au",
+        "David L Lorenz",
+        "Gregor Gorjanc",
+        "yiwu ye"
+      ],
+      "started": "2007-01-19T00:38:42Z",
+      "last_reply": "2007-01-19T13:30:20Z",
+      "root_message_id": "msg-df9399e2c962"
+    },
+    {
+      "id": "thread-3360a5df1ffc",
+      "subject": "factor levels",
+      "message_count": 1,
+      "participants": [
+        "Terry Therneau"
+      ],
+      "started": "2007-01-19T14:38:36Z",
+      "last_reply": "2007-01-19T14:38:36Z",
+      "root_message_id": "msg-3360a5df1ffc"
+    },
+    {
+      "id": "thread-e542edbc240a",
+      "subject": "hairlines in graphics",
+      "message_count": 2,
+      "participants": [
+        "Dennis Fisher",
+        "Prof Brian Ripley"
+      ],
+      "started": "2007-01-21T17:51:10Z",
+      "last_reply": "2007-01-22T08:01:23Z",
+      "root_message_id": "msg-e542edbc240a"
+    },
+    {
+      "id": "thread-0b2413c8b9ec",
+      "subject": "Indirect references in SPLUS",
+      "message_count": 2,
+      "participants": [
+        "Santosh",
+        "rich at mango-solutions.com"
+      ],
+      "started": "2007-01-22T06:54:07Z",
+      "last_reply": "2007-01-22T09:30:27Z",
+      "root_message_id": "msg-0b2413c8b9ec"
+    },
+    {
+      "id": "thread-805583befc86",
+      "subject": "ANOVA or what?",
+      "message_count": 1,
+      "participants": [
+        "Kamil Toth"
+      ],
+      "started": "2007-01-22T18:00:49Z",
+      "last_reply": "2007-01-22T18:00:49Z",
+      "root_message_id": "msg-805583befc86"
+    },
+    {
+      "id": "thread-9eb9fb360556",
+      "subject": "Correlation Coefficient for Weighted Regression",
+      "message_count": 1,
+      "participants": [
+        "King, Calvin Civ AFTAC/THD"
+      ],
+      "started": "2007-01-22T18:28:46Z",
+      "last_reply": "2007-01-22T18:28:46Z",
+      "root_message_id": "msg-9eb9fb360556"
+    },
+    {
+      "id": "thread-243cf642fee9",
+      "subject": "var(x) vs E{x^2] - [E{x}]^2",
+      "message_count": 2,
+      "participants": [
+        "Bill.Venables at csiro.au",
+        "John Fennick"
+      ],
+      "started": "2007-01-23T04:13:02Z",
+      "last_reply": "2007-01-23T06:04:13Z",
+      "root_message_id": "msg-243cf642fee9"
+    },
+    {
+      "id": "thread-122bc9e80ca8",
+      "subject": "DSC 2007 Additional Funding",
+      "message_count": 1,
+      "participants": [
+        "Paul Murrell"
+      ],
+      "started": "2007-01-23T20:28:25Z",
+      "last_reply": "2007-01-23T20:28:25Z",
+      "root_message_id": "msg-122bc9e80ca8"
+    },
+    {
+      "id": "thread-cbc61fe585ed",
+      "subject": "Indirect references in SPLUS",
+      "message_count": 1,
+      "participants": [
+        "Santosh"
+      ],
+      "started": "2007-01-24T04:18:20Z",
+      "last_reply": "2007-01-24T04:18:20Z",
+      "root_message_id": "msg-cbc61fe585ed"
+    },
+    {
+      "id": "thread-915aac5d7354",
+      "subject": "problem in substring()",
+      "message_count": 2,
+      "participants": [
+        "Mario Cortina Borja",
+        "Nora Muda"
+      ],
+      "started": "2007-01-24T08:52:14Z",
+      "last_reply": "2007-01-24T09:44:12Z",
+      "root_message_id": "msg-915aac5d7354"
+    },
+    {
+      "id": "thread-e0decb10d663",
+      "subject": "substring()'s problem",
+      "message_count": 1,
+      "participants": [
+        "Nora Muda"
+      ],
+      "started": "2007-01-24T09:40:15Z",
+      "last_reply": "2007-01-24T09:40:15Z",
+      "root_message_id": "msg-e0decb10d663"
+    },
+    {
+      "id": "thread-fba7df1c471a",
+      "subject": "JOB: LARS Package Developer",
+      "message_count": 1,
+      "participants": [
+        "Jill Goldschneider"
+      ],
+      "started": "2007-01-24T21:29:58Z",
+      "last_reply": "2007-01-24T21:29:58Z",
+      "root_message_id": "msg-fba7df1c471a"
+    },
+    {
+      "id": "thread-95b152c8742d",
+      "subject": "JOB: LARS internships",
+      "message_count": 1,
+      "participants": [
+        "Jill Goldschneider"
+      ],
+      "started": "2007-01-24T21:37:26Z",
+      "last_reply": "2007-01-24T21:37:26Z",
+      "root_message_id": "msg-95b152c8742d"
+    },
+    {
+      "id": "thread-7d6c01df9c73",
+      "subject": "write.table simple question",
+      "message_count": 1,
+      "participants": [
+        "Eric yang"
+      ],
+      "started": "2007-01-25T14:25:53Z",
+      "last_reply": "2007-01-25T14:25:53Z",
+      "root_message_id": "msg-7d6c01df9c73"
+    },
+    {
+      "id": "thread-efd719a4b511",
+      "subject": "Incorporating spatial correlation in logistic modeling in S-Plus",
+      "message_count": 1,
+      "participants": [
+        "Peter Kyveryga"
+      ],
+      "started": "2007-01-25T21:37:55Z",
+      "last_reply": "2007-01-25T21:37:55Z",
+      "root_message_id": "msg-efd719a4b511"
+    },
+    {
+      "id": "thread-128f1cbf388e",
+      "subject": "Command line functions to open menu dialogs?",
+      "message_count": 1,
+      "participants": [
+        "Li, Mike"
+      ],
+      "started": "2007-01-26T14:08:40Z",
+      "last_reply": "2007-01-26T14:08:40Z",
+      "root_message_id": "msg-128f1cbf388e"
+    },
+    {
+      "id": "thread-9decb3f83932",
+      "subject": "S-Plus or R codes for ICER and CEACs",
+      "message_count": 1,
+      "participants": [
+        "Dr. Takashi Kikuchi"
+      ],
+      "started": "2007-01-29T09:47:01Z",
+      "last_reply": "2007-01-29T09:47:01Z",
+      "root_message_id": "msg-9decb3f83932"
+    },
+    {
+      "id": "thread-e33e18e0f70f",
+      "subject": "Interface 2007 Conference - Philadelphia May 23-27",
+      "message_count": 1,
+      "participants": [
+        "Tim Hesterberg"
+      ],
+      "started": "2007-01-29T16:18:22Z",
+      "last_reply": "2007-01-29T16:18:22Z",
+      "root_message_id": "msg-e33e18e0f70f"
+    },
+    {
+      "id": "thread-7c411458687a",
+      "subject": "class and inheritance",
+      "message_count": 1,
+      "participants": [
+        "Russell Ivory"
+      ],
+      "started": "2007-01-30T23:21:24Z",
+      "last_reply": "2007-01-30T23:21:24Z",
+      "root_message_id": "msg-7c411458687a"
+    }
+  ]
+}

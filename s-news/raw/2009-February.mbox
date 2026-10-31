@@ -1,0 +1,725 @@
+From TimHesterberg at gmail.com  Mon Feb  2 02:31:02 2009
+From: TimHesterberg at gmail.com (Tim Hesterberg)
+Date: Sun, 01 Feb 2009 18:31:02 -0800
+Subject: Re: Bootstrapping nls stops
+In-Reply-To: <98BC938D4C400844A6AC00C6952BD5230EE45E@Pegasus.germany.evotecoai.com>
+References: <98BC938D4C400844A6AC00C6952BD5230EE45E@Pegasus.germany.evotecoai.com>
+Message-ID: <uiqntpo2h.fsf@gmail.com>
+
+Yes, you could use try().  Roughly:
+
+boot.nLS <- bootstrap(DATA,  {
+  result <- try(coef(eval(nLS.Object$call)))
+  if(it was an error)
+    rep(NA, the right length for a coef vector)
+  else
+    result
+  })
+
+Tim Hesterberg
+
+>Dear all,
+>
+>I didn't  find an useful answer neither in the handbooks nor in the
+>archive. The Problem I have is the following: How can I force the
+>function "bootstrap" to calculate the statistic for ALL  B resamples
+>even if a given bootstrap sample doesn't provide successfully a solution
+>by using nls()?
+>
+>nLS.Object <- nls(...., data = DATA, start = list( .... ))
+>was successfully calculated.
+>boot.nLS <- bootstrap(DATA,  coef(eval(nLS.Object$call)), B=1000)
+>stops after a few bootstrap samples.
+>
+>Is there something like try( .... )    which can be used in this
+>situation?     
+>
+>
+>Dr. Pierre Ilouga
+>Screening Operations/Discovery Informatics
+>EVOTEC AG
+>Schnackenburgallee 114
+>22525 Hamburg
+>Germany
+>
+>
+>S-PLUS : Copyright (c) 1988, 2002 Insightful Corp.
+>S : Copyright Lucent Technologies, Inc.
+>Version 6.1.2 Release 2 for Linux 2.2.12 : 2002
+>
+>S-PLUS : Copyright (c) 1988, 2007 Insightful Corp.
+>S : Copyright Insightful Corp.
+>Version 8.0.4  for Linux 2.4.21-37.EL, 64-bit : 2007
+>
+>
+>Evotec AG Hamburg. Amtsgericht Hamburg HRB 68223
+>Vorstand: Dr. Klaus Maleck und Dr. Mario Polywka
+>Aufsichtsratsvorsitzender: Dr. Flemming Ornskov
+
+From bosburn at sjrwmd.com  Mon Feb  2 19:12:01 2009
+From: bosburn at sjrwmd.com (Bill Osburn)
+Date: Mon, 02 Feb 2009 14:12:01 -0500
+Subject: S-PLUS: na.omit on data.frame columns
+Message-ID: <9E9563D3FAECF9448B370F988FD6BD153A293695E4@MAILSVR.sjrwmd.com>
+
+I have a data.frame and want to remove all columns where
+there is an NA. So far I can only get na.omit to work on rows.
+
+ 
+
+After googling for several hours I still can’t locate
+any ideas. Has anyone done na.omit or something, on columns?
+
+ 
+
+With my current data.frame I should go from 16x78 to 16x28
+
+From Sebastien.Bihorel at cognigencorp.com  Mon Feb  2 19:23:17 2009
+From: Sebastien.Bihorel at cognigencorp.com (Sebastien Bihorel)
+Date: Mon, 02 Feb 2009 14:23:17 -0500
+Subject: Re: S-PLUS: na.omit on data.frame columns
+In-Reply-To: <9E9563D3FAECF9448B370F988FD6BD153A293695E4@MAILSVR.sjrwmd.com>
+References: <9E9563D3FAECF9448B370F988FD6BD153A293695E4@MAILSVR.sjrwmd.com>
+Message-ID: <49874825.40801@cognigencorp.com>
+
+Hi,
+
+If mydf is your dataframe, this should do the trick: mydf <-
+mydf[,which(apply(mydf,2, function(x) is.element(NA,x))==F)]
+
+Be aware though that this will transform your data frame into a vector
+if only one column has no NA values.
+
+Hope it helps
+
+Sebastien Bihorel, PharmD, PhD
+
+PKPD Scientist
+
+Cognigen Corp
+
+Email: sebastien.bihorel at cognigencorp.com
+
+Phone: (716) 633-3463 ext. 323
+
+Bill Osburn wrote:
+>
+>
+>
+>
+>
+>   I have a data.frame and want to remove all
+> columns where
+> there is an NA. So far I can only get na.omit to work on rows.
+>
+>
+>
+>   After googling for several hours I still can’t
+> locate
+> any ideas. Has anyone done na.omit or something, on columns?
+>
+>
+>
+>   With my current data.frame I should go from
+> 16x78 to 16x28
+>
+>
+
+From bosburn at sjrwmd.com  Mon Feb  2 19:32:01 2009
+From: bosburn at sjrwmd.com (Bill Osburn)
+Date: Mon, 02 Feb 2009 14:32:01 -0500
+Subject: Re: S-PLUS: na.omit on data.frame columns
+Message-ID: <9E9563D3FAECF9448B370F988FD6BD153A293695E8@MAILSVR.sjrwmd.com>
+
+Two nice answers
+
+1)
+
+mydf <- mydf[,which(apply(mydf,2, function(x)
+is.element(NA,x))==F)]
+
+Be aware though that this will transform your data frame into a vector if only
+one column has no NA values.
+
+ 
+
+From: Sebastien Bihorel, PharmD, PhD
+
+ 
+
+2)
+
+If all your data (x) are
+numeric, then try
+
+ 
+
+y <-
+x[,!is.na(colSums(x))]
+
+ 
+
+From: Kenton D.
+Juhlin
+
+ 
+
+ 
+
+Both worked nicely
+
+ 
+
+Thanks
+
+From smouksassi at Pharsight.com  Mon Feb  2 19:34:55 2009
+From: smouksassi at Pharsight.com (Samer Mouksassi)
+Date: Mon, 02 Feb 2009 11:34:55 -0800
+Subject: Re: S-PLUS: na.omit on data.frame columns
+In-Reply-To: <9E9563D3FAECF9448B370F988FD6BD153A293695E4@MAILSVR.sjrwmd.com>
+References: <9E9563D3FAECF9448B370F988FD6BD153A293695E4@MAILSVR.sjrwmd.com>
+Message-ID: <5B833E900330354F9FDA984D06F924280563227B@ca-exchange.corp.pharsight.com>
+
+ 
+
+Hello Bill,
+
+ 
+
+Another way would be:
+
+ 
+
+apply(YOURDATAFRAME,2,anyMissing)
+
+ 
+
+this will give you which column contains missing
+values or not.
+
+ 
+
+Bests,
+
+ 
+
+Samer
+
+ 
+
+ 
+
+Samer Mouksassi, Pharm.D.
+
+Senior Associate (PK
+Scientist)
+
+smouksassi at Pharsight.com
+
+Pharsight
+ Corporation
+
+(http://pharsight.com/main.php)
+
+Reporting
+and Analysis Services (RAS)
+
+(http://pharsight.com/services/ras_home.php)
+
+2000 Peel Street, Suite
+  570
+
+Montreal, Quebec
+
+H3A 2W5 CANADA
+
+Land: (514) 789-2184
+
+Fax:  (514)
+789-2192
+
+Cell:  (514) 475-9339
+
+ 
+
+From:
+s-news-owner at lists.biostat.wustl.edu [mailto:s-news-owner at lists.biostat.wustl.edu]
+On Behalf Of Bill Osburn
+
+Sent: 2009-02-02 14:12
+
+To:
+'s-news at lists.biostat.wustl.edu'
+
+Subject: [S] S-PLUS: na.omit on
+data.frame columns
+
+ 
+
+I
+have a data.frame and want to remove all columns where there is an NA. So far I
+can only get na.omit to work on rows.
+
+ 
+
+After
+googling for several hours I still can’t locate any ideas. Has anyone
+done na.omit or something, on columns?
+
+ 
+
+With
+my current data.frame I should go from 16x78 to 16x28
+
+From bosburn at sjrwmd.com  Mon Feb  2 19:39:41 2009
+From: bosburn at sjrwmd.com (Bill Osburn)
+Date: Mon, 02 Feb 2009 14:39:41 -0500
+Subject: Re: S-PLUS: na.omit on data.frame columns
+In-Reply-To: <9E9563D3FAECF9448B370F988FD6BD153A293695E8@MAILSVR.sjrwmd.com>
+References: <9E9563D3FAECF9448B370F988FD6BD153A293695E8@MAILSVR.sjrwmd.com>
+Message-ID: <9E9563D3FAECF9448B370F988FD6BD153A293695E9@MAILSVR.sjrwmd.com>
+
+Two nice answers  - Sorry 4
+
+1)
+
+mydf <- mydf[,which(apply(mydf,2, function(x)
+is.element(NA,x))==F)]
+
+Be aware though that this will transform your data frame into a vector if only
+one column has no NA values.
+
+ 
+
+From: Sebastien Bihorel, PharmD, PhD
+
+ 
+
+2)
+
+If all your data (x) are
+numeric, then try
+
+ 
+
+y <-
+x[,!is.na(colSums(x))]
+
+ 
+
+From: Kenton D.
+Juhlin
+
+ 
+
+3)
+
+new.frame<-as.data.frame(lapply(DF,
+function(x) if(any(is.na(x))) NULL else x)) 
+
+where DF is the
+name of your data.frame.
+
+David L Lorenz
+
+ 
+
+4)
+
+x[, colSums(is.na(x))==0]
+
+ 
+
+and to ensure that you still get a data frame when only
+one column would be left, use
+
+ 
+
+x[, colSums(is.na(x))==0, drop=F]
+
+ 
+
+Andreas Krause
+
+ 
+
+ 
+
+ 
+
+ 
+
+All worked nicely Thanks
+
+ 
+
+From TimHesterberg at gmail.com  Tue Feb  3 06:13:30 2009
+From: TimHesterberg at gmail.com (Tim Hesterberg)
+Date: Mon, 02 Feb 2009 22:13:30 -0800
+Subject: Re: S-PLUS: na.omit on data.frame columns
+In-Reply-To: <9E9563D3FAECF9448B370F988FD6BD153A293695E9@MAILSVR.sjrwmd.com>
+References: <9E9563D3FAECF9448B370F988FD6BD153A293695E8@MAILSVR.sjrwmd.com> <9E9563D3FAECF9448B370F988FD6BD153A293695E9@MAILSVR.sjrwmd.com>
+Message-ID: <uwsc8nj3p.fsf@gmail.com>
+
+To remove columns with missing values, use:
+        mydf <- mydf[!sapply(mydf, anyMissing)]
+
+This has two advantages:
+(1) anyMissing is a fast way to check for missing values.
+    It drops down to C code and checks the bit patterns there.
+(2) Using mydf[j] instead of mydf[,j] avoids problems if you end up with
+    one column.
+
+Tim Hesterberg
+
+>Two nice answers  - Sorry 4
+>1)
+>mydf <- mydf[,which(apply(mydf,2, function(x) is.element(NA,x))==F)]
+>
+>Be aware though that this will transform your data frame into a vector if only 
+>one column has no NA values.
+>
+>From: Sebastien Bihorel, PharmD, PhD
+>
+>2)
+>If all your data (x) are numeric, then try
+>
+>y <- x[,!is.na(colSums(x))]
+>
+>From: Kenton D. Juhlin
+>
+>3)
+>new.frame<-as.data.frame(lapply(DF, function(x) if(any(is.na(x))) NULL else x))
+>
+>where DF is the name of your data.frame.
+>David L Lorenz
+>
+>4)
+>
+>x[, colSums(is.na(x))==0]
+>
+>
+>
+>and to ensure that you still get a data frame when only one column would be 
+>left, use
+>
+>
+>
+>x[, colSums(is.na(x))==0, drop=F]
+>
+>Andreas Krause
+>
+>
+>
+>
+>All worked nicely Thanks
+
+From smouksassi at Pharsight.com  Thu Feb 26 15:58:24 2009
+From: smouksassi at Pharsight.com (Samer Mouksassi)
+Date: Thu, 26 Feb 2009 07:58:24 -0800
+Subject: Re: Confidence interval for transformed variables
+In-Reply-To: <FB9D79B250314E93AB5F689F595A4FA8@prosanos.local>
+References: <BAY126-W42B689E0C29EFD226D321CBCAD0@phx.gbl> <FB9D79B250314E93AB5F689F595A4FA8@prosanos.local>
+Message-ID: <5B833E900330354F9FDA984D06F92428057F20EB@ca-exchange.corp.pharsight.com>
+
+http://en.wikipedia.org/wiki/Error_propagation
+
+http://www.itl.nist.gov/div898/handbook/mpc/section5/mpc55.htm
+
+ 
+
+Please review the link above for more
+information and theory.
+
+ 
+
+You can make S-plus compute partial
+derivatives for you :
+
+ 
+
+e.g:  deriv(~ (W + log(x) / Y 
+),c("W","x","Y"),function(W,x,Y) NULL, formal=T)
+
+ 
+
+Using the Partial derivatives and the variance
+covariance matrix you can apply the formula:
+
+http://www.itl.nist.gov/div898/handbook/mpc/section5/mpc55b.gif
+
+ 
+
+Hope this helps,
+
+Samer
+
+ 
+
+Samer Mouksassi, Pharm.D.
+
+Senior Associate Scientist,
+Reporting and Analysis Services
+
+Pharsight - A Certara™ Company
+
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On
+Behalf Of Alan Hochberg
+
+Sent: 2009-02-26 09:44
+
+To: 'dorothy pang'; 's news'
+
+Subject: Re: [S] Confidence
+interval for transformed variables
+
+ 
+
+Hi Dorothy,
+
+ 
+
+If you want an actual formula for the
+confidence limits, there is no simple answer to this, and it not only depends
+on the shape of the distribution of the three variables, but it also depends
+strongly on the correlations among the variables, i.e. how strongly they are
+related to one another.  Prepare for some Taylor series expansions and a lot of good
+old-fashioned pencil scratching, for which this handy summary on means and
+variances of ratios may come in handy:
+
+ 
+
+http://www.stat.cmu.edu/~hseltman/files/ratio.pdf
+
+ 
+
+Your alternative, assuming you have at
+least several hundred values of each variable, is to make a bootstrap
+estimate.  To get started down that path, Google
+“Bootstrapping” and check out the help for the S-plus
+“bootstrap()” function.
+
+ 
+
+Alan
+
+ 
+
+Alan Hochberg
+
+VP, Research
+
+ProSanos Corporation
+
+225 Market St. Ste. 502, 
+
+Harrisburg, PA 17101
+
+Tel
+717-635-2124 * Fax 717-635-2575
+
+ 
+
+ 
+
+From:
+s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On
+Behalf Of dorothy pang
+
+Sent: Wednesday, February 25, 2009
+10:33 PM
+
+To: s news
+
+Subject: [S] Confidence interval
+for transformed variables
+
+ 
+
+Dear all,
+
+ 
+
+I have obtained 95% CI for variables X, Y and W, and would like to obtain the
+95% CI for the following new variable:
+
+ 
+
+A= W+(In X)/Y
+
+ 
+
+Please may I seek advice on how to go about obtaining the 95% CI for the newly
+derived variable A in Splus?
+
+ 
+
+Thanks in advance.
+
+ 
+
+ 
+
+Warm regards
+
+Dorothy
+
+ 
+
+ 
+
+What can you do with the new Windows Live? Find
+out
+
+From YunSuk.Kim at oregonstate.edu  Fri Feb 27 21:52:19 2009
+From: YunSuk.Kim at oregonstate.edu (Kim, YunSuk)
+Date: Fri, 27 Feb 2009 13:52:19 -0800
+Subject: Partial R2!
+Message-ID: <0D23978FCA08B2499683B67DADE76B01AF256B@SAGE.forestry.oregonstate.edu>
+
+Hi,
+
+ 
+
+Can someone please tell me how to obtain the partial R square from a regression model output?  I saw same questions posted in the past, but have't found replies to those.  :-< 
+
+ 
+
+Thank you!
+
+ 
+
+  
+
+ 
+
+ 
+
+ 
+
+ 
+
+From YunSuk.Kim at oregonstate.edu  Fri Feb 27 22:52:02 2009
+From: YunSuk.Kim at oregonstate.edu (Kim, YunSuk)
+Date: Fri, 27 Feb 2009 14:52:02 -0800
+Subject: Adjusted R square
+Message-ID: <0D23978FCA08B2499683B67DADE76B01AF256E@SAGE.forestry.oregonstate.edu>
+
+Hi all,
+
+ 
+
+Earlier I asked for a method to obtain Partial R square for each variable in a model.  I also need the adjusted R square value from a regression model.  
+
+ 
+
+In the archive, I found someone gave the code;
+
+ 
+model1<-lm(y<-x1+x2)
+test <-(summary(model1))$adj.r.squared
+
+ 
+
+When I tried this, I got NULL.  Has the function changed since last 4 years or so?  If anyone can show me how to obtain adjusted R2 (and Partial R2 too), i really appreciate it.  
+
+ 
+
+Thank you for any help!
+
+ 
+
+yuni
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+From Chris.Barker at cvt.com  Fri Feb 27 22:58:29 2009
+From: Chris.Barker at cvt.com (Barker, Chris)
+Date: Fri, 27 Feb 2009 14:58:29 -0800
+Subject: Re: Adjusted R square
+In-Reply-To: <0D23978FCA08B2499683B67DADE76B01AF256E@SAGE.forestry.oregonstate.edu>
+References: <0D23978FCA08B2499683B67DADE76B01AF256E@SAGE.forestry.oregonstate.edu>
+Message-ID: <0A30918CCACC564BB94202B4DD7C8B2C024F6245@SPOTEXVS02.corp.cvt.int>
+
+ 
+
+You can get the adjusted R^2 from the ols() function in the 
+HMISC library.
+
+ 
+
+ 
+
+From: s-news-owner at lists.biostat.wustl.edu 
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Kim, 
+YunSuk
+Sent: Friday, February 27, 2009 2:52
+To: 
+s-news at lists.biostat.wustl.edu
+Subject: [S] Adjusted R 
+square
+
+Hi all,
+
+ 
+
+Earlier I asked for a method to 
+obtain Partial R square for each variable in a model.  I also need the 
+adjusted R square value from a regression model.  
+
+ 
+
+In the archive, I found someone gave the 
+code;
+
+ 
+model1<-lm(y<-x1+x2)
+test 
+<-(summary(model1))$adj.r.squared
+
+ 
+
+When I tried this, I got NULL.  Has 
+the function changed since last 4 years or so?  If anyone can show me how 
+to obtain adjusted R2 (and Partial R2 too), i really appreciate it.  
+
+ 
+
+Thank you for any help!
+
+ 
+
+yuni
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+

@@ -1,0 +1,1919 @@
+From zag_cirovic at yahoo.com  Thu Aug  2 08:42:02 2007
+From: zag_cirovic at yahoo.com (Ita Cirovic)
+Date: Thu, 02 Aug 2007 01:42:02 -0700
+Subject: extract digits
+Message-ID: <333736.78315.qm@web51408.mail.re2.yahoo.com>
+
+With number 3.25 how do I extract first digit (3) and the decimal (0.25). Thanks.
+
+Ita
+
+      Shape Yahoo! in your own image.  
+Join our Network Research Panel today!
+
+From MichaelCamilleri at branz.co.nz  Thu Aug  2 20:43:46 2007
+From: MichaelCamilleri at branz.co.nz (Michael Camilleri)
+Date: Fri, 03 Aug 2007 08:43:46 +1200
+Subject: Re: extract digits
+In-Reply-To: <333736.78315.qm@web51408.mail.re2.yahoo.com>
+References: <333736.78315.qm@web51408.mail.re2.yahoo.com>
+Message-ID: <A23B682083FD8248ADFE1317C82CBD6702B9B7AF@exchange.branznt.org.nz>
+
+The modulus operator %% will give you the
+decimal part 
+
+ 
+
+x%%1 
+
+ 
+
+Michael
+
+From meteor_shahab at yahoo.com  Fri Aug  3 08:00:04 2007
+From: meteor_shahab at yahoo.com
+Date: Fri, 03 Aug 2007 01:00:04 -0700
+Subject: MLE for truncated distrs
+Message-ID: <153067.11291.qm@web53211.mail.re2.yahoo.com>
+
+Dear All,
+
+I want to fit a class of left-truncated heavy-tailed distributions to my data:
+
+i want to use
+
+    weibull
+
+    log-stable
+
+    GPD
+
+    Gamma
+
+    lognormal
+
+    burr
+
+is there any function or library for estimating the parameters of these distributions using MLE?
+
+ 
+
+THNKS A LOT,
+
+Shahab Einabadi.
+
+ 
+
+Send instant messages to your online friends http://uk.messenger.yahoo.com 
+
+From zag_cirovic at yahoo.com  Fri Aug  3 10:17:37 2007
+From: zag_cirovic at yahoo.com (Ita Cirovic)
+Date: Fri, 03 Aug 2007 03:17:37 -0700
+Subject: count occurrences
+Message-ID: <471600.91331.qm@web51404.mail.re2.yahoo.com>
+
+Given two data sets I would like to count the occurrences of one dependent on the other. For example, 
+
+upb is defined as follows 
+
+                P4         P5 
+ [1,] -0.0406703026 0.02952575
+ [2,]  0.0008282428 0.06102947
+ [3,]  0.0098109756 0.08774035
+ [4,]  0.0183787962 0.11517816
+ [5,]  0.0275845430 0.14899661
+ [6,]  0.0390078215 0.19359835
+ [7,]  0.0541145248 0.26253533
+ [8,]  0.0772375923 0.37398115
+ [9,]  0.1228048769 0.58875809
+[10,]  0.9980051666 7.41044290
+
+then I have a data set which consists of the original values of the variable sP4 and P5
+ with the number of observations of around 11000. What I would like to do is to count how many observations of P4 are smaller than opb[1,1] and then for upb[2,1] and so on. Also this I would like to do for the other variable P5. The results would be stored in another matrix say obs with dim(obs) = 10x2.
+
+I have been trying to do this using for loops and if statements, but was wondering whether there was an easier way, for example some S-PLUS function that would do count given the condition. Thanks.
+
+      Pinpoint customers who are looking for what you sell. 
+
+From sbackwards at comcast.net  Fri Aug  3 17:35:10 2007
+From: sbackwards at comcast.net (SD Chasalow)
+Date: Fri, 03 Aug 2007 17:35:10 +0000
+Subject: Re: count occurrences
+Message-ID: <080320071735.24145.46B3674E00047BBA00005E5122070216339C0B9D0E99050C0E0D9C@comcast.net>
+
+Something like this should work:
+
+Suppose dim(x) is c(11000, 2).
+
+d <- dim(x)
+n <- d[1]
+p <- d[2]
+du <- dim(upb)
+x <- x[rep(seq(length = n), rep(du[1], n)), , drop = FALSE] 
+upb <- upb[rep(seq(length = du[1]), n), , drop = FALSE]
+cmat <- t(x < upb)
+dim(cmat) <- c(du[2], du[1], n)
+out <- t(rowSums(cmat, na.rm = TRUE, dims = 2))
+out
+
+The concept: expand x and upb so that an element-by-element comparison of the 
+two expanded matrices gives you every comparison you wish to make.  Do the 
+comparison.  Then modify the dimensions of the resulting comparison matrix, 
+"cmat", so that you easily can sum up the comparisons over the desired 
+dimensions.  In this case, I transpose, and then transform into a 3D array.  
+This allows me to use a single call to rowSums to sum up the comparisons for 
+every element of upb.
+
+To follow this kind of thing, I find it really helps to (a) draw lots of 
+pictures of the matrices and arrays; and (b) carefully inspect all the 
+intermediate objects, with test data for which you easily can see what the 
+answers should be.
+
+Cheers,
+Scott
+
+==================================
+Scott D. Chasalow
+Associate Director
+Statistical Genetics and Biomarkers
+Bristol-Myers Squibb Company
+
+Email: scott.chasalow <AT> bms.com
+================================== 
+
+Ita Cirovic wrote:
+> Given two data sets I would like to count the occurrences of one 
+> dependent on the other. For example,
+> 
+> upb is defined as follows
+> 
+>                 P4         P5
+>  [1,] -0.0406703026 0.02952575
+>  [2,]  0.0008282428 0.06102947
+>  [3,]  0.0098109756 0.08774035
+>  [4,]  0.0183787962 0.11517816
+>  [5,]  0.0275845430 0.14899661
+>  [6,]  0.0390078215 0.19359835
+>  [7,]  0.0541145248 0.26253533
+>  [8,]  0.0772375923 0.37398115
+>  [9,]  0.1228048769 0.58875809
+> [10,]  0.9980051666 7.41044290
+> 
+> then I have a data set which consists of the original values of the 
+> variable sP4 and P5 with the number of observations of around 11000. 
+> What I would like to do is to count how many observations of P4 are 
+> smaller than opb[1,1] and then for upb[2,1] and so on. Also this I would 
+> like to do for the other variable P5. The results would be stored in 
+> another matrix say obs with dim(obs) = 10x2.
+> 
+> I have been trying to do this using for loops and if statements, but was 
+> wondering whether there was an easier way, for example some S-PLUS 
+> function that would do count given the condition. Thanks.
+
+From zag_cirovic at yahoo.com  Fri Aug  3 18:04:59 2007
+From: zag_cirovic at yahoo.com (Ita Cirovic)
+Date: Fri, 03 Aug 2007 11:04:59 -0700
+Subject: Re: count occurrences
+Message-ID: <796335.53404.qm@web51402.mail.re2.yahoo.com>
+
+Generally this works half way as it adds up the rows , i.e. row+1 is the summation of the previous rows. I will try to remedy this and see if it will work then. Thanks for the input.
+
+> out
+       [,1]  [,2] 
+ [1,]  1106  1107
+ [2,]  2213  2213
+ [3,]  3320  3320
+ [4,]  4426  4426
+ [5,]  5532  5532
+ [6,]  6639  6639
+ [7,]  7745  7745
+ [8,]  8852  8852
+ [9,]  9958  9958
+[10,] 11064 11064
+
+and the row summations should be of equal (+/- 1) number of observations, so the first row is ok. The reason for this is the upb matrix is
+ structured in that way.Changing the upb matrix will of course change the out matrix but right now I would like to test with this.
+
+Ita
+
+----- Original Message ----
+From: SD Chasalow <sbackwards at comcast.net>
+To: S-NEWS <s-news at lists.biostat.wustl.edu>
+Sent: Friday, August 3, 2007 7:35:10 PM
+Subject: Re: [S] count occurrences
+
+Something like this should work:
+
+Suppose dim(x) is c(11000, 2).
+
+d <- dim(x)
+n <- d[1]
+p <- d[2]
+du <- dim(upb)
+x <- x[rep(seq(length = n), rep(du[1], n)), , drop = FALSE] 
+upb <- upb[rep(seq(length = du[1]), n), , drop = FALSE]
+cmat <- t(x < upb)
+dim(cmat) <- c(du[2], du[1], n)
+out <- t(rowSums(cmat, na.rm = TRUE, dims = 2))
+out
+
+The concept: expand x and upb so that an element-by-element comparison of the two expanded matrices
+ gives you every comparison you wish to make.  Do the comparison.  Then modify the dimensions of the resulting comparison matrix, "cmat", so that you easily can sum up the comparisons over the desired dimensions.  In this case, I transpose, and then transform into a 3D array.  This allows me to use a single call to rowSums to sum up the comparisons for every element of upb.
+
+To follow this kind of thing, I find it really helps to (a) draw lots of pictures of the matrices and arrays; and (b) carefully inspect all the intermediate objects, with test data for which you easily can see what the answers should be.
+
+Cheers,
+Scott
+
+==================================
+Scott D. Chasalow
+Associate Director
+Statistical Genetics and Biomarkers
+Bristol-Myers Squibb Company
+
+Email: scott.chasalow <AT> bms.com
+================================== 
+
+Ita Cirovic wrote:
+> Given
+ two data sets I would like to count the occurrences of one 
+> dependent on the other. For example,
+> 
+> upb is defined as follows
+> 
+>                 P4         P5
+>  [1,] -0.0406703026 0.02952575
+>  [2,]  0.0008282428 0.06102947
+>  [3,]  0.0098109756 0.08774035
+>  [4,]  0.0183787962 0.11517816
+>  [5,]  0.0275845430 0.14899661
+>  [6,]  0.0390078215 0.19359835
+>  [7,]  0.0541145248 0.26253533
+>  [8,]  0.0772375923 0.37398115
+>  [9,]  0.1228048769 0.58875809
+> [10,]  0.9980051666 7.41044290
+> 
+> then I have a data set which consists of the original values of
+ the 
+> variable sP4 and P5 with the number of observations of around 11000. 
+> What I would like to do is to count how many observations of P4 are 
+> smaller than opb[1,1] and then for upb[2,1] and so on. Also this I would 
+> like to do for the other variable P5. The results would be stored in 
+> another matrix say obs with dim(obs) = 10x2.
+> 
+> I have been trying to do this using for loops and if statements, but was 
+> wondering whether there was an easier way, for example some S-PLUS 
+> function that would do count given the condition. Thanks.
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+      Fussy? Opinionated? Impossible to please? Perfect.  Join Yahoo!'s user panel and lay it on us.
+
+From dataanalytics at earthlink.net  Mon Aug  6 01:15:13 2007
+From: dataanalytics at earthlink.net (Walter R. Paczkowski)
+Date: Sun, 05 Aug 2007 21:15:13 -0400
+Subject: Sample Size and Logit Models
+Message-ID: <E1IHr8m-0008Ag-5I@elasmtp-spurfowl.atl.sa.earthlink.net>
+
+Hi,
+
+I'm hoping someone has some insight about sample size and logit
+estimation that could help me.  I inherited a logit model from a
+client in the direct marketing area.  The previous consultant used
+approximately 143,800 observations in the training data set, of which
+only 50 (0.03%) were the target ( = 1) value for the dependent
+variable.  The literature I could find gives very little guidance on
+sample sizes (Hosmer & Lemeshow have some material, but they
+basically say that little has been done).  Does anyone know of some
+literature or even rules-of-thumb about sample sizes and/or ratio of
+target to non-target values of the dependent variable?  The use of
+143,800 observations is excessive.  Does this do anything to the
+significance of the estimates (e.g., am I always guaranteed very small
+p-values?)?  Is oversampling of the target value the key and if so,
+how do I calculate weights for the estimations?  
+
+Any guidance or suggestions in this area are definitely welcome.
+
+Walt Paczkowski
+
+_________________________________
+
+Walter R. Paczkowski, Ph.D.
+
+Data Analytics Corp.
+
+44 Hamilton Lane
+
+Plainsboro, NJ  08536
+
+(V) 609-936-8999
+
+(F) 609-936-3733
+
+From o_sanni at yahoo.com  Mon Aug  6 15:00:33 2007
+From: o_sanni at yahoo.com (Olanrewaju Sanni)
+Date: Mon, 06 Aug 2007 08:00:33 -0700
+Subject: Candlestick plot
+Message-ID: <52899.24244.qm@web62309.mail.re1.yahoo.com>
+
+Hi subscribers,
+  Can any tell me how to plot  candlestick chart with s-plus finmetrics.
+   
+  Lanre Sanni
+   
+ 
+
+      Park yourself in front of a world of choices in alternative vehicles.
+Visit the Yahoo! Auto Green Center.
+
+From gyollin at insightful.com  Mon Aug  6 17:35:15 2007
+From: gyollin at insightful.com (Guy Yollin)
+Date: Mon, 06 Aug 2007 10:35:15 -0700
+Subject: Re: Candlestick plot
+In-Reply-To: <52899.24244.qm@web62309.mail.re1.yahoo.com>
+References: <52899.24244.qm@web62309.mail.re1.yahoo.com>
+Message-ID: <96C6A984FE81AF4492020E9281CE67A8C4B6BB@sewinexch00.insightful.com>
+
+Given a time series object named price.ts with columns of "Open",
+"High", "Low", "Close", "Volume"
+
+ 
+
+The following line should produce a trellis plot with candlesticks
+in the upper panel and volume bars in the lower panel:
+
+ 
+
+trellisPlot(price.ts[,"Volume"],price.ts[,1:4],scales=list(y=list(relation="free")),
+
+      plot.type=c("stackbar","hloc"),type="c",trellis.args=(list(lwd=2,col=4,line.col=2,width=0.03)))
+
+ 
+
+The width may need to be adjusted depending on density of the
+data; the above setting work well for about 4 months of daily data.
+
+ 
+
+ 
+
+Best,
+
+ 
+
+-- Guy
+
+ 
+
+ 
+
+ 
+
+Guy Yollin
+
+Director of Financial Engineering
+
+Insightful Corporation
+
+gyollin at insightful.com
+
+ 
+
+ 
+
+ 
+
+ 
+
+From:
+s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On
+Behalf Of Olanrewaju Sanni
+
+Sent: Monday, August 06, 2007 8:01
+AM
+
+To: s-news at wubios.wustl.edu
+
+Subject: [S] Candlestick plot
+
+ 
+
+Hi subscribers,
+
+Can any tell me how to plot  candlestick chart with
+s-plus finmetrics.
+
+ 
+
+Lanre Sanni
+
+ 
+
+  
+
+Park yourself in front of a world of choices in alternative vehicles.
+
+Visit
+the Yahoo! Auto Green Center.
+
+From sbackwards at comcast.net  Mon Aug  6 17:59:51 2007
+From: sbackwards at comcast.net (SD Chasalow)
+Date: Mon, 06 Aug 2007 17:59:51 +0000
+Subject: Re: count occurrences
+Message-ID: <080620071759.21288.46B761970007C6EF0000532822028887449C0B9D0E99050C0E0D9C@comcast.net>
+
+I believe "adding up the rows", as you say, is exactly what you requested in 
+your original email.  I usually find it easier to solve a problem as described 
+than to solve the problem someone meant to describe but didn't.  Of course, had 
+this been a live consulting session I would have tried to make sure that the 
+real problem and the problem as described were the same thing.
+
+By the way, in the output below, row + 1 is NOT "the summation of the previous 
+rows".  Rather, it looks like the value in row i is the value in row i - 1 plus 
+either 1106 or 1107.
+
+With my code, out[i, j] is the number of elements in x[, j] that are less than 
+upb[i, j].  I can only guess what it is you really would like.  If, for 
+example, you really want the counts of values in x that fall in bins with 
+boundaries given by the elements of upb, that would not require a big change to 
+the code.  You would want to require that the values in each column of upb are 
+sorted.  Then, you could do something like this:
+
+d <- dim(x)
+n <- d[1]
+du <- dim(upb)
+upb.low <- rbind(min(upb) - 1, upb[-du[1], , drop = FALSE])
+x <- x[rep(seq(length = n), rep(du[1], n)), , drop = FALSE]
+upb <- upb[rep(seq(length = du[1]), n), , drop = FALSE]
+upb.low <- upb.low[rep(seq(length = du[1]), n), , drop = FALSE]
+cmat <- t(x < upb & x >= upb.low)
+dim(cmat) <- c(du[2], du[1], n)
+out <- t(rowSums(cmat, na.rm = TRUE, dims = 2))
+out
+
+Of course, if I have not chosen the inequality signs used to create cmat in 
+quite the way you would like, that's easy enough to change.  This just affects 
+what you want to happen when an element of x is on a bin boundary.
+
+Cheers,
+Scott 
+ 
+ -------------- Original message ----------------------
+From: Ita Cirovic <zag_cirovic at yahoo.com>
+> Generally this works half way as it adds up the rows , i.e. row+1 is the 
+> summation of the previous rows. I will try to remedy this and see if it will 
+> work then. Thanks for the input.
+> 
+> > out
+>        [,1]  [,2] 
+>  [1,]  1106  1107
+>  [2,]  2213  2213
+>  [3,]  3320  3320
+>  [4,]  4426  4426
+>  [5,]  5532  5532
+>  [6,]  6639  6639
+>  [7,]  7745  7745
+>  [8,]  8852  8852
+>  [9,]  9958  9958
+> [10,] 11064 11064
+> 
+> and the row summations should be of equal (+/- 1) number of observations, so 
+> the 
+> first row is ok. The reason for this is the upb matrix is structured in that 
+> way.Changing the upb matrix will of course change the out matrix but right 
+> now I 
+> would like to test with this.
+> 
+> Ita
+> 
+> ----- Original Message ----
+> From: SD Chasalow <sbackwards at comcast.net>
+> To: S-NEWS <s-news at lists.biostat.wustl.edu>
+> Sent: Friday, August 3, 2007 7:35:10 PM
+> Subject: Re: [S] count occurrences
+> 
+> Something like this should work:
+> 
+> Suppose dim(x) is c(11000, 2).
+> 
+> d <- dim(x)
+> n <- d[1]
+> p <- d[2]
+> du <- dim(upb)
+> x <- x[rep(seq(length = n), rep(du[1], n)), , drop = FALSE] 
+> upb <- upb[rep(seq(length = du[1]), n), , drop = FALSE]
+> cmat <- t(x < upb)
+> dim(cmat) <- c(du[2], du[1], n)
+> out <- t(rowSums(cmat, na.rm = TRUE, dims = 2))
+> out
+> 
+> The concept: expand x and upb so that an element-by-element comparison of the 
+> two expanded matrices gives you every comparison you wish to make.  Do the 
+> comparison.  Then modify the dimensions of the resulting comparison matrix, 
+> "cmat", so that you easily can sum up the comparisons over the desired 
+> dimensions.  In this case, I transpose, and then transform into a 3D array.  
+> This allows me to use a single call to rowSums to sum up the comparisons for 
+> every element of upb.
+> 
+> To follow this kind of thing, I find it really helps to (a) draw lots of 
+> pictures of the matrices and arrays; and (b) carefully inspect all the 
+> intermediate objects, with test data for which you easily can see what the 
+> answers should be.
+> 
+> Cheers,
+> Scott
+> 
+> ==================================
+> Scott D. Chasalow
+> Associate Director
+> Statistical Genetics and Biomarkers
+> Bristol-Myers Squibb Company
+> 
+> Email: scott.chasalow <AT> bms.com
+> ================================== 
+> 
+> Ita Cirovic wrote:
+> > Given two data sets I would like to count the occurrences of one 
+> > dependent on the other. For example,
+> > 
+> > upb is defined as follows
+> > 
+> >                 P4         P5
+> >  [1,] -0.0406703026 0.02952575
+> >  [2,]  0.0008282428 0.06102947
+> >  [3,]  0.0098109756 0.08774035
+> >  [4,]  0.0183787962 0.11517816
+> >  [5,]  0.0275845430 0.14899661
+> >  [6,]  0.0390078215 0.19359835
+> >  [7,]  0.0541145248 0.26253533
+> >  [8,]  0.0772375923 0.37398115
+> >  [9,]  0.1228048769 0.58875809
+> > [10,]  0.9980051666 7.41044290
+> > 
+> > then I have a data set which consists of the original values of the 
+> > variable sP4 and P5 with the number of observations of around 11000. 
+> > What I would like to do is to count how many observations of P4 are 
+> > smaller than opb[1,1] and then for upb[2,1] and so on. Also this I would 
+> > like to do for the other variable P5. The results would be stored in 
+> > another matrix say obs with dim(obs) = 10x2.
+> > 
+> > I have been trying to do this using for loops and if statements, but was 
+> > wondering whether there was an easier way, for example some S-PLUS 
+> > function that would do count given the condition. Thanks.
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+
+> --- Begin Message ---
+>
+>
+>
+> To:
+>
+> SD Chasalow <sbackwards at comcast.net>, S-NEWS <s-news at lists.biostat.wustl.edu>
+>
+>
+>
+>
+>
+> Subject:
+>
+> Re: [S] count occurrences
+>
+>
+>
+>
+>
+> From:
+>
+> Ita Cirovic <zag_cirovic at yahoo.com>
+>
+>
+>
+>
+>
+> Date:
+>
+> Fri, 3 Aug 2007 18:05:00 +0000
+>
+>
+>
+>
+> Generally this works half way as it adds up the rows , i.e. row+1 is the summation of the previous rows. I will try to remedy this and see if it will work then. Thanks for the input.
+>
+> > out
+>        [,1]  [,2]
+>  [1,]  1106  1107
+>  [2,]  2213  2213
+>  [3,]  3320  3320
+>  [4,]  4426  4426
+>  [5,]  5532  5532
+>  [6,]  6639  6639
+>  [7,]  7745  7745
+>  [8,]  8852  8852
+>  [9,]  9958  9958
+> [10,] 11064 11064
+>
+> and the row summations should be of equal (+/- 1) number of observations, so the first row is ok. The reason for this is the upb matrix is
+>  structured in that way.Changing the upb matrix will of course change the out matrix but right now I would like to test with this.
+>
+> Ita
+>
+> ----- Original Message ----
+> From: SD Chasalow <sbackwards at comcast.net>
+> To: S-NEWS <s-news at lists.biostat.wustl.edu>
+> Sent: Friday, August 3, 2007 7:35:10 PM
+> Subject: Re: [S] count occurrences
+>
+> Something like this should work:
+>
+> Suppose dim(x) is c(11000, 2).
+>
+> d <- dim(x)
+> n <- d[1]
+> p <- d[2]
+> du <- dim(upb)
+> x <- x[rep(seq(length = n), rep(du[1], n)), , drop = FALSE]
+> upb <- upb[rep(seq(length = du[1]), n), , drop = FALSE]
+> cmat <- t(x < upb)
+> dim(cmat) <- c(du[2], du[1], n)
+> out <- t(rowSums(cmat, na.rm = TRUE, dims = 2))
+> out
+>
+> The concept: expand x and upb so that an element-by-element comparison of the two expanded matrices
+>  gives you every comparison you wish to make.  Do the comparison.  Then modify the dimensions of the resulting comparison matrix, "cmat", so that you easily can sum up the comparisons over the desired dimensions.  In this case, I transpose, and then transform into a 3D array.  This allows me to use a single call to rowSums to sum up the comparisons for every element of upb.
+>
+> To follow this kind of thing, I find it really helps to (a) draw lots of pictures of the matrices and arrays; and (b) carefully inspect all the intermediate objects, with test data for which you easily can see what the answers should be.
+>
+> Cheers,
+> Scott
+>
+> ==================================
+> Scott D. Chasalow
+> Associate Director
+> Statistical Genetics and Biomarkers
+> Bristol-Myers Squibb Company
+>
+> Email: scott.chasalow <AT> bms.com
+> ==================================
+>
+> Ita Cirovic wrote:
+> > Given
+>  two data sets I would like to count the occurrences of one
+> > dependent on the other. For example,
+> >
+> > upb is defined as follows
+> >
+> >                 P4         P5
+> >  [1,] -0.0406703026 0.02952575
+> >  [2,]  0.0008282428 0.06102947
+> >  [3,]  0.0098109756 0.08774035
+> >  [4,]  0.0183787962 0.11517816
+> >  [5,]  0.0275845430 0.14899661
+> >  [6,]  0.0390078215 0.19359835
+> >  [7,]  0.0541145248 0.26253533
+> >  [8,]  0.0772375923 0.37398115
+> >  [9,]  0.1228048769 0.58875809
+> > [10,]  0.9980051666 7.41044290
+> >
+> > then I have a data set which consists of the original values of
+>  the
+> > variable sP4 and P5 with the number of observations of around 11000.
+> > What I would like to do is to count how many observations of P4 are
+> > smaller than opb[1,1] and then for upb[2,1] and so on. Also this I would
+> > like to do for the other variable P5. The results would be stored in
+> > another matrix say obs with dim(obs) = 10x2.
+> >
+> > I have been trying to do this using for loops and if statements, but was
+> > wondering whether there was an easier way, for example some S-PLUS
+> > function that would do count given the condition. Thanks.
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+>
+>
+>
+>
+>
+>
+>
+>       Fussy? Opinionated? Impossible to please? Perfect.  Join Yahoo!'s user panel and lay it on us.
+>
+> --- End Message ---
+
+From Kendra.B.Mhoon at uth.tmc.edu  Mon Aug  6 21:12:53 2007
+From: Kendra.B.Mhoon at uth.tmc.edu (Mhoon, Kendra B)
+Date: Mon, 06 Aug 2007 16:12:53 -0500
+Subject: Nelder-Mead Help
+Message-ID: <8A97626D5B6C6B44AB924057310F30B0BB428A@UTHEVS5.mail.uthouston.edu>
+
+I would like to perfrom the Nelder-Mead algorithm therefore, I am trying to use 
+the function optim() from the MASS library.  Specifically, I would like to 
+place a lower boundary constraint on my parameters?  Does anyone know if this 
+is possible with this function? 
+ 
+Thank you, 
+Kendra Mhoon
+
+From Neal.Alexander at lshtm.ac.uk  Tue Aug  7 23:40:08 2007
+From: Neal.Alexander at lshtm.ac.uk (Neal Alexander)
+Date: Wed, 08 Aug 2007 00:40:08 +0100
+Subject: Re: Sample Size and Logit Models
+In-Reply-To: <E1IHr8m-0008Ag-5I@elasmtp-spurfowl.atl.sa.earthlink.net>
+References: <E1IHr8m-0008Ag-5I@elasmtp-spurfowl.atl.sa.earthlink.net>
+Message-ID: <46B910E8020000900003FF87@smtp-a.lshtm.ac.uk>
+
+ 
+
+Walt; you might be interested in the following reference:
+
+ 
+
+   Hsieh FY, Bloch DA, Larsen MD. A simple method of sample size calculation for linear and logistic regression. Statistics in Medicine. 1998;17:1623-34.
+
+ 
+
+However, now you have the data, I think the information about the accuracy which the sample size can yield is given by the confidence interval of the analysis (rather than doing post hoc sample size calculations), see eg:
+
+ 
+
+   Smith AH, Bates MN. Confidence limit analyses should replace power calculations in the interpretation of epidemiologic studies. Epidemiology. 1992;3(5):449-52.
+
+ 
+
+Neal
+
+ 
+
+Neal Alexander        http://www.lshtm.ac.uk/ideu/staff/nalexander.html
+
+>>> "Walter R. Paczkowski" <dataanalytics at earthlink.net> 06/08/2007 02:15:13 >>>
+
+Hi,
+
+I'm hoping someone has some insight about sample size and logit estimation that could help me.  I inherited a logit model from a client in the direct marketing area.  The previous consultant used approximately 143,800 observations in the training data set, of which only 50 (0.03%) were the target ( = 1) value for the dependent variable.  The literature I could find gives very little guidance on sample sizes (Hosmer & Lemeshow have some material, but they basically say that little has been done).  Does anyone know of some literature or even rules-of-thumb about sample sizes and/or ratio of target to non-target values of the dependent variable?  The use of 143,800 observations is excessive.  Does this do anything to the significance of the estimates (e.g., am I always guaranteed very small p-values?)?  Is oversampling of the target value the key and if so, how do I calculate weights for the estimation
+ s?  
+
+Any guidance or suggestions in this area are definitely welcome.
+
+Walt Paczkowski
+
+_________________________________
+
+Walter R. Paczkowski, Ph.D.
+Data Analytics Corp.
+44 Hamilton Lane
+Plainsboro, NJ  08536
+(V) 609-936-8999
+(F) 609-936-3733
+
+From xao_ping at yahoo.com  Fri Aug 10 11:51:06 2007
+From: xao_ping at yahoo.com (Xao Ping)
+Date: Fri, 10 Aug 2007 04:51:06 -0700
+Subject: generalized gamma generator
+Message-ID: <307439.9408.qm@web56510.mail.re3.yahoo.com>
+
+Dear All:
+   
+  Is there somewhere in the S-PLUS world the r-, p-, d- and q- functions for generalized gamma distribution functions?
+   
+  Thanks
+   
+  Xao Ping
+  R&R Pharmakinetics
+  Taiwan
+ 
+      Take the Internet to Go: Yahoo!Go puts the Internet in your pocket: mail, news, photos & more. 
+
+From sichong.chen at postgrad.manchester.ac.uk  Mon Aug 13 15:09:54 2007
+From: sichong.chen at postgrad.manchester.ac.uk (Chen, Sichong)
+Date: Mon, 13 Aug 2007 08:09:54 -0700
+Subject: lme and glme
+Message-ID: <20070813000915.61469136D19@mailgate.biostat.wustl.edu>
+
+Dear user
+
+I want to ask a very basic question. Could someone tell me the difference
+between the function of lme and glme in CorrelatedData library? The glme
+seems to model the mixture effect models with correlated grouped data. lme
+is not able to do that and it seems glme is more flexible. Does this mean
+glme can replace lme in all the situations? If so why do we need lme?
+
+A similar question is regarding lm and glm.
+
+Best regards,
+
+Sichong Chen
+PhD of Finance
+Manchester Business School
+University of Manchester
+Oxford Road
+Manchester
+United Kingdom
+M13 9PL 
+Mobile: 07799 624925
+ 
+
+From gerald.jean at dgag.ca  Mon Aug 13 05:00:56 2007
+From: gerald.jean at dgag.ca
+Date: Mon, 13 Aug 2007 01:00:56 -0400
+Subject: =?utf-8?q?G=C3=A9rald_Jean/Assurances/SPGDAG/Desjardins_est_absent=2E?=
+Message-ID: <OF7E0EC0F2.4ADC8AEE-ON85257336.001B8D53-85257336.001B8D51@spgdag.ca>
+
+Je serai absent(e) du  2007/08/11 au 2007/08/20.
+
+Je serai absent du bureau jusqu'au lundi 20 août 2007.  Il me fera plaisir
+de répondre à votre message à mon retour.
+
+Gérald Jean
+
+From ribeirob at gmail.com  Tue Aug 14 01:03:21 2007
+From: ribeirob at gmail.com (Bernardo Ribeiro)
+Date: Mon, 13 Aug 2007 22:03:21 -0300
+Subject: Problems with SsfFit
+Message-ID: <552502e70708131803l6788ed98o6ca2b264d476745c@mail.gmail.com>
+
+Hey all,
+
+I'm working with a Term Structure model ans modelling it as part of a State Space form.
+I modelled the State Space form but kee gettin this error whe I run SSfFit:
+
+> ans.vasicek = SsfFit(start, 
+fama.bliss, genvasicek.ssf, tau = tau, freq = 1/
+    12, trace = T, lower = l, upper = u, control = nlminb.control(abs.tol
+     = 1e-006,  , rel.tol = 1e-006, x.tol = 1e-006, eval.max = 1000, 
+    iter.max = 500))
+
+Iteration  0 : objective =  1389460 
+Iteration  1 : objective =  11434.01 
+Iteration  2 : objective =  2453.152 
+Iteration  3 : objective =  6401.252 
+Iteration  4 : objective =  -75.86472 
+Iteration  5 : objective =  1e+010 
+
+.....
+Iteration  135 : objective =  -3807.041 
+Iteration  136 : objective =  -3807.044 
+Iteration  137 : objective =  -3807.051 
+Iteration  138 : objective =  -3818.088 
+Problem in .C("S_KalmanFil",: subroutine S_KalmanFil: Missing values in argument 5 
+
+Use traceback() to see the call stack
+
+When I call traceback() I get the following:
+
+> traceback()
+17: eval(action, sys.parent())
+16: doErrorAction("Problem in .C(\"S_KalmanFil\",: subroutine S_KalmanFil: Missing values in argument 5",
+
+15: .C("S_KalmanFil",
+14: .C("S_KalmanFil",
+13: KalmanFil(mY, ssf, ikf = ikf, task = "KFLIK")
+12: SsfLoglike(mY, ssf.mod, ikf = ikf)
+11: f(c(0., 0.449490474962204, 0.149007241071586
+, 0.0121000776637863, 
+10: eval(this.call, local = sys.parent(1.))
+9: do.call("f", c(list(new$x), old$aux[names(f)[ - c(1, length(f))]]))
+8: nlminb.0(temp, p, liv, lv, objective, bounds, scale)
+7: nlminb.trace
+(parm, loglike.fun, mY = data, FUN = FUN, conc = conc, scale = 
+6: SsfFit(start, fama.bliss, genvasicek.ssf, tau = tau, freq = 1/12, trace = T,
+5: eval(i, local)
+4: source(auto.print = auto.print, exprs = substitute(
+exprs.literal))
+3: script.run(exprs.literal = {
+2: eval(_expression_(script.run(exprs.literal = {
+1: 
+Message: Problem in .C("S_KalmanFil",: subroutine S_KalmanFil: Missing values in argument 5 
+
+Doen anyone know what is going on?
+
+Thanks a lot,
+
+Bernardo
+
+From santosh at igidr.ac.in  Tue Aug 14 09:53:38 2007
+From: santosh at igidr.ac.in (santosh)
+Date: Tue, 14 Aug 2007 15:23:38 +0530
+Subject: NuOpt and Loop
+In-Reply-To: <552502e70708131803l6788ed98o6ca2b264d476745c@mail.gmail.com>
+References: <552502e70708131803l6788ed98o6ca2b264d476745c@mail.gmail.com>
+Message-ID: <32634196.1187085218830.JavaMail.root@webmail.igidr.ac.in>
+
+Hi,
+
+I have done more than 1000 portfolio optimisation by employing NuOpt.
+It takes lots of time. I have written function which takes expected return and covariance matrix and do the mean variance optmisation. 
+
+I have used apply function, but in vain.
+
+Is there any idea how to speed up 1000 optimisation?
+
+Thanks a lot.
+regards
+Santosh  
+  
+
+From DougB at psbc.org  Tue Aug 14 16:10:14 2007
+From: DougB at psbc.org (Doug Bolgiano)
+Date: Tue, 14 Aug 2007 09:10:14 -0700
+Subject: Problem with importData function
+Message-ID: <D177B3E9AC59494BB99CB3DB025402C601B8D742@Central-EX1.PSBC.ORG>
+
+I’m having a problem importing worksheets from an
+Excel file via the importData function.  The context is that we receive two
+Excel files from a coordinating center on a monthly basis.  Each file has
+4 worksheets (pages) with the same number of rows (say, n1 or n2) and varying
+numbers of columns per page.  The format does not vary from month to month.
+ I have written a function that will import the data from one of the Excel
+files, given a file path, file name and the number of rows of data.  It
+uses four calls to the importData function, one for each page (worksheet) in
+the file.  The import of the first file (4 pages) completes successfully
+and the function returns a data frame that has the variables (columns) from all
+4 pages.  
+
+ 
+
+When the function starts to import the first page from the
+second file it generates an error message:
+
+ 
+
+            Problem:
+Invalid random number seed: numbers must be between 0 and 63 .  Use
+traceback() to see the call stack . 
+
+ 
+
+Traceback() shows:
+
+ 
+
+> traceback()
+
+7: eval(action, sys.parent())
+
+6: doErrorAction("Problem: Invalid random number seed:
+numbers must be b
+
+etween 0 and 63",
+
+5: openOrImportData(file, type, rowsToRead, startCol,
+endCol, colNameRow
+
+,
+
+4: importData(file = paste(PathNamestrng, FileName2strng,
+sep = ""), 
+
+3: getCBBdata.both("S:\\Operations
+Div\\CordBlood\\Transplant Outcome Da
+
+ta\\April 2007",
+
+2: eval(_expression_(test2.1 <- getCBBdata.both(
+
+1: NULL
+
+Message: Problem: Invalid random number seed: numbers must
+be between 0 
+
+and 63.  
+
+ 
+
+Immediately before the error message is generated I print the
+value of ‘.Random.seed’  :
+
+ 
+
+            [1]
+17 30 41 26 34  3  4 20 61 21 13  1 .  
+
+ 
+
+If I rerun the function after receiving the above error
+message, it does not complete the import of the first file but immediately
+generates the above error message.  It appears that ‘.Random.seed’
+is being augmented improperly but manually setting the ‘.Random.seed’
+value with ‘set.seed’ does not solve the problem.  I have
+included the function script below.
+
+ 
+
+Can someone shed some light on what is going on and how to
+fix the problem?  
+
+ 
+
+Thanks,
+
+ 
+
+Doug Bolgiano 
+
+Biostatistician
+
+Puget
+ Sound Blood Center
+
+Seattle, WA   98104 
+
+getCBBdata.both <- function(PathNamestrng,
+FileName1strng, lastRow1, FileName2strng, lastRow2)
+
+{
+
+curpg1 <-
+importData(file=paste(PathNamestrng, FileName1strng,sep=""), startCol
+= 1, endCol = 17, startRow = 4, 
+
+     endRow =
+lastRow1,  pageNumber = 1)
+
+pg1dim <- dim(curpg1)
+
+pg1add <- curpg1[,1:pg1dim[2]]
+
+curpg2 <-
+importData(file=paste(PathNamestrng, FileName1strng,sep=""), startCol
+= 1, endCol = 15, startRow = 4, 
+
+     endRow =
+lastRow1,  pageNumber = 2)
+
+pg2dim <- dim(curpg2)
+
+pg2add <- curpg2[,5:pg2dim[2]]
+
+##curpgs1.2 <- data.frame(pg1add, pg2add)
+
+curpg3 <-
+importData(file=paste(PathNamestrng, FileName1strng,sep=""), startCol
+= 1, endCol = 21, startRow = 4, 
+
+     endRow =
+lastRow1,  pageNumber = 3)
+
+pg3dim <- dim(curpg3)
+
+pg3add <- curpg3[,5:pg3dim[2]]
+
+##curpgs1.3 <- data.frame(curpgs1.2, pg3add)
+
+curpg4 <-
+importData(file=paste(PathNamestrng, FileName1strng,sep=""), startCol
+= 1, endCol = 17, startRow = 4, 
+
+     endRow =
+lastRow1,  pageNumber = 4)
+
+pg4dim <- dim(curpg4)
+
+pg4add <- curpg4[,5:pg4dim[2]]
+
+##curpgs1.4 <-
+data.frame(pg1add,pg2add,pg3add, pg4add)
+
+##return(curpgs1.4)
+
+print("Completed import of first
+file.")
+
+print(.Random.seed)
+
+set.seed()
+
+print(.Random.seed)
+
+curpg2.1 <-
+importData(file=paste(PathNamestrng, FileName2strng,sep=""), startCol
+= 1, endCol = 17, startRow = 4, 
+
+     endRow =
+lastRow2,  pageNumber = 1)
+
+pg1dim <- dim(curpg2.1)
+
+pg2.1add <- curpg2.1[,1:pg1dim[2]]
+
+print("Completed import of 1st page, 2nd
+file.")
+
+print(.Random.seed)
+
+curpg2.2 <-
+importData(file=paste(PathNamestrng, FileName2strng,sep=""), startCol
+= 1, endCol = 15, startRow = 4, 
+
+     endRow =
+lastRow2,  pageNumber = 2)
+
+pg2dim <- dim(curpg2.2)
+
+pg2.2add <- curpg2.2[,5:pg2dim[2]]
+
+##curpgs1.2 <- data.frame(pg1add, pg2add)
+
+print(.Random.seed)
+
+curpg2.3 <-
+importData(file=paste(PathNamestrng, FileName2strng,sep=""), startCol
+= 1, endCol = 21, startRow = 4, 
+
+     endRow =
+lastRow2,  pageNumber = 3)
+
+pg3dim <- dim(curpg2.3)
+
+pg2.3add <- curpg2.3[,5:pg3dim[2]]
+
+##curpgs1.3 <- data.frame(curpgs1.2, pg3add)
+
+print(.Random.seed)
+
+curpg2.4 <-
+importData(file=paste(PathNamestrng, FileName2strng,sep=""), startCol
+= 1, endCol = 17, startRow = 4, 
+
+     endRow =
+lastRow2,  pageNumber = 4)
+
+pg4dim <- dim(curpg2.4)
+
+pg2.4add <- curpg2.4[,5:pg4dim[2]]
+
+curpgs21.4 <-
+data.frame(pg2.1add,pg2.2add,pg2.3add, pg2.4add)
+
+return(curpgs21.4)
+
+##return(pg4dim)
+
+}
+
+ 
+
+ 
+
+*****************************************************************
+
+This e-mail and any attachments may contain confidential and 
+
+privileged information. It has been scanned for viruses.  If you 
+
+are not the intended recipient, please notify the sender 
+
+immediately by return e-mail, delete this e-mail and destroy any 
+
+copies. Any dissemination, use, review, disclosure, or 
+
+distribution of this information by a person other than the 
+
+intended recipient is unauthorized and may be illegal.
+
+*****************************************************************
+
+From MichaelCamilleri at branz.co.nz  Thu Aug 16 21:26:46 2007
+From: MichaelCamilleri at branz.co.nz (Michael Camilleri)
+Date: Fri, 17 Aug 2007 09:26:46 +1200
+Subject: Re: Problem with importData function
+In-Reply-To: <D177B3E9AC59494BB99CB3DB025402C601B8D742@Central-EX1.PSBC.ORG>
+References: <D177B3E9AC59494BB99CB3DB025402C601B8D742@Central-EX1.PSBC.ORG>
+Message-ID: <A23B682083FD8248ADFE1317C82CBD6702C57793@exchange.branznt.org.nz>
+
+Your problem has nothing to do with importData. The message
+
+ 
+
+Problem: Invalid random number seed: numbers must be between 0 and 63
+.  Use traceback() to see the call stack .
+
+ 
+
+indicates that the random number seed value has got corrupted. Type
+.Random.seed at the command line to see the variable. It should be something
+like:
+
+ 
+
+.Random.seed
+
+ [1] 33 41 27 36 43  3 57  5  5 27 56  0
+
+ 
+
+But with different integer values. Chances are your .Random.seed
+variable is character data.
+
+ 
+
+To fix it either 
+
+Call set.seed() to set the seed to a valid state or
+
+ 
+
+rm(.Random.seed) and hope S+ automatically regenerates it 
+
+ 
+
+importData needs .Random.seed as it has the capability to sample data
+as you import it. Even if you don’t sample data on import, it checks the
+value of .Random.seed.
+
+ 
+
+This error just happens from time to time.
+
+ 
+
+Michael
+
+*****************************************************************
+
+This e-mail and any attachments may contain confidential and 
+
+privileged information. It has been scanned for viruses.  If you 
+
+are not the intended recipient, please notify the sender 
+
+immediately by return e-mail, delete this e-mail and destroy any 
+
+copies. Any dissemination, use, review, disclosure, or 
+
+distribution of this information by a person other than the 
+
+intended recipient is unauthorized and may be illegal.
+
+*****************************************************************
+
+From meteor_shahab at yahoo.com  Sat Aug 18 18:04:16 2007
+From: meteor_shahab at yahoo.com
+Date: Sat, 18 Aug 2007 11:04:16 -0700
+Subject: MLE for Burr distribution
+Message-ID: <919125.26348.qm@web53203.mail.re2.yahoo.com>
+
+Dear All,
+
+I am using these codes to calculate MLE of Burr parameters,
+
+ 
+
+lburrm <- deriv3(
+
+~ -log(c * a * b^a * x^(c - 1) * (b + x^c)^(-(a + 1))),
+
+c("a", "b", "c"),
+
+function(x, a, b, c) NULL)
+
+ 
+
+f.like <- function(p, x)
+
+{
+
+e <- p[3] * p[1] * p[2]^p[1] * x^(p[3] - 1) * (p[2] + x^p[3])^(-(p[1] + 1))
+
+-sum(log(e))
+
+}
+
+ 
+
+f.grh <- function(p, x)
+
+{
+
+e <- lburrm(x, p[1], p[2], p[3])
+
+g <- colSums(attr(e, "gradient"))
+
+H <- colSums(attr(e, "hessian"), 2)
+
+list(gradient = g, hessian = H[row(H) <= col(H)])
+
+}
+
+ 
+
+p0 <- c(a=0.20, b=3e30, c=4)
+
+mix.nl2 <- nlminb(p0, f.like, f.grh, hessian = T,
+
+scale = c(1000, 1, 100), lower = c(0, 0, 0),
+
+upper = c(rep(Inf, 3)), x = dd)
+
+mix.nl2[c("parameter", "objective")]
+
+ 
+
+but as my dataset contains extreme valus like:
+
+ 
+
+2051009700  2082314400  2299479500 14389535000 18514194000
+
+the algorithm does not work properly, I know that parameter b is about 3e+30 but Splus always return 1+e20 for this parameter
+
+why Splus can not return larger values? What is the problem?
+
+Thanks alot,
+Regards,
+Shahab Einabadi
+
+ 
+
+ 
+
+Send instant messages to your online friends http://uk.messenger.yahoo.com 
+
+From allegro1978 at hotmail.com  Mon Aug 20 05:50:39 2007
+From: allegro1978 at hotmail.com (Steve S)
+Date: Mon, 20 Aug 2007 15:50:39 +1000
+Subject: Timezones
+Message-ID: <BAY106-F24EE7880EFBF96C2E26198B6DB0@phx.gbl>
+
+Dear All,
+
+ 
+
+I wonder if the timezone list in Splus 7.0 is updated immediately as legislation changes for each country? How often is it updated? For example, Australia last year had a change in its normal daylight saving date and Canada apparently will change its daylight saving in 2007. Can anyone from Splus comment?
+
+ 
+
+Steve
+
+ 
+
+Make shopping exciting.  Find what you want @ www.eBay.com.au 
+
+From surfprjab at hotmail.com  Mon Aug 20 19:40:35 2007
+From: surfprjab at hotmail.com (jose Bartolomei)
+Date: Mon, 20 Aug 2007 19:40:35 +0000
+Subject: multiple comparison test
+Message-ID: <BAY105-W24E2A9D665874A9473374AB6DB0@phx.gbl>
+
+Dear S-plus user,
+
+ 
+
+I will like to know which S function you recommend to detect multiple significant difference groups when performing a multiple comparison test for proportion. 
+
+ 
+
+We would like a function near the Marascuillo test.
+
+ 
+
+I am using S-Plus 7 for window
+
+ 
+
+Kind regards,
+
+Jose
+
+Connect to the next generation of MSN Messenger   Get it now! 
+
+From adrianwhm at hotmail.com  Wed Aug 22 11:35:31 2007
+From: adrianwhm at hotmail.com (adrian ming)
+Date: Wed, 22 Aug 2007 21:35:31 +1000
+Subject: Editing trees
+Message-ID: <BAY103-F278CD81C27C272B96284E3ACD50@phx.gbl>
+
+Hi people,
+
+ 
+
+Could someone help me out here?
+
+ 
+
+I edited a tree using the edit.tree function which produced the edited tree. I now want to edit this edited tree but can't seem to be able to do it in SPLUS. The command and error message are as follows:
+
+ 
+
+The original tree: ptree8
+
+The edited tree: ptree8edit
+
+ 
+
+ptree8edit2 _ edit.tree(ptree8edit, node=29, var="empmct", splitl=102.5)
+
+Problem in edit.tree: argument subset= not matched: edit.tree(object = ptree8, node = 14, var = "empmct", splitl = 65.5, subset = c("1", "2", "68", "205", "218", "447", "602", "610", "624", "663", "712", "843", "1042", "1663", "2141", "2200", "2773", "2775", "2949", "2989", "3022", "3100", "3179", "3243", "3322", "3555", "3574", "6378")) 
+Use traceback() to see the call stack
+
+I think it has something to do with the way the nodes are numbered. The edited tree still uses the node numbers from the original tree and somehow SPLUS encounters a problem when editing the edited tree again.
+
+ 
+
+Thanks for the help!
+
+ 
+
+adrian
+
+Fast track your education.  Become TAFE qualified fast. 
+
+From johnpitchard at googlemail.com  Wed Aug 22 13:54:47 2007
+From: johnpitchard at googlemail.com (John Pitchard)
+Date: Wed, 22 Aug 2007 14:54:47 +0100
+Subject: nlminb with constraints
+Message-ID: <ee4b1650708220654m2ff6f3cfx907d807634c2809a@mail.gmail.com>
+
+Dear all,
+
+ 
+
+I have a function that I want to minimise, it is in the form of a vector. However, there is a restriction on the actual vector itself, e.g. if the vector,x, has n components then
+
+ 
+
+x[n] <- 1 -(x[1] + ...+x[n-1]).
+
+ 
+
+Does anyone know how to put this constraint into the nlminb function?
+
+ 
+
+Many thanks in advance for your help.
+
+ 
+
+Regards,
+
+John
+
+ 
+
+ 
+
+From bates at stat.wisc.edu  Thu Aug 23 13:09:19 2007
+From: bates at stat.wisc.edu (Douglas Bates)
+Date: Thu, 23 Aug 2007 08:09:19 -0500
+Subject: Re: nlminb with constraints
+In-Reply-To: <ee4b1650708220654m2ff6f3cfx907d807634c2809a@mail.gmail.com>
+References: <ee4b1650708220654m2ff6f3cfx907d807634c2809a@mail.gmail.com>
+Message-ID: <40e66e0b0708230609j3d939c7fhe1cd5c6ce6762ed7@mail.gmail.com>
+
+On 8/22/07, John Pitchard <johnpitchard at googlemail.com> wrote:
+> Dear all,
+
+> I have a function that I want to minimise, it is in the form of a vector.
+> However, there is a restriction on the actual vector itself, e.g. if the
+> vector,x, has n components then
+
+> x[n] <- 1 -(x[1] + ...+x[n-1]).
+
+> Does anyone know how to put this constraint into the nlminb function?
+
+With an equality constraint like this you define the objective as a
+function of x[1], ..., x[n-1] and internally evaluate x[n] from the
+other values.
+
+Do the x's represent probabilities by any chance?  If so, the
+constraints are more complicated because you must have x[i] >= 0, i =
+1,...,n.  One way of enforcing this is to use a multivariate version
+of a logistic transformation.  David Jupp used a version of this in a
+paper on free-knot splines.  Don Watts and I describe such a
+transformation in our 1988 Wiley book "Nonlinear Regression Analysis
+and Its Applications".
+
+From Greg.Snow at intermountainmail.org  Thu Aug 23 16:18:28 2007
+From: Greg.Snow at intermountainmail.org (Greg Snow)
+Date: Thu, 23 Aug 2007 10:18:28 -0600
+Subject: Re: Editing trees
+In-Reply-To: <BAY103-F278CD81C27C272B96284E3ACD50@phx.gbl>
+References: <BAY103-F278CD81C27C272B96284E3ACD50@phx.gbl>
+Message-ID: <07E228A5BE53C24CAD490193A7381BBBB6ADED@LP-EXCHVS07.CO.IHC.COM>
+
+Adrian,
+
+ 
+
+This looks similar to a problem I had before.  In that 
+case the problem was with the $call component of the edited tree (which is used 
+to call the tree function for filling in the tree below your edit).  Try 
+something like this to see if it fixes your problem (this is a work around, no 
+guarentees):
+
+ 
+
+> ptree8edit$call 
+<- ptree8$call
+
+> 
+ptree8edit2 <- edit.tree(ptree8edit, node=29, var="empmct", 
+splitl=102.5)
+
+ 
+
+hope 
+this helps,
+
+ 
+
+(P.S. 
+the underscore '_' has fallen out of favor, it is suggested to use <- 
+instead)
+
+--
+Gregory (Greg) L. Snow Ph.D.
+Statistical Data 
+Center
+Intermountain Healthcare
+greg.snow at intermountainmail.org
+(801) 
+408-8111
+
+ 
+
+>
+>
+>   From: s-news-owner at lists.biostat.wustl.edu
+>   [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of adrian
+>   ming
+> Sent: Wednesday, August 22, 2007 5:36 AM
+> To:
+>   s-news at lists.biostat.wustl.edu
+> Subject: [S] Editing
+>   trees
+>
+>
+>
+>
+>
+>
+>   Hi people,
+>
+>
+>
+>   Could someone help me out here?
+>
+>
+>
+>   I edited a tree using the edit.tree function which produced the edited
+>   tree. I now want to edit this edited tree but can't seem to be able to do it
+>   in SPLUS. The command and error message are as follows:
+>
+>
+>
+>   The original tree: ptree8
+>
+>   The edited tree: ptree8edit
+>
+>
+>
+>   ptree8edit2 _ edit.tree(ptree8edit, node=29, var="empmct",
+>   splitl=102.5)
+>
+>
+> Problem in edit.tree: argument subset= not matched: edit.tree(object
+>   = ptree8, node = 14, var = "empmct", splitl = 65.5, subset = c("1", "2", "68",
+>   "205", "218", "447", "602", "610", "624", "663", "712", "843", "1042",
+>   "1663", "2141", "2200", "2773", "2775", "2949", "2989", "3022", "3100",
+>   "3179", "3243", "3322", "3555", "3574", "6378"))
+> Use traceback() to see
+>   the call stack
+>
+>
+>   I think it has something to do with the way the nodes are numbered. The
+>   edited tree still uses the node numbers from the original tree and somehow
+>   SPLUS encounters a problem when editing the edited tree again.
+>
+>
+>
+>   Thanks for the help!
+>
+>
+>
+>   adrian
+>
+>
+>
+>
+>   Fast track your education. Become TAFE qualified fast.
+
+From ldecola at usgs.gov  Thu Aug 23 21:29:14 2007
+From: ldecola at usgs.gov (F. Lee De Cola)
+Date: Thu, 23 Aug 2007 17:29:14 -0400
+Subject: loglin on zero-diagonal contingency tables
+Message-ID: <OF79A1A92D.E3C70F03-ON85257340.00732F73-85257340.007608E4@usgs.gov>
+
+I am analyzing a 'map' with 1024 'countries' each of which has one of 7
+'colors.'
+
+The following table gives the frequencies of the 1626 'neighbor' pairs.
+
+         water forest agric woodwet emergwet urban bare
+   water     0    110    32      16       26    17    2
+  forest     0      0   516     130       30   291  135
+   agric     0      0     0      41       12    78   39
+ woodwet     0      0     0       0       11    42   16
+emergwet     0      0     0       0        0     5    1
+   urban     0      0     0       0        0     0   76
+    bare     0      0     0       0        0     0    0
+
+I know that loglin() will analyze these kinds of pair frequencies, but I
+need the model to be constrained so that:
+1. there is symmetry among the color pairs - hence the upper-triangular
+grouping, and
+2. no 2 countries can have the same color - hence the zeros in the
+diagonal.
+
+I seek a model that will provide residuals based on the marginal totals.
+
+Reference(s) will be sufficient.
+
+Lee De Cola, PhD, MCP
+U.S. Geological Survey
+521 National Center
+Reston VA 20192 USA
+Room 2D324
+703-648-4178, fax 4603
+W77°22'10" N38°56'48"
+703-709-6972 home
+LDECOLA at USGS.GOV
+ldecola.home.comcast.net
+
+From tristan.lorino at lcpc.fr  Fri Aug 24 11:31:34 2007
+From: tristan.lorino at lcpc.fr (Tristan Lorino)
+Date: Fri, 24 Aug 2007 13:31:34 +0200
+Subject: Postcript fonts in graphics
+Message-ID: <1719319178.20070824133134@lcpc.fr>
+
+Hello,
+
+I would like to know if it is possible to include special characters
+(greek letters for example) in a S graphic, as it was done with the
+postcriptfonts library under linux. I work with SPlus v8 and Windows
+XP.
+I don't want to use LaTeX to include these special characters.
+
+Thanks
+Tristan Lorino
+
+-- 
+Laboratoire Central des Ponts et Chaussées
+[Division ESAR — Section AGR]
+Route de Bouaye BP 4129
+44341 Bouguenais Cedex
+France
+Tél 33 (0)2 40 84 56 18
+Fax 33 (0)2 40 84 59 92
+
+From jocelyn.bissonnette at gmail.com  Mon Aug 27 19:50:03 2007
+From: jocelyn.bissonnette at gmail.com (eggraid)
+Date: Mon, 27 Aug 2007 12:50:03 -0700
+Subject: hot keys and navigating SPLUS
+Message-ID: <12356403.post@talk.nabble.com>
+
+Hi, I'm losing lots of time going from window to window in SPLUS. CTRL+TAB is
+just not useful since it "rolls" and you get lost even faster then by mouse
+clicking and ... well... I'm quite impatient. 
+
+So if you have a list of the hotkeys you can use in SPLUS to save some time,
+it would be quite appreciated. Thanks
+-- 
+View this message in context: 
+http://www.nabble.com/hot-keys-and-navigating-SPLUS-tf4337883.html#a12356403
+Sent from the S-News mailing list archive at Nabble.com.
+
+From yiwu21111958 at yahoo.com  Thu Aug 30 04:24:14 2007
+From: yiwu21111958 at yahoo.com (yiwu ye)
+Date: Wed, 29 Aug 2007 21:24:14 -0700
+Subject: Problems with "integrate"
+Message-ID: <708103.80592.qm@web57115.mail.re3.yahoo.com>
+
+Dear list,
+
+I have an integration to do. The function is a gamma function as follows,
+
+g_function(x,alpha.L,beta.L){1/(beta.L^alpha.L*gamma(alpha.L))*x^(alpha.L-1)*exp(-x/beta.L)}
+
+No problems at all with the codes below:
+beta_2
+
+integrate(g,lower=0,upper=165,alpha.L=163/beta,beta.L=beta)
+
+integrate(g,lower=0,upper=170,alpha.L=167.8/beta,beta.L=beta)
+
+However, when beta=1.2, an error message says "singularity encountered..."
+beta_1.2
+integrate(g,lower=0,upper=165,alpha.L=163/beta,beta.L=beta)
+integrate(g,lower=0,upper=170,alpha.L=167.8/beta,beta.L=beta)
+
+Can anyone kindly help and explain why?
+
+Thanks so much in advance,
+
+Yiwu
+
+      Shape Yahoo! in your own image.  
+Join our Network Research Panel today!
+
+From elvis at xlsolutions-corp.com  Thu Aug 30 17:03:08 2007
+From: elvis at xlsolutions-corp.com (elvis Miller)
+Date: Thu, 30 Aug 2007 10:03:08 -0700
+Subject: 7 Courses: Upcoming September-October 2007 R/S+ schedule by XLSolutions Corp
+Message-ID: <20070830100308.aa8924c5d28ca71e2a043bb294e795eb.88ee79d343.wbe@email.secureserver.net>
+
+Our upcoming September-October 2007 R/S+ course schedule is now
+available. Pleasecheck out this link for additional information  and
+direct enquiries to Sue Turner sue at xlsolutions-corp.com  Phone: 206 686
+1578
+ 
+ 
+
+http://www.xlsolutions-corp.com/courselist.htm  
+ 
+------------------------------------------------------------------
+
+(1) An Introduction to S and R 
+*** Seattle / October 29-30, 2007  ***
+
+(2) R/S Fundamentals and Programming Techniques 
+*** Seattle / September 24-25, 2007  ***
+*** Boston / September 27-28, 2007   ***
+ 
+(3) R/S System: Complementing and Extending Statistical Computing forSAS
+Users 
+*** Raleigh / October 22-23, 2007 ***  
+ 
+(4) R/S System: Advanced Programming 
+*** Princeton / October 29-30, 2007 ***
+*** San Francisco / October 25-26, 2007 
+------------------------------------------------------------------
+
+http://www.xlsolutions-corp.com/courselist.htm  
+
+ 
+(5) Introduction to R/S+ programming: Microarrays Analysis
+andBioconductor.
+
+*** Los Angeles 9/24/2007 9/25/2007  *** 
+(6) Microarrays Data Analysis with R/S+ and GGobi  
+*** New York City 10/18/2007 10/19/2007 ***  
+(7) Data Mining: Practical Tools and Techniques in R/Splus 
+*** San Francisco 9/27/2007 9/28/2007 ***
+ 
+-------------------------------------------------------------------
+ 
+
+ Payment due AFTER the class
+ Email us for group discounts. 
+ Email Sue Turner: sue at xlsolutions-corp.com 
+ Phone: 206-686-1578 
+ Visit us: www.xlsolutions-corp.com/courselist.htm 
+ Please let us know if you and your colleagues are interested inthis 
+ class to take advantage of group discount. Register now to secureyour 
+ seat! 
+ 
+ Cheers, 
+ Elvis Miller, PhD 
+ Manager Training. 
+ XLSolutions Corporation 
+ 206 686 1578 
+ www.xlsolutions-corp.com
+
+From hrobison at unr.nevada.edu  Thu Aug 30 23:11:09 2007
+From: hrobison at unr.nevada.edu (Hillary Robison)
+Date: Thu, 30 Aug 2007 16:11:09 -0700
+Subject: MANOVA: specifying contrasts properly
+Message-ID: <1188515469.46d74e8d29ec9@secure.unr.nevada.edu>
+
+Hi all,
+
+I having trouble specifying MANOVA (in the GUI of S-plus 6.2) that allows the
+contrasts I'd like.
+
+I was hoping the MANOVA would let me test for differences among levels of "Pop"
+(my X variable with 32 levels) with respect to my repeated measurements for
+each "Pop", my Ys ("logk2.k1", "logk3.k1", "logk4.k1", "logk5.k1", "logk6.k1",
+"logk7.k1", "logk8.k1", "logk9.k1", "logk10.k1", "logk11.k1").  My Ys were
+measured 5 times in each "Pop."  The output gives me an overall p-value for
+"Pop", but does not give me p-values for the contrasts among my levels of
+"Pop."
+
+How do I specify this?
+
+What I did in the S-plus GUI was:
+
+Statisitics -> Multivariate -> MANOVA dialog box
+
+In the "Model" tab of the MANOVA dialog box I specified:
+Dataset: group
+Formula : cbind(logk2.k1, logk3.k1, logk4.k1, logk5.k1, logk6.k1, logk7.k1,
+logk8.k1, logk9.k1, logk10.k1, logk11.k1) ~ Pop
+
+In the "Options" tab of the MANOVA dialog box I specified:
+Assign Contrast: Helmert
+to Variables: Pop
+Contrasts: Pop=contr.helmert
+
+In the "Results" tab of the MANOVA dialog box I specified:
+Short Output
+ANOVA Table
+Testing with "pillai"
+Estimated Coefficients
+Estimated K Coef. for K-level Factor
+Save In: group
+Fitted Values
+Residuals
+
+The Report gives me:
+
+Call:  manova(formula = cbind(logk2.k1, logk3.k1, logk4.k1, logk5.k1, logk6.k1,
+logk7.k1, logk8.k1, logk9.k1, logk10.k1, logk11.k1) ~ Pop, data = clusters,
+contrasts = list(Pop = contr.helmert), na.action = na.exclude)
+
+Terms:
+                Pop Residuals
+Deg. of Freedom  32       132
+
+Estimated effects are balanced
+
+Analysis of Variance Table:
+           Df Pillai Trace approx. F num df    den df    P-value
+      Pop 32  4.426        3.275       320      1320         0
+Residuals 132
+
+Followed by the estimated coefficients for "logk2.k1", "logk3.k1", "logk4.k1",
+"logk5.k1", "logk6.k1", "logk7.k1", "logk8.k1", "logk9.k1", "logk10.k1",
+"logk11.k1" for each "Pop."
+
+Thank you for your thoughts on this.
+
+Hillary Robison
+
+From rod.tjoelker at boeing.com  Fri Aug 31 19:48:01 2007
+From: rod.tjoelker at boeing.com (Tjoelker, Rod)
+Date: Fri, 31 Aug 2007 12:48:01 -0700
+Subject: FW: Job openings at Boeing for data mining and machine learning
+Message-ID: <0C549DAFE1A8004D8EB57ACDD108646D058E5B71@XCH-NW-2V2.nw.nos.boeing.com>
+
+> Boeing's Mathematics and Computing Technology (M&CT) organization,
+> located in Bellevue Washington USA, invites applications for applied
+> research positions in data mining and machine learning. We offer an
+> exciting opportunity to be a part of a diverse research group that
+> touches all parts of the Boeing company, from aircraft to spacecraft,
+> communications systems and worldwide customers. We help Boeing tackle
+> its toughest information and computational issues and help develop
+> innovative products for the future.    
+> Interested candidates may view job descriptions at the www.Boeing.com
+> website under the employment section:
+> 
+> The data mining technologist position can be viewed at:
+> https://jobs.boeing.com/JobSeeker/JobView?reqcode=07-1019857
+> 
+> The machine learning technologist position can be viewed at:
+> https://jobs.boeing.com/JobSeeker/JobView?reqcode=07-1020370
+> 
+> 
+
+From dataanalytics at earthlink.net  Fri Aug 31 21:18:16 2007
+From: dataanalytics at earthlink.net (Walter R. Paczkowski)
+Date: Fri, 31 Aug 2007 17:18:16 -0400
+Subject: Making a Graphsheet Page Active
+Message-ID: <E1IRDpb-0001d0-0u@elasmtp-mealy.atl.sa.earthlink.net>
+
+Hi,
+
+I wrote a function that generates 50 graphs at once in one graphsheet
+called GSD2.  I often do this and then export the pages to
+PowerPoint using the Create PowerPoint option from the graph window
+menu.  This time, however, I wanted to export the pages in GSD2
+using the export.graph function inside another function.  The
+problem that I have is that the export.graph function only exports the
+active page, which certainly may not be the page I want.  How do I
+activate a page programmatically inside a function so that repeated calls
+to export.graph will export the pages one at a time?
+
+Thanks,
+
+Walt Paczkowski
+
+_________________________________
+
+Walter R. Paczkowski, Ph.D.
+
+Data Analytics Corp.
+
+44 Hamilton Lane
+
+Plainsboro, NJ  08536
+
+(V) 609-936-8999
+
+(F) 609-936-3733
+

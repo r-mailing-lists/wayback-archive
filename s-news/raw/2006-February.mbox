@@ -1,0 +1,5134 @@
+From Thom.Burnett at cognigencorp.com  Wed Feb  1 14:45:02 2006
+From: Thom.Burnett at cognigencorp.com (Thom Burnett)
+Date: Wed, 01 Feb 2006 09:45:02 -0500
+Subject: cex and resolution
+Message-ID: <43E0C96E.2070605@cognigencorp.com>
+
+How do I get larger fonts for labels and text on my graphs while keeping 
+high resolution?
+
+I'm finding that the cex parameter for character size hits a limit very 
+quickly in my graphs.
+
+As an example:
+
+java.graph(file=filename, format='PNG', width=2000)
+ par(cex=2)
+ plot(1:10, 1:10, title=titleString )
+dev.off()
+
+At this width setting the fonts produced are identical in size to cex=1 
+or cex=4.
+
+If I lower the width to something around 1500 or lower then I start 
+seeing an increase in the font.
+Unfortunately, I need the high width to make good quality graphs for 
+customers but I also need much larger characters.
+
+I've tried varying csi, font, and other parameters without any success.
+
+Is there something more about how cex and width work that I'm missing?
+
+I'm working with SPlus 7.0 on Unix.
+Changing to wmf or other graphic format isn't an option.
+
+From Vincent.Duval at bc.boehringer-ingelheim.com  Wed Feb  1 15:45:17 2006
+From: Vincent.Duval at bc.boehringer-ingelheim.com
+Date: Wed, 01 Feb 2006 16:45:17 +0100
+Subject: nlme: random effects
+Message-ID: <5F5D04205B6C124CA7FF7A001CEE37E103365178@bibex05.eu.boehringer.com>
+
+Dear list, 
+
+This maybe a naïve question for some of you but I have been struggling for some time to find out a way to implement the following random effect.
+
+Below is the basic model I have:
+
+Base1.nlme=nlme(DV~Alpha*XX**Beta,
+
+                                data="">   # groupedData depending of the variable ID
+
+                                fixed=Alpha+Beta~1,
+
+                                random=Alpha+Beta~1,
+
+                                start=list(fixed=c(400,0.5)),
+
+                                )
+
+Subjects go four times into the same experiments (VISIT). Therefore I susspect some variability on parameters between occaasions. 
+
+Implementation of the varaibility between occasions improved the description of the data. 
+
+Base3.nlme=update(Base1.nlme,
+
+                   random=Alpha+Beta~1|ID/VISIT)
+
+but I can't manage to estimate a same variability on Alpha and Beta over the four periods and on top of it an inter-occasion variability for Beta
+
+One of the ways I tried is bellow but didn't succeed more than the others,
+
+Base4.nlme=update(Base3.nlme, 
+
+                        random=list(Alpha~1|ID, Beta~1|ID/VISIT))
+
+Could someone give me a hint on how to start with this?
+
+Thanks for your help, 
+
+Vincent 
+
+PS: I Use Splus7 under windows XP
+
+From chullee at students.wisc.edu  Wed Feb  1 17:10:01 2006
+From: chullee at students.wisc.edu (CHUL LEE)
+Date: Wed, 01 Feb 2006 11:10:01 -0600
+Subject: replace missing with previous value
+Message-ID: <e95a961b15a07.15a07e95a961b@wiscmail.wisc.edu>
+
+Dear list,
+It is not an issue of S-Plus, but I know someone in this forum can 
+help me.
+I have data which have missing cases. I want to replace this missing 
+with above value. For example,
+
+Col1      Col2
+Smith     3
+          2.5
+          4
+Johnson   4
+          4.5
+          3
+          2.5
+
+In this case, I want to replace Row 2 & 3 in Col1 with Smith, but Row 
+5,6,&7 with Johnson. Is there a easy way to do by Excel or with 
+Statistics programs? This data has more than 80,000 rows.
+
+Chul
+
+From ccleland at optonline.net  Wed Feb  1 17:39:15 2006
+From: ccleland at optonline.net (Chuck Cleland)
+Date: Wed, 01 Feb 2006 12:39:15 -0500
+Subject: Re: replace missing with previous value
+In-Reply-To: <e95a961b15a07.15a07e95a961b@wiscmail.wisc.edu>
+References: <e95a961b15a07.15a07e95a961b@wiscmail.wisc.edu>
+Message-ID: <43E0F243.3030202@optonline.net>
+
+> X <- sample(c("Smith", "", "Johnson"), 80, replace=TRUE)
+
+> X
+ [1] "Johnson" ""        ""        "Johnson" "Smith"
+ [6] ""        ""        "Smith"   "Johnson" "Johnson"
+[11] ""        ""        "Smith"   "Smith"   "Johnson"
+[16] "Johnson" ""        ""        "Smith"   "Johnson"
+[21] "Smith"   "Johnson" "Smith"   ""        "Smith"
+[26] "Smith"   ""        "Smith"   "Johnson" ""
+[31] ""        "Smith"   ""        ""        "Johnson"
+[36] "Smith"   "Smith"   ""        "Johnson" ""
+[41] "Smith"   "Smith"   "Smith"   "Johnson" ""
+[46] ""        ""        ""        ""        "Johnson"
+[51] ""        ""        ""        "Johnson" "Johnson"
+[56] "Johnson" ""        "Johnson" "Johnson" "Smith"
+[61] ""        ""        ""        "Johnson" "Johnson"
+[66] ""        ""        "Smith"   "Smith"   "Johnson"
+[71] ""        "Johnson" ""        "Johnson" "Johnson"
+[76] "Smith"   "Smith"   "Johnson" "Smith"   "Smith"
+
+> for(i in seq(along=X)[-1]){X[i] <- if(X[i] == "" | is.na(X[i])) X[i - 
+1] else X[i]}
+
+> X
+ [1] "Johnson" "Johnson" "Johnson" "Johnson" "Smith"
+ [6] "Smith"   "Smith"   "Smith"   "Johnson" "Johnson"
+[11] "Johnson" "Johnson" "Smith"   "Smith"   "Johnson"
+[16] "Johnson" "Johnson" "Johnson" "Smith"   "Johnson"
+[21] "Smith"   "Johnson" "Smith"   "Smith"   "Smith"
+[26] "Smith"   "Smith"   "Smith"   "Johnson" "Johnson"
+[31] "Johnson" "Smith"   "Smith"   "Smith"   "Johnson"
+[36] "Smith"   "Smith"   "Smith"   "Johnson" "Johnson"
+[41] "Smith"   "Smith"   "Smith"   "Johnson" "Johnson"
+[46] "Johnson" "Johnson" "Johnson" "Johnson" "Johnson"
+[51] "Johnson" "Johnson" "Johnson" "Johnson" "Johnson"
+[56] "Johnson" "Johnson" "Johnson" "Johnson" "Smith"
+[61] "Smith"   "Smith"   "Smith"   "Johnson" "Johnson"
+[66] "Johnson" "Johnson" "Smith"   "Smith"   "Johnson"
+[71] "Johnson" "Johnson" "Johnson" "Johnson" "Johnson"
+[76] "Smith"   "Smith"   "Johnson" "Smith"   "Smith"
+
+CHUL LEE wrote:
+> Dear list,
+>
+> It is not an issue of S-Plus, but I know someone in this forum can
+> help me.
+>
+> I have data which have missing cases. I want to replace this missing
+> with above value. For example,
+>
+>
+>
+> Col1      Col2
+> Smith     3
+>           2.5
+>           4
+> Johnson   4
+>           4.5
+>           3
+>           2.5
+>
+>
+> In this case, I want to replace Row 2 & 3 in Col1 with Smith, but Row
+> 5,6,&7 with Johnson. Is there a easy way to do by Excel or with
+> Statistics programs? This data has more than 80,000 rows.
+>
+>
+>
+> Chul
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+--
+Chuck Cleland, Ph.D.
+NDRI, Inc.
+71 West 23rd Street, 8th floor
+New York, NY 10010
+tel: (212) 845-4495 (Tu, Th)
+tel: (732) 452-1424 (M, W, F)
+fax: (917) 438-0894
+
+From Rich at Mango-Solutions.com  Wed Feb  1 17:58:17 2006
+From: Rich at Mango-Solutions.com
+Date: Wed, 01 Feb 2006 17:58:17 +0000
+Subject: Re: replace missing with previous value
+In-Reply-To: <43E0F243.3030202@optonline.net>
+References: <43E0F243.3030202@optonline.net>
+Message-ID: <20060201175820.9055A1008DCC@mailgate.biostat.wustl.edu>
+
+There are lots of vector-based ways to do this too.  This is a quick vector
+based alternative ... 
+
+> # Create vector
+> myText <- c("Johnson", "", "", "", "", "Smith", "", "")
+
+> # Fill in blanks
+> isBlank <- myText == ""
+> rep(myText[!isBlank], table(cumsum(!isBlank)))
+[1] "Johnson" "Johnson" "Johnson" "Johnson" "Johnson" "Smith"   "Smith"
+"Smith"   
+
+This works if no leading blanks ... needs an additional line if there are
+...
+
+Cheers,
+Rich.
+
+mangosolutions
+S-PLUS & R Training and Consulting
+Tel   +44 118 902 6617
+Fax  +44 118 902 6401
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Chuck Cleland
+Sent: 01 February 2006 17:39
+To: CHUL LEE
+Cc: s-news at lists.biostat.wustl.edu
+Subject: Re: [S] replace missing with previous value
+
+ > X <- sample(c("Smith", "", "Johnson"), 80, replace=TRUE)
+
+ > X
+  [1] "Johnson" ""        ""        "Johnson" "Smith"
+  [6] ""        ""        "Smith"   "Johnson" "Johnson"
+[11] ""        ""        "Smith"   "Smith"   "Johnson"
+[16] "Johnson" ""        ""        "Smith"   "Johnson"
+[21] "Smith"   "Johnson" "Smith"   ""        "Smith"
+[26] "Smith"   ""        "Smith"   "Johnson" ""
+[31] ""        "Smith"   ""        ""        "Johnson"
+[36] "Smith"   "Smith"   ""        "Johnson" ""
+[41] "Smith"   "Smith"   "Smith"   "Johnson" ""
+[46] ""        ""        ""        ""        "Johnson"
+[51] ""        ""        ""        "Johnson" "Johnson"
+[56] "Johnson" ""        "Johnson" "Johnson" "Smith"
+[61] ""        ""        ""        "Johnson" "Johnson"
+[66] ""        ""        "Smith"   "Smith"   "Johnson"
+[71] ""        "Johnson" ""        "Johnson" "Johnson"
+[76] "Smith"   "Smith"   "Johnson" "Smith"   "Smith"
+
+ > for(i in seq(along=X)[-1]){X[i] <- if(X[i] == "" | is.na(X[i])) X[i - 
+1] else X[i]}
+
+ > X
+  [1] "Johnson" "Johnson" "Johnson" "Johnson" "Smith"
+  [6] "Smith"   "Smith"   "Smith"   "Johnson" "Johnson"
+[11] "Johnson" "Johnson" "Smith"   "Smith"   "Johnson"
+[16] "Johnson" "Johnson" "Johnson" "Smith"   "Johnson"
+[21] "Smith"   "Johnson" "Smith"   "Smith"   "Smith"
+[26] "Smith"   "Smith"   "Smith"   "Johnson" "Johnson"
+[31] "Johnson" "Smith"   "Smith"   "Smith"   "Johnson"
+[36] "Smith"   "Smith"   "Smith"   "Johnson" "Johnson"
+[41] "Smith"   "Smith"   "Smith"   "Johnson" "Johnson"
+[46] "Johnson" "Johnson" "Johnson" "Johnson" "Johnson"
+[51] "Johnson" "Johnson" "Johnson" "Johnson" "Johnson"
+[56] "Johnson" "Johnson" "Johnson" "Johnson" "Smith"
+[61] "Smith"   "Smith"   "Smith"   "Johnson" "Johnson"
+[66] "Johnson" "Johnson" "Smith"   "Smith"   "Johnson"
+[71] "Johnson" "Johnson" "Johnson" "Johnson" "Johnson"
+[76] "Smith"   "Smith"   "Johnson" "Smith"   "Smith"
+
+CHUL LEE wrote:
+> Dear list,
+> It is not an issue of S-Plus, but I know someone in this forum can 
+> help me.
+> I have data which have missing cases. I want to replace this missing 
+> with above value. For example,
+> 
+> Col1      Col2
+> Smith     3
+>           2.5
+>           4
+> Johnson   4
+>           4.5
+>           3
+>           2.5
+> 
+> 
+> In this case, I want to replace Row 2 & 3 in Col1 with Smith, but Row 
+> 5,6,&7 with Johnson. Is there a easy way to do by Excel or with 
+> Statistics programs? This data has more than 80,000 rows.
+> 
+> Chul
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+> 
+
+-- 
+Chuck Cleland, Ph.D.
+NDRI, Inc.
+71 West 23rd Street, 8th floor
+New York, NY 10010
+tel: (212) 845-4495 (Tu, Th)
+tel: (732) 452-1424 (M, W, F)
+fax: (917) 438-0894
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From pburns at pburns.seanet.com  Wed Feb  1 21:58:21 2006
+From: pburns at pburns.seanet.com (Patrick Burns)
+Date: Wed, 01 Feb 2006 21:58:21 +0000
+Subject: Re: replace missing with previous value
+In-Reply-To: <e95a961b15a07.15a07e95a961b@wiscmail.wisc.edu>
+References: <e95a961b15a07.15a07e95a961b@wiscmail.wisc.edu>
+Message-ID: <43E12EFD.2090604@pburns.seanet.com>
+
+This is known as 'Last Observation Carried Forward' or
+LOCF.  There is a discussion of algorithms for it somewhere
+in the R archives.
+
+You do not want to do serious computing in Excel or other
+spreadsheets -- see
+http://www.burns-stat.com/pages/Tutor/spreadsheet_addiction.html
+
+Patrick Burns
+patrick at burns-stat.com
++44 (0)20 8525 0696
+http://www.burns-stat.com
+(home of S Poetry and "A Guide for the Unwilling S User")
+
+CHUL LEE wrote:
+
+> Dear list,
+>
+> It is not an issue of S-Plus, but I know someone in this forum can
+> help me.
+>
+> I have data which have missing cases. I want to replace this missing
+> with above value. For example,
+>
+>
+>
+> Col1      Col2
+> Smith     3
+>          2.5
+>          4
+> Johnson   4
+>          4.5
+>          3
+>          2.5
+>
+>
+> In this case, I want to replace Row 2 & 3 in Col1 with Smith, but Row
+> 5,6,&7 with Johnson. Is there a easy way to do by Excel or with
+> Statistics programs? This data has more than 80,000 rows.
+>
+>
+>
+> Chul
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+>
+>
+>
+>
+
+From yiwu21111958 at yahoo.com  Wed Feb  1 23:42:44 2006
+From: yiwu21111958 at yahoo.com (yiwu ye)
+Date: Wed, 01 Feb 2006 15:42:44 -0800
+Subject: solve a non-linear equation
+Message-ID: <20060201234244.52288.qmail@web34406.mail.mud.yahoo.com>
+
+ Dear list, 
+  
+  Does any one know any simple command/function that can be used to sovle  a non-linear equation? For example, x=a+bx*exp(-cx).Given a, b and c,  to calculate x value. Thanks for help.
+  
+  Yiwu
+  
+
+		 
+ 
+What are the most popular cars? Find out at Yahoo! Autos 
+
+From yiwu21111958 at yahoo.com  Thu Feb  2 00:22:11 2006
+From: yiwu21111958 at yahoo.com (yiwu ye)
+Date: Wed, 01 Feb 2006 16:22:11 -0800
+Subject: Re: solve a non-linear equation
+In-Reply-To: <SE2KEXCH01bLAX3cf3e0000085b@se2kexch01.insightful.com>
+References: <SE2KEXCH01bLAX3cf3e0000085b@se2kexch01.insightful.com>
+Message-ID: <20060202002211.70196.qmail@web34405.mail.mud.yahoo.com>
+
+Many thanks to Tim for hist prompt reply to my query. His suggestion solved my problem perfectly.  Thanks the S+ list. Yiwu
+  
+
+Tim Hesterberg <timh at insightful.com> wrote:>   Use uniroot; you need to write it as 0 = f(x)
+> Or, use inverseFunction, part of the resample library.
+>
+> > Dear list,
+> >
+> >  Does any one know any simple command/function that can be used to sovle  a non-linear equation? For example, x=a+bx*exp(-cx).Given a, b and c,  to calculate x value. Thanks for help.
+> >
+> >  Yiwu
+>
+> ========================================================
+> | Tim Hesterberg       Research Scientist              |
+> | timh at insightful.com  Insightful Corp.                |
+> | (206)802-2319        1700 Westlake Ave. N, Suite 500 |
+> | (206)283-8691 (fax)  Seattle, WA 98109-3012, U
+>  .S.A.
+>  |
+> |                      www.insightful.com/Hesterberg   |
+> ========================================================
+> Download the S+Resample library from www.insightful.com/downloads/libraries
+>
+> Two Research Scientist positions:
+>  data mining
+>  frailty/mixed effects
+>     http://www.insightful.com/company/jobs.asp
+
+		Do you Yahoo!?
+ 
+With a free 1 GB, there's more in store with Yahoo! Mail.
+
+From kamiltoth at yahoo.com  Thu Feb  2 16:49:58 2006
+From: kamiltoth at yahoo.com (Kamil Toth)
+Date: Thu, 02 Feb 2006 08:49:58 -0800
+Subject: Eigenvalues, stupid
+Message-ID: <20060202164958.7718.qmail@web35801.mail.mud.yahoo.com>
+
+Dear S-PLUS gurus:
+  I have a linear algebra question, may be trivial, may be not. Indirectly, it is related to the accuracy of S-PLUS computation of eigenvalues, using the function "eigen".
+   
+  Suppose that I have a non-symmetric, positive definite matrix A, and I compute its eigenvalues, {lmb1,...,lmbN}, using eigen(A).  Suppose now that I have a new matrix 
+  C=diag{b1,...,bN}%*%A. Just to make things more clear, I multiply the matrix A by a vector {b1,...,bN} in such a way that the first row of A is multiplied by b1, the second by b2, ....., etc. All b's are positive. 
+   
+  Question: Is that possible to say anything about the eigenvalues of matrix C not actually computing them as eigen(C)?
+   
+  The reason I am asking is this: in my case,  A is a reasonably behaving matrix, with spectrum {lmb} in unit circle. But vector B is a terrible thing 
+ with
+ values in the range of many orders of magnitude. In addition, typical orders N are in hundreds. 
+  A couple of artificially constructed examples show that determination of eigenvalues 
+  of C using eigen(C) may be terribly wrong. In this situation, I would rather prefer to compute the eigenvalues of C through those of A, if linear algebra has anything to say about such a problem.
+   
+  Thank you in advance
+   
+  Kamil Toth
+   
+   
+   
+
+	
+		 Yahoo! Autos. Looking for a sweet ride? Get pricing, reviews, & more on new and used cars.
+
+From rej at dmu.dk  Fri Feb  3 08:47:37 2006
+From: rej at dmu.dk (=?utf-8?b?RWpybsOmcywgUmFzbXVz?=)
+Date: Fri, 03 Feb 2006 09:47:37 +0100
+Subject: data.restore
+Message-ID: <E5CBA52A5EDCB34EB9C70EE1530CC473AED644@dmukpost.dmu.dk>
+
+Dear S-plussers
+
+I am having difficulties transferring my data from S-Plus 6.x to S-Plus 2000. I simply get the following printed error:
+
+> data.restore("all.files")
+
+Error: in reading invalid mode for data: .Last.value at line 2
+
+When I compare the structure of files created by data.dump in S-Plus 2000 and my data.dump from version 6, I notice that in the version 6 data.dump the data class is duplicated for each entry. Here is how the first lines of the file looks:
+
+## Dump S Version 4 Dump ##
+
+.Last.value
+
+NULL
+
+NULL
+
+0
+
+.Messages
+
+character
+
+character
+
+6
+
+Can anyone give me a clue to how to retrieve my data?
+
+Regards
+
+Rasmus Ejrnæs 
+
+From fisher at plessthan.com  Fri Feb  3 14:12:01 2006
+From: fisher at plessthan.com (Dennis Fisher)
+Date: Fri, 03 Feb 2006 06:12:01 -0800
+Subject: Identifying Splus vs. R
+In-Reply-To: <20060203112004.D61CF33E745@smtp.biostat.wustl.edu>
+References: <20060203112004.D61CF33E745@smtp.biostat.wustl.edu>
+Message-ID: <03F8E04D-476C-4D4D-9CBD-AD2D6799515F@plessthan.com>
+
+Colleagues,I have written code that will be run in either Splus or R, depending on certain circumstances.  Most of the code runs interchangeably with the two programs.  But, in certain instances, I need to modify code so that it is specific for Splus or R.  Ideally, I would like to test which program is running.  If I enter the command:
+	version$language
+R returns "R" whereas my version of Splus (6.0) returns NULL.  I can parse these to obtain the desired result but I was wondering if anyone has a more sophisticated approach to this issue.
+
+Dennis
+
+ 
+
+ Dennis Fisher MD
+ P < (The "P Less Than" Company)
+ Phone: 1-866-PLessThan (1-866-753-7784)
+ Fax: 1-415-564-2220
+ www.PLessThan.com
+  
+
+From rolf at math.unb.ca  Fri Feb  3 14:59:31 2006
+From: rolf at math.unb.ca (Rolf Turner)
+Date: Fri, 03 Feb 2006 10:59:31 -0400
+Subject: Re: Identifying Splus vs. R
+Message-ID: <200602031459.k13ExVs1010081@erdos.math.unb.ca>
+
+I think
+
+        if(identical(version$language,"R")) {
+                # Do the R thing.
+        } else {
+                # Do the Splus thing.
+        }
+
+will work, and is sufficiently sophisticated to satisfy most tastes.
+
+                                cheers,
+
+                                        Rolf Turner
+                                        rolf at math.unb.ca
+
+From rmh at temple.edu  Fri Feb  3 16:07:14 2006
+From: rmh at temple.edu (Richard M. Heiberger)
+Date: Fri, 03 Feb 2006 11:07:14 -0500
+Subject: Re: Identifying Splus vs. R
+Message-ID: <1663f8a9.84ddc1d7.86b9d00@po-d.temple.edu>
+
+The system I use in the online files for 
+                Statistical Analysis and Data Display
+                Richard M. Heiberger and Burt Holland
+   http://springeronline.com/0-387-40270-5
+
+is based on the R function is.R().  The is.R function is slightly more
+complex than the recommendation Rolf Turner just posted, so I would not 
+recommend
+using that simple version.
+
+I do this often enough that I wrote a wrapper if.R() with the syntax
+
+if.R(s={},
+     r={})
+
+where you can put very complex statements inside the braces.
+In order to do this I need to define
+
+if.R <- function(r, s)
+{
+        if(exists("is.R") && is.R())
+                r
+        else s
+}
+
+If you wanted to go more elementary than my if.R function, then you would need
+to define in S-Plus a function
+
+is.R <- function() FALSE
+
+Then the statement is.R() would work correctly in both languages.
+
+Rich
+
+From fisher at plessthan.com  Fri Feb  3 16:49:16 2006
+From: fisher at plessthan.com (Dennis Fisher)
+Date: Fri, 03 Feb 2006 08:49:16 -0800
+Subject: Passing arguments to Splus
+References: <03F8E04D-476C-4D4D-9CBD-AD2D6799515F@plessthan.com>
+Message-ID: <81DCC067-3F65-42CA-80CC-BA369FF938ED@plessthan.com>
+
+Colleagues
+I run Splus (6.0) and R (2.2.0) from the command line in a Linux environment.  In R, I pass arguments to the program with the following command:
+
+	R --no-save < Script ARGUMENT
+
+Within R, I then access the argument using the commandArg() command.  This enables a script to identify files that should be read.
+
+When I attempt the same thing with Splus, the operating system returns the following error message:
+
+	/usr/local/bin/Splus: line 208: exec: ARGUMENT: not found
+
+When I  invoke the commandArg() command in Splus (having typed Splus<return> to start Splus), I get:
+	> commandArgs()
+	[1] "/home/R-S-Source/S-INSTALL/cmd/Sqpe"
+
+So, can I pass an argument to Splus in the same manner as with R?
+
+Dennis
+
+ 
+
+ Dennis Fisher MD
+ P < (The "P Less Than" Company)
+ Phone: 1-866-PLessThan (1-866-753-7784)
+ Fax: 1-415-564-2220
+ www.PLessThan.com
+  
+
+From Horace.Tso at pgn.com  Fri Feb  3 19:19:15 2006
+From: Horace.Tso at pgn.com (Horace Tso)
+Date: Fri, 03 Feb 2006 11:19:15 -0800
+Subject: Simulating multivariate normals
+Message-ID: <s3e33c40.002@pgn.com>
+
+Dear list,
+
+This little question of mine has to do with simulating multivariate normals. 
+It's been nagging me for sometime and I'd like to hear the list's comment. 
+Splus has this build-in rmvnorm function (or the mvrnorm in MASS) which works 
+just fine, until I realize it should be exactly the same thing as taking the 
+choleski decomposition of the covariance matrix and multiply it with a sample 
+of N(0,I). So I did this,
+
+y <- chol(cov) %*% matrix(rnorm(n*10000), nrow=n, ncol=10000)
+
+where my covariance matrix is positive definite. 
+
+Now, my y should behave like what the cov says it should. Given a large enough 
+sample of unit normal variates, I should get var(y) ~ cov, ie. the covariance 
+matrix of my simulated sample should come close to cov. 
+
+However, trial after trial, my var(y) is so unrecognizable that I suspect 
+something is missing. On the other hand, with rmvnorm, 
+
+y1 <- rmvnorm(1000, cov=cov, d=n)
+
+a modest n (~ 1000) already gives a very close approximation of cov.
+
+What is the reason my homemade simulator doesn't do as well as rmvnorm?
+
+Thank you all in advance.
+
+Horace W. Tso
+PGE
+Portland, Oregon 
+
+From Greg.Snow at intermountainmail.org  Fri Feb  3 20:15:15 2006
+From: Greg.Snow at intermountainmail.org (Gregory Snow)
+Date: Fri, 03 Feb 2006 13:15:15 -0700
+Subject: Re: Simulating multivariate normals
+Message-ID: <07E228A5BE53C24CAD490193A7381BBB2022DD@LP-EXCHVS07.CO.IHC.COM>
+
+Try:  
+
+y <- matrix(rnorm(n*10000), ncol=n) %*% chol(cov)
+
+-- 
+Gregory (Greg) L. Snow Ph.D.
+Statistical Data Center
+Intermountain Healthcare
+greg.snow at intermountainmail.org
+(801) 408-8111
+ 
+ 
+
+> -----Original Message-----
+> From: s-news-owner at lists.biostat.wustl.edu 
+> [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Horace Tso
+> Sent: Friday, February 03, 2006 12:19 PM
+> To: s-news at lists.biostat.wustl.edu
+> Subject: [S] Simulating multivariate normals
+> 
+> Dear list,
+> 
+> This little question of mine has to do with simulating 
+> multivariate normals. It's been nagging me for sometime and 
+> I'd like to hear the list's comment. Splus has this build-in 
+> rmvnorm function (or the mvrnorm in MASS) which works just 
+> fine, until I realize it should be exactly the same thing as 
+> taking the choleski decomposition of the covariance matrix 
+> and multiply it with a sample of N(0,I). So I did this,
+> 
+> y <- chol(cov) %*% matrix(rnorm(n*10000), nrow=n, ncol=10000)
+> 
+> where my covariance matrix is positive definite. 
+> 
+> Now, my y should behave like what the cov says it should. 
+> Given a large enough sample of unit normal variates, I should 
+> get var(y) ~ cov, ie. the covariance matrix of my simulated 
+> sample should come close to cov. 
+> 
+> However, trial after trial, my var(y) is so unrecognizable 
+> that I suspect something is missing. On the other hand, with rmvnorm, 
+> 
+> y1 <- rmvnorm(1000, cov=cov, d=n)
+> 
+> a modest n (~ 1000) already gives a very close approximation of cov.
+> 
+> What is the reason my homemade simulator doesn't do as well 
+> as rmvnorm?
+> 
+> Thank you all in advance.
+> 
+> Horace W. Tso
+> PGE
+> Portland, Oregon 
+> 
+> 
+> 
+> 
+> --------------------------------------------------------------------
+> This message was distributed by 
+> s-news at lists.biostat.wustl.edu.  To unsubscribe send e-mail 
+> to s-news-request at lists.biostat.wustl.edu with the BODY of 
+> the message:  unsubscribe s-news
+> 
+
+From im at edc.pitt.edu  Mon Feb  6 18:23:44 2006
+From: im at edc.pitt.edu (Im, Kelly)
+Date: Mon, 06 Feb 2006 13:23:44 -0500
+Subject: Re: goodness of fit test for conditional logistic regression for 1:1 matched pair data
+Message-ID: <E3FBCB35FBB8294A9B480A3B2DB7335664899E@boa.edc3.pitt.edu>
+
+Greetings,
+ 
+I'm looking for a way to test goodness of fit for a matched (1:1) data
+analysis.   One can look at deviances or model chi-squares, I guess, but
+that seems to provide more of a "relative" goodness of fit (compared to
+other models) than an "absolute" goodness of fit.
+
+Is there a Splus function to calculate a Hosmer-Lemeshow "like" measure
+that gives a single statistic  that is also an absolute, rather than
+relative measure of goodness of fit?
+
+I'd very much appreciate your advice,
+
+With regards,
+
+kelly
+
+++++++++++++++++++++++++++++++++++++
+ KyungAh (Kelly)  Im, 
+ Statistician
+ 130 Desoto St. 127 Parran Hall. 
+ Epidemiology Data Center 
+ Graduate School of Public Health
+ Department of Epidemiology
+ University of Pittsburgh
+ PA 15261
+ PHONE:(412) 624- 4612 FAX: (412) 624- 3775
+ Email: Im at edc.pitt.edu
+ http://www.edc.gsph.pitt.edu
+++++++++++++++++++++++++++++++++++++
+
+From elvis at xlsolutions-corp.com  Tue Feb  7 18:50:02 2006
+From: elvis at xlsolutions-corp.com
+Date: Tue, 07 Feb 2006 11:50:02 -0700
+Subject: March course @ 8 locations *** R/Splus Fundamentals and Programming Techniques
+Message-ID: <20060207115002.9f08cc34deb45d78e54b3b5664e21546.624a18ff50.wbe@email.secureserver.net>
+
+XLSolutions Corporation (www.xlsolutions-corp.com) is proud to
+announce  2-day "R/S-plus Fundamentals and Programming
+Techniques" in San Francisco: www.xlsolutions-corp.com/Rfund.htm
+
+**** Philadelphia,           March 9-10 
+**** Seattle,                  March 13-14 
+**** San Diego,              March 16-17
+**** Portland, OR           March  16-17
+**** Washington DC,      March 16-17
+
+**** New York                March  20-21
+**** San Francisco         March  30-31
+**** Atlanta                    March  30-31
+
+Reserve your seat now at the early bird rates! Payment due AFTER
+the class
+
+Course Description:
+
+This two-day beginner to intermediate R/S-plus course focuses on a
+broad spectrum of topics, from reading raw data to a comparison of R
+and S. We will learn the essentials of data manipulation, graphical
+visualization and R/S-plus programming. We will explore statistical
+data analysis tools,including graphics with data sets. How to enhance
+your plots, build your own packages (librairies) and connect via
+ODBC,etc.
+We will perform some statistical modeling and fit linear regression
+models. Participants are encouraged to bring data for interactive
+sessions
+
+With the following outline:
+
+- An Overview of R and S
+- Data Manipulation and Graphics
+- Using Lattice Graphics
+- A Comparison of R and S-Plus
+- How can R Complement SAS?
+- Writing Functions
+- Avoiding Loops
+- Vectorization
+- Statistical Modeling
+- Project Management
+- Techniques for Effective use of R and S
+- Enhancing Plots
+- Using High-level Plotting Functions
+- Building and Distributing Packages (libraries)
+- Connecting; ODBC, Rweb, Orca via sockets and via Rjava
+
+Email us for group discounts.
+Email Sue Turner: sue at xlsolutions-corp.com
+Phone: 206-686-1578
+Visit us: www.xlsolutions-corp.com/training.htm
+Please let us know if you and your colleagues are interested in this
+classto take advantage of group discount. Register now to secure your
+seat!
+
+Interested in R/Splus Advanced course? email us.
+
+Cheers,
+Elvis Miller, PhD
+Manager Training.
+XLSolutions Corporation
+206 686 1578
+www.xlsolutions-corp.com
+elvis at xlsolutions-corp.com
+
+From bwu at guzman.com  Tue Feb  7 19:00:52 2006
+From: bwu at guzman.com (Brian Wu)
+Date: Tue, 07 Feb 2006 14:00:52 -0500
+Subject: Is there a function worked similar to printf in C?
+Message-ID: <2EB36112B2545546B8E109672E599F63C0F951@server10.corp.guzman.com>
+
+Sometime, I need to print out an error or log from a function.
+Is there a function which works similar to the "printf" in C?
+
+Thanks.
+Brian
+
+From icdm at wi-lab.com  Wed Feb  8 08:00:04 2006
+From: icdm at wi-lab.com (ICDM)
+Date: Wed, 08 Feb 2006 17:00:04 +0900
+Subject: ICDM'06: Call for Workshop Proposals
+Message-ID: <019601c62c85$abceb100$9032a8c0@pc7kenji>
+
+[Apologies if you receive this more than once]
+
+==================================================================
+Call for Workshop Proposals
+
+ICDM '06: The 6th IEEE International Conference on Data Mining
+
+Sponsored by the IEEE Computer Society
+
+Hong Kong Convention and Exhibition Centre, Hong Kong, China,
+18-22 December 2006.
+
+http://www.comp.hkbu.edu.hk/iwi06/
+
+(Workshop Proposals Due: 10 April 2006)
+===================================================================
+
+The Program Committee of the 6th IEEE International Conference on Data
+Mining (ICDM '06) invites proposals for Workshops.  The Workshops will
+be held at the beginning of the Conference, December 18, 2006 at the
+Hong Kong Convention and Exhibition Centre.
+
+The workshop organizers will be responsible for advertising the
+workshop, forming the program committees, reviewing and selecting the
+papers, and guaranteeing high quality worthy of the prestige and range
+of the Conference.  All papers accepted for workshops will be included
+in the Workshop Proceedings, which are expected to be published by
+IEEE Computer Society Press and will be available at the workshops.
+
+The workshop organizers will also have the discretion of editing
+selected papers (after their expansion and revision) into books or
+special journal issues.  Workshops may be full-day or half-day. A
+full-day workshop should select 20-25 regular papers, while a half-day
+workshop should select 10-13 regular papers, from a large number of
+submissions.  The workshop organizers should ensure the presence of
+authors of accepted papers at the workshops.
+
+Each workshop subject will focus on new research challenges and
+initiatives in Data Mining.  The workshops should provide an informal
+and vibrant forum for researchers and industry practitioners to share
+their research results and practical development experiences in the
+data mining field.
+
+Workshop Proposal Submission
+-----------------------------
+
+Workshop proposals should include the following elements:
+
+- Title of the workshop
+- Your name, affiliation, mailing address and e-mail address
+- A description of the topic of the workshop (not exceeding 200 words)
+- Type of the workshop (full-day or half-day)
+- A description of how the workshop will contribute to the field of
+  Web Intelligence and/or Intelligent Agent Technology
+- A short description on how the workshop will be advertised so as
+  to ensure a sufficiently wide range of authors and high quality papers
+
+After the acceptance of a workshop proposal the organizer(s) should:
+
+- Create a "Call for papers/participation" for the workshop
+- Create a Web page for the workshop, the link of which will be published
+  on the Conference Web site
+- Create a Board of Reviewers (Program Committee)
+- Review and select papers
+- Schedule the workshop activities
+
+All submitted papers will be reviewed on the basis of technical
+quality, relevance, significance, and clarity.
+
+Those papers selected by a workshop organizer will also be reviewed by
+the Workshop Co-Chairs for final acceptance.
+
+We will provide an online paper submission and review system to
+support the workshops.
+
+Important Dates
+---------------
+
+- April 10, 2006: Workshop proposal submission due
+    (Please send proposals by e-mail to Workshops Chair)
+- April 20, 2006: Notification to workshop proposers
+- April 30, 2006: Each workshop organizer sends out Call for Workshops
+Papers
+- July 30, 2006: Due date for full workshop papers submission
+                 (at least two reviews for each paper)
+- September 5, 2006: Final acceptance by Workshop Co-Chairs
+- September 8, 2006: Notification of paper acceptance to authors
+- October   8, 2006: Camera-ready of accepted papers
+- December 18, 2006: Workshop day
+
+We look forward to your support in making 2006 IEEE Data Mining
+workshops an exciting event.
+
+Workshops Chair:
+
+ * Shusaku Tsumoto, Shimane University, Japan
+   E-mail: tsumoto at computer.org
+
+Note: we will not have a separate workshop registration fee this year
+(i.e., the conference registration covers everything).
+
+For your information, the ICDM '06 conference will be co-located with
+the IEEE/WIC/ACM International Joint Conference on Web Intelligence
+(WI) and Intelligent Agent Technology (IAT) for providing synergism
+among the three research areas. It will provide opportunities for
+technical collaboration beyond that of previous conferences. The three
+conferences will have a joint opening, keynote, reception, and
+banquet. Attendees only need to register for one conference and can
+attend workshops, sessions and tutorials across the three conferences.
+We are also planning a joint panel and joint paper sessions that
+discuss common problems in the three areas.
+
+From Jason.Overstreet at honeywell.com  Wed Feb  8 14:44:02 2006
+From: Jason.Overstreet at honeywell.com (Overstreet, Jason (FL51))
+Date: Wed, 08 Feb 2006 08:44:02 -0600
+Subject: Re: March course @ 8 locations *** R/Splus Fundamentals and Programming Techniques
+Message-ID: <830EDA711B3AD146904E3A27FFFC86FF4467BC@MN65EV803.global.ds.honeywell.com>
+
+Glad to see that there was a site (Atlanta) that was in a 1000 mile
+radius of Tampa.  I may have to start a Splus/R users group here in
+Florida this summer.  
+
+Is there some kind of heavy concentration of Splus users in New York,
+San Francisco, Seattle, and Washington, D.C?  
+
+I think insightful needs to do a better job at gaining a foothold in the
+Sun Belt, otherwise known as the South! 
+
+Jason Overstreet
+Systems Analyst / Statistician
+Honeywell DSES
+(727) 539-3964 
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of
+elvis at xlsolutions-corp.com
+Sent: Tuesday, February 07, 2006 1:50 PM
+To: s-news at lists.biostat.wustl.edu
+Subject: [S] March course @ 8 locations *** R/Splus Fundamentals and
+Programming Techniques
+
+XLSolutions Corporation (www.xlsolutions-corp.com) is proud to
+announce  2-day "R/S-plus Fundamentals and Programming
+Techniques" in San Francisco: www.xlsolutions-corp.com/Rfund.htm
+
+**** Philadelphia,           March 9-10 
+**** Seattle,                  March 13-14 
+**** San Diego,              March 16-17
+**** Portland, OR           March  16-17
+**** Washington DC,      March 16-17
+
+**** New York                March  20-21
+**** San Francisco         March  30-31
+**** Atlanta                    March  30-31
+
+Reserve your seat now at the early bird rates! Payment due AFTER
+the class
+
+Course Description:
+
+This two-day beginner to intermediate R/S-plus course focuses on a
+broad spectrum of topics, from reading raw data to a comparison of R
+and S. We will learn the essentials of data manipulation, graphical
+visualization and R/S-plus programming. We will explore statistical
+data analysis tools,including graphics with data sets. How to enhance
+your plots, build your own packages (librairies) and connect via
+ODBC,etc.
+We will perform some statistical modeling and fit linear regression
+models. Participants are encouraged to bring data for interactive
+sessions
+
+With the following outline:
+
+- An Overview of R and S
+- Data Manipulation and Graphics
+- Using Lattice Graphics
+- A Comparison of R and S-Plus
+- How can R Complement SAS?
+- Writing Functions
+- Avoiding Loops
+- Vectorization
+- Statistical Modeling
+- Project Management
+- Techniques for Effective use of R and S
+- Enhancing Plots
+- Using High-level Plotting Functions
+- Building and Distributing Packages (libraries)
+- Connecting; ODBC, Rweb, Orca via sockets and via Rjava
+
+Email us for group discounts.
+Email Sue Turner: sue at xlsolutions-corp.com
+Phone: 206-686-1578
+Visit us: www.xlsolutions-corp.com/training.htm
+Please let us know if you and your colleagues are interested in this
+classto take advantage of group discount. Register now to secure your
+seat!
+
+Interested in R/Splus Advanced course? email us.
+
+Cheers,
+Elvis Miller, PhD
+Manager Training.
+XLSolutions Corporation
+206 686 1578
+www.xlsolutions-corp.com
+elvis at xlsolutions-corp.com
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From simona.costanzo at ubs.com  Thu Feb  9 11:17:11 2006
+From: simona.costanzo at ubs.com
+Date: Thu, 09 Feb 2006 11:17:11 +0000
+Subject: breusch-pagan/cook-weiseberg test
+Message-ID: <B4DB35647B608744A45D3150D27F4B3601E5A636@NLDNC102PEX1.ubsw.net>
+
+Dear all,
+
+Would anyone know if there is a function/library to compute the 
+breusch-pagan/cook-weiseberg test for heteroscedasticity?
+
+Many thanks!
+
+Simona
+
+Visit our website at http://www.ubs.com
+
+This message contains confidential information and is intended only
+for the individual named.  If you are not the named addressee you
+should not disseminate, distribute or copy this e-mail.  Please
+notify the sender immediately by e-mail if you have received this
+e-mail by mistake and delete this e-mail from your system.
+
+E-mail transmission cannot be guaranteed to be secure or error-free
+as information could be intercepted, corrupted, lost, destroyed,
+arrive late or incomplete, or contain viruses.  The sender therefore
+does not accept liability for any errors or omissions in the contents
+of this message which arise as a result of e-mail transmission.  If
+verification is required please request a hard-copy version.  This
+message is provided for informational purposes and should not be
+construed as a solicitation or offer to buy or sell any securities or
+related financial instruments.
+
+From jfox at mcmaster.ca  Thu Feb  9 11:23:52 2006
+From: jfox at mcmaster.ca (John Fox)
+Date: Thu, 09 Feb 2006 06:23:52 -0500
+Subject: Re: breusch-pagan/cook-weiseberg test
+In-Reply-To: <B4DB35647B608744A45D3150D27F4B3601E5A636@NLDNC102PEX1.ubsw.net>
+References: <B4DB35647B608744A45D3150D27F4B3601E5A636@NLDNC102PEX1.ubsw.net>
+Message-ID: <20060209112351.HJEJ21965.tomts25-srv.bellnexxia.net@JohnDesktop8300>
+
+Dear Simona,
+
+See the ncv.test() function in the car library, available at
+<http://socserv.socsci.mcmaster.ca/jfox/Books/Companion/car.html>. 
+
+I hope this helps,
+ John
+
+--------------------------------
+John Fox
+Department of Sociology
+McMaster University
+Hamilton, Ontario
+Canada L8S 4M4
+905-525-9140x23604
+http://socserv.mcmaster.ca/jfox 
+-------------------------------- 
+
+> -----Original Message-----
+> From: s-news-owner at lists.biostat.wustl.edu 
+> [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of 
+> simona.costanzo at ubs.com
+> Sent: Thursday, February 09, 2006 6:17 AM
+> To: s-news at lists.biostat.wustl.edu
+> Subject: [S] breusch-pagan/cook-weiseberg test
+> 
+> Dear all,
+> 
+> Would anyone know if there is a function/library to compute 
+> the breusch-pagan/cook-weiseberg test for heteroscedasticity?
+> 
+> Many thanks!
+> 
+> 
+> Simona
+> 
+> Visit our website at http://www.ubs.com
+> 
+> This message contains confidential information and is 
+> intended only for the individual named.  If you are not the 
+> named addressee you should not disseminate, distribute or 
+> copy this e-mail.  Please notify the sender immediately by 
+> e-mail if you have received this e-mail by mistake and delete 
+> this e-mail from your system.
+> 
+> E-mail transmission cannot be guaranteed to be secure or 
+> error-free as information could be intercepted, corrupted, 
+> lost, destroyed, arrive late or incomplete, or contain 
+> viruses.  The sender therefore does not accept liability for 
+> any errors or omissions in the contents of this message which 
+> arise as a result of e-mail transmission.  If verification is 
+> required please request a hard-copy version.  This message is 
+> provided for informational purposes and should not be 
+> construed as a solicitation or offer to buy or sell any 
+> securities or related financial instruments.
+> 
+> --------------------------------------------------------------------
+> This message was distributed by 
+> s-news at lists.biostat.wustl.edu.  To unsubscribe send e-mail 
+> to s-news-request at lists.biostat.wustl.edu with the BODY of 
+> the message:  unsubscribe s-news
+
+From verkerk at candiensten.nl  Thu Feb  9 15:09:23 2006
+From: verkerk at candiensten.nl (Dick Verkerk)
+Date: Thu, 09 Feb 2006 16:09:23 +0100
+Subject: Bill Venables courses in Europe
+Message-ID: <43EB5B23.8090008@candiensten.nl>
+
+Dear S-PLUS User,
+
+It is our great pleasure and honor to announce a course by Bill
+Venables "Traditional and Modern Approaches to Statistical
+Modelling with S-PLUS: An Advanced Course".
+
+Bill Venables is a familiar contributor to the S-news mailing
+list and well known for his insights into the workings of the
+S language.  Bill worked for the University of Adelaide for
+many years before joining CMIS, the Mathematics and Information
+Science Division of CSIRO, Australia's premier scientific and
+industrial research organization in 1999.
+
+Dr Bill Venables is joint author with Professor Brian Ripley of
+the popular text and reference book "Modern Applied Statistics
+with S-PLUS" and "S Programming".
+
+This three-day course will present classical and modern
+approaches to statistical modelling using the facilities
+provided by S-PLUS. The course will present S-PLUS as a
+complete data analysis and graphics environment and will use
+both the standard software and the S programming language to
+offer strategies for handling both standard and non-standard
+statistical modelling problems.
+
+The course will be provided in Zurich and Paris. More information
+is avaible at:
+
+Zurich, February 27-29, March 1, 2006
+http://www.insightful.com/switzerland/us/services/venables_CH.asp
+
+Paris, March 6-8 2006
+http://www.insightful.com/france/services/venables_FR.asp
+
+Please let us know if you have any questions.
+
+Kind regards,
+Dick Verkerk
+
+PS
+Please feel free to send this message on to your colleagues and
+friends for whom it might be interesting!!
+
+Mathematica User Day with Conrad Wolfram on 22nd March
+At the Eindhoven Technical University.
+http://www.can.nl/english/cursussen/cursussendetail.asp?id=81
+
+Other courses
+
+February 14  Introduction to the S-Language
+http://www.can.nl/english/cursussen/cursussendetail.asp?id=2
+
+February 21  Introduction to Mathematica - FREE
+http://www.can.nl/english/cursussen/cursussendetail.asp?id=8
+
+February 22-23  Numerical Methods for Pricing Financial Derivatives
+http://www.can.nl/english/cursussen/cursussendetail.asp?id=25
+
+February 28  Workshop Maple TA (e-learning and automatise tests) - FREE
+http://www.can.nl/english/cursussen/cursussendetail.asp?id=64
+
+March 14  An Advanced Course on the S Language
+http://www.can.nl/english/cursussen/cursussendetail.asp?id=13
+
+March 16  Analysis of Repeated Measurements with S-PLUS
+http://www.can.nl/english/cursussen/cursussendetail.asp?id=79
+
+March 21  Workshop Maple TA (e-learning and automatise tests) - FREE
+http://www.can.nl/english/cursussen/cursussendetail.asp?id=64
+
+March 21  Maple TA training
+http://www.can.nl/english/cursussen/cursussendetail.asp?id=80
+
+March 28  Programming with Mathematica
+http://www.can.nl/english/cursussen/cursussendetail.asp?id=70
+
+March 29-30  Modeling, Pricing and Analysis of Credit Risk
+http://www.can.nl/english/cursussen/cursussendetail.asp?id=45
+
+April 18  Introduction to Mathematica - FREE
+http://www.can.nl/english/cursussen/cursussendetail.asp?id=8
+
+April 19-20  Financial Modeling with Mathematica®
+http://www.can.nl/english/cursussen/cursussendetail.asp?id=17
+
+_________________________
+
+CANdiensten, Nieuwpoortkade 23-25, NL-1055 RX Amsterdam              
+voice: +31 20 5608400 fax: +31 20 5608448 verkerk at can.nl
+
+_________________________
+
+Your Partner in Finance, Mathematics and Statistics!
+
+From Patricia.Kipnis at kp.org  Thu Feb  9 22:37:50 2006
+From: Patricia.Kipnis at kp.org
+Date: Thu, 09 Feb 2006 14:37:50 -0800
+Subject: Job opening: Statistician/SAS and S+ programmer
+Message-ID: <OF8B7E1A31.5B76BDB9-ON88257110.007C4A16-88257110.007C4F8A@KP.ORG>
+
+Division of Research at Kaiser Permanente,
+Oakland, CA
+
+Seeking a Statistician/Senior SAS/S+ Programmer
+
+Schedule: Full-time regular, 40 hours/week,
+Monday through Friday
+
+Send Resume to: Patricia.Kipnis at kp.org
+
+Position Summary:
+
+Under general supervision, this position
+exists to assist the organization in making strategic data-related decisions
+by analyzing, manipulating, tracking, internally managing and reporting
+data. This position takes an active leadership role as both as a consultant
+and as a high-level SAS programmer.
+
+Education/License/Certification: 
+
+Masters degree in economics, finance, health
+care administration, public health administration, statistics, mathematics,
+operations research, or related field required, or equivalent Bachelors
+degree and work experience in lieu of a Masters degree
+
+Qualifications: 
+
+1.Five or more years programming in SAS required.
+Experience with SQL, macros, SASGRAPH and statistical procedures in SAS
+preferred. Experience in S+ or R graphics.
+
+2.Experience with analytical manipulation
+and interpretation of large databases required.
+
+3.Typically five or more years of related
+analytical consulting experience, healthcare experience preferred. Broad
+familiarity with medical practices, especially population management and
+process and outcomes measurement. Project management experience strongly
+preferred.
+
+4.Experience with MVS/TSO operating systems
+and knowledge of JCL strongly preferred. Microsoft Office skills required.
+
+5.Exceptional analytic and critical thinking
+skills, writing skills, communication skills, consulting skills, and ability
+to work within a team. Ability to express complex analytical and technical
+information to senior management or to audiences with clinical training.
+Must be an independent self-starter.
+
+6.Proven leadership in consulting and, for
+some areas, project management. Must exhibit efficiency, collaboration,
+candor, openness, and results orientation.
+
+Must be able to work in a Labor/Management
+Partnership environment.
+
+Duties:
+
+1.Leads, makes significant contributions,
+and/or provides technical leadership to high visibility projects to identify
+and resolve issues of strategic importance to the organization. Interfaces
+regularly with senior management to produce timely and valuable results.
+
+2.Collaborates  on the development of
+predictive models by defining data input specifications, displaying data
+graphically, using of sophisticated statistical analysis techniques and
+presenting of results so as to improve the quality and efficiency of health
+care delivery systems. . 
+
+3.Builds and maintains complex statistical
+SAS routines using macros, vendor software, and software written by self
+and others. Tests and maintains data integrity across multiple databases
+(internal SAS, DB2, VSAM; external: MLWin, STATA, R/S+). Designs and enhances
+databases. Develops reports with accurate, easy to read, useful information
+that satisfies the client's needs. 
+
+4.Designs research plans for data gathering
+and analysis; participates significantly in interpreting analyses and developing
+action plans accordingly.
+
+5.Defines and frames complex multi-dimensional
+healthcare issues and develops time tables/processes for decision making.
+Translates needs, issues, and ideas into effective strategies and action
+plans. Formulates specific implementation plans and evaluates the effectiveness
+of actions/programs implemented. Develops creative alternative solutions.
+
+6.Works closely with IT and outside partners
+(and physicians for TPMG departments). 
+
+7.Sets the strategic direction of projects.
+Determines goals and priorities with team, clients, or project management
+sponsors (when appropriate). May coordinate team/project activities and
+schedules. May establish team membership and project participants, provide
+leadership to multi-disciplinary project teams, as well as manage work
+of outside consultants when used.
+
+8.Communicates results/recommendations to
+project sponsors, clients, and various senior level audiences (including
+physicians for TPMG departments).
+
+9.May participate in the development and
+management of the department, including coaching and recruiting for consultants/analysts
+and other departmental activities.
+
+From frank.d at francone.com  Fri Feb 10 21:58:24 2006
+From: frank.d at francone.com (Frank Francone)
+Date: Fri, 10 Feb 2006 14:58:24 -0700
+Subject: Plotting using color for signal value
+Message-ID: <11295B1CA9F56D4785A8438124AFD8390228A9@asp4.networkingco.local>
+
+I have data with x y coordinates and a signal value, z. I
+would like to show a scatter plot with the color of each point depending on the
+value of z. This is easy to do from the gui but I would like to do it
+automatically. I’m having trouble finding the documentation for doing
+that with plot.
+
+ 
+
+Any help would be greatly appreciated.
+
+ 
+
+Frank
+
+From PSchwarz at gcrinsight.com  Sat Feb 11 02:19:09 2006
+From: PSchwarz at gcrinsight.com (Schwarz,Paul)
+Date: Fri, 10 Feb 2006 18:19:09 -0800
+Subject: identifying which column/row is passed in calls to apply()
+Message-ID: <89C7DEAADB79564DB278694EB2417CCE910397@CHOCOLATE.GCRInsight.com>
+
+S-News readers,
+
+How would I identify which column (or row) is being operated on in a
+call to the function specified in apply()? That is, if I wanted to
+perform some column-specific (or row-specific) operation, how do I
+identify which column/row is being passed to the function that's
+specified in the call to apply(), where the number of columns ranges
+from 1 to ncol(mymat)?
+
+apply( mymat, 2, function(x){ ? } )
+
+I suspect that this is easy, but I'm drawing a blank on how to do this.
+
+Thanks a lot everyone.
+
+-Paul
+
+From rmh at temple.edu  Sat Feb 11 04:01:58 2006
+From: rmh at temple.edu (Richard M. Heiberger)
+Date: Fri, 10 Feb 2006 23:01:58 -0500
+Subject: Re: identifying which column/row is passed
+Message-ID: <e251258e.88ba0488.81b6700@po-d.temple.edu>
+
+the easiest way is to do the apply loop over the index.
+
+tmp <- matrix(1:12,3,4)
+tmp[2,3] <- 100
+tmp[3,2] <- 200
+dimnames(tmp) <- list(letters[1:3], LETTERS[1:4])
+tmp
+
+sapply(1:3, tmp,
+       FUN=function(i, x) {
+         x.i <- x[i,,drop=FALSE]
+         big <- (x.i > 20)
+         j <- seq(length(x.i))[big]
+         if (length(j) > 0) cat(i, ",", j, "\n")
+         apply(x.i, 1, mean)
+       })
+
+apply(tmp, 1, mean)
+
+From Rich at Mango-Solutions.com  Sat Feb 11 11:59:41 2006
+From: Rich at Mango-Solutions.com
+Date: Sat, 11 Feb 2006 11:59:41 +0000
+Subject: Re: identifying which column/row is passed in calls to apply()
+In-Reply-To: <89C7DEAADB79564DB278694EB2417CCE910397@CHOCOLATE.GCRInsight.com>
+References: <89C7DEAADB79564DB278694EB2417CCE910397@CHOCOLATE.GCRInsight.com>
+Message-ID: <20060211115934.46FEF1008C60@mailgate.biostat.wustl.edu>
+
+You could use sapply to pass in a vector of numbers (for column numbers) or
+characters (for column names) and index the columns of the input data.
+Something like this:-
+
+> innerFun <- function(i, df) {
+        if (i == 1) mean(df[[i]])
+        else median(df[[i]])
+}
+> sapply(1:length(myDf), innerFun, df=myDf)
+
+Not as efficient as apply for larger data structures I'd imagine, since
+you're passing the entire dataset in each time ...
+
+Rich.
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Schwarz,Paul
+Sent: 11 February 2006 02:19
+To: s-news at lists.biostat.wustl.edu
+Subject: [S] identifying which column/row is passed in calls to apply()
+
+S-News readers,
+
+How would I identify which column (or row) is being operated on in a
+call to the function specified in apply()? That is, if I wanted to
+perform some column-specific (or row-specific) operation, how do I
+identify which column/row is being passed to the function that's
+specified in the call to apply(), where the number of columns ranges
+from 1 to ncol(mymat)?
+
+apply( mymat, 2, function(x){ ? } )
+
+I suspect that this is easy, but I'm drawing a blank on how to do this.
+
+Thanks a lot everyone.
+
+-Paul
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From Terry.Koen at dnr.nsw.gov.au  Mon Feb 13 22:39:13 2006
+From: Terry.Koen at dnr.nsw.gov.au (Terry Koen)
+Date: Tue, 14 Feb 2006 09:39:13 +1100
+Subject: Prediction intervals for GAM
+Message-ID: <s3f1a555.073@dlwcmail.dlwc.nsw.gov.au>
+
+Dear S-Plus Users,    (using S-Plus 6.2 for Windows)
+
+ 
+
+A colleague of mine has asked how he can derive (and save) "95% prediction intervals" for a high degree Generalised Additive Model he has fitted.  The resulting graphic that he would produce would be something like the pointwise confidence intervals one can get from the command plot(gam.object, se=T).
+
+ 
+
+I know I can use ...
+
+predict.gam( fit.gam, type="response", se.fit=T, pi.fit=T)
+
+but this gives me prediction intervals only about the linear portion of the GAM.
+
+ 
+
+I seem to have lost my original reference to how I calculated confidence bands using jacknife residuals ...
+
+fit <- smooth.spline(NYear,NYield,df=40)
+res <- (fit$yin - fit$y)/(1-fit$lev)             # jacknife residuals
+sigma <- sqrt(var(res))                               # estimate of standard deviation
+upper <- fit$y + 2.0 * sigma * sqrt(fit$lev)  # upper 95% confidence band
+lower <- fit$y - 2.0 * sigma * sqrt(fit$lev)  # lower 95% confidence band
+
+ 
+
+... but cannot help but feel the formula I need may be something like
+
+upper <- fit$y + 2.0 * sqrt( sigma^2  * (1 + fit$lev))
+
+lower <- fit$y - 2.0 * sqrt( sigma^2  * (1 + fit$lev))
+
+ ... and that way bring in the variance about an individual point.
+
+ 
+
+Any advice / insights would be gratefully accepted.
+
+ 
+
+thanks, Terry
+
+ 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Terry Koen
+Senior Biometrician            ph: +61 2 63419119
+CNR Research Centre       fx:  +61 2 63424551
+Dept Natural Resources
+P.O. Box 445
+Cowra 2794  NSW        email: Terry.Koen at dnr.nsw.gov.au
+Australia
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+-----------------------------------------------------
+
+This message is intended for the addressee named and may contain confidential/privileged information. If you are not the intended recipient, please delete it and notify the sender. 
+
+Views expressed in this message are those of the individual sender, and are not necessarily the views of the Department.
+
+ 
+
+You should scan any attached files for viruses.
+
+-----------------------------------------------------
+
+From Thierry.ONKELINX at inbo.be  Tue Feb 14 08:41:12 2006
+From: Thierry.ONKELINX at inbo.be (ONKELINX, Thierry)
+Date: Tue, 14 Feb 2006 09:41:12 +0100
+Subject: Re: identifying which column/row is passed in calls to apply()
+Message-ID: <2E9C414912813E4EB981326983E0A10401666E68@inexch.instnat.be.grp>
+
+I would recommend that you add a column to the dataset which indicates
+what function needs to be evaluated in the apply loop.
+
+innerFun <- function(row) {
+        if (row[1] == 1){
+                result <- mean(row[-1])
+        } else {
+                result <- median(row[-1])
+        }
+        return(result)
+}
+myDf <- cbind(action = rep(c(0, 1), dim(myDf)[2]/2), myDf)
+apply(myDf, 1, innerFun)
+
+Cheers,
+
+Thierry
+--------------------------------------------------------
+ir. Thierry Onkelinx
+Research Institute for Nature and Forest
+Team Biometrics, methodology and quality assurance
+Gaverstraat 4
+B-9500 Geraardsbergen
+Belgium
+tel. + 32 54/436 185
+Thierry.Onkelinx at inbo.be
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of
+Rich at Mango-Solutions.com
+Sent: Saturday, February 11, 2006 1:00 PM
+To: 'Schwarz,Paul'; s-news at lists.biostat.wustl.edu
+Subject: Re: [S] identifying which column/row is passed in calls to
+apply()
+
+You could use sapply to pass in a vector of numbers (for column numbers)
+or
+characters (for column names) and index the columns of the input data.
+Something like this:-
+
+> innerFun <- function(i, df) {
+        if (i == 1) mean(df[[i]])
+        else median(df[[i]])
+}
+> sapply(1:length(myDf), innerFun, df=myDf)
+
+Not as efficient as apply for larger data structures I'd imagine, since
+you're passing the entire dataset in each time ...
+
+Rich.
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Schwarz,Paul
+Sent: 11 February 2006 02:19
+To: s-news at lists.biostat.wustl.edu
+Subject: [S] identifying which column/row is passed in calls to apply()
+
+S-News readers,
+
+How would I identify which column (or row) is being operated on in a
+call to the function specified in apply()? That is, if I wanted to
+perform some column-specific (or row-specific) operation, how do I
+identify which column/row is being passed to the function that's
+specified in the call to apply(), where the number of columns ranges
+from 1 to ncol(mymat)?
+
+apply( mymat, 2, function(x){ ? } )
+
+I suspect that this is easy, but I'm drawing a blank on how to do this.
+
+Thanks a lot everyone.
+
+-Paul
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From timh at insightful.com  Tue Feb 14 17:49:58 2006
+From: timh at insightful.com (Tim Hesterberg)
+Date: Tue, 14 Feb 2006 09:49:58 -0800
+Subject: Re: Prediction intervals for GAM
+In-Reply-To: <s3f1a555.073@dlwcmail.dlwc.nsw.gov.au>
+References: <s3f1a555.073@dlwcmail.dlwc.nsw.gov.au>
+Message-ID: <SE2KEXCH01xpTljBOh8000000db@se2kexch01.insightful.com>
+
+Prediction intervals in GAM models can be problematic.
+For logistic regression, for example, the y values are 0 or 1, and the
+interval would be one of:
+        [0, 1]
+        [0]
+        [1]
+
+One approach is to generate random values of regression parameters
+(using bootstrapping, or using the estimated parameters and their
+estimated covariance matrix), generate y values given those parameters
+and the x values of interest, and take the middle 95% of the y values
+as the prediction interval.  In the case of logistic regression, where
+the y values are 0 or 1, this would give one of the intervals above.
+
+In a large sample, where uncertainty in the parameters is small relative
+to the conditional variance of y given the parameters, an approximation
+would be to use the middle 95% of the conditional distribution of y,
+given x and the parameters.
+
+Tim Hesterberg
+
+>Dear S-Plus Users,    (using S-Plus 6.2 for Windows)
+> 
+>A colleague of mine has asked how he can derive (and save) "95%
+>prediction intervals" for a high degree Generalised Additive Model he
+>has fitted.  The resulting graphic that he would produce would be
+>something like the pointwise confidence intervals one can get from the
+>command plot(gam.object, se=T).
+> 
+>I know I can use ...
+>predict.gam( fit.gam, type="response", se.fit=T, pi.fit=T)
+>but this gives me prediction intervals only about the linear portion of
+>the GAM.
+> 
+>I seem to have lost my original reference to how I calculated
+>confidence bands using jacknife residuals ...
+>fit <- smooth.spline(NYear,NYield,df=40)
+>res <- (fit$yin - fit$y)/(1-fit$lev)             # jacknife residuals
+>sigma <- sqrt(var(res))                               # estimate of
+>standard deviation
+>upper <- fit$y + 2.0 * sigma * sqrt(fit$lev)  # upper 95% confidence
+>band
+>lower <- fit$y - 2.0 * sigma * sqrt(fit$lev)  # lower 95% confidence
+>band
+>
+> 
+>... but cannot help but feel the formula I need may be something like
+>upper <- fit$y + 2.0 * sqrt( sigma^2  * (1 + fit$lev))
+>lower <- fit$y - 2.0 * sqrt( sigma^2  * (1 + fit$lev))
+> ... and that way bring in the variance about an individual point.
+> 
+>Any advice / insights would be gratefully accepted.
+> 
+>thanks, Terry
+> 
+>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>Terry Koen
+>Senior Biometrician            ph: +61 2 63419119
+>CNR Research Centre       fx:  +61 2 63424551
+>Dept Natural Resources
+>P.O. Box 445
+>Cowra 2794  NSW        email: Terry.Koen at dnr.nsw.gov.au
+>Australia
+>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+From rodmach at uclink.berkeley.edu  Tue Feb 14 18:42:44 2006
+From: rodmach at uclink.berkeley.edu (Rhoderick Neri Machekano)
+Date: Tue, 14 Feb 2006 10:42:44 -0800
+Subject: summing algorithm
+Message-ID: <web-31038035@calmail-be3.berkeley.edu>
+
+Dear users
+
+Is there a general algorithm for finding all sets of say k +ve integers that sum to S. For 
+example, say I need all sets of 3 positve integers that sum to 6 : (1,2,3), (1,1,4),(2,2,2).
+
+Thanks
+
+rhoderick
+
+From bkb5 at cdc.gov  Tue Feb 14 19:07:33 2006
+From: bkb5 at cdc.gov (Biggerstaff, Brad J.)
+Date: Tue, 14 Feb 2006 12:07:33 -0700
+Subject: Re: summing algorithm
+Message-ID: <7E6C5EBC0D0DB8448A56A8BEEC632A900608789A@m-ncid-3.ncid.cdc.gov>
+
+These are called "partitions".  You might start with
+
+http://mathworld.wolfram.com/Partition.html,
+
+which metions a greedy algorithm for finding these, among other, useful
+facts.
+
+Cheers,
+Brad
+
+Brad Biggerstaff, Ph.D. 
+Mathematical Statistician 
+Division of Vector-Borne Infectious Diseases 
+National Center for Infectious Diseases 
+Centers for Disease Control and Prevention 
+P.O. Box 2087 
+Fort Collins, Colorado  80522-2087 
+(970) 221-6473 ... BBiggerstaff at cdc.gov 
+
+ 
+
+> -----Original Message-----
+> From: s-news-owner at lists.biostat.wustl.edu 
+> [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of 
+> Rhoderick Neri Machekano
+> Sent: Tuesday, February 14, 2006 11:43 AM
+> To: s-news at lists.biostat.wustl.edu
+> Subject: [S] summing algorithm
+> 
+> Dear users
+> 
+> Is there a general algorithm for finding all sets of say k 
+> +ve integers that sum to S. For 
+> example, say I need all sets of 3 positve integers that sum 
+> to 6 : (1,2,3), (1,1,4),(2,2,2).
+> 
+> Thanks
+> 
+> rhoderick
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+> 
+
+From timh at insightful.com  Tue Feb 14 19:26:22 2006
+From: timh at insightful.com (Tim Hesterberg)
+Date: Tue, 14 Feb 2006 11:26:22 -0800
+Subject: Re: summing algorithm
+In-Reply-To: <web-31038035@calmail-be3.berkeley.edu>
+References: <web-31038035@calmail-be3.berkeley.edu>
+Message-ID: <SE2KEXCH011tqrtzwgP00000005@se2kexch01.insightful.com>
+
+>Dear users
+>
+>Is there a general algorithm for finding all sets of say k +ve integers that 
+>sum to S. For 
+>example, say I need all sets of 3 positve integers that sum to 6 : (1,2,3), 
+>(1,1,4),(2,2,2).
+>
+>Thanks
+>
+>rhoderick
+
+I would do it inductively:
+start with the answer for 1,
+create answer for k+1 from answers for 1, 2, ... k.
+
+You could also do it recursively, but if you're not careful in programming
+it could get extremely slow, with a lot of duplicated effort.
+
+Here is an inductive solution to a similar problem, in case it helps.
+
+> combinations
+function(n, k)
+{
+  # Compute all n choose k combinations of size k from 1:n
+  # Return matrix with k rows and choose(n,k) columns.
+  if(!is.numeric(n) || length(n) != 1 || n %% 1) stop("'n' must be an integer")
+  if(!is.numeric(k) || length(k) != 1 || k %% 1)
+    stop("'k' must be an integer")
+  if(k > n || k < 0)
+    return(matrix(numeric(0), 0, 0))
+  if(k == 0)
+    return(matrix(numeric(0), 0, 1))
+  rowMatrix <- function(n) structure(1:n, dim = c(1, n))
+  colMatrix <- function(n) structure(1:n, dim = c(n, 1))
+  if(k == n)
+    return(colMatrix(n))
+  if(k == 1)
+    return(rowMatrix(n))
+  L <- vector("list", k)
+  # L[[j]] will contain combinations(N, j) for N = 2:n
+  L[[1]] <- rowMatrix(2)
+  L[[2]] <- colMatrix(2)
+  Diff <- n - k
+  for(N in seq(3, n, by = 1)) {
+    # loop over j in reverse order, to avoid overwriting
+    for(j in seq(min(k, N - 1), max(2, N - Diff), by = -1))
+      L[[j]] <- cbind(L[[j]], rbind(L[[j - 1]], N, deparse.level = 0))
+    if(N <= Diff + 1)
+      L[[1]] <- rowMatrix(N)
+    else L[[N - (Diff + 1)]] <- numeric(0)
+    if(N <= k)
+      L[[N]] <- colMatrix(N)
+  }
+  L[[k]]
+}
+
+Tim Hesterberg
+
+========================================================
+| Tim Hesterberg       Research Scientist              |
+| timh at insightful.com  Insightful Corp.                |
+| (206)802-2319        1700 Westlake Ave. N, Suite 500 |
+| (206)283-8691 (fax)  Seattle, WA 98109-3012, U.S.A.  |
+|                      www.insightful.com/Hesterberg   |
+========================================================
+Download the S+Resample library from www.insightful.com/downloads/libraries
+
+Two Research Scientist positions:
+        data mining
+        frailty/mixed effects
+    http://www.insightful.com/company/jobs.asp
+
+Speak out about biased science in Washington D.C.
+    http://home.comcast.net/~timhesterberg/ScientificIntegrity.html
+
+From elvis at xlsolutions-corp.com  Tue Feb 14 20:44:36 2006
+From: elvis at xlsolutions-corp.com
+Date: Tue, 14 Feb 2006 13:44:36 -0700
+Subject: R/Splus April course *** (Raleigh, Miami, Houston, Baltimore etc) R/Splus Fundamentals and Programming Techniques
+Message-ID: <20060214134436.9f08cc34deb45d78e54b3b5664e21546.1deacea063.wbe@email.secureserver.net>
+
+XLSolutions Corporation (www.xlsolutions-corp.com) is proud
+to
+announce  2-day "R/S-plus Fundamentals and
+Programming
+Techniques" in San Francisco:
+www.xlsolutions-corp.com/Rfund.htm
+
+****
+Raleigh,               
+April  3-4 
+****
+Miami,                 
+April 10-11
+****
+Houston,               
+April 13-14
+****
+Boston,                
+April 20-21
+****
+Baltimore,             
+April 27-28
+
+Reserve your seat now at the early bird rates!
+Payment due AFTER
+the class
+
+Course Description:
+
+This
+two-day beginner to intermediate R/S-plus course focuses on a
+broad
+spectrum of topics, from reading raw data to a comparison of R
+and
+S. We will learn the essentials of data manipulation,
+graphical
+visualization and R/S-plus programming. We will explore
+statistical
+data analysis tools,including graphics with data sets.
+How to enhance
+your plots, build your own packages (librairies) and
+connect via
+ODBC,etc.
+We will perform some statistical modeling
+and fit linear regression
+models. Participants are encouraged to
+bring data for interactive
+sessions
+
+With the following
+outline:
+
+- An Overview of R and S
+- Data Manipulation and
+Graphics
+- Using Lattice Graphics
+- A Comparison of R and
+S-Plus
+- How can R Complement SAS?
+- Writing Functions
+-
+Avoiding Loops
+- Vectorization
+- Statistical Modeling
+-
+Project Management
+- Techniques for Effective use of R and S
+-
+Enhancing Plots
+- Using High-level Plotting Functions
+- Building
+and Distributing Packages (libraries)
+- Connecting; ODBC, Rweb, Orca
+via sockets and via Rjava
+
+Email us for group
+discounts.
+Email Sue Turner: sue at xlsolutions-corp.com
+Phone:
+206-686-1578
+Visit us:
+www.xlsolutions-corp.com/training.htm
+Please let us know if you and
+your colleagues are interested in this
+classto take advantage of
+group discount. Register now to secure your
+seat!
+
+Interested
+in R/Splus Advanced course? email us.
+
+Cheers,
+Elvis
+Miller, PhD
+Manager Training.
+XLSolutions Corporation
+206 686
+1578
+www.xlsolutions-corp.com
+elvis at xlsolutions-corp.com
+
+From staplet5 at stt.msu.edu  Tue Feb 14 21:59:34 2006
+From: staplet5 at stt.msu.edu (James Stapleton)
+Date: Tue, 14 Feb 2006 16:59:34 -0500
+Subject: Red Graphics Screen
+Message-ID: <0E76D8E8DC801548B4E52791F221B7D21EC064@sttweb.sttwin.stt.msu.edu>
+
+ 
+
+ 
+
+ 
+
+I am using S-Plus 7.0  on Windows 2000.
+
+ 
+
+Suddenly my graphics screen background color  is red.
+Paper copies on a black-white printer  have black background and are
+therefore unreadable. I want the background to be white. I’ve tried
+everything I can think of, including under “Options”: Graph
+Options, Graph Style, Color Schemes. It doesn’t help to get out of, then
+back into, S-Plus.
+
+ 
+
+Jim
+
+ 
+
+James Stapleton
+
+Professor and Co-Graduate Director
+
+Department of Statistics and Probability
+
+517-355-9678
+
+ 
+
+From hurley.gj at pg.com  Tue Feb 14 22:10:13 2006
+From: hurley.gj at pg.com
+Date: Tue, 14 Feb 2006 17:10:13 -0500
+Subject: Re: Red Graphics Screen
+Message-ID: <OF95D96A67.8506436C-ON85257115.0079253E-85257115.0079C8B0@na.pg.com>
+
+I had this problem in S-Plus 6.1.  I had thought this had been fixed.  I believe you should be able to delete your .prefs folder and let S-Plus recreate this folder and you should be fine.
+
+"James Stapleton" <staplet5 at stt.msu.edu>
+
+Sent by: s-news-owner at lists.biostat.wustl.edu
+02/14/2006 04:59 PM
+
+        
+
+        To:        <s-news at lists.biostat.wustl.edu>
+
+        cc:        
+
+        Subject:        [S] Red Graphics Screen
+
+ 
+
+ 
+
+ 
+
+I am using S-Plus 7.0  on Windows 2000.
+
+ 
+
+Suddenly my graphics screen background color  is red. Paper copies on a black-white printer  have black background and are therefore unreadable. I want the background to be white. I've tried everything I can think of, including under "Options": Graph Options, Graph Style, Color Schemes. It doesn't help to get out of, then back into, S-Plus.
+
+ 
+
+Jim
+
+ 
+
+James Stapleton
+
+Professor and Co-Graduate Director
+
+Department of Statistics and Probability
+
+517-355-9678
+
+ 
+
+From rmh at temple.edu  Tue Feb 14 22:13:58 2006
+From: rmh at temple.edu (Richard M. Heiberger)
+Date: Tue, 14 Feb 2006 17:13:58 -0500
+Subject: Re: Red Graphics Screen
+Message-ID: <7c9acf30.8aa97ccb.81b3100@po-d.temple.edu>
+
+This is, unfortunately, an FAQ.
+
+The fix that Support at insightful.com gave me a long time ago
+is to 
+1. find your working directory.  It is the first item in search().
+2. close S-Plus
+3. delete the entire .Prefs subdirectory in your working directory
+4. reopen S-Plus and let it repopulate .Prefs
+
+From Christophe.Benoist at joslin.harvard.edu  Wed Feb 15 04:13:30 2006
+From: Christophe.Benoist at joslin.harvard.edu (Benoist, Christophe)
+Date: Tue, 14 Feb 2006 23:13:30 -0500
+Subject: 2D distributions
+Message-ID: <3E4E314268FD4F4E90AA4E752C3B777A0E9A16@jdcmail1.joslin.harvard.edu>
+
+Would appreciate help with the following question which aims to comparing 
+irregular distributions in 2-dimensional space.
+Assume a square grid, dimension n x n (where is on the order of 100), where a 
+reference distribution is generated by non-random placement of N objects in 
+this grid (where N is large, on the order of 10^5). The distribution is 
+"smooth", in that contiguous elements on the grid contain similar number of 
+objects, generating broad peaks an valleys, but cannot be fitted by any 
+particular function.
+Given subsequent sets of smaller numbers of objects placed onto the same grid, 
+how could one estimate a probability that this test distribution differs from 
+the reference distribution (the null hypothesis being that the test set is 
+simply a small random sample of the reference distribution)? This while 
+allowing spatial "wobble" in the system, such that peaks in neighboring squares 
+of the grid are not considered very different.
+Apologies if the question is trivial, makes no sense, or is clumsily formulated.
+Thanks
+Christophe Benoist
+
+From wi at maebashi-it.org  Wed Feb 15 08:43:55 2006
+From: wi at maebashi-it.org (WI)
+Date: Wed, 15 Feb 2006 17:43:55 +0900
+Subject: WI'06: Call For Papers
+Message-ID: <01b801c6320b$f464beb0$9032a8c0@pc7kenji>
+
+[Apologies if you receive this more than once]
+
+#####################################################################
+
+         IEEE/WIC/ACM  WEB INTELLIGENCE 2006
+
+                  CALL FOR PAPERS
+
+#####################################################################
+
+2006 IEEE/WIC/ACM  International Conference on
+Web Intelligence (WI'06)
+
+Hong Kong Convention and Exhibition Centre, Hong Kong, China,
+18-22 December 2006.
+
+Sponsored By
+IEEE Computer Society
+Web Intelligence Consortium (WIC)
+Association for Computing Machinery (ACM)
+
+http://www.comp.hkbu.edu.hk/iwi06/
+
+(Papers Due: 5 July 2006)
+**********************************************************************
+
+Web Intelligence (WI) has been recognized as a new direction for
+scientific research and development to explore the fundamental roles
+as well as practical impacts of Artificial Intelligence (AI)
+(e.g., knowledge representation, planning, knowledge discovery and
+data mining, intelligent agents, and social network intelligence) and
+advanced Information Technology (IT) (e.g., wireless networks,
+ubiquitous devices, social networks, and data/knowledge grids) on
+the next generation of Web-empowered products, systems, services, and
+activities. It is one of the most important as well as promising IT
+research fields in the era of Web and agent intelligence.
+
+The 2006 IEEE/WIC/ACM International Conference on Web Intelligence
+(WI'06) will be jointly held with the 2006 IEEE/WIC/ACM International
+Conference on Intelligent Agent Technology (IAT'06) and the 6th IEEE
+International Conference on Data Mining (ICDM'06) for providing
+synergism among the three research areas.  It will provide
+opportunities for technical collaboration beyond that of previous
+conferences. The three conferences will have a joint opening, keynote,
+reception, and banquet. Attendees only need to register for one
+conference and can attend workshops, sessions and tutorials across the
+three conferences.  We are also planning a joint panel and joint paper
+sessions that discuss common problems in the three areas.
+
++++++++++++++++++++
+Topics of Interest
++++++++++++++++++++
+
+The topics and areas include, but not limited to:
+
+* World Wide Wisdom Web (W4)
+  - Meta-Knowledge Discovery and Representation
+  - Problem Solver Markup Language (PSML)
+  - Search of Best Means and Ends
+  - Goal-Directed Services Support
+  - Distributed Resources Optimization
+  - Service Self-Aggregation
+  - Web Inference Engine
+  - Information and Knowledge Markets
+
+* New Social Interaction Paradigms
+  - Social and Psychological Contexts
+  - Regularities and Laws of W4
+  - Social Networks and Social Intelligence
+  - Social Networks Mining
+  - Web Site Clustering
+  - Link Topology and Site Hierarchy
+  - Theories of Small-World Web
+  - Virtual and Web Communities
+  - Web-Based Cooperative Work
+
+* Knowledge Community Formation and Support
+  - Ubiquitous Computing
+  - Intelligent Wireless Web
+  - Ubiquitous Learning Systems
+  - Entertainment
+
+* Knowledge Grids and Grid Intelligence
+  - Semantic Grids
+  - Knowledge Resources and Services Discovery
+  - On-Demand Planning and Routing
+  - Brokering and Scheduling
+  - Middleware Architectures and Tools
+
+* Web Mining and Farming
+  - Text Mining
+  - Data Stream Mining
+  - Multimedia Data Mining
+  - Web Content Mining
+  - Web Log and Usage Mining
+  - Learning User Profiles
+  - Context Sensitive Web Mining
+  - Web Information Clustering
+  - Web Page Clustering and Mining
+  - E-Mail Classification
+  - Web Site Classification
+  - Web Information Indexing
+  - Data Warehousing
+  - Web Farming and Warehousing
+
+* Semantics and Ontology Engineering
+  - Ontology-Based Information Extraction and Retrieval
+  - Ontology-Based Web Mining
+  - Web-Based Ontology Learning
+  - Semantic Web
+
+* Web Agents
+  - Global Information Foraging
+  - Distributed Problem Solving
+  - Coordination
+  - Resource Intermediary and Coordination Mechanisms
+  - Self-Organization and Reproduction
+  - Agent Networks and Topologies
+  - Mobile Agents
+  - Macroscopic Behavior Modeling
+  - Trust Models for Web Agents
+
+* Web Services
+  - Service-Oriented Computing
+  - Matchmaking
+  - Web Service Reconfiguration
+  - Web Service Workflow Composition
+  - Middleware-Based Ubiquitous Services
+  - Grid Services
+
+* Web Information Filtering and Retrieval
+  - Automatic Cataloging and Indexing
+  - Clustering-Based Recommender Systems
+  - Collaborative Filtering and Recommendation
+  - Hybrid Recommendation
+  - Information Retrieval Criteria and Evaluations
+  - Web Information Categorization and Ranking
+  - Proxy and Cache Techniques
+  - Web Prediction and Prefetching
+  - Distributed Web Search
+  - Specifications for Web Information Extraction Process
+  - Web Crawling Systems
+  - Search Engines and Meta-search Engines
+
+* Intelligent Human-Web Interaction
+  - Adaptive Web Interfaces
+  - Context-Aware Computing
+  - Learning User Profiles
+  - Personalized Interfaces
+  - Personalized Web Sites
+  - Remembrance Agents
+  - Multimedia Representation
+  - Visualization of Information and Knowledge
+  - Social and Psychological Issues
+
+* Web Support Systems
+  - Information Retrieval Support Systems
+  - Web Site Navigation Support Systems
+  - Recommender Support Systems
+  - Web-Based Decision Support Systems
+  - Soft Computing (including neural networks, fuzzy logic,
+    evolutionary computation, rough sets, and granular computing)
+    and Uncertainty Management for WI
+
+* Intelligent e-Technology
+  - Business Intelligence
+  - Intelligent Enterprise Portals
+  - Web-Based Direct Marketing and CRM
+  - Web-Based EDI
+  - e-Publishing
+  - e-Business and e-Commerce
+  - e-Finance
+  - e-Community
+  - Decentralized Community Communication Techniques
+  - e-Learning
+  - Digital Library
+  - e-Science
+  - e-Government
+  - Web Security, Integrity, Privacy and Trust
+
+++++++++++++++++++++++++++++++++++++
+On-Line Submissions and Publication
+++++++++++++++++++++++++++++++++++++
+
+High-quality papers in all WI related areas are solicited. Papers
+exploring new directions or areas will receive a careful and
+supportive review.  All submitted papers will be reviewed on the
+basis of technical quality, relevance, significance, and clarity.
+Note that WI'06 will accept ONLY on-line submissions, containing
+PDF versions.
+
+Paper submissions should be limited to a maximum of 8 pages in the
+IEEE 2-column format (see the IEEE Computer Society Press Proceedings
+Author Guidelines at
+http://www.computer.org/portal/pages/ieeecs/publications),
+and will be reviewed by the Program Committee on the basis of
+technical quality, relevance to data mining, originality,
+significance, and clarity.  Please use the Submission Form on the WI'06
+website to submit your paper.  Accepted papers will be published
+in the conference proceedings by the IEEE Computer Society Press.
+
+A selected number of WI'06 accepted papers will be expanded and
+revised for inclusion in Web Intelligence and Agent Systems: An
+International Journal (http://wi-consortium.org/journal.html) and in
+Annual Review of Intelligent Informatics
+(http://www.wi-consortium.org/annual.html)
+
+The best paper awards will be conferred at the conference on the
+authors of (1) the best research paper and (2) the best application
+paper.  Application-oriented submissions will be considered for the
+best application paper award.
+
+More detailed instructions and the On-Line Submission Form can be
+found from the WI'06 homepage: http://www.comp.hkbu.edu.hk/~wii06/.
+
+++++++++++++++++++++
+Industry/Demo-Track
+++++++++++++++++++++
+
+We solicit Industry/Demo-Track papers by the following methods.
+
+(1) Industry papers of 4 pages can be submitted on the same schedule as
+    the research track.
+(2) Separate 2 page demo proposals can submitted at a later schedule.
+(3) Full regular paper submissions can include a demo option.
+    That is, a full paper submissions will be asked to
+    specify if they would like to give a demonstration; choice of
+    demonstrations (while utilizing information from the regular reviewing
+    process) will be selected based on value as a demonstration.
+
+For options (1) and (2), please find more detailed instructions
+at the homepages:  http://www.comp.hkbu.edu.hk/iwi06/wi/?index=demo
+
+We are planning to arrange the Demo session in the afternoon of Dec 19
+(before and during the conference reception), jointly with the IAT'06 and
+ICDM'06 Demo sessions.
+
++++++++++
+Workshops
++++++++++
+
+WI'06 welcomes Workshop proposals.  As an important part of the
+conference, the workshop program will focus on new research challenges
+and initiatives.  All papers accepted for workshops will be included
+in the Workshop Proceedings, which are expected to be published by
+IEEE Computer Society Press and will be available at the
+workshops. Detailed information is available at the conference
+homepage.
+
+Note: we will not have a separate workshop registration fee this year
+(i.e., conference registration covers everything).
+
+++++++++++
+Tutorials
+++++++++++
+
+WI'06 also welcomes Tutorial proposals.  WI'06 will include tutorials
+providing in-depth background on subjects that are of broad interest
+to the Web intelligence community. Both short (2 hours) and long (half
+day) tutorials will be considered.  The tutorials will be part of the
+main conference technical program.  Detailed information is available
+at the conference homepage.
+
+Note: we will not have a separate tutorials registration fee this year
+(i.e., only one conference registration covers everything).
+
+++++++++++++++++
+Important Dates
+++++++++++++++++
+
+Workshop proposal submission: April 10, 2006
+Electronic submission of full papers: ** July 5, 2006 **
+Tutorial proposal submission: July 15, 2006
+Notification of paper acceptance: September 4, 2006
+Camera-ready copies of accepted papers: October 4, 2006
+Workshops: December 18, 2006
+Conference: December 19-22, 2006
+
+++++++++++++++++++++++++
+Conference Organization
+++++++++++++++++++++++++
+
+Conference Chairs:
+  * Jiming Liu, Hong Kong Baptist University, HK
+  * Benjamin Wah, University of Illinois at Urbana-Champaign, USA
+
+Organizing Chair:
+  * Yiu-Ming Cheung, Hong Kong Baptist University, HK
+
+Program Chair:
+  * Toyoaki Nishida, Kyoto University, Japan
+
+Program Co-chairs:
+  * Zhongzhi Shi, Chinese Academy of Sciences, China
+  * Ubbo Visser, Science Universitat Bremen, Germany
+  * Xindong Wu, University of Vermont, USA
+
+Industry/Demo-Track Co-Chairs:
+  * Wray Buntine, Helsinki Institute for Information Technology, Finland
+  * Kazuhiro Kuwabara, ATR, Japan
+  * Jianchang Mao, Yahoo! Inc., USA
+
+Workshop Co-Chairs:
+  * Cory J. Butz, University of Regina, Canada
+  * Ngoc Thanh Nguyen, Wroclaw University of Technology, Poland
+  * Yasufumi Takama, Tokyo Metropolitan University, Japan
+
+Tutorial Co-Chairs:
+  * Yuefeng Li, Queensland University of Technology, Australia
+  * Pawan Lingras, Saint Mary's University, Canada
+  * Hideaki Takeda, National Institute of Informatics/University of Tokyo,
+Japan
+
+Publicity Chairs:
+ * Marcin Szczuka, Warsaw University, Poland
+ * Guoyin Wang, Chongqing University of Posts and Telecommunications, China
+ * Hui Xiong, Rutgers University, USA
+
+Sponsorship Chairs:
+ * Man-chung Chan, Hong Kong Polytechnic University, HK
+ * Einoshin Suzuki, Yokohama National University, Japan
+ * Hongjin Yang, Chinese Academy of Sciences, China
+
+Program Vice Co-chairs:
+ * Mario Cannataro, University "Magna Greia" of Catanzaro, Italy
+ * Meng Chang Chen, Academia Sinica, Taiwan
+ * Joost Kok, Leiden Institute of Advanced Computer Science, The Netherlands
+ * Tsau Young Lin, San Jose State University, USA
+ * Massimo Marchiori, Massachusetts Institute of Technology, USA and
+                      University of Venice, Italy
+ * Ralf Moeller, Hamburg University of Technology, Germany
+ * Sankar Pal, Machine Intelligence Unit Indian Statistical Institute, India
+ * Steve Willmott, Technical University of Catalonia, Spain
+ * Chengqi Zhang, Faculty of Information Technology, Australia
+ * Lina Zhou, University of Maryland, USA
+
+*** Contact Information ***
+
+Yiuming Cheung
+Hong Kong Baptist University, HK
+E-mail: ymc at Comp.HKBU.Edu.HK
+
+From wi at maebashi-it.org  Wed Feb 15 10:33:22 2006
+From: wi at maebashi-it.org (WI)
+Date: Wed, 15 Feb 2006 19:33:22 +0900
+Subject: Call for Workshop Proposals (WI-IAT'06)
+Message-ID: <04a501c6321b$3ebbd200$9032a8c0@pc7kenji>
+
+[Apologies if you receive this more than once]
+
+==============================================================
+Call for Workshop Proposals
+
+2006 IEEE/WIC/ACM International Joint
+Conference on Web Intelligence and Intelligent Agent Technology
+(WI-IAT'06)
+
+Hong Kong Convention and Exhibition Centre, Hong Kong, China,
+18-22 December 2006.
+
+http://www.comp.hkbu.edu.hk/~wii06
+
+(Workshop Proposals Due: 10 April 2006)
+===================================================================
+
+The Program Committees of the 2006 IEEE/WIC/ACM International Joint
+Conference on Web Intelligence and Intelligent Agent Technology
+(WI-IAT'06) invite proposals for Workshops.  The Workshops will be
+held at the beginning of the Conference, December 18, 2006 at Hong
+Kong Convention and Exhibition Centre.
+
+The workshop organizers will be responsible for advertising the
+workshop, forming the program committees, reviewing and selecting the
+papers, and guaranteeing a high quality worthy of the prestige and
+range of the Conference.  All papers accepted for workshops will be
+included in the Workshop Proceedings, which are expected to be
+published by IEEE Computer Society Press and will be available at the
+workshops.
+
+The workshop organizers will also have the discretion of editing
+selected papers (after their expansion and revision) into books or
+special journal issues.  Workshops may be full-day or half-day. A
+full-day workshop should select 20-25 regular papers, while a half-day
+workshop should select 10-13 regular papers, from a large number of
+submissions.  The workshop organizers should ensure the presence of
+authors of accepted papers at the workshops.
+
+I. Workshop Topics
+
+Each workshop subject will focus on new research challenges and
+initiatives in Web Intelligence (WI) and Intelligent Agent Technology
+(IAT).  The workshops should provide an informal and vibrant forum for
+researchers and industry practitioners to share their research results
+and practical development experiences in these two fields.  Suggested,
+but not limited to, workshop topics include:
+
+- Intelligent E-Technology (including E-Science, E-Business,
+              E-Learning, E-Finance, E-Government, E-Community)
+- Intelligent Human-Web Interaction
+- Knowledge Grids and Grid Intelligence
+- Semantics and Ontology Engineering
+- Social Networks and Social Intelligence
+- Ubiquitous Computing
+- Web Agents
+- Web Information Filtering and Retrieval
+- Web Mining and Forming
+- Web Security, Integrity, Privacy and Trust
+- Web Services and Grid Services
+- Web Support Systems
+- World Wide Wisdom Web (W4)
+- Agent Systems Modeling and Methodology
+- Autonomous Knowledge and Information Agents
+- Autonomous Auctions and Negotiation
+- Autonomy-Oriented Computing (AOC)
+- Learning and Self-Adapting Agents
+- Distributed Intelligence
+
+II. Workshop Proposal Submission
+
+Workshop proposals should include the following elements:
+
+- Title of the workshop
+- Your name, affiliation, mailing address and e-mail address
+- A description of the topic of the workshop (not exceeding 200 words)
+- Type of the workshop (full-day or half-day)
+- A description of how the workshop will contribute to the field of
+  Web Intelligence and/or Intelligent Agent Technology
+- A short description on how the workshop will be advertised so as
+  to ensure a sufficiently wide range of authors and high quality papers
+
+After the acceptation of a workshop proposal the organizer(s) should:
+
+- Create a "Call for papers/participation" for the workshop
+- Create a Web page for the workshop, the link of which will be published
+  on the Conference Web site
+- Create a Board of Reviewers (Program Committee)
+- Review and select papers
+- Schedule the workshop activities
+
+Those papers selected by a workshop organizer will also be reviewed by
+the Workshop Co-Chairs for final acceptance.
+
+All submitted papers will be reviewed on the basis of technical
+quality, relevance, significance, and clarity.
+
+We will provide an online paper submission and review system
+to support the workshops.
+
+III. Important Dates
+
+- April 10, 2006: Workshop proposal submission due
+    (Please send proposals by e-mail to all three Workshop Co-Chairs)
+- April 20, 2006: Notification to workshop proposers
+- April 30, 2006: Each workshop organizer sends out Call for Workshops
+Papers
+- July 30, 2006: Due date for full workshop papers submission
+                 (at least two reviews for each paper)
+- September 5, 2006: Final acceptance by Workshop Co-Chairs
+- September 8, 2006: Notification of paper acceptance to authors
+- October   8, 2006: Camera-ready of accepted papers
+- December 18, 2006: Workshop day
+
+We look forward to your support in making 2006 IEEE/WIC/ACM WI-IAT
+workshops an exciting event.
+
+Workshop Co-Chairs:
+
+Cory J. Butz, University of Regina, Canada
+              E-mail: butz at cs.uregina.ca
+Ngoc Thanh Nguyen, Wroclaw University of Technology, Poland
+              E-mail: thanh at pwr.wroc.pl
+Yasufumi Takama, Tokyo Metropolitan University, Japan
+              E-mail: ytakama at cc.tmit.ac.jp
+
+Note: we will not have a separate workshop registration fee this year
+(i.e., only one conference registration covers everything).
+
+For your information, the WI-IAT'06 conference will be co-located with
+the IEEE International Conference on Data Mining (ICDM'06) for
+providing synergism among the three research areas. It will provide
+opportunities for technical collaboration beyond that of previous
+conferences. The three conferences will have the joint opening,
+keynote, reception, and banquet. Attendees only need to register one
+conference and can attend sessions across the three conferences. We
+are planning to have a joint panel and joint paper sessions that
+discuss common problems in the three areas.
+
+From huelber at yahoo.com  Wed Feb 15 19:04:15 2006
+From: huelber at yahoo.com (=?utf-8?q?Karl_H=C3=BClber?=)
+Date: Wed, 15 Feb 2006 11:04:15 -0800
+Subject: multivariate test for homogeneity of variances
+Message-ID: <20060215190415.39441.qmail@web35303.mail.mud.yahoo.com>
+
+Hi everyone!
+
+One way of testing for homogeneity of variances is to
+use the absolut values of residuals (e. g. from a
+one-way ANOVA) and use these as response in a further
+one-way ANOVA. Significant differencies indicate
+non-constant variances (Levene test).
+Is this also possible in a multivariate design like
+one-way MANOVA. Are there better solutions to the
+problem?
+
+Thanks for your help
+Karl
+
+__________________________________________________
+Do You Yahoo!?
+Tired of spam?  Yahoo! Mail has the best spam protection around 
+http://mail.yahoo.com 
+
+From tsiwik at deloitte.de  Wed Feb 15 21:29:03 2006
+From: tsiwik at deloitte.de (Siwik, Thomas (DE - Duesseldorf))
+Date: Wed, 15 Feb 2006 22:29:03 +0100
+Subject: Truncated normal distribution in survival analysis
+Message-ID: <5194BEDB32FF9D4F92513D04D653DC35228E9C@dedus0411.atrema.deloitte.com>
+
+Dear All,
+
+I am using gaussian parametric survival for some linear regressions for
+which censoring occurs. However, in my problem the distribution is
+truncated as well, i.e. limited to the domain [a,b].
+
+Is there a neat approach to pertube the SurvReg-function in order to
+take that truncated normal distribution into account (e.g. dividing the
+distribution by phi(b; my, sigma) - phi(a; my, sigma) anywhere in the
+code)?
+
+Thanks & Regards
+Thomas 
+
+ 
+----------------------------------------------------------------------------
+
+Vertraulichkeitshinweis
+Diese Nachricht und jeder uebermittelte Anhang beinhaltet vertrauliche 
+Informationen und ist nur fuer die Personen oder das Unternehmen bestimmt, an 
+welche sie tatsaechlich gerichtet ist. Sollten Sie nicht der 
+Bestimmungsempfaenger sein, weisen wir Sie darauf hin, dass die Verbreitung, 
+das (auch teilweise) Kopieren sowie der Gebrauch der empfangenen E-Mail und der 
+darin enthaltenen Informationen gesetzlich verboten ist und gegebenenfalls 
+Schadensersatzpflichten ausloesen kann. Sollten Sie diese Nachricht aufgrund 
+eines Uebermittlungsfehlers erhalten haben, bitten wir Sie, den Sender 
+unverzueglich hiervon in Kenntnis zu setzen. 
+Sicherheitswarnung: Bitte beachten Sie, dass das Internet kein sicheres 
+Kommunikationsmedium ist. Obwohl wir im Rahmen unseres Qualitaetsmanagements 
+und der gebotenen Sorgfalt Schritte eingeleitet haben, um einen 
+Computervirenbefall weitestgehend zu verhindern, koennen wir wegen der Natur 
+des Internet das Risiko eines Computervirenbefalls dieser E-Mail nicht 
+ausschliessen. 
+
+Confidentiality note
+This message (including any attachments) contains confidential information 
+intended for a specific individual or entity as the intended recipient. If you 
+are not the intended recipient, you are hereby notified that any distribution, 
+any copying of this message in part or in whole, or any taking of action based 
+on it, is strictly prohibited by law and may cause liability. In case you have 
+received this message due to an error in transmission, we ask you to notify the 
+sender immediately. 
+Safety warning: Please note that the Internet is not a safe means of 
+communication or form of media. Although we are continuously increasing our due 
+care of preventing virus attacks as a part of our Quality Management, we are 
+not able to fully prevent virus attacks as a result of the nature of the 
+Internet.
+----------------------------------------------------------------------------
+
+From tristan.lorino at lcpc.fr  Thu Feb 16 08:35:56 2006
+From: tristan.lorino at lcpc.fr (Tristan Lorino)
+Date: Thu, 16 Feb 2006 09:35:56 +0100
+Subject: Mixing tapply and diff
+Message-ID: <1583438515.20060216093556@lcpc.fr>
+
+Hi,
+
+I have two columns: one concerning quantitative data (V1), the other
+concerning the identification of the repeated measures made on the
+same units (V2) ; here, there is 3 measures on the first unit, 4
+measures on the 2d unit, and so one...
+
+  V1 V2
+ 1  5  1
+ 2  3  1
+ 3  6  1
+ 4  4  2
+ 5  7  2
+ 6  8  2
+ 7  9  2
+ 8  6  3
+ 9  5  3
+10  2  4
+11 31  4
+
+I would like to obtain (ideally...) a data frame or matrix with the
+ident variable and the difference between measures made on the same
+unit: something as returned by
+
+> tapply(as.vector(SDF1$V1),SDF1$V2,diff)
+$"1":
+[1] -2  3
+
+$"2":
+[1] 3 1 1
+
+$"3":
+[1] -1
+
+$"4":
+[1] 29
+
+but in a suitable way (data array), that means:
+
+ident  diff
+1      -2
+1      3
+2      3
+2      1
+2      1
+.....
+
+Thank you for your help,
+Tristan
+
+-- 
+Laboratoire Central des Ponts et Chaussées
+[Division ESAR ? Section AGR]
+Route de Bouaye BP 4129
+44341 Bouguenais Cedex
+France
+Tél 33 (0)2 40 84 56 18
+Fax 33 (0)2 40 84 59 92
+
+From dimitris.rizopoulos at med.kuleuven.be  Thu Feb 16 08:41:52 2006
+From: dimitris.rizopoulos at med.kuleuven.be (Dimitris Rizopoulos)
+Date: Thu, 16 Feb 2006 09:41:52 +0100
+Subject: Re: Mixing tapply and diff
+References: <1583438515.20060216093556@lcpc.fr>
+Message-ID: <000a01c632d4$d5c438e0$0540210a@www.domain>
+
+you already have it; you could use:
+
+vals <- tapply(as.vector(SDF1$V1), SDF1$V2, diff)
+out <- data.frame(id = rep(unique(SDF1$V2), sapply(vals, length)), 
+diff = vals)
+
+out
+
+I hope it helps.
+
+Best,
+Dimitris
+
+----
+Dimitris Rizopoulos
+Ph.D. Student
+Biostatistical Centre
+School of Public Health
+Catholic University of Leuven
+
+Address: Kapucijnenvoer 35, Leuven, Belgium
+Tel: +32/(0)16/336899
+Fax: +32/(0)16/337015
+Web: http://www.med.kuleuven.be/biostat/
+    http://www.student.kuleuven.be/~m0390867/dimitris.htm
+
+----- Original Message ----- 
+From: "Tristan Lorino" <tristan.lorino at lcpc.fr>
+
+To: "S-News" <s-news at lists.biostat.wustl.edu>
+Sent: Thursday, February 16, 2006 9:35 AM
+Subject: [S] Mixing tapply and diff
+
+> Hi,
+>
+> I have two columns: one concerning quantitative data (V1), the other
+> concerning the identification of the repeated measures made on the
+> same units (V2) ; here, there is 3 measures on the first unit, 4
+> measures on the 2d unit, and so one...
+>
+>  V1 V2
+> 1  5  1
+> 2  3  1
+> 3  6  1
+> 4  4  2
+> 5  7  2
+> 6  8  2
+> 7  9  2
+> 8  6  3
+> 9  5  3
+> 10  2  4
+> 11 31  4
+>
+> I would like to obtain (ideally...) a data frame or matrix with the
+> ident variable and the difference between measures made on the same
+> unit: something as returned by
+>
+> > tapply(as.vector(SDF1$V1),SDF1$V2,diff)
+>
+> $"1":
+> [1] -2  3
+>
+> $"2":
+> [1] 3 1 1
+>
+> $"3":
+> [1] -1
+>
+> $"4":
+> [1] 29
+>
+> but in a suitable way (data array), that means:
+>
+> ident  diff
+> 1      -2
+> 1      3
+> 2      3
+> 2      1
+> 2      1
+> .....
+>
+> Thank you for your help,
+> Tristan
+>
+> --
+> Laboratoire Central des Ponts et Chaussées
+> [Division ESAR ? Section AGR]
+> Route de Bouaye BP 4129
+> 44341 Bouguenais Cedex
+> France
+> Tél 33 (0)2 40 84 56 18
+> Fax 33 (0)2 40 84 59 92
+>
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu
+> with
+>
+> the BODY of the message:  unsubscribe s-news
+
+Disclaimer: http://www.kuleuven.be/cwis/email_disclaimer.htm
+
+From tristan.lorino at lcpc.fr  Thu Feb 16 08:51:59 2006
+From: tristan.lorino at lcpc.fr (Tristan Lorino)
+Date: Thu, 16 Feb 2006 09:51:59 +0100
+Subject: Re : Mixing tapply and diff
+In-Reply-To: <000a01c632d4$d5c438e0$0540210a@www.domain>
+References: <1583438515.20060216093556@lcpc.fr> <000a01c632d4$d5c438e0$0540210a@www.domain>
+Message-ID: <1137880607.20060216095159@lcpc.fr>
+
+Message de Dimitris Rizopoulos, reçu le jeudi 16 février 2006 à 09:41 :
+
+DR> you already have it; you could use:
+
+DR> vals <- tapply(as.vector(SDF1$V1), SDF1$V2, diff)
+DR> out <- data.frame(id = rep(unique(SDF1$V2), sapply(vals, length)), 
+DR> diff = vals)
+DR> out
+
+Thank you... but I have an error message:
+Problem in data.frameAux.list(x, na.strings = na.strings, stringsAsFactors = 
+str..: arguments imply differing number of rows: 2, 3, 1, 1
+Use traceback() to see the call stack
+
+12: eval(action, sys.parent())
+11: doErrorAction("Problem in data.frameAux.list(x, na.strings = na.stri
+ngs, stringsAsFactors = str..: arguments imply differing number of rows:
+ 2, 3, 1, 1",
+10: stop(paste("arguments imply differing number of rows:", paste(nrows,
+ collapse = ", ")))
+9: data.frameAux.list(x, na.strings = na.strings, stringsAsFactors = str
+ingsAsFactors)
+8: data.frameAux.default(eval(as.name(paste("..", i, sep = ""))), na.str
+ings = na.strings, stringsAsFactors = stringsAsFactors[i])
+7: data.frameAux(eval(as.name(paste("..", i, sep = ""))), na.strings = n
+a.strings, stringsAsFactors = stringsAsFactors[i])
+6: data.frame(id = rep(unique(SDF1$V2), sapply(vals, length)), diff = va
+ls)
+5: eval(i, local)
+4: source(auto.print = auto.print, exprs = substitute(exprs.literal))
+3: script.run(exprs.literal = {
+2: eval(expression(script.run(exprs.literal = {
+1: 
+Message: Problem in data.frameAux.list(x, na.strings = na.strings, strin
+gsAsFactors = str..: arguments imply differing number of rows: 2, 3, 1, 
+1 
+
+-- 
+Laboratoire Central des Ponts et Chaussées
+[Division ESAR ? Section AGR]
+Route de Bouaye BP 4129
+44341 Bouguenais Cedex
+France
+Tél. 33 (0)2 40 84 56 18
+
+From dimitris.rizopoulos at med.kuleuven.be  Thu Feb 16 08:59:32 2006
+From: dimitris.rizopoulos at med.kuleuven.be (Dimitris Rizopoulos)
+Date: Thu, 16 Feb 2006 09:59:32 +0100
+Subject: Re: Re : Mixing tapply and diff
+References: <1583438515.20060216093556@lcpc.fr> <000a01c632d4$d5c438e0$0540210a@www.domain> <1137880607.20060216095159@lcpc.fr>
+Message-ID: <000a01c632d7$4dbe4370$0540210a@www.domain>
+
+you are right I forgot to unlist() 'vals', i.e.,
+
+out <- data.frame(id = rep(unique(SDF1$V2), sapply(vals, length)), 
+diff = unlist(vals))
+
+should work.
+
+Best,
+Dimitris
+
+----
+Dimitris Rizopoulos
+Ph.D. Student
+Biostatistical Centre
+School of Public Health
+Catholic University of Leuven
+
+Address: Kapucijnenvoer 35, Leuven, Belgium
+Tel: +32/(0)16/336899
+Fax: +32/(0)16/337015
+Web: http://www.med.kuleuven.be/biostat/
+    http://www.student.kuleuven.be/~m0390867/dimitris.htm
+
+----- Original Message ----- 
+From: "Tristan Lorino" <tristan.lorino at lcpc.fr>
+
+To: "S-News" <s-news at lists.biostat.wustl.edu>
+Sent: Thursday, February 16, 2006 9:51 AM
+Subject: [S] Re : Mixing tapply and diff
+
+> Message de Dimitris Rizopoulos, reçu le jeudi 16 février 2006 à
+> 09:41 :
+>
+>
+> DR> you already have it; you could use:
+>
+> DR> vals <- tapply(as.vector(SDF1$V1), SDF1$V2, diff)
+> DR> out <- data.frame(id = rep(unique(SDF1$V2), sapply(vals,
+> length)),
+>
+> DR> diff = vals)
+> DR> out
+>
+> Thank you... but I have an error message:
+> Problem in data.frameAux.list(x, na.strings = na.strings,
+> stringsAsFactors = str..: arguments imply differing number of rows:
+> 2, 3, 1, 1
+>
+> Use traceback() to see the call stack
+>
+> 12: eval(action, sys.parent())
+> 11: doErrorAction("Problem in data.frameAux.list(x, na.strings =
+> na.stri
+> ngs, stringsAsFactors = str..: arguments imply differing number of
+> rows:
+>
+> 2, 3, 1, 1",
+> 10: stop(paste("arguments imply differing number of rows:",
+> paste(nrows,
+>
+> collapse = ", ")))
+> 9: data.frameAux.list(x, na.strings = na.strings, stringsAsFactors =
+> str
+>
+> ingsAsFactors)
+> 8: data.frameAux.default(eval(as.name(paste("..", i, sep = ""))),
+> na.str
+>
+> ings = na.strings, stringsAsFactors = stringsAsFactors[i])
+> 7: data.frameAux(eval(as.name(paste("..", i, sep = ""))), na.strings
+> = n
+>
+> a.strings, stringsAsFactors = stringsAsFactors[i])
+> 6: data.frame(id = rep(unique(SDF1$V2), sapply(vals, length)), diff
+> = va
+>
+> ls)
+> 5: eval(i, local)
+> 4: source(auto.print = auto.print, exprs =
+> substitute(exprs.literal))
+>
+> 3: script.run(exprs.literal = {
+> 2: eval(expression(script.run(exprs.literal = {
+> 1:
+> Message: Problem in data.frameAux.list(x, na.strings = na.strings,
+> strin
+> gsAsFactors = str..: arguments imply differing number of rows: 2, 3,
+> 1,
+>
+> 1
+>
+>
+>
+>
+> --
+> Laboratoire Central des Ponts et Chaussées
+> [Division ESAR ? Section AGR]
+> Route de Bouaye BP 4129
+> 44341 Bouguenais Cedex
+> France
+> Tél. 33 (0)2 40 84 56 18
+>
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu
+> with
+>
+> the BODY of the message:  unsubscribe s-news
+
+Disclaimer: http://www.kuleuven.be/cwis/email_disclaimer.htm
+
+From tristan.lorino at lcpc.fr  Thu Feb 16 08:59:33 2006
+From: tristan.lorino at lcpc.fr (Tristan Lorino)
+Date: Thu, 16 Feb 2006 09:59:33 +0100
+Subject: Re : Re : Mixing tapply and diff
+In-Reply-To: <1137880607.20060216095159@lcpc.fr>
+References: <1583438515.20060216093556@lcpc.fr> <000a01c632d4$d5c438e0$0540210a@www.domain> <1137880607.20060216095159@lcpc.fr>
+Message-ID: <1764398955.20060216095933@lcpc.fr>
+
+Message de Tristan Lorino, reçu le jeudi 16 février 2006 à 09:51 :
+
+TL> Message de Dimitris Rizopoulos, reçu le jeudi 16 février 2006 à 09:41 :
+
+DR>> you already have it; you could use:
+
+DR>> vals <- tapply(as.vector(SDF1$V1), SDF1$V2, diff)
+DR>> out <- data.frame(id = rep(unique(SDF1$V2), sapply(vals, length)), 
+DR>> diff = vals)
+DR>> out
+
+vals <- tapply(as.vector(SDF1$V1), SDF1$V2, diff)
+out <- data.frame(id = rep(unique(SDF1$V2), sapply(vals, length)), diff = 
+unlist(vals))
+out
+
+.. with "unlist" works fine...
+
+-- 
+Laboratoire Central des Ponts et Chaussées
+[Division ESAR ? Section AGR]
+Route de Bouaye BP 4129
+44341 Bouguenais Cedex
+France
+Tél. 33 (0)2 40 84 56 18
+
+From andy_liaw at merck.com  Thu Feb 16 12:43:26 2006
+From: andy_liaw at merck.com (Liaw, Andy)
+Date: Thu, 16 Feb 2006 07:43:26 -0500
+Subject: Re: multivariate test for homogeneity of variances
+Message-ID: <39B6DDB9048D0F4DAD42CB26AAFF0AFAFED814@usctmx1106.merck.com>
+
+See if this helps:
+http://finzi.psych.upenn.edu/R/Rhelp02a/archive/33330.html
+
+Have no idea if it works w/o change in S-PLUS though.
+
+Andy
+
+From: Karl H|lber
+> 
+> Hi everyone!
+> 
+> One way of testing for homogeneity of variances is to
+> use the absolut values of residuals (e. g. from a
+> one-way ANOVA) and use these as response in a further
+> one-way ANOVA. Significant differencies indicate
+> non-constant variances (Levene test).
+> Is this also possible in a multivariate design like
+> one-way MANOVA. Are there better solutions to the
+> problem?
+> 
+> Thanks for your help
+> Karl
+> 
+> __________________________________________________
+> Do You Yahoo!?
+> Tired of spam?  Yahoo! Mail has the best spam protection around 
+> http://mail.yahoo.com 
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+> 
+> 
+
+------------------------------------------------------------------------------
+Notice:  This e-mail message, together with any attachments, contains 
+information of Merck & Co., Inc. (One Merck Drive, Whitehouse Station, New 
+Jersey, USA 08889), and/or its affiliates (which may be known outside the 
+United States as Merck Frosst, Merck Sharp & Dohme or MSD and in Japan, as 
+Banyu) that may be confidential, proprietary copyrighted and/or legally 
+privileged. It is intended solely for the use of the individual or entity named 
+on this message.  If you are not the intended recipient, and have received this 
+message in error, please notify us immediately by reply e-mail and then delete 
+it from your system.
+------------------------------------------------------------------------------
+
+From bwu at guzman.com  Thu Feb 16 18:55:08 2006
+From: bwu at guzman.com (Brian Wu)
+Date: Thu, 16 Feb 2006 13:55:08 -0500
+Subject: How to cbind a list to data.frame while avoid using for loop
+Message-ID: <2EB36112B2545546B8E109672E599F63C0F976@server10.corp.guzman.com>
+
+I have a list temp.
+
+> temp
+[[1]]
+      MSFT
+1999 37156
+2000 52150
+2001 59257
+2002 67646
+2003 79571
+2004 92389
+
+[[2]]
+        IBM
+1999  87495
+2000  88349
+2001  88313
+2002  96484
+2003 104457
+2004 109183
+
+[[3]]
+         GOOG
+1999       NA
+2000       NA
+2001       NA
+2002  286.892
+2003  871.458
+2004 3313.351
+
+Any idea, how to combine the data.frame components into a data.frame avoid 
+using for loop?
+
+I wanna the result like this:
+> cbind(temp[[1]],temp[[2]],temp[[3]])
+      MSFT    IBM     GOOG
+1999 37156  87495       NA
+2000 52150  88349       NA
+2001 59257  88313       NA
+2002 67646  96484  286.892
+2003 79571 104457  871.458
+2004 92389 109183 3313.351
+
+the length of the list is variable.
+
+Any suggestion will be greatly appreciated!
+
+Brian
+
+From sundar.dorai-raj at pdf.com  Thu Feb 16 19:00:51 2006
+From: sundar.dorai-raj at pdf.com (Sundar Dorai-Raj)
+Date: Thu, 16 Feb 2006 13:00:51 -0600
+Subject: Re: How to cbind a list to data.frame while avoid using for loop
+In-Reply-To: <2EB36112B2545546B8E109672E599F63C0F976@server10.corp.guzman.com>
+References: <2EB36112B2545546B8E109672E599F63C0F976@server10.corp.guzman.com>
+Message-ID: <43F4CBE3.3030406@pdf.com>
+
+do.call("cbind", temp)
+
+Brian Wu wrote:
+> I have a list temp.
+>
+>
+> > temp
+>
+>
+> [[1]]
+>       MSFT
+> 1999 37156
+> 2000 52150
+> 2001 59257
+> 2002 67646
+> 2003 79571
+> 2004 92389
+>
+> [[2]]
+>         IBM
+> 1999  87495
+> 2000  88349
+> 2001  88313
+> 2002  96484
+> 2003 104457
+> 2004 109183
+>
+> [[3]]
+>          GOOG
+> 1999       NA
+> 2000       NA
+> 2001       NA
+> 2002  286.892
+> 2003  871.458
+> 2004 3313.351
+>
+> Any idea, how to combine the data.frame components into a data.frame avoid
+> using for loop?
+>
+> I wanna the result like this:
+>
+> > cbind(temp[[1]],temp[[2]],temp[[3]])
+>
+>
+>       MSFT    IBM     GOOG
+> 1999 37156  87495       NA
+> 2000 52150  88349       NA
+> 2001 59257  88313       NA
+> 2002 67646  96484  286.892
+> 2003 79571 104457  871.458
+> 2004 92389 109183 3313.351
+>
+> the length of the list is variable.
+>
+> Any suggestion will be greatly appreciated!
+>
+> Brian
+>
+>
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+
+From bwu at guzman.com  Thu Feb 16 19:00:50 2006
+From: bwu at guzman.com (Brian Wu)
+Date: Thu, 16 Feb 2006 14:00:50 -0500
+Subject: Re: How to cbind a list to data.frame while avoid using for loop
+Message-ID: <2EB36112B2545546B8E109672E599F63C0F977@server10.corp.guzman.com>
+
+Cool. Thanks a lot!
+
+-----Original Message-----
+From: Sundar Dorai-Raj [mailto:sundar.dorai-raj at pdf.com]
+Sent: Thursday, February 16, 2006 2:01 PM
+To: Brian Wu
+Cc: s-news at lists.biostat.wustl.edu
+Subject: Re: [S] How to cbind a list to data.frame while avoid using for
+loop
+
+do.call("cbind", temp)
+
+Brian Wu wrote:
+> I have a list temp.
+> 
+> 
+>>temp
+> 
+> [[1]]
+>       MSFT
+> 1999 37156
+> 2000 52150
+> 2001 59257
+> 2002 67646
+> 2003 79571
+> 2004 92389
+> 
+> [[2]]
+>         IBM
+> 1999  87495
+> 2000  88349
+> 2001  88313
+> 2002  96484
+> 2003 104457
+> 2004 109183
+> 
+> [[3]]
+>          GOOG
+> 1999       NA
+> 2000       NA
+> 2001       NA
+> 2002  286.892
+> 2003  871.458
+> 2004 3313.351
+> 
+> Any idea, how to combine the data.frame components into a data.frame avoid 
+> using for loop?
+> 
+> I wanna the result like this:
+> 
+>>cbind(temp[[1]],temp[[2]],temp[[3]])
+> 
+>       MSFT    IBM     GOOG
+> 1999 37156  87495       NA
+> 2000 52150  88349       NA
+> 2001 59257  88313       NA
+> 2002 67646  96484  286.892
+> 2003 79571 104457  871.458
+> 2004 92389 109183 3313.351
+> 
+> the length of the list is variable.
+> 
+> Any suggestion will be greatly appreciated!
+> 
+> Brian
+> 
+> 
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+
+From dsmith at insightful.com  Thu Feb 16 19:41:17 2006
+From: dsmith at insightful.com (David Smith)
+Date: Thu, 16 Feb 2006 11:41:17 -0800
+Subject: COURSE: Upcoming S-PLUS courses from Insightful
+Message-ID: <EDAC416B87ECCA44BEAB4D0CF48034EF8605F4@se2kexch01.insightful.com>
+
+Here is some information about upcoming courses from Insightful's training
+department that may be of interest to s-news subscribers.  Additional
+information is available at the links provided. Please direct any enquiries
+to Heather Anthony <hanthony at insightful.com>.
+
+# David Smith
+
+Insightful Training -- Featuring Guru-Led Courses!
+
+Introduction to S-PLUS for Life Sciences presented by Carlos Alzola
+Mar 2 - 3, Philadelphia, PA 
+http://www.insightful.com/services/course.asp?CID=47
+
+Traditional and Modern Approaches to Statistical Modelling with S-PLUS
+by Dr. Bill Venables
+Mar 15 - 17, New York, NY and Mar 20 - 22, San Francisco, CA 
+http://www.insightful.com/services/course.asp?CID=36
+
+Financial Modeling in S-PLUS presented by Dr. Peter Kempthorne
+APR 6 - 7, Chicago, IL
+http://www.insightful.com/services/course.asp?CID=15
+
+OTHER UPCOMING COURSES
+======================
+
+C210: S-PLUS 7 Working with Big Data
+Date: Feb 27 - 28
+Location: Seattle, WA 
+http://www.insightful.com/services/course.asp?CID=44
+
+G101: S-PLUS Graphical User Interface Jumpstart
+Date: Mar 13
+Location: New York, NY
+http://www.insightful.com/services/course.asp?CID=32
+
+C102: S-PLUS Essentials Command Line
+Date: Mar 14-16
+Location: New York, NY
+http://www.insightful.com/services/course.asp?CID=10
+
+C201: S-PLUS Programming
+Date: Mar 23-24
+Location: New York, NY
+http://www.insightful.com/services/course.asp?CID=41
+
+-- 
+David M Smith <dsmith at insightful.com>
+Senior Product Manager, Insightful Corp, Seattle WA
+Tel: +1 (206) 802 2360
+Fax: +1 (206) 283 6310
+
+Insightful Corporation (www.insightful.com) provides analytical solutions for
+text and data using S-PLUS, Insightful Miner, InFact and consulting services.
+
+From sichong.chen at postgrad.manchester.ac.uk  Fri Feb 17 11:02:51 2006
+From: sichong.chen at postgrad.manchester.ac.uk (Sichong Chen)
+Date: Fri, 17 Feb 2006 19:02:51 +0800
+Subject: organize objects in a chapter
+Message-ID: <20060217110142.D17AA1007F1C@mailgate.biostat.wustl.edu>
+
+Dear users
+
+I have two dumb questions about organize objects in my working chapter.
+
+In my working chapter, now I have about two hundred objects. I tried to create some folders in the chapter so that I can locate my object quickly. After I create a new folder in the chapter and move the objects to the folder, I click “save” button when I exit SPlus. But next time when I start SPlus. The folder is empty. There is no object in this folder all are in the chapter’s directory. How do you organize objects when there are hundreds objects in the working chapter?
+
+Another questions is how do you important a object in another working chapter to my current working chapter? (When I start a new project, I create a new working chapter. Is it right?) I tried to use attach function but when I attach to another working chapter, it seems that I have detached my current working chapter. I can not do with the objects I am currently managing. How do you handle this problem?
+
+Many thanks.
+
+CSC
+
+SPlus 7.0 & FinMetrics 2.0 User
+
+Windows XP
+
+From colinsplus at hotmail.com  Fri Feb 17 15:13:15 2006
+From: colinsplus at hotmail.com (Colin Maurice)
+Date: Fri, 17 Feb 2006 10:13:15 -0500
+Subject: simple table question
+Message-ID: <BAY17-F4C2FB8D6E038AA21C4C06C1F80@phx.gbl>
+
+Hello members,
+
+I have a simple tabluation question that has been bugging me for a bit. I 
+would appreciate any assistance with it.
+
+Suppose I have the following data.frame
+
+> x
+
+     X1       X2 X3    X4
+1 name1 Letter A  1 cat a
+2 name1 Letter B  2   cat
+3 name1 Letter A  3    bb
+4 name1 Letter B  1    re
+5 name1 Letter A  2 cat a
+6 name2 Letter B  3   cat
+7 name2 Letter A  1    bb
+8 name2 Letter B  2    re
+9 name2 Letter A  3 cat a
+10 name2 Letter B  1   cat
+
+I would like a tabulation for each category in X1 when X2 contains the 
+letter "A", and X4 has occurrence "cat a"
+
+> my.names <- unique(x$X1)
+> my.names2 <- factor(x$X1, my.names)
+> table(my.names2, regMatch(x$X4, "cat a") & regMatch(x$X2, "A"))
+
+    FALSE TRUE
+name1     3    2
+name2     4    1
+
+I'm only after the true occurences not the false column. How do I put this 
+conidtion into the table command without using the "[,2]" at the end of the 
+command.
+
+Thank you for any help.
+
+Colin
+
+_________________________________________________________________
+Express yourself instantly with MSN Messenger! Download today - it's FREE! 
+http://messenger.msn.click-url.com/go/onm00200471ave/direct/01/
+
+From dimitris.rizopoulos at med.kuleuven.be  Fri Feb 17 15:29:21 2006
+From: dimitris.rizopoulos at med.kuleuven.be (Dimitris Rizopoulos)
+Date: Fri, 17 Feb 2006 16:29:21 +0100
+Subject: Re: simple table question
+References: <BAY17-F4C2FB8D6E038AA21C4C06C1F80@phx.gbl>
+Message-ID: <004901c633d6$ecb6d1e0$0540210a@www.domain>
+
+if I've understood your question correctly, you probably need 
+something like:
+
+x <- data.frame(X1 = rep(c("name1", "name2"), each = 5),
+               X2 = rep(LETTERS[1:2], 5),
+               X3 = rep(1:3, length.out = 10),
+               X4 = rep(c("cat a", "cat", "bb", "re"), length.out = 
+10))
+
+##################
+x. <- x[x$X2 == "A" & x$X4 == "cat a", "X1"]
+table(x.)
+
+I hope it helps.
+
+Best,
+Dimitris
+
+----
+Dimitris Rizopoulos
+Ph.D. Student
+Biostatistical Centre
+School of Public Health
+Catholic University of Leuven
+
+Address: Kapucijnenvoer 35, Leuven, Belgium
+Tel: +32/(0)16/336899
+Fax: +32/(0)16/337015
+Web: http://www.med.kuleuven.be/biostat/
+    http://www.student.kuleuven.be/~m0390867/dimitris.htm
+
+----- Original Message ----- 
+From: "Colin Maurice" <colinsplus at hotmail.com>
+
+To: <s-news at lists.biostat.wustl.edu>
+Sent: Friday, February 17, 2006 4:13 PM
+Subject: [S] simple table question
+
+> Hello members,
+>
+> I have a simple tabluation question that has been bugging me for a
+> bit. I would appreciate any assistance with it.
+>
+>
+> Suppose I have the following data.frame
+>
+> > x
+>
+>      X1       X2 X3    X4
+> 1 name1 Letter A  1 cat a
+> 2 name1 Letter B  2   cat
+> 3 name1 Letter A  3    bb
+> 4 name1 Letter B  1    re
+> 5 name1 Letter A  2 cat a
+> 6 name2 Letter B  3   cat
+> 7 name2 Letter A  1    bb
+> 8 name2 Letter B  2    re
+> 9 name2 Letter A  3 cat a
+> 10 name2 Letter B  1   cat
+>
+> I would like a tabulation for each category in X1 when X2 contains
+> the letter "A", and X4 has occurrence "cat a"
+>
+>
+>
+> > my.names <- unique(x$X1)
+> > my.names2 <- factor(x$X1, my.names)
+> > table(my.names2, regMatch(x$X4, "cat a") & regMatch(x$X2, "A"))
+>
+>
+>     FALSE TRUE
+> name1     3    2
+> name2     4    1
+>
+> I'm only after the true occurences not the false column. How do I
+> put this conidtion into the table command without using the "[,2]"
+> at the end of the command.
+>
+>
+> Thank you for any help.
+>
+> Colin
+>
+> _________________________________________________________________
+> Express yourself instantly with MSN Messenger! Download today - it's
+> FREE!
+> http://messenger.msn.click-url.com/go/onm00200471ave/direct/01/
+>
+>
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu
+> with
+>
+> the BODY of the message:  unsubscribe s-news
+
+Disclaimer: http://www.kuleuven.be/cwis/email_disclaimer.htm
+
+From sbackwards at comcast.net  Fri Feb 17 16:19:28 2006
+From: sbackwards at comcast.net (SD Chasalow)
+Date: Fri, 17 Feb 2006 16:19:28 +0000
+Subject: Re: summing algorithm
+Message-ID: <021720061619.29030.43F5F78F000C82700000716622073000339C0B9D0E99050C0E0D9C@comcast.net>
+
+An algorithm for generating such partitions was published in JRSS C (Applied 
+Statistics) in 1997:
+
+@Article{Garcia-Perez:1997:DIA,
+  author =       "M. A. Garcia-Perez",
+  title =        "{AS 320}: Decomposing an integer {$N$} into all sets
+                 of {$J$} positive integer summands by simulation of
+                 dynamically varying nested {DO} loops",
+  journal =      j-APPL-STAT,
+  volume =       "46",
+  number =       "4",
+  pages =        "522--??",
+  month =        "????",
+  year =         "1997",
+  CODEN =        "APSTAG",
+  ISSN =         "0035-9254",
+  bibdate =      "Sat Jan 2 15:12:05 MST 1999",
+  acknowledgement = ack-nhfb,
+}
+
+This algorithm is quite similar to that implemented in function xsimplex in the 
+combinat library section/package, although xsimplex solves a related but 
+different problem.
+
+You also can find pseudo-code for this problem in some combinatorics books such 
+as "Combinatorial Algorithms" by Reingold, Nievergelt, and Deo.
+
+Cheers,
+Scott
+
+Scott Chasalow
+Statistical Genetics & Biomarkers
+Bristol-Myers Squibb
+
+> Dear users
+> 
+> Is there a general algorithm for finding all sets of say k +ve integers that 
+> sum
+> to S. For example, say I need all sets of 3 positve integers that sum to 6 : 
+> (1,2,3), (1,1,4), (2,2,2).
+>
+> Thanks
+>
+> rhoderick 
+
+From sbackwards at comcast.net  Fri Feb 17 16:31:38 2006
+From: sbackwards at comcast.net (SD Chasalow)
+Date: Fri, 17 Feb 2006 16:31:38 +0000
+Subject: Re: How to cbind a list to data.frame while avoid using for loop
+Message-ID: <021720061631.1357.43F5FA6A0001809B0000054D22007614389C0B9D0E99050C0E0D9C@comcast.net>
+
+do.call("cbind", temp) will create a matrix.  The original message is unclear 
+about whether a matrix or data.frame is desired.  But if a data.frame,
+
+as.data.frame(temp) will do the trick.
+
+-Scott
+
+Sundar Dorai-Raj wrote:
+
+do.call("cbind", temp)
+
+Brian Wu wrote:
+
+> I have a list temp.
+>
+>
+>> temp
+>
+>
+> [[1]]
+>       MSFT
+> 1999 37156
+> 2000 52150
+> 2001 59257
+> 2002 67646
+> 2003 79571
+> 2004 92389
+>
+> [[2]]
+>         IBM
+> 1999  87495
+> 2000  88349
+> 2001  88313
+> 2002  96484
+> 2003 104457
+> 2004 109183
+>
+> [[3]]
+>          GOOG
+> 1999       NA
+> 2000       NA
+> 2001       NA
+> 2002  286.892
+> 2003  871.458
+> 2004 3313.351
+>
+> Any idea, how to combine the data.frame components into a data.frame avoid 
+> using for loop?
+>
+> I wanna the result like this:
+>
+>> cbind(temp[[1]],temp[[2]],temp[[3]])
+>
+>
+>       MSFT    IBM     GOOG
+> 1999 37156  87495       NA
+> 2000 52150  88349       NA
+> 2001 59257  88313       NA
+> 2002 67646  96484  286.892
+> 2003 79571 104457  871.458
+> 2004 92389 109183 3313.351
+>
+> the length of the list is variable.
+>
+> Any suggestion will be greatly appreciated!
+>
+> Brian 
+
+From tplate at blackmesacapital.com  Fri Feb 17 17:53:47 2006
+From: tplate at blackmesacapital.com (Tony Plate)
+Date: Fri, 17 Feb 2006 10:53:47 -0700
+Subject: Re: identifying which column/row is passed in calls to apply()
+In-Reply-To: <20060211115934.46FEF1008C60@mailgate.biostat.wustl.edu>
+References: <20060211115934.46FEF1008C60@mailgate.biostat.wustl.edu>
+Message-ID: <43F60DAB.9050605@blackmesacapital.com>
+
+Rich at Mango-Solutions.com wrote:
+> You could use sapply to pass in a vector of numbers (for column numbers) or
+> characters (for column names) and index the columns of the input data.
+> Something like this:-
+>
+>
+> > innerFun <- function(i, df) {
+>
+>
+>         if (i == 1) mean(df[[i]])
+>         else median(df[[i]])
+> }
+>
+> > sapply(1:length(myDf), innerFun, df=myDf)
+>
+>
+>
+> Not as efficient as apply for larger data structures I'd imagine, since
+> you're passing the entire dataset in each time ...
+>
+> Rich.
+
+Actually, S-PLUS usually avoids make unnecessary copies of datasets in 
+this type of situation.  (AFAIK, S-PLUS uses techniques along the lines 
+of only duplicating an object when there is a change to an object, so 
+local "copies" to unchanged versions can just be references).
+
+Here's some operations on a large dataset with measurements that show 
+that extra copies are not made:
+
+> x <- 
+matrix(rnorm(1e6),ncol=1000,dimnames=list(paste("r",1:1000,sep=""),paste("c",1:1000,sep="")))
+
+>
+> # ordinary apply() version
+> mem.tally.reset()
+> print(sys.time({r1 <- apply(x, 1, sum); print(mem.tally.report())}))
+ new database evaluation
+            0    8097114
+[1] 0.250 1.063
+> mem.tally.reset()
+> print(sys.time({r1 <- apply(x, 1, sum); print(mem.tally.report())}))
+ new database evaluation
+            0    8097114
+[1] 0.265 1.062
+> all(r1==r2)
+[1] T
+>
+> # version that uses sapply() to loop over indices and access global
+> # variable x
+> mem.tally.reset()
+> print(sys.time({r2 <- sapply(seq(nrow(x)), function(i) sum(x[i,])); 
+print(mem.tally.report())}))
+
+ new database evaluation
+            0    8879045
+[1] 0.625 1.454
+> mem.tally.reset()
+> print(sys.time({r2 <- sapply(seq(nrow(x)), function(i) sum(x[i,])); 
+print(mem.tally.report())}))
+
+ new database evaluation
+            0    8879045
+[1] 0.797 1.640
+>
+> # version that uses sapply() to loop over indices and also
+> # passes in matrix x
+> mem.tally.reset()
+> print(sys.time({r3 <- sapply(seq(nrow(x)), function(i,y) 
+sum(y[i,]),x); print(mem.tally.report())}))
+
+ new database evaluation
+            0    8935493
+[1] 0.891 1.672
+> mem.tally.reset()
+> print(sys.time({r3 <- sapply(seq(nrow(x)), function(i,y) 
+sum(y[i,]),x); print(mem.tally.report())}))
+
+ new database evaluation
+            0    8939525
+[1] 0.891 1.703
+> all(r1==r3)
+[1] T
+>
+
+So, the both sapply() versions use about 1.1 times the memory used by 
+the apply() version, and takes about 2.5 to 3 times the CPU.  The latter 
+makes some sense because apply() in S-PLUS uses an optimized C function 
+for iterations when its FUN returns vectors of identical sizes.
+
+This was done with S-PLUS 7.0.6 for windows, and I've observed similar 
+behavior in all versions from S-PLUS 6 onwards.  One thing to note is 
+that loops done using sapply() (or lapply()) can be much more memory 
+efficient than loops done with 'for' -- sometimes unneeded memory used 
+in iterations of 'for' loops is not effectively reclaimed at the end of 
+each iteration, leading to out-of-memory errors.
+
+-- Tony Plate
+
+> -----Original Message-----
+> From: s-news-owner at lists.biostat.wustl.edu
+> [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Schwarz,Paul
+> Sent: 11 February 2006 02:19
+> To: s-news at lists.biostat.wustl.edu
+> Subject: [S] identifying which column/row is passed in calls to apply()
+>
+> S-News readers,
+>
+> How would I identify which column (or row) is being operated on in a
+> call to the function specified in apply()? That is, if I wanted to
+> perform some column-specific (or row-specific) operation, how do I
+> identify which column/row is being passed to the function that's
+> specified in the call to apply(), where the number of columns ranges
+> from 1 to ncol(mymat)?
+>
+> apply( mymat, 2, function(x){ ? } )
+>
+>
+> I suspect that this is easy, but I'm drawing a blank on how to do this.
+>
+> Thanks a lot everyone.
+>
+> -Paul
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+>
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+
+From khan at cshl.edu  Fri Feb 17 20:17:24 2006
+From: khan at cshl.edu (Khan, Sohail)
+Date: Fri, 17 Feb 2006 15:17:24 -0500
+Subject: Creating a data frame of NAs
+Message-ID: <C8696843AE995F4EA4CDC3E2B83482A901878F7D@mailbox02.cshl.edu>
+
+Dear List,
+
+Sorry, this is really an elementary question.  How would I create a data frame 
+of NA with 65000 rows and 37 columns?
+Thanks.
+
+Sohail Khan
+Scientific Programmer
+COLD SPRING HARBOR LABORATORY
+Genome Research Center
+500 Sunnyside Boulevard
+Woodbury, NY 11797
+(516)422-4076
+
+From jfox at mcmaster.ca  Fri Feb 17 20:33:02 2006
+From: jfox at mcmaster.ca (John Fox)
+Date: Fri, 17 Feb 2006 15:33:02 -0500
+Subject: Re: Creating a data frame of NAs
+In-Reply-To: <C8696843AE995F4EA4CDC3E2B83482A901878F7D@mailbox02.cshl.edu>
+References: <C8696843AE995F4EA4CDC3E2B83482A901878F7D@mailbox02.cshl.edu>
+Message-ID: <20060217203302.OYY10262.tomts22-srv.bellnexxia.net@JohnDesktop8300>
+
+Dear Sohail,
+
+One way would be,
+
+Data <- as.data.frame(matrix(NA, 65000, 37))
+
+John
+
+--------------------------------
+John Fox
+Department of Sociology
+McMaster University
+Hamilton, Ontario
+Canada L8S 4M4
+905-525-9140x23604
+http://socserv.mcmaster.ca/jfox 
+-------------------------------- 
+
+> -----Original Message-----
+> From: s-news-owner at lists.biostat.wustl.edu 
+> [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of 
+> Khan, Sohail
+> Sent: Friday, February 17, 2006 3:17 PM
+> To: s-news at lists.biostat.wustl.edu
+> Subject: [S] Creating a data frame of NAs
+> 
+> Dear List,
+> 
+> Sorry, this is really an elementary question.  How would I 
+> create a data frame of NA with 65000 rows and 37 columns?
+> Thanks.
+> 
+> 
+> Sohail Khan
+> Scientific Programmer
+> COLD SPRING HARBOR LABORATORY
+> Genome Research Center
+> 500 Sunnyside Boulevard
+> Woodbury, NY 11797
+> (516)422-4076
+> 
+> --------------------------------------------------------------------
+> This message was distributed by 
+> s-news at lists.biostat.wustl.edu.  To unsubscribe send e-mail 
+> to s-news-request at lists.biostat.wustl.edu with the BODY of 
+> the message:  unsubscribe s-news
+
+From khan at cshl.edu  Fri Feb 17 20:55:39 2006
+From: khan at cshl.edu (Khan, Sohail)
+Date: Fri, 17 Feb 2006 15:55:39 -0500
+Subject: Re: Creating a data frame of NAs
+Message-ID: <C8696843AE995F4EA4CDC3E2B83482A901878F7E@mailbox02.cshl.edu>
+
+Thank you very much John.
+
+-Sohail
+
+-----Original Message-----
+From: John Fox [mailto:jfox at mcmaster.ca]
+Sent: Friday, February 17, 2006 3:33 PM
+To: Khan, Sohail; s-news at lists.biostat.wustl.edu
+Subject: RE: [S] Creating a data frame of NAs
+
+Dear Sohail,
+
+One way would be,
+
+Data <- as.data.frame(matrix(NA, 65000, 37))
+
+John
+
+--------------------------------
+John Fox
+Department of Sociology
+McMaster University
+Hamilton, Ontario
+Canada L8S 4M4
+905-525-9140x23604
+http://socserv.mcmaster.ca/jfox 
+-------------------------------- 
+
+> -----Original Message-----
+> From: s-news-owner at lists.biostat.wustl.edu 
+> [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of 
+> Khan, Sohail
+> Sent: Friday, February 17, 2006 3:17 PM
+> To: s-news at lists.biostat.wustl.edu
+> Subject: [S] Creating a data frame of NAs
+> 
+> Dear List,
+> 
+> Sorry, this is really an elementary question.  How would I 
+> create a data frame of NA with 65000 rows and 37 columns?
+> Thanks.
+> 
+> 
+> Sohail Khan
+> Scientific Programmer
+> COLD SPRING HARBOR LABORATORY
+> Genome Research Center
+> 500 Sunnyside Boulevard
+> Woodbury, NY 11797
+> (516)422-4076
+> 
+> --------------------------------------------------------------------
+> This message was distributed by 
+> s-news at lists.biostat.wustl.edu.  To unsubscribe send e-mail 
+> to s-news-request at lists.biostat.wustl.edu with the BODY of 
+> the message:  unsubscribe s-news
+
+From chuck at insightful.com  Fri Feb 17 21:06:15 2006
+From: chuck at insightful.com (Chuck Taylor)
+Date: Fri, 17 Feb 2006 13:06:15 -0800
+Subject: Re: organize objects in a chapter
+Message-ID: <0AED0D29DB783641A47A3BD7C4FE1476A65D41@se2kexch02.insightful.com>
+
+A few comments here that you may find helpful:
+
+1. You should never try to move S-PLUS objects into or out 
+of a chapter using Windows Explorer or other tools outside 
+of S-PLUS. Doing so would disrupt the way S-PLUS keeps track 
+of its objects.
+
+2. The best way to group objects is to put them in separate 
+chapters.
+
+3. To access objects in other than your working chapter, use 
+attach() to add it to your search path.
+
+For example, suppose you have a group of utility functions 
+that you wish to keep together. Create a new chapter called 
+"Utilities". Suppose you put it in "D:\Data". You could do 
+something like this:
+
+   createChapter("D:/Data/Utilities")
+   attach("D:/Data/Utilities", pos=2)
+
+To see what has happened, run search().
+
+Then you could move functions into that directory using 
+commands such as this:
+
+   assign("MySum", MySum, where=2)
+
+What that does is to get MySum from the chapter in position 1 
+of your searchpath (your working chapter) and assign it to the 
+chapter in position 2 ("Utilities"). The following does the 
+same thing, but is more explicit about where MySum is from:
+
+   assign("MySum", get("MySum", where=1), where=2)
+
+If you would like to attach the utilities directory every 
+time you run S-PLUS, create this function in each of your 
+working chapters:
+
+   .First <- function(){
+      attach("D:/Data/Utilities", pos=2)
+   }
+
+Chuck Taylor
+Sr. Quality Assurance Engineer
+Insightful Corporation
+Seattle, WA, USA
+
+-----Original Message-----
+From: Sichong Chen [mailto:sichong.chen at postgrad.manchester.ac.uk]
+Sent: Friday, February 17, 2006 3:03 AM
+To: s-news at lists.biostat.wustl.edu
+Subject: [S] organize objects in a chapter
+
+Dear users
+I have two dumb questions about organize objects in my working chapter.
+
+In my working chapter, now I have about two hundred objects. I tried to
+create some folders in the chapter so that I can locate my object quickly.
+After I create a new folder in the chapter and move the objects to the
+folder, I click "save" button when I exit SPlus. But next time when I start
+SPlus. The folder is empty. There is no object in this folder all are in the
+chapter's directory. How do you organize objects when there are hundreds
+objects in the working chapter?
+
+Another questions is how do you important a object in another working chapter
+to my current working chapter? (When I start a new project, I create a new
+working chapter. Is it right?) I tried to use attach function but when I
+attach to another working chapter, it seems that I have detached my current
+working chapter. I can not do with the objects I am currently managing. How
+do you handle this problem?
+
+Many thanks.
+
+CSC
+
+SPlus 7.0 & FinMetrics 2.0 User
+Windows XP
+
+From sichong.chen at postgrad.manchester.ac.uk  Fri Feb 17 21:45:51 2006
+From: sichong.chen at postgrad.manchester.ac.uk (Chen,Sichong)
+Date: Sat, 18 Feb 2006 05:45:51 +0800
+Subject: Thanks and another question
+Message-ID: <20060217214439.F27D61007EE4@mailgate.biostat.wustl.edu>
+
+Thanks for the suggestions and help from Yingfu, Max and Chuck. They are very helpful. Now I don’t have to create so many different working chapters as before.
+
+I have another question. I attach a new chapter the position is 2. When I try to modify the new attached chapter, say, use “rm” to remove some objects in the new chapter, I failed. I have to detach my current working chapter so that the new attached chapter moves to the position 1 and then I can do what I want. After that, I attach the working chapter back. Is there any way to avoid these inconveniences and just let me work on the new attached chapter or change directly the positions between the chapters?
+
+Many thanks,
+
+Sichong Chen
+
+PhD of Finance
+
+Manchester Business School
+
+University of Manchester
+
+Oxford Road
+
+Manchester
+
+United Kingdom
+
+M13 9PL 
+
+From grahamleask at btopenworld.com  Sat Feb 18 11:06:11 2006
+From: grahamleask at btopenworld.com (GRAHAM LEASK)
+Date: Sat, 18 Feb 2006 11:06:11 +0000
+Subject: Mixed effects models and R2
+Message-ID: <20060218110611.99429.qmail@web86203.mail.ukl.yahoo.com>
+
+With mixed effects models in S plus is it feasible to describe models in terms of how much of the variation explained? If so how do I gain an estimate of how much of the variation is explained by the model (i.e. an R2 figure).
+   
+  I am using S plus 7.0 but have relatively little experience in using this software.
+   
+   
+
+From jkrobert at bcm.tmc.edu  Sat Feb 18 23:10:34 2006
+From: jkrobert at bcm.tmc.edu (Roberts, J. Kyle)
+Date: Sat, 18 Feb 2006 17:10:34 -0600
+Subject: Re: Mixed effects models and R2
+References: <20060218110611.99429.qmail@web86203.mail.ukl.yahoo.com>
+Message-ID: <3FC0430478C30B4A9AF0AFF7863418F14D1AEA@BCMEVS6.ad.bcm.edu>
+
+Graham,
+
+ 
+
+Don't report any R^2 statistic for any 
+mixed effects model.  Snijders & Bosker and Hox give lengthy 
+discussions on why not to.  I am presenting a paper at AERA this year on 
+possible R^2 measures for 2-level linear models, but I assure you that it is not 
+easy, nor straight-forward.  If you look on my website at:
+
+http://www.hlm-online.com/datasets/education/
+
+Dataset 1 actually gives an example where 
+adding a covariate increases the variance at level-2, which would mean negative 
+variance explained (something not possible in OLS).  Typically, an R^2-type 
+metric makes little sense in HLM/mixed effects models.
+
+ 
+
+I hope that this helps,
+
+Kyle
+
+ 
+
+***************************************
+
+J. Kyle Roberts, 
+Ph.D.
+
+Baylor College of 
+Medicine
+
+Center for Educational 
+Outreach
+
+One Baylor Plaza, MS:  
+BCM411
+
+Houston, TX   
+77030-3411
+
+713-798-6672 - 713-798-8201 
+Fax
+
+jkrobert at bcm.edu
+
+***************************************
+
+ 
+
+From: s-news-owner at lists.biostat.wustl.edu on 
+behalf of GRAHAM LEASK
+Sent: Sat 2/18/2006 5:06 AM
+To: 
+s-news at lists.biostat.wustl.edu
+Subject: [S] Mixed effects models and 
+R2
+
+With mixed effects models in S plus is it feasible to 
+describe models in terms of how much of the variation explained? If so how do I 
+gain an estimate of how much of the variation is explained by the model (i.e. an 
+R2 figure).
+
+ 
+
+I am using S plus 7.0 but have relatively little experience in using this 
+software.
+
+ 
+
+ 
+
+From luisreino at isa.utl.pt  Sun Feb 19 16:17:23 2006
+From: luisreino at isa.utl.pt (=?utf-8?q?Lu=C3=ADs_Reino?=)
+Date: Sun, 19 Feb 2006 16:17:23 +0000
+Subject: Fixed or random?
+Message-ID: <7.0.0.16.0.20060219161651.01a1aaa8@isa.utl.pt>
+
+I am trying to use mixed effects model with lme function in S-Plus 2000.
+I will try to explain my sampling design:
+I want to study the impact of afforestation on 
+the abundance of one bird species in adjacent 
+agricultural habitats. So, I selected 52 forest 
+patches with an adjacent fallow field 
+(agricultural habitat). In order to evaluate the 
+variation in abundances with increasing distance 
+from the forest edge, the bird counts were undertaken as follows:
+
+1) for each SITE  (forest + adjacent fallow) we 
+performed  4 point counts along a transect 
+radiating from the forest edge, with the first 
+one located at the forest border and the other 
+ones spaced at 100 m intervals (100, 200, 300m); 
+this was coded as a continuous variable (Dist)
+
+2) I have three main types of forest (eucalyptus, 
+pinewoods and oakwoods), which were coded as two dummy variables (X1 and X2);
+3) I also have landscape context variables (e.g., 
+proportional cover by potentially suitable 
+habitat within a 1km buffer from the transect; 
+coded as a continuous variable A), which have the 
+same value for all distance classes within each of the 52 transects.
+
+Again, I'm interested in understanding if bird 
+abundances changed with increasing distance from 
+the forest edge, and whether such variation is 
+influenced by forest type and landscape context.
+
+I'm not sure how to specify such design. 
+Presently I'm using the following model, though I 
+don't know whether this is correct or not
+
+model<-lme(abundance~Dist+X1+X2+A+X1xDist+X2xDist+AxDist, 
+random=~1 | Site, data=file)
+
+My main question is whether Dist should also be 
+used as a random component, because all Dist 
+values within each site have the same values of X1, X2 and A.
+
+best regards,
+
+Luis Reino
+
+-------------------------------------------------------
+Luís Miguel Reino
+Centro de Estudos Florestais
+Departamento de Engenharia Florestal
+Instituto Superior de Agronomia
+Tapada da Ajuda
+1349-017 Lisboa
+Portugal
+
+From elinder at cisunix.unh.edu  Mon Feb 20 17:56:36 2006
+From: elinder at cisunix.unh.edu (Ernst Linder)
+Date: Mon, 20 Feb 2006 12:56:36 -0500
+Subject: Re: Mixed effects models and R2
+References: <20060218110611.99429.qmail@web86203.mail.ukl.yahoo.com> <3FC0430478C30B4A9AF0AFF7863418F14D1AEA@BCMEVS6.ad.bcm.edu>
+Message-ID: <43FA02D4.9050606@cisunix.unh.edu>
+
+Graham:
+
+In the paper by Gelman & Pardoe (see link)
+several R-square like measures are proposed for each
+level in a multilevel model.
+
+http://www.stat.columbia.edu/~gelman/research/published/rsquared16.pdf
+
+Ernst Linder.
+
+Roberts, J. Kyle wrote:
+> Graham,
+>
+> Don't report any R^2 statistic for any mixed effects model.  Snijders &
+> Bosker and Hox give lengthy discussions on why not to.  I am presenting
+> a paper at AERA this year on possible R^2 measures for 2-level linear
+> models, but I assure you that it is not easy, nor straight-forward.  If
+> you look on my website at:
+>
+> http://www.hlm-online.com/datasets/education/
+> Dataset 1 actually gives an example where adding a covariate increases
+> the variance at level-2, which would mean negative variance explained
+> (something not possible in OLS).  Typically, an R^2-type metric makes
+> little sense in HLM/mixed effects models.
+>
+> I hope that this helps,
+>
+> Kyle
+>
+> ***************************************
+>
+> J. Kyle Roberts, Ph.D.
+> Baylor College of Medicine
+> Center for Educational Outreach
+> One Baylor Plaza, MS:  BCM411
+> Houston, TX   77030-3411
+> 713-798-6672 - 713-798-8201 Fax
+> jkrobert at bcm.edu <mailto:jkrobert at bcm.edu>
+> ***************************************
+>
+>
+>
+> ------------------------------------------------------------------------
+> From: s-news-owner at lists.biostat.wustl.edu on behalf of GRAHAM LEASK
+> Sent: Sat 2/18/2006 5:06 AM
+> To: s-news at lists.biostat.wustl.edu
+> Subject: [S] Mixed effects models and R2
+>
+> With mixed effects models in S plus is it feasible to describe models in
+> terms of how much of the variation explained? If so how do I gain an
+> estimate of how much of the variation is explained by the model (i.e. an
+> R2 figure).
+>
+> I am using S plus 7.0 but have relatively little experience in using
+> this software.
+>
+>
+
+--
+****************************************************************
+Ernst Linder                               elinder at unh.edu
+Department of Mathematics and Statistics     603 - 862- 2687
+University of New Hampshire            Fax:  603 - 862 - 4096
+Durham, NH 03824                www.math.unh.edu/~elinder
+****************************************************************
+
+From productsap at yahoo.com  Tue Feb 21 13:41:25 2006
+From: productsap at yahoo.com (prod sap)
+Date: Tue, 21 Feb 2006 05:41:25 -0800
+Subject: Software and Solutions for Making Statistical Analysis Plan
+Message-ID: <20060221134125.78956.qmail@web37609.mail.mud.yahoo.com>
+
+                  SapMaker
+
+               Software and Solutions for Making Statistical Analysis Plan
+         ClinTrialStat Release SapMaker 2.0
+   : Find out more about the benefits that your organization can gain from using new release of SapMaker 2.0.
+  With software and solutions from SapMaker 2.0, you can quickly create table shells of Statistical Analysis Plan, SAS program code
+ for the table, and metadata document or definition of your analysis variables for the SAP so that you can manage your process of writing SAP more effectively.
+  Why do spent so many hours in tedious work of making table shells of you SAP?  Let SapMaker help you. To be a Statistician, not a Table Maker.   Visit http://www.sapmaker.com for details ...
+
+          Business
+ Solutions   SapMaker provides solutions for easily adapted to standards of users, enabling organizations to increase productivity, reduce costs, and meet timeline.
+
+  
+    Technologies   Each of our technology provides you with powerful, proven capabilities to let you quickly complete previous tedious
+ works
+
+__________________________________________________
+Do You Yahoo!?
+Tired of spam?  Yahoo! Mail has the best spam protection around 
+http://mail.yahoo.com 
+
+From ageisler at htu.tugraz.at  Tue Feb 21 13:50:39 2006
+From: ageisler at htu.tugraz.at
+Date: Tue, 21 Feb 2006 14:50:39 +0100
+Subject: Bayesian Logistic Regression
+Message-ID: <1140529839.43fb1aaf80df3@www.htu.tugraz.at>
+
+Hello!
+
+I'm studying Technical Mathematics on the Technical University of Graz.
+
+I have the following problem:
+I'm writing my thesis about the topic "Bayesian Logistic Regression". I'm
+looking for a package for S-Plus which can do the following: I specify a prior,
+i.e. prior ~ NV(beta, 1/n*I), whereas I is the identity matrix, beta and n are
+given.
+The package should take this prior and the data as an input, calculate the
+Bayesian Logistic Regression und as an result there should be the
+posterior-density resp. the posterior-distribution.
+
+Is there a package in S-Plus which can do this?
+
+Best regards
+Alexander Geisler
+
+--
+Alexander Geisler
+Mail: ageisler at htu.tugraz.at
+
+From bill.shipley at usherbrooke.ca  Tue Feb 21 15:06:53 2006
+From: bill.shipley at usherbrooke.ca (Bill Shipley)
+Date: Tue, 21 Feb 2006 10:06:53 -0500
+Subject: Kolmogorov-Smirnov test for nested alternatives?
+Message-ID: <001801c636f8$7382a950$a41ad284@BIO041>
+
+Hello.  The 
+Kolmogorov-Smirnov test in S-PLUS allows one to test for a significant deviation 
+of an empirical distribution from a predicted distribution.  Consider a 
+case where one has a series of nested alternative predicted distributions - 
+alternative exponential distributions with increasing numbers of estimated 
+parameters:
+
+ 
+
+p(i) 
+=(1/Z)exp(-lamda0 -lambda1*t_i1-lamda2*t_i2...)  where Z is a normalization 
+constant and t_i1 etc are attributes of each group i and the lamda coefficients 
+are estimated from the empirical data.
+
+ 
+
+I would like to 
+conduct a series of sequential tests in which
+
+(I)
+
+ I compare an 
+empirical distribution of proportions over a set of groups to the predicted 
+distributions assuming (1) all lamda values greater than 0 (i.e. lamda1, lamda 2 
+etc.) are zero; (2)all lamda values greater that 1 (i.e. lamda2, lamda3 
+etc.) are zero
+
+ 
+
+(II) Compare the 
+improvement in fit as I increase the number of lamda values that are freely 
+estimated in order to detect non-significant improvement in 
+fit.
+
+ 
+
+Is it possible to do 
+step (ii) using a Kolmogorov-Smirnov procedure?  
+
+Bill 
+Shipley 
+
+ 
+
+From Christoph.Scherber at uni-jena.de  Tue Feb 21 19:48:31 2006
+From: Christoph.Scherber at uni-jena.de (Christoph Scherber)
+Date: Tue, 21 Feb 2006 20:48:31 +0100
+Subject: arcsine transformation with negative values
+Message-ID: <1140551311.43fb6e8f73d8d@webmail.uni-jena.de>
+
+Dear S list members,
+
+I am currently analyzing a dataset that consists of differences of percentage
+values - i.e., the values may range from -100% to +100%.
+
+How can I transform these data in order to meet the assumptions of parametric
+statistics? I´ve been thinking of adding a constant and then using a
+transformation like
+
+transformed<-asin(sqrt(p))
+
+But the p values would then not lie in the interval [0..1].
+
+I would be most grateful for any advice.
+
+Best regards
+Christoph.
+
+----------------------------------------------------------------
+This mail was sent through http://webmail.uni-jena.de
+
+From Patrick.Heer at bakom.admin.ch  Wed Feb 22 16:07:11 2006
+From: Patrick.Heer at bakom.admin.ch
+Date: Wed, 22 Feb 2006 17:07:11 +0100
+Subject: Firm effects in estimating earning function
+Message-ID: <972231170C40FE4797E048E1E39B22AB1EFA00@sbem35exc1004.efd.intra.admin.ch>
+
+Dear all
+This has nothing to do with R coding, but maybe someone can help me.
+I am now dealing with dummy variables (8 firm indicators) in order to
+regress the firm effects on the a wage distribution. My problem is that
+there is always a reference category which I have to compare with the
+coefficient estimated.
+I have read a bench of workingpaper and it looks like there is a way to
+compute all the firm coefficients without refering to one firm, since
+every category shows up in the result with a coefficient value.
+Can anyone help me with this issue?
+Thank you
+Patrick
+
+From khan at cshl.edu  Thu Feb 23 04:14:31 2006
+From: khan at cshl.edu (Khan, Sohail)
+Date: Wed, 22 Feb 2006 23:14:31 -0500
+Subject: Replacing NA with a particular value
+Message-ID: <C8696843AE995F4EA4CDC3E2B83482A901878F81@mailbox02.cshl.edu>
+
+Dear list,
+
+I have a data frame as:
+
+chr     chr.pos         abs.pos         ratio
+1       2500            3600            0.25
+1       5600            7500            NA
+2       1450            5200            NA
+2       5000            7005            NA
+2       6480            8754            0.25
+2       5425            6542            NA
+2       6000            8963            NA
+2       6542            9512            0.32
+
+I would like to replace the NAs only if they occur in between the same values, 
+in the data set above replace NA between 0.25 with 0.25, and leave the NA 
+between 0.25 and 0.32.  Any help is greatly appreciated.
+
+-Sohail
+
+From petr.pikal at precheza.cz  Thu Feb 23 08:11:20 2006
+From: petr.pikal at precheza.cz (Petr Pikal)
+Date: Thu, 23 Feb 2006 09:11:20 +0100
+Subject: Re: Replacing NA with a particular value
+In-Reply-To: <C8696843AE995F4EA4CDC3E2B83482A901878F81@mailbox02.cshl.edu>
+References: <C8696843AE995F4EA4CDC3E2B83482A901878F81@mailbox02.cshl.edu>
+Message-ID: <43FD7C38.20993.196F1B@localhost>
+
+Hi
+
+maybe you can use approx
+
+> pok
+  chr chr.pos abs.pos ratio
+1   1    2500    3600  0.25
+2   1    5600    7500    NA
+3   2    1450    5200    NA
+4   2    5000    7005    NA
+5   2    6480    8754  0.25
+6   2    5425    6542    NA
+7   2    6000    8963    NA
+8   2    6542    9512  0.32
+
+apr<-approx(pok$ratio, n=length(pok$ratio))$y
+vyber<-which(c(diff(apr)==0,FALSE))
+pok$ratio[vyber]<-apr[vyber]
+
+Which works with this data but I am not sure if it works with 
+arbitrary values in ratio.
+
+HTH
+Petr
+
+On 22 Feb 2006 at 23:14, Khan, Sohail wrote:
+
+Subject:                [S] Replacing NA with a particular value
+Date sent:              Wed, 22 Feb 2006 23:14:31 -0500
+From:                   "Khan, Sohail" <khan at cshl.edu>
+To:                     <s-news at lists.biostat.wustl.edu>
+
+> Dear list,
+> 
+> I have a data frame as:
+> 
+> chr   chr.pos         abs.pos         ratio
+> 1     2500            3600            0.25
+> 1     5600            7500            NA
+> 2     1450            5200            NA
+> 2     5000            7005            NA
+> 2     6480            8754            0.25
+> 2     5425            6542            NA
+> 2     6000            8963            NA
+> 2     6542            9512            0.32
+> 
+> I would like to replace the NAs only if they occur in between the same
+> values, in the data set above replace NA between 0.25 with 0.25, and
+> leave the NA between 0.25 and 0.32.  Any help is greatly appreciated.
+> 
+> -Sohail
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+
+Petr Pikal
+petr.pikal at precheza.cz
+
+From zeileis at ci.tuwien.ac.at  Thu Feb 23 15:46:38 2006
+From: zeileis at ci.tuwien.ac.at (Achim Zeileis)
+Date: Thu, 23 Feb 2006 16:46:38 +0100
+Subject: useR! 2006 - 2006-02-28 Submission Deadline
+Message-ID: <Pine.LNX.4.58.0602231645270.17370@thorin.ci.tuwien.ac.at>
+
+Dear S/R users,
+
+The submission deadline for `useR! 2006', the second R user conference to
+be held in Vienna June 15-17 2006, is only five days ahead. So this
+weekend is the perfect time to submit abstracts for user-contributed
+sessions!
+
+The sessions will be a platform to bring together R users, contributers,
+package maintainers and developers in the S spirit that `users are
+developers'.
+
+We invite all R users to submit abstracts on topics presenting innovations
+or exciting applications of R. A web page offering more information on the
+`useR!' conference, abstract submission, registration and Vienna is
+available at
+
+  http://www.R-project.org/useR-2006/
+
+We look forward to receiving your abstract!
+
+The organizing committee:
+Torsten Hothorn, Achim Zeileis, David Meyer, Bettina Gruen,
+Kurt Hornik and Friedrich Leisch
+
+From tplate at blackmesacapital.com  Thu Feb 23 22:10:24 2006
+From: tplate at blackmesacapital.com (Tony Plate)
+Date: Thu, 23 Feb 2006 15:10:24 -0700
+Subject: Re: Replacing NA with a particular value
+In-Reply-To: <C8696843AE995F4EA4CDC3E2B83482A901878F81@mailbox02.cshl.edu>
+References: <C8696843AE995F4EA4CDC3E2B83482A901878F81@mailbox02.cshl.edu>
+Message-ID: <43FE32D0.5070108@blackmesacapital.com>
+
+Here's a another approach using approx.  If you want to consider 
+slightly different values of 'ratio' to be equal, then modify the 
+comparison yleft==yright appropriately.
+
+> pok <- read.table(header=T, clipboardConnection())
+> pok2 <- na.exclude(data.frame(ratio=pok$ratio, n=seq(len=nrow(pok))))
+> yleft <- approx(y=pok2$ratio, x=pok2$n, xout=seq(len=nrow(pok)), 
+method="constant", f=0)$y
+> yright <- approx(y=pok2$ratio, x=pok2$n, xout=seq(len=nrow(pok)), 
+method="constant", f=1)$y
+
+> yleft
+[1] 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.32
+> yright
+[1] 0.25 0.25 0.25 0.25 0.25 0.32 0.32 0.32
+> cbind(pok, ratio2=ifelse(is.na(pok$ratio) & yleft==yright, yleft, 
+pok$ratio))
+
+  chr chr.pos abs.pos ratio ratio2
+1   1    2500    3600  0.25   0.25
+2   1    5600    7500    NA   0.25
+3   2    1450    5200    NA   0.25
+4   2    5000    7005    NA   0.25
+5   2    6480    8754  0.25   0.25
+6   2    5425    6542    NA     NA
+7   2    6000    8963    NA     NA
+8   2    6542    9512  0.32   0.32
+>
+
+Khan, Sohail wrote:
+> Dear list,
+>
+> I have a data frame as:
+>
+> chr     chr.pos         abs.pos         ratio
+> 1       2500            3600            0.25
+> 1       5600            7500            NA
+> 2       1450            5200            NA
+> 2       5000            7005            NA
+> 2       6480            8754            0.25
+> 2       5425            6542            NA
+> 2       6000            8963            NA
+> 2       6542            9512            0.32
+>
+> I would like to replace the NAs only if they occur in between the same values,
+> in the data set above replace NA between 0.25 with 0.25, and leave the NA
+> between 0.25 and 0.32.  Any help is greatly appreciated.
+>
+> -Sohail
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+
+From carr.gj at pg.com  Fri Feb 24 15:05:29 2006
+From: carr.gj at pg.com
+Date: Fri, 24 Feb 2006 10:05:29 -0500
+Subject: Re: Replacing NA with a particular value
+Message-ID: <OFAE67EADD.0B3D0CCF-ON8525711F.004F10CD-8525711F.0052E642@na.pg.com>
+
+Sohail,
+
+In case you haven't yet gotten what you need on this, the direct solution is to index the non-missing values of ratio that are neighbors to the missing values.  Calculate cumsum(!is.na(ratio)), and cumsum(!is.na(ratio))+1, and you will see that they give the index to the NON-MISSING values of ratio that neighbor your missing values.  Then ratio[!is.na(ratio)][cumsum(!is.na(ratio))] and ratio[!is.na(ratio)][cumsum(!is.na(ratio))+1] are the neighbors.  Run the following code to see the result.  This mechanism also provides a basis to do a "last value carried forward".  Minor mods would be required to handle leading/trailing NAs?
+
+ratio<-c(.25,NA,NA,NA,.25,NA,NA,.39)
+
+df<-data.frame(
+
+        ratio=ratio,
+
+        indexUp=cumsum(!is.na(ratio)),
+
+        indexDown=cumsum(!is.na(ratio))+1)
+
+df$ratioUp<-df$ratio[!is.na(df$ratio)][df$indexUp]
+
+df$ratioDown<-df$ratio[!is.na(df$ratio)][df$indexDown]
+
+df$newRatio<-ifelse((df$ratioUp-df$ratioDown)==0 & is.na(df$ratio),df$ratioUp,df$ratio)
+
+Greg
+
+"Khan, Sohail" <khan at cshl.edu>
+
+Sent by: s-news-owner at lists.biostat.wustl.edu
+02/22/2006 11:14 PM
+
+        
+
+        To:        <s-news at lists.biostat.wustl.edu>
+
+        cc:        
+
+        Subject:        [SPAM]::[S] Replacing NA with a particular value
+
+Dear list,
+
+I have a data frame as:
+
+chr                 chr.pos                                  abs.pos                                  ratio
+
+1                 2500                                  3600                                  0.25
+
+1                 5600                                  7500                                  NA
+
+2                 1450                                  5200                                  NA
+
+2                 5000                                  7005                                  NA
+
+2                 6480                                  8754                                  0.25
+
+2                 5425                                  6542                                  NA
+
+2                 6000                                  8963                                  NA
+
+2                 6542                                  9512                                  0.32
+
+I would like to replace the NAs only if they occur in between the same values, in the data set above replace NA between 0.25 with 0.25, and leave the NA between 0.25 and 0.32.  Any help is greatly appreciated.
+
+-Sohail
+
+--------------------------------------------------------------------
+
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+
+the BODY of the message:  unsubscribe s-news
+
+From colinsplus at hotmail.com  Mon Feb 27 16:12:24 2006
+From: colinsplus at hotmail.com (Colin Maurice)
+Date: Mon, 27 Feb 2006 11:12:24 -0500
+Subject: the use of eval and parse
+Message-ID: <BAY17-F18C049D3ADA73DC89D846DC1F60@phx.gbl>
+
+Dear members,
+
+I was wondering why so many people use the "eval" and "parse" commands 
+together along with the "paste" command, even when there doesn't appear to 
+be any obvious reason why. For instance, I found the following code in an 
+Splus Library:
+
+table.to.data.frame <- function(TheTable, DataName, TheList)
+{
+#
+#  convert a table to a data.frame containing the same information
+#
+#  TheTable contains the table
+#  DataName is a string to head the data column
+#  TheList is a list of strings being the headings for the dimensions
+#     of the table
+#
+  TheData <- as.vector(TheTable)
+  N <- length(TheData)
+  eval(parse(text = paste("TheDataFrame <- data.frame(", DataName,
+     " = TheData, row.names = 1:N)", sep = "")))
+  DN <- dimnames(TheTable)
+  K <- length(DN)
+  if(K != length(TheList))
+  {
+     print("List is wrong length")
+     return(NA)
+  }
+  r1 <- 1
+  r2 <- N
+  for(k in 1:K)
+  {
+     len <- length(DN[[k]])
+     r2 <- r2/len
+     eval(parse(text = paste("TheDataFrame$", TheList[k],
+        " <- rep(rep(DN[[k]], rep(r1, len)), r2)", sep = "")))
+     r1 <- r1 * len
+  }
+  TheDataFrame
+}
+
+But I don't know why
+
+eval(parse(text = paste("TheDataFrame <- data.frame(", DataName,
+     " = TheData, row.names = 1:N)", sep = "")))
+
+couldn't have been replaced with
+
+TheDataFrame <- data.frame(DataName= TheData, row.names = 1:N)
+
+Can someone explain why it is sometimes better to use "eval" and "parse" 
+rather than the standard why of assigning objects.
+
+Any help is much appreciated.
+
+Colin
+
+_________________________________________________________________
+Express yourself instantly with MSN Messenger! Download today - it's FREE! 
+http://messenger.msn.click-url.com/go/onm00200471ave/direct/01/
+
+From Rich at Mango-Solutions.com  Mon Feb 27 16:23:49 2006
+From: Rich at Mango-Solutions.com
+Date: Mon, 27 Feb 2006 16:23:49 +0000
+Subject: Re: the use of eval and parse
+In-Reply-To: <BAY17-F18C049D3ADA73DC89D846DC1F60@phx.gbl>
+References: <BAY17-F18C049D3ADA73DC89D846DC1F60@phx.gbl>
+Message-ID: <20060227162348.7D2F31005EE4@mailgate.biostat.wustl.edu>
+
+In my experience, there are many workarounds to problems solved with
+eval/parse.  These can involve the use of applys, loops or calls to
+"do.call".  One quick example where I've used eval/parse is as follows:-
+
+> myDf <- data.frame(X=rnorm(100), Y=rnorm(100), Z=runif(100))
+
+> # Can't get a bubble plot directly because cex won't use vector of values
+> plot(myDf$X, myDf$Y, type="n")
+> points(myDf$X, myDf$Y, cex=myDf$Z)
+Too many values for parameter cex; some ignored
+
+> # Eval and Parse is one possible solution
+> plot(myDf$X, myDf$Y, type="n")
+> eval(parse(text=paste("points(", myDf$X, ",", myDf$Y, ", cex=", myDf$Z,
+")")))
+
+Sometimes, I think "because you can" is also an answer :o)
+
+Cheers,
+Rich.
+
+mangosolutions
+S & R Training & Consulting
+
+-----Original Message-----
+From: s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Colin Maurice
+Sent: 27 February 2006 16:12
+To: s-news at lists.biostat.wustl.edu
+Subject: [S] the use of eval and parse
+
+Dear members,
+
+I was wondering why so many people use the "eval" and "parse" commands 
+together along with the "paste" command, even when there doesn't appear to 
+be any obvious reason why. For instance, I found the following code in an 
+Splus Library:
+
+table.to.data.frame <- function(TheTable, DataName, TheList)
+{
+#
+#  convert a table to a data.frame containing the same information
+#
+#  TheTable contains the table
+#  DataName is a string to head the data column
+#  TheList is a list of strings being the headings for the dimensions
+#     of the table
+#
+   TheData <- as.vector(TheTable)
+   N <- length(TheData)
+   eval(parse(text = paste("TheDataFrame <- data.frame(", DataName,
+      " = TheData, row.names = 1:N)", sep = "")))
+   DN <- dimnames(TheTable)
+   K <- length(DN)
+   if(K != length(TheList))
+   {
+      print("List is wrong length")
+      return(NA)
+   }
+   r1 <- 1
+   r2 <- N
+   for(k in 1:K)
+   {
+      len <- length(DN[[k]])
+      r2 <- r2/len
+      eval(parse(text = paste("TheDataFrame$", TheList[k],
+         " <- rep(rep(DN[[k]], rep(r1, len)), r2)", sep = "")))
+      r1 <- r1 * len
+   }
+   TheDataFrame
+}
+
+But I don't know why
+
+eval(parse(text = paste("TheDataFrame <- data.frame(", DataName,
+      " = TheData, row.names = 1:N)", sep = "")))
+
+couldn't have been replaced with
+
+TheDataFrame <- data.frame(DataName= TheData, row.names = 1:N)
+
+Can someone explain why it is sometimes better to use "eval" and "parse" 
+rather than the standard why of assigning objects.
+
+Any help is much appreciated.
+
+Colin
+
+_________________________________________________________________
+Express yourself instantly with MSN Messenger! Download today - it's FREE! 
+http://messenger.msn.click-url.com/go/onm00200471ave/direct/01/
+
+--------------------------------------------------------------------
+This message was distributed by s-news at lists.biostat.wustl.edu.  To
+unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+the BODY of the message:  unsubscribe s-news
+
+From Mary.Crissey at sas.com  Tue Feb 28 00:45:22 2006
+From: Mary.Crissey at sas.com (Mary Crissey)
+Date: Mon, 27 Feb 2006 19:45:22 -0500
+Subject: ACM SIGKDD Conference on Knowledge Discovery (KDD-2006) deadlines
+Message-ID: <88B52CB47F33BF46830F6FFC9CAC3290091700E6@MERC26.na.sas.com>
+
+ CALL FOR Research and Industrial track PAPERS, Tutorial, Panel discussions and Demos
+
+ <<cfp new.txt>> 
+
+The Twelfth Annual SIGKDD International Conference on
+
+Knowledge Discovery and Data Mining 
+
+August 20 - 23, 2006
+
+Philadelphia, USA 
+
+http://www.acm.org/sigs/sigkdd/kdd2006/
+
+http://www.kdd2006.com 
+
+Abstracts due: March 3, 2006 
+
+Paper submissions due: March 10, 2006 
+
+Mary Grace Crissey
+
+KDD06 publicity Chair
+
+San Antonio, TX      (210) 637-5855
+
+cfp new.txt
+
+Description: cfp new.txt
+
+From andrew.scott at icfrith.com.au  Tue Feb 28 03:46:51 2006
+From: andrew.scott at icfrith.com.au (Andrew Scott)
+Date: Tue, 28 Feb 2006 14:46:51 +1100
+Subject: Character Conversion to Upper Case
+Message-ID: <17ECC4735C623B419672DD87E7539D2B69FF1A@icfmail1.icfrith.com.au>
+
+Dear 
+S-News Readers ,
+
+ 
+
+I've 
+got a quick question:
+
+ 
+
+Is 
+there an S-Plus command that converts a character field into upper 
+case?
+
+ 
+
+Thanks
+
+ 
+
+Andrew 
+Scott
+
+ 
+
+ 
+
+From sundar.dorai-raj at pdf.com  Tue Feb 28 04:05:16 2006
+From: sundar.dorai-raj at pdf.com (Sundar Dorai-Raj)
+Date: Mon, 27 Feb 2006 22:05:16 -0600
+Subject: Re: Character Conversion to Upper Case
+In-Reply-To: <17ECC4735C623B419672DD87E7539D2B69FF1A@icfmail1.icfrith.com.au>
+References: <17ECC4735C623B419672DD87E7539D2B69FF1A@icfmail1.icfrith.com.au>
+Message-ID: <4403CBFC.2070109@pdf.com>
+
+See ?casefold.
+
+--sundar
+
+Andrew Scott wrote:
+> Dear S-News Readers ,
+>
+> I've got a quick question:
+>
+> Is there an S-Plus command that converts a character field into upper case?
+>
+> Thanks
+>
+> Andrew Scott
+>
+>
+
+From tristan.lorino at lcpc.fr  Tue Feb 28 10:02:15 2006
+From: tristan.lorino at lcpc.fr (Tristan Lorino)
+Date: Tue, 28 Feb 2006 11:02:15 +0100
+Subject: SurvReg
+Message-ID: <1193307232.20060228110215@lcpc.fr>
+
+Hi,
+
+With survReg, it is possible to get the inverse Hessian:
+> fit_survReg(...)
+> fit$var
+
+Is it possible to get also the score matrix? More generally, how can I
+get all the steps of the procedure? A sort of debugging for survReg
+(SPlus 7)...
+
+Thanks,
+Tristan Lorino
+
+-- 
+Laboratoire Central des Ponts et Chaussées
+[Division ESAR ? Section AGR]
+Route de Bouaye BP 4129
+44341 Bouguenais Cedex
+France
+Tél 33 (0)2 40 84 56 18
+Fax 33 (0)2 40 84 59 92
+
+From Mary.Crissey at sas.com  Tue Feb 28 12:46:40 2006
+From: Mary.Crissey at sas.com (Mary Crissey)
+Date: Tue, 28 Feb 2006 07:46:40 -0500
+Subject: ACM SIGKDD Conference on Knowledge Discovery (KDD-2006) deadlines
+Message-ID: <88B52CB47F33BF46830F6FFC9CAC3290091701A3@MERC26.na.sas.com>
+
+ CALL FOR Research and Industrial track PAPERS, Tutorial, Panel discussions and Demos
+
+The Twelfth Annual SIGKDD International Conference on
+
+Knowledge Discovery and Data Mining 
+
+August 20 - 23, 2006
+
+Philadelphia, USA 
+
+http://www.acm.org/sigs/sigkdd/kdd2006/
+
+http://www.kdd2006.com 
+
+Abstracts due: March 3, 2006 
+
+Paper submissions due: March 10, 2006
+
+ 
+
+ <<cfp new.txt>> 
+
+Mary Grace Crissey
+
+KDD06 publicity Chair
+
+San Antonio, TX      (210) 637-5855
+
+cfp new.txt
+
+Description: cfp new.txt
+
+From gandhi.harish at gmail.com  Tue Feb 28 20:03:05 2006
+From: gandhi.harish at gmail.com (Harish Gandhi)
+Date: Tue, 28 Feb 2006 12:03:05 -0800
+Subject: Binomial test in S-plus
+Message-ID: <25f862330602281203kf6ec1a8m1cb7475dc8f98f8a@mail.gmail.com>
+
+Hello,
+
+Wondering how to compare the treatment effects using binomial test in S-plus. For
+e.g. compare treatment 1 vs. Treatment 2? Treatment Group A vs. Group B.
+
+Data is in following shape:
+
+                                                                        Frequency        
+
+Treatment       Treatment Group            Effect p           Effect q
+ 1                     A                                     5          
+           0                
+
+ 2                     B                                    10                    
+0
+
+ 3                     B                                    12                    
+5
+
+ …                   C
+
+ ...                   C
+
+  n                   A
+
+Any hint will be appreciated.
+
+ 
+
+Thanks,
+
+Harish Gandhi,
+
+Oregon
+ State University
+
+PS: I am using S-plus 6.2.1 Professional edition. OS is XP
+Professional with SP2.
+
+From therneau at mayo.edu  Tue Feb 28 22:37:00 2006
+From: therneau at mayo.edu (Terry Therneau)
+Date: Tue, 28 Feb 2006 16:37:00 -0600
+Subject: Re: SurvReg
+Message-ID: <200602282237.k1SMb0D22189@crow.mayo.edu>
+
+ There is not a mechanism to get the internal bits of survreg.  This is
+unlike coxph, where I wrote the coxph.detail routine to give exactly what
+you ask (for debugging purposes).  It has turned out to be very useful.
+  However, the source code for survreg is available, look at the survival
+package on our department's web site   www.mayo.edu/biostatistics
+(Insightful decided to put a capital letter into the middle of "survreg", 
+beyond that it is the code from Mayo).   You could certainly add print
+statements into the C code.
+
+        Terry Therneau
+        Mayo Clinic
+        
+-------------------------------------------------       
+Hi,
+
+With survReg, it is possible to get the inverse Hessian:
+> fit_survReg(...)
+> fit$var
+
+Is it possible to get also the score matrix? More generally, how can I
+get all the steps of the procedure? A sort of debugging for survReg
+(SPlus 7)...
+
+Thanks,
+Tristan Lorino
+

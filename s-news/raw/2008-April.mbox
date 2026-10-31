@@ -1,0 +1,2629 @@
+From courses at zanybooks.com  Tue Apr  1 15:47:09 2008
+From: courses at zanybooks.com
+Date: Tue, 01 Apr 2008 08:47:09 -0700
+Subject: Online Course: Applications of Bootstrap, CART, and Permutation Tests
+Message-ID: <20080401084709.b21645f2bceb2bcc4cba8e709837b1d9.3ef9a66d1c.wbe@email.secureserver.net>
+
+Online, interactive course in Applications of Bootstrap, CART and Permutation Methods.  Three lessons in three weeks.  18 Apr-9 May, 2008.  $324.  ($254 for students, faculty, and research workers at academic institutions.)  Early Bird (before April 5th) discount of $50.
+
+For more information, see http://statisticsonline.info
+
+Coming up soon:  Modeling with R.  Three lessons in three weeks. 9 May -30 May  2008.  $300. ($225 for students, faculty, and research workers at academic institutions.) OLS, EIV, QR, and CART plus validation. Early Bird (by 29 April) discount of $50.
+
+For more information, see http://statisticsonline.info
+
+From johnpitchard at googlemail.com  Wed Apr  2 13:35:21 2008
+From: johnpitchard at googlemail.com (John Pitchard)
+Date: Wed, 02 Apr 2008 14:35:21 +0100
+Subject: calculating standard errors using nlminb
+Message-ID: <ee4b1650804020635o8be5685w4f64db2bfabae05b@mail.gmail.com>
+
+ 
+
+Dear all,
+
+ 
+
+I'm trying to calculate individual standard errors for all the values within a  vector which has a restriction on it, namely they must add up to 1 - but not necessarily positive though, i.e
+
+ 
+
+I've got a vector consisting of a, b, c, d
+
+ 
+
+x <- c(a, b, c)
+
+ 
+
+the aim is to the values of x that minimise some objective function using nlminb. Once I find these values I can calculate d as follows,
+
+ 
+
+d <- 1-sum(x).
+
+ 
+
+ 
+
+I want to obtain standard errors for a, b, c and d. Can this be achived from outputing the hessian matrix and then taking the square root of the diagonal elements? How would I calculate a standard error for component d as it is not part of the actual minimisation?
+
+ 
+
+Many thanks in advance for any help.
+
+ 
+
+Regards,
+
+John
+
+From rayharaf at rogers.com  Wed Apr  2 21:14:46 2008
+From: rayharaf at rogers.com (Ray Haraf)
+Date: Wed, 02 Apr 2008 17:14:46 -0400
+Subject: Re: summary(object, test=c("Roy", "Wilks", "Pillai", ....)
+In-Reply-To: <B998A44C8986644EA8029CFE6396A924010B1AA6@exqld2-bne.nexus.csiro.au>
+References: <B998A44C8986644EA8029CFE6396A924010B1AA6@exqld2-bne.nexus.csiro.au>
+Message-ID: <995369.44389.qm@web88008.mail.re2.yahoo.com>
+
+Thanks, Professor Venables, for your prompt and valuable reply. I tried manova() function and got two different answers for test=c("Wilks","Roy","Pillai") and tests=c("Wilks","Roy",'"Pillai") as shown below. In the first case (test=c(list)) I got error message which probably means I can only call one test at a time. I thought I could get ride of this by adding "s" to test; in this case (tests=c(list)), I got Pillai test. Does this mean that Pillai would be the default test and summary(manova()) can only post one test at a time?
+   
+  > summary(manova(cbind(y1, y2) ~ z1, data ="">+ ex7.8),test=c("Wilks","Roy","Pillai"))
+Error in match.arg(test) : 'arg' must be of length 1
+> summary(manova(cbind(y1, y2) ~ z1, data ="">+ ex7.8),tests=c("Wilks","Roy","Pillai"))
+          Df  Pillai approx F num Df den Df Pr(>F) 
+ 
+z1         1  0.9375  15.0000      2      2 0.0625 .
+Residuals  3                                        
+---
+Signif. codes:  0 ?***? 0.001 ?**? 0.01 ?*? 0.05 ?.? 0.1 ? ? 1 
+
+I am still struggling to construct prediction ellipse. Both ellipse() and ellipse.lm() are not giving me the solution to "Sampling from multivariate multiple regression prediction regions" posted by Iain Pardoe, Mon May 9 18:43:46 2005. I am working on the same problem and performed all the steps he suggested
+   
+  > ex7.10 <- 
++ data.frame(y1 = c(141.5,
+ 168.9, 154.8, 146.5, 172.8, 160.1, 108.5), 
++ y2 = c(301.8, 396.1, 328.2, 307.4, 362.4, 369.5, 229.1), 
++ z1 = c(123.5, 146.1, 133.9, 128.5, 151.5, 136.2, 92), 
++ z2 = c(2.108, 9.213, 1.905, .815, 1.061, 8.603, 1.125)) 
+> attach(ex7.10) 
+> f.mlm <- lm(cbind(y1,y2)~z1+z2) 
+> y.hat <- c(1, 130, 7.5) %*% coef(f.mlm) 
+> round(y.hat, 2) 
+         y1 y2 
+[1,] 151.84 349.63 
+> qf.z <- t(c(1, 130, 7.5)) %*% 
++ solve(t(cbind(1,z1,z2)) %*% cbind(1,z1,z2)) %*% 
++ c(1, 130, 7.5) 
+> round(qf.z, 5) 
+        [,1] 
+[1,] 0.36995 
+> n.sigma.hat <- SSD(f.mlm)$SSD
+ # same as t(resid(f.mlm)) %*% 
+resid(f.mlm) 
+> round(n.sigma.hat, 2) 
+     y1 y2 
+y1 5.80 5.22 
+y2 5.22 12.57 
+> F.quant <- qf(.95,2,3) 
+> round(F.quant, 2) 
+[1] 9.55 
+   
+  From here how could I calculate a 95% prediction ellipse for y=(y1,y2) at (z1,z2)=(130,7.5) using either ellipse or ellipse.lm? y1 would be the x-axis and y2, the y-axis. The center is different from (0,0) and I don't know what would be the appropriate x (the lm object). Should I used predicted values or residuals? In both cases I have vectors which is different from the example given with ellipse.lm
+   
+  Lastly but not the least, would be too ambitious to draw the axes (i.e, the eigenvalues) to  the ellipse? fear God, honour
+ the king and work very hard!
+   
+  Thanks and very kind regards,
+  Ray
+  
+
+   
+
+  
+Bill.Venables at csiro.au wrote:
+  > With a matris response lm(...) doesn't really fit a multivariate
+> regression. It fits multiple univariate linear regressions. You can
+> build a multivariate linear regression from it, of course.
+>
+> I suspect you need to looking at manova(...) to fit the model. Then the
+> summary method, and the other model comparison tools of course, will
+> give you multivariate tests.
+>
+> As to simultaneous prediction intervals and ellipsoids, the only advice
+> I can give you is the standard: fear God, honour the king and work very
+> hard. Best of luck! :-)
+>
+> Bill Venables.
+>
+>
+> -----Original Message-----
+> From:
+>  s-news-owner at lists.biostat.wustl.edu
+> [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Ray Haraf
+> Sent: Sunday, 30 March 2008 3:32 PM
+> To: s-news at lists.biostat.wustl.edu
+> Subject: [S] summary(object, test=c("Roy", "Wilks", "Pillai", ....)
+>
+> Dear All,
+>
+> I am running multivariate multiple regression using lm() and would be
+> very appreciative of your kind and prompt help (as usual) with how to
+> obtain the usual statistics of multivariate analysis, i.e., Wilks'
+> lambda, Pillai's trace, Hotelling-Lawley trace, and Roy's greatest root.
+>
+> I unsuccessfully tried this
+> > ex7.8 <- data.frame(z1 = c(0, 1, 2, 3, 4),
+> + y1 = c(1, 4, 3, 8, 9),
+> + y2 = c(-1, -1, 2, 3, 2))
+> > summary(lm(cbind(y1, y2) ~ z1, data ="">ex7.8),test=c("Wilks","Roy","Pillai"))
+>
+> Also, any suggestion on how obtain simultaneous prediction intervals and
+> prediction ellipsoid would be very valued. Thanks for your kind care
+>
+> Here is the result of
+>  the above summary() function
+>
+> Response y1 :
+> Call:
+> lm(formula = y1 ~ z1, data = "">Residuals:
+> 1 2 3 4 5
+> 6.880e-17 1.000e+00 -2.000e+00 1.000e+00 -1.326e-16
+> Coefficients:
+> Estimate Std. Error t value Pr(>|t|)
+> (Intercept) 1.0000 1.0954 0.913 0.4286
+> z1 2.0000 0.4472 4.472 0.0208 *
+> ---
+> Signif. codes: 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+> Residual standard error: 1.414 on 3 degrees of freedom
+> Multiple R-squared: 0.8696, Adjusted R-squared: 0.8261
+> F-statistic: 20 on 1 and 3 DF, p-value: 0.02084
+>
+> Response y2 :
+> Call:
+> lm(formula = y2 ~ z1, data = "">Residuals:
+> 1 2 3 4 5
+> 9.931e-17 -1.000e+00 1.000e+00 1.000e+00 -1.000e+00
+> Coefficients:
+> Estimate Std. Error t value Pr(>|t|)
+> (Intercept) -1.0000 0.8944 -1.118 0.3450
+> z1 1.0000 0.3651 2.739 0.0714 .
+> ---
+> Signif. codes: 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+> Residual standard error: 1.155 on 3 degrees of
+>  freedom
+> Multiple R-squared: 0.7143, Adjusted R-squared: 0.619
+> F-statistic: 7.5 on 1 and 3 DF, p-value: 0.07142
+>
+> >
+> Kind regards,
+> Ray
+
+From Mark.Hearnden at nt.gov.au  Wed Apr  2 21:56:24 2008
+From: Mark.Hearnden at nt.gov.au
+Date: Thu, 03 Apr 2008 07:26:24 +0930
+Subject: Extracting means from split plot models
+Message-ID: <OF0FB35231.A56FF31D-ON6925741F.007759E8-6925741F.00787A7F@nt.gov.au>
+
+Hello
+
+I have a model which is a split plot in time, 'Sample' is nested in 'Treatment'
+and repeated over 5 occasions ('Time').
+It is a totally confounded model (not my idea but unavoidable) as there is only
+1 replication of Treatment per year (hence the pseudoreplicated Sample level
+within Treatment). Samples are slightly unbalanced within Treatment but occur
+across all Times.
+
+> splitmodel <-
+aov(depvar~Treatment*Time+Error(Sample%in%Treatment+Sample%in%Treatment:Time),data=data)
+
+My question is how do I extract the means (and se's if possible) predicted by
+the model from the aov object given I have two error strata? I have tried
+model.tables.aov and '.aovlist.
+
+> model.tables.aovlist(splitmodel, se=F, type="means")
+
+I realise I won't get se's with the unbalanced design but someone might have a
+fix?
+
+Many thanks if you can help.
+
+(Using S+8 in WinXP)
+
+Dr Mark Hearnden
+Biometrician
+Primary Industry Services
+Goff Letts Building
+Berrimah
+
+Department of Primary Industry, Fisheries and Mines
+Northern Territory Government of Australia
+GPO Box 3000
+DARWIN  NT  0801
+
+"Everything should be made as simple as possible,
+  but not simpler." Albert Einstein.
+
+From kate.bassil at utoronto.ca  Wed Apr  2 14:57:24 2008
+From: kate.bassil at utoronto.ca
+Date: Wed, 02 Apr 2008 10:57:24 -0400
+Subject: Moran's I for residuals
+Message-ID: <20080402105724.pytpf7o8swocskgw@webmail.utoronto.ca>
+
+Can anyone tell me how to calculate Moran's I for regression residuals using
+s-plus? I realize I can calculate it for the raw data using  
+'spatial.cor' but thought a modification was necessary given I would  
+like to apply it to regression residuals.
+
+Thank you.
+
+Kate Bassil
+University of Toronto
+
+From elvis at xlsolutions-corp.com  Wed Apr  2 14:29:28 2008
+From: elvis at xlsolutions-corp.com (elvis Miller)
+Date: Wed, 02 Apr 2008 07:29:28 -0700
+Subject: R/S+ course in *** New York City *** April 28-29 by XLSolutions Corp
+Message-ID: <20080402072928.aa8924c5d28ca71e2a043bb294e795eb.5310c0cafc.wbe@email.secureserver.net>
+
+Our March-April 2008 course schedule is now available online! With R/S
+Fundamentals and Programming Techniques courses at 7 cities including
+
+**** New York City / April 28-29, 2008 ***
+
+Please direct enquiries to Sue Turner:  sue at xlsolutions-corp.com Phone:
+206 686 1578
+
+-------- Ask for Group Discount -------
+
+www.xlsolutions-corp.com/courselist.htm
+ 
+Payment due AFTER the class
+Email us for group discounts.
+Email Sue Turner: sue at xlsolutions-corp.com
+Phone: 206-686-1578
+Visit us: www.xlsolutions-corp.com/courselist.htm
+Please let us know if you and your colleagues are interested in this
+class to take advantage of group discount. Register now to secure your
+seat!
+Cheers,
+Elvis Miller, PhD
+Manager Training.
+XLSolutions Corporation
+206 686 1578
+www.xlsolutions-corp.com
+
+From elise at predictionimpact.com  Fri Apr  4 09:29:20 2008
+From: elise at predictionimpact.com (Elise Johnson)
+Date: Fri, 04 Apr 2008 02:29:20 -0700
+Subject: Predictive Analytics for Business, Marketing and Web (May 8-9 and June 5-6)
+Message-ID: <16490012.post@talk.nabble.com>
+
+Predictive Analytics for Business, Marketing and Web is a concentrated training program that includes interactive breakout sessions.
+
+Dates: May 8-9 and June 5-6, 2008
+
+Locations: San Francisco (May), New York City (June)
+
+Sponsor: Prediction Impact, Inc.
+
+Instructor:  Eric Siegel, Ph.D.
+
+100% of October 2007 attendees rated this program Excellent or Very Good (details).
+
+**Early-bird special: Sign up one month ahead for $100 off the registration fee**
+
+(This seminar is offered in conjunction with the eMetrics Marketing Optimization Summit.)
+
+Business metrics do a great job summarizing the past. But if you want to predict how customers will respond in the future, there is one place to turn—predictive analytics. By learning from your abundant historical data, predictive analytics provides the marketer something beyond standard business reports and sales forecasts: actionable predictions for each customer. These predictions encompass all channels, both online and off, foreseeing which customers will buy, click, respond, convert or cancel. If you predict it, you own it. 
+
+ The customer predictions generated by predictive analytics deliver more relevant content to each customer, improving response rates, click rates, buying behavior, retention and overall profit. For online applications such as e-marketing and customer care recommendations, predictive analytics acts in real-time, dynamically selecting the ad, web content or cross-sell product each visitor is most likely to click on or respond to, according to that visitor's profile. This is AB selection, rather than just AB testing.
+
+In two days we cover:
+
+The techniques, tips and pointers you need in order to run a successful predictive analytics and data mining initiative 
+
+How to strategically position and tactically deploy predictive analytics and data mining at your company 
+
+How to bridge the prevalent gap between technical understanding and practical use
+
+How a predictive model works, how it's created and how much revenue it generates
+
+Several detailed case studies that demonstrate predictive analytics in action and make the concepts concrete
+
+No background in statistics or modeling is required. The only specific knowledge assumed for this training program is moderate experience with Excel.
+
+For more information, visit Predictive Analytics for Business, Marketing and Web, e-mail us at  training at predictionimpact.com or call (415) 683-1146.
+
+View this message in context: Predictive Analytics for Business, Marketing and Web (May 8-9 and June 5-6)
+
+Sent from the S-News mailing list archive at Nabble.com.
+
+From lochapoka at web.de  Fri Apr  4 15:14:42 2008
+From: lochapoka at web.de (Volker Bahn)
+Date: Fri, 04 Apr 2008 11:14:42 -0400
+Subject: Re: Moran's I for residuals
+In-Reply-To: <20080402105724.pytpf7o8swocskgw@webmail.utoronto.ca>
+References: <20080402105724.pytpf7o8swocskgw@webmail.utoronto.ca>
+Message-ID: <47F645E2.8040507@web.de>
+
+Hi Kate,
+
+You can find extensive code for doing this in the ecological archives 
+supplemental files for
+Jeremy W. Lichstein, Theodore R. Simons, Susan A. Shriner, and Kathleen 
+E. Franzreb. 2002. Spatial autocorrelation and autoregressive models in 
+ecology. Ecological Monographs 72:445-463.
+
+at http://www.esapubs.org/archive/mono/M072/007/default.htm
+
+The short answer is that you need to do the randomization for finding 
+the reference distribution of Morin's I on the original data and then 
+run the model on each randomization and calculate Morin's I for each set 
+of the resulting residuals rather than simply running randomizations of 
+the residuals of the model on the original data.
+
+HTH
+
+Volker
+
+kate.bassil at utoronto.ca wrote:
+> <div class="moz-text-flowed" style="font-family: -moz-fixed">Can anyone
+> tell me how to calculate Moran's I for regression residuals using
+> s-plus? I realize I can calculate it for the raw data using
+> 'spatial.cor' but thought a modification was necessary given I would
+> like to apply it to regression residuals.
+>
+> Thank you.
+>
+> Kate Bassil
+> University of Toronto
+>
+> </div>
+
+From bill at insightful.com  Mon Apr  7 00:57:52 2008
+From: bill at insightful.com (Bill Dunlap)
+Date: Sun, 06 Apr 2008 17:57:52 -0700
+Subject: Re: Problem with matrix
+In-Reply-To: <EBEF03D341A7544EA1481BB1B64FA6760122CF72@SoM-Exchange.management.uottawa.ca>
+References: <20080318102725.aa8924c5d28ca71e2a043bb294e795eb.c614248f21.wbe@email.secureserver.net> <EBEF03D341A7544EA1481BB1B64FA6760122CF72@SoM-Exchange.management.uottawa.ca>
+Message-ID: <Pine.GSO.4.56.0804061750170.5452@devsun3201.insightful.com>
+
+On Fri, 4 Apr 2008, Saadi, Samir wrote:
+
+> Below is the problem I met after running  three commands in sequence.
+> It says "Unable to obtain requested dynamic memory ". What am I doing
+> wrong?
+>
+> The following three commands are used to generate one simulated
+> sample (a matrix of 2283 rows and 10 columns)
+>
+> Run : VAsia10.sim=array(0, c(2283,10))
+>   (Implementing this line generates a matrix with 2283 rows and 10 columns,
+>    each element is set initial value 0)
+>
+> Run: tmp=simulate(VAsia10.dvec, n=2283)
+>  ( This is used to simulate 10 variable time series of length 2283.
+>    the following is the summary result for tmp
+>
+> summary(tmp)
+>     Length Class    Mode
+>  et  22830       numeric
+> V.t 228300       numeric
+>
+> Run: VAsia10.sim=matrix(tmp, byrow=F, nrow=2283, ncol=10)
+>   (transform the simulated series (tmp) into a matrix defined above
+>    in the first command as VAsia10.sim. Implementing this line however
+>    displays the error: Problem: Unable to obtain requested dynamic memory
+
+tmp is a list of length 2, with elements of length 22830 and 228300.
+Applying matrix(tmp, myrow=FALSE, nrow=2283, ncol=10) extends, by
+repetition, this list to length 22830 so it will have 22830/2 *
+(22830+228300) 2866648950 numbers in it.  At 8 bytes/number this is
+more than 2^34 bytes, more than a 32-bit machine and handle.
+
+You probably wanted to make a matrix out of one or both of the elements
+of tmp, not tmp itself.  E.g.,
+    z <- matrix(tmp$et, byrow=F, nrow=2283, ncol=10)
+
+----------------------------------------------------------------------------
+Bill Dunlap
+Insightful Corporation
+bill at insightful dot com
+360-428-8146
+
+ "All statements in this message represent the opinions of the author and do
+ not necessarily reflect Insightful Corporation policy or position."
+
+From o_sanni at yahoo.com  Mon Apr  7 11:35:35 2008
+From: o_sanni at yahoo.com (Olanrewaju Sanni)
+Date: Mon, 07 Apr 2008 04:35:35 -0700
+Subject: Causality Test
+Message-ID: <357514.93912.qm@web62303.mail.re1.yahoo.com>
+
+Hi,
+
+Can anyone tell me how to use s-plus finmetrics for Granger Causality Test? All contributions are highly appreciated.
+
+ 
+
+Best Regards,
+
+Lanre Sanni
+
+      You rock. That's why Blockbuster's offering you one month of Blockbuster Total Access, No Cost.
+
+From guy.yollin at rotellacapital.com  Mon Apr  7 14:04:14 2008
+From: guy.yollin at rotellacapital.com (Guy Yollin)
+Date: Mon, 07 Apr 2008 10:04:14 -0400
+Subject: Re: Causality Test
+In-Reply-To: <357514.93912.qm@web62303.mail.re1.yahoo.com>
+References: <357514.93912.qm@web62303.mail.re1.yahoo.com>
+Message-ID: <E634AF2410E42246A35865D8C0C784D9C571E0@MI8NYCMAIL09.Mi8.com>
+
+Lanre,
+
+ 
+
+You really don’t need FinMetrics to perform the Granger causality
+test since it just involves linear regression.  The following function can
+be used; setting verbose=T will print out step-by-step description of the test. 
+The reference I used was Econometric Models and Economic Forecasts by Pindyck
+& Rubinfeld.
+
+ 
+
+Best,
+
+ 
+
+-- G
+
+ 
+
+ 
+
+ 
+
+grangertest <-
+function(X,Y,p=0.95,verbose=F) {
+
+  if( verbose ) {
+
+   
+cat("\nTest that X causes Y\n")
+
+   
+cat("Step 1 - null hypothesis: X does NOT cause Y (hoping to reject this
+hypothesis)\n")
+
+  }
+
+  y.lag.1 <-
+Y[-length(Y)]
+
+  x.lag.1 <-
+X[-length(X)]
+
+  y <- Y[-1]
+
+  x <- X[-1]
+
+  if( verbose )
+
+   
+cat("  Unrestricted regression: regress Y against lagged values of Y
+and lagged values of X\n")
+
+  mod1.UR <- lm(y ~
+y.lag.1 + x.lag.1)
+
+  if( verbose )
+
+   
+cat("  Restricted regression: regress Y against only lagged values of
+Y\n")
+
+  mod1.R <- lm(y ~
+y.lag.1)
+
+  if( verbose )
+
+   
+cat("  Test null hypothesis with an Ftest\n")
+
+  N<-length(y)
+
+  q<-1
+
+  k<-3
+
+  cv<-qf(p,q,N-k)
+
+  pcv<-1-p
+
+  ESS1.R <-
+sum(mod1.R$resid^2)
+
+  ESS1.UR <-
+sum(mod1.UR$resid^2)
+
+  Fstat1 <- ((N-k) /
+q) * ((ESS1.R - ESS1.UR) / ESS1.UR)
+
+  pv1<-pf(Fstat1, q,
+N-k)
+
+  if( verbose ) {
+
+   
+cat("    F-stat =",Fstat1,"
+(",1-pv1,")\n")
+
+    cat("   
+Critial Value =",cv," (",pcv,")\n")
+
+  }
+
+  if( Fstat1 < cv )
+{
+
+    if(
+verbose ) {
+
+     
+cat("    Since F-stat is < Critial Value, we CAN NOT
+reject the null-hypothesis\n")
+
+     
+cat("    Hence, we CAN NOT conclude that X causes
+Y\n")
+
+    }
+
+    step1<-F
+
+  } else {
+
+    if(
+verbose ) {
+
+     
+cat("    Since F-stat is > Critial Value, we CAN reject
+the null-hypothesis\n")
+
+     
+cat("    Hence, we may be able to conclude that X actually
+does causes Y\n")
+
+    }
+
+   
+step1<-T
+
+  }
+
+  if( verbose ) {
+
+   
+cat("Step 2 - null hypothesis: Y does NOT cause X (hoping to accept this
+hypothesis)\n")
+
+   
+cat("  Unrestricted regression: regress X against lagged values of X
+and lagged values of Y\n")
+
+  }
+
+  mod2.UR <- lm(x ~
+x.lag.1 + y.lag.1)
+
+  if( verbose )
+
+    cat(" 
+Restricted regression: regress X against only lagged values of X\n")
+
+  mod2.R <- lm(x ~
+x.lag.1)
+
+  if( verbose )
+
+   
+cat("  Test null hypothesis with an Ftest\n")
+
+  ESS2.R <-
+sum(mod2.R$resid^2)
+
+  ESS2.UR <-
+sum(mod2.UR$resid^2)
+
+  Fstat2 <- ((N-k) /
+q) * ((ESS2.R - ESS2.UR) / ESS2.UR)
+
+  pv2<-pf(Fstat2, q,
+N-k)
+
+  if( verbose ) {
+
+   
+cat("    F-stat =",Fstat2,"
+(",1-pv2,")\n")
+
+   
+cat("    Critial Value =",cv,"
+(",pcv,")\n")
+
+  }
+
+  if( Fstat2 < cv )
+{
+
+    if(
+verbose ) {
+
+     
+cat("    Since F-stat is < Critial Value, we CAN NOT
+reject the null-hypothesis\n")
+
+     
+cat("    Hence, we can conclude that Y does not causes X
+and may be able to conclude that X causes Y\n")
+
+    }
+
+    step2
+<- T
+
+  } else {
+
+    if(
+verbose ) {
+
+     
+cat("    Since F-stat is > Critial Value, we MUST reject
+the null-hypothesis\n")
+
+     
+cat("    Hence, prehaps Y does cause X, in any event, we
+certainly CAN NOT conclude that X causes Y\n")
+
+    }
+
+    step2
+<- F
+
+  }
+
+  if( verbose )
+
+   
+cat("Step 3 - summarized our test results and draw a conclusion\n")
+
+  if( step1 & step2
+) {
+
+    if(
+verbose ) {
+
+     
+cat("  Since we were able to reject the null hypothesis in step 1 but
+failed to reject in step 2,\n")
+
+     
+cat("  We can indeed conclude that X causes Y\n\n")
+
+    }
+
+   
+return(TRUE)
+
+  }
+
+  if( step1 &
+!step2 ) {
+
+    if(
+verbose ) {
+
+     
+cat("  Although we were able to reject the null hypothesis in step 1,
+we also rejected the null hypothesis in step 2,\n")
+
+     
+cat("  Both series are probably driven by a third series\n\n")
+
+    }
+
+   
+return(FALSE)
+
+  }
+
+  if( !step1 &
+step2 ) {
+
+    if(
+verbose ) {
+
+     
+cat("  Since we accepted the null hypothesis in step 1 and also
+accepted the null hypothesis in step 2,\n")
+
+     
+cat("  Both series are probably unrelated to each other in regards to
+causaility\n\n")
+
+    }
+
+   
+return(FALSE)
+
+  }
+
+  if( !step1 &
+!step2 ) {
+
+    if(
+verbose ) {
+
+     
+cat("  Since we could not reject the null hypothesis in step 1 but
+could reject the null hypothesis in step 2,\n")
+
+     
+cat("  Our conclusion should be that Y actually causes X\n\n")
+
+    }
+
+   
+return(FALSE)
+
+  }
+
+}
+
+ 
+
+ 
+
+From:
+s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On
+Behalf Of Olanrewaju Sanni
+
+Sent: Monday, April 07, 2008 4:36
+AM
+
+To: s-news at lists.biostat.wustl.edu
+
+Subject: [S] Causality Test
+
+ 
+
+Hi,
+
+Can anyone tell me how to use s-plus finmetrics for Granger Causality
+Test? All contributions are highly appreciated.
+
+ 
+
+Best Regards,
+
+Lanre Sanni
+
+ 
+
+You rock. That's why Blockbuster's offering you one
+month of Blockbuster Total Access, No Cost.
+
+From johnpitchard at googlemail.com  Mon Apr  7 14:40:42 2008
+From: johnpitchard at googlemail.com (John Pitchard)
+Date: Mon, 07 Apr 2008 15:40:42 +0100
+Subject: nlminb with constraint
+Message-ID: <ee4b1650804070740p73a0bc83odbcd879e23d7ac66@mail.gmail.com>
+
+Dear All,
+
+ 
+
+I wanted to post some more details about the query I sent to s-news last week.
+
+ 
+
+I have a vector with a constraint. The constraint is that the sum of the vector must add up to 1 - but not necessarily positive, i.e.
+
+x[n] <- 1 -(x[1] + ...+x[n-1])
+
+ 
+
+I perform the optimisation on the vector x such that 
+
+ 
+
+x <- c(x, 1-sum(x))
+
+ 
+
+In other words,
+
+ 
+
+fn <- function(x){
+  x <- c(x, 1 - sum(x))
+  # other calculations here
+}
+
+then feed this into nlminb()
+
+out <- nlminb(x, fn)
+out.x <- out$parameters
+
+out.x <- c(out.x, 1 - sum(out.x))
+out.x
+ 
+
+I would like to calculate standard errors for each of the components of x. Is this possible by outputing the Hessian matrix? Furthermore, how would I calculate this for the last component (if this is indeed possible) which has the restriction (i.e. 1-sum(out.x))?
+
+ 
+
+Any help would be much appreciated.
+
+ 
+
+Regards,
+
+John 
+
+From gerald.jean at dgag.ca  Mon Apr  7 17:12:17 2008
+From: gerald.jean at dgag.ca
+Date: Mon, 07 Apr 2008 13:12:17 -0400
+Subject: Square root of a vector taking for ever!
+Message-ID: <OFF97A4AD8.5D7DDE4E-ON85257424.0056E11B-85257424.005E8274@spgdag.ca>
+
+Hello there,
+
+I am running :
+
+S-PLUS : Copyright (c) 1988, 2007 Insightful Corp.
+S : Copyright Insightful Corp.
+Version 8.0.4  for Linux 2.4.21-37.EL, 64-bit : 2007
+
+Running "summary.glm" twice on the output of "dglm" (a function by Gordon
+Smyth for dispersion modeling) takes roughly 20 minutes??  I made a private
+version of "summary.glm" trying to track down where the bottle neck is.
+Here is what I found:
+
+the instruction: "wt <- wt^0.5" is the one that's eating up all the time.
+I then inserted a "return(wt)" statement in the function and played around
+with this "named" vector.  I "unnamed" the vector but the timing was
+basically the same.  I tracked the problem down to taking square root of
+numbers very close to "1".  To make a long story short I'll show you the
+same command ran on the above machine, Linux 64-bit machine, and on a
+32-bit Windows version:
+
+--------------------------------------------------------------------------------
+ttt.test <- sample(c(0.99999999999999978, 0.99999999999999978,
+                     1.0000000000000002, 1.0000000000000002,
+                     1.0000000000000002, 1.0000000000000002,
+                     0.99999999999999978, 1.0000000000000002,
+                     0.99999999999999978, 0.99999999999999978), size =
+826015,
+                   replace = T)
+class(ttt.test)
+[1] "numeric"
+mysummary(ttt.test)
+                   Min.                1st Qu.                 Median
+ 9.9999999999999985e-03 9.9999999999999985e-03 9.9999999999999985e-03
+                   Mean                3rd Qu.                   Max.
+ 1.0000000000000000e-02 1.0000000000000002e-02 1.0000000000000002e-02
+                      N                    Sum
+ 8.2601500000000000e+05 8.2601500000000000e+05
+length(ttt.test)
+[1] 826015
+resources(ttt.test.sqrt <- ttt.test^0.5)
+ User time    =  0 h.  12 min.  39.060000000000172804 s.
+ System time  =  0 h.   0 min.   0.019999999999999574 s.
+ CPU time     =  0 h.  12 min.  39.080000000000154614 s.
+ Elapsed time =  0 h.  12 min.  39.860000000000582077 s.
+ Child        =  0 h.   0 min.   0.000000000000000000 s.
+ % CPU        =  99.9
+ Memory usage:
+      Cache   = 0 Bytes
+      Working = 13.217104M Bytes
+--------------------------------------------------------------------------------
+Allmost  13 minutes to take 826015 square roots of numbers near 1?
+Now on the 32-bit Windows machine.
+
+S-PLUS : Copyright (c) 1988, 2007 Insightful Corp.
+S : Copyright Insightful Corp.
+Enterprise Developer Version 8.0.4  for Microsoft Windows : 2007
+
+ttt.test <- sample(c(0.99999999999999978, 0.99999999999999978,
+                     1.0000000000000002, 1.0000000000000002,
+                     1.0000000000000002, 1.0000000000000002,
+                     0.99999999999999978, 1.0000000000000002,
+                     0.99999999999999978, 0.99999999999999978), size =
+826015,
+                   replace = T)
+class(ttt.test)
+[1] "numeric"
+options(digits = 17)
+mysummary(ttt.test)
+                Min.             1st Qu.             Median Mean
+3rd Qu.
+ 0.99999999999999978 0.99999999999999978 1.0000000000000002    1
+1.0000000000000002
+               Max.      N                     Sum
+ 1.0000000000000002 826015  8.2601500000000000e+05
+length(ttt.test)
+[1] 826015
+resources(ttt.test.sqrt <- ttt.test^0.5)
+ User time    =  0 h.  0 min.  0.260999999999999900 s.
+ System time  =  0 h.  0 min.  0.010000000000000009 s.
+ CPU time     =  0 h.  0 min.  0.270999999999999910 s.
+ Elapsed time =  0 h.  0 min.  0.271000000000015010 s.
+ Child        =  0 h.  0 min.  0.000000000000000000 s.
+ % CPU        =  100
+ Memory usage:
+      Cache   = 0 Bytes
+      Working = 13.232343M Bytes
+--------------------------------------------------------------------------------
+It is only
+
+(12 * 60 + 39.860000000000582077) / 0.271000000000015010
+[1] 2803.9114391142380 times faster???  I know that a problem that fits in
+
+32-bit will run faster in 32-bit than in 64-bit BUT I doubt very much that
+it
+explains such a difference?  Am I missing something???
+
+Thanks for any support,
+
+Gérald Jean
+Conseiller senior en statistiques, Actuariat
+télephone            : (418) 835-4900 poste (7639)
+télecopieur          : (418) 835-6657
+courrier électronique: gerald.jean at dgag.ca
+
+"In God we trust, all others must bring data"  W. Edwards Deming
+
+Le message ci-dessus, ainsi que les documents l'accompagnant, sont destinés
+uniquement aux personnes identifiées et peuvent contenir des informations
+privilégiées, confidentielles ou ne pouvant être divulguées. Si vous avez
+reçu ce message par erreur, veuillez le détruire.
+
+This communication (and/or the attachments) is intended for named
+recipients only and may contain privileged or confidential information
+which is not to be disclosed. If you received this communication by mistake
+please destroy all copies.
+
+From ral at lcfltd.com  Tue Apr  8 00:40:56 2008
+From: ral at lcfltd.com (Robert A LaBudde)
+Date: Mon, 07 Apr 2008 20:40:56 -0400
+Subject: Re: Square root of a vector taking for ever!
+Message-ID: <0JYZ007DZAUZ9U41@vms173005.mailsrvcs.net>
+
+I'd say there is a problem with an iterative 
+algorithm for a fractional power of a number near 
+one. I ran your problem in R v.2.6.2 and got:
+
+> ttt.test <- sample(c(0.99999999999999978, 0.99999999999999978,
++                      1.0000000000000002, 1.0000000000000002,
++                      1.0000000000000002, 1.0000000000000002,
++                      0.99999999999999978, 1.0000000000000002,
++                      0.99999999999999978, 0.99999999999999978), size =
++ 826015,
++                    replace = T)
+> class(ttt.test)
+[1] "numeric"
+> length(ttt.test)
+[1] 826015
+> system.time(ttt.test.sqrt <- ttt.test^0.5)
+   user  system elapsed
+   0.06    0.01    0.07
+
+I suppose Insightful should look into their algorithm, if it takes 13 minutes.
+
+I would recommend you use "sqrt()" instead of 
+"^0.5" as a workaround. It's usually better to do this anyway.
+
+At 01:12 PM 4/7/2008, gerald.jean at dgag.ca wrote:
+> Hello there,
+>
+> I am running :
+>
+> S-PLUS : Copyright (c) 1988, 2007 Insightful Corp.
+> S : Copyright Insightful Corp.
+> Version 8.0.4  for Linux 2.4.21-37.EL, 64-bit : 2007
+>
+> Running "summary.glm" twice on the output of "dglm" (a function by Gordon
+> Smyth for dispersion modeling) takes roughly 20 minutes??  I made a private
+> version of "summary.glm" trying to track down where the bottle neck is.
+> Here is what I found:
+>
+> the instruction: "wt <- wt^0.5" is the one that's eating up all the time.
+> I then inserted a "return(wt)" statement in the function and played around
+> with this "named" vector.  I "unnamed" the vector but the timing was
+> basically the same.  I tracked the problem down to taking square root of
+> numbers very close to "1".  To make a long story short I'll show you the
+> same command ran on the above machine, Linux 64-bit machine, and on a
+> 32-bit Windows version:
+>
+> --------------------------------------------------------------------------------
+> ttt.test <- sample(c(0.99999999999999978, 0.99999999999999978,
+>                      1.0000000000000002, 1.0000000000000002,
+>                      1.0000000000000002, 1.0000000000000002,
+>                      0.99999999999999978, 1.0000000000000002,
+>                      0.99999999999999978, 0.99999999999999978), size =
+> 826015,
+>                    replace = T)
+> class(ttt.test)
+> [1] "numeric"
+> mysummary(ttt.test)
+>                    Min.                1st Qu.                 Median
+>  9.9999999999999985e-03 9.9999999999999985e-03 9.9999999999999985e-03
+>                    Mean                3rd Qu.                   Max.
+>  1.0000000000000000e-02 1.0000000000000002e-02 1.0000000000000002e-02
+>                       N                    Sum
+>  8.2601500000000000e+05 8.2601500000000000e+05
+> length(ttt.test)
+> [1] 826015
+> resources(ttt.test.sqrt <- ttt.test^0.5)
+>  User time    =  0 h.  12 min.  39.060000000000172804 s.
+>  System time  =  0 h.   0 min.   0.019999999999999574 s.
+>  CPU time     =  0 h.  12 min.  39.080000000000154614 s.
+>  Elapsed time =  0 h.  12 min.  39.860000000000582077 s.
+>  Child        =  0 h.   0 min.   0.000000000000000000 s.
+>  % CPU        =  99.9
+>  Memory usage:
+>       Cache   = 0 Bytes
+>       Working = 13.217104M Bytes
+> --------------------------------------------------------------------------------
+> Allmost  13 minutes to take 826015 square roots of numbers near 1?
+> Now on the 32-bit Windows machine.
+>
+> S-PLUS : Copyright (c) 1988, 2007 Insightful Corp.
+> S : Copyright Insightful Corp.
+> Enterprise Developer Version 8.0.4  for Microsoft Windows : 2007
+>
+> ttt.test <- sample(c(0.99999999999999978, 0.99999999999999978,
+>                      1.0000000000000002, 1.0000000000000002,
+>                      1.0000000000000002, 1.0000000000000002,
+>                      0.99999999999999978, 1.0000000000000002,
+>                      0.99999999999999978, 0.99999999999999978), size =
+> 826015,
+>                    replace = T)
+> class(ttt.test)
+> [1] "numeric"
+> options(digits = 17)
+> mysummary(ttt.test)
+>                 Min.             1st Qu.             Median Mean
+> 3rd Qu.
+>  0.99999999999999978 0.99999999999999978 1.0000000000000002    1
+> 1.0000000000000002
+>                Max.      N                     Sum
+>  1.0000000000000002 826015  8.2601500000000000e+05
+> length(ttt.test)
+> [1] 826015
+> resources(ttt.test.sqrt <- ttt.test^0.5)
+>  User time    =  0 h.  0 min.  0.260999999999999900 s.
+>  System time  =  0 h.  0 min.  0.010000000000000009 s.
+>  CPU time     =  0 h.  0 min.  0.270999999999999910 s.
+>  Elapsed time =  0 h.  0 min.  0.271000000000015010 s.
+>  Child        =  0 h.  0 min.  0.000000000000000000 s.
+>  % CPU        =  100
+>  Memory usage:
+>       Cache   = 0 Bytes
+>       Working = 13.232343M Bytes
+> --------------------------------------------------------------------------------
+> It is only
+>
+> (12 * 60 + 39.860000000000582077) / 0.271000000000015010
+> [1] 2803.9114391142380 times faster???  I know that a problem that fits in
+>
+> 32-bit will run faster in 32-bit than in 64-bit BUT I doubt very much that
+> it
+> explains such a difference?  Am I missing something???
+>
+> Thanks for any support,
+>
+> Gérald Jean
+> Conseiller senior en statistiques, Actuariat
+> télephone            : (418) 835-4900 poste (7639)
+> télecopieur          : (418) 835-6657
+> courrier électronique: gerald.jean at dgag.ca
+>
+> "In God we trust, all others must bring data"  W. Edwards Deming
+>
+>
+> Le message ci-dessus, ainsi que les documents l'accompagnant, sont destinés
+> uniquement aux personnes identifiées et peuvent contenir des informations
+> privilégiées, confidentielles ou ne pouvant être divulguées. Si vous avez
+> reçu ce message par erreur, veuillez le détruire.
+>
+> This communication (and/or the attachments) is intended for named
+> recipients only and may contain privileged or confidential information
+> which is not to be disclosed. If you received this communication by mistake
+> please destroy all copies.
+>
+>
+> --------------------------------------------------------------------
+> This message was distributed by s-news at lists.biostat.wustl.edu.  To
+> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with
+> the BODY of the message:  unsubscribe s-news
+
+================================================================
+Robert A. LaBudde, PhD, PAS, Dpl. ACAFS  e-mail: ral at lcfltd.com
+Least Cost Formulations, Ltd.            URL: http://lcfltd.com/
+824 Timberlake Drive                     Tel: 757-467-0954
+Virginia Beach, VA 23464-3239            Fax: 757-467-2947
+
+"Vere scire est per causas scire"
+================================================================
+
+From bill at insightful.com  Tue Apr  8 00:09:28 2008
+From: bill at insightful.com (Bill Dunlap)
+Date: Mon, 07 Apr 2008 17:09:28 -0700
+Subject: Re: Square root of a vector taking for ever!
+In-Reply-To: <0JYZ007DZAUZ9U41@vms173005.mailsrvcs.net>
+References: <0JYZ007DZAUZ9U41@vms173005.mailsrvcs.net>
+Message-ID: <Pine.GSO.4.56.0804071650050.20734@devsun3201.insightful.com>
+
+On Mon, 7 Apr 2008, Robert A LaBudde wrote:
+
+> I'd say there is a problem with an iterative
+> algorithm for a fractional power of a number near
+> one. I ran your problem in R v.2.6.2 and got:
+> ...
+>  > system.time(ttt.test.sqrt <- ttt.test^0.5)
+>     user  system elapsed
+>     0.06    0.01    0.07
+>
+> I suppose Insightful should look into their algorithm, if it takes 13 minutes.
+>
+> I would recommend you use "sqrt()" instead of
+> "^0.5" as a workaround. It's usually better to do this anyway.
+
+Splus uses that standard math library's pow() function.  We do not
+write our own code for things like that, although we do have to write
+wrappers to work around known problems in the math library's functions
+(e.g., they do know about our missing value flags and don't always do
+the right things for Inf).
+
+The root cause is that the 64-bit gcc 3.4.5 version of pow(x,y) is
+extremely slow when x is 1 bit away from 1 in either direction (1+2^-52
+or 1-2^-53) and y is quite close or equal to 0.5.  Our tests did not
+check those cases.
+
+I just changed the C code in Splus to use sqrt(x) instead of
+pow(x,0.5).  Later I looked at R's C code (src/main/arithmetic.c) and
+noticed that it does the same thing unless one is using gcc 4.3:
+   /* work around a bug in May 2007 snapshots of gcc pre-4.3.0 */
+   #if __GNUC__ == 4 && __GNUC_MINOR__ == 3
+       return (y == 2.0) ? x*x : pow(x, y);
+   #else
+       return (y == 2.0) ? x*x : ((y == 0.5) ? sqrt(x) : pow(x, y));
+   #endif
+I don't know if it does this to avoid a speed problem or for some other
+reason.  The checkin comment says
+   "work around an optimization bug in currnt gcc pre-4.3.0"
+
+You can still detect the problem in R (compiled with gcc 3.4.5
+in 64-bit mode on Linux) if you use a power quite close to 0.5:
+   R64> unix.time(rep(1+2^-52,1000) ^ 0.5) # uses C sqrt()
+      user  system elapsed
+         0       0       0
+   R64> unix.time(rep(1+2^-52,1000) ^ (0.5+2^-46)) # uses C pow()
+      user  system elapsed
+     2.177   0.000   2.177
+
+> >Allmost  13 minutes to take 826015 square roots of numbers near 1?
+
+----------------------------------------------------------------------------
+Bill Dunlap
+Insightful Corporation
+bill at insightful dot com
+360-428-8146
+
+ "All statements in this message represent the opinions of the author and do
+ not necessarily reflect Insightful Corporation policy or position."
+
+From sthomas1950 at gmail.com  Tue Apr  8 03:04:10 2008
+From: sthomas1950 at gmail.com (steve thomas)
+Date: Mon, 07 Apr 2008 23:04:10 -0400
+Subject: Looking to Purchase an Older Version of S-Plus
+Message-ID: <272cf9eb0804072004q5038a657g3a8d482bbc5ef559@mail.gmail.com>
+
+I would like to purchase a used, older version of S-Plus Professional for personal use.  Versions 6.x or 7.x would be fine.  I may be contacted at sthomas1950 at gmail.com
+
+ 
+
+Steve Thomas
+
+From hujian at gmail.com  Tue Apr  8 03:24:53 2008
+From: hujian at gmail.com (Richard)
+Date: Mon, 07 Apr 2008 22:24:53 -0500
+Subject: Diebold, Gunther, and Tay (1998) Test
+Message-ID: <abe7feea0804072024p3b33ce1ag1398d0eeb041e7d8@mail.gmail.com>
+
+Hi Guys,
+
+ 
+
+Does anybody just happen to have the code on Diebold, Gunther, and Tay (1998) Test to evaluate density forecasts? Please refer to this paper: "Evaluating Density Forecasts with Applications to Financial Risk Management" by Francis X. Diebold, Todd A. Gunther and Anthony S. Tay. Thanks!
+
+ 
+
+Richard
+
+From david.jessop at ubs.com  Tue Apr  8 10:50:36 2008
+From: david.jessop at ubs.com
+Date: Tue, 08 Apr 2008 11:50:36 +0100
+Subject: Re: Diebold, Gunther, and Tay (1998) Test
+In-Reply-To: <abe7feea0804072024p3b33ce1ag1398d0eeb041e7d8@mail.gmail.com>
+References: <abe7feea0804072024p3b33ce1ag1398d0eeb041e7d8@mail.gmail.com>
+Message-ID: <25492B412B325B4FB1FED95013D3E5CE05537489@NLDNC105PEX1.ubsw.net>
+
+HI,
+
+ 
+
+It's available on their website - http://www.ssc.upenn.edu/~fdiebold/papers/paper16/software.html
+
+ 
+
+David
+
+ 
+
+>
+>
+>   From: Richard [mailto:hujian at gmail.com]
+>
+> Sent: 08 April 2008 04:25
+> To:
+>   s-news at lists.biostat.wustl.edu
+> Subject: Diebold, Gunther, and Tay
+>   (1998) Test
+>
+>
+>
+>
+>
+>   Hi Guys,
+>
+>
+>
+>   Does anybody just happen to have the code on Diebold, Gunther, and
+>   Tay (1998) Test to evaluate density forecasts? Please refer to this
+>   paper: "Evaluating Density Forecasts with Applications to Financial Risk
+>   Management" by Francis X. Diebold, Todd A. Gunther and Anthony S. Tay.
+>   Thanks!
+>
+>
+>
+>   Richard
+
+Issued by UBS AG or affiliates to professional investors for 
+information only and its accuracy/completeness is not guaranteed. 
+All opinions may change without notice and may differ to 
+opinions/recommendations expressed by other business areas of UBS. 
+UBS may maintain long/short positions and trade in instruments 
+referred to. Unless stated otherwise, this is not a personal 
+recommendation, offer or solicitation to buy/sell and any 
+prices/quotations are indicative only. UBS may provide investment 
+banking and other services to, and/or its employees may be directors 
+of, companies referred to. To the extent permitted by law, UBS does 
+not accept any liability arising from the use of this communication.
+
+ © UBS 2008.  All rights reserved. Intended for recipient only
+and not for further distribution without the consent of UBS.
+
+UBS Limited is a company registered in England & Wales under company
+number 2035362, whose registered office is at 1 Finsbury Avenue,
+London, EC2M 2PP, United Kingdom.
+
+UBS AG (London Branch) is registered as a branch of a foreign company
+under number BR004507, whose registered office is at
+1 Finsbury Avenue, London, EC2M 2PP, United Kingdom.
+
+UBS Clearing and Execution Services Limited is a company registered
+in England & Wales under company number 03123037, whose registered
+office is at 1 Finsbury Avenue, London, EC2M 2PP, United Kingdom.
+
+From gerald.jean at dgag.ca  Tue Apr  8 13:51:52 2008
+From: gerald.jean at dgag.ca
+Date: Tue, 08 Apr 2008 09:51:52 -0400
+Subject: Re: Square root of a vector taking for ever!
+In-Reply-To: <Pine.GSO.4.56.0804071650050.20734@devsun3201.insightful.com>
+References: <Pine.GSO.4.56.0804071650050.20734@devsun3201.insightful.com>
+Message-ID: <OF07FF3536.2ED88E21-ON85257425.004A74FD-85257425.004C2922@spgdag.ca>
+
+Hello Bill,
+
+thanks for looking into that problem.  You said you changed the Splus code,
+in "summary.glm" I assume, to "sqrt(x)" rather than "x^0.5".  Unfortunately
+it doesn't solve the problem, takes just as long to run on the Linux 64-bit
+version of Splus!
+
+> ttt.test <- sample(c(0.99999999999999978, 0.99999999999999978,
++                      1.0000000000000002, 1.0000000000000002,
++                      1.0000000000000002, 1.0000000000000002,
++                      0.99999999999999978, 1.0000000000000002,
++                      0.99999999999999978, 0.99999999999999978), size =
+826015,
++                    replace = T)
+> class(ttt.test)
+[1] "numeric"
+> mysummary(ttt.test)
+   Min. 1st Qu. Median   Mean 3rd Qu.   Max.      N    Sum
+      1      1       1      1      1       1 826015 826015
+> resources(ttt.test.sqrt <- sqrt(ttt.test))
+
+ User time    =  0 h.  12 min.  39.33 s.
+ System time  =  0 h.   0 min.   0.06 s.
+ CPU time     =  0 h.  12 min.  39.39 s.
+ Elapsed time =  0 h.  12 min.  40.24 s.
+ Child        =  0 h.   0 min.   0.00 s.
+ % CPU        =  99.89
+ Memory usage:
+      Cache   = 0 Bytes
+      Working = 13.217072M Bytes
+
+I find this annoying since I extensively use summary.glm; I suppose I'll
+make a private copy and check for closeness to "1" before taking sqrt.
+
+Gérald Jean
+Conseiller senior en statistiques, Actuariat
+télephone            : (418) 835-4900 poste (7639)
+télecopieur          : (418) 835-6657
+courrier électronique: gerald.jean at dgag.ca
+
+"In God we trust, all others must bring data"  W. Edwards Deming
+
+                                                                           
+             Bill Dunlap                                                   
+             <bill@insightful.                                             
+             com>                                                        A 
+                                       Robert A LaBudde <ral at lcfltd.com>   
+             2008/04/07 20:09                                           cc 
+                                       gerald.jean at dgag.ca,                
+                                       s-news at wubios.wustl.edu,            
+                                       support at insightful.com              
+                                                                     Objet 
+                                       Re: [S] Square root of a vector     
+                                       taking for ever!                    
+                                                                           
+                                                                           
+                                                                           
+                                                                           
+                                                                           
+                                                                           
+
+On Mon, 7 Apr 2008, Robert A LaBudde wrote:
+
+> I'd say there is a problem with an iterative
+> algorithm for a fractional power of a number near
+> one. I ran your problem in R v.2.6.2 and got:
+> ...
+>  > system.time(ttt.test.sqrt <- ttt.test^0.5)
+>     user  system elapsed
+>     0.06    0.01    0.07
+>
+> I suppose Insightful should look into their algorithm, if it takes 13
+minutes.
+>
+> I would recommend you use "sqrt()" instead of
+> "^0.5" as a workaround. It's usually better to do this anyway.
+
+Splus uses that standard math library's pow() function.  We do not
+write our own code for things like that, although we do have to write
+wrappers to work around known problems in the math library's functions
+(e.g., they do know about our missing value flags and don't always do
+the right things for Inf).
+
+The root cause is that the 64-bit gcc 3.4.5 version of pow(x,y) is
+extremely slow when x is 1 bit away from 1 in either direction (1+2^-52
+or 1-2^-53) and y is quite close or equal to 0.5.  Our tests did not
+check those cases.
+
+I just changed the C code in Splus to use sqrt(x) instead of
+pow(x,0.5).  Later I looked at R's C code (src/main/arithmetic.c) and
+noticed that it does the same thing unless one is using gcc 4.3:
+   /* work around a bug in May 2007 snapshots of gcc pre-4.3.0 */
+   #if __GNUC__ == 4 && __GNUC_MINOR__ == 3
+       return (y == 2.0) ? x*x : pow(x, y);
+   #else
+       return (y == 2.0) ? x*x : ((y == 0.5) ? sqrt(x) : pow(x, y));
+   #endif
+I don't know if it does this to avoid a speed problem or for some other
+reason.  The checkin comment says
+   "work around an optimization bug in currnt gcc pre-4.3.0"
+
+You can still detect the problem in R (compiled with gcc 3.4.5
+in 64-bit mode on Linux) if you use a power quite close to 0.5:
+   R64> unix.time(rep(1+2^-52,1000) ^ 0.5) # uses C sqrt()
+      user  system elapsed
+         0       0       0
+   R64> unix.time(rep(1+2^-52,1000) ^ (0.5+2^-46)) # uses C pow()
+      user  system elapsed
+     2.177   0.000   2.177
+
+> >Allmost  13 minutes to take 826015 square roots of numbers near 1?
+
+----------------------------------------------------------------------------
+
+Bill Dunlap
+Insightful Corporation
+bill at insightful dot com
+360-428-8146
+
+ "All statements in this message represent the opinions of the author and
+do
+ not necessarily reflect Insightful Corporation policy or position."
+
+Le message ci-dessus, ainsi que les documents l'accompagnant, sont destinés
+uniquement aux personnes identifiées et peuvent contenir des informations
+privilégiées, confidentielles ou ne pouvant être divulguées. Si vous avez
+reçu ce message par erreur, veuillez le détruire.
+
+This communication (and/or the attachments) is intended for named
+recipients only and may contain privileged or confidential information
+which is not to be disclosed. If you received this communication by mistake
+please destroy all copies.
+
+From MichaelCamilleri at branz.co.nz  Tue Apr  8 22:01:23 2008
+From: MichaelCamilleri at branz.co.nz (Michael Camilleri)
+Date: Wed, 09 Apr 2008 10:01:23 +1200
+Subject: Re: Looking to Purchase an Older Version of S-Plus
+In-Reply-To: <272cf9eb0804072004q5038a657g3a8d482bbc5ef559@mail.gmail.com>
+References: <272cf9eb0804072004q5038a657g3a8d482bbc5ef559@mail.gmail.com>
+Message-ID: <A23B682083FD8248ADFE1317C82CBD6703A62374@exchange.branznt.org.nz>
+
+Under the current S-Plus 8 license the
+software cannot be sold to another party. This is probably true of most of the older
+versions also.
+
+ 
+
+If your are a licensed S-Plus user through
+a company or educational institute you may be able to install a second copy of
+S-Plus on another machine, provided they are not used simultaneously.
+
+ 
+
+Michael
+
+From mbauer at usc.edu  Tue Apr  8 23:15:24 2008
+From: mbauer at usc.edu (Madeline Bauer)
+Date: Tue, 08 Apr 2008 16:15:24 -0700
+Subject: Re: Looking to Purchase an Older Version of S-Plus
+In-Reply-To: <A23B682083FD8248ADFE1317C82CBD6703A62374@exchange.branznt.org.nz>
+References: <272cf9eb0804072004q5038a657g3a8d482bbc5ef559@mail.gmail.com> <A23B682083FD8248ADFE1317C82CBD6703A62374@exchange.branznt.org.nz>
+Message-ID: <0JZ100MGM4OJIV50@msg-mx5.usc.edu>
+
+I think that the only way someone could sell their software is if and
+only if they had stopped using it AND removed it from their
+machine.  Of course, if someone had stopped using it, they are
+probably not looking at S-News ;-)
+
+Cheers, Madeline
+
+At 03:01 PM 04/08/2008, Michael Camilleri wrote:
+
+> Under the current S-Plus 8 license the software cannot be sold to another
+> party. This is probably true of most of the older versions also.
+>
+>
+>
+> If your are a licensed S-Plus user through a company or educational
+> institute you may be able to install a second copy of S-Plus on another
+> machine, provided they are not used simultaneously.
+>
+>
+>
+> Michael
+
+===
+
+Madeline Bauer, Ph.D.       
+University of Southern California
+
+Keck School of Medicine (Infectious Diseases)
+
+IRD Room 620 (MC9520), 2020 Zonal Ave, Los Angeles 90033
+
+(323) 226-2775 [Voice] (FAX by appointment ;-)
+
+mbauer at usc.edu  [Fastest communication method] 
+
+From jlykwan at gmail.com  Wed Apr  9 09:23:23 2008
+From: jlykwan at gmail.com (Joyce Kwan)
+Date: Wed, 09 Apr 2008 17:23:23 +0800
+Subject: Is s-plus able to study the effect of individual-level variable on group outcome
+Message-ID: <ecfb30810804090223o3ceb2ae7j8d1348e5f223c2a9@mail.gmail.com>
+
+Hi all, 
+
+ 
+
+I would like to ask if it's possible for me to fit a multilevel model in S-Plus that enable me to study the effect of individual-level variable on group-level variable. For example, whether individual's goal orientation will affect teams' performance. So far as I see, most of the analysis regarding multilevel modelling are studying how group-level variable affect individual's repsonse. I'm wondering if it's possible for us to do the other way round in s-plus. 
+
+ 
+
+Thanks. 
+
+ 
+
+Joyce 
+
+From Brigitte.Lacroix at UCB-Group.com  Wed Apr  9 12:23:23 2008
+From: Brigitte.Lacroix at UCB-Group.com (Lacroix Brigitte)
+Date: Wed, 09 Apr 2008 14:23:23 +0200
+Subject: Code for stacked bar plot
+Message-ID: <84C9D1E44406D446A6A2155FECEF3F7903ACBA1B@braexc103.dir.ucb-group.com>
+
+Dear all,
+
+ 
+
+What code would you use to draw a stacked bar plot representing the 
+proportions of 3 codes by time intervals (sum of the 3 proportions =1), with the 
+number of observations per time interval on top of each bar ?
+
+(I am using guiPlot(...) so far, but this is not optimal, and I did not 
+manage to get the number of observations on the plot)
+
+ 
+
+Any input would be greatly appreciated ! (any other idea to represent such 
+data is welcome of course!)
+
+ 
+
+Thank you !
+
+ 
+
+Brigitte Lacroix
+
+ 
+
+Legal Notice: This electronic mail and its attachments are intended solely for the person(s) to whom they are addressed and contain information which is confidential or otherwise protected from disclosure, except for the purpose for which they are intended. Dissemination, distribution, or reproduction by anyone other than the intended recipients is prohibited and may be illegal. If you are not an intended recipient, please immediately inform the sender and return the electronic mail and its attachments and destroy any copies which may be in your possession. UCB screens electronic mails for viruses but does not warrant that this electronic mail is free of any viruses. UCB accepts no liability for any damage caused by any virus transmitted by this electronic mail. (Ref: #*UG1107)
+
+From ef9999 at albany.edu  Wed Apr  9 15:05:55 2008
+From: ef9999 at albany.edu
+Date: Wed, 09 Apr 2008 11:05:55 -0400
+Subject: Simulation of Weibull survival data
+Message-ID: <1876.169.226.147.190.1207753555.squirrel@webmail.albany.edu>
+
+Hi all,
+I am in a process of fitting  mixtures of survival to birth weight data.
+my inclination is that the subgroups in the birth weight cohort may have a
+mixture of two parameter Weibull or a Weibull and an exponential.
+Unfortunately I have no Idea how to set up
+the simulation for the two parameter Weibull. I hope some kind soul will
+be able to help or point me in the right direction. Any help would be
+greatly appreciated.
+Thanks
+Eric
+
+From therneau at mayo.edu  Wed Apr  9 15:55:48 2008
+From: therneau at mayo.edu (Terry Therneau)
+Date: Wed, 09 Apr 2008 10:55:48 -0500
+Subject: Re: Simulation of Weibull survival data
+Message-ID: <200804091555.m39FtmA18274@hsrnfs-101.mayo.edu>
+
+ If x ~ as an exponential, then x^p is distributed as a Weibull for p>0.  So 
+simulation of the data is easy using rexp().
+ 
+        Terry Therneau
+        
+
+From swkaruri at insightful.com  Wed Apr  9 17:09:34 2008
+From: swkaruri at insightful.com (Stella Karuri)
+Date: Wed, 09 Apr 2008 10:09:34 -0700
+Subject: Re: Is s-plus able to study the effect of individual-level variable on group outcome
+In-Reply-To: <61D7107976B46045BFCAA8BD301E82954C8DFB@nc2kexch01.insightful.com>
+References: <ecfb30810804090223o3ceb2ae7j8d1348e5f223c2a9@mail.gmail.com> <61D7107976B46045BFCAA8BD301E82954C8DFB@nc2kexch01.insightful.com>
+Message-ID: <96C6A984FE81AF4492020E9281CE67A8012C6AC1@sewinexch00.insightful.com>
+
+Your problem seems to be more focused on
+model specification and interpretation. If you want to see whether grouping
+variable is required or not you can use “anova” for example to
+compare a model with no grouping variable versus the multi-level model. 
+
+ 
+
+ The output from the multilevel model
+can also indicate the relationship between units and clusters. For example how the
+magnitude of the estimated variance for a random effect in compares with a
+fixed effect indicates whether 
+
+a)       The amount of the variability in the fixed effect(or rate of change
+in the response due to specified variable) from group to group.
+
+b)       A grouping variable is necessary
+
+ 
+
+I hope this helps
+
+ 
+
+Stella
+
+ 
+
+From:
+s-news-owner at lists.biostat.wustl.edu on behalf of Joyce Kwan
+
+Sent: Wed 4/9/2008 5:23 AM
+
+To: s-news at lists.biostat.wustl.edu
+
+Subject: [S] Is s-plus able to
+study the effect of individual-level variable on group outcome
+
+Hi all, 
+
+ 
+
+I would like to ask if it's possible for me to fit a multilevel model
+in S-Plus that enable me to study the effect of individual-level variable on
+group-level variable. For example, whether individual's goal orientation will
+affect teams' performance. So far as I see, most of the analysis
+regarding multilevel modelling are studying how group-level variable
+affect individual's repsonse. I'm wondering if it's possible for us to do the
+other way round in s-plus. 
+
+ 
+
+Thanks. 
+
+ 
+
+Joyce 
+
+From comet_meteor99 at yahoo.com  Sat Apr 12 16:23:05 2008
+From: comet_meteor99 at yahoo.com (Shahab Einabadi)
+Date: Sat, 12 Apr 2008 09:23:05 -0700
+Subject: Introduction to Linear Regression Analysis, 4th Edition
+Message-ID: <774556.44486.qm@web45502.mail.sp1.yahoo.com>
+
+Dear Splus users,
+
+is there any document for running the statistical computation needed in with splus
+
+"Introduction to Linear Regression Analysis, 4th Edition"
+
+ 
+
+ 
+
+__________________________________________________
+Do You Yahoo!?
+Tired of spam?  Yahoo! Mail has the best spam protection around 
+http://mail.yahoo.com 
+
+From santosh2005 at gmail.com  Sun Apr 13 23:13:15 2008
+From: santosh2005 at gmail.com (Santosh)
+Date: Sun, 13 Apr 2008 16:13:15 -0700
+Subject: read SAS files using R
+Message-ID: <816b5ce40804131613n69e615fahb9c0fcae8de5f0c@mail.gmail.com>
+
+Dear R experts, 
+Is there a way to read SAS datasets (*.sas7bdat) using R? 
+
+Regards
+Santosh
+
+From jlloret at dcom.upv.es  Sun Apr 13 23:52:00 2008
+From: jlloret at dcom.upv.es (Jaime Lloret Mauri)
+Date: Mon, 14 Apr 2008 01:52:00 +0200
+Subject: UBICOMM 2008 Call for Papers, September 29 - October 4, Valencia, Spain
+Message-ID: <1208130720.48029ca0e7817@webmail.upv.es>
+
+Please consider to contribute to and/or forward to the appropriate groups the
+following opportunity to submit and publish original scientific results.
+
+Apologies for cross-postings.
+
+==============  UBICOMM 2008 Call for Papers ===============
+
+CALL FOR PAPERS, TUTORIALS, PANELS
+
+UBICOMM 2008, The Second International Conference on Mobile Ubiquitous
+Computing, Systems, Services and Technologies
+September 29 - October 4, Valencia, Spain
+
+General page: http://www.iaria.org/conferences2008/UBICOMM08.html
+Call  for Papers: http://www.iaria.org/conferences2008/CfPUBICOMM08.html
+
+Important deadlines:
+
+Submission deadline May 5, 2008
+Notification June 15, 2008
+Registration and camera ready July 20, 2008
+
+Submissions will be peer-reviewed, published by IEEE CS Press, posted in IEEE
+Digital Library, and indexed with the major indexes.
+
+Extended versions of selected papers will be invited for specialized journals.
+
+UBICOMM 2008 Special Area Tracks (details in the CfP on site):
+
+Fundamentals
+
+Semantics of ubiquity; Ubiquitous knowledge; Knowledge discovery mechanisms;
+Profiling ubiquitous environments; Ubiquitous technologies for education,
+learning, and training
+
+Mobility
+
+Ubiquitous computing; Wearable computing; Mobile computing; Nomadic computing;
+Mobile commerce; Mobile learning
+
+Information Ubiquity
+
+Ubiquitous information appliances; Information retrieval and filtering; Context
+awareness; Control of ubiquitous data; Data management and processing; Data
+replication, migration and dissemination
+
+Ubiquitous Multimedia Systems and Processing
+
+Multimedia content recognition, indexing and search; Mobile graphics, games and
+entertainment; Ubiquitous multimedia applications and systems; Streaming mobile
+multimedia; Mobile media management; Multimedia ubiquitous platforms; Multimedia
+Indexing and Compression; Image and Signal Processing; Virtual reality in
+ubiquitous systems
+
+Wireless Technologies
+
+Bluetooth; 802.11.x; 802.15.x; ZigBee; WiMax
+
+Web Services
+
+Web 2.0; Semantic web; Web services; Ontology; Web Services evolution; Web
+Services applications
+
+Ubiquitous networks
+
+Ubiquitous networks; Network management; Network performance evaluation;
+Networks and technology convergence; Internet access in ubiquitous systems;
+Ubiquitous mesh, ad hoc and sensor networks; RFID; Reconfigurability and
+personalization of ubiquitous networks
+
+Ubiquitous devices and operative systems
+
+Design of devices for ubiquitous systems; Mobile devices; Wearable devices;
+Embedded systems; Operative systems for ubiquitous devices; Real-time operating
+systems and scheduling
+
+Ubiquitous mobile services and protocols
+
+Frameworks, architectures, and languages for ubiquitous services; Queries,
+transactions and workflows in mobile and ubiquitous Networks; Algorithms for
+ubiquitous systems; SLA/QoS in ubiquitous services; Ontology based services;
+Location-based services; Protocols and interaction mechanisms for ubiquitous
+services; Mobile services and service convergence; Service discovery
+mechanisms; Tracking in ubiquitous environments; Measurement, control, and
+management of ubiquitous services; Design and development of ubiquitous
+services; Wireless/mobile service delivery
+
+Ubiquitous software and security
+
+Ambient components; Agent technologies; Software for spontaneous interoperation;
+Dependability guarantees; Security; Key Management and Authentication; Trust;
+Privacy; Fault-tolerance; Multimedia Information Security
+
+Collaborative ubiquitous systems
+
+Cooperative networks for ubiquitous systems; Cooperative applications for
+ubiquitous networks; Handheld and wearable systems for interaction in
+collaborative groups and communities; Ad hoc collaboration in ubiquitous
+computing environments; Awareness of collaboration and of work environment;
+Inherently mobile collaborative work
+
+User and applications
+
+Mobile user interfaces; Ubiquitous user-generated content (weblogs, wikis,
+etc.); Mobile and ubiquitous computing support for collaborative learning; User
+modeling and personalization; Context- and location-aware applications;
+Toolkits, testbeds, development environments; Tools and techniques for
+designing, implementing, & evaluating ubiquitous systems; Constructing,
+deploying and prototyping of ubiquitous applications; Evaluation of user models
+for ubiquitous environments; On-line analytical techniques; Human-computer
+interaction in ubiquitous computing environments; Ubiquitous e-Development
+(business, science, health, etc.); Case Studies; Emerging
+industrial/business/scientific ubiquitous scenarios; Ambient intelligence;
+Social issues and implications of ubiquitous system
+
+================================
+
+UBICOMM 2008 Chairs
+
+General Chair
+Jaime Lloret Mauri, Polytechnic University of Valencia, Spain
+
+Program Committee Chairs
+Narcís Cardona, Polytechnic University of Valencia, Spain
+Kwang-Cheng Chen, Taiwan National University, Taiwan
+
+Steering Committee Chair
+Petre Dini, Cisco Systems, Inc. / Concordia University, Canada
+
+===============================================
+
+-- 
+
+From DavidsonA at AGR.GC.CA  Mon Apr 14 18:15:50 2008
+From: DavidsonA at AGR.GC.CA (Davidson, Andrew)
+Date: Mon, 14 Apr 2008 14:15:50 -0400
+Subject: Re: is price a secret?
+In-Reply-To: <734088.14669.qm@web35804.mail.mud.yahoo.com>
+References: <734088.14669.qm@web35804.mail.mud.yahoo.com>
+Message-ID: <4816EDDE62CBBF439D279513DB1C68417BCCC2@onottaxms1.AGR.GC.CA>
+
+Kamil –
+
+ 
+
+I think you have to call them directly and
+get a quote.
+
+ 
+
+Andrew
+
+ 
+
+-----Original
+Message-----
+
+From:
+s-news-owner at lists.biostat.wustl.edu
+[mailto:s-news-owner at lists.biostat.wustl.edu] On
+Behalf Of Kamil Toth
+
+Sent: Monday, April 14, 2008 2:14
+PM
+
+To: s-news at lists.biostat.wustl.edu
+
+Subject: [S] is price a secret?
+
+ 
+
+Folks, 
+
+I am really stunned! I've been trying to find a price
+list for the S-PLUS 8 
+
+and to my utter bewilderment I've been not able to
+locate it on the Insightful/S-PLUS
+
+web page! How these folks are going to market the stuff if the price is not
+known?
+
+Or am I missing something? Please advise
+
+ 
+
+Kamil 
+
+   
+
+From bosburn at sjrwmd.com  Tue Apr 15 18:27:09 2008
+From: bosburn at sjrwmd.com (Bill Osburn)
+Date: Tue, 15 Apr 2008 14:27:09 -0400
+Subject: S-PLUS guiClose()
+Message-ID: <86C26BC2D595E1408C75EB0D4559493A03245971@MAILSJR.sjrwmd.com>
+
+I am creating a number of graph sheets and want to close
+them. Using guiClose(classname, name) requires answering  a prompt for
+each graph sheet.
+
+ 
+
+Is there any way to remove the graph sheets without
+responding to a prompt or warning?
+
+From bosburn at sjrwmd.com  Wed Apr 16 11:44:05 2008
+From: bosburn at sjrwmd.com (Bill Osburn)
+Date: Wed, 16 Apr 2008 07:44:05 -0400
+Subject: S-PLUS guiClose(): Response Summary
+Message-ID: <86C26BC2D595E1408C75EB0D4559493A03245979@MAILSJR.sjrwmd.com>
+
+Thanks –
+in all I received 6 responses.
+
+ 
+
+I’ve
+elected to use the following for my purposes
+
+ 
+
+for(i in
+1:(length(dev.list()))) {
+
+      dev.off(which =
+dev.cur())
+
+}
+
+ 
+
+The summarized
+responses were:
+
+ 
+
+1.  Look at dev.off()
+
+2.  guiSetOption(
+option.name="SaveGraphPrompt", value.string="F" ) then
+reset =“T” afterwards if desired
+
+3.  create a function
+
+writeGraphFile = function (graph, fname)
+{
+
+  guiSave(
+"GraphSheet", Name = graph, FileName=fname)
+
+  guiClose(
+"GraphSheet", graph)
+
+  invisible()
+
+ 
+cat(paste("Graph",graph,"has been saved as",fname))
+
+}
+
+ 
+
+For instance
+
+ 
+
+writeGraphFile(“GSD2”,”C:\test.sgr”)
+
+ 
+
+From bosburn at sjrwmd.com  Wed Apr 16 12:38:30 2008
+From: bosburn at sjrwmd.com (Bill Osburn)
+Date: Wed, 16 Apr 2008 08:38:30 -0400
+Subject: Re: S-PLUS guiClose(): Response Summary Update
+Message-ID: <86C26BC2D595E1408C75EB0D4559493A0324597C@MAILSJR.sjrwmd.com>
+
+Another response:
+
+ 
+
+graphics.off()
+
+From lourdes at disca.upv.es  Thu Apr 17 07:56:05 2008
+From: lourdes at disca.upv.es (=?utf-8?q?Lourdes_Pe=C3=B1alver?=)
+Date: Thu, 17 Apr 2008 09:56:05 +0200
+Subject: ADVCOMP 2008 || September 29 - October 4, Valencia, Spain
+In-Reply-To: <C42CCEB7.5CD2%lourdes@disca.upv.es>
+References: <C42CCEB7.5CD2%lourdes@disca.upv.es>
+Message-ID: <C42CCF35.5CD4%lourdes@disca.upv.es>
+
+                   
+                   
+Please consider to contribute to and/or forward to the appropriate groups
+the following opportunity to submit and publish original scientific results.
+
+                Apologies for cross-postings.
+
+=================
+ 
+ 
+============== ADVCOMP 2008 Call for Papers ===============
+ 
+CALL FOR PAPERS, TUTORIALS, PANELS
+ 
+ 
+ADVCOMP 2008, The Second International Conference on Advanced Engineering
+Computing and Applications in Sciences
+September 29 - October 4, Valencia, Spain
+
+General page: http://www.iaria.org/conferences2008/ADVCOMP08.html
+Call for Papers: http://www.iaria.org/conferences2008/CfPADVCOMP08.html
+ 
+Submission deadline:  May 5, 2008
+Notification June 15, 2008
+Registration and camera ready July 20, 2008
+
+Submissions will be peer-reviewed, published by IEEE CPS, posted in IEEE
+Digital Library, and indexed with the major indexes.
+
+Extended versions of selected papers will be invited for specialized
+journals.
+
+ADVCOMP 2008 Special Area Tracks (details in the CfP on site):
+
+Computing techniques:
+
+Hybrid computational methods, Advanced numerical algorithms, Parallel and
+grid computing, Autonomic computing, Computational logics, Neuronal
+networks, Genetic algorithms, Fractals & Superfractal algorithms, Random
+graph dynamics, Clustering large and high dimensional data, Computation
+Genomic, Biological Sequence analysis, Biomecatronics, System theory and
+control
+
+Computing support:
+
+Support for scientific problem-solving, Support for decisions,
+Agent-assisted workflow support, Middleware computation support, High
+performance computing, Problem solving environments, Computational science
+and education
+
+Application domains:
+
+Advanced scientific computing, Development of numerical and scientific
+software-based systems, Management of scientific data and knowledge,
+Advanced computing in bioinformatics and biophysics, Advanced computing in
+molecular systems and biological systems, Application of engineering methods
+to genetics, Medical computation and graphics, Advanced computing in
+simulation systems, Advanced computing in mathematics, Advanced computing
+for statistics and optimization, Advanced computing in operation research,
+Advanced computing in mechanics and quantum mechanics, Advanced computing in
+civil engineering, Advanced computing in physics science, Advanced computing
+in chemistry science, Advanced computing for geosciences and meteorology,
+Maps and geo-images building, Curve and surface reconstruction, Financial
+computing and forecasting, Advanced computing in economics, Advanced
+computing in robotics and manufacturing, Advanced computing on Earth
+science, geosciences and meteorology, Advanced computing in electronics and
+electrical science, Advanced computing in power systems, Environmental
+advanced computing
+
+Semantic processing
+
+Fundamental of semantic processing (storing, computing, representation,
+communications, etc.) , Semantic-driven system design, Syntactic and
+semantic processing models, Semantic networking and routing, Hardware and
+software support for semantic processing, Microprocessors for semantic
+processing, Multi-model semantic systems, Semantic annotation of multimedia
+supports, Semantic multimedia information retrieval, Natural language
+semantic processing, Context-based semantic processing, Content-based
+semantic processing, Performance in semantic processing, Information
+security in semantic processing, Applications, services and systems based on
+semantic processing, Speech, text and picture recognition, Semantic email
+workflow and content, Semantic blogs and wikis, Semantic email addressing,
+Semantic web and digital libraries, Semantic processing for biomedical
+knowledge, Semantic processing in e-Health, Semantic-driven tutoring
+systems, Semantic processing platforms , Lessons learnt
+
+Advanced searching for video, voice and speech [VVS]:
+
+Engines and methods for VVS advanced searching, Advanced process for
+multimedia information mining, Searching using metadata, semantics, and
+ontology, Advanced searching in digital libraries, Advanced use of  RDF and
+OWL, Patterns in VVS searching, Contextual VVS searching, Rapid VVS
+searching, Accuracy in VVS searching, Noise in VVS searching, Performance in
+VVS searching, Metrics for VVS searching, Text and VVS searching,
+Applications of VVS
+
+ 
+=================
+
+IARIA Publicity Board
+
+==================
+
+------ End of Forwarded Message
+
+------ End of Forwarded Message
+
+From Xiaochen.Sun at brunel.ac.uk  Thu Apr 17 15:52:56 2008
+From: Xiaochen.Sun at brunel.ac.uk (Xiaochen Sun)
+Date: Thu, 17 Apr 2008 16:52:56 +0100
+Subject: Risk Control Strategies for Hedge Funds and Program Trading - 4th Annual CARISMA conference
+References: <E386E504246A9249A9176B5BEEC13B6F7B8F01@UXEXMBU116.academic.windsor>
+Message-ID: <E386E504246A9249A9176B5BEEC13B6F7B8F02@UXEXMBU116.academic.windsor>
+
+We are pleased to announce the 4th Annual CARISMA conference, which takes place 
+in London at 7City Learning on 1-2 July 2008.
+
+The theme of the conference is "Risk Control Strategies for Hedge Funds and 
+Program Trading".  There are also four pre- and post-conference workshops.  For 
+further details see
+ http://www.optirisk-systems.com/events/carisma2008.asp
+
+The conference provides a platform to discuss the applications and advances, 
+and to explore future research directions.  The focus is on the emerging 
+requirements of the finance industry, from the perspective of performance 
+monitoring, regulation and compliance.  It brings together practitioners and 
+academics working in the area of financial planning, optimisation and risk 
+modelling. The satellite workshops provide an in-depth view of related topics 
+in investment and risk modelling.  
+
+Speakers include:
+
+* Carlo Acerbi, Abaxbank
+* Art Asriev, Bear Stearns
+* Les Balzer, The University of New South Wales
+* Dan Bienstock, Columbia University
+* Nicos Christofides, Imperial College
+* Robert Clarkson, Cass Business School, City University.
+* M A H Dempster, Centre for Financial Research, Judge Business School, 
+University of Cambridge & Cambridge Systems Associates Limited
+* Dan diBartolomeo, Northfield Information Services Inc 
+* Chanaka Edirisinghe, University of Tennessee
+* Philip Gagner, RavenPack Int'l
+* Gerd Infanger, Stanford University
+* Dilip Madan, University of Maryland, Consultant to Morgan Stanley & Visiting 
+Professor, CARISMA (Risk Awards Quant of the Year 2008)
+* Gautam Mitra, CARISMA, Brunel University
+* Andrew Robinson, SunGard-APT
+* Bernd Scherer, Morgan Stanley
+* Rob Stubbs, Axioma
+* Stefan Thurner, red.stars.com
+* Xunyu Zhou, University of Oxford 
+
+Topics:
+
+* Risk Management for Hedge Funds
+* Long-Short Portfolios with Downside Risk Control
+* Credit Crunch, Liquidity, and Equity Market Neutral Strategies: Managing Risk 
+in High Volatility Markets
+* Dynamic Asset Allocation
+* Automated Risk Management for Global Macro Strategies
+* Actuarial Insights into Hedge Fund Management
+* Optimal Trade Execution
+* Risk Management for Equity Trading: Fat Tails and Liquidity Gaps
+* Optimal Technical Trading Rules and Risk Control in Managing Stock Portfolios
+* Portfolio Implementation Shortfall Trading Strategies
+* Dynamic Behavioural Portfolio Choice
+* Coherent Measures of Risk
+* Automated Statistical Arbitrage Funds
+* Efficiencies in Multi-Account Optimisation
+
+Pre/Post Conference Workshops:
+
+30 June 2008: Two Half-Day WORKSHOPS:
+
+Morning: Robust Portfolio Optimisation
+Afternoon: LDI/ALM 
+
+3 July 2008: Two Half-Day WORKSHOPS:
+
+Morning:  New Developments: Performance Measures and Structured Products; 
+Coherent Risk Measures and Liquidity Risk
+
+Afternoon: RavenPack workshop: News Analytics and Financial Modelling
+
+###############################
+# Apologise for any cross sending ##
+###############################
+
+ 
+ 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+Michael(Xiaochen) Sun, BA(BTBU), MSc(Hull), PhD Student,
+CARISMA, www.carisma.brunel.ac.uk <http://www.carisma.brunel.ac.uk/>  
+The Centre for the Analysis of Risk and OptimISation Modelling Applications
+School of Information Systems, Computing and Mathematics
+Brunel University, Uxbridge, UB8 3PH, Middlesex, United Kingdom
+Telephone: +44 1895 265625 [M503], Fax: +44 1895 269732
+Webpage:http://people.brunel.ac.uk/~mapgxcs 
+<http://people.brunel.ac.uk/~mapgxcs>  
+http://optirisk.googlepages.com <http://optirisk.googlepages.com/>  
+Blog: http://mam3xs.blogspot.com <http://mam3xs.blogspot.com/> 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+<http://mam3xs.blogspot.com/>   
+
+From baluxon at utmb.edu  Thu Apr 17 17:50:48 2008
+From: baluxon at utmb.edu (Luxon, Bruce A.)
+Date: Thu, 17 Apr 2008 12:50:48 -0500
+Subject: Subset extraction from matrix using lists
+Message-ID: <4F303F95D640DC4083C34D4A7DB9B5BD0678E121@EXCHVS1.utmb.edu>
+
+I have a one column list of row identifiers (gene ids) that I want
+to use to pull out a subset of rows (with many columns) from a matrix of gene
+_expression_ data.  I was searching for a
+method to do this in SPlus and so far no luck. 
+Any suggestions on how I can do this?
+
+ 
+
+Thanks
+
+ 
+
+Bruce Luxon
+
+ 
+
+***************************************
+
+Bruce A. Luxon, Ph.D.
+
+Director, UTMB Bioinformatics Program
+
+Professor, Dept. of Biochemistry and Molecular Biology
+
+University of Texas Medical Branch
+
+Galveston, TX 77555-1157
+
+(409)747-6802/6  baluxon at utmb.edu
+
+http://www.bmb.utmb.edu/faculty/luxon/
+
+http://www.bioinfo.utmb.edu
+
+ 
+
+From elvis at xlsolutions-corp.com  Wed Apr 23 17:01:20 2008
+From: elvis at xlsolutions-corp.com (elvis Miller)
+Date: Wed, 23 Apr 2008 10:01:20 -0700
+Subject: Course*** R/S-Plus Advanced Programming ****by XLSolutions Corp / May 2008 in San Francisco
+Message-ID: <20080423100120.aa8924c5d28ca71e2a043bb294e795eb.dbdf216c42.wbe@email.secureserver.net>
+
+Announcing R/Splus Advanced Programming course: May 29-30, 2008
+in  San Francisco.
+
+        ***  half of the seats are already taken  ***
+
+Please email for earlybird rates: Payments due after the class.
+
+R/Splus Advanced Programming Course Outline:
+
+Day 1 
+
+- Overview of R/S fundamentals: Syntax and Semantics 
+- Class and Inheritance 
+- Concepts, Construction and good use of Language Objects 
+- Coercion and Efficiency 
+- Object-oriented Programming in R and S-Plus 
+- Taking advantage of fast objects and fast functions 
+- Advanced Manipulation tools: Parse, Deparse, Substitute, etc. 
+- How to fully take advantage of Vectorization 
+- Generic and Method Functions 
+- Search path, Databases and Frames Visibility (S-plus) 
+
+Day 2 
+
+- Working with Large Objects 
+- Handling Properly Recursion and Iterative Calculations 
+- Managing loops; For (S-Plus) and for() loops 
+- Consequences of Lazy Evaluation 
+- Efficient Code Practices for Large Computations 
+- Memory Management and Resource Monitoring 
+- Writing R and S-plus Functions to call Compiled Code 
+- Writing and Debugging Compiled Code for S-plus and R system 
+- Connecting R to External Data Sources 
+- Macros in R 
+- Understanding the Structure of Model fitting Functions in R and
+S-plus 
+- Designing and Packaging Efficiently a new model Function 
+
+Payment due AFTER the class
+Email us for group discounts.
+Email Sue Turner: sue at xlsolutions-corp.com
+Phone: 206-686-1578
+Visit us: www.xlsolutions-corp.com/courselist.htm
+Please let us know if you and your colleagues are interested in this
+class to take advantage of group discount. 
+
+Register now to secure your seat!
+
+Cheers,
+Elvis Miller, PhD
+Manager Training.
+XLSolutions Corporation
+206 686 1578
+www.xlsolutions-corp.com
+
+From paul.jordan at roche.com  Fri Apr 25 14:53:59 2008
+From: paul.jordan at roche.com (Jordan, Paul)
+Date: Fri, 25 Apr 2008 16:53:59 +0200
+Subject: 
+Message-ID: <71FCE11FBF31DF4D86510341A13496E602E7515C@rbamsem2.emea.roche.com>
+
+Hi,
+
+ 
+
+I encountered 
+serious difficulties in plotting timeDate objects; here a baby example which 
+should show the problems:
+
+ 
+
+H <- rep(8,10)
+
+M <- 
+c(12,13,13,14,15,17,17,17,18,19)
+
+S <- 
+c(54,7,53,27,20,40,43,9,2,49)
+
+x <- timeCalendar(h = H, min 
+= M, s=S,format = "%H:%M:%S") 
+
+plot(x,1:10)
+
+The x-axis is 
+labeled with the default origin 1.Jan,1960.
+
+ 
+
+Specifying the date 
+
+y <- 
+timeCalendar(rep(4,10),d=rep(23,10),y=rep(2007,10),h = H, min = M, s=S,format = 
+"%H:%M:%S")
+
+plot(y,1:10)
+
+resulted in a complete mess (I am working with version  7.0.0  for 
+Microsoft Windows ).
+
+ 
+
+Has anyone a solution for this 
+problem?
+
+ 
+
+ 
+
+ 
+
+ 
+
+Paul Jordan Ph.D
+
+Senior Statistician
+
+F.Hoffmann-La Roche Ltd
+
+PDIM
+
+Bld. 670/R.709
+
+CH-4070 Basel
+
+Switzerland
+
+ 
+
+ 
+
+ 
+
+ 
+
+From verkerk at candiensten.nl  Mon Apr 28 07:41:26 2008
+From: verkerk at candiensten.nl (Dick Verkerk)
+Date: Mon, 28 Apr 2008 09:41:26 +0200
+Subject: An Advanced Course on the S Language, Amsterdam, June 6th
+Message-ID: <48157FA6.5080100@candiensten.nl>
+
+_____________________________________________________________________
+
+          An Advanced Course on the S Language
+          Amsterdam, 6 June 2008
+          By Longhow Lam
+_____________________________________________________________________
+
+For whom?
+
+Existing users of R and S-PLUS who would like to get a more indepth knowledge 
+and understanding of the S language.
+
+Topics include
+
+Efficient computations
+Avoiding loops
+The 'apply' and 'outer' functions
+Linking C code
+
+Object-oriented programming
+Generic functions
+Classes and methods
+Group and replacement methods
+
+Computing on the language
+Unevaluated expressions
+Creating expressions, calls and function calls
+Frames and databases
+
+Programming graphics
+High and low level plots
+Altering standard graphical settings
+Trellis graphs
+
+location: Amsterdam
+Dates
+6 June 2008, 10.00-16.30
+
+Price
+EUR 495,- per person excluding VAT
+
+Registration is possible via the registration form below my name of via
+the website:
+http://www.can.nl/events/details.php?id=34
+
+If you have any questions, please feel free to contact me.
+
+Best Regards,
+Gose Fischer
+
+P.S. Feel free to share this information amongst friends and
+     colleagues who might be interested!
+
+___________________________________________________________________
+
+Registration Form
+___________________________________________________________________
+
+[ ] June 6th - An Advanced Course on the S Language
+    EUR 495,- per person (VAT excluded)
+
+Name:                          M/F
+Function:
+Department:
+Institute:
+Address:
+Zip:
+City:
+Phone:
+Fax:
+Email:
+
+From dataanalytics at earthlink.net  Mon Apr 28 18:54:22 2008
+From: dataanalytics at earthlink.net (Data Analytics Corp.)
+Date: Mon, 28 Apr 2008 14:54:22 -0400
+Subject: Plotting two time series
+Message-ID: <48161D5E.6080404@earthlink.net>
+
+Hi,
+
+I have a matrix with two time series, the S&P500 and the Consumer 
+Confidence Index, created using the function timeSeries().  Let's say I 
+create
+
+x <- timeSeries(data, from = timeCalendar(d=1, m=1, y = 2004))
+
+I can easily plot one of the components using
+
+plot.timeSeries(x$sp500).  Similarly for, say, confidence.  The series 
+x$sp500 and x$confidence have different scales.  I'd like to have them 
+on one plot with the scale for the S&P500 on the left and the scale for 
+the Confidence Index on the right    If I use
+
+plot.timeSeries(x)
+
+then both are drawn on the same plot area, but the scales are not for 
+the series individually so the graph is hard to read.  I can do this in 
+Stata (with a little effort) but I'd prefer to do it in S+.  How can 
+this be done?  Any suggestions?
+
+I'm using S+8 on Windows Vista.
+
+Thanks,
+
+Walt Paczkowski
+
+--
+________________________
+
+Walter R. Paczkowski, Ph.D.
+Data Analytics Corp.
+44 Hamilton Lane
+Plainsboro, NJ 08536
+________________________
+(V) 609-936-8999
+(F) 609-936-3733
+dataanalytics at earthlink.net
+www.dataanalyticscorp.com
+
+From comet_meteor99 at yahoo.com  Tue Apr 29 17:56:12 2008
+From: comet_meteor99 at yahoo.com (Shahab Einabadi)
+Date: Tue, 29 Apr 2008 10:56:12 -0700
+Subject: two function
+Message-ID: <159707.97000.qm@web45510.mail.sp1.yahoo.com>
+
+Dear S users,
+
+does anyone have simple functions for :
+
+ 
+
+1)monte carlo integration
+
+2)newton root finding
+
+ 
+
+Bests,
+
+Shahab Eianbadi
+
+      Be a better friend, newshound, and 
+know-it-all with Yahoo! Mobile.  Try it now.
+
+From santosh2005 at gmail.com  Wed Apr 30 15:52:10 2008
+From: santosh2005 at gmail.com (Santosh)
+Date: Wed, 30 Apr 2008 08:52:10 -0700
+Subject: R/S+ timeDate related question
+Message-ID: <816b5ce40804300852r4278da06xeebf467e8da61b4f@mail.gmail.com>
+
+Dear R/S+ ians!
+
+I would like to generate a sequence of time/date in R & S+ for simulation purposes instead of elapsed time. How do I generate a sequence of date & time? Is there a quick way to add a column of the sequenced "Date & Time" to a data frame? 
+
+what are the equivalent functions of timeDate and unpaste in R?
+
+Thanks much in advance!!
+Regards,
+Santosh
+
+From maechler at stat.math.ethz.ch  Wed Apr 30 16:28:17 2008
+From: maechler at stat.math.ethz.ch (Martin Maechler)
+Date: Wed, 30 Apr 2008 18:28:17 +0200
+Subject: Re: R/S+ timeDate related question
+In-Reply-To: <816b5ce40804300852r4278da06xeebf467e8da61b4f@mail.gmail.com>
+References: <816b5ce40804300852r4278da06xeebf467e8da61b4f@mail.gmail.com>
+Message-ID: <18456.40481.721831.494866@stat.math.ethz.ch>
+
+>>>>> "S" == Santosh  <santosh2005 at gmail.com>
+>>>>>     on Wed, 30 Apr 2008 08:52:10 -0700 writes:
+
+    S> Dear R/S+ ians!
+    S> I would like to generate a sequence of time/date in R & S+ for simulation
+    S> purposes instead of elapsed time. How do I generate a sequence of date &
+    S> time? Is there a quick way to add a column of the sequenced "Date & 
+Time" to
+    S> a data frame?
+
+    S> what are the equivalent functions of timeDate and unpaste in R?
+
+The Rmetrics package  'fCalendar' has a "timeDate" class that
+tries to be more or less S+ compatible.
+It is on CRAN and hence just an
+
+   install.packages("fCalendar", .....<maybe specify your CRAN mirror....)  
+   library(fCalendar)
+
+away.
+
+unpaste() can be replaced by  strsplit() and similar, but I
+don't know the details.
+
+    S> Thanks much in advance!!
+    S> Regards,
+    S> Santosh
+
+    S> [[alternative HTML version deleted]]
+
+From comet_meteor99 at yahoo.com  Wed Apr 30 20:26:18 2008
+From: comet_meteor99 at yahoo.com (Shahab Einabadi)
+Date: Wed, 30 Apr 2008 13:26:18 -0700
+Subject: ellipse
+Message-ID: <333771.5105.qm@web45509.mail.sp1.yahoo.com>
+
+Dear S users,
+
+ 
+
+Is there any function to plot ellipse in 2D and 3D spaces?
+
+ 
+
+Bests,
+
+Shahab Einabadi.
+
+      Be a better friend, newshound, and 
+know-it-all with Yahoo! Mobile.  Try it now.
+
