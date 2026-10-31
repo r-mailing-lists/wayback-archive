@@ -228,12 +228,12 @@
       "date": "2001-01-02T23:08:35Z",
       "subject": "RE: What software is faster than S-Plus?",
       "subject_clean": "What software is faster than S-Plus?",
-      "in_reply_to": null,
+      "in_reply_to": "<1D593E45800CD311936B00902740C68C75C55C@medadm-nt.med.wayne.edu>",
       "references": [],
       "body_plain": "| -----Original Message-----\n| From: Janisse, James [mailto:JJanis at med.wayne.edu]\n| Sent: Wednesday, 3 January 2001 8:29\n| To: S-news S-PLUS (E-mail)\n| Subject: [S] What software is faster than S-Plus?\n| \n| \n| I am testing a new method for setting acceptable levels of human exposure\nto\n| a chemical substance.  This new method relies on a smoothing function to\n| estimate the dose-response curve.  I am using S-Plus 2000 and Windows 98.\n| The smooth is fit using the gam function and the acceptable level of\n| exposure is the predictor score that corresponds to a certain change in\n| outcome.  Based on my communication with S-PLUS technical support the only\n| way to solve for a predictor score given an outcome score, when a gam is\n| used with a smoothing term, is to use one of the minimization functions\n| (i.e. ms, nls).  This works really well when I only need to solve this\nonce.\n| It takes about 2 seconds using a 600 Mhz Machine with 128 Meg of RAM.  \n| \n| The problem is that I want to run a Monte Carlo analysis.  For each cell\nin\n| the study I will be running 2000 samples.  For each of those samples I\nwill\n| be running an additional 100 samples.  Thus there are 200000 samples for\n| each cell.  The computer time spent doing this will be over 100 hours for\n| each cell in the study.  Given the number of cells that we are looking at\n| this would take a few years of straight computer time.\n| \n| Are there any mathematical software programs available that could do this\n| type of a task much quicker?  \n\nYep.  S-PLUS can.\n\n| I don't know much about using a C routine to\n| do this type of task.  Is this a possible avenue?  Does anyone know\nanything\n| about other statistical packages like Mathcad or Matlad?\n| \n| Any assistance would be greatly appreciated.  I don't want to grow old\n| waiting for my results.\n\nMany people fall into the trap that is clearly at the root of your dilemma.\nTry to think of it this way.  gam() and friends are predominantly\nexploratory tools for one data set at a time to be used \"at the keyboard\"\n(or with the mouse, these days).  That's why they are so flexible and can\nchange models so easily, &c &c, but all of this comes at a price.  You\ncannot really expect the same procedure to work well in a situation where\nyour task is entirely fixed beforehand, repeated literally thousands of\ntimes and only a fraction of the work it is doing is going to be used,\nanyway.  Your overheads are much too big: you are paying for something you\ndo not need and it is very costly.\n\nWhat you have to do is pare down the calculation you want to do to its bare\nessentials and use low-level tools for just those jobs that need to be done.\nYou could go to the C level if that's appropriate, but I suspect it will not\nbe.  You may have to be more cagey in how you go about your simulation as\nwell.  There are things like smooth.spline that can fit smoothing splines\nquickly (if that is really what you should be doing - somehow I doubt it)\nand tools like approx that can back solve in a way that may be entirely\nadequate for your purposes, but without knowing more about your problem it\nis almost impossible to give you any concrete advice.  The principle is\nclear, though: you have to be more cunning in the way you use S-PLUS, there\nare MANY levels on which it can be used and for your problem you need to go\nmuch lower than you realise.  In short you need to become a real S\nProgrammer and not just an S-PLUS package user.  It isn't hard, trust me...\n:-)\n\n--\nBill Venables, CSIRO/CMIS Environmetrics Project\nEmail: Bill.Venables at cmis.csiro.au\nPhone: +61 7 3826 7251\nFax:   +61 7 3826 7304\nPostal: PO Box 120, Cleveland, Qld 4163, AUSTRALIA",
       "body_snippet": "| -----Original Message-----\n| From: Janisse, James [mailto:JJanis at med.wayne.edu]\n| Sent: Wednesday, 3 January 2001 8:29\n| To: S-news S-PLUS (E-mail)\n| Subject: [S] What software is faster than S-P",
-      "thread_id": "thread-093d6366c8e6",
-      "thread_depth": 0,
+      "thread_id": "thread-b596dd7ba20e",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -494,12 +494,12 @@
       "date": "2001-01-06T22:08:29Z",
       "subject": "RE: lapply question",
       "subject_clean": "lapply question",
-      "in_reply_to": null,
+      "in_reply_to": "<37E1E2BB9C28D311AB390008C707D2A608DAC755@nycexis01.mi8.com>",
       "references": [],
       "body_plain": "In nanoseconds, Tim Hesterberg and Bill Dunlap responded with solutions.\nBoth included possibilities along the lines of the following:\n\n(for j in names(x)) {\n        xj _ x[[j]]\n        if(xj is numeric){\n                rescale using x[[j]]\n                x[[j]] _ xj\n        }\n\nI tried it already, and it worked fine.  Thanks.\n\n--- original message is below ---\n\nI have a dataframe \"m\" which I'd like to rescale based on another dataframe.\nI'm led to believe \"lapply\" might be the most efficient way to accomplish\nthis.  For example, the following code rescales based on the same dataframe:\n\n        newm <- lapply(m, function(x)\n        if(is.numeric(x)) (as.numeric(x) - min(as.numeric(x), na.rm = T\n                        ))/(max(as.numeric(x), na.rm = T) - min(\n                        as.numeric(x), na.rm = T)) else (x))\n\nBut I sure cannot figure out how to get the min and max from a different\ndataframe (\"rs\", in my case).  I thought something like this might work:\n\n        newm <- lapply(m, function(x)\n        if(is.numeric(x)) (as.numeric(x) - min(as.numeric(rs[,names(x)]),\nna.rm = T\n                        ))/(max(as.numeric(rs[,names(x)]), na.rm = T) - min(\n                        as.numeric(rs[,names(x)]), na.rm = T)) else (x))\n\nBut it fails miserably.  Any help is appreciated.\n\n--\nMichael Kattan\nMemorial Sloan-Kettering Cancer Center\n1275 York Ave C1068,  New York, NY  10021 \nTel:212-639-2996  Fax:630-604-3605\nmike at kattan.net\n==",
       "body_snippet": "In nanoseconds, Tim Hesterberg and Bill Dunlap responded with solutions.\nBoth included possibilities along the lines of the following:\n\n(for j in names(x)) {\n        xj _ x[[j]]\n        if(xj is numer",
-      "thread_id": "thread-e4dd59989bcc",
-      "thread_depth": 0,
+      "thread_id": "thread-6144ac9e1747",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -606,12 +606,12 @@
       "date": "2001-01-08T19:45:52Z",
       "subject": "Re: text output to report",
       "subject_clean": "text output to report",
-      "in_reply_to": null,
+      "in_reply_to": "<D7E1E71C0658D4118C9D00104B6D756D07FCB3@AMU01>",
       "references": [],
       "body_plain": "Check out the sink() function.\nIt may do the trick for you.\n\nJVA\n\n`·.,,  ><(((º>   `·.,,  ><(((º>   `·.,,  ><(((º>\n\nJean V. Adams\nU.S. Geological Survey\nGreat Lakes Science Center\nc/o Marquette Biological Station\n1924 Industrial Parkway\nMarquette, MI 49855  U.S.A.\nphone: (906) 226-1212\nFAX: 906-226-3632\ne-mail: jean_adams at usgs.gov\n\n                                                                                \n                                  \n                    \"Winifred Lambert\"                                          \n                                  \n                    <winnie at ccb.ensco.com>            To:     \"S-PLUS Newsgroup \n(E-mail)\"                         \n                    Sent by:                          \n<s-news at lists.biostat.wustl.edu>                            \n                    s-news-owner at lists.biostat        cc:                       \n                                  \n                    .wustl.edu                        Subject:     [S] text \noutput to report                      \n                                                                                \n                                  \n                                                                                \n                                  \n                    01/08/01 10:58 AM                                           \n                                  \n                                                                                \n                                  \n                                                                                \n                                  \n\nAll,\n\nS-PLUS 2000 Windows 2000\n\nI have about 300 *.lm objects.  I want to output the *.lm$coefficients\nvector in each of the *.lm objects to a text file automatically by\nlooping through the names in a script.  I already know how to use\npaste() to create file names and loop through them.  I need to know how\nto route the output to a Report or another text file that can be\nimported to MS Word.  I tried dump(*.lm$coefficients,\nfileout=\"testdumpcoef\", append=F), but go the error, \"first argument to\ndump must be a character vector\".  Thanks for the help...\n\nwin\n\n*************************************************\nWinifred C. Lambert            Senior Scientist/Meteorologist\nENSCO, Inc.\nAerospace Sciences and Engineering Division\n1980 N Atlantic Ave, Suite 230\nCocoa Beach, FL  32931\nVOICE:  321.853.8130           FAX:  321.853.8415\nlambert.winifred at ensco.com <mailto:lambert.winifred at ensco.com>\n\nAMU Quarterly Reports on the Web:\nhttp://technology.ksc.nasa.gov/WWWaccess/AMU/home.html\n*************************************************\n\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Check out the sink() function.\nIt may do the trick for you.\n\nJVA\n\n`·.,,  ><(((º>   `·.,,  ><(((º>   `·.,,  ><(((º>\n\nJean V. Adams\nU.S. Geological Survey\nGreat Lakes Science Center\nc/o Marquette Biolog",
-      "thread_id": "thread-0652275f6c5b",
-      "thread_depth": 0,
+      "thread_id": "thread-a151e4f904c1",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -1180,12 +1180,12 @@
       "date": "2001-01-11T11:52:58Z",
       "subject": "Re: Question, How can I draw this graph",
       "subject_clean": "Question, How can I draw this graph",
-      "in_reply_to": null,
+      "in_reply_to": "<F61U4GALvtapufwbcm900011d44@hotmail.com>",
       "references": [],
       "body_plain": "Dear all,\n\nI recived a number of reply from mailbase members. In the follow, I write\nabstract of them,\n\nMy question was:\n\nI am wondering, how can I draw a graph with following formula (Haar\nfunction),\n\nf(x)=-1/sqrt(2)   if -1 < x < 0\n    = 1/sqrt(2)   if  0 < x <=1\n    = 0           else where\n\nThe answers :\n               -------------------------------\nBill wenables wrote\n\nTry:\n\n      x <- c(-5,-4,-3,-2,-1,-1, 0,0,1,1,2,3,4,5)\n      y <- c( 0, 0, 0, 0, 0,-1,-1,1,1,0,0,0,0,0)/sqrt(2)\n      plot(x, y, type = \"l\", ylim = c(-2,2))\n                 _____________________________\n\nAndy Liaw wrote\n\nplot(c(-1,0,1),c(-1/sqrt(2),-1/sqrt(2),1/sqrt(2)), type='step')\n\n                 ______________________________\n\nJean Adams wrote\n\nTry this:\n\ny <- 1/sqrt(2)\nplot(c(-1, 0, 0, 1), c(-y, -y, y, 0), xlim=c(-2, 2), xlab=\"x\", ylab=\"f(x)\")\npoints(c(-1, 0, 1), c(0, 0, y), pch=16)\nsegments(c(-1, 0), c(-y, y), c(0, 1), c(-y, y))\narrows(c(-1, 1), c(0, 0), c(-2, 2), c(0, 0))\n\n             ________________________________________\n\nJoseph Lucke\n\nPiece of cake!\n\nDefine\n\nhaar <- function(x) ifelse( (-1 < x & x < 0)  |  (0 < x & x <= 1),\nifelse(0 < x, 1/sqrt(2), -1/sqrt(2)  ), 0)\n\nLet x<- seq(-2,2,.1)\n\nhaar(x)\n[1]  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000\n0.0000000  0.0000000  0.0000000  0.0000000  0.0000000 -0.7071068\n-0.7071068 -0.7071068 -0.7071068 -0.7071068\n[17] -0.7071068 -0.7071068 -0.7071068 -0.7071068  0.0000000  0.7071068\n0.7071068  0.7071068  0.7071068  0.7071068  0.7071068  0.7071068\n0.7071068  0.7071068  0.7071068  0.0000000\n[33]  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000\n0.0000000  0.0000000  0.0000000\n\nplot(x, haar(x))\n\n             _________________________________________\n\nGerry Blais  wrote\n\nMaybe something like this\n\nlow   <- -1/sqrt(2);\nhigh  <- -low;\n\nplot (0:1, 0:1, xlim = c(-10,10), ylim=c(-2,2), type=\"n\");\n\nlines(c(-10,1),c(0,0));\n\nlines(c(-1,0),c(low,low));\n\nlines(c(0,1),c(high,high));\n\nlines(c(1,10),c(0,0));\n\n            ______________________________________\n\nJim Pratt wrote\n\nHow about something like the following:\n\nplot(c(-2,2),c(-1,1),type='n',xlab='x',ylab='Haar function f(x)')\nsegments(c(-2,-1,0,1),c(0,-1/sqrt(2),1/sqrt(2),0),c(-1,0,1,2),c(0,-1/sqrt(2),1/sqrt(2),0))\n\nCould add points to plot open or closed circles to represent the open/closed\nend\nat discontinuous jumps.\n\npoints(c(-1,0,1),c(0,-1/sqrt(2),1/sqrt(2)),pch=16)\npoints(c(-1,0,1),c(-1/sqrt(2),1/sqrt(2),0),pch=1)\n\n                    __________________________________\n\n Charla Lambert wrote\n\nOne way to do this is to create the data with repeated ifelse()\nstatements:\n\nx <- seq(from = -2, to = 2, length = 500)\ny <- ifelse(x<0, -1/sqrt(2), 1/sqrt(2))\ny <- ifelse(x<=-1 | x>1, 0, y)\nplot(x, y, type = \"l\")\n\n          __________________________________________-\n\n Charles Roosen wrote\n\nmy.haar <- function(x){\n      ifelse(abs(x) < 1, sign(x)*1/sqrt(2), 0)\n}\n\nmy.vec <- seq(-2, 2, length=100)\nplot(my.vec, my.haar(my.vec), type=\"l\", xlab=\"x\", ylab=\"Haar\")\n\n            ________________________________________\n\nand finally  Tim Hesterberg wrote\n\nUse ifelse() to define your function.\n\nThe usual way to graph a function is:\n      x <- (some values over the right range)\n      plot(x, f(x), type=\"l\")\n\nThe following is useful for automating the graphic process:\n\nGraph _ function(f, left = 0, right = 1, npoints = 81, ..., add = F, Par)\n{\n##Graph function f\n##f may be given as an expression, in terms of x, but then ignore \"...\"\n##Optional graphical parameters must go in list \"Par\"\n##Had to move add argument after ... to avoid conflict with\n## optional argument \"a\" to f.\n##This function chooses points between the limits\ncpoints _ function(xlim, n) {\n  # Want high resolution near ends, but not right at ends\n  xlim[1] + (xlim[2]-xlim[1]) * ( sin( pi/2 * (ppoints(n)*2 - 1)) + 1) /2\n}\n\n## First determine the x limits, and x\nif( !missing(left) ) if( length(left)==2) {\n  right _ left[2]\n  left _ left[1]\n}\n\n##If add==T & right/left unknown, then base x on old info\n## If par()$usr is unchanged since last call to Graph,\n##  then use old x, else use par()$user\n\n## This function checks whether Graph.x exists & is consistent with\n##  the current value of par(\"usr\")\ncheck.Graph.x _ function() {\n  if( exists(\"Graph.x\",frame=0))\n    if( all( par(\"usr\") == get(\"Graph.x\",frame=0)$usr )) return(T)\n  F\n}\n\nif(add==T && missing(left) ){\n  if( check.Graph.x() ) {\n    x _ get(\"Graph.x\",frame=0)$x\n  } else {\n    x _ cpoints( par(\"usr\")[1:2], npoints )\n  }\n} else {\n  x _ cpoints( c(left,right), npoints )\n}\n\n## Evaluate the function\nif(is.function(eval(substitute(f))))\n  y _ f(x, ...)\nelse\n  y _ eval(substitute(f), local=sys.nframe() )\n##See do.call() for the example of how this was created.\n\n## Use plot() or lines() to graph the function\nif(!missing(Par)) {\n  if(add) do.call(\"lines\", c(list(x=x,y=y),Par))\n  else do.call(\"plot\",c(Par, list(x=x,y=y,xlab=\"y\",ylab=\"x\",type=\"l\") ))\n}\nelse{\n  if(add) lines(x, y)\n  else plot(x, y, type = \"l\", xlab=\"x\", ylab=\"y\")\n}\n\nassign(\"Graph.x\", list( x=x, usr=par(\"usr\")), frame=0)\ninvisible(list(x=x,y=y))\n}\n\nCaveat - this is my own cade, not MathSoft code.  It has not gone\nthrough any QA or other review here.  But I have used it succesfully\nfor years.\n\n                 ____________________________________\n\nThank you in advance of all reply\n\nRegards,\nMohamed\n_________________________________________________________________\nGet your FREE download of MSN Explorer at http://explorer.msn.com",
       "body_snippet": "Dear all,\n\nI recived a number of reply from mailbase members. In the follow, I write\nabstract of them,\n\nMy question was:\n\nI am wondering, how can I draw a graph with following formula (Haar\nfunction),",
-      "thread_id": "thread-f69bf52d8cd9",
-      "thread_depth": 0,
+      "thread_id": "thread-af5478af47fb",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -1212,12 +1212,12 @@
       "date": "2001-01-11T14:46:18Z",
       "subject": "Re: multinomial logit",
       "subject_clean": "multinomial logit",
-      "in_reply_to": null,
+      "in_reply_to": "<Pine.SOL.4.10.10101110329360.20471-100000@phoenix.Princeton.EDU>",
       "references": [],
       "body_plain": "Yes, you can use Brian Ripley's \"multinom\" function in the neural net\npackage (on Statlib) or my plr() function in the package of the same name\n(also on Statlib).\n\n> From: \"Man S. Kwok\" <mankwok at phoenix.Princeton.EDU>\n> To: s-news at wubios.wustl.edu\n> Subject: [S] multinomial logit\n> \n> Did any one write a function to fit multinomial logit models (for\n> individual data, like 100 companies and each could have three possible\n> responses to a question)? I have continuous independent variables, and\n> therefore couldn't turn the analysis into a contingency table.",
       "body_snippet": "Yes, you can use Brian Ripley's \"multinom\" function in the neural net\npackage (on Statlib) or my plr() function in the package of the same name\n(also on Statlib).\n\n> From: \"Man S. Kwok\" <mankwok at ph",
-      "thread_id": "thread-ca230d1d7504",
-      "thread_depth": 0,
+      "thread_id": "thread-7913dd9e19ca",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -1356,12 +1356,12 @@
       "date": "2001-01-12T04:29:22Z",
       "subject": "RE: CART question",
       "subject_clean": "CART question",
-      "in_reply_to": null,
+      "in_reply_to": "<00c701c07c42$780a4a80$ac97bd89@csu.cuhk.edu.hk>",
       "references": [],
       "body_plain": "| -----Original Message-----\n| From: Eric Wong [mailto:mcwong at cuhk.edu.hk]\n| Sent: Friday, 12 January 2001 12:51\n| To: s-news at lists.biostat.wustl.edu\n| Subject: [S] CART question\n| \n| \n| Dear all,\n| \n| I tried to use CART to formula the length of stay (LOS) in \n| hospital with some risk factors.  In fact, LOS is a negatively \n| skewed variable.  I first tried a tree for LOS and the log(LOS), \n| and I found the results were totally different. \n\nI'm surprised the variable was negatively skewed.  With this kind of\nresponse I would expect the distribution to be positively skewed, that is\nwith the \"hump\" near the origin and the heavy tail on the large positive\nvalues. If it were negatively skewed the log transformation would not do\nmuch for least squares techniques (other than make them worse).  Tree-based\nmodels are fitted by least squares.\n\nIt's not surprising you get totally different looking trees for the cases\nwith and without log transforming the response, but how different are the\npredictions (after back-transformation in the transformed case)?\n\n| My questions are:\n| 1) Should I take log(LOS) as it is skewed?\n\nIf it gives you a scale in which errors are more homogeneous, then probably\nyes.  It does mean, though, that you are now considering relative errors\nrather than absolute errors.  If the accuracy of your predictions is\nnaturally measured in relative terms (for example, 4%) rather than absolute\nterms (for example, 4 days) then the log transformed response is the natural\none in which to work.\n\n| 2) If yes, is it also applied to other non-parameteric methods such as\n| GAM and MARS?\n\nIf your techinque is adding squares of errors you are clearly better off if\nthose errors are on a homogeneous scale, but there are competing\nconsiderations, of course.  For example, with a gam you might want to\ntransform the response and fit an additive model or you may want to fit a\nmodel in the original scale with a log link.  It depends on the context and\non what you want to do with the results.\n\nBill Venables.\n\n--\nBill Venables, CSIRO/CMIS Environmetrics Project\nEmail: Bill.Venables at cmis.csiro.au\nPhone: +61 7 3826 7251\nFax:   +61 7 3826 7304\nPostal: PO Box 120, Cleveland, Qld 4163, AUSTRALIA\n\n| \n| Thanks in advance.\n| \n| Eric WONG\n| \n| ---------------------------------------------------------------------\n| This message was distributed by s-news at lists.biostat.wustl.edu.  To\n| unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n| the BODY of the message:  unsubscribe s-news\n|",
       "body_snippet": "| -----Original Message-----\n| From: Eric Wong [mailto:mcwong at cuhk.edu.hk]\n| Sent: Friday, 12 January 2001 12:51\n| To: s-news at lists.biostat.wustl.edu\n| Subject: [S] CART question\n| \n| \n| Dear al",
-      "thread_id": "thread-81ad840a9490",
-      "thread_depth": 0,
+      "thread_id": "thread-9e0186e210d0",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -1372,12 +1372,12 @@
       "date": "2001-01-12T11:10:44Z",
       "subject": "RE: S Compiler",
       "subject_clean": "S Compiler",
-      "in_reply_to": null,
+      "in_reply_to": "<C1B1A78EB953D211902D0040056AC48B07561F@VRVCOM>",
       "references": [],
       "body_plain": "Thank you to all the persons who replied:\n\n1) Nick Ellis, Chuck Taylor, Sam Buttrey, A.J. Rossini and Alan Zaslavsky.\n\nwho pointed the following links out :\n\nhttp://www.stat.cmu.edu/~hseltman/Scompile.html\nhttp://people.ne.mediaone.net/mncalder/scompile/scompile.html\n\n2) Prof. Brian D. Ripley who suggested:\n\n\"I think the consensus is that S is not compilable.  You can build\nR as a linkable DLL or library, though, and that may do what you want.\nSee, e.g.  htpp://developer.r-project.org/embedded.html\"\n\n----------------------------------------------------------------------------\n----\nPierre Delfosse                                 Address:   CENTEXBEL\npierre.delfosse at centexbel.be            avenue du parc, 38\nTelephone:      32-87-322443                    B-4650 Chaineux BELGIUM\nFax:                    32-87-340518",
       "body_snippet": "Thank you to all the persons who replied:\n\n1) Nick Ellis, Chuck Taylor, Sam Buttrey, A.J. Rossini and Alan Zaslavsky.\n\nwho pointed the following links out :\n\nhttp://www.stat.cmu.edu/~hseltman/Scompile",
-      "thread_id": "thread-c4a055435405",
-      "thread_depth": 0,
+      "thread_id": "thread-ce1a11ee7674",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -1428,8 +1428,8 @@
       ],
       "body_plain": "> \"I think the consensus is that S is not compilable.  You can build\n> R as a linkable DLL or library, though, and that may do what you want.\n\nAnd for the sake of completeness :) I'll also mention the S-PLUS 6 for\nWindows will be able to do the same for C++ programs (when it's released).\nA draft white paper discussing the new CONNECT/C++ feature is available on\nour website at:\n\n  http://www.splus.com/betaprogram/splus6/connectCppWhitePaper.pdf\n\nand I encourage anyone interested in beta testing this feature to email me.\n\n# David Smith\n\n--\nDavid M Smith <dsmith at splus.mathsoft.com>\nS-PLUS Product Marketing Manager, MathSoft DAPD, Seattle WA\nTel: +1 (206) 283 8802 x360\nFax: +1 (206) 283 0347\n\nCheck out http://www.splus.com/consulting to learn about new services we are\noffering.",
       "body_snippet": "> \"I think the consensus is that S is not compilable.  You can build\n> R as a linkable DLL or library, though, and that may do what you want.\n\nAnd for the sake of completeness :) I'll also mention the",
-      "thread_id": "thread-c4a055435405",
-      "thread_depth": 1,
+      "thread_id": "thread-ce1a11ee7674",
+      "thread_depth": 2,
       "month": "2001-01"
     },
     {
@@ -1570,12 +1570,12 @@
       "date": "2001-01-14T20:33:12Z",
       "subject": "Re: Survival estimates from coxph() with strata()",
       "subject_clean": "Survival estimates from coxph() with strata()",
-      "in_reply_to": null,
+      "in_reply_to": "<3A5FD6EA.DBAD7CB4@math.mun.ca>",
       "references": [],
       "body_plain": "You have started your story in the middle  -- tell us first what it is you\nare trying to accomplish.     \n\n  The survfit.coxph function does what it was designed to do.  The newdata \nargument is almost always a dummy data set with 1 or 2 \"observations\" in it.  \nDo you really want n separate survival curves?  No one has ever seriously asked\nme for that before.\n\n        Terry Therneau",
       "body_snippet": "You have started your story in the middle  -- tell us first what it is you\nare trying to accomplish.     \n\n  The survfit.coxph function does what it was designed to do.  The newdata \nargument is almos",
-      "thread_id": "thread-1e354708615a",
-      "thread_depth": 0,
+      "thread_id": "thread-d53a52b4d98b",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -1690,8 +1690,8 @@
       ],
       "body_plain": "Terry Therneau wrote:\n> \n>    You have started your story in the middle  -- tell us first what it is you\n> are trying to accomplish.\n> \n>   The survfit.coxph function does what it was designed to do.  The newdata\n> argument is almost always a dummy data set with 1 or 2 \"observations\" in it.\n> Do you really want n separate survival curves?  No one has ever seriously \n> asked\n> me for that before.\n\nI came across this when I used survfit and coxph in a program.\nI wanted survival estimates of more than a few observations in\nthe dummy data set (for example, the dummy data set may be the\ndata set fitted by coxph). However, for each observation, survfit\nreturns the estimates from all strata, not just those from the\nstratum to which the observation belongs, which are what I\nwanted. To get what I wanted, I have to figure out the strata\ninformation for each observation. If survfit is used in a\ncommand line with 1 or 2 observations, it is not difficult to\nsee by eyes which strata these observations belong to.\nOtherwise, I don't know how to do this in a simple way. Since\nI believe this is not a quite unusual thing, other users may\nhave a smart way without writing extra S-PLUS codes for this\njob.\n\nFrank (<fharrell at virginia.edu>) suggested the function cph in his\nDesign library. I just checked the help file of this function,\nand haven't got a chance to try it yet.\n\nThanks a lot for all the responses.\n\nPaul.",
       "body_snippet": "Terry Therneau wrote:\n> \n>    You have started your story in the middle  -- tell us first what it is you\n> are trying to accomplish.\n> \n>   The survfit.coxph function does what it was designed to do. ",
-      "thread_id": "thread-1e354708615a",
-      "thread_depth": 1,
+      "thread_id": "thread-d53a52b4d98b",
+      "thread_depth": 2,
       "month": "2001-01"
     },
     {
@@ -1718,12 +1718,12 @@
       "date": "2001-01-15T20:29:48Z",
       "subject": "double integration",
       "subject_clean": "double integration",
-      "in_reply_to": null,
+      "in_reply_to": "<979532226.3a6279c2e9188@www.sph.emory.edu>",
       "references": [],
       "body_plain": "Dear S-users:\n\nIn the help file of S+ function 'integrate', there is an example to use this \nfunction to do a simple double integration:\n\nintegral(0,5) integral(0, t) x^2 dxdt.\n\nI tried to extend this function, so that it is appropriate for a general double \nintegration integral(a,b) integral(c, d) f(x,y)dxdy. I failed to pass the \nvariable y to the seceond level integration.\n\nIf someone has done this before or has some suggestions, please give me a \nresponse. I appreicate your help.\n\nThanks,\n\nJingli Song\n\nDept. of Biostat.\nEmory University",
       "body_snippet": "Dear S-users:\n\nIn the help file of S+ function 'integrate', there is an example to use this \nfunction to do a simple double integration:\n\nintegral(0,5) integral(0, t) x^2 dxdt.\n\nI tried to extend this",
-      "thread_id": "thread-7370e8077bb3",
-      "thread_depth": 0,
+      "thread_id": "thread-99ee274fb35a",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -1922,12 +1922,12 @@
       "date": "2001-01-16T21:12:39Z",
       "subject": "RE: Concatenation of digit",
       "subject_clean": "Concatenation of digit",
-      "in_reply_to": null,
+      "in_reply_to": "<3A646647.D4EDD1F@pse.unige.ch>",
       "references": [],
       "body_plain": "How about\n\n> paste(c(5, 6.5, 9), sep=\"\")\n[1] \"5\"   \"6.5\" \"9\"  \n> \nAlfred Balch\nAlfred.H.Balch at pharmacia.com\nPharmacia R&D\n700 Chesterfield PKWY N\nChesterfield, MO\n63017\n \n-----Original Message-----\nFrom: Diego Kuonen [mailto:Diego at Kuonen.com]\nSent: Tuesday, January 16, 2001 11:47 AM\nTo: Olivier.Renaud at pse.unige.ch\nCc: Snews\nSubject: Re: [S] Concatenation of digit\n\nOlivier.Renaud at pse.unige.ch wrote:\n> \n> > toto <- c(5, 6.5, 9)\n> I would like to obtain the character string \"5-6.5-9\" (even \"56.59\"\n> would be fine)\n\n  paste(c(5, 6.5, 9), collapse=\"\")  \n\nproduces \"56.59\", and\n\n  paste(c(5, 6.5, 9), collapse=\"-\")  \n\nproduces \"5-6.5-9\"...\n\nGreets\n\n  Diego\n\n-- \n   _                                          _  \n  (o-             Diego Kuonen               -o)\n  //\\  DMA-Ecublens, EPFL, CH-1015 Lausanne  /\\\\  \n .v_/_......................................_\\_v.\n/ Phone: +41(0)21 6935508  Fax: +41(0)21 6934250 \\\n: http://stat.kuonen.com   http://www.Statoo.com :\n: ` Never trust an operating system you don't    : \n:   have sources for ;-) '    http://www.LUGO.ch :\n\\................................................/\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "How about\n\n> paste(c(5, 6.5, 9), sep=\"\")\n[1] \"5\"   \"6.5\" \"9\"  \n> \nAlfred Balch\nAlfred.H.Balch at pharmacia.com\nPharmacia R&D\n700 Chesterfield PKWY N\nChesterfield, MO\n63017\n \n-----Original Message-----",
-      "thread_id": "thread-1511f6ead0bc",
-      "thread_depth": 0,
+      "thread_id": "thread-6541a04e2c70",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -2068,12 +2068,12 @@
       "date": "2001-01-18T01:50:13Z",
       "subject": "double integration",
       "subject_clean": "double integration",
-      "in_reply_to": null,
+      "in_reply_to": "<979532226.3a6279c2e9188@www.sph.emory.edu>",
       "references": [],
       "body_plain": "SPlus 2000 rel 1\nreceiving digests\n\nIn response to the recent message on double integration: the subject was\ndiscussed in March 99 (see S-Archives).   \n\nHowever the functions given there should be used cautiously. The basic\ncode proposed was of the form\n\ndouble.integral.demo.fn <- function() {\n        fun <- function(y)\n        unlist(lapply(y, function(y)\n        {\n                integrate(f = function(x, y)\n                exp(-0.5 * (x^2 + y^2))/(2 * pi), lower = IL, upper =\n                IU, y = y)$integral\n        }))\n        integrate(f = fun, lower = OL, upper = OU)$integral\n}\n\nwhere IL,IU,OL and OU represent limits of integration (inner lower, inner\nupper etc..) and could in general be given as function arguments.\n\nthe function given within the code is the joint density of two independent\nstandard normal rvs \nconsider those square regions of integration where L=IL=OL, U=IU=OU\n\non R2 (L=-Inf,U=Inf)\n> double.integral.demo.fn()\n[1] 0.6853893\n\non R2+ (L=0,U=Inf)\n> double.integral.demo.fn()\n[1] 0.1713473\n\non R2- (L=-Inf,U=0)\n> double.integral.demo.fn()\n[1] 0.1713473\n\nAll clearly incorrect. No warnings or errors were printed.\nI've tested the function over finite squared regions of integration -\nsimilar errors occur in some circumstances, sometimes with warnings and\nsometimes without. In some cases the algorithm seems to get stuck since it\ncontinues to evaluate the inner integral (in x) at the same y value\n(y=0) and hence increasing the subdivisions has no affect on the\noutput. The only way around these problems appears to be to lessen the\ntolerence levels.\n\ne.g try, with default tolerence levels (abs.tol = 10^-4 say)\n(L=-c,U=c): works for c<=2.4, not for c>=2.5\n(L=-c,U=5): works for c<=0.6, not for c>=0.7 \n\nOther functions put on the list based on this code (e.g the\nintegrate.double function from Karen Johnson [original code was from Bill\nVenables]) yield the same conclusions.\n\nAlec Stephenson",
       "body_snippet": "SPlus 2000 rel 1\nreceiving digests\n\nIn response to the recent message on double integration: the subject was\ndiscussed in March 99 (see S-Archives).   \n\nHowever the functions given there should be use",
-      "thread_id": "thread-eae70b182902",
-      "thread_depth": 0,
+      "thread_id": "thread-99ee274fb35a",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -2172,12 +2172,12 @@
       "date": "2001-01-18T16:19:05Z",
       "subject": "Re[2]: Ed50",
       "subject_clean": "Re[2]: Ed50",
-      "in_reply_to": null,
+      "in_reply_to": "<3A663DDD.17C490B1@bigpace.med.utah.edu>",
       "references": [],
       "body_plain": "What its known as depends on your perspective/subject area ...\n\nI have seen all of the following:\n\nED50 = effective dose to produce 50% response\nEC50 = effective concentration ...\nLC50 = least concentration to ...\nLD50 = least dose or lethal dose to produce ...\n\nMy clients in the agricultural chem area tend to use the ED or EC.  My clients \nin toxicology tend to use LC or LD.  \n\nI am sure there are more labels out there.\n\nLori B. Pfahler                           Lori_B_Pfahler at rohmhaas.com \nStatistics Support Group                  215-619-5480\nAnalytical and Computational Technology Center\nRohm and Haas Company                     727 Norristown Road \nSpring House Research Labs                Spring House, PA 19477 \n\"These are my opinions and not those of the Rohm and Haas Company\"\n\n______________________________ Reply Separator _________________________________\nSubject: Re: [S] Ed50\nAuthor:  Prof Brian D Ripley <ripley at stats.ox.ac.uk> at Internet\nDate:    01/18/2001 7:22 AM\n\nOn Wed, 17 Jan 2001, Nathan Leon Pace, MD, MStat wrote:\n\n> I recall a recent message about a function to calculate ED50s from logistic\n> regression.  I can't find the message in the S-News archive.  Can anyone point\n> me to the message?\n\nGuessing that ED50 is what used to be known as LD50, there is a function to \ncompute this, dose.p, in the MASS library.  See MASS (the book, pp.\n221-2), for an example.\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/ \nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr) \nOxford OX1 3TG, UK                Fax:  +44 1865 272595",
       "body_snippet": "What its known as depends on your perspective/subject area ...\n\nI have seen all of the following:\n\nED50 = effective dose to produce 50% response\nEC50 = effective concentration ...\nLC50 = least concent",
-      "thread_id": "thread-ea4a4ce2a308",
-      "thread_depth": 0,
+      "thread_id": "thread-dd1dd9c4efab",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -2304,12 +2304,12 @@
       "date": "2001-01-20T23:31:06Z",
       "subject": "RE: Hierarchical sampling",
       "subject_clean": "Hierarchical sampling",
-      "in_reply_to": null,
+      "in_reply_to": "<000f01c08305$c657eca0$c4c743c3@a10153069>",
       "references": [],
       "body_plain": "Fredrik Lundgren asks:\n\n| From: Fredrik Lundgren\n| [mailto:fredrik.lundgren at norrkoping.mail.telia.com]\n| Sent: Sunday, 21 January 2001 3:24\n| To: s-news at lists.biostat.wustl.edu\n| Subject: [S] Hierarchical sampling\n| \n| \n| Dear S-experts,\n| \n| I have a problem with hierarchical sampling\n| \n| # I have a matrix 'prov' \n| \n| > prov\n|    group gold test \n|  1     1    1    1\n|  2     1    0    1\n|  3     2    1    1\n|  4     2    0    0\n|  5     3    1    0\n|  6     3    0    0\n|  7     4    1    1\n|  8     4    0    0\n|  9     5    0    0\n| 10     5    1    0\n| 11     6    0    1\n| 12     6    1    1\n| 13     7    0    0\n| 14     7    0    0\n| 15     8    0    0\n| 16     8    0    0\n| 17     9    0    0\n| 18     9    0    0\n| 19    10    1    0\n| 20    11    0    0\n| \n| # Groups aren't necessarily of the same size - as seen for \n| group 10 and 11\n| \n| \n| # I sample with replacement on group level\n| \n| n <- length(unique(prov[,'group']))\n| s <-sample(n, n, replace=T)\n\nWhy not just sample from the groups themselves:\n\ngrp <- unique(prov[, 'group'])\nsam <- sample(grp, length(grp), replace = T)\n\n(It does not make any difference here, I know, but it would if \n your groups were not labelled by the integers 1, 2, ..., n)\n\n| \n| > s\n|  [1] 2 5 2 1 9 7 7 8 8 4\n| \n| # Now I would like to form a new matrix with data from groups \n| as they were sampled\n| \n| new.matrix\n| \n|  group gold test\n|  1     2    1    1\n|  2     2    0    0\n|  3     5    0    0\n|  4     5    1    0\n|  5     2    1    1\n|  6     2    0    0\n|  7     1    1    1\n|  8     1    0    1\n|  9     9    0    0\n| 10     9    0    0\n| 11     7    0    0\n| 12     7    0    0\n| 13     7    0    0\n| 14     7    0    0\n| 15     8    0    0\n| 16     8    0    0\n| 17     8    0    0\n| 18     8    0    0\n| 19     4    1    1\n| 20     4    0    0\n| \n| # How do I generate such a new.matrix???\n\nHere's one way.\n\n# find out where the groups are located within the matrix:\n\nwhere <- split(1:nrow(prov), prov[, 'group'])\n\n# now piece together the index vector you need:\n\ni <- unlist(where[sam])\n\n# finally, get your matrix\n\nnew.matrix <- prov[i, ]\n\n# done.  But if you want it all in one step...\n\nnew.matrix <- prov[unlist(split(1:nrow(prov), prov[, 'group'])\n       [sample(unique(prov[,'group']), replace=T)]), ]\n\n| \n| I use S-Plus 2000 rel 2\n\nOK, but this should work anywhere.\n\nI love this kind of stuff!  :-)\n\nBill Venables.\n\n| Sincerely yours\n| Fredrik Lundgren\n| \n| \n| ---------------------------------------------------------------------\n| This message was distributed by s-news at lists.biostat.wustl.edu.  To\n| unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n| the BODY of the message:  unsubscribe s-news\n|",
       "body_snippet": "Fredrik Lundgren asks:\n\n| From: Fredrik Lundgren\n| [mailto:fredrik.lundgren at norrkoping.mail.telia.com]\n| Sent: Sunday, 21 January 2001 3:24\n| To: s-news at lists.biostat.wustl.edu\n| Subject: [S] Hi",
-      "thread_id": "thread-c496ed835034",
-      "thread_depth": 0,
+      "thread_id": "thread-8a028d5dd686",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -2542,12 +2542,12 @@
       "date": "2001-01-23T16:08:52Z",
       "subject": "initial values in nls",
       "subject_clean": "initial values in nls",
-      "in_reply_to": null,
+      "in_reply_to": "<12574.010119@maf.vu.lt>",
       "references": [],
       "body_plain": "Here is my (slightly edited) original problem and responses from\nDouglas Bates and Nick Ellis (I thank both of them):\n\nWhen starting nonlinear regression, one has to indicate the initial\nvalues of the coefficients. How can I do this in\nFFF <- data.frame(x, y)\nparam(FFF, \"a1\") <- aa1\nparam(FFF, \"a2\") <- aa2\n...................\nparam(FFF, \"a6\") <- aa6\nfit <- nls(y ~ exp(poly(x,5))\nwhere, in the formula, there is no place for parameters?!\nI can't take logarithms of both sides because of some zeros in y.\n\n**********************\nA response from Douglas Bates\n**********************\n\nYou will need to be more careful in expressing your model.  For nls\nthe right hand side of the formula must include the parameters but\nthe parameters a1, a2, ..., a6 do not appear in exp(poly(x, 5)).\n\nYou could use exp(poly(x,5) %*% c(a1,a2,a3,a4,a5,a6)) but that may\ncomplicate getting starting estimates because all the rows in\npoly(x,5) change if you delete any row.  I would suggest using an\nexplicit representation of the polynomial as\n\ny ~ exp(((((a6*x+a5)*x+a4)*x+a3)*x+a2)*x+a1)\n\nto get starting estimates you could use\n\ncoef(lm(log(y) ~ outer(x, 0:5, \"^\"), data = FFF, subset = y > 0))\n\nso you only take the logarithm of the positive values.\n\nAnother possibility is to use glm with family = poisson to get a log\nlink.\n\n*************************\nA response from Nick Ellis\n*************************\n\npoly(x,5) actually returns a matrix of polynomials and so is\nsuitable for passing to linear models. For non-linear\nmodels, you have to evaluate the function explicitly, thus:\n\nx <- rep(-5:5,100)\ny <- exp(x+rnorm(x)/10)\nFFF <- data.frame(x, y)\nparam(FFF, \"alpha\") <- log(mean(y))\nparam(FFF, \"beta\") <- rep(0,5)\nfit <- nls(y ~ exp(alpha+poly(x,5)%*%beta), data=FFF)\nplot(x,y)\nlines(sort(x),predict(fit)[order(x)])\n\nAn alternative to using param is to specify start in the argument list:\n\nfit <- nls(y ~ exp(alpha+poly(x,5)%*%beta), data=FFF,\nstart=list(alpha=log(mean(y)),beta=rep(0,5)))\n\nBest,\nRemigijus",
       "body_snippet": "Here is my (slightly edited) original problem and responses from\nDouglas Bates and Nick Ellis (I thank both of them):\n\nWhen starting nonlinear regression, one has to indicate the initial\nvalues of the",
-      "thread_id": "thread-b8841a3ba3c1",
-      "thread_depth": 0,
+      "thread_id": "thread-78a58526d30a",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -2638,12 +2638,12 @@
       "date": "2001-01-23T23:29:43Z",
       "subject": "Re: MathSoft Inc. changes name to Insightful Corporation",
       "subject_clean": "MathSoft Inc. changes name to Insightful Corporation",
-      "in_reply_to": null,
+      "in_reply_to": "<LGEFIDJJDBKMHCAKBCOIIEGHCJAA.dsmith@splus.mathsoft.com>",
       "references": [],
       "body_plain": "What a great name :)\n\nPooh\nPoohworld, inc.\n\nworkplace is fun sometimes? or always? check this out!\nhttp://content.careers.msn.com/WorkingLife/Workplace/0101_poisonboss.asp\n\navid M Smith <dsmith at insightful.com> wrote:\n> Today, MathSoft has changed its name to Insightful\n> Corporation. A letter is\n> being sent to all S-PLUS customers. I've included a\n> copy below, and you can\n> also find it on our new website at\n> www.insightful.com.\n> \n> If you have any questions, feel free to contact me\n> at dsmith at insightful.com.\n> \n> # David Smith\n> \n> --\n> David M Smith <dsmith at insightful.com>\n> S-PLUS Product Marketing Manager, Insightful Corp.,\n> Seattle WA\n> Tel: +1 (206) 283 8802 x360\n> Fax: +1 (206) 283 0347\n> \n> Check out http://www.insightful.com/consulting to\n> learn about new services\n> we are offering.\n> \n> Dear Valued Customer:\n> \n> Today, we are excited to announce that we have\n> changed our name from\n> MathSoft Inc.(NASDAQ:MATH) to Insightful Corporation\n> (NASDAQ:IFUL).The\n> reason for the name change is two-fold:\n> \n> 1. Our focus on advanced analytical software and\n> services as our core\n> business, and\n> \n> 2. Our decision to sell MathSoft Engineering and\n> Educational Products\n> Division (more information available at\n> www.insightful.com/news).\n> \n> What does this mean to you? All good news, since our\n> whole business is now\n> focused on statistical analysis and data mining. The\n> products you use,\n> S-PLUS and StatServer, are the backbone of our\n> technology solution. And we?\n> ve got more to come, designed to help you understand\n> reality and anticipate\n> the future. Our goal is to help you develop insight\n> and intelligence from\n> your data, so you can make better decisions every\n> day.\n> \n> The name change also provides an opportunity to\n> introduce you to our\n> consulting services group, which delivers analytical\n> expertise and\n> development resources to meet your specific needs.\n> If you are looking for\n> additional resources to develop analytical\n> applications, you can count on us\n> to deliver results as fast as possible. See\n> www.insightful.com/consulting.\n> \n> We are very excited about the name change from\n> MathSoft to Insightful\n> Corporation and our organizational focus on\n> analytical software and\n> consulting services. Feel free to give us a call if\n> you have questions or\n> want to learn more about our software and services.\n> Finally, thank you for\n> you continued support. We will continue working as\n> hard as ever to exceed\n> your expectations.\n> \n> Sincerely,\n> Shawn Javid\n> Senior Vice President\n> Insightful Corporation\n> \n> P.S. Check out the new S-PLUS Community at\n> www.insightful.com/community.\n> \n>\n---------------------------------------------------------------------\n> This message was distributed by\n> s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to\n> s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n\n__________________________________________________\nDo You Yahoo!?\nYahoo! Auctions - Buy the things you want at great prices. \nhttp://auctions.yahoo.com/",
       "body_snippet": "What a great name :)\n\nPooh\nPoohworld, inc.\n\nworkplace is fun sometimes? or always? check this out!\nhttp://content.careers.msn.com/WorkingLife/Workplace/0101_poisonboss.asp\n\navid M Smith <dsmith at ins",
-      "thread_id": "thread-3b41bd1d70b4",
-      "thread_depth": 0,
+      "thread_id": "thread-0dd5796f999f",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -2686,12 +2686,12 @@
       "date": "2001-01-24T12:17:34Z",
       "subject": "bootstrapping or jackknifing rotated PCA/factor analyses",
       "subject_clean": "bootstrapping or jackknifing rotated PCA/factor analyses",
-      "in_reply_to": null,
+      "in_reply_to": "<3A6EB9D1.26364.9B4A0E9@localhost>",
       "references": [],
       "body_plain": "A colleague has a small n (n=25) study of six variables.  The \nvariables are of good reliability and there is some a priori sense in \nwhich you would expect that three would covary and others also \ncovary but that there would be a difference between the two \npackets of three.  (There is no sense in which a strict a priori \ncovariance matrix or loading matrix can be specified and tested \nusing CFA.) \n\nRotated PCA shows a very striking pattern of a first component on \nwhich all six load strongly and positively and a second component \non which there is a clear bipolar loading.  I'm arguing that the \nnumbers are very small but that the result does look worthy of \npublication (given theoretical considerations etc.) but only if we can \nput some standard errors on the eigenvalues (and hence the \ndecision to rotate two components) and on the loadings. \n\nMy recollection is that there was a literature on bootstrapping and \njackknifing for PCA etc.  My recollection is that there are some \nserious issues about using something like a procrustes rotation to \nrotate the generated samples toward the original sample pattern \nand some issues about radical simplification of the formulae and \nhence the computation for jackknifing. Can someone point me to a \ngood current summary and has anyone implemented anything to \ndo this in S+? \n\nTIA, \n\nChris \n\nChris Evans <chris at visped.org or chris at psyctc.org>\nConsultant Psychiatrist in Psychotherapy,\nRampton Hospital; Associate R&D Director,\nTavistock & Portman NHS Trust;\nHon. SL Institute of Psychiatry\n*** My views are my own and not representative \nof those institutions ***",
       "body_snippet": "A colleague has a small n (n=25) study of six variables.  The \nvariables are of good reliability and there is some a priori sense in \nwhich you would expect that three would covary and others also \nco",
-      "thread_id": "thread-7cf363fae318",
-      "thread_depth": 0,
+      "thread_id": "thread-39a9b8568b88",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -2702,12 +2702,12 @@
       "date": "2001-01-24T12:50:56Z",
       "subject": "Re: importing data from excel (2)",
       "subject_clean": "importing data from excel (2)",
-      "in_reply_to": null,
+      "in_reply_to": "<20010123161650.13267.qmail@web4805.mail.yahoo.com>",
       "references": [],
       "body_plain": "I had and still have exactly the same problem.\nI gave up on it and export pages to text files before importing them into\nSplus...\nThis doesn't get you any further but might save you some time.\nThe suspicion is that the PageNumber setting is passed but just not used\ninside the internal routine.\n\n          Andreas Krause",
       "body_snippet": "I had and still have exactly the same problem.\nI gave up on it and export pages to text files before importing them into\nSplus...\nThis doesn't get you any further but might save you some time.\nThe sus",
-      "thread_id": "thread-7e8691c0a7cf",
-      "thread_depth": 0,
+      "thread_id": "thread-deb6e0930e24",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -2930,12 +2930,12 @@
       "date": "2001-01-25T16:55:45Z",
       "subject": "test de mantel",
       "subject_clean": "test de mantel",
-      "in_reply_to": null,
+      "in_reply_to": "<200101250910.KAA03545@ujf.ujf-grenoble.fr>",
       "references": [],
       "body_plain": "Dear Splus users,\n\nI want to calculate the spatial autocorrelation between a matrice of\ngenetic distance (coming from a qualitative data=sequence). I know for\neach sequence the geographic coordinate (x,y).\nI have 264 individus to study (as a consequence a big matrice)\n- So I first want to built a matrice of geographic distance from the two\ncolonns x, y\n- then import the matrice of genetic distance already available\n- Then to calculate the Mantel statistic\n- Then to compute the mantel coorrelogram\n\nIt is possible to do it with spatial  Splus because after looking the\nhelp I don't find how to do?\nMany thanks\nStephanie",
       "body_snippet": "Dear Splus users,\n\nI want to calculate the spatial autocorrelation between a matrice of\ngenetic distance (coming from a qualitative data=sequence). I know for\neach sequence the geographic coordinate (",
-      "thread_id": "thread-c4a9c8a73a81",
-      "thread_depth": 0,
+      "thread_id": "thread-8454eabb8eab",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -3148,12 +3148,12 @@
       "date": "2001-01-26T16:08:35Z",
       "subject": "F tests and gams in S+",
       "subject_clean": "F tests and gams in S+",
-      "in_reply_to": null,
+      "in_reply_to": "<sa719c8d.088@wpo.nerc.ac.uk>",
       "references": [],
       "body_plain": "Can anyone advise me on the following (probably simple) problem:-\n\nWhen fitting generalized additive models from the pull down menu in S+ 2000 the \noutput contains items \nlabelled \"Npar DF\" and \"Npar F\" but these do not seem to have the values I \nwould expect from \ncomparison with equivalent polynomial regression models. Using the anova \nfunction to compare gams \ngives values closer to my preconceptions ( i.e. the values I would calculate \ndirectly from the fitted deviances \ngiven in the gam output.)  In particular  \"Npar DF\" is one less than I would \nexpect.  I suspect I'm missing \nsomething obvious. Any help appreciated especially guidance on what these terms \nrefer to and how they \nare calculated.\n\nAndy Scott",
       "body_snippet": "Can anyone advise me on the following (probably simple) problem:-\n\nWhen fitting generalized additive models from the pull down menu in S+ 2000 the \noutput contains items \nlabelled \"Npar DF\" and \"Npar ",
-      "thread_id": "thread-bcda1928e88f",
-      "thread_depth": 0,
+      "thread_id": "thread-25a98e72c98d",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -3246,12 +3246,12 @@
       "date": "2001-01-29T15:44:37Z",
       "subject": "Re: Enhanced Box Plot",
       "subject_clean": "Enhanced Box Plot",
-      "in_reply_to": null,
+      "in_reply_to": "<993D57BFC276D311A4220008C7A48E2D066D77@es09snlnt.sandia.gov>",
       "references": [],
       "body_plain": "I was able to modify the 'panel.bwplot' function to print the number of\nobservations inside the plot area. Is there a way to print this information\nalong the right side axis in the graph area?\n\nThanks, Greg Snow, Madeline Bauer, Don MacQueen, and Joel Dubin, for your\nresponses.\n\nCalvin\nEmail: cking at sandia.gov\n\nMy Question:\n        I work with datasets where boxplots are a natural choice and I am\nlooking at\n        encoding more information than is achieved using the available\nTrellis\n        graphics function, bwplot, which BTW is excellent to begin with.\n        Let's say we create a box plot thus:\n                bwplot(MyFactor~MyNumeric, data=MySample)\n        'MySample' has 1000 rows, and 'MyFactor' has 6 distinct levels. Let\ncount1,\n        count2, count3, count4, count5, count6 be the number of rows that\nbelong to\n        each of the 6 levels of 'MyFactor'.\n        Has anyone looked at displaying the value of countX either by\nannotating\n        next to the corresponding box plot, or by scaling the width/height\nof the\n        box in proportion to the value of countX?\n\nGreg Snow:\n        The non-trellis function boxplot has an option (varwidth) that will\nmake\n        the widths of the boxes be proportional to sqrt(n), I believe the\nboxplots\n        made by the gui also have an option for that under the boxspecs\npage.\n        I don't know how to do it using the trellis function (bwplot)\nwithout\n        writing your own panel function.\n\nMadeline Bauer:\n        Yes ... John Tukey (may he rest in peace), the inventor of the box\nplot,\n        suggested that it might be informative to have the width (which\nwould be\n        the height, in the trellis form) of the box proportional to the\nsquare root\n        of the number of observations. This is an option in the non-trellis\nboxplot\n        function with varwidth=T. Now, if only the code for boxplot were\nviewable,\n        but it doesn't seem to be. Perhaps you can figure out how to modify\n        panel.bwplot or fiddle with the parameter box.ratio ??\n\nDon Macqueen:\n        I have a simple extension of the boxplot function (not the Trellis \n        version) that adds counts to the boxplot labels. \n        # 4/30/98\n        # version of boxplot that adds n to the labels\n        #\n        boxpl <- function(x,...) {\n           bx <- boxplot(x,plot=F,...)\n           bx$names <- paste(bx$names,'\\nn = ',bx$n,sep='')\n           bxp(bx)\n           invisible(bx)\n        }\n\nJoel Dubin:\n        J. Jack Lee (from M.D. Anderson Cancer Center) and I wrote a\n        function several years back to add features to the existing boxplot\n        function at that time.  This is a non-Trellis function.  Features\ninclude \n        sorting categories for the plots to your liking, as well as stating\nthe \n        sample size under each boxplot and an indicator for the mean inside\neach\n        boxplot region.",
       "body_snippet": "I was able to modify the 'panel.bwplot' function to print the number of\nobservations inside the plot area. Is there a way to print this information\nalong the right side axis in the graph area?\n\nThanks",
-      "thread_id": "thread-35e41b3b357e",
-      "thread_depth": 0,
+      "thread_id": "thread-43e505483294",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -3262,12 +3262,12 @@
       "date": "2001-01-29T18:04:08Z",
       "subject": "Re: Enhanced Box Plot",
       "subject_clean": "Enhanced Box Plot",
-      "in_reply_to": null,
+      "in_reply_to": "<993D57BFC276D311A4220008C7A48E2D066D77@es09snlnt.sandia.gov>",
       "references": [],
       "body_plain": "Madeline Bauer suggested that I post the changes that I made to the\n\"panel.bwplot\" function to see if someone could help me with the placement\nof number of observations along the right axis of the box plot in the graph\narea.\n\nHere are the two lines that I added to the very end of the panel function:\n...........\nstr <- as.character(length(y[y==Y]))\ntext(median.value$x, median.value$y-w, str)\n\nAny suggestions would be appreciated!\n\nCalvin\n\n> --------------------------------------------------------------------------\n> ------------\n>  Calvin King                           Org: 6524     \n>  Sandia National Laboratories    Phone: (505) 844-7847\n>  P. O. Box 5800, MS 0977        E-mail: cking at sandia.gov\n>  Albuquerque, NM 87185           Fax: (505) 844-2057\n> --------------------------------------------------------------------------\n> ------------\n> \n>",
       "body_snippet": "Madeline Bauer suggested that I post the changes that I made to the\n\"panel.bwplot\" function to see if someone could help me with the placement\nof number of observations along the right axis of the box",
-      "thread_id": "thread-3fa23b1392c0",
-      "thread_depth": 0,
+      "thread_id": "thread-43e505483294",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -3310,12 +3310,12 @@
       "date": "2001-01-29T22:05:16Z",
       "subject": "RE: looking for the C-routine 'spline_basis'",
       "subject_clean": "looking for the C-routine 'spline_basis'",
-      "in_reply_to": null,
+      "in_reply_to": "<Pine.GSO.3.96.1010129162352.1859B-100000@lear.ucs.indiana.edu>",
       "references": [],
       "body_plain": "See splines.c in the library/splines/src directory of the R 1.1.1 source\ncode, available from the Downloads section of http://www.r-project.org/.\nHere is the function you requested, but you will want to look at the rest of\nthe package.\n\nvoid spline_basis(double *knots, Sint *ncoeff, Sint *order,\n                  double *xvals, Sint *derivs, Sint *nx,\n                  double *basis, Sint *offsets)\n{                               /* evaluate the non-zero B-spline basis */\n                                /* functions (or their derivatives) at */\n                                /* xvals.  */\n  Sint n = *nx, i, j;\n  double *dpt, *coeff, *last = knots + *ncoeff;\n\n  orderm1 = *order - 1L;\n  rdel = Calloc(orderm1, double);\n  ldel = Calloc(orderm1, double);\n  coeff = Calloc(*order, double);\n  dpt = (knots += *order);      /* first *order knots must be <= all xvals\n*/\n  for( ; n--; xvals++, derivs++) {\n    while(dpt < last && *dpt <= *xvals) dpt++;\n    if (*derivs) {              /* slow method for derivatives */\n      for(i = 0; i < *order; i++) {\n        for(j = 0; j < *order; j++) coeff[j] = 0;\n        coeff[i] = 1;\n        *basis++ = evaluate(dpt, *xvals, coeff, (Sint) *derivs);\n      }\n    }\n    else {\n      basis_funcs(dpt, *xvals, basis); /* fast method for value */\n      basis += *order;\n    }\n    *offsets++ = (Sint)(dpt - knots);\n  }\n  Free(ldel); Free(rdel); Free(coeff);\n}\n\nDave Homiak\nQR Programming\nStafford Trading, Inc.\n230 S. LaSalle Street\nSuite 688\nChicago, IL 60604\n312-356-4514 Voice\n312-786-9176 Fax\ndhomiak at xcaliber.com\n\n> -----Original Message-----\n> From: Jin Zhu [SMTP:jinzhu at indiana.edu]\n> Sent: Monday, January 29, 2001 3:27 PM\n> To:   s-news at wubios.wustl.edu\n> Subject:      [S] looking for the C-routine 'spline_basis'\n> \n> Dear Splus users:\n> \n> Can anyone help me finding the code for the C-subroutine-- 'spline_basis'?\n> Thank you very much!\n> \n> Jin Zhu\n> \n> \n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news",
       "body_snippet": "See splines.c in the library/splines/src directory of the R 1.1.1 source\ncode, available from the Downloads section of http://www.r-project.org/.\nHere is the function you requested, but you will want ",
-      "thread_id": "thread-d75abce59590",
-      "thread_depth": 0,
+      "thread_id": "thread-dae8400c5686",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -3478,12 +3478,12 @@
       "date": "2001-01-30T10:09:26Z",
       "subject": "Re: Degrees of freedom in GAM with smoothing spline",
       "subject_clean": "Degrees of freedom in GAM with smoothing spline",
-      "in_reply_to": null,
+      "in_reply_to": "<OF614F9515.5E4CAE67-ONC12569E4.002F4522@basler.ch>",
       "references": [],
       "body_plain": "1)  These models are not nested LS fits, so you can conclude very\nlittle from what you showed us.  Increasing the df does not necesarily\nimprove the fit.\n\n2) df = 1 makes no sense.  The model includes a linear term and\na non-linear term zero, and you have given the latter 0 df.\nIndeed, s() says:\n\n   Values for df should be greater than 1.\n\nsummary() will tell you a lot more, including\n\nDF for Terms and Chi-squares for Nonparametric Effects\n\n             Df Npar Df Npar Chisq    P(Chi) \n (Intercept)  1                             \n           x  1                             \ns(y, df = 4)  1       4   2.239815 0.6876443\n\nYes, it looks as if df has to be at least 5. \n\nI suggest you try regression splines instead.\n\n> From: pierre.joyet at basler.ch\n> Date: Tue, 30 Jan 2001 10:08:05 +0100\n> \n> I don't understand the following behaviour of S-Plus Version 2000, Release\n> 1 (the data frame dat5 is defined at the end of this message);  it is as if\n> S-Plus always assumed df >= 5 in s().\n> \n> \n> > gam(Z/N ~ x + s(y, df = 1), family = binomial(link = logit), data = dat5,\n> weights = N, epsilon = 1e-7)\n> Call:\n> gam(formula = Z/N ~ x + s(y, df = 1), family = binomial(link = logit), data\n> = dat5, weights = N, epsilon = 1e-007)\n> \n> Degrees of Freedom: 32 total; 25.02437 Residual\n> Residual Deviance: 27.96137\n> \n> \n> > gam(Z/N ~ x + s(y, df = 4), family = binomial(link = logit), data = dat5,\n> weights = N, epsilon = 1e-7)\n> Call:\n> gam(formula = Z/N ~ x + s(y, df = 4), family = binomial(link = logit), data\n> = dat5, weights = N,\n>      epsilon = 1e-007)\n> \n> Degrees of Freedom: 32 total; 25.02795 Residual\n> Residual Deviance: 27.96545\n> \n> \n> > gam(Z/N ~ x + s(y, df = 5), family = binomial(link = logit), data = dat5,\n> weights = N, epsilon = 1e-7)\n> Call:\n> gam(formula = Z/N ~ x + s(y, df = 5), family = binomial(link = logit), data\n> = dat5, weights = N, epsilon = 1e-007)\n> \n> Degrees of Freedom: 32 total; 25.16151 Residual\n> Residual Deviance: 28.11458\n> \n> \n> > gam(Z/N ~ x + s(y, df = 6), family = binomial(link = logit), data = dat5,\n> weights = N, epsilon = 1e-7)\n> Call:\n> gam(formula = Z/N ~ x + s(y, df = 6), family = binomial(link = logit), data\n> = dat5, weights = N,\n>      epsilon = 1e-007)\n> \n> Degrees of Freedom: 32 total; 24.1733 Residual\n> Residual Deviance: 26.88274\n> \n> \n> > gam(Z/N ~ x + s(y, df = 10), family = binomial(link = logit), data =\n> dat5, weights = N, epsilon = 1e-7)\n> Call:\n> gam(formula = Z/N ~ x + s(y, df = 10), family = binomial(link = logit),\n> data = dat5, weights = N, epsilon = 1e-007)\n> \n> Degrees of Freedom: 32 total; 20.19333 Residual\n> Residual Deviance: 20.96767\n> \n> \n> \"dat5\"<-\n> structure(.Data = list(x = c(0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2,\n> 2, 2,\n>      2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3), y = c\n> (-0.2394473742852923,\n>      -0.2151489341064364, -0.169986718746239, -0.05834355070643233,\n>      0.06947074098626722, 0.2485386685197627, -0.1700035743552708,\n>      -0.1507296158681328, -0.1278768968159772, -0.09305901963077524,\n>      -0.01491289001193018, 0.07314333820890026, 0.251280926551337,\n>      -0.2141207028370447, -0.1899214630752825, -0.1699752147341705,\n>      -0.1508285350003458, -0.1280865978684152, -0.01283593079903267,\n>      0.06928531936847314, 0.2510982257482156, -0.2389086879149528,\n>      -0.2137028675118527, -0.1894120805919478, -0.1700801537164134,\n>      -0.1507327974514527, -0.128042553745042, -0.09464232720973888,\n>      -0.05782492687233681, 0.06837221277921084, 0.1409921966491252,\n>      0.2515176191110122), N = c(354, 380, 277, 339, 368, 341, 294, 311,\n> 362,\n>      302, 428, 384, 318, 462, 343, 332, 306, 354, 446, 339, 284, 272, 400,\n>      348, 304, 308, 340, 258, 328, 314, 283, 279), Z = c(3, 2, 0, 3, 3, 3,\n> 3,\n>      1, 5, 5, 4, 3, 4, 5, 5, 8, 2, 3, 5, 2, 2, 5, 12, 5, 7, 6, 6, 10, 2, 4,\n>      4, 1)), row.names = c(\"1\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\",\n> \"10\",\n>      \"11\", \"12\", \"13\", \"14\", \"15\", \"16\", \"17\", \"18\", \"19\", \"20\", \"21\",\n> \"22\",\n>      \"23\", \"24\", \"25\", \"26\", \"27\", \"28\", \"29\", \"30\", \"31\", \"32\"), class\n> = \"data.frame\")\n> \n> \n> dat5$Z was generated (on S-Plus 4.5 for Windows) by:\n> set.seed(317)\n> y <- -5 + 0.3*dat5$x + dat5$y^2\n> dat5$N <- rbinom(32, dat5$N, exp(y) / (1 + exp(y)))\n> \n> \n> Thanks!\n> \n> Pierre Joyet\n> \n> Baloise Insurance\n> Switzerland\n> \n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595",
       "body_snippet": "1)  These models are not nested LS fits, so you can conclude very\nlittle from what you showed us.  Increasing the df does not necesarily\nimprove the fit.\n\n2) df = 1 makes no sense.  The model includes",
-      "thread_id": "thread-c10f53e24ad3",
-      "thread_depth": 0,
+      "thread_id": "thread-b38930a2fd34",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -3510,12 +3510,12 @@
       "date": "2001-01-30T11:58:15Z",
       "subject": "RE: Grouped Binary data Logistic regression",
       "subject_clean": "Grouped Binary data Logistic regression",
-      "in_reply_to": null,
+      "in_reply_to": "<61B1D88B756DD011988200805FEA37CE049FDB1A@gbtpmx00.merck.com>",
       "references": [],
       "body_plain": "Thanks to Steve Roberts for the solution: to quote from V&R:\n\n\"If the response is a two-column matrix, it is assumed that the first column\nholds the number of successes, and the second holds the number of failures\nfor each trial\"\n\nIn my defence, I would point out that I looked under \"logistic regression\"\nin the index of V&R 3rd edition. If I had looked under \"binomial data\", you\nwould not be reading this e-mail :-)\n\nThanks in advance to all those others who will suggest the same...\n\nAndrew\n\n> ----------\n> From:         Jack, Andrew[SMTP:andrew_jack at merck.com]\n> Sent:         30 January 2001 11:23\n> To:   'S-news'\n> Subject:      [S] Grouped Binary data Logistic regression\n> \n> Using S+ 2000 rel 3 on NT 4 SP 6a\n> \n> I would like to perform a logistic regression on **grouped** binary data,\n> ie:\n> \n> y     n       x\n> 0     6       0\n> 1     8       3\n> 3     6       6\n> 5     6       10\n> \n> where \"y\" is the number of binary reponses out of \"n\", and \"x\" is the\n> covariate. Of course I could change this to individual observations and\n> use\n> GLM (expanding the above and replicating the covariate etc) but I'm lazy,\n> and certain other packages (eg Genstat) cope with grouped data rather\n> simply.\n> \n> Could anyone point me in the right direction? Am I right in thinking that\n> the \"weights\" parameter in the GLM function is NOT what I need?\n> \n> Thank you\n> \n> Andrew\n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>",
       "body_snippet": "Thanks to Steve Roberts for the solution: to quote from V&R:\n\n\"If the response is a two-column matrix, it is assumed that the first column\nholds the number of successes, and the second holds the numbe",
-      "thread_id": "thread-b442965b33c8",
-      "thread_depth": 0,
+      "thread_id": "thread-9e3ca08d0f38",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -3542,12 +3542,12 @@
       "date": "2001-01-30T12:03:20Z",
       "subject": "Re: Grouped Binary data Logistic regression",
       "subject_clean": "Grouped Binary data Logistic regression",
-      "in_reply_to": null,
+      "in_reply_to": "<61B1D88B756DD011988200805FEA37CE049FDB1A@gbtpmx00.merck.com>",
       "references": [],
       "body_plain": "> Date: Tue, 30 Jan 2001 06:23:33 -0500\n> From: \"Jack, Andrew\" <andrew_jack at merck.com>\n> \n> Using S+ 2000 rel 3 on NT 4 SP 6a\n> \n> I would like to perform a logistic regression on **grouped** binary data,\n> ie:\n> \n> y     n       x\n> 0     6       0\n> 1     8       3\n> 3     6       6\n> 5     6       10\n> \n> where \"y\" is the number of binary reponses out of \"n\", and \"x\" is the\n> covariate. Of course I could change this to individual observations and use\n> GLM (expanding the above and replicating the covariate etc) but I'm lazy,\n> and certain other packages (eg Genstat) cope with grouped data rather\n> simply.\n\nS does even more simply, you just need to read the right account.\n\n> Could anyone point me in the right direction? Am I right in thinking that\n> the \"weights\" parameter in the GLM function is NOT what I need?\n\nglm(cbind(y, n-y) ~ x, family=binomial)\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595",
       "body_snippet": "> Date: Tue, 30 Jan 2001 06:23:33 -0500\n> From: \"Jack, Andrew\" <andrew_jack at merck.com>\n> \n> Using S+ 2000 rel 3 on NT 4 SP 6a\n> \n> I would like to perform a logistic regression on **grouped** binar",
-      "thread_id": "thread-d22f496f187e",
-      "thread_depth": 0,
+      "thread_id": "thread-9e3ca08d0f38",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -3558,12 +3558,12 @@
       "date": "2001-01-30T12:18:27Z",
       "subject": "RE: AR process correlations",
       "subject_clean": "AR process correlations",
-      "in_reply_to": null,
+      "in_reply_to": "<1900E2BC2B60D411961100C0F6B0E32917CA2C@DELL1_NTSERVER>",
       "references": [],
       "body_plain": "Oops, that should have been exp(-alpha*abs(s))\n \n> A couple of simple time series/GEE questions - please forgive \n> my ignorance\n> \n> In an AR-1 process, the correlation between x(t) and x(t+s) \n> is exp(-alpha*abs(t-s))\n> \n> 1) What is the equivalent formula for an AR-2 process?\n> \n> 2) Can the necessary parameters (for example, alpha in an AR \n> 1 process) be obtained from the standard ARIMA output?\n> \n> Thanks in advance,\n> \n> Peter.\n> peter.england at emb.co.uk\n> \n>",
       "body_snippet": "Oops, that should have been exp(-alpha*abs(s))\n \n> A couple of simple time series/GEE questions - please forgive \n> my ignorance\n> \n> In an AR-1 process, the correlation between x(t) and x(t+s) \n> is ",
-      "thread_id": "thread-dc3c327f7778",
-      "thread_depth": 0,
+      "thread_id": "thread-d259944a5c82",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -3574,12 +3574,12 @@
       "date": "2001-01-30T13:32:42Z",
       "subject": "RE: RE: AR process correlations",
       "subject_clean": "AR process correlations",
-      "in_reply_to": null,
+      "in_reply_to": "<1900E2BC2B60D411961100C0F6B0E32917CA2C@DELL1_NTSERVER>",
       "references": [],
       "body_plain": "Peter,\n\nThe exact expression for an AR process of order p can be found in Box,\nJenkins and Reinsel, Time Series Analysis, in section 3.2.2 on page 55.  It\nwill be also in the first edition in a similar place, I'm sure, but my copy\nof that is at home.  The k-th autocorrelation is a linear combination of the\nk-th powers of the p roots of the characteristic equation,\n   1 - phi(1)*B - phi(2)*B^2 - ... - phi(p)* B^p = 0\n(phi is alpha in your notation).\n\nYou estimate the phi's in S-Plus using something like ar() or arima.mle().\n\nThe specific solutions for 2nd order (p=2) are discussed in section 3.2.4\n(\"Second-Order Autoregressive Process\"), where a nice closed form expression\nis given.  If you can't easily get the book, let me know and I'll type it\nout for you.\n\nI am definitely not a wiz at S-Plus time series functions.  However, I seem\nto remember that there is a function that calculates the autocorrelation\nfunction from a fitted model.  Anybody else know?  Either that or I wrote\none once - I'll look.\n\n  - Lane\n\nAh, found it!  Here you go...  The following calculates the autocorrelation\nfunction from the recursion relation given in Box, Jenkins and Reinsel.  Get\nthe phi values as I mentioned from a time series fit in S-Plus.\n\n#  ar.acf - Calculate theoretical acf of given AR model\n#         - See Box, Jenkins & Reinsel page 56, equation 3.2.4 or 3.2.6\n\nar.acf <- function( phi, nlags=length(phi) )\n{\n    p <- length( phi )\n    L1 <- c( phi, rep( 0, p ) )\n    L2 <- c( rep( 0, p ), phi )\n    M1 <- M2 <- Iden <- diag( length(phi) ) # right dimensions\n    for( i in 1:p ) {\n        M1[ i , ] <- L1[ (i+1):(i+p) ]\n        M2[ , i ] <- L2[ (p+1-i):(p+p-i) ]\n    }\n    rho <- solve( Iden - M1 - M2, phi )\n    if( nlags > length(rho) ) {\n        rho <- c( rho, rep( 0, nlags-length(rho) ) )\n        for( k in (length(phi)+1):length(rho) )\n            rho[k] <- sum( phi * rho[(k-1):(k-p)] )\n    }\n    else rho <- rho[ 1:nlags ]\n    rho\n}\n\n-----Original Message-----\nFrom: Peter England [mailto:peter.england at emb.co.uk]\nSent: Tuesday, January 30, 2001 7:18 AM\nTo: 's-news at wubios.wustl.edu'\nSubject: [S] RE: AR process correlations\n\nOops, that should have been exp(-alpha*abs(s))\n \n> A couple of simple time series/GEE questions - please forgive \n> my ignorance\n> \n> In an AR-1 process, the correlation between x(t) and x(t+s) \n> is exp(-alpha*abs(t-s))\n> \n> 1) What is the equivalent formula for an AR-2 process?\n> \n> 2) Can the necessary parameters (for example, alpha in an AR \n> 1 process) be obtained from the standard ARIMA output?\n> \n> Thanks in advance,\n> \n> Peter.\n> peter.england at emb.co.uk\n> \n> \n\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Peter,\n\nThe exact expression for an AR process of order p can be found in Box,\nJenkins and Reinsel, Time Series Analysis, in section 3.2.2 on page 55.  It\nwill be also in the first edition in a simila",
-      "thread_id": "thread-335d37a3b570",
-      "thread_depth": 0,
+      "thread_id": "thread-d259944a5c82",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -3606,12 +3606,12 @@
       "date": "2001-01-30T15:57:22Z",
       "subject": "Re: gamma distribution",
       "subject_clean": "gamma distribution",
-      "in_reply_to": null,
+      "in_reply_to": "<3A76EF5B.B4BC0BD7@inrialpes.fr>",
       "references": [],
       "body_plain": "> Date: Tue, 30 Jan 2001 17:44:11 +0100\n> From: Olivier Martin <olivier.martin at inrialpes.fr>\n> \n> I would like to estimate the maximum likelihood parameters of a gamma\n> distribution\n> (shape and scale). Is there an available program that can do this ?\n\nSort of.  Library MASS has \n\ngamma.dispersion         Calculate the MLE of the Gamma Dispersion\n                         Parameter in a GLM Fit\n\nand you can fit a glm with just a mean .....\n\nThre are other similar tricks.\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595",
       "body_snippet": "> Date: Tue, 30 Jan 2001 17:44:11 +0100\n> From: Olivier Martin <olivier.martin at inrialpes.fr>\n> \n> I would like to estimate the maximum likelihood parameters of a gamma\n> distribution\n> (shape and s",
-      "thread_id": "thread-997f8064b1d2",
-      "thread_depth": 0,
+      "thread_id": "thread-cdc33d3b1aa9",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -3688,12 +3688,12 @@
       "date": "2001-01-30T18:59:04Z",
       "subject": "Re: Confidence Interval on Quotient",
       "subject_clean": "Confidence Interval on Quotient",
-      "in_reply_to": null,
+      "in_reply_to": "<B6D0644CBEA8D211B7600008C74CC9550446604E@Chelan>",
       "references": [],
       "body_plain": "I've answered this question many times in different places, so I'll\njust attach my standard answer below:  it gives a first and\na second order approximation for the coefficient of variation\nof the ratio between two means.  If your sample sizes are large\nenough to make bootstrapping reliable, then most likely the\napproximations here will be good ones that will save you the\ntrouble of bootstrapping.\n\nAs you will note, the answer I give is based on Taylor series,\nand is only valid for situations where the coefficient of variation\nof the denominator is relatively small ( < 20%).  If the\ndenominator is small and highly variable, the ratio measure\nwill be extremely skewed positively in any case, so the standard\nerror of it is not such a useful quantity, and the whole notion\nof taking ratios in such a case is somewhat dubious.\n\n        -------------------------------------------------\n\nThe Taylor series for  R = A/B,  through its first two orders,\nlooks like this:\n\ndR ~ (1/B)*dA - (A/B^2)*dB + (A/B^3)*dB^2 - (1/B^2)*dA*dB       (EQ 1)\n\n(there is no term for dA^2 since the second partial derivative of R\nwith respect to A is 0).\nIn the application here, dA and dB can be considered independent\nrandom variables with mean 0 (departures of sample mean from population\nmean for the two samples--it is important that the samples are\nindependent, not important whether they come from the same population).\n\nIf one squares EQ 1, takes expectations, uses independence and mean 0,\nand simplifies, one gets the following second-order approximation,\nin which cvA, cvB, and cvR denote the coefficients of variation of A, B, R\n(i.e., cvA = SA/A, etc.), B3 denotes the normalized third central moment\nof the denominator B (expectation of the third power of the deviation\nfrom the mean, divided by the third power of the mean), and B4 denotes\nthe analogous normalized fourth central moment of B:\n\ncvR ~ sqrt(cvA^2 + cvB^2 + (cvA*cvB)^2 - 2*B3 + B4)             (EQ 2)\n\nIf the central limit theorem applies approximately to statistic B,\nso its distribution is approximately Gaussian, EQ 2 can be simplified:\nB3 is essentially 0 and B4 is approximately 3*(cvB^4).  So for this case,\nthe second-order approximation becomes\n\ncvR ~ sqrt(cvA^2 + cvB^2 + (cvA*cvB)^2 + 3*(cvB^4))             (EQ 3)\n\nIf cvA and cvB are less than 20%, this is a quite good approximation;\nand if they are less than 10%, the latter two terms in it play little\nrole--the first order approximation, essentially Pythagorean combination\nof coefficients of variation is pretty good.  However, this second-order\napproximation goes to pot rapidly for coefficients of variation\nover 20%--one needs higher terms of the Taylor expansion and it\nmay no longer be worthwhile to look for any formula unless you have\nparticularly interesting special cases.\n\nDave Krantz",
       "body_snippet": "I've answered this question many times in different places, so I'll\njust attach my standard answer below:  it gives a first and\na second order approximation for the coefficient of variation\nof the rat",
-      "thread_id": "thread-0fedaef5a896",
-      "thread_depth": 0,
+      "thread_id": "thread-5e7137fb3c38",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -3722,12 +3722,12 @@
       "date": "2001-01-30T19:03:08Z",
       "subject": "Re: Confidence Interval on Quotient",
       "subject_clean": "Confidence Interval on Quotient",
-      "in_reply_to": null,
+      "in_reply_to": "<B6D0644CBEA8D211B7600008C74CC9550446604E@Chelan>",
       "references": [],
       "body_plain": "Bootstrapping isn't necessary, at least under some ``usual''\nassumptions --- normality and homoscedasticity.\n\nSuppose X_1, ..., X_n1 ~ N(mu_1,sigma^2);\n        X_1, ..., X_n2 ~ N(mu_2,sigma^2)  (same sigma).\n\nLet rho = mu_1/mu_2.\n\nTo test the hypothesis H_0: rho = rho_0 we can use the test statistic\n\n                       (X-bar - rho_0 * Y-bar)\n                  T = --------------------------\n                      s_p*sqrt(1/n1 + rho_0^2/n2)\n\nwhich will have a t distribution with n1+n2-2 degrees of freedom\nunder H_0.  (Note: s_p = pooled estimate of sigma.)\n\nA confidence interval for rho may be formed as the set of all\nrho_0 for which H_0 would NOT be rejected.  The boundaries of\nthis interval can be found by solving the quadratic equation\n\n                T^2 = (table value)^2\n\nfor rho_0.  It's not clear to me whether the confidence region\nwill indeed be an interval --- it could be the exterior or\ncomplement of an interval; some experimentation should clear\nthis up.\n\nIf heteroscedasticity is a problem then you are in a Behrens-Fisher\nbind, which may be solvable via the Welch-Aspin-Smith-Satterthwaite\napproach as is used in the usual setting of inference about mu_1 - mu_2.\n(I haven't thought this through.)\n\nIf non-normality is a problem then bootstrapping is probably the\nonly way to go.  But this is only a worry if n1 and n2 are small.\nAnd if this is the case then you're in trouble no matter what you\ndo. :-)\n\nIf n1 and n2 are large then neither heteroscedasticity nor\nnon-normality should be a problem.  (Just take df = infinity.)\n\n                                        cheers,\n\n                                                Rolf Turner\n                                                rolf at math.unb.ca",
       "body_snippet": "Bootstrapping isn't necessary, at least under some ``usual''\nassumptions --- normality and homoscedasticity.\n\nSuppose X_1, ..., X_n1 ~ N(mu_1,sigma^2);\n        X_1, ..., X_n2 ~ N(mu_2,sigma^2)  (same ",
-      "thread_id": "thread-a94ac3962bd3",
-      "thread_depth": 0,
+      "thread_id": "thread-5e7137fb3c38",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -3924,12 +3924,12 @@
       "date": "2001-01-31T17:40:43Z",
       "subject": "RE: White Standard Errors",
       "subject_clean": "White Standard Errors",
-      "in_reply_to": null,
+      "in_reply_to": "<LHEGLMIBLHLPMMKANAHIMEEGCBAA.cr-berry@uchicago.edu>",
       "references": [],
       "body_plain": "Chris,\nI found the reference I mentioned:\n        Using heteroskedasticity consistent standard errors in the linear\nregression model.\n        Long and Ervin\n        American Statistician (2000), 54, 217-\n\nIt discusses and compares several variations on this theme.\n\nMatt Kurbat\n\n-----Original Message-----\nFrom: Christopher Berry [mailto:cr-berry at uchicago.edu]\nSent: Tuesday, January 30, 2001 10:39 PM\nTo: Kurbat, Matt\nSubject: RE: [S] White Standard Errors\n\nMatt -\n\nI will not bother summing the results, as Frank Harrell sent his directly to\nthe list.  I've only received one other response (besides yours) which was\nalso a reference to the Frank Harrell code.  It seems to do what I was\nlooking for; perhaps the same applies for you.  Thanks again for your\nfeedback.\n\nBest,\nChris\n\n-----Original Message-----\nFrom: Kurbat, Matt [mailto:Matt.Kurbat at kmv.com]\nSent: Tuesday, January 30, 2001 12:42 PM\nTo: 'Christopher Berry'\nSubject: RE: [S] White Standard Errors\n\nPlease do repost any replies you get to this because I'm also interested.\n\nAlso, I believe that there was an article in a recent issue of American\nStatistician\n(one in late 2000) on this topic.  You might find it interesting because it\ntalks\nabout several variations on this idea and compares their relative\nperformance in small samples.\nIf memory serves, White's was not the best in small samples (but memory may\nbe wrong!).\n\nmatt kurbat\n\n-----Original Message-----\nFrom: Christopher Berry [mailto:cr-berry at uchicago.edu]\nSent: Tuesday, January 30, 2001 10:26 AM\nTo: s-news at wubios.wustl.edu\nSubject: [S] White Standard Errors\n\nIs there a way to obtain White's heteroskedastic-consistent standard errors\nwith lm?  I've searched the online help and s-news archive with no luck.\nI'm new to Splus, so perhaps I'm missing something obvious.  Any help will\nbe much appreciated.  Thanks.\n\nChris Berry\nUniversity of Chicago\nDepartment of Political Science\n\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Chris,\nI found the reference I mentioned:\n        Using heteroskedasticity consistent standard errors in the linear\nregression model.\n        Long and Ervin\n        American Statistician (2000), 54, 2",
-      "thread_id": "thread-d6c74e489a20",
-      "thread_depth": 0,
+      "thread_id": "thread-8ae2e7f76716",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -3956,12 +3956,12 @@
       "date": "2001-01-31T18:03:18Z",
       "subject": "Ordinal Regression",
       "subject_clean": "Ordinal Regression",
-      "in_reply_to": null,
+      "in_reply_to": "<1F6254B50D8FD211BC8900E0291B03B3034490B4@EXCHANG1>",
       "references": [],
       "body_plain": "> Hi all, \n> \n> I was wondering if anybody can suggest a good book (paper, etc...) on\n> Ordinal Regression, considering that I haven't read anything on this\n> subject yet.\n>  \n> Are there any useful materials on-line ??\n> \n> thank you\n> Ella\n>",
       "body_snippet": "> Hi all, \n> \n> I was wondering if anybody can suggest a good book (paper, etc...) on\n> Ordinal Regression, considering that I haven't read anything on this\n> subject yet.\n>  \n> Are there any useful m",
-      "thread_id": "thread-f27ee9646d2c",
-      "thread_depth": 0,
+      "thread_id": "thread-fdee78234c0b",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -3978,8 +3978,8 @@
       ],
       "body_plain": "Because of the Long article I added an \"efron\" option to robcov()\na few months ago.  -Frank Harrell\n\n\"Kurbat, Matt\" wrote:\n> \n> Chris,\n> I found the reference I mentioned:\n>         Using heteroskedasticity consistent standard errors in the linear\n> regression model.\n>         Long and Ervin\n>         American Statistician (2000), 54, 217-\n> \n> It discusses and compares several variations on this theme.\n> \n> Matt Kurbat\n> \n> -----Original Message-----\n> From: Christopher Berry [mailto:cr-berry at uchicago.edu]\n> Sent: Tuesday, January 30, 2001 10:39 PM\n> To: Kurbat, Matt\n> Subject: RE: [S] White Standard Errors\n> \n> Matt -\n> \n> I will not bother summing the results, as Frank Harrell sent his directly to\n> the list.  I've only received one other response (besides yours) which was\n> also a reference to the Frank Harrell code.  It seems to do what I was\n> looking for; perhaps the same applies for you.  Thanks again for your\n> feedback.\n> \n> Best,\n> Chris\n> \n> -----Original Message-----\n> From: Kurbat, Matt [mailto:Matt.Kurbat at kmv.com]\n> Sent: Tuesday, January 30, 2001 12:42 PM\n> To: 'Christopher Berry'\n> Subject: RE: [S] White Standard Errors\n> \n> Please do repost any replies you get to this because I'm also interested.\n> \n> Also, I believe that there was an article in a recent issue of American\n> Statistician\n> (one in late 2000) on this topic.  You might find it interesting because it\n> talks\n> about several variations on this idea and compares their relative\n> performance in small samples.\n> If memory serves, White's was not the best in small samples (but memory may\n> be wrong!).\n> \n> matt kurbat\n> \n> -----Original Message-----\n> From: Christopher Berry [mailto:cr-berry at uchicago.edu]\n> Sent: Tuesday, January 30, 2001 10:26 AM\n> To: s-news at wubios.wustl.edu\n> Subject: [S] White Standard Errors\n> \n> Is there a way to obtain White's heteroskedastic-consistent standard errors\n> with lm?  I've searched the online help and s-news archive with no luck.\n> I'm new to Splus, so perhaps I'm missing something obvious.  Any help will\n> be much appreciated.  Thanks.\n> \n> Chris Berry\n> University of Chicago\n> Department of Political Science\n> \n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n\n-- \nFrank E Harrell Jr              Prof. of Biostatistics & Statistics\nDiv. of Biostatistics & Epidem. Dept. of Health Evaluation Sciences\nU. Virginia School of Medicine  http://hesweb1.med.virginia.edu/biostat",
       "body_snippet": "Because of the Long article I added an \"efron\" option to robcov()\na few months ago.  -Frank Harrell\n\n\"Kurbat, Matt\" wrote:\n> \n> Chris,\n> I found the reference I mentioned:\n>         Using heteroskedas",
-      "thread_id": "thread-d6c74e489a20",
-      "thread_depth": 1,
+      "thread_id": "thread-8ae2e7f76716",
+      "thread_depth": 2,
       "month": "2001-01"
     },
     {
@@ -4040,12 +4040,12 @@
       "date": "2001-01-31T22:11:11Z",
       "subject": "FW: ks.gof for a uniform distribution",
       "subject_clean": "ks.gof for a uniform distribution",
-      "in_reply_to": null,
+      "in_reply_to": "<4495FF893208D411ABEB00508BCA32BBDF1AEC@ntserver2.kmv.com>",
       "references": [],
       "body_plain": "Thanks to Jorge Sirgo and Jim Pratt for the answer to my question:\n\n> ks.gof(x,distribution=\"uniform\",alternative = \"two.sided\", min=0,max=1)\n\n-Matt\n\n-----Original Message-----\n\nSubject: [S] ks.gof for a uniform distribution\n\nDear Splus Users,\n\nI would like to test if the sample distribution of x is uniform (U[0,1] - x\nis a vector of proportions).\nI can do this with ks.gof.  However, this requires distributional parameters\nfor the uniform distribution.  If I omit them, I get the following:\n\n> ks.gof(x, distribution = \"uniform\")\nError in ks.gof(x, distribution = \"uniform\"): For distributions other than\nthe normal or exponential, you must supply the parameters.\n\nMy question is: what is the format/syntax for parameters for a uniform\ndistribution in this test?\n\nThank you,\nMatt\n\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Thanks to Jorge Sirgo and Jim Pratt for the answer to my question:\n\n> ks.gof(x,distribution=\"uniform\",alternative = \"two.sided\", min=0,max=1)\n\n-Matt\n\n-----Original Message-----\n\nSubject: [S] ks.gof fo",
-      "thread_id": "thread-fb9d9cb23093",
-      "thread_depth": 0,
+      "thread_id": "thread-d884f60a6f7a",
+      "thread_depth": 1,
       "month": "2001-01"
     },
     {
@@ -4168,12 +4168,13 @@
     {
       "id": "thread-b596dd7ba20e",
       "subject": "What software is faster than S-Plus?",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Bill.Venables at CMIS.CSIRO.AU",
         "Janisse, James"
       ],
       "started": "2001-01-02T22:29:08Z",
-      "last_reply": "2001-01-02T22:29:08Z",
+      "last_reply": "2001-01-02T23:08:35Z",
       "root_message_id": "msg-b596dd7ba20e"
     },
     {
@@ -4187,17 +4188,6 @@
       "started": "2001-01-02T22:36:33Z",
       "last_reply": "2001-01-03T14:18:51Z",
       "root_message_id": "msg-48d324226b27"
-    },
-    {
-      "id": "thread-093d6366c8e6",
-      "subject": "What software is faster than S-Plus?",
-      "message_count": 1,
-      "participants": [
-        "Bill.Venables at CMIS.CSIRO.AU"
-      ],
-      "started": "2001-01-02T23:08:35Z",
-      "last_reply": "2001-01-02T23:08:35Z",
-      "root_message_id": "msg-093d6366c8e6"
     },
     {
       "id": "thread-477196d82e6d",
@@ -4303,12 +4293,12 @@
     {
       "id": "thread-6144ac9e1747",
       "subject": "lapply question",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Mike Kattan"
       ],
       "started": "2001-01-06T17:23:59Z",
-      "last_reply": "2001-01-06T17:23:59Z",
+      "last_reply": "2001-01-06T22:08:29Z",
       "root_message_id": "msg-6144ac9e1747"
     },
     {
@@ -4321,17 +4311,6 @@
       "started": "2001-01-06T19:34:40Z",
       "last_reply": "2001-01-06T19:34:40Z",
       "root_message_id": "msg-ebb2d8bf755f"
-    },
-    {
-      "id": "thread-e4dd59989bcc",
-      "subject": "lapply question",
-      "message_count": 1,
-      "participants": [
-        "Mike Kattan"
-      ],
-      "started": "2001-01-06T22:08:29Z",
-      "last_reply": "2001-01-06T22:08:29Z",
-      "root_message_id": "msg-e4dd59989bcc"
     },
     {
       "id": "thread-ff0120932ff8",
@@ -4380,12 +4359,13 @@
     {
       "id": "thread-a151e4f904c1",
       "subject": "text output to report",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Winifred Lambert"
+        "Winifred Lambert",
+        "jean_adams at usgs.gov"
       ],
       "started": "2001-01-08T15:58:32Z",
-      "last_reply": "2001-01-08T15:58:32Z",
+      "last_reply": "2001-01-08T19:45:52Z",
       "root_message_id": "msg-a151e4f904c1"
     },
     {
@@ -4398,17 +4378,6 @@
       "started": "2001-01-08T19:00:18Z",
       "last_reply": "2001-01-08T19:00:18Z",
       "root_message_id": "msg-13fadb1bbd68"
-    },
-    {
-      "id": "thread-0652275f6c5b",
-      "subject": "text output to report",
-      "message_count": 1,
-      "participants": [
-        "jean_adams at usgs.gov"
-      ],
-      "started": "2001-01-08T19:45:52Z",
-      "last_reply": "2001-01-08T19:45:52Z",
-      "root_message_id": "msg-0652275f6c5b"
     },
     {
       "id": "thread-f53e9287ebc4",
@@ -4615,13 +4584,13 @@
     {
       "id": "thread-af5478af47fb",
       "subject": "Question, How can I draw this graph",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "M.T Shakeri",
         "Tim Hesterberg"
       ],
       "started": "2001-01-10T12:09:29Z",
-      "last_reply": "2001-01-10T22:36:52Z",
+      "last_reply": "2001-01-11T11:52:58Z",
       "root_message_id": "msg-af5478af47fb"
     },
     {
@@ -4682,23 +4651,25 @@
     {
       "id": "thread-7913dd9e19ca",
       "subject": "multinomial logit",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Alan Zaslavsky",
         "Man S. Kwok"
       ],
       "started": "2001-01-11T08:43:11Z",
-      "last_reply": "2001-01-11T08:43:11Z",
+      "last_reply": "2001-01-11T14:46:18Z",
       "root_message_id": "msg-7913dd9e19ca"
     },
     {
       "id": "thread-ce1a11ee7674",
       "subject": "S Compiler",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
+        "David M Smith",
         "Pierre Delfosse"
       ],
       "started": "2001-01-11T10:39:40Z",
-      "last_reply": "2001-01-11T10:39:40Z",
+      "last_reply": "2001-01-12T17:04:44Z",
       "root_message_id": "msg-ce1a11ee7674"
     },
     {
@@ -4713,17 +4684,6 @@
       "root_message_id": "msg-de1e997c49b3"
     },
     {
-      "id": "thread-f69bf52d8cd9",
-      "subject": "Question, How can I draw this graph",
-      "message_count": 1,
-      "participants": [
-        "M.T Shakeri"
-      ],
-      "started": "2001-01-11T11:52:58Z",
-      "last_reply": "2001-01-11T11:52:58Z",
-      "root_message_id": "msg-f69bf52d8cd9"
-    },
-    {
       "id": "thread-b64f29629ee3",
       "subject": "COURSE: S-PLUS Fundamentals, 6th-9th March 2001, London UK",
       "message_count": 1,
@@ -4733,17 +4693,6 @@
       "started": "2001-01-11T12:00:06Z",
       "last_reply": "2001-01-11T12:00:06Z",
       "root_message_id": "msg-b64f29629ee3"
-    },
-    {
-      "id": "thread-ca230d1d7504",
-      "subject": "multinomial logit",
-      "message_count": 1,
-      "participants": [
-        "Alan Zaslavsky"
-      ],
-      "started": "2001-01-11T14:46:18Z",
-      "last_reply": "2001-01-11T14:46:18Z",
-      "root_message_id": "msg-ca230d1d7504"
     },
     {
       "id": "thread-8f56414760e6",
@@ -4792,8 +4741,9 @@
     {
       "id": "thread-9e0186e210d0",
       "subject": "CART question",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
+        "Bill.Venables at CMIS.CSIRO.AU",
         "Eric Wong",
         "Frank E Harrell Jr"
       ],
@@ -4834,29 +4784,6 @@
       "started": "2001-01-12T03:58:39Z",
       "last_reply": "2001-01-12T22:33:47Z",
       "root_message_id": "msg-1856177b6ea9"
-    },
-    {
-      "id": "thread-81ad840a9490",
-      "subject": "CART question",
-      "message_count": 1,
-      "participants": [
-        "Bill.Venables at CMIS.CSIRO.AU"
-      ],
-      "started": "2001-01-12T04:29:22Z",
-      "last_reply": "2001-01-12T04:29:22Z",
-      "root_message_id": "msg-81ad840a9490"
-    },
-    {
-      "id": "thread-c4a055435405",
-      "subject": "S Compiler",
-      "message_count": 2,
-      "participants": [
-        "David M Smith",
-        "Pierre Delfosse"
-      ],
-      "started": "2001-01-12T11:10:44Z",
-      "last_reply": "2001-01-12T17:04:44Z",
-      "root_message_id": "msg-c4a055435405"
     },
     {
       "id": "thread-d4d0785b8fb0",
@@ -4927,12 +4854,13 @@
     {
       "id": "thread-d53a52b4d98b",
       "subject": "Survival estimates from coxph() with strata()",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
-        "Paul Y. Peng"
+        "Paul Y. Peng",
+        "Terry Therneau"
       ],
       "started": "2001-01-13T04:17:46Z",
-      "last_reply": "2001-01-13T04:17:46Z",
+      "last_reply": "2001-01-15T14:58:45Z",
       "root_message_id": "msg-d53a52b4d98b"
     },
     {
@@ -4945,18 +4873,6 @@
       "started": "2001-01-13T17:15:36Z",
       "last_reply": "2001-01-13T17:15:36Z",
       "root_message_id": "msg-998dfe63083c"
-    },
-    {
-      "id": "thread-1e354708615a",
-      "subject": "Survival estimates from coxph() with strata()",
-      "message_count": 2,
-      "participants": [
-        "Paul Y. Peng",
-        "Terry Therneau"
-      ],
-      "started": "2001-01-14T20:33:12Z",
-      "last_reply": "2001-01-15T14:58:45Z",
-      "root_message_id": "msg-1e354708615a"
     },
     {
       "id": "thread-7e4deb2da368",
@@ -4984,12 +4900,13 @@
     {
       "id": "thread-99ee274fb35a",
       "subject": "double integration",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
+        "ALEC STEPHENSON",
         "Jingli Song"
       ],
       "started": "2001-01-15T04:17:06Z",
-      "last_reply": "2001-01-15T04:17:06Z",
+      "last_reply": "2001-01-18T01:50:13Z",
       "root_message_id": "msg-99ee274fb35a"
     },
     {
@@ -5027,17 +4944,6 @@
       "root_message_id": "msg-e24c5033190b"
     },
     {
-      "id": "thread-7370e8077bb3",
-      "subject": "double integration",
-      "message_count": 1,
-      "participants": [
-        "Jingli Song"
-      ],
-      "started": "2001-01-15T20:29:48Z",
-      "last_reply": "2001-01-15T20:29:48Z",
-      "root_message_id": "msg-7370e8077bb3"
-    },
-    {
       "id": "thread-e958978c1480",
       "subject": "CFP: International Conference on Computational Intelligence for Modelling, Control and Automation - CIMCA'2001",
       "message_count": 1,
@@ -5051,8 +4957,9 @@
     {
       "id": "thread-6541a04e2c70",
       "subject": "Concatenation of digit",
-      "message_count": 3,
+      "message_count": 4,
       "participants": [
+        "BALCH, ALFRED H [PHR/1005]",
         "Diego Kuonen",
         "Olivier.Renaud at pse.unige.ch"
       ],
@@ -5106,17 +5013,6 @@
       "started": "2001-01-16T18:46:16Z",
       "last_reply": "2001-01-16T20:01:21Z",
       "root_message_id": "msg-12a58ffae5f6"
-    },
-    {
-      "id": "thread-1511f6ead0bc",
-      "subject": "Concatenation of digit",
-      "message_count": 1,
-      "participants": [
-        "BALCH, ALFRED H [PHR/1005]"
-      ],
-      "started": "2001-01-16T21:12:39Z",
-      "last_reply": "2001-01-16T21:12:39Z",
-      "root_message_id": "msg-1511f6ead0bc"
     },
     {
       "id": "thread-7cbf24628bae",
@@ -5189,26 +5085,16 @@
     {
       "id": "thread-dd1dd9c4efab",
       "subject": "Ed50",
-      "message_count": 3,
+      "message_count": 4,
       "participants": [
         "Christmann, Andreas",
+        "Lori B Pfahler",
         "Nathan Leon Pace, MD, MStat",
         "Prof Brian D Ripley"
       ],
       "started": "2001-01-18T00:50:37Z",
-      "last_reply": "2001-01-18T07:22:46Z",
+      "last_reply": "2001-01-18T16:19:05Z",
       "root_message_id": "msg-dd1dd9c4efab"
-    },
-    {
-      "id": "thread-eae70b182902",
-      "subject": "double integration",
-      "message_count": 1,
-      "participants": [
-        "ALEC STEPHENSON"
-      ],
-      "started": "2001-01-18T01:50:13Z",
-      "last_reply": "2001-01-18T01:50:13Z",
-      "root_message_id": "msg-eae70b182902"
     },
     {
       "id": "thread-94d280888608",
@@ -5220,17 +5106,6 @@
       "started": "2001-01-18T15:14:35Z",
       "last_reply": "2001-01-18T15:14:35Z",
       "root_message_id": "msg-94d280888608"
-    },
-    {
-      "id": "thread-ea4a4ce2a308",
-      "subject": "Re[2]: Ed50",
-      "message_count": 1,
-      "participants": [
-        "Lori B Pfahler"
-      ],
-      "started": "2001-01-18T16:19:05Z",
-      "last_reply": "2001-01-18T16:19:05Z",
-      "root_message_id": "msg-ea4a4ce2a308"
     },
     {
       "id": "thread-c9d061e22028",
@@ -5269,12 +5144,12 @@
     {
       "id": "thread-78a58526d30a",
       "subject": "initial values in nls",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Remigijus Lapinskas"
       ],
       "started": "2001-01-19T12:46:42Z",
-      "last_reply": "2001-01-19T12:46:42Z",
+      "last_reply": "2001-01-23T16:08:52Z",
       "root_message_id": "msg-78a58526d30a"
     },
     {
@@ -5291,24 +5166,14 @@
     {
       "id": "thread-8a028d5dd686",
       "subject": "Hierarchical sampling",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Bill.Venables at CMIS.CSIRO.AU",
         "Fredrik Lundgren"
       ],
       "started": "2001-01-20T17:23:54Z",
-      "last_reply": "2001-01-20T17:23:54Z",
-      "root_message_id": "msg-8a028d5dd686"
-    },
-    {
-      "id": "thread-c496ed835034",
-      "subject": "Hierarchical sampling",
-      "message_count": 1,
-      "participants": [
-        "Bill.Venables at CMIS.CSIRO.AU"
-      ],
-      "started": "2001-01-20T23:31:06Z",
       "last_reply": "2001-01-20T23:31:06Z",
-      "root_message_id": "msg-c496ed835034"
+      "root_message_id": "msg-8a028d5dd686"
     },
     {
       "id": "thread-e95463de08e6",
@@ -5381,25 +5246,15 @@
       "root_message_id": "msg-2acda05198f6"
     },
     {
-      "id": "thread-b8841a3ba3c1",
-      "subject": "initial values in nls",
-      "message_count": 1,
-      "participants": [
-        "Remigijus Lapinskas"
-      ],
-      "started": "2001-01-23T16:08:52Z",
-      "last_reply": "2001-01-23T16:08:52Z",
-      "root_message_id": "msg-b8841a3ba3c1"
-    },
-    {
       "id": "thread-deb6e0930e24",
       "subject": "importing data from excel (2)",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Dan King"
+        "Dan King",
+        "andreas.krause at pharma.Novartis.com"
       ],
       "started": "2001-01-23T16:16:50Z",
-      "last_reply": "2001-01-23T16:16:50Z",
+      "last_reply": "2001-01-24T12:50:56Z",
       "root_message_id": "msg-deb6e0930e24"
     },
     {
@@ -5438,24 +5293,14 @@
     {
       "id": "thread-0dd5796f999f",
       "subject": "MathSoft Inc. changes name to Insightful Corporation",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "David M Smith"
-      ],
-      "started": "2001-01-23T21:22:48Z",
-      "last_reply": "2001-01-23T21:22:48Z",
-      "root_message_id": "msg-0dd5796f999f"
-    },
-    {
-      "id": "thread-3b41bd1d70b4",
-      "subject": "MathSoft Inc. changes name to Insightful Corporation",
-      "message_count": 1,
-      "participants": [
+        "David M Smith",
         "pooh rondstr"
       ],
-      "started": "2001-01-23T23:29:43Z",
+      "started": "2001-01-23T21:22:48Z",
       "last_reply": "2001-01-23T23:29:43Z",
-      "root_message_id": "msg-3b41bd1d70b4"
+      "root_message_id": "msg-0dd5796f999f"
     },
     {
       "id": "thread-5dc47342a559",
@@ -5471,35 +5316,13 @@
     {
       "id": "thread-39a9b8568b88",
       "subject": "bootstrapping or jackknifing rotated PCA/factor analyses",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Chris Evans"
       ],
       "started": "2001-01-24T11:17:37Z",
-      "last_reply": "2001-01-24T11:17:37Z",
-      "root_message_id": "msg-39a9b8568b88"
-    },
-    {
-      "id": "thread-7cf363fae318",
-      "subject": "bootstrapping or jackknifing rotated PCA/factor analyses",
-      "message_count": 1,
-      "participants": [
-        "Chris Evans"
-      ],
-      "started": "2001-01-24T12:17:34Z",
       "last_reply": "2001-01-24T12:17:34Z",
-      "root_message_id": "msg-7cf363fae318"
-    },
-    {
-      "id": "thread-7e8691c0a7cf",
-      "subject": "importing data from excel (2)",
-      "message_count": 1,
-      "participants": [
-        "andreas.krause at pharma.Novartis.com"
-      ],
-      "started": "2001-01-24T12:50:56Z",
-      "last_reply": "2001-01-24T12:50:56Z",
-      "root_message_id": "msg-7e8691c0a7cf"
+      "root_message_id": "msg-39a9b8568b88"
     },
     {
       "id": "thread-16ac0bf440e6",
@@ -5560,12 +5383,13 @@
     {
       "id": "thread-8454eabb8eab",
       "subject": "test de mantel",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Stéphanie Blanc-Manel",
         "stephanie manel"
       ],
       "started": "2001-01-25T09:22:01Z",
-      "last_reply": "2001-01-25T09:22:01Z",
+      "last_reply": "2001-01-25T16:55:45Z",
       "root_message_id": "msg-8454eabb8eab"
     },
     {
@@ -5624,17 +5448,6 @@
       "root_message_id": "msg-f4942e2467af"
     },
     {
-      "id": "thread-c4a9c8a73a81",
-      "subject": "test de mantel",
-      "message_count": 1,
-      "participants": [
-        "Stéphanie Blanc-Manel"
-      ],
-      "started": "2001-01-25T16:55:45Z",
-      "last_reply": "2001-01-25T16:55:45Z",
-      "root_message_id": "msg-c4a9c8a73a81"
-    },
-    {
       "id": "thread-7a492a06e15e",
       "subject": "Format for Surv() function",
       "message_count": 2,
@@ -5648,12 +5461,12 @@
     {
       "id": "thread-43e505483294",
       "subject": "Enhanced Box Plot",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
         "King, Calvin"
       ],
       "started": "2001-01-25T22:38:25Z",
-      "last_reply": "2001-01-25T22:38:25Z",
+      "last_reply": "2001-01-29T18:04:08Z",
       "root_message_id": "msg-43e505483294"
     },
     {
@@ -5727,24 +5540,13 @@
     {
       "id": "thread-25a98e72c98d",
       "subject": "F tests and gams in S+",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Andy Scott"
       ],
       "started": "2001-01-26T15:49:07Z",
-      "last_reply": "2001-01-26T15:49:07Z",
-      "root_message_id": "msg-25a98e72c98d"
-    },
-    {
-      "id": "thread-bcda1928e88f",
-      "subject": "F tests and gams in S+",
-      "message_count": 1,
-      "participants": [
-        "Andy Scott"
-      ],
-      "started": "2001-01-26T16:08:35Z",
       "last_reply": "2001-01-26T16:08:35Z",
-      "root_message_id": "msg-bcda1928e88f"
+      "root_message_id": "msg-25a98e72c98d"
     },
     {
       "id": "thread-48cf7cf59045",
@@ -5791,28 +5593,6 @@
       "root_message_id": "msg-09c972b05c3b"
     },
     {
-      "id": "thread-35e41b3b357e",
-      "subject": "Enhanced Box Plot",
-      "message_count": 1,
-      "participants": [
-        "King, Calvin"
-      ],
-      "started": "2001-01-29T15:44:37Z",
-      "last_reply": "2001-01-29T15:44:37Z",
-      "root_message_id": "msg-35e41b3b357e"
-    },
-    {
-      "id": "thread-3fa23b1392c0",
-      "subject": "Enhanced Box Plot",
-      "message_count": 1,
-      "participants": [
-        "King, Calvin"
-      ],
-      "started": "2001-01-29T18:04:08Z",
-      "last_reply": "2001-01-29T18:04:08Z",
-      "root_message_id": "msg-3fa23b1392c0"
-    },
-    {
       "id": "thread-419418f59bec",
       "subject": "mahalanobis metric for clustering",
       "message_count": 1,
@@ -5826,24 +5606,14 @@
     {
       "id": "thread-dae8400c5686",
       "subject": "looking for the C-routine 'spline_basis'",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "David Homiak",
         "Jin Zhu"
       ],
       "started": "2001-01-29T21:27:08Z",
-      "last_reply": "2001-01-29T21:27:08Z",
-      "root_message_id": "msg-dae8400c5686"
-    },
-    {
-      "id": "thread-d75abce59590",
-      "subject": "looking for the C-routine 'spline_basis'",
-      "message_count": 1,
-      "participants": [
-        "David Homiak"
-      ],
-      "started": "2001-01-29T22:05:16Z",
       "last_reply": "2001-01-29T22:05:16Z",
-      "root_message_id": "msg-d75abce59590"
+      "root_message_id": "msg-dae8400c5686"
     },
     {
       "id": "thread-f24c099c106c",
@@ -5884,12 +5654,13 @@
     {
       "id": "thread-b38930a2fd34",
       "subject": "Degrees of freedom in GAM with smoothing spline",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Prof Brian Ripley",
         "pierre.joyet at basler.ch"
       ],
       "started": "2001-01-30T09:08:05Z",
-      "last_reply": "2001-01-30T09:08:05Z",
+      "last_reply": "2001-01-30T10:09:26Z",
       "root_message_id": "msg-b38930a2fd34"
     },
     {
@@ -5904,81 +5675,28 @@
       "root_message_id": "msg-4c9dd5c408f0"
     },
     {
-      "id": "thread-c10f53e24ad3",
-      "subject": "Degrees of freedom in GAM with smoothing spline",
-      "message_count": 1,
-      "participants": [
-        "Prof Brian Ripley"
-      ],
-      "started": "2001-01-30T10:09:26Z",
-      "last_reply": "2001-01-30T10:09:26Z",
-      "root_message_id": "msg-c10f53e24ad3"
-    },
-    {
       "id": "thread-9e3ca08d0f38",
       "subject": "Grouped Binary data Logistic regression",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
-        "Jack, Andrew"
+        "Jack, Andrew",
+        "Prof Brian Ripley"
       ],
       "started": "2001-01-30T11:23:33Z",
-      "last_reply": "2001-01-30T11:23:33Z",
+      "last_reply": "2001-01-30T12:03:20Z",
       "root_message_id": "msg-9e3ca08d0f38"
-    },
-    {
-      "id": "thread-b442965b33c8",
-      "subject": "Grouped Binary data Logistic regression",
-      "message_count": 1,
-      "participants": [
-        "Jack, Andrew"
-      ],
-      "started": "2001-01-30T11:58:15Z",
-      "last_reply": "2001-01-30T11:58:15Z",
-      "root_message_id": "msg-b442965b33c8"
     },
     {
       "id": "thread-d259944a5c82",
       "subject": "AR process correlations",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
+        "Bishop, Lane",
         "Peter England"
       ],
       "started": "2001-01-30T12:00:42Z",
-      "last_reply": "2001-01-30T12:00:42Z",
-      "root_message_id": "msg-d259944a5c82"
-    },
-    {
-      "id": "thread-d22f496f187e",
-      "subject": "Grouped Binary data Logistic regression",
-      "message_count": 1,
-      "participants": [
-        "Prof Brian Ripley"
-      ],
-      "started": "2001-01-30T12:03:20Z",
-      "last_reply": "2001-01-30T12:03:20Z",
-      "root_message_id": "msg-d22f496f187e"
-    },
-    {
-      "id": "thread-dc3c327f7778",
-      "subject": "AR process correlations",
-      "message_count": 1,
-      "participants": [
-        "Peter England"
-      ],
-      "started": "2001-01-30T12:18:27Z",
-      "last_reply": "2001-01-30T12:18:27Z",
-      "root_message_id": "msg-dc3c327f7778"
-    },
-    {
-      "id": "thread-335d37a3b570",
-      "subject": "AR process correlations",
-      "message_count": 1,
-      "participants": [
-        "Bishop, Lane"
-      ],
-      "started": "2001-01-30T13:32:42Z",
       "last_reply": "2001-01-30T13:32:42Z",
-      "root_message_id": "msg-335d37a3b570"
+      "root_message_id": "msg-d259944a5c82"
     },
     {
       "id": "thread-4eefd41e53b5",
@@ -5992,22 +5710,12 @@
       "root_message_id": "msg-4eefd41e53b5"
     },
     {
-      "id": "thread-997f8064b1d2",
-      "subject": "gamma distribution",
-      "message_count": 1,
-      "participants": [
-        "Prof Brian Ripley"
-      ],
-      "started": "2001-01-30T15:57:22Z",
-      "last_reply": "2001-01-30T15:57:22Z",
-      "root_message_id": "msg-997f8064b1d2"
-    },
-    {
       "id": "thread-cdc33d3b1aa9",
       "subject": "gamma distribution",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Olivier Martin"
+        "Olivier Martin",
+        "Prof Brian Ripley"
       ],
       "started": "2001-01-30T16:44:11Z",
       "last_reply": "2001-01-30T16:44:11Z",
@@ -6016,10 +5724,12 @@
     {
       "id": "thread-5e7137fb3c38",
       "subject": "Confidence Interval on Quotient",
-      "message_count": 3,
+      "message_count": 5,
       "participants": [
         "Charles C. Berry",
+        "Dave Krantz",
         "Eric Zivot",
+        "Rolf Turner",
         "Schmitt, Paul W."
       ],
       "started": "2001-01-30T17:07:49Z",
@@ -6029,36 +5739,16 @@
     {
       "id": "thread-8ae2e7f76716",
       "subject": "White Standard Errors",
-      "message_count": 2,
+      "message_count": 4,
       "participants": [
         "Christopher Berry",
+        "Frank E Harrell Jr",
+        "Kurbat, Matt",
         "fharrell at virginia.edu"
       ],
       "started": "2001-01-30T18:25:52Z",
-      "last_reply": "2001-01-30T20:54:34Z",
+      "last_reply": "2001-01-31T18:03:55Z",
       "root_message_id": "msg-8ae2e7f76716"
-    },
-    {
-      "id": "thread-0fedaef5a896",
-      "subject": "Confidence Interval on Quotient",
-      "message_count": 1,
-      "participants": [
-        "Dave Krantz"
-      ],
-      "started": "2001-01-30T18:59:04Z",
-      "last_reply": "2001-01-30T18:59:04Z",
-      "root_message_id": "msg-0fedaef5a896"
-    },
-    {
-      "id": "thread-a94ac3962bd3",
-      "subject": "Confidence Interval on Quotient",
-      "message_count": 1,
-      "participants": [
-        "Rolf Turner"
-      ],
-      "started": "2001-01-30T19:03:08Z",
-      "last_reply": "2001-01-30T19:03:08Z",
-      "root_message_id": "msg-a94ac3962bd3"
     },
     {
       "id": "thread-06f10f212d3e",
@@ -6131,38 +5821,15 @@
       "root_message_id": "msg-08b544862481"
     },
     {
-      "id": "thread-d6c74e489a20",
-      "subject": "White Standard Errors",
-      "message_count": 2,
-      "participants": [
-        "Frank E Harrell Jr",
-        "Kurbat, Matt"
-      ],
-      "started": "2001-01-31T17:40:43Z",
-      "last_reply": "2001-01-31T18:03:55Z",
-      "root_message_id": "msg-d6c74e489a20"
-    },
-    {
       "id": "thread-fdee78234c0b",
       "subject": "Ordinal Regression",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Huszti, Ella"
       ],
       "started": "2001-01-31T17:59:22Z",
-      "last_reply": "2001-01-31T17:59:22Z",
-      "root_message_id": "msg-fdee78234c0b"
-    },
-    {
-      "id": "thread-f27ee9646d2c",
-      "subject": "Ordinal Regression",
-      "message_count": 1,
-      "participants": [
-        "Huszti, Ella"
-      ],
-      "started": "2001-01-31T18:03:18Z",
       "last_reply": "2001-01-31T18:03:18Z",
-      "root_message_id": "msg-f27ee9646d2c"
+      "root_message_id": "msg-fdee78234c0b"
     },
     {
       "id": "thread-7d01d58f9fc6",
@@ -6190,24 +5857,13 @@
     {
       "id": "thread-d884f60a6f7a",
       "subject": "ks.gof for a uniform distribution",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Kurbat, Matt"
       ],
       "started": "2001-01-31T21:02:38Z",
-      "last_reply": "2001-01-31T21:02:38Z",
-      "root_message_id": "msg-d884f60a6f7a"
-    },
-    {
-      "id": "thread-fb9d9cb23093",
-      "subject": "ks.gof for a uniform distribution",
-      "message_count": 1,
-      "participants": [
-        "Kurbat, Matt"
-      ],
-      "started": "2001-01-31T22:11:11Z",
       "last_reply": "2001-01-31T22:11:11Z",
-      "root_message_id": "msg-fb9d9cb23093"
+      "root_message_id": "msg-d884f60a6f7a"
     },
     {
       "id": "thread-d8405ea41c5c",

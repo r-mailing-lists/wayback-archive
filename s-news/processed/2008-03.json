@@ -125,12 +125,12 @@
       "date": "2008-03-04T16:39:47Z",
       "subject": "Re: three questions",
       "subject_clean": "three questions",
-      "in_reply_to": null,
+      "in_reply_to": "<BAY105-W210DDFEFDB30FD83E52739B6100@phx.gbl>",
       "references": [],
       "body_plain": "On Tuesday, March 04, 2008 9:37, jose Bartolomei wrote:\n\n > ...It is possible to manipulate or  use  the\n > crosstabs  (ct)  result  values  as separate\n > entities (eg., a<- first row, last  column)?\n\nIf by \"result values\" you mean the counts of each category the\ncrosstabs function returns an array of counts (among other\nthings, e.g., attributes containing the marginals) that can be\naccessed by index. If all you want is the counts, you can\nuse table():\n\n   > attach ( solder [ solder $ skips > 10 , ] )\n   > xt <- table ( Solder , Opening )\n   > detach()\n   > xt\n          S  M L\n    Thin 99 15 9\n   Thick 24 11 0\n   >\n\nand access \"result  values as separate entities\" with indices.\n\nFor example, here xt is a 2 X 3 matrix and the first row, last\ncolumn is:\n\n   > xt [ 1 , 3 ]\n   [1] 9\n   >\n\nand the entire first row is:\n\n   > xt [ 1 , 1:3 ]\n     S  M L\n    99 15 9\n   >\n\n > ...Does a weight function to be use with  ct\n > exist?  I  need  to  use   a   vector   that\n > represents a weight for my data....\n\nAre you saying you have frequency weights?  Cant you just multiply\nyour count matrix by your weights?  Like,\n\n   > uw <- xt / 9\n   > uw\n             S    M L\n    Thin 11.00 1.67 1\n   Thick  2.67 1.22 0\n   > uw * 9\n          S  M L\n    Thin 99 15 9\n   Thick 24 11 0\n   >\n\nor\n\n   > wt <- matrix ( c ( 10 , 20 , 30 , 40 , 50 , 60 ) , nrow = 2 ,\nbyrow=F)\n   > wt\n        [,1] [,2] [,3]\n   [1,]   10   30   50\n   [2,]   20   40   60\n   > xt * wt\n           S   M   L\n    Thin 990 450 450\n   Thick 480 440   0\n   >\n\n--\nDavid Huffer",
       "body_snippet": "On Tuesday, March 04, 2008 9:37, jose Bartolomei wrote:\n\n > ...It is possible to manipulate or  use  the\n > crosstabs  (ct)  result  values  as separate\n > entities (eg., a<- first row, last  column)?",
-      "thread_id": "thread-95c45d9c36f3",
-      "thread_depth": 0,
+      "thread_id": "thread-4e8c1275eb75",
+      "thread_depth": 1,
       "month": "2008-03"
     },
     {
@@ -207,12 +207,12 @@
       "date": "2008-03-05T13:36:46Z",
       "subject": "Constrained regression",
       "subject_clean": "Constrained regression",
-      "in_reply_to": null,
+      "in_reply_to": "<000f01c87ce2$0d946020$3502a8c0@LAPTOP>",
       "references": [],
       "body_plain": "I would like to acknowledge the answers I received from Tom Filloon, Mike Cheung and Berwyn Turlach.\n\nBerwyn's response was exactly what I needed. Use solve.QP from the quadprog package in R. S-Plus has the equivalent function solveQP in the NuOpt module.\n\nBerwyn's response is below\n\nG'day Carlos,\n\nOn Mon, Mar 3, 2008 at 11:52 AM\n\nCarlos Alzola <calzola at cox.net> wrote:\n\n>  I am trying to get information on how to fit a linear regression with \n\n> constrained parameters. Specifically, I have 8 predictors , their \n\n> coeffiecients should all be non-negative and add up to 1. I understand \n\n> it is a quadratic programming problem but I have no experience in the \n\n> subject. I searched the archives but the results were inconclusive.\n\n>\n\n>  Could someone provide suggestions and references to the literature, \n\n> please?\n\nA suggestion:\n\n> library(MASS)   ## to access the Boston data\n\n> designmat <- model.matrix(medv~., data=\"\" Dmat <- \n\n> crossprod(designmat, designmat) dvec <- crossprod(designmat, \n\n> Boston$medv) Amat <- cbind(1, diag(NROW(Dmat))) bvec <- c(1, \n\n> rep(0,NROW(Dmat)) meq <- 1\n\n> library(quadprog)\n\n> res <- solve.QP(Dmat, dvec, Amat, bvec, meq)\n\nThe solution seems to contain values that are, for all practical purposes, actually zero:\n\n> res$solution\n\n [1]  4.535581e-16  2.661931e-18  1.016929e-01 -1.850699e-17  [5]  1.458219e-16 -3.892418e-15  8.544939e-01  0.000000e+00  [9]  2.410742e-16  2.905722e-17 -5.700600e-20 -4.227261e-17 [13]  4.381328e-02 -3.723065e-18\n\nSo perhaps better:\n\n> zapsmall(res$solution)\n\n [1] 0.0000000 0.0000000 0.1016929 0.0000000 0.0000000 0.0000000  [7] 0.8544939 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 [13] 0.0438133 0.0000000\n\nSo the estimates seem to follow the constraints.\n\nAnd the unconstrained solution is:\n\n> res$unconstrainted.solution\n\n [1]  3.645949e+01 -1.080114e-01  4.642046e-02  2.055863e-02  [5]  2.686734e+00 -1.776661e+01  3.809865e+00  6.922246e-04  [9] -1.475567e+00  3.060495e-01 -1.233459e-02 -9.527472e-01 [13]  9.311683e-03 -5.247584e-01\n\nwhich seems to coincide with what lm() thinks it should be:\n\n> coef(lm(medv~., Boston))\n\n  (Intercept)          crim            zn         indus          chas \n\n 3.645949e+01 -1.080114e-01  4.642046e-02  2.055863e-02  2.686734e+00 \n\n          nox            rm           age           dis           rad \n\n-1.776661e+01  3.809865e+00  6.922246e-04 -1.475567e+00  3.060495e-01 \n\n          tax       ptratio         black         lstat \n\n-1.233459e-02 -9.527472e-01  9.311683e-03 -5.247584e-01 \n\nSo there seem to be no numeric problems.  Otherwise we could have done something else (e.g calculate the QR factorization of the design matrix, say X, and give the R factor to solve.QP, instead of calculating X'X and giving that one to solve.QP).\n\nIf the intercept is not supposed to be included in the set of constrained estimates, then something like the following can be done:\n\n> Amat[1,] <- 0\n\n> res <- solve.QP(Dmat, dvec, Amat, bvec, meq)\n\n> zapsmall(res$solution)\n\n [1] 6.073972 0.000000 0.109124 0.000000 0.000000 0.000000 0.863421  [8] 0.000000 0.000000 0.000000 0.000000 0.000000 0.027455 0.000000\n\nOf course, since after the first command in that last block the second column of Amat contains only zeros\n\n> Amat[,2]\n\n [1] 0 0 0 0 0 0 0 0 0 0 0 0 0 0\n\nwe might as well have removed it (and the corresponding entry in bvec)\n\n> Amat <- Amat[, -2]\n\n> bvec <- bvec[-2]\n\nbefore calling solve.QP().\n\nNote, the Boston data set was only used to illustrate how to fit such models, I do not want to imply that these models are sensible for these data. :-)\n\nHope this helps.\n\nCheers,\n\n        Berwin\n\nCarlos Alzola\n\ncalzola at cox.net\n\n(703) 242-6747",
       "body_snippet": "I would like to acknowledge the answers I received from Tom Filloon, Mike Cheung and Berwyn Turlach.\n\nBerwyn's response was exactly what I needed. Use solve.QP from the quadprog package in R. S-Plus h",
-      "thread_id": "thread-088ea969f52c",
-      "thread_depth": 0,
+      "thread_id": "thread-06e18485a2e5",
+      "thread_depth": 1,
       "month": "2008-03"
     },
     {
@@ -223,12 +223,12 @@
       "date": "2008-03-05T14:05:01Z",
       "subject": "Re: Removing levels from a factor",
       "subject_clean": "Removing levels from a factor",
-      "in_reply_to": null,
+      "in_reply_to": "<OFF1008F4C.CE604E7E-ON69257403.001D738D-69257403.002024DF@nt.gov.au>",
       "references": [],
       "body_plain": "The easiest thing is to turn off factors:\n \n > options(stringsAsFactors=F)\n > data$Treatment <- as.character(data$Treatment)\n \n Now you can subset the data frame and things will work as you would anticipate.\n \n Comment: factors are occassionaly useful, but only occasionally.  Much grief \ncan be avoided by turning them off by default.  Our biostat group (>100 people, \nover 1200 projects a year) has had the above option as a part of our global \ndefaults for many years, and has not yet seen a downside to the decision.\n \n        Terry Therneau\n        Mayo Clinic",
       "body_snippet": "The easiest thing is to turn off factors:\n \n > options(stringsAsFactors=F)\n > data$Treatment <- as.character(data$Treatment)\n \n Now you can subset the data frame and things will work as you would anti",
-      "thread_id": "thread-45a0aacc78f5",
-      "thread_depth": 0,
+      "thread_id": "thread-0fb5522267c6",
+      "thread_depth": 1,
       "month": "2008-03"
     },
     {
@@ -245,8 +245,8 @@
       ],
       "body_plain": "I just want to add my two cents on the question of whether or not to use\nfactors in a data frame.  The notion of \"factor\" is built in to the\nstatistical-modeling features of S in a way that can be extremely useful and\nconvenient.  However, S is also well-suited to more general data-management\napplications, and here I have experienced the grief and felt your pain, when\nI have experienced mental lapses regarding the dual numeric/character nature\nof factor variables.\n\nAnother aspect to think about may be execution speed.  We have recently done\nsome benchmarking on factor vs. character columns for certain common\noperations for a large-scale drug-safety application (2 million record\ndatabase).  For operations such as:\n\nsubset.frame <- my.frame[my.frame$var == theValue,]\nor\nsubset.frame <- my.frame[is.element(my.frame$var, theSubset),]\n\nwe found that the character data type was advantageous for \"var\", etc.\nHowever for:\n\nbig.frame <- merge(my.first.frame, my.second.frame, by=\"var\")\nor\nmy.table <- table(my.frame$var)\n\nwe found that the factor data type conferred a speed advantage.  Your\nmileage, of course, may vary, depending on your application, and on the\ndimensions of the data frame involved.  All I can say is that if speed is\nimportant to you, it may be worth experimenting with factor vs. character in\nparticular fields to see which one makes the application run faster.\n\nAlan Hochberg\nVP, Research\nProSanos Corporation\n225 Market St. Ste. 502, \nHarrisburg, PA 17101\nTel 717-635-2124 * Fax 717-635-2575",
       "body_snippet": "I just want to add my two cents on the question of whether or not to use\nfactors in a data frame.  The notion of \"factor\" is built in to the\nstatistical-modeling features of S in a way that can be ext",
-      "thread_id": "thread-45a0aacc78f5",
-      "thread_depth": 1,
+      "thread_id": "thread-0fb5522267c6",
+      "thread_depth": 2,
       "month": "2008-03"
     },
     {
@@ -263,8 +263,8 @@
       ],
       "body_plain": "Terry,\n\nRegarding the 'factors are only occasionally useful' comment,\nwhat are the situations where factors are _actually_ useful?\nDo not (most?) modelling functions that require factors usually\ncoerce character values as required?\n\nThanks, DaveT.\n*************************************\nSilviculture Data Analyst\nOntario Forest Research Institute\nOntario Ministry of Natural Resources\ndavid.john.thompson at ontario.ca\nhttp://ofri.mnr.gov.on.ca\n*************************************\n>-----Original Message-----\n>From: s-news-owner at lists.biostat.wustl.edu \n>[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of \n>Terry Therneau\n>Sent: March 5, 2008 09:05 AM\n>To: s-news at lists.biostat.wustl.edu; Mark.Hearnden at nt.gov.au\n>Subject: Re: [S] Removing levels from a factor\n>\n> The easiest thing is to turn off factors:\n> \n> > options(stringsAsFactors=F)\n> > data$Treatment <- as.character(data$Treatment)\n> \n> Now you can subset the data frame and things will work as you would\nanticipate.\n> \n> Comment: factors are occassionaly useful, but only occasionally.  Much\ngrief \n>can be avoided by turning them off by default.  Our biostat group (>100\npeople, \n>over 1200 projects a year) has had the above option as a part of our\nglobal \n>defaults for many years, and has not yet seen a downside to the\ndecision.\n> \n>       Terry Therneau\n>       Mayo Clinic\n>--------------------------------------------------------------------\n>This message was distributed by s-news at lists.biostat.wustl.edu.  To\n>unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n>the BODY of the message:  unsubscribe s-news",
       "body_snippet": "Terry,\n\nRegarding the 'factors are only occasionally useful' comment,\nwhat are the situations where factors are _actually_ useful?\nDo not (most?) modelling functions that require factors usually\ncoerc",
-      "thread_id": "thread-45a0aacc78f5",
-      "thread_depth": 1,
+      "thread_id": "thread-0fb5522267c6",
+      "thread_depth": 2,
       "month": "2008-03"
     },
     {
@@ -281,8 +281,8 @@
       ],
       "body_plain": "I'm not Terry, but I'll give my opinion.  I find factors quite useful and very \nnatural--but I started programming using S and didn't migrate from another \nlanguage/application.\n\nWhen a modeling application implicitly coerces a vector from character to \nfactor, how does it chose the reference level when using treatment style \ncontrasts? It sorts alphabetically, which means in treatment contrasts you \nwould be comparing all other levels to the level that sorts alphabetically \nfirst. In most applications of medical research, we have a preconceived notion \nof what should be the reference (placebo, active comparator, lowest dose).  By \nusing factors we can explicitly state the ordering.  This is also very useful \nfor displaying data in either tables of figures--ordering is important and this \nis taken care of when constructing the factor objects.\n\nI suppose it's a tradeoff of having to explicitly dump levels when needed or \ntake care of the ordering at the appropriate time just before the \nmodeling/display.  I chose the earlier first method.\n\n--Matt\n\nMatt Austin\nGlobal Statistical Lead, PMO\nDirector, Biostatistics\nAmgen, Inc.\nmaustin at amgen.com\n\n-----Original Message-----\nFrom: s-news-owner at lists.biostat.wustl.edu \n[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Thompson, David (MNR)\nSent: Wednesday, March 05, 2008 7:07 AM\nTo: Terry Therneau; s-news at lists.biostat.wustl.edu; Mark.Hearnden at nt.gov.au\nSubject: Re: [S] Removing levels from a factor\n\nTerry,\n\nRegarding the 'factors are only occasionally useful' comment, what are the \nsituations where factors are _actually_ useful?\nDo not (most?) modelling functions that require factors usually coerce \ncharacter values as required?\n\nThanks, DaveT.\n*************************************\nSilviculture Data Analyst\nOntario Forest Research Institute\nOntario Ministry of Natural Resources\ndavid.john.thompson at ontario.ca\nhttp://ofri.mnr.gov.on.ca\n*************************************\n>-----Original Message-----\n>From: s-news-owner at lists.biostat.wustl.edu\n>[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Terry\n>Therneau\n>Sent: March 5, 2008 09:05 AM\n>To: s-news at lists.biostat.wustl.edu; Mark.Hearnden at nt.gov.au\n>Subject: Re: [S] Removing levels from a factor\n>\n> The easiest thing is to turn off factors:\n>\n> > options(stringsAsFactors=F)\n> > data$Treatment <- as.character(data$Treatment)\n>\n> Now you can subset the data frame and things will work as you would\nanticipate.\n>\n> Comment: factors are occassionaly useful, but only occasionally.  Much\ngrief\n>can be avoided by turning them off by default.  Our biostat group (>100\npeople,\n>over 1200 projects a year) has had the above option as a part of our\nglobal\n>defaults for many years, and has not yet seen a downside to the\ndecision.\n>\n>       Terry Therneau\n>       Mayo Clinic\n>--------------------------------------------------------------------\n>This message was distributed by s-news at lists.biostat.wustl.edu.  To\n>unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n>the BODY of the message:  unsubscribe s-news\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To unsubscribe \nsend e-mail to s-news-request at lists.biostat.wustl.edu with the BODY of the \nmessage:  unsubscribe s-news",
       "body_snippet": "I'm not Terry, but I'll give my opinion.  I find factors quite useful and very \nnatural--but I started programming using S and didn't migrate from another \nlanguage/application.\n\nWhen a modeling appli",
-      "thread_id": "thread-45a0aacc78f5",
-      "thread_depth": 2,
+      "thread_id": "thread-0fb5522267c6",
+      "thread_depth": 3,
       "month": "2008-03"
     },
     {
@@ -331,8 +331,8 @@
       ],
       "body_plain": "Austin, Matt wrote:\n> I'm not Terry, but I'll give my opinion.  I find factors quite useful and very\n> natural--but I started programming using S and didn't migrate from another\n> language/application.\n>\n> When a modeling application implicitly coerces a vector from character to\n> factor, how does it chose the reference level when using treatment style\n> contrasts? It sorts alphabetically, which means in treatment contrasts you\n> would be comparing all other levels to the level that sorts alphabetically\n> first. In most applications of medical research, we have a preconceived notion\n> of what should be the reference (placebo, active comparator, lowest dose).  By\n> using factors we can explicitly state the ordering.  This is also very useful\n> for displaying data in either tables of figures--ordering is important and this\n> is taken care of when constructing the factor objects.\n>\n> I suppose it's a tradeoff of having to explicitly dump levels when needed or\n> take care of the ordering at the appropriate time just before the\n> modeling/display.  I chose the earlier first method.\n>\n> --Matt\n>\n> Matt Austin\n> Global Statistical Lead, PMO\n> Director, Biostatistics\n> Amgen, Inc.\n> maustin at amgen.com\n\nI have to agree with Matt.  In my experience and in the experience of a \nlarge number of R users in our department, the advantages of factors far \noutway the disadvantages.\n\nFrank Harrell\n\n> -----Original Message-----\n> From: s-news-owner at lists.biostat.wustl.edu\n> [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Thompson, David (MNR)\n> Sent: Wednesday, March 05, 2008 7:07 AM\n> To: Terry Therneau; s-news at lists.biostat.wustl.edu; Mark.Hearnden at nt.gov.au\n> Subject: Re: [S] Removing levels from a factor\n>\n> Terry,\n>\n> Regarding the 'factors are only occasionally useful' comment, what are the\n> situations where factors are _actually_ useful?\n> Do not (most?) modelling functions that require factors usually coerce\n> character values as required?\n>\n> Thanks, DaveT.\n> *************************************\n> Silviculture Data Analyst\n> Ontario Forest Research Institute\n> Ontario Ministry of Natural Resources\n> david.john.thompson at ontario.ca\n> http://ofri.mnr.gov.on.ca\n> *************************************\n> > -----Original Message-----\n> > From: s-news-owner at lists.biostat.wustl.edu\n> > [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Terry\n> > Therneau\n> > Sent: March 5, 2008 09:05 AM\n> > To: s-news at lists.biostat.wustl.edu; Mark.Hearnden at nt.gov.au\n> > Subject: Re: [S] Removing levels from a factor\n> >\n> > The easiest thing is to turn off factors:\n> >\n> > > options(stringsAsFactors=F)\n> > > data$Treatment <- as.character(data$Treatment)\n> >\n> > Now you can subset the data frame and things will work as you would\n>\n> anticipate.\n> > Comment: factors are occassionaly useful, but only occasionally.  Much\n>\n> grief\n> > can be avoided by turning them off by default.  Our biostat group (>100\n>\n> people,\n> > over 1200 projects a year) has had the above option as a part of our\n>\n> global\n> > defaults for many years, and has not yet seen a downside to the\n>\n> decision.\n> >       Terry Therneau\n> >       Mayo Clinic\n> > --------------------------------------------------------------------\n> > This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> > unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> > the BODY of the message:  unsubscribe s-news\n>\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To unsubscribe\n> send e-mail to s-news-request at lists.biostat.wustl.edu with the BODY of the\n> message:  unsubscribe s-news\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n\n--\nFrank E Harrell Jr   Professor and Chair           School of Medicine\n                     Department of Biostatistics   Vanderbilt University",
       "body_snippet": "Austin, Matt wrote:\n> I'm not Terry, but I'll give my opinion.  I find factors quite useful and very\n> natural--but I started programming using S and didn't migrate from another\n> language/application",
-      "thread_id": "thread-45a0aacc78f5",
-      "thread_depth": 3,
+      "thread_id": "thread-0fb5522267c6",
+      "thread_depth": 4,
       "month": "2008-03"
     },
     {
@@ -395,12 +395,12 @@
       "date": "2008-03-06T16:43:56Z",
       "subject": "Re: tapply question",
       "subject_clean": "tapply question",
-      "in_reply_to": null,
+      "in_reply_to": "<47CFB658.C718.0085.0@epa.state.oh.us>",
       "references": [],
       "body_plain": "On Thursday, March 06, 2008 9:16, Michael Slattery wrote:\n\n > ...I have a tapply problem, which I  thought\n > was  an  easy  one,  but  the  solution  has\n > nonetheless eluded  me  (more  coffee?).  My\n > dataframe structure is this:...\n >\n >   index    R1            R2   ...      R40\n >   A        NA            345.6         .\n >   C        non-detect    non-detect    .\n >   B        1.03          NA            .\n >   B        1.55          NA            .\n >   A        NA            234.5         .\n >   C        non-detect    NA            .\n >   .        .             .             .\n >   .        .             .             .\n >   .        .             .             .\n > ...What I need are simultaneous counts of 1)\n > NA's and 2) non-detect's for each column Rx,\n > for each index (n=3), across some 40 columns\n > and some 150K records...\n\nWould something simple like this work:\n\n   > ctNAND <- function ( x ) {\n   +   cbind (\n   +     sumNA  = sum ( x == \"NA\" )\n   +     , sumND  = sum ( x == \"non-detect\" )\n   +   )\n   + }\n   >\n   > lapply (\n   +   list ( R1 , R2 , R3 )\n   +   , function ( x ) tapply (\n   +     x\n   +     , index\n   +     , ctNAND\n   +   )\n   + )\n   [[1]]:\n   $a:\n        sumNA sumND\n   [1,]     8     3\n\n   $b:\n        sumNA sumND\n   [1,]    10     4\n\n   $c:\n        sumNA sumND\n   [1,]     8     3\n\n   [[2]]:\n   $a:\n        sumNA sumND\n   [1,]     7     2\n\n   $b:\n        sumNA sumND\n   [1,]    11     5\n\n   $c:\n        sumNA sumND\n   [1,]     9     1\n\n   [[3]]:\n   $a:\n        sumNA sumND\n   [1,]     8     2\n\n   $b:\n        sumNA sumND\n   [1,]     7     4\n\n   $c:\n        sumNA sumND\n   [1,]     7     2\n\n   >\n\n--\n David Huffer",
       "body_snippet": "On Thursday, March 06, 2008 9:16, Michael Slattery wrote:\n\n > ...I have a tapply problem, which I  thought\n > was  an  easy  one,  but  the  solution  has\n > nonetheless eluded  me  (more  coffee?).  ",
-      "thread_id": "thread-c456f42f2da2",
-      "thread_depth": 0,
+      "thread_id": "thread-0026fbb3835e",
+      "thread_depth": 1,
       "month": "2008-03"
     },
     {
@@ -589,8 +589,8 @@
       ],
       "body_plain": "On Wed, Mar 5, 2008 at 1:41 PM, Frank E Harrell Jr\n<f.harrell at vanderbilt.edu> wrote:\n> Austin, Matt wrote:\n>  > I'm not Terry, but I'll give my opinion.  I find factors quite useful and \n> very natural--but I started programming using S and didn't migrate from \n> another language/application.\n>  >\n>  > When a modeling application implicitly coerces a vector from character to \n> factor, how does it chose the reference level when using treatment style \n> contrasts? It sorts alphabetically, which means in treatment contrasts you \n> would be comparing all other levels to the level that sorts alphabetically \n> first. In most applications of medical research, we have a preconceived \n> notion of what should be the reference (placebo, active comparator, lowest \n> dose).  By using factors we can explicitly state the ordering.  This is also \n> very useful for displaying data in either tables of figures--ordering is \n> important and this is taken care of when constructing the factor objects.\n>  >\n>  > I suppose it's a tradeoff of having to explicitly dump levels when needed \n> or take care of the ordering at the appropriate time just before the \n> modeling/display.  I chose the earlier first method.\n\n>  I have to agree with Matt.  In my experience and in the experience of a\n>  large number of R users in our department, the advantages of factors far\n>  outweigh the disadvantages.\n\nYes.  This tends to be a religious issue with fundamentalists in both\ncamps.  I believe that the \"factors are beneficial\" camp is larger\nthan the \"factors are the work of the devil\" camp.\n\nHowever, as far as I can tell no one answered the original question\nwhich was how do you drop unused levels from a factor - assuming that\nyou do not want to do this by banishing the concept of a factor and\nexiling any person who dares to speak the name. The answer in R, and I\nbelieve also in S-PLUS, is to use drop = TRUE in a subscripting\nexpression.  Thus\n\nnewdata <- subset(data, Treatment %in% c(\"B\", \"C\", \"D\"))\n\nproduces a data frame in which Treatment still has 5 levels, but\n\nnewdata$Treatment[drop = TRUE]\n\nhas 3 levels.  An example run in R (I don't have access to a copy of S-PLUS) is\n\n> set.seed(123454321)\n> (dd <- data.frame(Response = rnorm(20, mean = 100, sd = 20), Treatment = \n> gl(5, 4, labels = LETTERS[1:5])))\n    Response Treatment\n1   61.14481         A\n2  128.50892         A\n3   81.93145         A\n4   87.32405         A\n5  134.72183         B\n6   58.98118         B\n7  122.37794         B\n8  135.43260         B\n9   91.19961         C\n10  76.57837         C\n11  76.84436         C\n12 108.38061         C\n13  73.45558         D\n14  84.02234         D\n15  81.52792         D\n16  88.71802         D\n17  84.74533         E\n18 104.90819         E\n19 116.16492         E\n20  88.32498         E\n> str(newdata <- subset(dd, Treatment %in% LETTERS[2:4]))\n'data.frame':   12 obs. of  2 variables:\n $ Response : num  134.7  59.0 122.4 135.4  91.2 ...\n $ Treatment: Factor w/ 5 levels \"A\",\"B\",\"C\",\"D\",..: 2 2 2 2 3 3 3 3 4 4 ...\n> newdata$Treatment[drop = TRUE]\n [1] B B B B C C C C D D D D\nLevels: B C D\n\n>  > -----Original Message-----\n>  > From: s-news-owner at lists.biostat.wustl.edu \n> [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Thompson, David \n> (MNR)\n>  > Sent: Wednesday, March 05, 2008 7:07 AM\n>  > To: Terry Therneau; s-news at lists.biostat.wustl.edu; Mark.Hearnden at nt.gov.au\n>  > Subject: Re: [S] Removing levels from a factor\n>  >\n>  > Terry,\n>  >\n>  > Regarding the 'factors are only occasionally useful' comment, what are the \n> situations where factors are _actually_ useful?\n>  > Do not (most?) modelling functions that require factors usually coerce \n> character values as required?\n\n>  >> -----Original Message-----\n>  >> From: s-news-owner at lists.biostat.wustl.edu\n>  >> [mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Terry\n>  >> Therneau\n>  >> Sent: March 5, 2008 09:05 AM\n>  >> To: s-news at lists.biostat.wustl.edu; Mark.Hearnden at nt.gov.au\n>  >> Subject: Re: [S] Removing levels from a factor\n>  >>\n>  >> The easiest thing is to turn off factors:\n>  >>\n>  >>> options(stringsAsFactors=F)\n>  >>> data$Treatment <- as.character(data$Treatment)\n>  >> Now you can subset the data frame and things will work as you would\n>  > anticipate.\n>  >> Comment: factors are occassionaly useful, but only occasionally.  Much\n>  > grief\n>  >> can be avoided by turning them off by default.  Our biostat group (>100\n>  > people,\n>  >> over 1200 projects a year) has had the above option as a part of our\n>  > global\n>  >> defaults for many years, and has not yet seen a downside to the\n>  > decision.",
       "body_snippet": "On Wed, Mar 5, 2008 at 1:41 PM, Frank E Harrell Jr\n<f.harrell at vanderbilt.edu> wrote:\n> Austin, Matt wrote:\n>  > I'm not Terry, but I'll give my opinion.  I find factors quite useful and \n> very nat",
-      "thread_id": "thread-45a0aacc78f5",
-      "thread_depth": 4,
+      "thread_id": "thread-0fb5522267c6",
+      "thread_depth": 5,
       "month": "2008-03"
     },
     {
@@ -676,12 +676,12 @@
       "date": "2008-03-17T14:09:06Z",
       "subject": "Re: Burned by factors",
       "subject_clean": "Burned by factors",
-      "in_reply_to": null,
+      "in_reply_to": "<c968588d0803051012x4be861f7pbf489ae363b0983e@mail.gmail.com>",
       "references": [],
       "body_plain": "I had to chuckle at Doug's synopsis\n\n> Yes.  This tends to be a religious issue with fundamentalists in both\n> camps.  I believe that the \"factors are beneficial\" camp is larger\n> than the \"factors are the work of the devil\" camp.\n\n  I think factors are useful, but that not every character variable should be a \nfactor.  \n  In some releases of Splus and R, however, the \"turn characters into factors\" \nbehavior has been so ingrained that it was very hard to have a character \nvariable in a data frame at all, even if you wanted it that way.  This is the \nbehavior that led to the most impassioned factor arguments, I think.  But that \nwas a transient design flaw, now fixed and behind us.  (Not as transient as it \nshould have been, but the difficulty in convincing certain people that it was a \ndesign flaw is another story).\n  \n  In choosing between two behaviors\n    a. Splus/R automatically turns characters into factors, the user turns some \nof these back into strings\n    b. No automatic conversion, the user turns appropriate strings into factors.\n    \nI vote strongly for (b).  It's been my experience that I get a \"gotcha\" less \noften, and that nothing important is broken by taking that road.  But with \ncurrent releases of the code (a) works well too, and seems to be preferred by \nmore people.  \n\n  Alan's comments on better warnings are an interesting idea.  The frequency of \nthe 'factor bit me' questions on the newslists argues that several of the \nanomalies that arise are far from obvious.  \n  \n        Terry T.",
       "body_snippet": "I had to chuckle at Doug's synopsis\n\n> Yes.  This tends to be a religious issue with fundamentalists in both\n> camps.  I believe that the \"factors are beneficial\" camp is larger\n> than the \"factors ar",
-      "thread_id": "thread-a361cad1955c",
-      "thread_depth": 0,
+      "thread_id": "thread-5ee2035786e8",
+      "thread_depth": 1,
       "month": "2008-03"
     },
     {
@@ -692,12 +692,12 @@
       "date": "2008-03-17T16:50:56Z",
       "subject": "Re: baseline hazard in Splus",
       "subject_clean": "baseline hazard in Splus",
-      "in_reply_to": null,
+      "in_reply_to": "<47DA6A3A.3080707@sophia.inra.fr>",
       "references": [],
       "body_plain": "The question was why coxph.detail(fit) and survfit(fit) give different answers \nfor a fitted Cox model.  The answer is that they do give the same answers for \nme.\n \n\n> fit <- coxph(Surv(time, status) ~ ph.ecog + wt.loss, lung)\n\n> dt <- coxph.detail(fit)\n> sfit <- survfit(fit)\n\n> h1 <- cumsum(dt$hazard)\n> h2 <- -log(sfit$surv)\n\n> all.equal(h1, h2)\n  T  \n> fit$mean\n[1] 0.9342723 9.7276995\n\n  Now, my guess as to what may have gone wrong for you: the coxph.detail \nfunction returns the baseline hazard for a fiction subject with covariates = \nmean of the data set.  It has no other option.\n  The survfit function, however, will give the baseline hazard for an arbitrary \nsetting of the covariates, for instance\n        survfit(fit, newdata=data.frame(ph.ecog=1, wt.loss=20)\nto get the survival for a subject with physician's ECOG score of 1 and a 20 lb \nweight loss.  If no values are given it defaults to the mean.\n\n  I think you compared a \"mean\" patient (rarely a reasonable value) in \ncoxph.detail to a more realistic set of covariate values from survfit.  One \nwould not expect the same baseline survival.\n  \n        Terry Therneau\n        \n\n------------ begin included message ---------------------\nDear all,\n\nThere is something I do not understand in fitting a cox regression model \n in Splus.\n\nOk, I have a model fitted that way:\n\nfit<-coxph(Surv(start,stop,event)~ \"list of covariates\")\n\nI know I can collect back the y-coordinates of the cumulative baseline \nhazard function that way:\n\ncumsum(coxph.detail(fit)$hazard)\n\n(and I can collect back the corresponding x-coordinates with: \ncoxph.detail(fit)$time)\n\nWhat I do not understand is that we should also be able to collect this \nthrough an estimate of the baseline survivor function, S0(t). This \nfunction can be estimated that way:\n\nS0t<-survfit(fit,list(\"here a list of values for the covariates \ncorresponding to the baseline hazard\"))$surv\n\nThen, since by definition H(t)=-log(S(t)), I was sure that\n\n-log(S0t) should exactly correspond the cumulative baseline hazard \nfunction, but this is not the case.\n\nCan someone explain me where I'm wrong?\n\nThanks in advance for that.\n\nEric.\n\n-",
       "body_snippet": "The question was why coxph.detail(fit) and survfit(fit) give different answers \nfor a fitted Cox model.  The answer is that they do give the same answers for \nme.\n \n\n> fit <- coxph(Surv(time, status) ",
-      "thread_id": "thread-4061679cb0cc",
-      "thread_depth": 0,
+      "thread_id": "thread-af8fa0986757",
+      "thread_depth": 1,
       "month": "2008-03"
     },
     {
@@ -730,8 +730,8 @@
       ],
       "body_plain": "Ok, thanks for this reply (and thanks to Matt Austin who also helps).\n\nNow I see. My misunderstanding is that I was sure that the\ncoxph.detail()$hazard was the **baseline** hazard (i.e., with all\ncovariates equal to zero). Actually, it rather is the hazard for a\ncohort of individuals having the covariates set the their average\nvalues. This is different and this was misleading (at least for me).\n\nThanks in all cases for clarifying this to me.\n\nEric.\n\nTerry Therneau wrote:\n>    The question was why coxph.detail(fit) and survfit(fit) give different answers\n> for a fitted Cox model.  The answer is that they do give the same answers for\n> me.\n>\n>\n>\n>   >     fit <- coxph(Surv(time, status) ~ ph.ecog + wt.loss, lung)\n> >\n> >\n>\n>\n>\n>   >     dt <- coxph.detail(fit)\n> > sfit <- survfit(fit)\n> >\n> >\n>\n>\n>\n>   >     h1 <- cumsum(dt$hazard)\n> > h2 <- -log(sfit$surv)\n> >\n> >\n>\n>\n>\n>   >     all.equal(h1, h2)\n> >\n> >\n>\n>     T\n>\n>   >     fit$mean\n> >\n> >\n>\n>   [1] 0.9342723 9.7276995\n>\n>   Now, my guess as to what may have gone wrong for you: the coxph.detail\n> function returns the baseline hazard for a fiction subject with covariates =\n> mean of the data set.  It has no other option.\n>   The survfit function, however, will give the baseline hazard for an arbitrary\n> setting of the covariates, for instance\n>   \tsurvfit(fit, newdata=data.frame(ph.ecog=1, wt.loss=20)\n> to get the survival for a subject with physician's ECOG score of 1 and a 20 lb\n> weight loss.  If no values are given it defaults to the mean.\n>\n>   I think you compared a \"mean\" patient (rarely a reasonable value) in\n> coxph.detail to a more realistic set of covariate values from survfit.  One\n> would not expect the same baseline survival.\n>\n>   \tTerry Therneau\n>\n>\n>\n> ------------ begin included message ---------------------\n> Dear all,\n>\n> There is something I do not understand in fitting a cox regression model\n>  in Splus.\n>\n> Ok, I have a model fitted that way:\n>\n> fit<-coxph(Surv(start,stop,event)~ \"list of covariates\")\n>\n> I know I can collect back the y-coordinates of the cumulative baseline\n> hazard function that way:\n>\n> cumsum(coxph.detail(fit)$hazard)\n>\n> (and I can collect back the corresponding x-coordinates with:\n> coxph.detail(fit)$time)\n>\n> What I do not understand is that we should also be able to collect this\n> through an estimate of the baseline survivor function, S0(t). This\n> function can be estimated that way:\n>\n> S0t<-survfit(fit,list(\"here a list of values for the covariates\n> corresponding to the baseline hazard\"))$surv\n>\n> Then, since by definition H(t)=-log(S(t)), I was sure that\n>\n> -log(S0t) should exactly correspond the cumulative baseline hazard\n> function, but this is not the case.\n>\n> Can someone explain me where I'm wrong?\n>\n> Thanks in advance for that.\n>\n> Eric.\n>\n> -\n>\n>\n\n-- \n\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   \n    Eric Wajnberg\n    Chair of the ESF Scientific programme on\n    Behavioural Ecology of Insect Parasitoids\n    Associated Professor at the UQAM\n    (Universite du Quebec a Montréal)\n    I.N.R.A.\n    400 Route des Chappes, BP 167,\n    06903 Sophia Antipolis Cedex, France\n    Tel: (33-0) 4.92.38.64.47\n    Fax: (33-0) 4.92.38.65.57\n    e-mail: wajnberg at sophia.inra.fr\n    Web page: http://www.sophia.inra.fr/perso/wajnberg/\n\n    Editor-in-Chief of BioControl, Published by Springer.\n\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
       "body_snippet": "Ok, thanks for this reply (and thanks to Matt Austin who also helps).\n\nNow I see. My misunderstanding is that I was sure that the\ncoxph.detail()$hazard was the **baseline** hazard (i.e., with all\ncova",
-      "thread_id": "thread-4061679cb0cc",
-      "thread_depth": 1,
+      "thread_id": "thread-af8fa0986757",
+      "thread_depth": 2,
       "month": "2008-03"
     },
     {
@@ -782,8 +782,8 @@
       ],
       "body_plain": "Douglas Bates <bates <at> stat.wisc.edu> writes:\n...\n> \n> However, as far as I can tell no one answered the original question\n> which was how do you drop unused levels from a factor - assuming that\n> you do not want to do this by banishing the concept of a factor and\n> exiling any person who dares to speak the name. The answer in R, and I\n> believe also in S-PLUS, is to use drop = TRUE in a subscripting\n> expression.  Thus\n\nThere is also drop.levels() function in gdata package for R - I am not\nsure if it is also in S-PLUS port. I use it often. Usually I import the\ndata, check the structure with str(), occasionally I remove some data\nand then unused levels come up. Use of drop.levels() after data handling\nsaved me a lot of \"problems\" later on.\n\nGregor",
       "body_snippet": "Douglas Bates <bates <at> stat.wisc.edu> writes:\n...\n> \n> However, as far as I can tell no one answered the original question\n> which was how do you drop unused levels from a factor - assuming that\n> ",
-      "thread_id": "thread-45a0aacc78f5",
-      "thread_depth": 5,
+      "thread_id": "thread-0fb5522267c6",
+      "thread_depth": 6,
       "month": "2008-03"
     },
     {
@@ -978,12 +978,12 @@
       "date": "2008-03-30T05:46:58Z",
       "subject": "Re: summary(object, test=c(\"Roy\", \"Wilks\", \"Pillai\", ....)",
       "subject_clean": "summary(object, test=c(\"Roy\", \"Wilks\", \"Pillai\", ....)",
-      "in_reply_to": null,
+      "in_reply_to": "<158971.98665.qm@web88001.mail.re2.yahoo.com>",
       "references": [],
       "body_plain": "With a matris response lm(...) doesn't really fit a multivariate\nregression.  It fits multiple univariate linear regressions.  You can\nbuild a multivariate linear regression from it, of course.\n\nI suspect you need to looking at manova(...) to fit the model.  Then the\nsummary method, and the other model comparison tools of course, will\ngive you multivariate tests.\n\nAs to simultaneous prediction intervals and ellipsoids, the only advice\nI can give you is the standard: fear God, honour the king and work very\nhard.  Best of luck!  :-)\n\nBill Venables.\n\n-----Original Message-----\nFrom: s-news-owner at lists.biostat.wustl.edu\n[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Ray Haraf\nSent: Sunday, 30 March 2008 3:32 PM\nTo: s-news at lists.biostat.wustl.edu\nSubject: [S] summary(object, test=c(\"Roy\", \"Wilks\", \"Pillai\", ....)\n\nDear All,\n \nI am running multivariate multiple regression using lm() and would be\nvery appreciative of your kind and prompt help (as usual) with how to\nobtain the usual statistics of multivariate analysis, i.e., Wilks'\nlambda, Pillai's trace, Hotelling-Lawley trace, and Roy's greatest root.\n \nI unsuccessfully tried this\n> ex7.8 <- data.frame(z1 = c(0, 1, 2, 3, 4), \n+  y1 = c(1, 4, 3, 8, 9), \n+  y2 = c(-1, -1, 2, 3, 2))\n> summary(lm(cbind(y1, y2) ~ z1, data =\nex7.8),test=c(\"Wilks\",\"Roy\",\"Pillai\"))\n \nAlso, any suggestion on how obtain simultaneous prediction intervals and\nprediction ellipsoid would be very valued. Thanks for your kind care\n \nHere is the result of the above summary() function\n\nResponse y1 :\nCall:\nlm(formula = y1 ~ z1, data = ex7.8)\nResiduals:\n         1          2          3          4          5 \n 6.880e-17  1.000e+00 -2.000e+00  1.000e+00 -1.326e-16 \nCoefficients:\n            Estimate Std. Error t value Pr(>|t|)  \n(Intercept)   1.0000     1.0954   0.913   0.4286  \nz1            2.0000     0.4472   4.472   0.0208 *\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 \nResidual standard error: 1.414 on 3 degrees of freedom\nMultiple R-squared: 0.8696,     Adjusted R-squared: 0.8261 \nF-statistic:    20 on 1 and 3 DF,  p-value: 0.02084 \n\nResponse y2 :\nCall:\nlm(formula = y2 ~ z1, data = ex7.8)\nResiduals:\n         1          2          3          4          5 \n 9.931e-17 -1.000e+00  1.000e+00  1.000e+00 -1.000e+00 \nCoefficients:\n            Estimate Std. Error t value Pr(>|t|)  \n(Intercept)  -1.0000     0.8944  -1.118   0.3450  \nz1            1.0000     0.3651   2.739   0.0714 .\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 \nResidual standard error: 1.155 on 3 degrees of freedom\nMultiple R-squared: 0.7143,     Adjusted R-squared: 0.619 \nF-statistic:   7.5 on 1 and 3 DF,  p-value: 0.07142 \n\n> \nKind regards,\nRay",
       "body_snippet": "With a matris response lm(...) doesn't really fit a multivariate\nregression.  It fits multiple univariate linear regressions.  You can\nbuild a multivariate linear regression from it, of course.\n\nI sus",
-      "thread_id": "thread-1f604111d641",
-      "thread_depth": 0,
+      "thread_id": "thread-463009a4cab7",
+      "thread_depth": 1,
       "month": "2008-03"
     }
   ],
@@ -1013,12 +1013,12 @@
     {
       "id": "thread-06e18485a2e5",
       "subject": "Constrained regression",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Carlos Alzola"
       ],
       "started": "2008-03-03T03:52:50Z",
-      "last_reply": "2008-03-03T03:52:50Z",
+      "last_reply": "2008-03-05T13:36:46Z",
       "root_message_id": "msg-06e18485a2e5"
     },
     {
@@ -1047,24 +1047,14 @@
     {
       "id": "thread-4e8c1275eb75",
       "subject": "three questions",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "David Huffer",
         "jose Bartolomei"
       ],
       "started": "2008-03-04T14:36:40Z",
-      "last_reply": "2008-03-04T14:36:40Z",
-      "root_message_id": "msg-4e8c1275eb75"
-    },
-    {
-      "id": "thread-95c45d9c36f3",
-      "subject": "three questions",
-      "message_count": 1,
-      "participants": [
-        "David Huffer"
-      ],
-      "started": "2008-03-04T16:39:47Z",
       "last_reply": "2008-03-04T16:39:47Z",
-      "root_message_id": "msg-95c45d9c36f3"
+      "root_message_id": "msg-4e8c1275eb75"
     },
     {
       "id": "thread-e6d153a0b95e",
@@ -1091,55 +1081,35 @@
     {
       "id": "thread-0fb5522267c6",
       "subject": "Removing levels from a factor",
-      "message_count": 2,
-      "participants": [
-        "Mark.Hearnden at nt.gov.au",
-        "gerald.jean at dgag.ca"
-      ],
-      "started": "2008-03-05T05:51:17Z",
-      "last_reply": "2008-03-05T13:25:47Z",
-      "root_message_id": "msg-0fb5522267c6"
-    },
-    {
-      "id": "thread-088ea969f52c",
-      "subject": "Constrained regression",
-      "message_count": 1,
-      "participants": [
-        "Carlos Alzola"
-      ],
-      "started": "2008-03-05T13:36:46Z",
-      "last_reply": "2008-03-05T13:36:46Z",
-      "root_message_id": "msg-088ea969f52c"
-    },
-    {
-      "id": "thread-45a0aacc78f5",
-      "subject": "Removing levels from a factor",
-      "message_count": 7,
+      "message_count": 9,
       "participants": [
         "Alan Hochberg",
         "Austin, Matt",
         "Douglas Bates",
         "Frank E Harrell Jr",
         "Gregor Gorjanc",
+        "Mark.Hearnden at nt.gov.au",
         "Terry Therneau",
-        "Thompson, David (MNR)"
+        "Thompson, David (MNR)",
+        "gerald.jean at dgag.ca"
       ],
-      "started": "2008-03-05T14:05:01Z",
+      "started": "2008-03-05T05:51:17Z",
       "last_reply": "2008-03-20T20:04:51Z",
-      "root_message_id": "msg-45a0aacc78f5"
+      "root_message_id": "msg-0fb5522267c6"
     },
     {
       "id": "thread-5ee2035786e8",
       "subject": "Burned by factors",
-      "message_count": 5,
+      "message_count": 6,
       "participants": [
         "Alan Hochberg",
         "Bill.Venables at csiro.au",
         "Douglas Bates",
-        "Kevin Wright"
+        "Kevin Wright",
+        "Terry Therneau"
       ],
       "started": "2008-03-05T18:12:18Z",
-      "last_reply": "2008-03-17T14:00:49Z",
+      "last_reply": "2008-03-17T14:09:06Z",
       "root_message_id": "msg-5ee2035786e8"
     },
     {
@@ -1157,26 +1127,16 @@
     {
       "id": "thread-0026fbb3835e",
       "subject": "tapply question",
-      "message_count": 3,
+      "message_count": 4,
       "participants": [
         "Bill Dunlap",
+        "David Huffer",
         "Michael Slattery",
         "Tim Hesterberg"
       ],
       "started": "2008-03-06T14:16:08Z",
       "last_reply": "2008-03-06T17:34:33Z",
       "root_message_id": "msg-0026fbb3835e"
-    },
-    {
-      "id": "thread-c456f42f2da2",
-      "subject": "tapply question",
-      "message_count": 1,
-      "participants": [
-        "David Huffer"
-      ],
-      "started": "2008-03-06T16:43:56Z",
-      "last_reply": "2008-03-06T16:43:56Z",
-      "root_message_id": "msg-c456f42f2da2"
     },
     {
       "id": "thread-897b47a720cb",
@@ -1237,12 +1197,13 @@
     {
       "id": "thread-af8fa0986757",
       "subject": "baseline hazard in Splus",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
-        "Eric Wajnberg"
+        "Eric Wajnberg",
+        "Terry Therneau"
       ],
       "started": "2008-03-14T12:06:18Z",
-      "last_reply": "2008-03-14T12:06:18Z",
+      "last_reply": "2008-03-18T11:06:36Z",
       "root_message_id": "msg-af8fa0986757"
     },
     {
@@ -1255,29 +1216,6 @@
       "started": "2008-03-15T22:24:19Z",
       "last_reply": "2008-03-15T22:24:19Z",
       "root_message_id": "msg-80789d1aa3d4"
-    },
-    {
-      "id": "thread-a361cad1955c",
-      "subject": "Burned by factors",
-      "message_count": 1,
-      "participants": [
-        "Terry Therneau"
-      ],
-      "started": "2008-03-17T14:09:06Z",
-      "last_reply": "2008-03-17T14:09:06Z",
-      "root_message_id": "msg-a361cad1955c"
-    },
-    {
-      "id": "thread-4061679cb0cc",
-      "subject": "baseline hazard in Splus",
-      "message_count": 2,
-      "participants": [
-        "Eric Wajnberg",
-        "Terry Therneau"
-      ],
-      "started": "2008-03-17T16:50:56Z",
-      "last_reply": "2008-03-18T11:06:36Z",
-      "root_message_id": "msg-4061679cb0cc"
     },
     {
       "id": "thread-1943426c9559",
@@ -1384,24 +1322,14 @@
     {
       "id": "thread-463009a4cab7",
       "subject": "summary(object, test=c(\"Roy\", \"Wilks\", \"Pillai\", ....)",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Bill.Venables at csiro.au",
         "Ray Haraf"
       ],
       "started": "2008-03-30T05:31:42Z",
-      "last_reply": "2008-03-30T05:31:42Z",
-      "root_message_id": "msg-463009a4cab7"
-    },
-    {
-      "id": "thread-1f604111d641",
-      "subject": "summary(object, test=c(\"Roy\", \"Wilks\", \"Pillai\", ....)",
-      "message_count": 1,
-      "participants": [
-        "Bill.Venables at csiro.au"
-      ],
-      "started": "2008-03-30T05:46:58Z",
       "last_reply": "2008-03-30T05:46:58Z",
-      "root_message_id": "msg-1f604111d641"
+      "root_message_id": "msg-463009a4cab7"
     }
   ]
 }

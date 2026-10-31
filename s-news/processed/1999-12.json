@@ -439,12 +439,12 @@
       "date": "1999-12-02T15:15:07Z",
       "subject": "Re: [S] apply function",
       "subject_clean": "[S] apply function",
-      "in_reply_to": null,
+      "in_reply_to": "<004c01bf3ccb$2764ac40$66a0dcc3@miss-jenny.mpl.ird.fr>",
       "references": [],
       "body_plain": "> From: \"Eric Elguero\" <Eric.Elguero at mpl.ird.fr>\n> I am using S-plus #3.3 under Windows-95 and having trouble with the apply \n> function.\n> \n> sbl is a data frame which contains numeric and character columns and I want to\n> extract those columns which are numeric, so I thought of something like\n> \n> sbl[,apply(sbl,2,is.numeric)]\n> \n> unfortunately this does'nt work, see below::\n...\n\nWhat is actually going on here is a bit complicated.  apply() is designed\nfor matrices, not data frames.  To work on a data frame, it uses\nas.matrix() to make it a matrix, which turns it into character data (the\nonly fully general way of coercing a data frame into a single mode of\ndata).  Hence whatever column you look at with apply(), it is character.\nHowever, mean() (unlike other summary functions like sum()) will try to\ncoerce its data to numeric.  The numeric columns have been turned into\ncharacter data that can be coerced back to numeric, but the others don't\nlook like numbers so you get the warnings and NA values.\n\nHowever, do not despair -- what you want can be done very easily with lapply()\n(which operates on lists, of which data frames are a special case).  E.g.\n\n> X_data.frame(aa=letters,bb=1:26)\n> unlist(lapply(X,mode))\n        aa        bb \n \"numeric\" \"numeric\"\n> unlist(lapply(X,is.factor))\n aa bb \n  T  F\n\nNote that a factor is numeric data, so \"mode\" or \"is.numeric\" will not do\nquite what you want.\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "> From: \"Eric Elguero\" <Eric.Elguero at mpl.ird.fr>\n> I am using S-plus #3.3 under Windows-95 and having trouble with the apply \n> function.\n> \n> sbl is a data frame which contains numeric and charact",
-      "thread_id": "thread-690abc6f57e7",
-      "thread_depth": 0,
+      "thread_id": "thread-f3efdbf89055",
+      "thread_depth": 1,
       "month": "1999-12"
     },
     {
@@ -455,12 +455,12 @@
       "date": "1999-12-02T15:35:08Z",
       "subject": "Re: [S] apply function",
       "subject_clean": "[S] apply function",
-      "in_reply_to": null,
+      "in_reply_to": "<004c01bf3ccb$2764ac40$66a0dcc3@miss-jenny.mpl.ird.fr>",
       "references": [],
       "body_plain": "those who replied me that \"apply\" needs a matrix did not read\ncarefully my (admittedly long) message, for sbl *is* a matrix.\n\nbecause 1)\n\n> is.matrix(sbl)\n[1] T\n\nand 2)\n\nis.matrix returns TRUE if dim(x) is of length 2, and FALSE otherwise.\nMatrix objects are those that have an attribute dim of length 2.\n(from the help)\n\nso what I now understand is that sbl is a matrix but not a numeric one.\n\nbut there is something worse, see below:\n\n> sbl\n        ID   Village Cohorte Sexe Age Poids1 Taille1 \n1     310   Lossa       1    M      35       66.6         170\n2     322   Lossa       1    M        3         9.9           79\n3     381   Lossa       2    F         7       21.7         120\n4     410   Lossa       1    M      58       53.8         167\n5     431   Lossa       1    M      13       31.7         145\n\n> sbl==as.matrix(sbl)\n   ID Village Cohorte Sexe Age Poids1 Taille1 \n1  T       T       T        T       T          T           T\n2  T       T       T        T       F          F           F\n3  T       T       T        T       F          T           T\n4  T       T       T        T       T          T           T\n5  T       T       T        T       T          T           T\n\n \nthe problem can be narrowed to:\n\n> \" 9.9\"==9.9  (notice the space before the 9)\n[1] F\n> \"9.9\"==9.9\n[1] T\n\nnevertheless I get\n\n> as.numeric(\"  9.9\")\n[1] 9.9\n\nmy conclusion is that the automatic conversion from character to numeric\ncannot be trusted, for it doesn't work when called by the \"==\" function.\n\ne.e.\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "those who replied me that \"apply\" needs a matrix did not read\ncarefully my (admittedly long) message, for sbl *is* a matrix.\n\nbecause 1)\n\n> is.matrix(sbl)\n[1] T\n\nand 2)\n\nis.matrix returns TRUE if dim(",
-      "thread_id": "thread-88cb556bd929",
-      "thread_depth": 0,
+      "thread_id": "thread-f3efdbf89055",
+      "thread_depth": 1,
       "month": "1999-12"
     },
     {
@@ -599,12 +599,12 @@
       "date": "1999-12-03T16:55:02Z",
       "subject": "RE: [S] data frame manipulation question",
       "subject_clean": "[S] data frame manipulation question",
-      "in_reply_to": null,
+      "in_reply_to": "<6B677297622ED311A8E100902785F93106AD7F@ribes.for.orst.edu>",
       "references": [],
       "body_plain": "Hi All,\n\nSamuel Buttrey responded to my question 10 minutes after I posted it to the\nS-Plus list.  His answer (and anticipation of my needing to address NAs) was\nright on the mark.  I include my question and Samuel's response below-\nthank you Samuel.  Michael Wing.\n\n> -----Original Message-----\n\n> Hi all,\n> \n> I have a data frame that is organized in the following format:\n> \n> Obs   T       C       K\n> 1     5       8       2\n> 2     4       7       6\n> 3     3       na      9\n> \n> \"Obs\" is a the observation number while T, C, and K are numeric variables.\n> \n> I would like to output a data frame (or other object that I can convert\n> into\n> a text file) that captures every unique combination of each of the three\n> variables.  The desired output would look like (18 possibilities in this\n> example):\n> \n> obs   T       C       K\n> 1     5       8       2\n> 2     5       8       6\n> 3     5       8       9\n> 4     4       8       2\n> 5     4       8       6\n> .\n> .\n> 18    3       7       9       \n> \n> \n> Can this be accomplished in S-Plus?  I am using S-Plus 2000 for Windows\n> NT.\n> \n\nRESPONSE FROM SAMUEL BUTTREY: \n\nSubject: RE: [S] data frame manipulation question\n\nHi.  expand.grid() will do almost exactly what you want. Try\nexpand.grid(<your data frame>)\n\nThe problem is, it will expand the NA's as well. I guess that's not what you\nwant. So you might create a list with one item per column of your data\nframe,  from which you have removed NA's:\n\nexpand.grid(lapply (zz, function (x) x[!is.na(x)]))\n\nThis will do what you want, I believe.\n\nI hope this helps,\n\nSam Buttrey\nbuttrey at nps.navy.mil\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Hi All,\n\nSamuel Buttrey responded to my question 10 minutes after I posted it to the\nS-Plus list.  His answer (and anticipation of my needing to address NAs) was\nright on the mark.  I include my quest",
-      "thread_id": "thread-ce24b0ec0687",
-      "thread_depth": 0,
+      "thread_id": "thread-1df87f823094",
+      "thread_depth": 1,
       "month": "1999-12"
     },
     {
@@ -1321,12 +1321,12 @@
       "date": "1999-12-12T20:21:26Z",
       "subject": "[S] Get paid just for being online!",
       "subject_clean": "[S] Get paid just for being online!",
-      "in_reply_to": null,
+      "in_reply_to": "<0.8176570d.25855dc9@aol.com>",
       "references": [],
       "body_plain": "Get paid just for being online!!\n\nI recently ran across AllAdvantage.com, a brand-new company that pays its \nmembers to surf the Web - and they've been paying out hundreds of thousands \nof dollars to members for two months now. The average member check for August \nwas $87.77! Not too shabby for just being online. \n\nWhat's the catch? No catch -- to earn money you agree to give up a little \nspace on your desktop for a message window -- called a Viewbar -- that \ndelivers information about products and services available online. \n\nAllAdvantage.com is for real: \n\nIn September they raised the hours they pay to 25 per month. \nSome AllAdvantage.com members will earn well over $1,000 EACH in September \nalone. \nAllAdvantage.com just completed a deal for $31 million in venture capital \nfunding from some of the savviest investors in the industry. They're putting \ntheir money on a winner! \nThe sooner you join, the sooner you'll get paid. Please use my referral ID \nnumber (HEZ-134). Be sure to tell all your friends who use the Internet -- \nthe more referrals you get, the more money you can earn. You can sign up with \nAllAdvantage.com right away at <a \nhref=\"http://www.alladvantage.com/go.asp?refid=HEZ-134\">http://www.alladvantag\ne.com/go.asp?refid=HEZ-134</a> \n\nThis is a really great deal with no strings attached! \n\nSincerely,\nLou\nMember ID# HEZ-134\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Get paid just for being online!!\n\nI recently ran across AllAdvantage.com, a brand-new company that pays its \nmembers to surf the Web - and they've been paying out hundreds of thousands \nof dollars to ",
-      "thread_id": "thread-a481ccef08e1",
-      "thread_depth": 0,
+      "thread_id": "thread-331cc223b17f",
+      "thread_depth": 1,
       "month": "1999-12"
     },
     {
@@ -1567,12 +1567,12 @@
       "date": "1999-12-14T12:47:34Z",
       "subject": "Re: [S] as.integer inside other S-Plus functions",
       "subject_clean": "[S] as.integer inside other S-Plus functions",
-      "in_reply_to": null,
+      "in_reply_to": "<72039CBD75C9D211AFEF0000F80838DC6F11E8@NTSERV2.campden.co.uk>",
       "references": [],
       "body_plain": "my avice is to always make sure your arguments are of the right type\nand not to depend upon such function as is.xxx or as.xxx whose\nbehaviour is sometimes strange.\n\nsee for example:\n\n> attributes(as.vector(list(a=0,b=1)))\n$names:\n[1] \"a\" \"b\"\n\nalthough as.vector is supposed to strip its argument of any attribute.\n\ne.e.\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "my avice is to always make sure your arguments are of the right type\nand not to depend upon such function as is.xxx or as.xxx whose\nbehaviour is sometimes strange.\n\nsee for example:\n\n> attributes(as.v",
-      "thread_id": "thread-a4e3f92a9802",
-      "thread_depth": 0,
+      "thread_id": "thread-726e58a55979",
+      "thread_depth": 1,
       "month": "1999-12"
     },
     {
@@ -1695,12 +1695,12 @@
       "date": "1999-12-14T20:10:00Z",
       "subject": "Re: [S] Bon Voyage!",
       "subject_clean": "[S] Bon Voyage!",
-      "in_reply_to": null,
+      "in_reply_to": "<575.41616.305733@england.com>",
       "references": [],
       "body_plain": "Folks, \n\nWhy is a company called \n        gatravel at england.com\nsending adds through our SPLUS users list? \n\nIs there a list manager who can kick them\nout of here?\n\nEric Jacquier\n\nAsst. Prof. of Finance\nCarroll School of Management, Finance Dept.\nFulton Hall 330 \nBoston College\nChestnut Hill, MA 02467\n\nTel: (617) 552-2943\nFax: (617) 552-0431\nEmail: jacquier at jacquier.bc.edu\nWeb:   www2.bc.edu/~jacquier\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Folks, \n\nWhy is a company called \n        gatravel at england.com\nsending adds through our SPLUS users list? \n\nIs there a list manager who can kick them\nout of here?\n\nEric Jacquier\n\nAsst. Prof. of Fin",
-      "thread_id": "thread-67896d4a363d",
-      "thread_depth": 0,
+      "thread_id": "thread-1d2495e31fae",
+      "thread_depth": 1,
       "month": "1999-12"
     },
     {
@@ -1711,12 +1711,12 @@
       "date": "1999-12-14T20:59:45Z",
       "subject": "Re: [S] Bon Voyage!",
       "subject_clean": "[S] Bon Voyage!",
-      "in_reply_to": null,
+      "in_reply_to": "<575.41616.305733@england.com>",
       "references": [],
       "body_plain": "i concur!\nif there was ever a disincentive to purchase goods or services\nfrom a vendor, getting spammed from that vendor does it for me!\nlmv\n\nORIG> \nORIG> Folks, \nORIG> \nORIG> Why is a company called \nORIG>   gatravel at england.com\nORIG> sending adds through our SPLUS users list? \nORIG> \nORIG> Is there a list manager who can kick them\nORIG> out of here?\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "i concur!\nif there was ever a disincentive to purchase goods or services\nfrom a vendor, getting spammed from that vendor does it for me!\nlmv\n\nORIG> \nORIG> Folks, \nORIG> \nORIG> Why is a company called ",
-      "thread_id": "thread-0d73e5b4c391",
-      "thread_depth": 0,
+      "thread_id": "thread-1d2495e31fae",
+      "thread_depth": 1,
       "month": "1999-12"
     },
     {
@@ -1749,8 +1749,8 @@
       ],
       "body_plain": "The problem is that the list can be written to by anybody, and\nspammers do.  Most spam is fairly easy to filter, and the list host\nsite could have filtered this one. (It was \"direct to MX spam\", and\ncould have been filtered by looking up the sending machine in the DUL\nat mail-abuse.org, for anyone who is interested.)  It could also have\nbeen filtered at the source; it originated at\n\"01-055.031.popsite.net\", so you could complain to \"abuse at megapop.net\"\nabout it.\n\nPersonally, I'd recommend complaining to Megapop.  They make money\nfrom the spammer.  \n\nComplaining to the people who run the list seems like pretty bad\nmanners to me:  they're volunteers, and setting up spam filters takes\ntime.  Offering to help with running the list sounds like a better\noption.  \n\nDuncan Murdoch\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "The problem is that the list can be written to by anybody, and\nspammers do.  Most spam is fairly easy to filter, and the list host\nsite could have filtered this one. (It was \"direct to MX spam\", and\nc",
-      "thread_id": "thread-67896d4a363d",
-      "thread_depth": 1,
+      "thread_id": "thread-1d2495e31fae",
+      "thread_depth": 2,
       "month": "1999-12"
     },
     {
@@ -1921,12 +1921,12 @@
       "date": "1999-12-16T16:38:32Z",
       "subject": "[S] S-Plus Question",
       "subject_clean": "[S] S-Plus Question",
-      "in_reply_to": null,
+      "in_reply_to": "<0056440003555935000002L452*@MHS>",
       "references": [],
       "body_plain": "Here is a summary of replies to my original posting.\nThank you very much to those who replied (their names are given below).\n\nMatt Kurbat\n\nORIGINAL POSTING\n> Dear Readers,\n>\n> I'd like to be able to do the following in Splus.\n>\n> Say you have a dataframe called DF,\n> and variables V1 through Vn in this dataframe.\n>\n> Say also you have a string \"temp\" such that\n> temp is \"DF$V1\".  For example you might have defined temp as\n>\n>         temp<-paste(\"DF$\",\"V1\",sep=\"\")\n>\n> I'd like to be able to use this character string \"temp\" to access\n> the variable V1 in dataframe DF - for example, to be able to\n> assign DF$V1 to a new varible.  What do I do to \"temp\" to\n> be able to access the variable V1 in dataframe DF?\n>\n> Thank you,\n> Matt Kurbat\n\nREPLIES:\nThank you very much to all the following for their answers:\nBrad Biggerstaff\nBill Dunlap\nNick Ellis\nAndrzej Galecki\nBert Gunter\nTim Hesterberg\nAlbyn Jones\nRenaud Lancelot\nNick Locantore\nAndrew Sinclair\nDavid Smith\nBill Venables\n\nThere were several different types of answers.  I've extracted one example\nof each type (or in some cases combined answers).  Results are presented\nbelow.\n\n----------------------------------------------------------------------------\n----------------------------------\n\nI think you want\n\n*newvble <- eval(parse(text=temp))\n*(*OR: eval(parse(text=\"DF$V1\"))**)\n*(*OR: eval(parse(text=paste(\"DF$\",\"V1\",sep=\"\")))**)\n\nThe parse() converts your string into an 'expression'.\neval() then evaluates the expression.  You may need to\neval(, frame = sys.parent()) or something else cleverer\nif this is all done inside a function.\n----------------------------------------------------------------------------\n----------------------------------\n\nget(temp)\n\nor\n\nget(\"DF$V1\")\n\nor if you want to assign all Vi at the same time:\n\nfor(i = 1:n) assign(paste(\"new.var\", i, sep=\"\"), get(paste(\"DF$\", \"V\",\ni, sep=\"\")))\n\n(if you're interested in the last solution, beware of the arguments\n\"immediate\", \"where\" and \"frame\")\n\n----------------------------------------------------------------------------\n----------------------------------\n\nI think that this is what you want:\n\n> attach(fuel.frame)\n> names(fuel.frame)\n[1] \"Weight\"  \"Disp.\"   \"Mileage\" \"Fuel\"    \"Type\"\n> temp<-paste(\"fuel.frame$\",\"Type\",sep=\"\")\n> newvar <- eval(parse(text=temp)\n----------------------------------------------------------------------------\n----------------------------------\n\nI'm not sure how to do exactly what you're asking, but maybe this will help.\nYou can still access the columns of DF using the names \"V1\" ... \"Vn\" by\nusing do.call() togther with the subscripting functions.  Variations on the\nfunction (\"[\",\"[[\",\"$\") and the column-list argument are useful for various\nthings; note column numbers are accepted, too (see last example).\n\nFor example:\n> DF<-data.frame(V1=1:10,V2=11:20,V3=letters[rep(1:2,5)])\n> DF\n   V1 V2 V3\n 1  1 11  a\n 2  2 12  b\n 3  3 13  a\n 4  4 14  b\n 5  5 15  a\n 6  6 16  b\n 7  7 17  a\n 8  8 18  b\n 9  9 19  a\n10 10 20  b\n>\n> do.call(\"[\",list(DF,\"V2\"))\n   V2\n 1 11\n 2 12\n 3 13\n 4 14\n 5 15\n 6 16\n 7 17\n 8 18\n 9 19\n10 20\n> do.call(\"[[\",list(DF,\"V2\"))\n [1] 11 12 13 14 15 16 17 18 19 20\n>\n> do.call(\"$\",list(DF,\"V2\"))\n [1] 11 12 13 14 15 16 17 18 19 20\n>\n> do.call(\"[\",list(DF,c(\"V1\",\"V3\")))\n   V1 V3\n 1  1  a\n 2  2  b\n 3  3  a\n 4  4  b\n 5  5  a\n 6  6  b\n 7  7  a\n 8  8  b\n 9  9  a\n10 10  b\n>\n> do.call(\"[\",list(DF,paste(\"V\",c(1,3),sep=\"\")))\n   V1 V3\n 1  1  a\n 2  2  b\n 3  3  a\n 4  4  b\n 5  5  a\n 6  6  b\n 7  7  a\n 8  8  b\n 9  9  a\n10 10  b\n>\n> do.call(\"[\",list(DF,c(1,3)))\n   V1 V3\n 1  1  a\n 2  2  b\n 3  3  a\n 4  4  b\n 5  5  a\n 6  6  b\n 7  7  a\n 8  8  b\n 9  9  a\n10 10  b\n\nAdditional to my previous note:\n\nYou could unpaste temp at $ and use \"V1\" using one of the methods I sent\npreviously (though suggesting the paste wasn't needed):\nunpaste(temp,sep=\"$\")[[2]] will get you \"V1\" directly.  You have to be\ncareful when applying unpaste() willy-nilly, as it will work for namings of\nlist of lists, but the 2 might then be wrong:\n\n> temp2<-\"DF$L1$V1\"\n> unpaste(temp2,sep=\"$\")\n[[1]]:\n[1] \"DF\"\n\n[[2]]:\n[1] \"L1\"\n\n[[3]]:\n[1] \"V1\"\n----------------------------------------------------------------------------\n----------------------------------\n\nsimpler is to use constructs like df[,\"V1\"]\n\ntemp<-paste(\"V\",1,sep=\"\")\nnewvar <- df[,temp]\n\nwhy not just use the natural subsetting syntax: X[,temp],\nleaving off the \"DF$\" prefix:\n\n> X <- data.frame(a1=rnorm(10),a2=rnorm(10),a3=rnorm(10))\n> X\n             a1          a2          a3\n 1 -0.009327616 -0.63203923 -1.10863723\n 2 -0.883845067  1.88446473  0.26173191\n 3 -0.899785204  0.82985563  0.86992442\n 4  1.966962166  0.91691809 -1.45683723\n 5  1.148358581  1.12844552 -0.45587880\n 6  0.446811886 -0.99774637 -0.05244959\n 7 -1.457353823  0.03401917 -0.53959360\n 8  0.292276032 -0.42210101  0.15247698\n 9  0.538080257 -0.76695623 -0.74940718\n10 -0.255957675  0.42023236  0.28882342\n> n <- c(\"a1\",\"a2\")\n> X[,n]\n             a1          a2\n 1 -0.009327616 -0.63203923\n 2 -0.883845067  1.88446473\n 3 -0.899785204  0.82985563\n 4  1.966962166  0.91691809\n 5  1.148358581  1.12844552\n 6  0.446811886 -0.99774637\n 7 -1.457353823  0.03401917\n 8  0.292276032 -0.42210101\n 9  0.538080257 -0.76695623\n10 -0.255957675  0.42023236\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Here is a summary of replies to my original posting.\nThank you very much to those who replied (their names are given below).\n\nMatt Kurbat\n\nORIGINAL POSTING\n> Dear Readers,\n>\n> I'd like to be able to d",
-      "thread_id": "thread-79b6656bda71",
-      "thread_depth": 0,
+      "thread_id": "thread-1287b2e22d78",
+      "thread_depth": 1,
       "month": "1999-12"
     },
     {
@@ -2165,12 +2165,12 @@
       "date": "1999-12-17T21:50:29Z",
       "subject": "RE: [S] log(0) problem",
       "subject_clean": "[S] log(0) problem",
-      "in_reply_to": null,
+      "in_reply_to": "<s85a5c69.001@fcc.gov>",
       "references": [],
       "body_plain": "Bruce,\n\nSorry I can't answer your question, but it brings to\nmind a somewhat related problem I had with S-plus (4.5)\nquite recently.  I was dealing with a multinomial\nlikelihood, containing factors such as p^x.  The log-\nlikelihood, of course, contained summands such as xlog(p).\n\nNow the problem.  Suppose p = 0.  That means that that class\nis impossible under the model, and if x is *not* 0, the\nlikelihood should be 0, and the log-likelihood, -Inf.\nSo far, so good:\n\n> 0^2\n[1] 0\n\n> log(0)\n[1] -Inf\n\n> 2*log(0)\n[1] -Inf\n\n> 2*(-Inf)\n[1] -Inf\n\nBut suppose now that x = 0 too.  Then that (impossible) class\nshould contribute a factor 0^0 = 1 to the likelihood.  And so\nit does in S-Plus:\n\n> 0^0\n[1] 1\n\nHowever, much to my annoyance, the contribution to the log-\nlikelihood became NA, not 0:\n\n> 0*log(0)\n[1] NA\n\n> 0*(-Inf)\n[1] NA\n\nNow, it seems to me that if you're going to define 0^0 as 1,\nit would be only consistent and polite to define\n0log(0) = log(1) = 0.  Or am I missing something here?\nAre there times when you would not want 0log(0) (or for that\nmatter, 0*(-Inf)) to be 0?\n\nCheers,\nScott\n\nCereon Genomics\nScott.Chasalow at cereon.com\n\n} -----Original Message-----\n} From: Bruce McCullough [mailto:BMCCULLO at fcc.gov]\n} Sent: Friday, 17 December, 1999 15:53\n} To: s-news at wubios.wustl.edu\n} Subject: [S] log(0) problem\n}  \n} Let \"lik\" be the likelihood of an invidual observation.\n} \n} Doing some replication work, the other guy (using an\n} inferior package) encountered a problem with log(lik) \n} when lik is close to zero.  Using S-Plus to replicate, \n} I had no such problem and so did not use the\n} following lines from the other guy's code:\n} \n} b = lik < 0.1^(10)               (a dummy variable)\n} lik = lik*(1-b) + b*0.1^(10)\n} L = log(lik)\n} \n} Clearly this is not a good thing to do.  \n} I ran the code on S-Plus both with and without\n} these lines, and got two radically different answers.\n} \n} Question: does anyone know of a published\n} reference that disabuses people of this errant\n} practice or its cousin: replacing values that\n} are zero with a very small number?\n} \n} Many thanks,\n} \n} Bruce\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Bruce,\n\nSorry I can't answer your question, but it brings to\nmind a somewhat related problem I had with S-plus (4.5)\nquite recently.  I was dealing with a multinomial\nlikelihood, containing factors su",
-      "thread_id": "thread-269ea8221693",
-      "thread_depth": 0,
+      "thread_id": "thread-e464d0185887",
+      "thread_depth": 1,
       "month": "1999-12"
     },
     {
@@ -2197,12 +2197,12 @@
       "date": "1999-12-17T22:04:27Z",
       "subject": "RE: [S] log(0) problem",
       "subject_clean": "[S] log(0) problem",
-      "in_reply_to": null,
+      "in_reply_to": "<s85a5c69.001@fcc.gov>",
       "references": [],
       "body_plain": "> Now, it seems to me that if you're going to define 0^0 as 1,\n> it would be only consistent and polite to define\n> 0log(0) = log(1) = 0.  Or am I missing something here?\n> Are there times when you would not want 0log(0) (or for that\n> matter, 0*(-Inf)) to be 0?\n\nS-Plus or other programming languages have to deal with ambiguous questions\nby giving ambiguous answers.  We can't expect the language to be able to\nguess what we mean.\n\nWe can define  \n        1 * log(0) \nas \n        lim(x->0) 1 * log (x)\nand this is unambiguously a negative infinity.\n\nSuppose now we want \n        0 * log(0)\nDoes this mean\n        lim (x->0) 0 * log(x), which is 0 ?\nOr does this mean\n        lim (x->0) x * log(x), which is 0 ?\nOr does this mean\n        lim (x->0) (5/(log(x)) * log(x), which is 5?\n\nIf you know statistics, you are likely to know that you mean either the\nfirst or the second, but S-Plus cannot expected to recognize and guess\nthat it is a binomial likelihood calculation.  Hence the NA is an appropriate\nresponse.\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "> Now, it seems to me that if you're going to define 0^0 as 1,\n> it would be only consistent and polite to define\n> 0log(0) = log(1) = 0.  Or am I missing something here?\n> Are there times when you wo",
-      "thread_id": "thread-ec0348a24f8b",
-      "thread_depth": 0,
+      "thread_id": "thread-e464d0185887",
+      "thread_depth": 1,
       "month": "1999-12"
     },
     {
@@ -2523,12 +2523,12 @@
       "date": "1999-12-21T11:58:25Z",
       "subject": "Re: [S] thanks for bivariate...replies",
       "subject_clean": "[S] thanks for bivariate...replies",
-      "in_reply_to": null,
+      "in_reply_to": "<UTC199912211116.MAA31519.rvdh@dory.cwi.nl>",
       "references": [],
       "body_plain": "> Date: Tue, 21 Dec 1999 12:16:32 +0100 (MET)\n> From: Rob.van.der.Horst at cwi.nl\n> > \n> > Maybe a stupid question or a faq:\n> > \n> > Does somewhere exist a Splus function for a random drawing\n> > (X,Y) from the bivariate normal distribution (means 0, sigma's 1,rho)\n> > ????????\n> > \n> \n> Well, it was not a stupid question after all.\n> The problem was (what a shame!) that we are still working with \n> Splus version 3.4 (for SGI)\n> \n> Many nice people told me to use the function \"rmvnorm\" (c.q. dmvnorm,pmvnorm)\n> and that function is \"not\" available in our 'old' version.\n> \n> Bill Venables was so kind to deliver me the source-text and now it is\n> working!\n\nThere is a function mvrnorm in library MASS that works on all versions\nof S-PLUS, possibly what Bill sent you.\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "> Date: Tue, 21 Dec 1999 12:16:32 +0100 (MET)\n> From: Rob.van.der.Horst at cwi.nl\n> > \n> > Maybe a stupid question or a faq:\n> > \n> > Does somewhere exist a Splus function for a random drawing\n> > (X,",
-      "thread_id": "thread-bcf9c090b4d5",
-      "thread_depth": 0,
+      "thread_id": "thread-62cf34fab4a1",
+      "thread_depth": 1,
       "month": "1999-12"
     },
     {
@@ -2593,8 +2593,8 @@
       ],
       "body_plain": "Rob van der Horst said:\n\n> > Bill Venables was so kind to deliver me the source-text and now it is\n> > working!\n\nto which Brian Ripley replied:\n\n> There is a function mvrnorm in library MASS that works on all versions\n> of S-PLUS, possibly what Bill sent you.\n\nand I confirm:\n\nAbsolutely!  The original, still the best and open source to boot!\n\nBill.\n\n-- \n-----------------------------------------------------------------\nBill Venables, Statistician, CMIS Environmetrics Project.\n\nPhysical address:                            Postal address:\nCSIRO Marine Laboratories,                   PO Box 120,       \n233 Middle St, Cleveland, Queensland         Cleveland, Qld, 4163\nAUSTRALIA                                    AUSTRALIA\n\nTelephone: +61 7 3826 7251     Email: Bill.Venables at cmis.csiro.au     \n      Fax: +61 7 3826 7304\n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Rob van der Horst said:\n\n> > Bill Venables was so kind to deliver me the source-text and now it is\n> > working!\n\nto which Brian Ripley replied:\n\n> There is a function mvrnorm in library MASS that work",
-      "thread_id": "thread-bcf9c090b4d5",
-      "thread_depth": 1,
+      "thread_id": "thread-62cf34fab4a1",
+      "thread_depth": 2,
       "month": "1999-12"
     },
     {
@@ -2889,12 +2889,12 @@
       "date": "1999-12-27T16:34:28Z",
       "subject": "RE: [S] reference",
       "subject_clean": "[S] reference",
-      "in_reply_to": null,
+      "in_reply_to": "<385EDE44.6A5D91A7@fsc.qut.edu.au>",
       "references": [],
       "body_plain": "Dr. Tweedie has a few papers on this topic with three (former) students of\nhis and others, the latest with Dr. Sue Duval are to appear in Biometrics\nand JASA.   The Stat. in Med. paper of his on meta-analysis is with me (also\na former student of his), but it's on estimation of the heterogeneity\nvariance and doesn't account at all for publication bias.\n\nSee his home page\nhttp://www.biostat.umn.edu/~tweedie/documents/tweediecurrentpapers.html for\nthe publication bias papers (see trim1.ps/trim1.pdf and trim2.ps/trim2.pdf\nfor the Biometrics and JASA papers) and our Stat in Med paper\n(Finaltau2.ps), or mine http://www.stat.colostate.edu/~bradb for the Stat in\nMed paper.  \n\nI have written fairly complete software in S-Plus to do almost all of this,\nincluding most of my variance estimation work and Duval and Tweedie's\npublication bias methodology.  When I've gotten it a bit more checked out, I\nmight post to statlib.  Note that these methods are for one-way models,\nwhere there are no covariates.  The recent paper by Thompson and Sharp in\nStat. in Med., for example, should be consulted in these cases.\n\nRegards,\nBrad\n\nBrad Biggerstaff, Ph.D.\nMathematical Statistican\nCenters for Disease Control and Prevention\nNational Center for Infectious Diseases\nDivision of Vector-Borne Infectious Diseases\nP.O. Box 2087\nFort Collins, CO  80522-2087   U.S.A.\n(970) 221-6473              bkb5 at cdc.gov\n\n> -----Original Message-----\n> From: In-Sun Nam [SMTP:i.nam at fsc.qut.edu.au]\n> Sent: Monday, December 20, 1999 6:56 PM\n> To:   S-List\n> Subject:      [S] reference\n> \n> \n> Dear all,\n> \n> Does anyone know a reference or two regarding a test for the existence\n> and number of missing studies (for Meta analysis), possibly by Tweedie,\n> possibly in Stats. in Med. or in Stat. Society??\n> \n> Thanks in advance,\n> In-Sun\n> \n> -----------------------------------------------------------------------\n> This message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\n> send e-mail to s-news-request at wubios.wustl.edu with the BODY of the\n> message:  unsubscribe s-news\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Dr. Tweedie has a few papers on this topic with three (former) students of\nhis and others, the latest with Dr. Sue Duval are to appear in Biometrics\nand JASA.   The Stat. in Med. paper of his on meta-",
-      "thread_id": "thread-d0685892b1d4",
-      "thread_depth": 0,
+      "thread_id": "thread-85a6bd797593",
+      "thread_depth": 1,
       "month": "1999-12"
     },
     {
@@ -3017,12 +3017,12 @@
       "date": "1999-12-29T05:00:18Z",
       "subject": "[S] resume",
       "subject_clean": "[S] resume",
-      "in_reply_to": null,
+      "in_reply_to": "<199912030816.QAA01740@pop1.pacific.net.ph>",
       "references": [],
       "body_plain": "????? PLEASE ASSESS IF I QUALIFY AS\nTEACHER IN AUSTRALIA. BELOW IS MY RESUME. kINDLY TELL ME HOW I CAN AVAIL\nOF YOUR ASSISTANCE. TY.\n\n? \n\n?????????????????????????? MARIA\nCAROLINA P. LAYOG\n\n?????????? 102\nParaiso St Parang Marikina City\n\n___________________________________________________________\n\nA PERSONAL\nDATA\n\n??? Age:?\n33\n\n??? Date of Birth:? January 28, 1966\n\n??? Place of Birth:? Manila\n\n??? Telephone Number: 9488379\n\n??? Height:? 5?4 1/2?\n\n??? Weight:? 135 lbs.\n\n??? Religion: Roman Catholic\n\n??? Nationality: Filipina\n\n? \n\n??? Civil Status: Single\n\n??? Sex: Female\n\n??? Hobbies: Reading, writing poems, Sketching\n\n??? Special Skills: Writing Plays, Directing Plays, Hosting \n\n??????????????????? Programs\n\n??? Passport Number: BB844740 Valid until Jan 24 2002\n\n??? NBI ID Number: L573M8YOGNA0000\n\n??? TIN: 118210855\n\n??? SSS:? 03-8409281-5\n\n??? PRC License No : 0197148\n\nB. EDUCATIONAL\nQUALIFICATIONS\n\n??????????????\nInclusive period?? School/College\n\nElementary???? 1972-1978??????? Paco Catholic School\n\nSecondary????? 1978-1982??????? Paco catholic School\n\nCollege??????? 1982-1985??????? NCBA Quezon City\n\nGraduate?????? 1985-1986??????? University of the \n\n???????????????????????????????? Philippines, Diliman QC\n\n??????????????? 1987-1992??????? UP Diliman Qc (18 Masteral\n\n????????????????????????????????\nUnits)\n\nC. WORK\nEXPERIENCES\n\n?? OUR LADY\nOF PERPETUAL SCHOOL? MARIKINA CITY? 1987-1991\n\n?? KOSTKA SCHOOL QUEZON CITY??????????????????? 1991-1992\n\n?? MIRIAM COLLEGE GRADE SCHOOL????????????????? 1992-1996\n\n?? ST. SCHOLASTICA?S ACADEMY? MARIKINA CITY???? 1996-1997\n\n?? PARANG ELEM.SCHOOL? MARIKINA CITY?????????? 1997-1999\n\n?? \n\nD. CIVIL SERVICE ELIGIBILITIES\n\n?? \n\n?? PROFESSIONAL BOARD EXAMINATIONS FOR TEACHERS (PBET)\n\n???????? November 25,1990????? 76.62%\n\nE. InService\nTraining and Seminars Attended\n\n???\nTITLE?????????????? DATE??????????? SPONSORING AGENCY\n\nInnovative Reading???? Nov. 28, 1987??? Bookmark\nPublishing? \n\nTechnique & Strategies\n\nBuilding a People????? Feb. 27, 1993??? CEAP (Carholic Edu-\n\nBuilding a Nation?????????????????????? cators Assoc. of \n\n??????????????????????????????????????? the Phils.)\n\nNature Awareness Camp? May 3-15,1993??? Miriam PEACE\n\n? for Teachers\n\nClub Moderators??????? Jan. 22,1994???? QC-Mkna. Consortium\n\ntraining Workshop\n\nAnnual Seminar Assembly Feb.26,1994???? Phil.Geographical \n\n??????????????????????????????????????????? Society\n\nCritical Thinking in??? Apr.25-29,1994? ATENEO\n\nSocial Studies\n\nLatest Development????? Feb. 25,1995??? CEAP\n\nin Phil. History\n\nIBON Partnership??????? Feb.29,1996??? IBON\n\nin Education\n\n17th? National????????? Oct.23-25,???? ATENEO/NCCA\n\nConference on Local???????? 1996\n\nand National History\n\nThe World of 1896?????? Oct. 25-26,??? ATENEO\n\n??????????????????????????? 1996\n\nTugon ng Guro sa??????? Nov.23,1996??? CEAP\n\nSentenaryo\n\nDivision Seminar??????? Oct. 28-30,??? District III \n\nWorkshop on the??????????? 1997??????? Marikina Division\n\nPreparation of \n\nInstructural Aids for\n\nUse in English\n\nNational Conference???? Dec. 10-12,?? Department of Educ.,??? \n\nOn the Gifted?????????????? 1997????? Culture & Sports and\n\n????????????????????????????????????? GIFTED Phils., Inc.\n\nDemo Teaching?????????? Feb. 13,1998? Reading Association?????? \n\non Beginning and????????????????????? of the Phil. and\n\nRemedial Reading????????????????????? Division of Marikina\n\n??????????????????????????????????????????? City \n\nAdvance Research Tools? May 1320,??? Asian Center of UP,\n\nin Social & Behavioral???? 1998??????????? Diliman, QC\n\n?? Sciences\n\nTeaching Effective-???? June 6, 1998? Prime Center for\n\n? ness Course???????????????????????? Professionals, Inc.\n\nSeminar workshop??????? Nov.10-13,??? Division of Marikina \n\nin HEKASI????????????????? 1998??????????? City\n\nPopularizing the??????? May 15-16,??? University of the \n\nLaw Seminar for??????????? 1999?????? Philippines , law \n\nPublic Schools??????????????????????? Center \n\nTeachers from\n\nAll regions?????????????????????????? Institute of Gov?t\n\n????????????????????????????????????? And Law Reform\n\nThe Language of??????? July 04,1999? Prime Center for? \n\nTeaching & Learning????????????????? Professionals, Inc.\n\nInstructional Media??? Aug. 15,1999? Prime Center for\n\n& Technologies for?????????????????? Professionals, Inc.\n\nLearning\n\nF.\nACHIEVEMENTS\n\n? Social\nStudies Coordinator (OLOPSS) SY 1990-1991\n\n? PUBLICATIONS:\n\n? Ako at Ang Daloy ng Kasaysayan (co-author) GradeFive\n\n? Textbook for Araling Panlipunan (National Bookstore)\n\n? Modules for Environmental Education (grade Two) \n\n? MIRIAM PEACE / Department of Environment and Natural?? \n\n? Resources\n\nG. CHARACTER?\nREFERENCES:\n\n?? Dr. Lydia\nN. Agno????? Professor??????? UP, Diliman,QC\n\n????????????????????????? Author\n\n?? Dr. Celina E. Balonso? Program Adviser? UP Diliman, QC\n\n????????????????????????? Master of Arts\n\n????????????????????????? In Educ., Social\n\n???????????????????????????? Studies \n\n?? Dr. Virginia Silvestre? DECS-NCR?????? Modesta Village,\n\n?????????????????????????? Supervisor???? Parang, Marikina\n\n?????????????????????????????????????????????? City\n\n????? I hereby certify that the data and information stated above are\ntrue and correct.\n\n??????????????????????????????????????????????????????????????????\nMARIA CAROLINA P. LAYOG? \n\n?? \n\n?? \n\n?? \n\n?? \n\n?? \n\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "????? PLEASE ASSESS IF I QUALIFY AS\nTEACHER IN AUSTRALIA. BELOW IS MY RESUME. kINDLY TELL ME HOW I CAN AVAIL\nOF YOUR ASSISTANCE. TY.\n\n? \n\n?????????????????????????? MARIA\nCAROLINA P. LAYOG\n\n??????????",
-      "thread_id": "thread-92bab1ded98d",
-      "thread_depth": 0,
+      "thread_id": "thread-075f4233fc94",
+      "thread_depth": 1,
       "month": "1999-12"
     },
     {
@@ -3131,12 +3131,12 @@
       "date": "1999-12-31T14:07:18Z",
       "subject": "Re: [S] survreg question",
       "subject_clean": "[S] survreg question",
-      "in_reply_to": null,
+      "in_reply_to": "<3.0.5.32.19991231005438.0079c5c0@mail-bb.acpub.duke.edu>",
       "references": [],
       "body_plain": "Brian B asked about the 'strata' argument in survreg():\n\n Statsci changed the name of the routine to survReg, you may be invoking the\nolder routine.  \n  We had a debate about this.  In making the survreg() changes from my\nsurvival4 to survival5 release,  the new routine is not upwardly compatable\nwith the old.  Some arguments changed, and the output structure most definitely\ndid.  Should we:\n     a. Keep the old name.  In 2 years no one will remember that you used to\nhave to say \"dist='normal', link='log'\" instead of the new \"dist='lognormal'\".\n     b. Create a new name survReg and class, so that old code works without\nchange, but current users will confuse the routines.\n\n  Neither is perfect.  They voted for (b).  (I mildly preferred a.)\n\n----\n \n  2. Are there any functions for fitting a Cox model to interval censored data?\n        No.  Perhaps someday.\n\n  3. Drawing a survival curve for interval censored data? \n       Yes, if one assumes a parametric model.\n\n        > dfit <- survreg(Surv(time1, time2, status, type='interval') ~1,\n                     data=donnell)\n        > xx <- predict(dfit, newdata=donnell[1,], type='quantile',\n                              p= (1:29)/30 )\n        > plot(xx, 1- (1:29)/30, xlab='Time', ylab='Survival')\n\n       (The donnell data can be found in the test suite of survival5.  It\n        was sent to me by a user (Donnell) as an example where the\n        survreg() doesn't converge.  survReg and censorReg do fine)\n\n      For an interval-censored KM: no.\n\nTerry Therneau\n-----------------------------------------------------------------------\nThis message was distributed by s-news at wubios.wustl.edu.  To unsubscribe\nsend e-mail to s-news-request at wubios.wustl.edu with the BODY of the\nmessage:  unsubscribe s-news",
       "body_snippet": "Brian B asked about the 'strata' argument in survreg():\n\n Statsci changed the name of the routine to survReg, you may be invoking the\nolder routine.  \n  We had a debate about this.  In making the surv",
-      "thread_id": "thread-a13c8f3e33cd",
-      "thread_depth": 0,
+      "thread_id": "thread-b28376fadbb6",
+      "thread_depth": 1,
       "month": "1999-12"
     },
     {
@@ -3394,12 +3394,13 @@
     {
       "id": "thread-f3efdbf89055",
       "subject": "[S] apply function",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
+        "Alan Zaslavsky",
         "Eric Elguero"
       ],
       "started": "1999-12-02T13:43:02Z",
-      "last_reply": "1999-12-02T13:43:02Z",
+      "last_reply": "1999-12-02T15:35:08Z",
       "root_message_id": "msg-f3efdbf89055"
     },
     {
@@ -3412,28 +3413,6 @@
       "started": "1999-12-02T15:15:02Z",
       "last_reply": "1999-12-02T15:15:02Z",
       "root_message_id": "msg-676b1c951491"
-    },
-    {
-      "id": "thread-690abc6f57e7",
-      "subject": "[S] apply function",
-      "message_count": 1,
-      "participants": [
-        "Alan Zaslavsky"
-      ],
-      "started": "1999-12-02T15:15:07Z",
-      "last_reply": "1999-12-02T15:15:07Z",
-      "root_message_id": "msg-690abc6f57e7"
-    },
-    {
-      "id": "thread-88cb556bd929",
-      "subject": "[S] apply function",
-      "message_count": 1,
-      "participants": [
-        "Eric Elguero"
-      ],
-      "started": "1999-12-02T15:35:08Z",
-      "last_reply": "1999-12-02T15:35:08Z",
-      "root_message_id": "msg-88cb556bd929"
     },
     {
       "id": "thread-657cc863ed57",
@@ -3493,12 +3472,12 @@
     {
       "id": "thread-075f4233fc94",
       "subject": "[S] resume",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "pam_nico at pacific.net.ph"
       ],
       "started": "1999-12-03T08:03:56Z",
-      "last_reply": "1999-12-03T08:03:56Z",
+      "last_reply": "1999-12-29T05:00:18Z",
       "root_message_id": "msg-075f4233fc94"
     },
     {
@@ -3515,24 +3494,13 @@
     {
       "id": "thread-1df87f823094",
       "subject": "[S] data frame manipulation question",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Wing, Michael"
       ],
       "started": "1999-12-03T16:21:07Z",
-      "last_reply": "1999-12-03T16:21:07Z",
-      "root_message_id": "msg-1df87f823094"
-    },
-    {
-      "id": "thread-ce24b0ec0687",
-      "subject": "[S] data frame manipulation question",
-      "message_count": 1,
-      "participants": [
-        "Wing, Michael"
-      ],
-      "started": "1999-12-03T16:55:02Z",
       "last_reply": "1999-12-03T16:55:02Z",
-      "root_message_id": "msg-ce24b0ec0687"
+      "root_message_id": "msg-1df87f823094"
     },
     {
       "id": "thread-4e0f7cb9435f",
@@ -3958,20 +3926,9 @@
       "root_message_id": "msg-032e858395d3"
     },
     {
-      "id": "thread-a481ccef08e1",
-      "subject": "[S] Get paid just for being online!",
-      "message_count": 1,
-      "participants": [
-        "LouBug5 at aol.com"
-      ],
-      "started": "1999-12-12T20:21:26Z",
-      "last_reply": "1999-12-12T20:21:26Z",
-      "root_message_id": "msg-a481ccef08e1"
-    },
-    {
       "id": "thread-331cc223b17f",
       "subject": "[S] Get paid just for being online!",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "LouBug5 at aol.com"
       ],
@@ -4073,12 +4030,13 @@
     {
       "id": "thread-726e58a55979",
       "subject": "[S] as.integer inside other S-Plus functions",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Eric Elguero",
         "Gadd, Daniel"
       ],
       "started": "1999-12-14T11:33:46Z",
-      "last_reply": "1999-12-14T11:33:46Z",
+      "last_reply": "1999-12-14T12:47:34Z",
       "root_message_id": "msg-726e58a55979"
     },
     {
@@ -4091,17 +4049,6 @@
       "started": "1999-12-14T12:17:32Z",
       "last_reply": "1999-12-14T12:17:32Z",
       "root_message_id": "msg-c1bc933d0755"
-    },
-    {
-      "id": "thread-a4e3f92a9802",
-      "subject": "[S] as.integer inside other S-Plus functions",
-      "message_count": 1,
-      "participants": [
-        "Eric Elguero"
-      ],
-      "started": "1999-12-14T12:47:34Z",
-      "last_reply": "1999-12-14T12:47:34Z",
-      "root_message_id": "msg-a4e3f92a9802"
     },
     {
       "id": "thread-8041894a7280",
@@ -4117,12 +4064,15 @@
     {
       "id": "thread-1d2495e31fae",
       "subject": "[S] Bon Voyage!",
-      "message_count": 1,
+      "message_count": 4,
       "participants": [
-        "gatravel at england.com"
+        "Duncan Murdoch",
+        "gatravel at england.com",
+        "jacquier at jacquier.bc.edu",
+        "laura vaugeois"
       ],
       "started": "1999-12-14T14:47:41Z",
-      "last_reply": "1999-12-14T14:47:41Z",
+      "last_reply": "1999-12-15T00:38:39Z",
       "root_message_id": "msg-1d2495e31fae"
     },
     {
@@ -4172,36 +4122,13 @@
     {
       "id": "thread-1287b2e22d78",
       "subject": "[S] S-Plus Question",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "paul.na"
       ],
       "started": "1999-12-14T19:49:09Z",
-      "last_reply": "1999-12-14T19:49:09Z",
+      "last_reply": "1999-12-16T16:38:32Z",
       "root_message_id": "msg-1287b2e22d78"
-    },
-    {
-      "id": "thread-67896d4a363d",
-      "subject": "[S] Bon Voyage!",
-      "message_count": 2,
-      "participants": [
-        "Duncan Murdoch",
-        "jacquier at jacquier.bc.edu"
-      ],
-      "started": "1999-12-14T20:10:00Z",
-      "last_reply": "1999-12-15T00:38:39Z",
-      "root_message_id": "msg-67896d4a363d"
-    },
-    {
-      "id": "thread-0d73e5b4c391",
-      "subject": "[S] Bon Voyage!",
-      "message_count": 1,
-      "participants": [
-        "laura vaugeois"
-      ],
-      "started": "1999-12-14T20:59:45Z",
-      "last_reply": "1999-12-14T20:59:45Z",
-      "root_message_id": "msg-0d73e5b4c391"
     },
     {
       "id": "thread-4ac9460c81bb",
@@ -4325,17 +4252,6 @@
       "root_message_id": "msg-23c59df89d4d"
     },
     {
-      "id": "thread-79b6656bda71",
-      "subject": "[S] S-Plus Question",
-      "message_count": 1,
-      "participants": [
-        "paul.na"
-      ],
-      "started": "1999-12-16T16:38:32Z",
-      "last_reply": "1999-12-16T16:38:32Z",
-      "root_message_id": "msg-79b6656bda71"
-    },
-    {
       "id": "thread-216be4db701b",
       "subject": "[S] Adaptive (\"biased coin\") Randomization for Clinical Trials",
       "message_count": 1,
@@ -4451,12 +4367,14 @@
     {
       "id": "thread-e464d0185887",
       "subject": "[S] log(0) problem",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
-        "Bruce McCullough"
+        "Alan Zaslavsky",
+        "Bruce McCullough",
+        "CHASALOW, SCOTT [AG/2165]"
       ],
       "started": "1999-12-17T20:53:04Z",
-      "last_reply": "1999-12-17T20:53:04Z",
+      "last_reply": "1999-12-17T22:04:27Z",
       "root_message_id": "msg-e464d0185887"
     },
     {
@@ -4471,17 +4389,6 @@
       "root_message_id": "msg-9f51894861c1"
     },
     {
-      "id": "thread-269ea8221693",
-      "subject": "[S] log(0) problem",
-      "message_count": 1,
-      "participants": [
-        "CHASALOW, SCOTT [AG/2165]"
-      ],
-      "started": "1999-12-17T21:50:29Z",
-      "last_reply": "1999-12-17T21:50:29Z",
-      "root_message_id": "msg-269ea8221693"
-    },
-    {
       "id": "thread-575c532f8451",
       "subject": "[S] GAM",
       "message_count": 1,
@@ -4491,17 +4398,6 @@
       "started": "1999-12-17T22:03:08Z",
       "last_reply": "1999-12-17T22:03:08Z",
       "root_message_id": "msg-575c532f8451"
-    },
-    {
-      "id": "thread-ec0348a24f8b",
-      "subject": "[S] log(0) problem",
-      "message_count": 1,
-      "participants": [
-        "Alan Zaslavsky"
-      ],
-      "started": "1999-12-17T22:04:27Z",
-      "last_reply": "1999-12-17T22:04:27Z",
-      "root_message_id": "msg-ec0348a24f8b"
     },
     {
       "id": "thread-2a15693e8693",
@@ -4650,12 +4546,13 @@
     {
       "id": "thread-85a6bd797593",
       "subject": "[S] reference",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Biggerstaff, Brad J.",
         "In-Sun Nam"
       ],
       "started": "1999-12-21T01:56:20Z",
-      "last_reply": "1999-12-21T01:56:20Z",
+      "last_reply": "1999-12-27T16:34:28Z",
       "root_message_id": "msg-85a6bd797593"
     },
     {
@@ -4672,25 +4569,15 @@
     {
       "id": "thread-62cf34fab4a1",
       "subject": "[S] thanks for bivariate...replies",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
+        "Bill Venables",
+        "Prof Brian Ripley",
         "Rob.van.der.Horst at cwi.nl"
       ],
       "started": "1999-12-21T11:16:32Z",
-      "last_reply": "1999-12-21T11:16:32Z",
-      "root_message_id": "msg-62cf34fab4a1"
-    },
-    {
-      "id": "thread-bcf9c090b4d5",
-      "subject": "[S] thanks for bivariate...replies",
-      "message_count": 2,
-      "participants": [
-        "Bill Venables",
-        "Prof Brian Ripley"
-      ],
-      "started": "1999-12-21T11:58:25Z",
       "last_reply": "1999-12-21T23:43:33Z",
-      "root_message_id": "msg-bcf9c090b4d5"
+      "root_message_id": "msg-62cf34fab4a1"
     },
     {
       "id": "thread-babb971eec06",
@@ -4883,17 +4770,6 @@
       "root_message_id": "msg-63d0e0f30b7f"
     },
     {
-      "id": "thread-d0685892b1d4",
-      "subject": "[S] reference",
-      "message_count": 1,
-      "participants": [
-        "Biggerstaff, Brad J."
-      ],
-      "started": "1999-12-27T16:34:28Z",
-      "last_reply": "1999-12-27T16:34:28Z",
-      "root_message_id": "msg-d0685892b1d4"
-    },
-    {
       "id": "thread-4e599541efac",
       "subject": "[S] How to link multilple time series to MS ACCESS database andauto-refresh",
       "message_count": 1,
@@ -4971,17 +4847,6 @@
       "root_message_id": "msg-8aa3d0732903"
     },
     {
-      "id": "thread-92bab1ded98d",
-      "subject": "[S] resume",
-      "message_count": 1,
-      "participants": [
-        "pam_nico at pacific.net.ph"
-      ],
-      "started": "1999-12-29T05:00:18Z",
-      "last_reply": "1999-12-29T05:00:18Z",
-      "root_message_id": "msg-92bab1ded98d"
-    },
-    {
       "id": "thread-58ceece41d86",
       "subject": "[S] Returning Values from a Dialog",
       "message_count": 2,
@@ -5029,24 +4894,14 @@
     {
       "id": "thread-b28376fadbb6",
       "subject": "[S] survreg question",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Brian Beckage"
-      ],
-      "started": "1999-12-31T05:54:38Z",
-      "last_reply": "1999-12-31T05:54:38Z",
-      "root_message_id": "msg-b28376fadbb6"
-    },
-    {
-      "id": "thread-a13c8f3e33cd",
-      "subject": "[S] survreg question",
-      "message_count": 1,
-      "participants": [
+        "Brian Beckage",
         "Therneau, Terry M., Ph.D."
       ],
-      "started": "1999-12-31T14:07:18Z",
+      "started": "1999-12-31T05:54:38Z",
       "last_reply": "1999-12-31T14:07:18Z",
-      "root_message_id": "msg-a13c8f3e33cd"
+      "root_message_id": "msg-b28376fadbb6"
     },
     {
       "id": "thread-1e3f90ea9e29",

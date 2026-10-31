@@ -643,12 +643,12 @@
       "date": "2003-06-06T21:57:48Z",
       "subject": "Re: Subscripting",
       "subject_clean": "Subscripting",
-      "in_reply_to": null,
+      "in_reply_to": "<000001c32c19$2cfc1b70$37997bd5@r850e>",
       "references": [],
       "body_plain": "> Looks like a precision issue - your problem is highlighted by the\n> following example .\n>  \n> > (2 - 1) == 1\n> [1] T\n> > (2.1 - 1.1) == 1\n> [1] T\n> > (2.11 - 1.11) == 1\n> [1] F\n> > (2.111 - 1.111) == 1\n> [1] F\n>  \n> You could use zapsmall (or round) to get around this problem in the\n> short term .\n>  \n> > zapsmall(6.13 - 4.48) == 1.65\n> [1] T\n\nFor those who are curious, here is what is happening here:  A floating\npoint number is represented as a binary fraction with a fixed number of\nplaces and a 1 in the first place, times a power of 2.  For a number 2.xx\nthe place value of the first place is twice that with 1.xx.  Hence there\nis one less bit of precision at the right end.  If the last bit on the\nright end of 1.xx happens to be a 0, dropping it doesn't change the value\nof the fractional part, so the subtraction gives an exact 1.  If the last\nbit happens to be a 1, then the subtraction does not give an exact 1.\n\nMoral: never treat floating point calculations as exact, if it will make\na difference.  FIgure out how much error is likely (not hard for simple\nexpressions like x-y) and deal with it accordingly.",
       "body_snippet": "> Looks like a precision issue - your problem is highlighted by the\n> following example .\n>  \n> > (2 - 1) == 1\n> [1] T\n> > (2.1 - 1.1) == 1\n> [1] T\n> > (2.11 - 1.11) == 1\n> [1] F\n> > (2.111 - 1.111) =",
-      "thread_id": "thread-46d0d49bd942",
-      "thread_depth": 0,
+      "thread_id": "thread-e144d2ba1196",
+      "thread_depth": 1,
       "month": "2003-06"
     },
     {
@@ -805,12 +805,12 @@
       "date": "2003-06-09T20:00:11Z",
       "subject": "Re: Multinomial Question",
       "subject_clean": "Multinomial Question",
-      "in_reply_to": null,
+      "in_reply_to": "<000501c32e0d$29ae7ee0$2032b583@qut.edu.au>",
       "references": [],
       "body_plain": "Steve,\n\nI suggest you might find it useful to recode your multinomial samples.  Let's \ncall your \"C\" matrix X (\"C\" is a bad choice, since it is the name of a system \nfunction).  Also, I'm going to store your samples as columns instead of rows, \njust because I feel like it.  A column of X gives the class frequencies for a \nparticular sample.  I recode X, creating a matrix I'll call U.  A column of U \ngives the class numbers (labels) for a particular sample.  Its probably easiest \njust to look at the example:\n \n> X <- array(c(0,2,0,0,0,1,0,1,0,0,1,1), c(4, 3))\n> X\n     [,1] [,2] [,3] \n[1,]    0    0    0\n[2,]    2    1    0\n[3,]    0    0    1\n[4,]    0    1    1\n\n> U <- x2u.mat(X)\n> U\n     [,1] [,2] [,3] \n[1,]    2    2    3\n[2,]    2    4    4\n\nI give the function x2u.mat below.  Once we have U, decomposing X into A and B \nis simple and fast:\n\n> A <- B <- array(0, dim(X))\n> A[cbind(U[1, ], 1:ncol(X))] <- 1\n> B[cbind(U[2, ], 1:ncol(X))] <- 1\n\n> t(X)\n     [,1] [,2] [,3] [,4] \n[1,]    0    2    0    0\n[2,]    0    1    0    1\n[3,]    0    0    1    1\n\n> t(A)\n     [,1] [,2] [,3] [,4] \n[1,]    0    1    0    0\n[2,]    0    1    0    0\n[3,]    0    0    1    0\n\n> t(B)\n     [,1] [,2] [,3] [,4] \n[1,]    0    1    0    0\n[2,]    0    0    0    1\n[3,]    0    0    0    1\n\nWe can think of A as a matrix of indicator variables for U[1, ], the first unit \nin each sample.  B is a matrix of indicator variables for U[2, ], the second \nunit in each sample.  More explicitly,\n\nA[, j] = ( Ind(U_1j = 1), Ind(U_1j = 2), Ind(U_1j = 3), Ind(U_1j = 4) )\nB[, j] = ( Ind(U_2j = 1), Ind(U_2j = 2), Ind(U_2j = 3), Ind(U_2j = 4) ).\n\nHere, U_1j is the element in row 1, column j of U, etc.; I'm not, for the \nmoment, using S syntax.\n\nAs for your question (2), I'm not sure, but I suspect that if you have d \n*independent* multinomial samples (d=3 in your example), the column sums of A \nform a sample from a multinomial with n = d and the same p as in your original. \n Same thing for B.\n\nCheers,\nScott\n\n=================================== \nScott D Chasalow\nScott.Chasalow at monsanto.com\n=================================== \n\n\"x2u.mat\" <- function(x)\n{\n# DATE WRITTEN:  09 Jun 2003             LAST REVISED:  09 Jun 2003\n# AUTHOR:  Scott D. Chasalow  (Scott.Chasalow at monsanto.com)\n#\n# DESCRIPTION:\n#       Converts a matrix of x-encoded simplex-lattice points to a\n#       matrix of u-encoded simplex-lattice points (equivalently,\n#       \"untabulates\" bin counts).\n#\n# REQUIRED ARGUMENTS:\n# x     a matrix of non-negative integers, giving x-encoded points on\n#       a simplex lattice.  Element (i, j) gives the number of units\n#       in class i for point j.  That is, the points are stored as\n#       COLUMNS of x.  The column sums of x must be the same; that\n#       is, length(unique(colSums(x))) must be 1.\n#\n# VALUE:\n#       a matrix of positive integers, giving u-encoded points on a\n#       simplex lattice.  Column j gives the u-encoding for point\n#       x[, j].  Each column gives the bin numbers for a point, in\n#       lexicographic order.\n#\n# DETAILS:\n#       Simplex lattice points are also known as p-part compositions\n#       of n.  The support space of a multinomial distribution is a\n#       simplex lattice.\n#\n# SEE ALSO:\n#       xsimplex, rmultz2, x2u\n# \n# EXAMPLES:\n#       # 5 random samples from a multinomial(4, (1/3, 1/3, 1/3)) distn:\n#       x <- rmultz2(n = 4,  p = rep(1/3, 3), draws = 5)\n#       x2u.mat(x)\n#\n#       # Complete enumeration of the support space of a multinomial\n#       # distribution with n = 5 and p = 3 classes:\n#       x <- xsimplex(3, 5)\n#       x2u.mat(x)\n#\n        d <- dim(x)\n        nclasses <- d[1]\n        draws <- d[2]\n        n <- colSums(x)\n        if (length(unique(n)) > 1)\n                stop(\"What the...?\")\n        else\n                n <- n[1]\n        labs <- rep(1:nclasses, draws)\n        u <- rep(labs, x)\n        array(u, c(n, draws))\n}\n\n-----Original Message-----\nFrom: Steve Su [mailto:s.su at qut.edu.au]\nSent: Sunday, 08 June 2003 18:28\nTo: s-news at lists.biostat.wustl.edu\nSubject: [S] Multinomial Question\n\nDear All,\n\nI have two rather strange questions. It is probably not quite the right\nplace to ask a more theoretical question in here but if anyone can direct me\nto a more appropriate channel please let me know.\n\nLets say I have a matrix C, generated by the following multinomial\ndistribution:\n\n### rmultinom function:\n### This is based on rmultz2() from S-news by Alan Zaslavsky & Scott\nChasalow\n### {and adapted from the R package \"combinat\"}.\n### Arg.names like  rbinom();  returns  n x p matrix\n\n  rmultinom <- function(n, size, prob) {\n      K <- length(prob) # #{classes}\n      matrix(tabulate(sample(K, n * size, repl = TRUE, prob) + K * 0:(n -\n1),\n                      nbins = n * K),\n             nrow = n, ncol = K, byrow = TRUE)\n  }\n\nSo C will be generated by (rmultinom(3,2,rep(1/4,4))) for example, with 4\ncolumns and 3 rows. The size parameter in rmultinom is always set to 2.\n\nI want to decompose C=A+B.\n\nSo if\n\nC<-matrix(c(0,0,0,2,1,0,0,0,1,0,1,1),ncol=4) # from rmultinom\n\nThen:\nA<-matrix(c(0,0,0,1,1,0,0,0,1,0,0,0),ncol=4)\nB<-matrix(c(0,0,0,1,0,0,0,0,0,0,1,1),ncol=4)\n\n> C\n     [,1] [,2] [,3] [,4]\n[1,]    0    2    0    0\n[2,]    0    1    0    1\n[3,]    0    0    1    1\n> A\n     [,1] [,2] [,3] [,4]\n[1,]    0    1    0    0\n[2,]    0    1    0    0\n[3,]    0    0    1    0\n> B\n     [,1] [,2] [,3] [,4]\n[1,]    0    1    0    0\n[2,]    0    0    0    1\n[3,]    0    0    0    1\n\nA is a matrix with the first entry of 1's in each row of C, and B is a\nmatrix with the second entry of 1's in each row of C.\n\nHere are my two questions:\n\n1. Is there a way I can define mathematically the relationship of B and C in\na single line to reflect the fact that A is a matrix with the first entry of\n1's in each row of C, and B is a matrix with the second entry of 1's in each\nrow of C?\n\n2. What are the multinomial distributions parameters of the colSums of B and\nA when it is decomposed in this manner?\n\nI have include a little and likely inefficient function to decompose C into\nB and A.\n\nfun.sep.mat<-function(ddd){\n\neee<-t(ddd)\nindex<-rep(which(eee),c(eee)[which(eee)])\n\nA<-rep(0,length=prod(dim(ddd)))\nB<-A\n\nB[index[seq(2,length(index),by=2)]]<-1\nA[index[seq(1,length(index),by=2)]]<-1\n\nA<-matrix(A,ncol=ncol(ddd),byrow=T)\nB<-matrix(B,ncol=ncol(ddd),byrow=T)\n\nreturn(A,B)}\n\nThank you for your attention.\n\nSteve.\n\n****************************************************************************\n**********\n\n Steve Su (s.su at qut.edu.au)\n PhD student.\n\n School of Accountancy\n School of Mathematical Sciences\n Queensland University of Technology\n\n Postal Address: Steve Su, School of Accountancy, QUT, PO Box 2434,\nBrisbane,\n Queensland, Australia, 4000.\n\n Phone:  +61 7 3864 2017\n Fax:    +61 7 3864 1812\n Mobile: 0421  840  586\n     .\n   _--_|\\\n  /      QUT\n  \\_.--._/\n        v\n\n****************************************************************************\n**********\n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Steve,\n\nI suggest you might find it useful to recode your multinomial samples.  Let's \ncall your \"C\" matrix X (\"C\" is a bad choice, since it is the name of a system \nfunction).  Also, I'm going to sto",
-      "thread_id": "thread-d3f0b8fb49be",
-      "thread_depth": 0,
+      "thread_id": "thread-990fff29ec9b",
+      "thread_depth": 1,
       "month": "2003-06"
     },
     {
@@ -1109,12 +1109,12 @@
       "date": "2003-06-11T13:47:34Z",
       "subject": "Re: high quality phots with S+?",
       "subject_clean": "high quality phots with S+?",
-      "in_reply_to": null,
+      "in_reply_to": "<000001c32fd0$c6d4e550$e228ad40@home>",
       "references": [],
       "body_plain": "Danni,\n\nI don't know if this will help you, but if the main problem you are having\nis with the appearance of plotted lines, you might want to look into using\ndevices such as wmf.graph(), postscript(), or pdf.graph() instead of\ngraphsheet().  See a collection of messages on this topic pasted in below,\ndating back to 1997.  Why this critical element of producing publication\nquality graphics has not yet been addressed by Insightful is beyond me.\n\nS-PLUS® 6.1 for Windows\nPROFESSIONAL EDITION\nRelease 1\n\nJVA\n\n`·.,,  ><(((º>   `·.,,  ><(((º>   `·.,,  ><(((º>\n\nJean V. Adams\nStatistician\nU.S. Geological Survey\nGreat Lakes Science Center\nc/o Marquette Biological Station\n1924 Industrial Parkway\nMarquette, MI 49855  U.S.A.\nphone: (906) 226-1212\nFAX: 906-226-3632\nweb site: www.glsc.usgs.gov\ne-mail: jean_adams at usgs.gov\n\n-----\n\nTo:  <s-news at lists.biostat.wustl.edu>\nSubject:  high quality phots with S+?\nFrom:  \"Danni Wang\" <liuwang94710 at hotmail.com>\nDate:  10 Jun 2003\n\nDear group,\n\nI am making some time series plots with S+ (6.0 win 2000) for\npublishing. I used arguments lty=, lwd= in plot( ), lines( ) to identify\ndifferent lines. However the lines printed out with very closed look\n(when in black & white). Because data were sampled at very fast\nfrequency, adding symbols in lines messed up. I tried to edit the line\ntypes from GUI but the quality was still poor.\n\nCould you suggest some good functions to make high quality time series\nplots?\n\nThanks very much.\n\nDanni\n\n-----\n\nTo: s-news at lists.biostat.wustl.edu\nSubject: [S] Summary: appearance of plotted lines\nFrom: jean_adams at usgs.gov\nDate: 19 Oct 2000\n\nI received replies to my original posting (pasted below) from David Smith (\ndsmith at splus.mathsoft.com) and Brian Ripley (ripley at stats.ox.ac.uk), both\nhelpful.  Thanks.\n\nThe problem with the appearance of the plotted lines is apparently a\n\"feature\" of the Windows tools.  No guarantee this will be fixed for S-PLUS\n6.  However, S-PLUS 6 will include a dedicated Windows Metafile device\nwmf.graph() which does not exhibit this problem.\n\nUntil then, other work arounds are ... either export the graph as EPS\n(Encapsulated PostScript) before printing it or use a different graphics\ndevice, e.g., postscript() or pdf.graph() instead of graphsheet().  Note\nalso that there is a free program, GhostScript, which can convert\nPostScript into other formats.\n\nJVA\n\n-----\n\nTo: s-news at lists.biostat.wustl.edu\nSubject: [S] appearance of plotted lines\nFrom: jean_adams at usgs.gov\nDate: 16 Oct 2000\n\nI have pasted below two messages previously posted to the s-news list on\nthis topic, consistency in the appearance of plotted lines.  In short,\nusing a line width > 1 and a line type other than 1, the appearance of a\nplotted line changes depending on the angle of the line in the plot.  I am\ncreating line plots for publication and am frustrated with this \"feature\".\nThe graphics in S-PLUS are one of its greatest assetts from my point of\nview.  This seems like a pretty large oversight to me, one which may force\nme to create or edit my plots in some other software, where my data isn't,\nand which makes me grumpy just thinking about it.  I am using S-PLUS 2000\nProfessional Release 3 (rev date 23 Aug 00) with Windows NT.  Has anyone\ncome up with a work around to this problem?  MathSoft, are you planning to\nfix this any time soon?\n\nJVA\n\n-----\n\n23 Aug. 1999 - Joseph F. Yen\n\n> Please be aware the following bugs found in producing 2D line plots.  So\n> far there is no resolution offered by MathSoft in its S-Plus 2000.\n>\nThe problem:  With the same line styles and line weights, vertical and\nhorizontal lines appear to be different from slanted lines in 2D line\nplots.\n\n> I plotted 2 polygons in draft mode (using S-Plus 4.5 under Windows 95 on\n> PC) with specifications as follows.\n>\n> (1) (x,y) = (2,0), (2,1), (3,2), (4,2), (5,2).\n> (2) (x,y) = (1.999,0), (2,1), (3,2), (4,2.001), (5,2).\n> (3) Both polygons used Dot Dot Dash line style with line weight of 15.\n>\n> The horizontal and vertical segements in the 1st polygon appeared to be\n> different from the other segments of both polygons.  It seems that, when\n> one enlarges the line width of a segment, one enlarges the widths of dots\n> and dashes as well only if it is a horizontal or a vertical segment.  To\n> me, the enlargement in both directions for dots and dashes like this\n> should be the preferred graphical presentation.  I also experimented with\n> different line weights  from 1/4 to 12.  Similar findings were obseved.\n> Plots of these 2 polygons look the same only when the line weights are\n> hairline.\n\n-----\n\n7 Nov. 1997 - Jean V. Adams\n\n     I make a lot of line plots in my work and was delighted to see that\n     S-PLUS 4 now allows for the combination of different line types with\n     different line widths.  However, I run into some difficulties when I\n     create a legend to identify the lines in a plot.  The lines in the\n     legend sometimes look quite different than those in the plot.  This\n     appears to be due to the angle of the line.  While it is generally\n     easy to distinguish the lines in the plot, it is more difficult to\n     distinguish the lines in the legend, and it is downright challenging\n     to try and match them (which is, of course, the purpose of a legend).\n     Try creating this plot to see what I mean:\n\n     graphsheet()\n     par(pty=\"s\")\n     plot(0, 0, xlim=c(5, 20), ylim=c(5, 20), type=\"n\", xlab=\"\", ylab=\"\")\n     for(i in 1:9) abline(9-i, 1, lty=i, lwd=3)\n     legend(15, 12, as.character(1:9), lty=1:9, lwd=3)\n\n     Is there some way that I can improve upon this situation?  Any advice\n     is appreciated.  (I use Windows 95).  Thanks.",
       "body_snippet": "Danni,\n\nI don't know if this will help you, but if the main problem you are having\nis with the appearance of plotted lines, you might want to look into using\ndevices such as wmf.graph(), postscript(),",
-      "thread_id": "thread-3d77ad835de1",
-      "thread_depth": 0,
+      "thread_id": "thread-15d98a580af1",
+      "thread_depth": 1,
       "month": "2003-06"
     },
     {
@@ -1141,12 +1141,12 @@
       "date": "2003-06-11T19:03:49Z",
       "subject": "Re: Using nonlinear least square regression",
       "subject_clean": "Using nonlinear least square regression",
-      "in_reply_to": null,
+      "in_reply_to": "<CC189F10F7F6F744B96880AC96CBFA0E20215D@edc.gsph.pitt.edu>",
       "references": [],
       "body_plain": "Kelly,\n\n \n\nIn \nyour formula supplied in the end to the NLS function, there is no dependence on \nDelta. You will need to ensure that this dependence is made explicit by \ndefining Lamda's (and A) as functions of Delta. Otherwise, the NLS function will \ntreat your secondary definitions (lamdas and A) as being fixed quantities, and \nwill be unable to detect any parameter to vary.\n\n \n\nBest Regards,\n\n \n\nNikhil\n\n \n\n************************************************************\n\nN. S. Padhye, Ph.D.\n\nAssistant Professor & \nBiostatistician\n\nCenter for Nursing Research, School of \nNursing\n\nThe University of Texas Health Science \nCenter at Houston\n\nhttp://www.uth.tmc.edu\n\nNikhil.S.Padhye at uth.tmc.edu\n\n \n\n \n\n>   -----Original Message-----\n> From: Im, Kelly\n>   [mailto:im at edc.pitt.edu]\n> Sent: Wednesday, June 11, 2003 1:04\n>   PM\n> To: 's-news at lists.biostat.wustl.edu'\n> Cc: Im,\n>   Kelly\n> Subject: [S] Using nonlinear least square regression\n>\n>\n>\n>\n>   Dear Splus,\n>\n>   I'm fitting a model using\n>   nls( ) function. ( I'm still with Splus2000 in WindowsXP)\n> but  I have a very messy\n>   equation ( at least to me) only to estimate one\n> parameter 'Delta'.  What's\n>   confusing to me is that how I can use NLS() fuction\n> when the model is written with\n>   several substitution-able parts. ( lamda1,lamda2, and A)\n>\n>   What I tried was as\n>   follows:\n>\n>      all.data <-\n>   data.frame(time=time,vl=vl, v0=vl[1], E, CL, t0)\n>    param(all.data,\"Delta\")\n>   <- 0.05\n>    attach(all.data)\n>\n>      lamda1 <-\n>   0.5*(( CL+Delta )  + ( ( CL-Delta )^2 + (4*(1-E)*CL*Delta) ) ^(1/2)\n>   )\n>\n>   lamda2 <- 0.5*(( CL+Delta )   - ( ( CL-Delta )^2 +\n>   (4*(1-E)*CL*Delta) ) ^(1/2) )\n>    A     <- (E*CL -\n>   lamda2)/ (lamda1 - lamda2)\n>\n>      new.data <-\n>   data.frame(time=time,vl=vl,v0=vl[1], E, CL, t0, lamda1, lamda2, A)\n>\n>\n>   param(new.data,\"Delta\") <- 0.05\n>\n>   Deltafit <-  nls(vl\n>   ~ V0*( A*exp(-lamda1*(time - t0)) + (1-A)*exp( - lamda2*(time-t0))),\n>   data=\"\" trace=T)\n>\n>\n>   And I'm not sure if this is\n>   correct syntax to run with  nls( ).\n>\n>   Any advice would greatly be\n>   appreciated and save my day!\n>\n>   kelly\n>\n>   ======================================\n> = Kelly Im, MS.\n>   Statistician\n> = 130\n>   Desoto St. 127 Parran Hall.\n> = Epidemiology Data Center\n> = Graduate School of Public Health\n> = University of Pittsburgh\n>\n> = PA 15261\n> = PHONE:(412) 624- 4612 FAX: (412)\n>   624- 3775\n> = Email:\n>   Im at edc.pitt.edu\n> ======================================",
       "body_snippet": "Kelly,\n\n \n\nIn \nyour formula supplied in the end to the NLS function, there is no dependence on \nDelta. You will need to ensure that this dependence is made explicit by \ndefining Lamda's (and A) as fun",
-      "thread_id": "thread-b5e70acfbc30",
-      "thread_depth": 0,
+      "thread_id": "thread-51d4aade4a57",
+      "thread_depth": 1,
       "month": "2003-06"
     },
     {
@@ -1223,12 +1223,12 @@
       "date": "2003-06-12T07:46:20Z",
       "subject": "Re: Multiple comparisons in a non parametric way",
       "subject_clean": "Multiple comparisons in a non parametric way",
-      "in_reply_to": null,
+      "in_reply_to": "<OFBF11D729.4D415686-ONC1256D43.00298E8E@virbac.fr>",
       "references": [],
       "body_plain": "I'm doing such a test at the moment.\n\n \n\n \n\nI'm using the \"wilcox.test\" function to test all pairwise comparisons after \nI've used the \"kruskal.test\" to show that there is a global \ndifference.\n\n \n\nIn order to account for multiple comparisons ie, an increased chance of a \ntype 2 error,  I'm using the bonferroni correction.\n\n \n\nI beleave there are other ways. Indeed there are permutation appoaches that \nare likely better.\n\n \n\n \n\n \n\nChristopher G Howden\nStatistical Ecologist\nDepartment of Sustainable \nNatural Resources\n(Work) 02 9895 7130\n(Fax)    02 9895 \n7867\n(Mob)   0410 689 945\n\n>>> \n<Annaelle_Sanquer/VIRBAC/FR.VIRBAC at virbac.fr> 12/06/2003 5:40:49 pm \n>>>\nHello,\n\nI work with Splus 6.1 in Windows.\nI would like \nto know if there is some possibilities with S+ to perform\nmultiple \ncomparisons test after an anova, but in a non parametric way.\nThe function \nMulticomp permitted to make only parametric test like Tukey...\nIf S+ does not \nhave this function, do you know which non parametric test\nare available in \ntheory? May be someone has already programmed it ?\n\nthank \nyou\n\nAnnaële \nSanquer\n\n--------------------------------------------------------------------\nThis \nmessage was distributed by s-news at lists.biostat.wustl.edu.  \nTo\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu \nwith\nthe BODY of the message:  unsubscribe \ns-news",
       "body_snippet": "I'm doing such a test at the moment.\n\n \n\n \n\nI'm using the \"wilcox.test\" function to test all pairwise comparisons after \nI've used the \"kruskal.test\" to show that there is a global \ndifference.\n\n \n\nIn",
-      "thread_id": "thread-d5eddf3de4e4",
-      "thread_depth": 0,
+      "thread_id": "thread-05d711a8c179",
+      "thread_depth": 1,
       "month": "2003-06"
     },
     {
@@ -1239,12 +1239,12 @@
       "date": "2003-06-12T09:22:09Z",
       "subject": "Re: tapply not completing",
       "subject_clean": "tapply not completing",
-      "in_reply_to": null,
+      "in_reply_to": "<F12D043C8E69D211B90A0010E36079C203DA26A4@ILIFE101>",
       "references": [],
       "body_plain": "Thanks to Andy Liaw, James Holtman, Bert Gunter and Sundar Dorai-Raj who\nreplied to my query.\n\nIt was pointed out by way of examples that I should have no difficulty in\ncarrying out the tapply and when I examined my data more closely I found\nthat one of my factors had been corrupted and it had 700 rather 5 levels\nbecause it had been contaminated with double precision data, instead of\ncarrying out a 260*5*40 categorisation, I was carrying out 260*700*40.\n\nBoth Andy and Bert suggested pasting the three factors together an carrying\nout the tapply on this single factor which is a trick I hope I remember for\nthe future.\n\nMany thanks,\nGlenn\n\n-----Original Message-----\nFrom: Glenn.Treacy at ILIM.COM [mailto:Glenn.Treacy at ILIM.COM]\nSent: 06 June 2003 17:8\nTo: s-news at lists.biostat.wustl.edu\nSubject: Re: [S] tapply not completing\n\nHi,\n\nI am using S+6.1 on NT4 with 512MB RAM.\n\nI have a dataframe (df) with a dimension of 380,000 by 12 and I have three\nvaraibles df$X1, df$X2 and df$X3 all factors with approximately (250, 5 and\n40 categories respectively).\n\nUltimately I want to do tapply(df$Y,list(df$X1,df$X2,df$X3), sum) but the\ncommand doesn't complete and eventually I exhaust my memory.\n\nI can do \n\ntapply(df$Y,list(df$X1), sum) in  0.8 secs\ntapply(df$Y,list(df$X1,df$X2), sum) in  1.7 secs\ntapply(df$Y,list(df$X1,df$X3), sum) in  64 secs\n\nClearly the number of categories pays a major part.\n\nI don't consider that my data frame is that large (50MB) and I am surpised\nthat S+ can't complete this. Can anyone shed some light on why the command\nwon't complete and any possible workarounds. Would anyone have a ball park\nwhat level of RAM I would need to carry out this computation?\n\nRegards,\nGlenn\n\n**********************************************************************\nThis email and any files transmitted with it are confidential and\nintended solely for the use of the individual or entity to whom they\nare addressed. If you have received this email in error please notify\nthe system manager.\nThis footnote also confirms that this email message has been swept \nfor the presence of computer viruses.\n**********************************************************************\n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Thanks to Andy Liaw, James Holtman, Bert Gunter and Sundar Dorai-Raj who\nreplied to my query.\n\nIt was pointed out by way of examples that I should have no difficulty in\ncarrying out the tapply and whe",
-      "thread_id": "thread-99e5ebe22141",
-      "thread_depth": 0,
+      "thread_id": "thread-ecb079c9b319",
+      "thread_depth": 1,
       "month": "2003-06"
     },
     {
@@ -1305,12 +1305,12 @@
       "date": "2003-06-12T15:26:38Z",
       "subject": "Re: Using nonlinear least square regression",
       "subject_clean": "Using nonlinear least square regression",
-      "in_reply_to": null,
+      "in_reply_to": "<CC189F10F7F6F744B96880AC96CBFA0E20215D@edc.gsph.pitt.edu>",
       "references": [],
       "body_plain": "I just wanted to thank you for the valuable inputs.  I was able to \nfit the\n\nmodel yesterday by rewriting my Lambda1, Lambda2 and A as functions \nof\n\n'Delta'.   And then call them in the NLS( ) function. S plus \nliked it very much.\n\n \n\nJust to give you a synopsis of this study,  we are trying to \nunderstand\n\nthe viral kinetics of Hepatitis C virus with our new treatment \nregimen\n\n(pegylated interferon plus ribavirin) over time.  and that there are \nthese\n\nmathematical models, which derived \nfrom differential equations by some mathematicians,\n\npresumably  fit the biphasic decline of Hep C viral \nload.\n\n \n\nThe messy equation is their second solution, and estimates the \nelimination rate\n\nof the hep C infected cells, which is the 'Delta'.   E is \nefficacy of the treatment,\n\nCL is clearance rate of virions. E and CL were estimated from \nanother solution \n\npreviously.  Oh, I'm getting into too much detail now. Sorry.  \nAnd here are the codes.\n\n \n\n \n\nlam1 <- function(Delta) { 0.5*(( CL+Delta )  + ( ( CL-Delta )^2 + \n(4*(1-E)*CL*Delta) ) ^(1/2) ) }\nlam2 <- function(Delta) { 0.5*(( CL+Delta \n)  - ( ( CL-Delta )^2 + (4*(1-E)*CL*Delta) ) ^(1/2) ) }\n\ntheA     <- function(Delta) { \n   \n((E*CL -(0.5*(( CL+Delta )-((CL-Delta)^2 + (4*(1-E)*CL*Delta))^(1/2)))) / \n\n   ((CL-Delta )^2 + (4*(1-E)*CL*Delta) ) ^(1/2) )\n    \n}\n\nparam(new.data,\"Delta\") <- 0.05 \n\nDeltafit.log10 <- nls(log10(vl) ~ \nlog10(v0*(theA(Delta)*exp(-lam1(Delta)*(time-t0))+(1-theA(Delta))*exp(-lam2(Delta)*(time-t0)))  \n)\n,data=\"\" trace=T)\n\n \n\n \n\nThank you!\n\n \n\nkelly\n\n \n\n \n\n \n\n>\n>\n>   -----Original Message-----\n> From: Nikhil S Padhye\n>   [mailto:Nikhil.S.Padhye at uth.tmc.edu]\n> Sent: Wednesday, June 11, 2003\n>   3:04 PM\n> To: Im, Kelly\n> Cc:\n>   s-news at lists.biostat.wustl.edu\n> Subject: RE: [S] Using nonlinear\n>   least square regression\n>\n>\n>\n>   Kelly,\n>\n>\n>\n>   In\n>   your formula supplied in the end to the NLS function, there is no dependence\n>   on Delta. You will need to ensure that this dependence is made explicit\n>   by defining Lamda's (and A) as functions of Delta. Otherwise, the NLS function\n>   will treat your secondary definitions (lamdas and A) as being fixed\n>   quantities, and will be unable to detect any parameter to\n>   vary.\n>\n>\n>\n>   Best Regards,\n>\n>\n>\n>   Nikhil\n>\n>\n>\n>   ************************************************************\n>\n>   N. S. Padhye, Ph.D.\n>\n>   Assistant Professor &\n>   Biostatistician\n>\n>   Center for Nursing Research, School of\n>   Nursing\n>\n>   The University of Texas Health Science\n>   Center at Houston\n>\n>   http://www.uth.tmc.edu\n>\n>   Nikhil.S.Padhye at uth.tmc.edu\n>\n>\n>\n>\n>\n>   >     -----Original Message-----\n> > From: Im, Kelly\n> >     [mailto:im at edc.pitt.edu]\n> > Sent: Wednesday, June 11, 2003 1:04\n> >     PM\n> > To: 's-news at lists.biostat.wustl.edu'\n> > Cc: Im,\n> >     Kelly\n> > Subject: [S] Using nonlinear least square regression\n> >\n> >\n> >\n> >\n> >     Dear Splus,\n> >\n> >     I'm fitting a model using\n> >     nls( ) function. ( I'm still with Splus2000 in WindowsXP)\n> > but  I have a very messy\n> >     equation ( at least to me) only to estimate one\n> > parameter 'Delta'.  What's\n> >     confusing to me is that how I can use NLS() fuction\n> > when the model is written with\n> >     several substitution-able parts. ( lamda1,lamda2, and A)\n> >\n> >     What I tried was as\n> >     follows:\n> >\n> >        all.data\n> >     <- data.frame(time=time,vl=vl, v0=vl[1], E, CL, t0)\n> >\n> >     param(all.data,\"Delta\") <- 0.05\n> >    attach(all.data)\n> >\n> >        lamda1 <-\n> >     0.5*(( CL+Delta )  + ( ( CL-Delta )^2 + (4*(1-E)*CL*Delta) ) ^(1/2)\n> >     )\n> >\n> >     lamda2 <- 0.5*(( CL+Delta )   - ( ( CL-Delta )^2 +\n> >     (4*(1-E)*CL*Delta) ) ^(1/2) )\n> >    A     <- (E*CL -\n> >     lamda2)/ (lamda1 - lamda2)\n> >\n> >        new.data\n> >     <- data.frame(time=time,vl=vl,v0=vl[1], E, CL, t0, lamda1, lamda2,\n> >     A)\n> >\n> >     param(new.data,\"Delta\") <- 0.05\n> >\n> >     Deltafit <-\n> >     nls(vl ~ V0*( A*exp(-lamda1*(time - t0)) + (1-A)*exp( - lamda2*(time-t0))),\n> >     data=\"\" trace=T)\n> >\n> >\n> >     And I'm not sure if this\n> >     is correct syntax to run with  nls( ).\n> >\n> >     Any advice would greatly\n> >     be appreciated and save my day!\n> >\n> >     kelly\n> >\n> >     ======================================\n> > = Kelly Im, MS.\n> >     Statistician\n> > = 130\n> >     Desoto St. 127 Parran Hall.\n> > = Epidemiology Data Center\n> > = Graduate School of Public\n> >     Health\n> > =\n> >     University of Pittsburgh\n> > = PA 15261\n> > = PHONE:(412) 624- 4612 FAX: (412) 624- 3775\n> > = Email: Im at edc.pitt.edu\n> >\n> > ======================================",
       "body_snippet": "I just wanted to thank you for the valuable inputs.  I was able to \nfit the\n\nmodel yesterday by rewriting my Lambda1, Lambda2 and A as functions \nof\n\n'Delta'.   And then call them in the NLS( ) functi",
-      "thread_id": "thread-d748a4d74419",
-      "thread_depth": 0,
+      "thread_id": "thread-51d4aade4a57",
+      "thread_depth": 1,
       "month": "2003-06"
     },
     {
@@ -1505,12 +1505,12 @@
       "date": "2003-06-15T23:23:28Z",
       "subject": "Re: plotting with Inf",
       "subject_clean": "plotting with Inf",
-      "in_reply_to": null,
+      "in_reply_to": "<C497480353EF904FBF7A8B0851E5422C9F7B12@MAIL002.AD.MLP.COM>",
       "references": [],
       "body_plain": "i \nfugured that it's the ylim and not the series\n\nitself \nthat it gets upset about it so i'll just add\n\nany(is.inf).  disregard that previous \nemail.\n\n \n\n                                                \nmark\n\n>\n>\n>   -----Original Message-----\n> From: Leeds, Mark\n>\n> Sent: Sunday, June 15, 2003 6:57 PM\n> To:\n>   s-news at wubios.wustl.edu\n> Subject: [S] plotting with\n>   Inf\n>\n>\n>\n>   does anyone know\n>   how the plot function  treats Inf values.\n>\n>\n>\n>   i check for NA's\n>   before I do anything but the Inf values don't get taken\n> out\n>\n>   when I use\n>   na.rm=True.\n>\n>\n>\n>   So, when plot the\n>   series, it says missing values are not allowed.\n>\n>   I guess\n>   because\n>\n>   either  of\n>   the series having Inf values or the ylim\n> option having\n>\n>   an Inf value. I'm\n>   not sure which but I guess i have to check\n>\n>   for Inf by usin\n>   any.inf  in addition to na.rm=T  ? thanks.\n>\n>\n>\n>\n>\n>\n>   mark",
       "body_snippet": "i \nfugured that it's the ylim and not the series\n\nitself \nthat it gets upset about it so i'll just add\n\nany(is.inf).  disregard that previous \nemail.\n\n \n\n                                              ",
-      "thread_id": "thread-ad13fec0f816",
-      "thread_depth": 0,
+      "thread_id": "thread-02d9adfc671e",
+      "thread_depth": 1,
       "month": "2003-06"
     },
     {
@@ -1539,12 +1539,12 @@
       "date": "2003-06-16T02:22:21Z",
       "subject": "Re: avoiding a loop",
       "subject_clean": "avoiding a loop",
-      "in_reply_to": null,
+      "in_reply_to": "<C497480353EF904FBF7A8B0851E5422C9F7B11@MAIL002.AD.MLP.COM>",
       "references": [],
       "body_plain": "Here is another way by using the 'rle' function;\n\n> x <- sample(0:1,100,T,prob=c(1,6))\n> x\n  [1] 0 1 0 1 1 1 0 1 1 1 1 1 0 0 0 0 1 1 1 1 0 1 1 1 1 1 0 1 1 0 1 1 1 0 0\n1 1\n [38] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 0 0 1 1 1 1 1 1 1 1 0 1 1 1 1\n1 1\n [75] 0 1 1 1 1 1 1 1 1 1 0 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1\n> x.rle <- rle(x)\n> x.rle\nRun Length Encoding\n  lengths: int [1:28] 1 1 1 3 1 5 4 4 1 5 ...\n  values : int [1:28] 0 1 0 1 0 1 0 1 0 1 ...\n> x.match <- which(x.rle$lengths > 5 & x.rle$values == 1)  # runs of 1's\ngreater than 5\n> x.match  # index where there is a run of more than 5 1's\n[1] 16 20 22 24 28\n> x.index <- c(1, cumsum(x.rle$lengths)+1)  # compute the index of the\nstart of the run\n> x.index\n [1]   1   2   3   4   7   8  13  17  21  22  27  28  30  31  34  36  54\n55  58\n[20]  60  68  69  75  76  85  86  90  91 101\n> x[x.index[x.match]+5] <- -1  # replace with -1\n> x\n  [1]  0  1  0  1  1  1  0  1  1  1  1  1  0  0  0  0  1  1  1  1  0  1  1\n1  1\n [26]  1  0  1  1  0  1  1  1  0  0  1  1  1  1  1 -1  1  1  1  1  1  1  1\n1  1\n [51]  1  1  1  0  1  1  1  0  0  1  1  1  1  1 -1  1  1  0  1  1  1  1  1\n-1  0\n [76]  1  1  1  1  1 -1  1  1  1  0  1  1  1  1  0  1  1  1  1  1 -1  1  1\n1  1\n>\n\nYou can either repeat the algorithm until there are no runs greater than 5\nor do some additional calculation on runs greater than 5 to change the\nvalues.\n__________________________________________________________\nJames Holtman               \"What is the problem you are trying to solve?\"\nExecutive Consultant  --  Office of Technology, Convergys\njames.holtman at convergys.com\n(513) 723-2929\n\n                                                                                \n                                       \n                      Spencer Graves                                            \n                                       \n                      <spencer.graves at PDF.COM>         To:       \"Leeds, Mark\" \n<mleeds at mlp.com>                        \n                      Sent by:                         cc:       \ns-news at wubios.wustl.edu                               \n                      s-news-owner at lists.biosta        Subject:  Re: [S] \navoiding a loop                               \n                      t.wustl.edu                                               \n                                       \n                                                                                \n                                       \n                                                                                \n                                       \n                      06/15/2003 21:54                                          \n                                       \n                                                                                \n                                       \n                                                                                \n                                       \n\nHow about the following:\n\nx <- c(0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0)\nrecount5 <-\nfunction(x){\n             k <- length(x)\n             x5 <- ((x[1:(k-4)]>0) & (x[2:(k-3)]>0)\n                         & (x[3:(k-2)]>0) & (x[4:(k-1)]>0) &\n                         (x[5:k]>0))\n             mult <- (x5[1:(k-5)] & x5[2:(k-4)])\n             if(any(mult)){\n                         x5[2:(k-4)][mult] <- FALSE\n                         x[5:k][x5] <- (-1)\n                         if(any(mult))x <- recount5(x)\n             }\n             x\n}\n\nrecount5(x)\n\n##############\nOne could also make the \"5\" an argument \"k\" in this function.\n\nhth.  spencer graves\n\nLeeds, Mark wrote:\n> since subscribing to this news group, i realize that\n> there are a lot of Splus experts out there.\n> could anyone answer the following  ?\n>\n> i have a vector that consists of zeros and\n> ones. Whenever there is a string of 5 consecutive\n> one's, the next element, if it is a one,\n> should be changed to -1. Then, the consecutive one count should\n> then start over from zero. Otherwise, the elements in\n> the vector don't get changed.\n>\n> so, for example, if i had the vector\n>\n> 0 0   1 1 1 1 1 1 1 0 0 0\n>\n> it should become\n>\n> 0 0 1 1 1 1 1 -1 1 0 0 0\n>\n> doing this with a loop is obviously not a problem\n> but i have been thinking about how to\n> do it without looping and i can't get\n> a solution.\n>\n> if anyone has time and could do this,\n> that would be great.\n>\n>                                     mark\n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news\n\n--\n\"NOTICE:  The information contained in this electronic mail transmission is\nintended by Convergys Corporation for the use of the named individual or\nentity to which it is directed and may contain information that is\nprivileged or otherwise confidential.  If you have received this electronic\nmail transmission in error, please delete it from your system without\ncopying or forwarding it, and notify the sender of the error by reply email\nor by telephone (collect), so that the sender's address records can be\ncorrected.\"",
       "body_snippet": "Here is another way by using the 'rle' function;\n\n> x <- sample(0:1,100,T,prob=c(1,6))\n> x\n  [1] 0 1 0 1 1 1 0 1 1 1 1 1 0 0 0 0 1 1 1 1 0 1 1 1 1 1 0 1 1 0 1 1 1 0 0\n1 1\n [38] 1 1 1 1 1 1 1 1 1 1 1 1",
-      "thread_id": "thread-4cc6101387bf",
-      "thread_depth": 0,
+      "thread_id": "thread-691132144314",
+      "thread_depth": 1,
       "month": "2003-06"
     },
     {
@@ -1637,12 +1637,12 @@
       "date": "2003-06-16T14:54:17Z",
       "subject": "Re: lag down",
       "subject_clean": "lag down",
-      "in_reply_to": null,
+      "in_reply_to": "<JHEILOKJLDODCBAOAKDOOEACCEAA.bernd.puschner@bkh-guenzburg.de>",
       "references": [],
       "body_plain": "> dear s-plus users,\n>\n> can't figure out a solution to a simple problem.\n> i have a data frame with one observation (x) per subject (id)\n>\n> id    x\n> 1     2\n> 1     NA\n> 2     1\n> 2     NA\n> 3     2\n> 3     NA\n>\n> how do i \"lag down\" the observation per subject so that the data frame looks\n> like\n>\n> id    x\n> 1     2\n> 1     2\n> 2     1\n> 2     1\n> 3     2\n> 3     2\n>\n> etc.\n>\n\nIf there are always two observations per unique id, then you can easily do\nthis by converting the x column to a matrix as illustrated below.\n\nTed Wright\n\n> df <- data.frame(id = c(1, 1, 2, 2, 3, 3), x = c(2, NA, 1, NA, 2, NA))\n> df\n  id  x\n1  1  2\n2  1 NA\n3  2  1\n4  2 NA\n5  3  2\n6  3 NA\n> xm <- matrix(df$x, nrow = 2)\n> xm\n     [,1] [,2] [,3]\n[1,]    2    1    2\n[2,]   NA   NA   NA\n> xm[2,  ] <- xm[1,  ]\n> xm\n     [,1] [,2] [,3]\n[1,]    2    1    2\n[2,]    2    1    2\n> df$x <- as.vector(xm)\n> df\n  id x\n1  1 2\n2  1 2\n3  2 1\n4  2 1\n5  3 2\n6  3 2",
       "body_snippet": "> dear s-plus users,\n>\n> can't figure out a solution to a simple problem.\n> i have a data frame with one observation (x) per subject (id)\n>\n> id    x\n> 1     2\n> 1     NA\n> 2     1\n> 2     NA\n> 3     ",
-      "thread_id": "thread-e1c84f0e0153",
-      "thread_depth": 0,
+      "thread_id": "thread-bf84fbce56b5",
+      "thread_depth": 1,
       "month": "2003-06"
     },
     {
@@ -1659,8 +1659,8 @@
       ],
       "body_plain": "If there are more than two observations per unique id,\nwe may try the following:\n\n> data\n   id  x \n 1  2 33\n 2  2 NA\n 3  3 67\n 4  3 NA\n 5  3 NA\n 6  3 NA\n 7  3 NA\n 8  4 24\n 9  4 NA\n10  4 NA\n11  4 NA\n12  5 45\n13  5 NA\n14  5 NA\n15  5 NA\n16  6 29\n17  6 NA\n18  6 NA\n19  6 NA\n20  6 NA\n\n# First sort data by id using sort.col function.\n data<- sort.col(data, c(1,2), ascending=T)\n x1<- rle(data$id)\n x<- data$x[is.na(data$x)==F]\n data$x<- rep(x, times=x1$lengths)\n\n> data\n   id  x \n 1  2 33\n 2  2 33\n 3  3 67\n 4  3 67\n 5  3 67\n 6  3 67\n 7  3 67\n 8  4 24\n 9  4 24\n10  4 24\n11  4 24\n12  5 45\n13  5 45\n14  5 45\n15  5 45\n16  6 29\n17  6 29\n18  6 29\n19  6 29\n20  6 29\n\nHope it helps.\n\nPeng Huang, Ph.D.\nAssistant Professor\nDepartment of Biometry and Epidemiology\nMedical University of South Carolina\n135 Cannon Street, Suite 303\nPost Office Box 250835\nCharleston, SC 29425, USA\nTel: 843-876-1134\nFax: 843-876-1126\n\nBernd Puschner wrote:\n> \n> dear s-plus users,\n> \n> can't figure out a solution to a simple problem.\n> i have a data frame with one observation (x) per subject (id)\n> \n> id      x\n> 1       2\n> 1       NA\n> 2       1\n> 2       NA\n> 3       2\n> 3       NA\n> \n> how do i \"lag down\" the observation per subject so that the data frame looks\n> like\n> \n> id      x\n> 1       2\n> 1       2\n> 2       1\n> 2       1\n> 3       2\n> 3       2\n> \n> etc.\n> \n> any help would be appreciated.\n> \n> thanks.\n> \n> bernd\n> \n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news",
       "body_snippet": "If there are more than two observations per unique id,\nwe may try the following:\n\n> data\n   id  x \n 1  2 33\n 2  2 NA\n 3  3 67\n 4  3 NA\n 5  3 NA\n 6  3 NA\n 7  3 NA\n 8  4 24\n 9  4 NA\n10  4 NA\n11  4 NA\n12",
-      "thread_id": "thread-e1c84f0e0153",
-      "thread_depth": 1,
+      "thread_id": "thread-bf84fbce56b5",
+      "thread_depth": 2,
       "month": "2003-06"
     },
     {
@@ -1875,12 +1875,12 @@
       "date": "2003-06-17T13:24:37Z",
       "subject": "Re: Simulation of survival data to produce sample size estimate.",
       "subject_clean": "Simulation of survival data to produce sample size estimate.",
-      "in_reply_to": null,
+      "in_reply_to": "<seee0ed8.003@medicine.umaryland.edu>",
       "references": [],
       "body_plain": "Why not use the actual survival curve?\n \n Assume a male, enrolled at age 50 in 1990:\n \n> tdata <- data.frame(age=50*365.25, sex=1, year=chron('1/1/1990'))\n> esurv <- survexp(~1, data=tdata, ratetable=survexp.us, times=(0:50)*365.25)\n> plot(esurv$time/365, esurv$surv)\n\n  This gives a survival curve, now grab random survival times off of it:\n  \n> ntime <- 300\n> times <- approx(esurv$surv, esurv$time, runif(ntime))$y\n\n Splus has the US, US by race, Minnesota, Florida, and Arizona tables\nbuilt in.  (Since the rate tables are stored in terms of rate/day, all\nuse of them has to be in days.  Hence the multiplication/division by\n365.25).  The approx function just does linear interpolation.\n\n        Terry Therneau",
       "body_snippet": "Why not use the actual survival curve?\n \n Assume a male, enrolled at age 50 in 1990:\n \n> tdata <- data.frame(age=50*365.25, sex=1, year=chron('1/1/1990'))\n> esurv <- survexp(~1, data=tdata, ratetable=",
-      "thread_id": "thread-35cbe5fb44c2",
-      "thread_depth": 0,
+      "thread_id": "thread-25143325b2eb",
+      "thread_depth": 1,
       "month": "2003-06"
     },
     {
@@ -1909,12 +1909,12 @@
       "date": "2003-06-17T14:21:55Z",
       "subject": "observation number",
       "subject_clean": "observation number",
-      "in_reply_to": null,
+      "in_reply_to": "<3EEF1345.5060900@igf.edu.pl>",
       "references": [],
       "body_plain": "Dear S+ users\n\nMy original problem was: \nI have a data frame in which the first column indicates the day number, the second column  observation number and the third results of observations. It may look like: \nDn    On    R1 \n1    1    3 \n1    2    4 \n1    3    5 \n2    4    6 \n2    5    7 \n2    6    8 \nTo find minimum value of R1 for each day is easy: \nmin.valR1<-Tapply(R1,Dn,min) \nbut how can I get not only the vector of minimum values, but also a vector of observation numbers for which the minimum occurred I am using S+ 4.5 for Windows.\n\nI would like to thank  James Holtman, Sundar Dorai-Raj, Patrick Burns Mark Leeds, Joseph Verducci, Spancer Graves, and Jingshan Zhangfor their prompt reply.\n\nThe codes of James and Sundar worked at once and gave me exactly what I wanted. \n\nJames wrote:\n\nA 'trick' that I always use is to work with the 'index' of the data so that\nI can create a function that will return any combination of the other data\nitems in a data frame or any other structure:\n\n> x.1\n Dn On R1\n1  1  1  3\n2  1  2  4\n3  1  3  5\n4  2  4  6\n5  2  5  7\n6  2  6  8\n> x.2 <- sapply(split(1:nrow(x.1), x.1$Dn), function(x){    # 'split'  the\nindices\n+     c(Dn=x.1$Dn[x[1]], R1=min(x.1$R1[x]))     # construct the data you\nwant to return\n+ })\n> t(x.2)    # transpose to get in the correct order\n Dn R1\n1  1  3\n2  2  6\n\nSundar proposed:\n\ndat <- data.frame(Dn = c(1, 1, 1, 2, 2, 2),R1 = c(1, 0, 3, 5, 6, 4))\n\nby(dat$R1, dat$Dn, function(x) \n{ m <- min(x) \nc(m, which(x == m)) \n})\n\nThank you once again and best regards \nJanusz",
       "body_snippet": "Dear S+ users\n\nMy original problem was: \nI have a data frame in which the first column indicates the day number, the second column  observation number and the third results of observations. It may loo",
-      "thread_id": "thread-8b2b40b401e5",
-      "thread_depth": 0,
+      "thread_id": "thread-b08747d49475",
+      "thread_depth": 1,
       "month": "2003-06"
     },
     {
@@ -2065,12 +2065,12 @@
       "date": "2003-06-17T20:27:45Z",
       "subject": "Re: Incorporating GuiPlot in a function",
       "subject_clean": "Incorporating GuiPlot in a function",
-      "in_reply_to": null,
+      "in_reply_to": "<20030617184209.87375.qmail@web42001.mail.yahoo.com>",
       "references": [],
       "body_plain": "Hi Vig, \nIt took me a while to figure out the guiPlot function, but I found that you \nneed to save the data.frame to the data directory in s after you have completed \nall of your data manipulations using the assign function, otherwise data \nmanipulations are not seen. \n\n### example of code that i've used ###\nassign(save.name, object, where = 1)\ngsname <- guiPlot(PlotType=\"Scatter\", DataSet=*save.name*, AxisType=\"Log Log\", \nColumns=cols, Graph=graph.num)\n\nUsing guiPlot allows for creation of interactive graphs where you can use the \nvarious graph tools to select data points from a data.frame. I have found that \nthis sometimes not as stable as the regular plot functions. \n\nIf you don't need the specific graph tools, I would advise using the regular \nplot function. \n\nhope this helps, \nRichard Park \nComputational Data Analyzer\nJoslin Diabetes Center\n\n-----Original Message-----\nFrom: Vignesh Panchanatham [mailto:vkpanch at yahoo.com]\nSent: Tuesday, June 17, 2003 14:42 PM\nTo: s-news at lists.biostat.wustl.edu\nSubject: [S] Incorporating GuiPlot in a function\n\nHi,\n\nDoes anyone have experience with incorporating the Gui\ncommands (like GuiPlot) within a function? How does\nGuiPlot deal with additional data manipulations to the\noriginal dataframe? \n\nThe problem I am experiencing is that if I give the\nfunction the name of a dataframe and then do some\nfiltering operations on the dataframe within the\nfunction, GuiPlot uses the original (unfiltered)\ndataframe for plotting and not the modified dataframe.\nHow do I get it to use the modified dataframe without\nhaving to save the dataframe externally?\n\nThanks,\nVig \n\n__________________________________\nDo you Yahoo!?\nThe New Yahoo! Search - Faster. Easier. Bingo.\nhttp://search.yahoo.com\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Hi Vig, \nIt took me a while to figure out the guiPlot function, but I found that you \nneed to save the data.frame to the data directory in s after you have completed \nall of your data manipulations us",
-      "thread_id": "thread-683636f17fb1",
-      "thread_depth": 0,
+      "thread_id": "thread-1f0c69bd7934",
+      "thread_depth": 1,
       "month": "2003-06"
     },
     {
@@ -2113,12 +2113,12 @@
       "date": "2003-06-18T13:41:24Z",
       "subject": "Is there a multiple-comparisons approach for survival curves?",
       "subject_clean": "Is there a multiple-comparisons approach for survival curves?",
-      "in_reply_to": null,
+      "in_reply_to": "<3B1DF09C9A08D3118D310008C7913C45984B93@rlc00aex006.mnr.gov.on.ca>",
       "references": [],
       "body_plain": "List,\n\n1) Is there a multiple-comparisons approach for survival curves to indicate\nwhich factor combinations are different and/or similar?\n\n2) Is it safe and/or appropriate to partition the data by heuristically\nlogical factor combinations and run survdiff as many times as required to\nfind the dissimilar groupings of survival responses?\n\n3) Does the nesting of the factors, tend within stk and stk within trt,\nimpose restrictions on how I must approach the survival analysis?\n\nThank you all, DaveT.\n**********************************************************\nnuthin but now.\nthere it is again...    there it is again...    there's another one\n**********************************************************\nDavid J. Thompson\nSilviculture Data Analyst\nOntario Forest Research Institute\nOntario Ministry of Natural Resources\n1235 Queen Street East\nSault Ste. Marie, Ontario, P6A 2E5\n\n(705) 946-7433\n(705) 946-2030 Fax\ndavid.thompson at mnr.gov.on.ca\n**********************************************************",
       "body_snippet": "List,\n\n1) Is there a multiple-comparisons approach for survival curves to indicate\nwhich factor combinations are different and/or similar?\n\n2) Is it safe and/or appropriate to partition the data by he",
-      "thread_id": "thread-f4ffc636973b",
-      "thread_depth": 0,
+      "thread_id": "thread-e21ef99ecb92",
+      "thread_depth": 1,
       "month": "2003-06"
     },
     {
@@ -2177,12 +2177,12 @@
       "date": "2003-06-18T17:08:12Z",
       "subject": "deconvolution",
       "subject_clean": "deconvolution",
-      "in_reply_to": null,
+      "in_reply_to": "<20030616211514.71409.qmail@web20707.mail.yahoo.com>",
       "references": [],
       "body_plain": "Dear All:\n\n \n\nMany thanks to Spencer Graves, Brian Ripley and Manoel Pacheco for a great help with my request about deconvolution. After the discussion, I've realized that basically an appropriate framework for the solution of my problem is a Baysian one. \n\n \n\nUnfortunately, I am not a big expert in Baysian approach. But my undrstanding now is that my question is a kind of really basic for Baysian analysis. Can anybody please recommend some reference on \"Baysian Statistics in 24 hours\" or \"for Dummies\" ?\n\n \n\nThank you, \n\nXao Ping\n\nR&R Pharmakinetics\n\nTaiwan  \n\nDo you Yahoo!?\n\nSBC Yahoo! DSL - Now only $29.95 per month!",
       "body_snippet": "Dear All:\n\n \n\nMany thanks to Spencer Graves, Brian Ripley and Manoel Pacheco for a great help with my request about deconvolution. After the discussion, I've realized that basically an appropriate fra",
-      "thread_id": "thread-21b2dfdae072",
-      "thread_depth": 0,
+      "thread_id": "thread-9d496804504e",
+      "thread_depth": 1,
       "month": "2003-06"
     },
     {
@@ -2199,8 +2199,8 @@
       ],
       "body_plain": "Have you tried Google?  I got lots of hits for \"introduction to Bayesian \nstatisics\" and even \"Bayesian biostatistics\".\n\nhth.  spencer graves\n\nXao Ping wrote:\n> Dear All:\n>\n>\n> Many thanks to Spencer Graves, Brian Ripley and Manoel Pacheco for a\n> great help with my request about deconvolution. After the discussion,\n> I've realized that basically an appropriate framework for the solution\n> of my problem is a Baysian one.\n>\n>\n> Unfortunately, I am not a big expert in Baysian approach. But\n> my undrstanding now is that my question is a kind of really basic for\n> Baysian analysis. Can anybody please recommend some reference on\n> \"Baysian Statistics in 24 hours\" or \"for Dummies\" ?\n>\n>\n> Thank you,\n>\n> Xao Ping\n>\n> R&R Pharmakinetics\n>\n> Taiwan\n>\n>\n>\n> ------------------------------------------------------------------------\n>\n> Do you Yahoo!?\n>\n> SBC Yahoo! DSL\n> <http://pa.yahoo.com/*http://rd.yahoo.com/evt=1207/*http://promo.yahoo.com/sbc/>\n> - Now only $29.95 per month!",
       "body_snippet": "Have you tried Google?  I got lots of hits for \"introduction to Bayesian \nstatisics\" and even \"Bayesian biostatistics\".\n\nhth.  spencer graves\n\nXao Ping wrote:\n> Dear All:\n>\n>\n> Many thanks to Spencer ",
-      "thread_id": "thread-21b2dfdae072",
-      "thread_depth": 1,
+      "thread_id": "thread-9d496804504e",
+      "thread_depth": 2,
       "month": "2003-06"
     },
     {
@@ -2341,12 +2341,12 @@
       "date": "2003-06-20T04:53:53Z",
       "subject": "Re: Merging Time Series",
       "subject_clean": "Merging Time Series",
-      "in_reply_to": null,
+      "in_reply_to": "<sef1ffd1.009@pgn.com>",
       "references": [],
       "body_plain": "I have also had this problem recently and found a solution.  I don't have time \nto re-edit it so in case it's helpful, here it is in its more or less original \nform.\nGenerally wouldn't it be good to have some simple ways of handling timeSeries \nand timeDate objects?\n\n#the following 4 time series have different lengths and different frequencies \n(some quarterly some annual)\nBanks.Med.pct.ts<-timeSeries(Banks.Med.pct,BanksTime,units=\"Percent\")\nBanks.Mean.pct.ts<-timeSeries(Panama.10JuneB$Total.Exposure,BanksTime,units=\"Percent\")\nCU.Med.ts<-timeSeries(CU.Med.pct,BSTime,units=\"Percent\")\nBS.ts<-timeSeries(BS.Med.pct,BSTime,units=\"Percent\")\n\n#the following does exactly what it ought to do, but I cannot see how to \nextract the multiple time series from the 4:\nplot(Banks.Med.pct.ts,Banks.Mean.pct.ts,CU.Med.ts,BS.ts)\n\n#this below enables use of ts.union but loses the timeSeries features:\n\nBanks.cts<-cts(cbind(Banks.Med.pct,Panama.10JuneB$Total.Exposure),dates(\"01/28/1990\"),\"months\",names=c(\"Median\",\"Average\"))\n\nCUBS.cts<-cts(cbind(CU.Med.pct,BS.Med.pct),dates(\"03/28/1993\"),\"quarters\",names=c(\"Credit\n Unions\",\"Building Societies\"))\n\n#the fllowing objects have the correct behaviour\nADIs.all<-ts.union(Banks.cts,CUBS.cts)\n\nHope this helps.\n\nAlun\n\n____________________\nDr Alun Pope\n\nStatistics Consultant\nAustralian Prudential Regulation Authority\n400 George Street, Sydney NSW 2000, Australia\nGPO Box 9836, Sydney NSW 2001, Australia\n\nTel: (02) 9210 3232\nFax: (02) 9210 3021\nE-mail: alun.pope at apra.gov.au\n\n                -----Original Message-----\n                From: Horace Tso [mailto:Horace_Tso at pgn.com] \n                Sent: Friday, 20 June 2003 11:24 AM\n                To: s-news at lists.biostat.wustl.edu\n                Subject: [S] Merging Time Series\n\n                Hi folks,\n                 \n                Using 6.1 under Win2K, I want to do a Union of two Time Series. \nSounds simple? I've tried every trick out there and nothing works. SPlus \nsupport suggests using merge(), but that doesn't work. Each series has \nidentical column names, Y1, Y2, Y3. There are some overlapping dates in both. \nHere they are, \n                 \n                > t1\n                Position    Y1    Y2      Y3\n                02/12/1997 7.00  6.50 7.50 \n                02/26/1997 6.50  6.25 6.75 \n                02/27/1997 6.50  6.25 6.75\n                02/28/1997 6.50  6.25 6.75\n                03/01/1997 6.50  6.25 6.75\n                03/03/1997 6.50  6.25 6.75\n                03/04/1997 9.21  7.25 10.00\n                03/05/1997 10.00 9.75  10.25\n                03/06/1997 8.75  8.50  9.00\n                 \n                >t2\n                Position    Y1    Y2      Y3\n                02/12/1997 6.00  8.50 7.50 \n                02/26/1997 6.15  6.00 6.75 \n                02/27/1997 4.50  4.25 4.75\n                02/28/1997 3.50  3.25 3.25\n                03/01/1997 6.50  6.25 6.75\n                03/04/1997 6.50  6.25 6.75\n                03/05/1997 1.21  2.25 1.00\n                03/08/1997 1.00  0.75  0.25\n                03/09/1997 2.25  2.50  2.00\n                 \n                I want to create the following,\n                 \n                Position         Y1    Y2      Y3    Y11    Y21    Y31\n                02/12/1997  6.00  8.50 7.50  7.00   6.50   7.50\n                02/26/1997  6.15  6.00 6.75  6.50   6.25   6.75\n                02/27/1997  4.50  4.25 4.75  6.50   6.25    6.75\n                02/28/1997  3.50  3.25 3.25  6.50   6.25    6.75\n                03/01/1997  6.50  6.25 6.75  6.50   6.25    6.75\n                03/03/1997  NA     NA   NA     6.50   6.25    6.75\n                03/04/1997  6.50  6.25 6.75   9.21  7.25   10.00\n                03/05/1997  1.21  2.25 1.00  10.00 9.75   10.25\n                03/06/1997  NA     NA   NA     8.75    8.50   9.00\n                03/08/1997  1.00  0.75   0.25 NA     NA      NA\n                03/09/1997  2.25  2.50   2.00 NA     NA      NA\n                 \n                Thanks a lot.\n                 \n                Horace W. Tso\n                Senior Quantitative Analyst\n                Portland General Electric\n                Portland, Oregon\n                503-464-8430 (D)\n                 \n                 \n\nIMPORTANT NOTICE:\n\nThis e-mail is intended solely for the person or organisation to whom it is\naddressed, and may contain secret, confidential or legally privileged\ninformation. \n\nIf you have received this e-mail in error or are aware that you are not\nauthorised to have it, you MUST NOT use or copy it, or disclose its contents\nto any person. If you do any of these things, you may be sued or prosecuted.\n\nIf you have received this e-mail in error, please contact the sender\nimmediately.",
       "body_snippet": "I have also had this problem recently and found a solution.  I don't have time \nto re-edit it so in case it's helpful, here it is in its more or less original \nform.\nGenerally wouldn't it be good to h",
-      "thread_id": "thread-fadc8fe96479",
-      "thread_depth": 0,
+      "thread_id": "thread-49de7242c73b",
+      "thread_depth": 1,
       "month": "2003-06"
     },
     {
@@ -2375,12 +2375,12 @@
       "date": "2003-06-20T07:26:40Z",
       "subject": "Re: Merging Time Series",
       "subject_clean": "Merging Time Series",
-      "in_reply_to": null,
+      "in_reply_to": "<sef1ffd1.009@pgn.com>",
       "references": [],
       "body_plain": "Henrik\n\nThanks for this.  Wouldn't it be nice if the help pointed from timeSeries to \nseriesMerge? \n\nAlun\n\n____________________\nDr Alun Pope\n\nStatistics Consultant\nAustralian Prudential Regulation Authority\n400 George Street, Sydney NSW 2000, Australia\nGPO Box 9836, Sydney NSW 2001, Australia\n\nTel: (02) 9210 3232\nFax: (02) 9210 3021\nE-mail: alun.pope at apra.gov.au\n\n-----Original Message-----\nFrom: Henrik Aalborg Nielsen [mailto:immhan at student.dtu.dk] \nSent: Friday, 20 June 2003 5:18 PM\nTo: Horace Tso\nCc: s-news-list\nSubject: Re: [S] Merging Time Series\n\nDear Horace,\n\nseriesMerge should do the job :\n\n> tmp <- timeSeries(data=data.frame(x=1:10))\n> tmp2 <- timeSeries(data=data.frame(x=11:20))\n>  seriesMerge(tmp, tmp2)\n  Positions x.1 x.2\n 01/01/1960  1  11\n 01/02/1960  2  12\n 01/03/1960  3  13\n 01/04/1960  4  14\n 01/05/1960  5  15\n 01/06/1960  6  16\n 01/07/1960  7  17\n 01/08/1960  8  18\n 01/09/1960  9  19\n 01/10/1960 10  20\n>\n\nRegards,\nHenrik\n\n--------------------------------------------------------------------------\n   Henrik Aalborg Nielsen                  \n   Informatics and Mathematical Modelling\n   Section for Statistics, Time Series Group\n   Technical University of Denmark\n   Richard Petersens Plads, Build.321,\n   DK-2800 Kgs. Lyngby, Denmark.\n   Phone:  +45 4525 3418\n   Fax.:   +45 4588 2673\n   E-mail: han at imm.dtu.dk\n   URL:    http://www.imm.dtu.dk/~han\n--------------------------------------------------------------------------\n\nOn Thu, 19 Jun 2003, Horace Tso wrote:\n\n> Hi folks,\n> \n> Using 6.1 under Win2K, I want to do a Union of two Time Series. Sounds \n> simple? I've tried every trick out there and nothing works. SPlus support \n> suggests using merge(), but that doesn't work. Each series has identical \n> column names, Y1, Y2, Y3. There are some overlapping dates in both. Here they \n> are, \n> \n> > t1\n> Position    Y1    Y2      Y3\n> 02/12/1997 7.00  6.50 7.50 \n> 02/26/1997 6.50  6.25 6.75 \n> 02/27/1997 6.50  6.25 6.75\n> 02/28/1997 6.50  6.25 6.75\n> 03/01/1997 6.50  6.25 6.75\n> 03/03/1997 6.50  6.25 6.75\n> 03/04/1997 9.21  7.25 10.00\n> 03/05/1997 10.00 9.75  10.25\n> 03/06/1997 8.75  8.50  9.00\n> \n> >t2\n> Position    Y1    Y2      Y3\n> 02/12/1997 6.00  8.50 7.50 \n> 02/26/1997 6.15  6.00 6.75 \n> 02/27/1997 4.50  4.25 4.75\n> 02/28/1997 3.50  3.25 3.25\n> 03/01/1997 6.50  6.25 6.75\n> 03/04/1997 6.50  6.25 6.75\n> 03/05/1997 1.21  2.25 1.00\n> 03/08/1997 1.00  0.75  0.25\n> 03/09/1997 2.25  2.50  2.00\n> \n> I want to create the following,\n> \n> Position         Y1    Y2      Y3    Y11    Y21    Y31\n> 02/12/1997  6.00  8.50 7.50  7.00   6.50   7.50\n> 02/26/1997  6.15  6.00 6.75  6.50   6.25   6.75\n> 02/27/1997  4.50  4.25 4.75  6.50   6.25    6.75\n> 02/28/1997  3.50  3.25 3.25  6.50   6.25    6.75\n> 03/01/1997  6.50  6.25 6.75  6.50   6.25    6.75\n> 03/03/1997  NA     NA   NA     6.50   6.25    6.75\n> 03/04/1997  6.50  6.25 6.75   9.21  7.25   10.00\n> 03/05/1997  1.21  2.25 1.00  10.00 9.75   10.25\n> 03/06/1997  NA     NA   NA     8.75    8.50   9.00\n> 03/08/1997  1.00  0.75   0.25 NA     NA      NA\n> 03/09/1997  2.25  2.50   2.00 NA     NA      NA\n> \n> Thanks a lot.\n> \n> Horace W. Tso\n> Senior Quantitative Analyst\n> Portland General Electric\n> Portland, Oregon\n> 503-464-8430 (D)\n> \n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news\n\nIMPORTANT NOTICE:\n\nThis e-mail is intended solely for the person or organisation to whom it is\naddressed, and may contain secret, confidential or legally privileged\ninformation. \n\nIf you have received this e-mail in error or are aware that you are not\nauthorised to have it, you MUST NOT use or copy it, or disclose its contents\nto any person. If you do any of these things, you may be sued or prosecuted.\n\nIf you have received this e-mail in error, please contact the sender\nimmediately.",
       "body_snippet": "Henrik\n\nThanks for this.  Wouldn't it be nice if the help pointed from timeSeries to \nseriesMerge? \n\nAlun\n\n____________________\nDr Alun Pope\n\nStatistics Consultant\nAustralian Prudential Regulation Aut",
-      "thread_id": "thread-4a4ab40a61b6",
-      "thread_depth": 0,
+      "thread_id": "thread-49de7242c73b",
+      "thread_depth": 1,
       "month": "2003-06"
     },
     {
@@ -2945,12 +2945,12 @@
       "date": "2003-06-24T17:43:25Z",
       "subject": "Re: matrix export into TXT file ?",
       "subject_clean": "matrix export into TXT file ?",
-      "in_reply_to": null,
+      "in_reply_to": "<HFEEJMLAODBKIBKEOIOGKENBDEAA.falk@ucalgary.ca>",
       "references": [],
       "body_plain": "Hi Falk, \ni'm not sure about splus2000, since I am using splus 6.1, but two functions you \nmay want to look into are:\nexportData()\nwrite.table()\n\nboth functions have the ability to write to an ascii text file. \n\nexample of code that i use:\nexportData(dataset, type=\"EXCEL\", file=vecFileName[1], colNames=TRUE) \n\nthis exports the data into an excel file. \n\nhth, \nrichard park\ncomputational data analyzer\njoslin diabetes center\n\n-----Original Message-----\nFrom: Falk Huettmann [mailto:falk at ucalgary.ca]\nSent: Tuesday, June 24, 2003 13:43 PM\nTo: Listserver SPLUS\nSubject: [S] matrix export into TXT file ?\n\nHi,\n\nI am wondering what would be the best way to export a \nmatrix, e.g. 14*14, into a (comma-delimited) TXT file.\n\nThanks very much for the help; best regards\n\n    F.\n\nPS. I am using  SPLUS2000 on WinNT\n\nFalk Huettmann PhD\nGeography Dept.-Earth Science-\n2500 University Drive N.W.\nUniversity of Calgary\nCalgary AB, T2N 1N4 CANADA\nEmail: falk at ucalgary.ca\nTel. 403 210 5422 (lab)\n     403 230 3122 (home)\n Fax 403 282 6561\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Hi Falk, \ni'm not sure about splus2000, since I am using splus 6.1, but two functions you \nmay want to look into are:\nexportData()\nwrite.table()\n\nboth functions have the ability to write to an ascii t",
-      "thread_id": "thread-ce1ba418415f",
-      "thread_depth": 0,
+      "thread_id": "thread-8027dca2de9c",
+      "thread_depth": 1,
       "month": "2003-06"
     },
     {
@@ -3266,12 +3266,12 @@
       "date": "2003-06-26T14:39:50Z",
       "subject": "Epheremal data tool tips and point labels",
       "subject_clean": "Epheremal data tool tips and point labels",
-      "in_reply_to": null,
+      "in_reply_to": "<Pine.GSO.4.05.10306260857450.4669-100000@phage.cshl.edu>",
       "references": [],
       "body_plain": "Whenever I make a graph of some data and move my\ncursor over any specific data point a box usually\nappears giving specific info about that particular\ndata point. It usually disappears after about 3\nseconds or so. I would like to know if it is possibe\nto make it persist longer even perhaps until I move\nthe cursor away from the point. I am using SPlus 6.0\non W2K.\nThanks in advance for any help.\n\n__________________________________\nDo you Yahoo!?\nSBC Yahoo! DSL - Now only $29.95 per month!\nhttp://sbc.yahoo.com",
       "body_snippet": "Whenever I make a graph of some data and move my\ncursor over any specific data point a box usually\nappears giving specific info about that particular\ndata point. It usually disappears after about 3\nse",
-      "thread_id": "thread-4d8f64840964",
-      "thread_depth": 0,
+      "thread_id": "thread-0de9ccf67a2a",
+      "thread_depth": 1,
       "month": "2003-06"
     },
     {
@@ -3366,12 +3366,12 @@
       "date": "2003-06-27T14:15:15Z",
       "subject": "Re: Real-Life",
       "subject_clean": "Real-Life",
-      "in_reply_to": null,
+      "in_reply_to": "<5.1.0.14.0.20030625171229.01e48868@assist.stt.msu.edu>",
       "references": [],
       "body_plain": "Perhaps the important thing to keep in mind here is that our data can often\ndeviate alot from normality yet inferences about means, changes in means,\netc. will not be too far astray.  But start asking questions that require\nestimating other statistics like percentiles (which are needed to estimate\nprediction intervals for individual units or to estimate tolerance\nintervals for a proportion of the population) then deviations from\nnormality can make a big difference.  My experience is that many\nbiological/ecological questions would be more realistically solved by\ntolerance interval estimates - how does some large (e.g, 90%) proportion of\nthe population respond.\n\nBrian S. Cade\n\nU. S. Geological Survey\nFort Collins Science Center\n2150 Centre Ave., Bldg. C\nFort Collins, CO  80526-8818\n\nemail:  brian_cade at usgs.gov\ntel:  970 226-9326",
       "body_snippet": "Perhaps the important thing to keep in mind here is that our data can often\ndeviate alot from normality yet inferences about means, changes in means,\netc. will not be too far astray.  But start asking",
-      "thread_id": "thread-3117bea5378f",
-      "thread_depth": 0,
+      "thread_id": "thread-254b4668dcf3",
+      "thread_depth": 1,
       "month": "2003-06"
     },
     {
@@ -3388,8 +3388,8 @@
       ],
       "body_plain": "Yes, definitely for tolerance intervals, you need a deeper \nunderstanding of the distribution.  Nonparametric tolerance invervals \nrequire much larger samples to produce tight and stable results than do \nparametric tolerance interval procedures -- and the validity will be \nonly as good as the parametric assumptions.\n\n\t  Thanks for that counterexample.\n\nBest Wishes,\nSpencer Graves\n\nBrian S Cade wrote:\n> Perhaps the important thing to keep in mind here is that our data can often\n> deviate alot from normality yet inferences about means, changes in means,\n> etc. will not be too far astray.  But start asking questions that require\n> estimating other statistics like percentiles (which are needed to estimate\n> prediction intervals for individual units or to estimate tolerance\n> intervals for a proportion of the population) then deviations from\n> normality can make a big difference.  My experience is that many\n> biological/ecological questions would be more realistically solved by\n> tolerance interval estimates - how does some large (e.g, 90%) proportion of\n> the population respond.\n>\n>\n> Brian S. Cade\n>\n>\n>\n> U. S. Geological Survey\n> Fort Collins Science Center\n> 2150 Centre Ave., Bldg. C\n> Fort Collins, CO  80526-8818\n>\n> email:  brian_cade at usgs.gov\n> tel:  970 226-9326",
       "body_snippet": "Yes, definitely for tolerance intervals, you need a deeper \nunderstanding of the distribution.  Nonparametric tolerance invervals \nrequire much larger samples to produce tight and stable results than ",
-      "thread_id": "thread-3117bea5378f",
-      "thread_depth": 1,
+      "thread_id": "thread-254b4668dcf3",
+      "thread_depth": 2,
       "month": "2003-06"
     },
     {
@@ -3498,12 +3498,12 @@
       "date": "2003-06-30T11:42:38Z",
       "subject": "Re: about skewness",
       "subject_clean": "about skewness",
-      "in_reply_to": null,
+      "in_reply_to": "<945HFdk6g2704S03.1056970626@uwdvg003.cms.usa.net>",
       "references": [],
       "body_plain": "Stefano,\n\nThere is indeed a command in S -- have a look under skewness\n\nRegards,\n\nDavid\n\n-----Original Message-----\nFrom: Stefano Sofia [mailto:stefano.sofia at usa.net]\nSent: 30 June 2003 11:57\nTo: s-news at lists.biostat.wustl.edu\nSubject: about skewness\n\nDear Splus users,\nI need to evaluate the skewness of a set of data (temperature values).\nIs there any predefined Splus command for the skewness? I have been looking\nfor, with no success.\nAn easy way to evaluate the skewness is: \n\n(mean â mode) / (standard deviation).\n\nWhich is the Splus command for the âmodeâ?\nIt should never be the case (my data should be fitted by a Gamma\ndistribution), but what happens if the mode is not a single value?\nDo you know any more effective way to check the positiveness or negativeness\nof the skewness for some data?\n\nThank you for your usual help and support\nStefano\n\nV+\"¶‹«ÁæìŠ×¶\u001bm§ÿðÃ\u000b›±Ê&N\u0018¬™ë,j\u0007œ¢{ZŠ{\u001c¢wâuéíbú+™«b¢v§v+\"ž×uçhž\\Ÿ¢»az)Ýø¹©gjg!ü¨¹ªÞ‹m…éÚçZuÚÞÇÊ¬†‹¥vz-v+,zh§j×ŠËk‰»­zŠÜœ­†+\u001e™¨¥>Wš±éè¶'ò¶\u0017¬zw^®)¦yØµéro'¦j)b*.…«Þç\u001eŠ÷¶\u0018¬zf¢•¼¦ŠËZ‘æ§u×z×†+\u001e™¨¥~º&Ê«³+-za&j)m­©ìš+,Š‰Üjyè ¹ªÚ×vÚ\u001bzÇº·¨­êëëyæwè®f­Š‰Üé]mèêÜz›^uÊ+®êmyÙh²×^²ÚèÉçZ®¸¯zV­zŠâÊ&¦W­zŠÜ{ZŠ{â®ë\u001e±8^±éÝz»az·Ÿ¢·¡ë'¢Öqêm–&›ŠX­Éú+j|ž®º+²Šèš+,Š‰ìŠ{ayÊ'µéíí†+&zË\u001aì!‰ÈZ®+\u001ejÆzË¶‡Þ¨¥¶¶§²h¬²*'!ûÞ'âq«b¢x¬­ê·¦Wš±êÞç¨Z­×(§+ÞÈ8b²g¬±¨\u001eŠÊk¢øy×è®)ß¹š¶*'jZn®š,zÆvÈhºWg¢ÖÞr‰ìžu«\u001a²‰br+Z¶*'¢º\u001f}êí²¢»\u001e–V§ÊÇº¸­‰ë(®·¥j×~)ÚÈ–)ì¦z{l",
       "body_snippet": "Stefano,\n\nThere is indeed a command in S -- have a look under skewness\n\nRegards,\n\nDavid\n\n-----Original Message-----\nFrom: Stefano Sofia [mailto:stefano.sofia at usa.net]\nSent: 30 June 2003 11:57\nTo: s",
-      "thread_id": "thread-cf5927476349",
-      "thread_depth": 0,
+      "thread_id": "thread-a8ed87ef4a91",
+      "thread_depth": 1,
       "month": "2003-06"
     },
     {
@@ -3882,13 +3882,14 @@
     {
       "id": "thread-e144d2ba1196",
       "subject": "Subscripting",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
+        "Alan Zaslavsky",
         "Dimitrios Stats",
         "rpugh"
       ],
       "started": "2003-06-06T10:48:28Z",
-      "last_reply": "2003-06-06T12:37:14Z",
+      "last_reply": "2003-06-06T21:57:48Z",
       "root_message_id": "msg-e144d2ba1196"
     },
     {
@@ -3918,12 +3919,12 @@
     {
       "id": "thread-ecb079c9b319",
       "subject": "tapply not completing",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Glenn.Treacy at ILIM.COM"
       ],
       "started": "2003-06-06T16:07:34Z",
-      "last_reply": "2003-06-06T16:07:34Z",
+      "last_reply": "2003-06-12T09:22:09Z",
       "root_message_id": "msg-ecb079c9b319"
     },
     {
@@ -3947,17 +3948,6 @@
       "started": "2003-06-06T21:57:22Z",
       "last_reply": "2003-06-06T21:57:22Z",
       "root_message_id": "msg-57f34778e43b"
-    },
-    {
-      "id": "thread-46d0d49bd942",
-      "subject": "Subscripting",
-      "message_count": 1,
-      "participants": [
-        "Alan Zaslavsky"
-      ],
-      "started": "2003-06-06T21:57:48Z",
-      "last_reply": "2003-06-06T21:57:48Z",
-      "root_message_id": "msg-46d0d49bd942"
     },
     {
       "id": "thread-84895f13ccf4",
@@ -3984,8 +3974,9 @@
     {
       "id": "thread-990fff29ec9b",
       "subject": "Multinomial Question",
-      "message_count": 3,
+      "message_count": 4,
       "participants": [
+        "CHASALOW, SCOTT [AG/1000]",
         "Spencer Graves",
         "Steve Su",
         "jingshan zhang"
@@ -4050,17 +4041,6 @@
       "root_message_id": "msg-45f39d6e4500"
     },
     {
-      "id": "thread-d3f0b8fb49be",
-      "subject": "Multinomial Question",
-      "message_count": 1,
-      "participants": [
-        "CHASALOW, SCOTT [AG/1000]"
-      ],
-      "started": "2003-06-09T20:00:11Z",
-      "last_reply": "2003-06-09T20:00:11Z",
-      "root_message_id": "msg-d3f0b8fb49be"
-    },
-    {
       "id": "thread-c8ad6c54010f",
       "subject": "Multinomial question revisited",
       "message_count": 3,
@@ -4120,14 +4100,15 @@
     {
       "id": "thread-15d98a580af1",
       "subject": "high quality phots with S+?",
-      "message_count": 3,
+      "message_count": 4,
       "participants": [
         "Danni Wang",
+        "Jean V Adams",
         "Prof Brian Ripley",
         "Rich at mango-solutions.com"
       ],
       "started": "2003-06-11T04:20:23Z",
-      "last_reply": "2003-06-11T10:44:56Z",
+      "last_reply": "2003-06-11T13:47:34Z",
       "root_message_id": "msg-15d98a580af1"
     },
     {
@@ -4177,38 +4158,17 @@
       "root_message_id": "msg-d8d2423a6072"
     },
     {
-      "id": "thread-3d77ad835de1",
-      "subject": "high quality phots with S+?",
-      "message_count": 1,
-      "participants": [
-        "Jean V Adams"
-      ],
-      "started": "2003-06-11T13:47:34Z",
-      "last_reply": "2003-06-11T13:47:34Z",
-      "root_message_id": "msg-3d77ad835de1"
-    },
-    {
       "id": "thread-51d4aade4a57",
       "subject": "Using nonlinear least square regression",
-      "message_count": 2,
+      "message_count": 4,
       "participants": [
         "Henrik Aalborg Nielsen",
-        "Im, Kelly"
-      ],
-      "started": "2003-06-11T18:03:34Z",
-      "last_reply": "2003-06-12T06:47:26Z",
-      "root_message_id": "msg-51d4aade4a57"
-    },
-    {
-      "id": "thread-b5e70acfbc30",
-      "subject": "Using nonlinear least square regression",
-      "message_count": 1,
-      "participants": [
+        "Im, Kelly",
         "Nikhil S Padhye"
       ],
-      "started": "2003-06-11T19:03:49Z",
-      "last_reply": "2003-06-11T19:03:49Z",
-      "root_message_id": "msg-b5e70acfbc30"
+      "started": "2003-06-11T18:03:34Z",
+      "last_reply": "2003-06-12T15:26:38Z",
+      "root_message_id": "msg-51d4aade4a57"
     },
     {
       "id": "thread-ffd88eb3c99d",
@@ -4236,35 +4196,14 @@
     {
       "id": "thread-05d711a8c179",
       "subject": "Multiple comparisons in a non parametric way",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Annaelle_Sanquer/VIRBAC/FR.VIRBAC at virbac.fr"
-      ],
-      "started": "2003-06-12T07:40:49Z",
-      "last_reply": "2003-06-12T07:40:49Z",
-      "root_message_id": "msg-05d711a8c179"
-    },
-    {
-      "id": "thread-d5eddf3de4e4",
-      "subject": "Multiple comparisons in a non parametric way",
-      "message_count": 1,
-      "participants": [
+        "Annaelle_Sanquer/VIRBAC/FR.VIRBAC at virbac.fr",
         "Chris Howden"
       ],
-      "started": "2003-06-12T07:46:20Z",
+      "started": "2003-06-12T07:40:49Z",
       "last_reply": "2003-06-12T07:46:20Z",
-      "root_message_id": "msg-d5eddf3de4e4"
-    },
-    {
-      "id": "thread-99e5ebe22141",
-      "subject": "tapply not completing",
-      "message_count": 1,
-      "participants": [
-        "Glenn.Treacy at ILIM.COM"
-      ],
-      "started": "2003-06-12T09:22:09Z",
-      "last_reply": "2003-06-12T09:22:09Z",
-      "root_message_id": "msg-99e5ebe22141"
+      "root_message_id": "msg-05d711a8c179"
     },
     {
       "id": "thread-1fb172daef5d",
@@ -4287,17 +4226,6 @@
       "started": "2003-06-12T15:19:23Z",
       "last_reply": "2003-06-12T15:19:23Z",
       "root_message_id": "msg-d74f15d49326"
-    },
-    {
-      "id": "thread-d748a4d74419",
-      "subject": "Using nonlinear least square regression",
-      "message_count": 1,
-      "participants": [
-        "Im, Kelly"
-      ],
-      "started": "2003-06-12T15:26:38Z",
-      "last_reply": "2003-06-12T15:26:38Z",
-      "root_message_id": "msg-d748a4d74419"
     },
     {
       "id": "thread-93e5c67af41b",
@@ -4371,47 +4299,26 @@
     {
       "id": "thread-691132144314",
       "subject": "avoiding a loop",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Leeds, Mark",
-        "Spencer Graves"
+        "Spencer Graves",
+        "james.holtman at convergys.com"
       ],
       "started": "2003-06-15T21:00:33Z",
-      "last_reply": "2003-06-16T01:54:32Z",
+      "last_reply": "2003-06-16T02:22:21Z",
       "root_message_id": "msg-691132144314"
     },
     {
       "id": "thread-02d9adfc671e",
       "subject": "plotting with Inf",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Leeds, Mark"
       ],
       "started": "2003-06-15T22:57:10Z",
-      "last_reply": "2003-06-15T22:57:10Z",
-      "root_message_id": "msg-02d9adfc671e"
-    },
-    {
-      "id": "thread-ad13fec0f816",
-      "subject": "plotting with Inf",
-      "message_count": 1,
-      "participants": [
-        "Leeds, Mark"
-      ],
-      "started": "2003-06-15T23:23:28Z",
       "last_reply": "2003-06-15T23:23:28Z",
-      "root_message_id": "msg-ad13fec0f816"
-    },
-    {
-      "id": "thread-4cc6101387bf",
-      "subject": "avoiding a loop",
-      "message_count": 1,
-      "participants": [
-        "james.holtman at convergys.com"
-      ],
-      "started": "2003-06-16T02:22:21Z",
-      "last_reply": "2003-06-16T02:22:21Z",
-      "root_message_id": "msg-4cc6101387bf"
+      "root_message_id": "msg-02d9adfc671e"
     },
     {
       "id": "thread-4376562a9195",
@@ -4427,24 +4334,26 @@
     {
       "id": "thread-e21ef99ecb92",
       "subject": "Is there a multiple-comparisons approach for survival curves?",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "david.thompson at mnr.gov.on.ca"
       ],
       "started": "2003-06-16T14:19:38Z",
-      "last_reply": "2003-06-16T14:19:38Z",
+      "last_reply": "2003-06-18T13:41:24Z",
       "root_message_id": "msg-e21ef99ecb92"
     },
     {
       "id": "thread-bf84fbce56b5",
       "subject": "lag down",
-      "message_count": 2,
+      "message_count": 4,
       "participants": [
         "Bernd Puschner",
+        "Charles E. (Ted) Wright",
+        "Peng Huang",
         "Sundar Dorai-Raj"
       ],
       "started": "2003-06-16T14:20:53Z",
-      "last_reply": "2003-06-16T14:31:10Z",
+      "last_reply": "2003-06-16T17:45:25Z",
       "root_message_id": "msg-bf84fbce56b5"
     },
     {
@@ -4459,40 +4368,29 @@
       "root_message_id": "msg-29cb11925acf"
     },
     {
-      "id": "thread-e1c84f0e0153",
-      "subject": "lag down",
-      "message_count": 2,
-      "participants": [
-        "Charles E. (Ted) Wright",
-        "Peng Huang"
-      ],
-      "started": "2003-06-16T14:54:17Z",
-      "last_reply": "2003-06-16T17:45:25Z",
-      "root_message_id": "msg-e1c84f0e0153"
-    },
-    {
       "id": "thread-9d496804504e",
       "subject": "deconvolution",
-      "message_count": 6,
+      "message_count": 8,
       "participants": [
         "Prof Brian Ripley",
         "Spencer Graves",
         "Xao Ping"
       ],
       "started": "2003-06-16T21:15:14Z",
-      "last_reply": "2003-06-17T16:34:01Z",
+      "last_reply": "2003-06-18T17:28:00Z",
       "root_message_id": "msg-9d496804504e"
     },
     {
       "id": "thread-25143325b2eb",
       "subject": "Simulation of survival data to produce sample size estimate.",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "John Sorkin",
-        "Spencer Graves"
+        "Spencer Graves",
+        "Terry Therneau"
       ],
       "started": "2003-06-16T22:39:10Z",
-      "last_reply": "2003-06-17T00:59:52Z",
+      "last_reply": "2003-06-17T13:24:37Z",
       "root_message_id": "msg-25143325b2eb"
     },
     {
@@ -4543,7 +4441,7 @@
     {
       "id": "thread-b08747d49475",
       "subject": "observation number",
-      "message_count": 4,
+      "message_count": 5,
       "participants": [
         "Janusz Borkowski",
         "Spencer Graves",
@@ -4551,30 +4449,8 @@
         "jingshan zhang"
       ],
       "started": "2003-06-17T13:10:29Z",
-      "last_reply": "2003-06-17T13:52:37Z",
-      "root_message_id": "msg-b08747d49475"
-    },
-    {
-      "id": "thread-35cbe5fb44c2",
-      "subject": "Simulation of survival data to produce sample size estimate.",
-      "message_count": 1,
-      "participants": [
-        "Terry Therneau"
-      ],
-      "started": "2003-06-17T13:24:37Z",
-      "last_reply": "2003-06-17T13:24:37Z",
-      "root_message_id": "msg-35cbe5fb44c2"
-    },
-    {
-      "id": "thread-8b2b40b401e5",
-      "subject": "observation number",
-      "message_count": 1,
-      "participants": [
-        "Janusz Borkowski"
-      ],
-      "started": "2003-06-17T14:21:55Z",
       "last_reply": "2003-06-17T14:21:55Z",
-      "root_message_id": "msg-8b2b40b401e5"
+      "root_message_id": "msg-b08747d49475"
     },
     {
       "id": "thread-83707b36a20f",
@@ -4592,24 +4468,14 @@
     {
       "id": "thread-1f0c69bd7934",
       "subject": "Incorporating GuiPlot in a function",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Park, Richard",
         "Vignesh Panchanatham"
       ],
       "started": "2003-06-17T18:42:09Z",
-      "last_reply": "2003-06-17T18:42:09Z",
-      "root_message_id": "msg-1f0c69bd7934"
-    },
-    {
-      "id": "thread-683636f17fb1",
-      "subject": "Incorporating GuiPlot in a function",
-      "message_count": 1,
-      "participants": [
-        "Park, Richard"
-      ],
-      "started": "2003-06-17T20:27:45Z",
       "last_reply": "2003-06-17T20:27:45Z",
-      "root_message_id": "msg-683636f17fb1"
+      "root_message_id": "msg-1f0c69bd7934"
     },
     {
       "id": "thread-c6e9e78901b2",
@@ -4632,17 +4498,6 @@
       "started": "2003-06-18T07:30:29Z",
       "last_reply": "2003-06-18T07:30:29Z",
       "root_message_id": "msg-dc7793e0f5e7"
-    },
-    {
-      "id": "thread-f4ffc636973b",
-      "subject": "Is there a multiple-comparisons approach for survival curves?",
-      "message_count": 1,
-      "participants": [
-        "david.thompson at mnr.gov.on.ca"
-      ],
-      "started": "2003-06-18T13:41:24Z",
-      "last_reply": "2003-06-18T13:41:24Z",
-      "root_message_id": "msg-f4ffc636973b"
     },
     {
       "id": "thread-0572af4f7e05",
@@ -4676,18 +4531,6 @@
       "started": "2003-06-18T16:24:16Z",
       "last_reply": "2003-06-18T16:24:16Z",
       "root_message_id": "msg-8655f1a9a16a"
-    },
-    {
-      "id": "thread-21b2dfdae072",
-      "subject": "deconvolution",
-      "message_count": 2,
-      "participants": [
-        "Spencer Graves",
-        "Xao Ping"
-      ],
-      "started": "2003-06-18T17:08:12Z",
-      "last_reply": "2003-06-18T17:28:00Z",
-      "root_message_id": "msg-21b2dfdae072"
     },
     {
       "id": "thread-71f92b3b4d05",
@@ -4759,36 +4602,15 @@
     {
       "id": "thread-49de7242c73b",
       "subject": "Merging Time Series",
-      "message_count": 2,
+      "message_count": 4,
       "participants": [
         "Henrik Aalborg Nielsen",
-        "Horace Tso"
+        "Horace Tso",
+        "Pope, Alun"
       ],
       "started": "2003-06-20T01:24:09Z",
-      "last_reply": "2003-06-20T07:18:27Z",
-      "root_message_id": "msg-49de7242c73b"
-    },
-    {
-      "id": "thread-fadc8fe96479",
-      "subject": "Merging Time Series",
-      "message_count": 1,
-      "participants": [
-        "Pope, Alun"
-      ],
-      "started": "2003-06-20T04:53:53Z",
-      "last_reply": "2003-06-20T04:53:53Z",
-      "root_message_id": "msg-fadc8fe96479"
-    },
-    {
-      "id": "thread-4a4ab40a61b6",
-      "subject": "Merging Time Series",
-      "message_count": 1,
-      "participants": [
-        "Pope, Alun"
-      ],
-      "started": "2003-06-20T07:26:40Z",
       "last_reply": "2003-06-20T07:26:40Z",
-      "root_message_id": "msg-4a4ab40a61b6"
+      "root_message_id": "msg-49de7242c73b"
     },
     {
       "id": "thread-14d19c0fba05",
@@ -5043,24 +4865,14 @@
     {
       "id": "thread-8027dca2de9c",
       "subject": "matrix export into TXT file ?",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Falk Huettmann"
-      ],
-      "started": "2003-06-24T17:43:22Z",
-      "last_reply": "2003-06-24T17:43:22Z",
-      "root_message_id": "msg-8027dca2de9c"
-    },
-    {
-      "id": "thread-ce1ba418415f",
-      "subject": "matrix export into TXT file ?",
-      "message_count": 1,
-      "participants": [
+        "Falk Huettmann",
         "Park, Richard"
       ],
-      "started": "2003-06-24T17:43:25Z",
+      "started": "2003-06-24T17:43:22Z",
       "last_reply": "2003-06-24T17:43:25Z",
-      "root_message_id": "msg-ce1ba418415f"
+      "root_message_id": "msg-8027dca2de9c"
     },
     {
       "id": "thread-994c515e7d04",
@@ -5148,13 +4960,14 @@
     {
       "id": "thread-254b4668dcf3",
       "subject": "Real-Life",
-      "message_count": 3,
+      "message_count": 5,
       "participants": [
+        "Brian S Cade",
         "Jim Stapleton",
         "Spencer Graves"
       ],
       "started": "2003-06-25T21:27:15Z",
-      "last_reply": "2003-06-26T02:48:23Z",
+      "last_reply": "2003-06-27T14:38:53Z",
       "root_message_id": "msg-254b4668dcf3"
     },
     {
@@ -5171,24 +4984,14 @@
     {
       "id": "thread-0de9ccf67a2a",
       "subject": "Epheremal Data tool tips and point labels",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Joseph West"
-      ],
-      "started": "2003-06-26T13:06:51Z",
-      "last_reply": "2003-06-26T13:06:51Z",
-      "root_message_id": "msg-0de9ccf67a2a"
-    },
-    {
-      "id": "thread-4d8f64840964",
-      "subject": "Epheremal data tool tips and point labels",
-      "message_count": 1,
-      "participants": [
+        "Joseph West",
         "joseph"
       ],
-      "started": "2003-06-26T14:39:50Z",
+      "started": "2003-06-26T13:06:51Z",
       "last_reply": "2003-06-26T14:39:50Z",
-      "root_message_id": "msg-4d8f64840964"
+      "root_message_id": "msg-0de9ccf67a2a"
     },
     {
       "id": "thread-c58c04758a48",
@@ -5224,18 +5027,6 @@
       "started": "2003-06-27T12:47:00Z",
       "last_reply": "2003-06-27T12:47:00Z",
       "root_message_id": "msg-974012b61b41"
-    },
-    {
-      "id": "thread-3117bea5378f",
-      "subject": "Real-Life",
-      "message_count": 2,
-      "participants": [
-        "Brian S Cade",
-        "Spencer Graves"
-      ],
-      "started": "2003-06-27T14:15:15Z",
-      "last_reply": "2003-06-27T14:38:53Z",
-      "root_message_id": "msg-3117bea5378f"
     },
     {
       "id": "thread-5d6ee6b64993",
@@ -5285,24 +5076,14 @@
     {
       "id": "thread-a8ed87ef4a91",
       "subject": "about skewness",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Stefano Sofia"
-      ],
-      "started": "2003-06-30T10:57:06Z",
-      "last_reply": "2003-06-30T10:57:06Z",
-      "root_message_id": "msg-a8ed87ef4a91"
-    },
-    {
-      "id": "thread-cf5927476349",
-      "subject": "about skewness",
-      "message_count": 1,
-      "participants": [
+        "Stefano Sofia",
         "david.jessop at ubs.com"
       ],
-      "started": "2003-06-30T11:42:38Z",
+      "started": "2003-06-30T10:57:06Z",
       "last_reply": "2003-06-30T11:42:38Z",
-      "root_message_id": "msg-cf5927476349"
+      "root_message_id": "msg-a8ed87ef4a91"
     },
     {
       "id": "thread-cab835cfad69",

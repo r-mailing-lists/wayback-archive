@@ -275,12 +275,12 @@
       "date": "2002-12-03T07:14:42Z",
       "subject": "Re: forcing intercept through zero",
       "subject_clean": "forcing intercept through zero",
-      "in_reply_to": null,
+      "in_reply_to": "<200212030001.gB301Ea13694@tumnus.metr.ou.edu>",
       "references": [],
       "body_plain": "Hallo\n\nOn 2 Dec 2002 at 18:01, Mike Richman wrote:\n\n> Using the lm command in Splus, is there an option to force the\n> intercept through zero?\n\nInstead\n\n> lm(y~x)\n\nCall:\nlm(formula = y ~ x)\n\nCoefficients:\n(Intercept)            x  \n    0.08079      4.65938\n\ntry\n\nlm(y~x-1)\n\nCall:\nlm(formula = y ~ x - 1)\n\nCoefficients:\n    x  \n4.666  \n\n> \n> TIA,\n> \n> Mike Richman\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu\n> with the BODY of the message:  unsubscribe s-news\n\nCheers\nPetr Pikal\npetr.pikal at precheza.cz\np.pik at volny.cz",
       "body_snippet": "Hallo\n\nOn 2 Dec 2002 at 18:01, Mike Richman wrote:\n\n> Using the lm command in Splus, is there an option to force the\n> intercept through zero?\n\nInstead\n\n> lm(y~x)\n\nCall:\nlm(formula = y ~ x)\n\nCoefficie",
-      "thread_id": "thread-b7ce1fc705cd",
-      "thread_depth": 0,
+      "thread_id": "thread-ee46d403948c",
+      "thread_depth": 1,
       "month": "2002-12"
     },
     {
@@ -507,12 +507,12 @@
       "date": "2002-12-04T13:01:52Z",
       "subject": "Re: mode of objects",
       "subject_clean": "mode of objects",
-      "in_reply_to": null,
+      "in_reply_to": "<916B4FCD8EDAD1119F7800A0C98F17BA0CCF289D@slon12302.csfp.co.uk>",
       "references": [],
       "body_plain": "... or yet more simply:\n\nsapply(objects(),function(x)mode(get(x)))\n\nget() and assign() can be very useful for \"computing on the language\" issues\nlike this.\n\nBert Gunter\nBiometrics Research RY 84-16\nMerck & Company\nP.O. Box 2000\nRahway, NJ 07065-0900\nPhone: (732) 594-7765\nmailto: bert_gunter at merck.com\n\n\"The business of the statistician is to catalyze the scientific learning\nprocess.\"      -- George E.P. Box\n\n-----Original Message-----\nFrom: John Fox [mailto:jfox at mcmaster.ca]\nSent: Wednesday, December 04, 2002 7:16 AM\nTo: Burbidge, Robert\nCc: s-news at lists.biostat.wustl.edu\nSubject: Re: [S] mode of objects\n\nDear Robert,\n\nAt 10:57 AM 12/4/2002 +0000, Burbidge, Robert wrote:\n>Hi S+ers,\n>\n>objects() returns a vector of character strings containing names of \n>variables, for example:\n>\n> > objects()\n>  [1] \".Last.value\"          \".Random.seed\"         \".Temporary.file.list\" \n> \".findPattern\"         \"audusd\"\n>\n>If I want to find the mode of these variables (without using the \n>unreliable Object Explorer), is there a more sensible way than this:\n>\n> > sapply(paste(\"mode(\", objects(), \")\"), function(txt)\neval(parse(text=txt)))\n>  [1] \"list\"      \"numeric\"   \"character\" \"function\"  \"list\"\n>\n>which seems overly complicated to me.\n\nHow about sapply(objects(), function(x) mode(eval(parse(text=x))))?\n\nJohn\n\n-----------------------------------------------------\nJohn Fox\nDepartment of Sociology\nMcMaster University\nHamilton, Ontario, Canada L8S 4M4\nemail: jfox at mcmaster.ca\nphone: 905-525-9140x23604\nweb: www.socsci.mcmaster.ca/jfox\n-----------------------------------------------------\n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news\n\n------------------------------------------------------------------------------\nNotice: This e-mail message, together with any attachments, contains \ninformation of Merck & Co., Inc. (Whitehouse Station, New Jersey, USA) that may \nbe confidential, proprietary copyrighted and/or legally privileged, and is \nintended solely for the use of the individual or entity named on this message.  \nIf you are not the intended recipient, and have received this message in error, \nplease immediately return this by e-mail and then delete it.\n\n==============================================================================",
       "body_snippet": "... or yet more simply:\n\nsapply(objects(),function(x)mode(get(x)))\n\nget() and assign() can be very useful for \"computing on the language\" issues\nlike this.\n\nBert Gunter\nBiometrics Research RY 84-16\nMe",
-      "thread_id": "thread-16b323fbbf60",
-      "thread_depth": 0,
+      "thread_id": "thread-fcca188c86fb",
+      "thread_depth": 1,
       "month": "2002-12"
     },
     {
@@ -623,12 +623,12 @@
       "date": "2002-12-04T22:46:13Z",
       "subject": "Re: Efficiency Question",
       "subject_clean": "Efficiency Question",
-      "in_reply_to": null,
+      "in_reply_to": "<20021204195110.60154.qmail@web40801.mail.yahoo.com>",
       "references": [],
       "body_plain": "I think you will find the following rather more efficient; probably more\nstable numerically also.\n\nqqq <- log(1 - p)\nppp <- log(p)\ng <- exp(X %*% t(ppp) + (1 - X) %*% t(qqq))\n\nHere, we have taken logs to change products into sums.  This allows us to\navoid multiplying many possibly small numbers together.  And, we can use the\nrelatively efficient matrix multiplication to pick out the required elements\nof p or 1 - p, and do the sums.\n\nYou will need to take some care if any elements of p are 0 or 1 (so that\nlog(p) or log(1 - p) is -Inf).  The main difficulty I have found with this\nsort of thing is that 0 * (-Inf) evaluates to NA.  That's reasonable enough\non its own, I suppose.  But in your application, multiplication by 0 is just\na simple trick to leave the term out of the sum.  You want 0 * (-Inf) to be\n0 here.\n\nHere's one possible, if inelegant, solution to this complication: change any\n-Inf values in ppp or qqq to a very large (in absolute value) but finite\nnegative number.\n\nqqq <- log(1 - p)\nppp <- log(p)\nppp[is.infinite(ppp)] <- (-.Machine$double.xmax)\nqqq[is.infinite(qqq)] <- (-.Machine$double.xmax)\ng <- exp(X %*% t(ppp) + (1 - X) %*% t(qqq))\n\nAnother possibility (less efficient, more memory intensive, but avoids the 0\n* -Inf problem more directly):\n\nnrx <- nrow(X)\nnrp <- nrow(p)\nXnow <- as.vector(t(X[rep(1:nrx, rep(nrp, nrx)), , drop = F]))\npnow <- as.vector(t(p))\ng <- log(pnow^Xnow) + log((1 - pnow)^(1 - Xnow))\ng <- exp(colSums(g))\ndim(g) <- c(nrp, nrx)\ng <- t(g)\n\nI haven't tested this last bit of code, but it, or something quite like it,\nshould work.\n\nCheers,\nScott\n\n-----Original Message-----\nFrom: Dimitris Rizopoulos [mailto:jimsailgr at yahoo.gr]\nSent: Wednesday, 04 December 2002 14:51\nTo: s-news\nSubject: [S] Efficiency Question \n\nDear S people,\n\nI would like to ask you the following:\n\nLet's suppose that I have a n*p matrix of p binary variables\n(n=number of observations) and a k*p matrix of probabilities. I\nwant to compute the following matrix:\n\nX <- matrix(sample(rep(0:1, 500*8)), 500, 8)\np <- matrix(sample(rep(seq(0.11,0.9,.01), 100)), 100, 8)\n########\n#S-PLUS 2000 for Windows Release 1\nresources({\ng <- matrix(0, nrow=nrow(X), ncol=nrow(p))\nfor(i in 1:nrow(X)){\ng[i, ] <- apply(p, 1, function(p, X, i) prod(ifelse(X[i,]==1, p,\n1-p)), X, i)\n}\n})\n CPU Elasped % CPU Child Cache Working \n  NA  191 sec   NA     0     0  632036\n\nAs the number of observations n increases the procedure becomes\nvery slow. Is there any other more efficient way to do this?\n\nThanks in advance for your suggestions,\nDimitris\n\n=====\nDimitris C. Rizopoulos \nGraduate Student\nDepartment of Statistics\nAthens University of Economics and Business\nhttp://www.stat-athens.aueb.gr/\nGreece\n\n____________________________________________________________\nDo You Yahoo!?\n????????? ?? ?????? @yahoo.gr ????????? ??? ??? http://www.otenet.gr\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "I think you will find the following rather more efficient; probably more\nstable numerically also.\n\nqqq <- log(1 - p)\nppp <- log(p)\ng <- exp(X %*% t(ppp) + (1 - X) %*% t(qqq))\n\nHere, we have taken logs",
-      "thread_id": "thread-92da357fb818",
-      "thread_depth": 0,
+      "thread_id": "thread-9293e87f38a8",
+      "thread_depth": 1,
       "month": "2002-12"
     },
     {
@@ -639,12 +639,12 @@
       "date": "2002-12-05T01:50:38Z",
       "subject": "Re: Efficiency Question",
       "subject_clean": "Efficiency Question",
-      "in_reply_to": null,
+      "in_reply_to": "<20021204195110.60154.qmail@web40801.mail.yahoo.com>",
       "references": [],
       "body_plain": "I think you will find the following rather more efficient; probably more\nstable numerically also.\n\nqqq <- log(1 - p)\nppp <- log(p)\ng <- exp(X %*% t(ppp) + (1 - X) %*% t(qqq))\n\nHere, we have taken logs to change products into sums.  This allows us to\navoid multiplying many possibly small numbers together.  And, we can use the\nrelatively efficient matrix multiplication to pick out the required elements\nof p or 1 - p, and do the sums.\n\nYou will need to take some care if any elements of p are 0 or 1 (so that\nlog(p) or log(1 - p) is -Inf).  The main difficulty I have found with this\nsort of thing is that 0 * (-Inf) evaluates to NA.  That's reasonable enough\non its own, I suppose.  But in your application, multiplication by 0 is just\na simple trick to leave the term out of the sum.  You want 0 * (-Inf) to be\n0 here.\n\nHere's one possible, if inelegant, solution to this complication: change any\n-Inf values in ppp or qqq to a very large (in absolute value) but finite\nnegative number.\n\nqqq <- log(1 - p)\nppp <- log(p)\nppp[is.infinite(ppp)] <- (-.Machine$double.xmax)\nqqq[is.infinite(qqq)] <- (-.Machine$double.xmax)\ng <- exp(X %*% t(ppp) + (1 - X) %*% t(qqq))\n\nAnother possibility (less efficient, more memory intensive, but avoids the 0\n* -Inf problem more directly):\n\nnrx <- nrow(X)\nnrp <- nrow(p)\nXnow <- as.vector(t(X[rep(1:nrx, rep(nrp, nrx)), , drop = F]))\npnow <- as.vector(t(p))\ng <- log(pnow^Xnow) + log((1 - pnow)^(1 - Xnow))\ng <- exp(colSums(g))\ndim(g) <- c(nrp, nrx)\ng <- t(g)\n\nI haven't tested this last bit of code, but it, or something quite like it,\nshould work.\n\nCheers,\nScott\n\n=================================== \nScott D Chasalow\nEmail:  Scott.Chasalow at monsanto.com\n=================================== \n\n-----Original Message-----\nFrom: Dimitris Rizopoulos [mailto:jimsailgr at yahoo.gr]\nSent: Wednesday, 04 December 2002 14:51\nTo: s-news\nSubject: [S] Efficiency Question \n\nDear S people,\n\nI would like to ask you the following:\n\nLet's suppose that I have a n*p matrix of p binary variables\n(n=number of observations) and a k*p matrix of probabilities. I\nwant to compute the following matrix:\n\nX <- matrix(sample(rep(0:1, 500*8)), 500, 8)\np <- matrix(sample(rep(seq(0.11,0.9,.01), 100)), 100, 8)\n########\n#S-PLUS 2000 for Windows Release 1\nresources({\ng <- matrix(0, nrow=nrow(X), ncol=nrow(p))\nfor(i in 1:nrow(X)){\ng[i, ] <- apply(p, 1, function(p, X, i) prod(ifelse(X[i,]==1, p,\n1-p)), X, i)\n}\n})\n CPU Elasped % CPU Child Cache Working \n  NA  191 sec   NA     0     0  632036\n\nAs the number of observations n increases the procedure becomes\nvery slow. Is there any other more efficient way to do this?\n\nThanks in advance for your suggestions,\nDimitris\n\n=====\nDimitris C. Rizopoulos \nGraduate Student\nDepartment of Statistics\nAthens University of Economics and Business\nhttp://www.stat-athens.aueb.gr/\nGreece\n\n____________________________________________________________\nDo You Yahoo!?\n????????? ?? ?????? @yahoo.gr ????????? ??? ??? http://www.otenet.gr\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "I think you will find the following rather more efficient; probably more\nstable numerically also.\n\nqqq <- log(1 - p)\nppp <- log(p)\ng <- exp(X %*% t(ppp) + (1 - X) %*% t(qqq))\n\nHere, we have taken logs",
-      "thread_id": "thread-4854a8dd2b44",
-      "thread_depth": 0,
+      "thread_id": "thread-9293e87f38a8",
+      "thread_depth": 1,
       "month": "2002-12"
     },
     {
@@ -737,12 +737,12 @@
       "date": "2002-12-05T13:14:58Z",
       "subject": "Re: Simulation in Splus",
       "subject_clean": "Simulation in Splus",
-      "in_reply_to": null,
+      "in_reply_to": "<000001c29c1e$22732a80$4f32b583@busacc325>",
       "references": [],
       "body_plain": "All you've shown us is generating random numbers, which takes barely\nmeasurable time on my laptop:\n\n> j<-rpois(100,50) \n> sys.time({runif(j,0,365); rexp(j,0.2); rnorm(j,3,0.2)})\n[1] 0.01 0.03\n\nEven if you are running Splus on a 386, I can't imagine this being slow.  If\nyou need more help, you will have to provide more information about what\nyou're doing.\n\nI'm not aware of \"do loops\" in Splus.\n\nThere is \"Scompile\", which attempts to translate for loops in Splus into C\ncode.  There are some limitations.\n\nAndy\n\n-----Original Message-----\nFrom: Steve Su [mailto:s.su at qut.edu.au]\nSent: Thursday, December 05, 2002 12:21 AM\nTo: s-news at lists.biostat.wustl.edu\nSubject: [S] Simulation in Splus\n\nDear All, \n\nI am wondering if it is possible to run several states of the simulation\nat the same time? For example I may want to generate \nj<-rpois(100,50) \n\nthen I would generate runif(j,0,365) rexp(j,0.2) and rnorm(j,3,0.2), is\nit possible to generate these three random numbers simultaneously to\nsave time? \n\nI am finding using simulation in Splus can be quite slow when\ncomputation becomes large even without using the for and do loop and I\nam thinking maybe it is worthwhile to use other programs for simulation.\nIs there a translator language I can use to translate my Splus codes to\nFortran or Matlab? Is it likely that I will get a substantial\nimprovement in terms of speed? \n\nAll comments welcome!\n\n************************************************************************\n**************\n\n?Steve Su (s.su at qut.edu.au)???\n?PhD student.?\n\n?School of Accountancy\n?School of Mathematical Sciences\n?Queensland University of Technology?\n\n?Postal Address: Steve Su, School of Accountancy, QUT, PO Box 2434,\nBrisbane,\n?Queensland, Australia, 4000.??\n\n?Phone:? +61 7 3864 2017\n?Fax:??? +61 7 3864 1812?????\n?Mobile: 0421? 840? 586?\n???? .??????????????????????????????\n?? _--_|\\?????????????????\n? /????? QUT??????????????????????????????????\n?\n\\_.--._/????????????????????????????????????????????????????????????????\n??????????\n??????? v??????????????????????????????????????????????\n?????????????????????????????????????????????????????????????????????\n************************************************************************\n**************???? \n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news\n\n------------------------------------------------------------------------------\nNotice: This e-mail message, together with any attachments, contains \ninformation of Merck & Co., Inc. (Whitehouse Station, New Jersey, USA) that may \nbe confidential, proprietary copyrighted and/or legally privileged, and is \nintended solely for the use of the individual or entity named on this message.  \nIf you are not the intended recipient, and have received this message in error, \nplease immediately return this by e-mail and then delete it.\n\n==============================================================================",
       "body_snippet": "All you've shown us is generating random numbers, which takes barely\nmeasurable time on my laptop:\n\n> j<-rpois(100,50) \n> sys.time({runif(j,0,365); rexp(j,0.2); rnorm(j,3,0.2)})\n[1] 0.01 0.03\n\nEven if",
-      "thread_id": "thread-e34bbf5f2674",
-      "thread_depth": 0,
+      "thread_id": "thread-f86b3c64495f",
+      "thread_depth": 1,
       "month": "2002-12"
     },
     {
@@ -759,8 +759,8 @@
       ],
       "body_plain": "Dear All,\n\nSorry about confusion I may have caused. I am currently doing a\nsimulation which uses 25 different functions, and it is actually 11\npages long in total. One of the things I think I might be able to save\ntime on is to see if I can generate for example:\n\nI am wondering if it is possible to run several states of the simulation\nat the same time? For example I may want to generate \nj<-rpois(100,50) \n\nthen I would generate runif(j,0,365) rexp(j,0.2) and rnorm(j,3,0.2), is\nit possible to generate these three random numbers simultaneously rather\nthan one after the other to save time?\n\nHope this is clear, I think in most cases I have to break my problems\ndown into the simplest form unless someone would like to go through my 9\npages program to recommend suggestions!!!!\n\nSteve. \n\n-----Original Message-----\nFrom: s-news-owner at lists.biostat.wustl.edu\n[mailto:s-news-owner at lists.biostat.wustl.edu] On Behalf Of Liaw, Andy\nSent: Thursday, 5 December 2002 11:15 PM\nTo: 'Steve Su'; s-news at lists.biostat.wustl.edu\nSubject: Re: [S] Simulation in Splus\n\nAll you've shown us is generating random numbers, which takes barely\nmeasurable time on my laptop:\n\n> j<-rpois(100,50) \n> sys.time({runif(j,0,365); rexp(j,0.2); rnorm(j,3,0.2)})\n[1] 0.01 0.03\n\nEven if you are running Splus on a 386, I can't imagine this being slow.\nIf\nyou need more help, you will have to provide more information about what\nyou're doing.\n\nI'm not aware of \"do loops\" in Splus.\n\nThere is \"Scompile\", which attempts to translate for loops in Splus into\nC\ncode.  There are some limitations.\n\nAndy\n\n-----Original Message-----\nFrom: Steve Su [mailto:s.su at qut.edu.au]\nSent: Thursday, December 05, 2002 12:21 AM\nTo: s-news at lists.biostat.wustl.edu\nSubject: [S] Simulation in Splus\n\nDear All, \n\nI am wondering if it is possible to run several states of the simulation\nat the same time? For example I may want to generate \nj<-rpois(100,50) \n\nthen I would generate runif(j,0,365) rexp(j,0.2) and rnorm(j,3,0.2), is\nit possible to generate these three random numbers simultaneously to\nsave time? \n\nI am finding using simulation in Splus can be quite slow when\ncomputation becomes large even without using the for and do loop and I\nam thinking maybe it is worthwhile to use other programs for simulation.\nIs there a translator language I can use to translate my Splus codes to\nFortran or Matlab? Is it likely that I will get a substantial\nimprovement in terms of speed? \n\nAll comments welcome!\n\n************************************************************************\n**************\n\n?Steve Su (s.su at qut.edu.au)???\n?PhD student.?\n\n?School of Accountancy\n?School of Mathematical Sciences\n?Queensland University of Technology?\n\n?Postal Address: Steve Su, School of Accountancy, QUT, PO Box 2434,\nBrisbane,\n?Queensland, Australia, 4000.??\n\n?Phone:? +61 7 3864 2017\n?Fax:??? +61 7 3864 1812?????\n?Mobile: 0421? 840? 586?\n???? .??????????????????????????????\n?? _--_|\\?????????????????\n? /????? QUT??????????????????????????????????\n?\n\\_.--._/????????????????????????????????????????????????????????????????\n??????????\n??????? v??????????????????????????????????????????????\n?????????????????????????????????????????????????????????????????????\n************************************************************************\n**************???? \n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news\n\n------------------------------------------------------------------------\n------\nNotice: This e-mail message, together with any attachments, contains\ninformation of Merck & Co., Inc. (Whitehouse Station, New Jersey, USA)\nthat may be confidential, proprietary copyrighted and/or legally\nprivileged, and is intended solely for the use of the individual or\nentity named on this message.  If you are not the intended recipient,\nand have received this message in error, please immediately return this\nby e-mail and then delete it.\n\n========================================================================\n======\n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Dear All,\n\nSorry about confusion I may have caused. I am currently doing a\nsimulation which uses 25 different functions, and it is actually 11\npages long in total. One of the things I think I might be",
-      "thread_id": "thread-e34bbf5f2674",
-      "thread_depth": 1,
+      "thread_id": "thread-f86b3c64495f",
+      "thread_depth": 2,
       "month": "2002-12"
     },
     {
@@ -803,12 +803,12 @@
       "date": "2002-12-05T20:04:51Z",
       "subject": "Re: bwplot box plot with vertical boxes",
       "subject_clean": "bwplot box plot with vertical boxes",
-      "in_reply_to": null,
+      "in_reply_to": "<8A0708778CFFD411B2030008C75DBB3B15538E@msgpacpbs1.rhq.pac.dfo-mpo.gc.ca>",
       "references": [],
       "body_plain": "OK, for \nthe record:\n\n \n\nOthers may \nbe better ideas, but I only know of this:  You can do it via the GUI in the \nWindows version.  I have no idea how to get it via command \nline.\n\n \n\nAndy\n\n-----Original Message-----\nFrom: FolkesM at pac.dfo-mpo.gc.ca \n[mailto:FolkesM at pac.dfo-mpo.gc.ca]\nSent: Thursday, December 05, 2002 \n1:57 PM\nTo: s-news at wubios.wustl.edu\nSubject: [S] bwplot box \nplot with vertical boxes\n\nThis question \nexists, repeatedly, in the archives but tragically as we all know, often answers \nare not posted by the recipient...\n\nI merely need to \ncreate a box plot (using bwplot) with vertical boxes.\n\n(And I promise to \npost the answers!)\n\n \n\nThanks\n\nMichael\n\n \n\n______________________________________\n\nMichael \nFolkes                                        \nPh  (250) 756-7264\n\nCanadian Dept. of Fisheries & \nOceans    Fax (250) 756-7162\n\nSouth Coast Salmon Stock \nAssessment\n\n3225 Stephenson Point Rd.\n\nNanaimo, B.C., Canada\n\nV9T-1K3\n\n \n\n------------------------------------------------------------------------------\n\nNotice: This e-mail message, together with any attachments, contains information of Merck & Co., Inc. (Whitehouse Station, New Jersey, USA) that may be confidential, proprietary copyrighted and/or legally privileged, and is intended solely for the use of the individual or entity named on this message.  If you are not the intended recipient, and have received this message in error, please immediately return this by e-mail and then delete it.\n\n==============================================================================",
       "body_snippet": "OK, for \nthe record:\n\n \n\nOthers may \nbe better ideas, but I only know of this:  You can do it via the GUI in the \nWindows version.  I have no idea how to get it via command \nline.\n\n \n\nAndy\n\n-----Origi",
-      "thread_id": "thread-c861431146b5",
-      "thread_depth": 0,
+      "thread_id": "thread-510c217d7f58",
+      "thread_depth": 1,
       "month": "2002-12"
     },
     {
@@ -883,12 +883,12 @@
       "date": "2002-12-06T07:24:41Z",
       "subject": "Re: SPLUS on a Mac",
       "subject_clean": "SPLUS on a Mac",
-      "in_reply_to": null,
+      "in_reply_to": "<3DEFEC61.9080904@u.washington.edu>",
       "references": [],
       "body_plain": "Hi,\n\nAs another Mac user who uses a windows machine  now only essentially to use SPLUS (as MATLAB is now back on the Mac platform)  I just wondered if there were any plans to port SPLUS to the MAC. My past experience with emulators was not good and buying a windows laptop was a better solution.\n\nMark\n\nMark Salmon\n\nProfessor of Financial Econometrics\n\nFinancial Econometrics Research Centre\n\nFaculty of Finance\n\nCass Business School\n\n106 Bunhill Row\n\nLondon\n\nEC1Y 8TZ\n\nTel: +(0)207 040 8746\n\nFax: +(0)207 040 8881\n\nSect: +(0)207 040 8784\n\n\"Marcia A. Ciol\" <marciac at u.washington.edu>\n\nSent by: s-news-owner at lists.biostat.wustl.edu\n12/06/2002 12:16 AM\n\n        \n\n        To:        s-news at lists.biostat.wustl.edu\n\n        cc:        \n\n        Subject:        [S] SPLUS on a Mac\n\nI am almost sure that somebody has asked this question before, but I \n\nhave not found a suitable answer in the arquives.\n\nI am going to buy a new laptop and I want to buy a MacInstosh PowerBook \n\nG4.  I know there is a  Windows XP emulator for that computer and I \n\nassume I could run SPLUS with it.  Has anybody had experience with that \n\nbefore?  Is anybody out there running SPLUS in a Mac using a Windows \n\nemulator?  How well does it work?  \n\nThank you very much,\n\nMarcia Ciol\n\n-- \n\nMarcia A. Ciol\n\nResearch Assistant Professor\n\nWestern Medical Rehabilitation Research Network - RehabNet West\n\nRehabilitation Medicine Department\n\nhttp://RehabNetWest.washington.edu\n\nOffice room: BB854 - Health Sciences Building\n\nPhone: (206) 221-4668\n\ne-mail address: marciac at u.washington.edu\n\nMailing address:\n\nUniversity of Washington  Box 356490\n\nBB919 Health Sciences Building\n\n1959 Northeast Pacific Street \n\nSeattle WA 90195\n\n--------------------------------------------------------------------\n\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\n\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Hi,\n\nAs another Mac user who uses a windows machine  now only essentially to use SPLUS (as MATLAB is now back on the Mac platform)  I just wondered if there were any plans to port SPLUS to the MAC. My",
-      "thread_id": "thread-6961426351dd",
-      "thread_depth": 0,
+      "thread_id": "thread-a9b38ef9f29b",
+      "thread_depth": 1,
       "month": "2002-12"
     },
     {
@@ -917,12 +917,12 @@
       "date": "2002-12-06T08:03:32Z",
       "subject": "Re: SPLUS on a Mac",
       "subject_clean": "SPLUS on a Mac",
-      "in_reply_to": null,
+      "in_reply_to": "<3DEFEC61.9080904@u.washington.edu>",
       "references": [],
       "body_plain": "Dear S-Plus users,\nI realy am a S-plus die-hard, but on my iMac at home I rather work with R.\nNearly all the functions in S-Plus work with R, except gam(), which is a\ncompletely different implementation (and maybe more useful at that)  and\nspecial functions like rowSums and the like (which are not needed anyway\nwhen using apply). Another sometimes annoying thing is the use of the\nargument 'where' (in objects(..,where=1), R uses pos=-1 and with a\ndifferent meaning. Of course there are other differences (brian Ripley and\nBill Venables have communicated this several times) but for simple\npractical purposes one can live with that. R is fast, perhaps also because\nthere is no GUI, it looks like S (-Plus) in the old days on Unix.\nSiem Heisterkamp",
       "body_snippet": "Dear S-Plus users,\nI realy am a S-plus die-hard, but on my iMac at home I rather work with R.\nNearly all the functions in S-Plus work with R, except gam(), which is a\ncompletely different implementati",
-      "thread_id": "thread-8a26ca5ac0c9",
-      "thread_depth": 0,
+      "thread_id": "thread-a9b38ef9f29b",
+      "thread_depth": 1,
       "month": "2002-12"
     },
     {
@@ -1073,12 +1073,12 @@
       "date": "2002-12-06T18:09:09Z",
       "subject": "Re: Splus for MacOS X",
       "subject_clean": "Splus for MacOS X",
-      "in_reply_to": null,
+      "in_reply_to": "<CFA6739DD532764AA51E7459970BF0E205D0A99A@ns-bco-mse3.im.battelle.org>",
       "references": [],
       "body_plain": "Per Dr. Irwin and Dr. Ripley's comments, Insightful does\nnot make a version of Splus that is *officially* compatible\nwith any flavor of Linux other than RedHat 6.1 or later.\n\nHowever, the Yellow Dog website \n(http://www.yellowdoglinux.com/products/)\nmakes a point of stating \"Yellow Dog Linux for PowerPC:\nA complete port of Red Hat's RPM-based operating system\".\nThis seems to indicate that software compatible with Red Hat\nwould also be compatible with Yellow Dog.\n\nI have emailed the makers of Yellow Dog and asked them to\nverify if this is true or not.  I will pass any responses\nalong to the Splus listserv.\n\n- david paul",
       "body_snippet": "Per Dr. Irwin and Dr. Ripley's comments, Insightful does\nnot make a version of Splus that is *officially* compatible\nwith any flavor of Linux other than RedHat 6.1 or later.\n\nHowever, the Yellow Dog w",
-      "thread_id": "thread-9b2947aa9a0f",
-      "thread_depth": 0,
+      "thread_id": "thread-18220025eb35",
+      "thread_depth": 1,
       "month": "2002-12"
     },
     {
@@ -1095,8 +1095,8 @@
       ],
       "body_plain": "Dear David\n\nAlthough Yellow Dog is a RedHat based port to the Mac, S-Plus\nwill not work, because there is simply no binary for the\nPowerPC processor used in the Mac!! S-Plus is only compiled\nfor Intel processors (and other processors mentioned by Brian\nRipley), but not for the PowerPC (sorrowly) used in the Mac.\nYellow Dog could port RedHat Linux from the Intel processor\nto the PowerPC processor, because the source code is free.\nHowever, this is not true for S-Plus (no source code, since\nit is a commercial package!)\n\nBest regards\nChristian Stratowa\nVienna     Austria\n\nPaul, David A wrote:\n\n> Per Dr. Irwin and Dr. Ripley's comments, Insightful does\n> not make a version of Splus that is *officially* compatible\n> with any flavor of Linux other than RedHat 6.1 or later.\n>\n> However, the Yellow Dog website\n> (http://www.yellowdoglinux.com/products/)\n>\n> makes a point of stating \"Yellow Dog Linux for PowerPC:\n>\n> A complete port of Red Hat's RPM-based operating system\".\n>\n> This seems to indicate that software compatible with Red Hat\n>\n> would also be compatible with Yellow Dog.\n>\n>\n>\n> I have emailed the makers of Yellow Dog and asked them to\n> verify if this is true or not.  I will pass any responses\n> along to the Splus listserv.\n>\n> - david paul\n>\n>\n>\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news",
       "body_snippet": "Dear David\n\nAlthough Yellow Dog is a RedHat based port to the Mac, S-Plus\nwill not work, because there is simply no binary for the\nPowerPC processor used in the Mac!! S-Plus is only compiled\nfor Intel",
-      "thread_id": "thread-9b2947aa9a0f",
-      "thread_depth": 1,
+      "thread_id": "thread-18220025eb35",
+      "thread_depth": 2,
       "month": "2002-12"
     },
     {
@@ -1107,12 +1107,12 @@
       "date": "2002-12-06T19:09:15Z",
       "subject": "Re: Splus for MacOS X",
       "subject_clean": "Splus for MacOS X",
-      "in_reply_to": null,
+      "in_reply_to": "<CFA6739DD532764AA51E7459970BF0E205D0A99A@ns-bco-mse3.im.battelle.org>",
       "references": [],
       "body_plain": "Please disregard my two posts about the equivalence\nof RH and Yellow Dog -- Splus will never work on\nYellow Dog.\n\nMuch thanks to Dr. Brian Ripley, Dr.\nMark Irwin, and Dr. Christian Stratowa for their\ncorrespondence (and patience).\n\n-david",
       "body_snippet": "Please disregard my two posts about the equivalence\nof RH and Yellow Dog -- Splus will never work on\nYellow Dog.\n\nMuch thanks to Dr. Brian Ripley, Dr.\nMark Irwin, and Dr. Christian Stratowa for their\n",
-      "thread_id": "thread-a3f030f0b189",
-      "thread_depth": 0,
+      "thread_id": "thread-18220025eb35",
+      "thread_depth": 1,
       "month": "2002-12"
     },
     {
@@ -1123,12 +1123,12 @@
       "date": "2002-12-06T19:26:20Z",
       "subject": "Re: SPLUS on a Mac",
       "subject_clean": "SPLUS on a Mac",
-      "in_reply_to": null,
+      "in_reply_to": "<3DEFEC61.9080904@u.washington.edu>",
       "references": [],
       "body_plain": "To clarify a couple of points on this issue:\n\nS-PLUS 6.1 for Linux is indeed compiled for the Intel platform. It won't work \nwith Linux on non-Intel hardware such as the Mac.\n\nAs those who attended last month's user conference in Seattle would have heard, \nwe don't have any immediate plans to port S-PLUS to MacOS X.  Although MacOS X \nis a Unix-esque platform, the porting burden would be significant. We do review \nthe supported platform list with each major release of S-PLUS, and we'll again \nlook at the feasibility of a MacOS X port for S-PLUS 7. If you have an interest \nin this platform, please do let me know -- this information will help me \njustify a port when it comes time to review.\n\n# David Smith\n\n-- \nDavid M Smith <dsmith at insightful.com>\nProduct Manager, Insightful Corp, Seattle WA\nTel: +1 (206) 802 2360\nFax: +1 (206) 283 6310\n\nInsightful Corporation (www.insightful.com) provides analytical solutions for \ntext and data using S-PLUS, Insightful Miner, InFact and consulting services. \n\n> -----Original Message-----\n> From: Marcia A. Ciol [mailto:marciac at u.washington.edu]\n> Sent: Thursday, December 05, 2002 4:17 PM\n> To: s-news at lists.biostat.wustl.edu\n> Subject: [S] SPLUS on a Mac\n> \n> \n> I am almost sure that somebody has asked this question before, but I \n> have not found a suitable answer in the arquives.\n> \n> I am going to buy a new laptop and I want to buy a MacInstosh \n> PowerBook \n> G4.  I know there is a  Windows XP emulator for that computer and I \n> assume I could run SPLUS with it.  Has anybody had experience \n> with that \n> before?  Is anybody out there running SPLUS in a Mac using a Windows \n> emulator?  How well does it work?  \n> \n> Thank you very much,\n> \n> Marcia Ciol\n> \n> -- \n> Marcia A. Ciol\n> Research Assistant Professor\n> Western Medical Rehabilitation Research Network - RehabNet West\n> Rehabilitation Medicine Department\n> http://RehabNetWest.washington.edu\n> Office room: BB854 - Health Sciences Building\n> Phone: (206) 221-4668\n> e-mail address: marciac at u.washington.edu\n> \n> Mailing address:\n> University of Washington  Box 356490\n> BB919 Health Sciences Building\n> 1959 Northeast Pacific Street \n> Seattle WA 90195\n> \n> \n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n> \n>",
       "body_snippet": "To clarify a couple of points on this issue:\n\nS-PLUS 6.1 for Linux is indeed compiled for the Intel platform. It won't work \nwith Linux on non-Intel hardware such as the Mac.\n\nAs those who attended la",
-      "thread_id": "thread-08658fc77b75",
-      "thread_depth": 0,
+      "thread_id": "thread-a9b38ef9f29b",
+      "thread_depth": 1,
       "month": "2002-12"
     },
     {
@@ -1145,8 +1145,8 @@
       ],
       "body_plain": ">>>>> \"david\" == David A Paul <Paul> writes:\n\n    david> However, the Yellow Dog website \n    david> (http://www.yellowdoglinux.com/products/)\n    david> makes a point of stating \"Yellow Dog Linux for PowerPC:\n    david> A complete port of Red Hat's RPM-based operating system\".\n    david> This seems to indicate that software compatible with Red Hat\n    david> would also be compatible with Yellow Dog.\n\nExactly, but software isn't even compatible between RedHat versions\nfor different processors.  So while you might be technically correct,\nthe results are wrong.\n\nbest,\n-tony\n\n-- \nA.J. Rossini                            Rsrch. Asst. Prof. of Biostatistics\nU. of Washington Biostatistics          rossini at u.washington.edu        \nFHCRC/SCHARP/HIV Vaccine Trials Net     rossini at scharp.org\n-------------- http://software.biostat.washington.edu/ ----------------\nFHCRC: M: 206-667-7025 (fax=4812)|Voicemail is pretty sketchy/use Email\nUW:   Th: 206-543-1044 (fax=3286)|Change last 4 digits of phone to FAX\n(my tuesday/wednesday/friday locations are completely unpredictable.)",
       "body_snippet": ">>>>> \"david\" == David A Paul <Paul> writes:\n\n    david> However, the Yellow Dog website \n    david> (http://www.yellowdoglinux.com/products/)\n    david> makes a point of stating \"Yellow Dog Linux for",
-      "thread_id": "thread-9b2947aa9a0f",
-      "thread_depth": 1,
+      "thread_id": "thread-18220025eb35",
+      "thread_depth": 2,
       "month": "2002-12"
     },
     {
@@ -1289,12 +1289,12 @@
       "date": "2002-12-10T01:53:41Z",
       "subject": "Re: Using R Packages in S-Plus",
       "subject_clean": "Using R Packages in S-Plus",
-      "in_reply_to": null,
+      "in_reply_to": "<sdef67f5.062@homer.usc.edu.au>",
       "references": [],
       "body_plain": "Many thanks to Brian Ripley, Andy Liaw and Paul Gilbert for their advce\nregarding the use of R packages in S-Plus.  See below for responses.\n\nThanks\n\nTrudi O'Farrell\n\n**********************************************************************\n1.\n\nYou might do better to ask on R-help.  Since you mention zip files, I\nthink you have been looking at pre-compiled packages for Windows. You\ncannot use those on S-PLUS without picking them apart, and probably not\nat\nall if compiled code is involved.  You can port the sources (.tar.gz\nfiles), provided you have the appropriate tools (including a C or\nFortran\ncompiler as needed).  You might get to appreciate the effort that goes\ninto providing pre-compiled packages for Windows users of both S-PLUS\nand\nR, as it can be a tricky process.\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\n\n**********************************************************************\n2.\n\nAs R is mostly compatible with Splus at the S code level, it's\nprobably\neasiest to use R for your purpose.  Many R packages were \"ported\" from\noriginally S libraries, so you may want to see if the package you want\nto\nuse is actually one of those, in which case it's easiest to use the S\nlibrary in Splus.\n\nIs the package from CRAN?  Not knowing which package you're talking\nabout,\ncan't help further.\n\nAndy\n**********************************************************************\n3.\n\nBrian's answer was accurate, but he didn't mention that it might be a\nlot easier to install and learn R. For most purposes it is almost\nidentical to S (unless you are making a lot of use of new classes and\nmethods, or some Splus specific programs).\n\nPaul Gilbert\n\n>>> \"Trudi O'Farrell\" <TOfarre1 at usc.edu.au> 5/12/2002 14:51:08 >>>\nDear All,\n\nI am operating on Windows95 using Splus v6.1\n\nI have been using S-Plus for about 12 months and I recently have needed\nto look into using the R program because I need to utilise a \"package\"\ndeveloped under R.\n\nUnfortunately I have little knowledge of R and would prefer to continue\nusing S-Plus to use these new \"packages\". What I would like to know is,\nis it possible to take the R-Package (saved as a zip file) and some how\nattach as a library in S-Plus and access the 'package\" components\nthrough S-Plus?  a). Will this work, or is it possible? b). What method\ndo I use to attach and use the R files?\n\nThank you for your help in advance,\n\nRegards,\n\nTrudi O'Farrell\n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Many thanks to Brian Ripley, Andy Liaw and Paul Gilbert for their advce\nregarding the use of R packages in S-Plus.  See below for responses.\n\nThanks\n\nTrudi O'Farrell\n\n*********************************",
-      "thread_id": "thread-0450325f9814",
-      "thread_depth": 0,
+      "thread_id": "thread-aa5718a38944",
+      "thread_depth": 1,
       "month": "2002-12"
     },
     {
@@ -1321,12 +1321,12 @@
       "date": "2002-12-10T10:29:30Z",
       "subject": "Re: S+Plus 2000 on Windows XP",
       "subject_clean": "S+Plus 2000 on Windows XP",
-      "in_reply_to": null,
+      "in_reply_to": "<5.1.0.14.2.20021209163955.00a1c440@postoffice4.mail.cornell.edu>",
       "references": [],
       "body_plain": "I get the following error-message when I try compiling a function:\n\n\"Problem in on.exit(add = T, options(old.echo)): Object \"old.echo\" not found\n\nError during wrapup: Object \".sys.error.opt\" not found\"\n\nI don't use 'on.exit' in my function ...\n\nDoes anyone know what the cause might be?\n\nRegards,\n\nChristian\n\nThis message is for the named person's use only. It may contain sensitive and \nprivate proprietary or legally privileged information. No confidentiality or \nprivilege is waived or lost by any mistransmission. If you are not the intended \nrecipient, please immediately delete it and all copies of it from your system, \ndestroy any hard copies of it and notify the sender. You must not, directly or \nindirectly, use, disclose, distribute, print, or copy any part of this message \nif you are not the intended recipient. CREDIT SUISSE GROUP and each legal \nentity in the CREDIT SUISSE FIRST BOSTON or CREDIT SUISSE ASSET MANAGEMENT \nbusiness units of CREDIT SUISSE FIRST BOSTON reserve the right to monitor all \ne-mail communications through its networks. Any views expressed in this message \nare those of the individual sender, except where the message states otherwise \nand the sender is authorized to state them to be the views of any such entity.\nUnless otherwise stated, any pricing information given in this message is \nindicative only, is subject to change and does not constitute an offer to deal \nat any price quoted. Any reference to the terms of executed transactions should \nbe treated as  preliminary only and subject to our formal written confirmation.",
       "body_snippet": "I get the following error-message when I try compiling a function:\n\n\"Problem in on.exit(add = T, options(old.echo)): Object \"old.echo\" not found\n\nError during wrapup: Object \".sys.error.opt\" not found",
-      "thread_id": "thread-daba9224ab1a",
-      "thread_depth": 0,
+      "thread_id": "thread-70a7240c4659",
+      "thread_depth": 1,
       "month": "2002-12"
     },
     {
@@ -1435,12 +1435,12 @@
       "date": "2002-12-11T08:51:59Z",
       "subject": "Re: Type I and III sum of squares",
       "subject_clean": "Type I and III sum of squares",
-      "in_reply_to": null,
+      "in_reply_to": "<F80kPFafA8mtQ4JCS8X0000323a@hotmail.com>",
       "references": [],
       "body_plain": "I \nthink you have put your finger on one of the main problems with Type III sums of \nsquares.  What you are asking for (additivity and order invariance) is \nnot possible for a non-orthogonal design.  Type III sums of squares \nencourage people to think about their analyses in the wrong way: what they \nactually do is obscure precisely what hypothesis is being tested.  Get this \nstraight and all is simplicity and light.\n\n \n\nEnd \nof sermon.\n\n \n\nBill Venables.\n\n -----Original Message-----\nFrom: jo jiao \n[mailto:jo_jiao at hotmail.com]\nSent: Wednesday, December 11, 2002 6:23 \nPM\nTo: s-news at lists.biostat.wustl.edu\nSubject: [S] Type I \nand III sum of squares\n\n>\n>\n>\n>   Hi, every one on the list, Season Greetings.\n>\n>\n>\n>   I have question on Type I and III sum of squares given by analysis of\n>   variance.\n>\n>   Say I have three factors in my ANOVA model, the anova function can\n>   calculate Type I and III sum of squares for each of the three factors in the\n>   model. As indicated in splus menu, Type I sum of squares for a factor in the\n>   model is depended on the factor's order in the model formula.\n>   The sum of Type I sums of squares of all factors is equal to the\n>   total sum of squares (sum(y_i - y_-)^2). The Type III sum of squares for\n>   a factor is said not depending on its order in the model\n>   formula, and yet the sum of the sums of squares of all factors is\n>   not the same as the total sum of squares. The difference between sum\n>   of squares of Type I and that of Type III is not very significant in my\n>   study. However I wonder if any splus function can give me the\n>   sum of squares for each of  my three variables and these sums of\n>   squares can satisfy: (a) they are additive, in the sense that\n>   they are added u p to the total sum of squares;  (b) the\n>   sum of squares for a factor in the model is not associated with the\n>   factor's order in the model formula.\n>\n>\n>\n>   Thank you very much for your kind help.\n>\n>\n>\n>   Jo\n>\n>\n>\n>\n>\n>\n>   Tired of spam? Get advanced junk mail\n>   protection with MSN 8.",
       "body_snippet": "I \nthink you have put your finger on one of the main problems with Type III sums of \nsquares.  What you are asking for (additivity and order invariance) is \nnot possible for a non-orthogonal design.  ",
-      "thread_id": "thread-d969efd8152c",
-      "thread_depth": 0,
+      "thread_id": "thread-c986e1094929",
+      "thread_depth": 1,
       "month": "2002-12"
     },
     {
@@ -1451,12 +1451,12 @@
       "date": "2002-12-11T08:57:07Z",
       "subject": "splitting data",
       "subject_clean": "splitting data",
-      "in_reply_to": null,
+      "in_reply_to": "<OF15E06DC3.3C606973-ON44256C8C.002E4CA7@adiaweb.adia.co.ae>",
       "references": [],
       "body_plain": "Hi,\n\nPlease ignore my earlier mail. I want to split the data into five\napporoximately equal parts. Is there a function in splus which allows me to\ndo that. I want to do this such that the number of data points in each\ncategory is similar, i.e. maximum difference of 1.\n\nBest Regards\nArjun Bhandari\n\n********************************************************************************\nThe contents of this mail are personal opinions of the Author.\nADIA disclaims all responsibility and accepts no liability, whatsoever.\n********************************************************************************",
       "body_snippet": "Hi,\n\nPlease ignore my earlier mail. I want to split the data into five\napporoximately equal parts. Is there a function in splus which allows me to\ndo that. I want to do this such that the number of da",
-      "thread_id": "thread-07959b84b99d",
-      "thread_depth": 0,
+      "thread_id": "thread-6e15545d23fc",
+      "thread_depth": 1,
       "month": "2002-12"
     },
     {
@@ -1473,8 +1473,8 @@
       ],
       "body_plain": "Arjun,\n\nHow about the following self-made code:\n\ndivide<-function(n,k){\n        \n        #This function is to divide the whole sample into several \n        #subgroups such that the sizes of them are as close \n        #to each other as possible.\n        \n        #n is sample size\n        #k is the number of subgroups you specify.\n        a<-n%%k\n        b<-n%/%k\n        x<-rep(b,k)\n        if (a==0) return(x)     \n                \n        x[1:a]<-x[1:a]+1\n        #If you would like to randomly assign the extra ones to the\n        #categories, you can do this:\n        #chosen<-sample(1:k,a,replace=F)\n        #x[chosen]<-x[chosen]+1\n        return(x)\n}\n\nthen use the vector generated from this function to subset.\nFor instance,\n \nSizes<-divide(n,k)\nCumSizes<-c(0,cumsum(Sizes))\nfor(i in 1:k)\nassign(paste(\"junk\",i,sep=\"\"),x[(CumSizes[i]+1):CumSizes[i+1],])\n\nNote: you can still do the subsetting randomly in the same way\nas in the function. However, the random design here will render \nthe randomness within the above function unnecessary, right?\n\nGood luck,\njingshan\n\nOn Wed, 11 Dec 2002, Arjun Bhandari wrote:\n\n> Hi,\n> \n> Please ignore my earlier mail. I want to split the data into five\n> apporoximately equal parts. Is there a function in splus which allows me to\n> do that. I want to do this such that the number of data points in each\n> category is similar, i.e. maximum difference of 1.\n> \n> Best Regards\n> Arjun Bhandari\n> \n> \n> \n> \n> \n> ********************************************************************************\n> The contents of this mail are personal opinions of the Author.\n> ADIA disclaims all responsibility and accepts no liability, whatsoever.\n> ********************************************************************************\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>",
       "body_snippet": "Arjun,\n\nHow about the following self-made code:\n\ndivide<-function(n,k){\n        \n        #This function is to divide the whole sample into several \n        #subgroups such that the sizes of them are a",
-      "thread_id": "thread-07959b84b99d",
-      "thread_depth": 1,
+      "thread_id": "thread-6e15545d23fc",
+      "thread_depth": 2,
       "month": "2002-12"
     },
     {
@@ -1533,12 +1533,12 @@
       "date": "2002-12-11T20:26:15Z",
       "subject": "Re: Type I and III sum of squares",
       "subject_clean": "Type I and III sum of squares",
-      "in_reply_to": null,
+      "in_reply_to": "<F80kPFafA8mtQ4JCS8X0000323a@hotmail.com>",
       "references": [],
       "body_plain": "What \nyou're asking for is mathematically impossible for data with non-orthogonal \ndesign matrix (as is the case with \"unbalanced\" design: unequal cell counts or \nmissing cells).  Also, asking for \"nice properties\" of sum of squares is \nreally barking up the wrong tree.  Those mathematical niceties serve no \nreal useful purpose in answering real data analysis questions.  (So \nwhat if the SS are additive and order-independent?  What does that have \nto do with your scientific questions?)\n\n \n\nAs Bill \nVenables said, the right question to ask is what are the hypotheses you're \ninterested in testing?  If you can write that down clear enough, there \nwon't be silly questions like which is the right type of SS to \nuse.\n\n \n\nAmen to \nwhat Bill said!\n\n \n\nAndy\n\n \n\n-----Original Message-----\nFrom: jo jiao \n[mailto:jo_jiao at hotmail.com]\nSent: Wednesday, December 11, 2002 3:23 \nAM\nTo: s-news at lists.biostat.wustl.edu\nSubject: [S] Type I \nand III sum of squares\n\nHi, every one on the list, Season Greetings.\n\n \n\nI have question on Type I and III sum of squares given by analysis of \nvariance.\n\nSay I have three factors in my ANOVA model, the anova function can \ncalculate Type I and III sum of squares for each of the three factors in the \nmodel. As indicated in splus menu, Type I sum of squares for a factor in the \nmodel is depended on the factor's order in the model formula. The \nsum of Type I sums of squares of all factors is equal to the total sum \nof squares (sum(y_i - y_-)^2). The Type III sum of squares for a factor is \nsaid not depending on its order in the model formula, and yet the \nsum of the sums of squares of all factors is not the same as the total sum \nof squares. The difference between sum of squares of Type I and that \nof Type III is not very significant in my study. However I wonder if \nany splus function can give me the sum of squares for each of  my \nthree variables and these sums of squares can satisfy: (a) they are \nadditive, in the sense that they are added u p to the total sum of \nsquares;  (b) the sum of squares for a factor in the model is not \nassociated with the factor's order in the model formula. \n\n \n\nThank you very much for your kind help.\n\n \n\nJo\n\nTired of spam? Get advanced junk mail \nprotection with MSN 8. \n\n------------------------------------------------------------------------------\n\nNotice:  This e-mail message, together with any attachments, contains information of Merck & Co., Inc. (Whitehouse Station, New Jersey, USA) that may be confidential, proprietary copyrighted and/or legally privileged, and is intended solely for the use of the individual or entity named in this message.  If you are not the intended recipient, and have received this message in error, please immediately return this by e-mail and then delete it.\n\n==============================================================================",
       "body_snippet": "What \nyou're asking for is mathematically impossible for data with non-orthogonal \ndesign matrix (as is the case with \"unbalanced\" design: unequal cell counts or \nmissing cells).  Also, asking for \"ni",
-      "thread_id": "thread-11d342bc5b16",
-      "thread_depth": 0,
+      "thread_id": "thread-c986e1094929",
+      "thread_depth": 1,
       "month": "2002-12"
     },
     {
@@ -1599,12 +1599,12 @@
       "date": "2002-12-12T14:08:05Z",
       "subject": "Re: aggregate, agg.sum,agg.length",
       "subject_clean": "aggregate, agg.sum,agg.length",
-      "in_reply_to": null,
+      "in_reply_to": "<000401c2a1d2$f70a59d0$4f32b583@busacc325>",
       "references": [],
       "body_plain": "Try the summarize \nfunction in the Hmisc library.  It works much faster than aggregate for my \nneeds.\n\n \n\nKevin \nWright\n\n \n\n>   -----Original Message-----\n> From: Steve Su\n>   [mailto:s.su at qut.edu.au]\n> Sent: Thursday, December 12, 2002 5:38\n>   AM\n> To: s-news at lists.biostat.wustl.edu\n> Subject: [S]\n>   aggregate, agg.sum,agg.length\n>\n>\n>\n>\n>   Dear\n>   All,\n>\n>\n>\n>   I had a look at the archive on\n>   aggregate and it appears that someone has already ask\n>   this question but no one seem to have answered. Is there a fast alternative to\n>   aggregate function? Has it been implemented? I know there is agg.sum and\n>   agg.length but the application is rather limited?\n>\n>\n>\n>   Thanks for your attention.\n>\n>\n>\n>\n>   **************************************************************************************\n>\n>  Steve\n>   Su\n>   (s.su at qut.edu.au)\n>  PhD\n>   student.\n>\n>  School of\n>   Accountancy\n>  School of\n>   Mathematical Sciences\n>  Queensland\n>   University of\n>   Technology\n>\n>  Postal Address:\n>   Steve\n>   Su,\n>   School of\n>   Accountancy, QUT,\n>   PO Box\n>   2434, Brisbane,\n>  Queensland,\n>   Australia,\n>   4000.\n>\n>\n>  Phone:  +61 7 3864\n>   2017\n>  Fax:    +61 7 3864\n>   1812\n>  Mobile: 0421  840\n>   586\n>\n>   .\n>\n>   _--_|\\\n>\n>   /\n>   QUT\n>\n>   \\_.--._/\n>\n>   v\n>\n> **************************************************************************************\n>\n>\n>\n\n \n\nThis communication is for use by the intended recipient and contains\ninformation that may be privileged, confidential or copyrighted under\napplicable law. If you are not the intended recipient, you are hereby\nformally notified that any use, copying or distribution of this e-mail,\nin whole or in part, is strictly prohibited. Please notify the sender by\nreturn e-mail and delete this e-mail from your system. Unless explicitly\nand conspicuously designated as \"E-Contract Intended\", this e-mail does\nnot constitute a contract offer, a contract amendment, or an acceptance\nof a contract offer. This e-mail does not constitute a consent to the\nuse of sender's contact information for direct marketing purposes or for\ntransfers of data to third parties.\n\nFrancais  Deutsch  Italiano  Espanol  Portugues  Japanese  Chinese  Korean\n\nwww.dupont.com/corp/email_disclaimer.html",
       "body_snippet": "Try the summarize \nfunction in the Hmisc library.  It works much faster than aggregate for my \nneeds.\n\n \n\nKevin \nWright\n\n \n\n>   -----Original Message-----\n> From: Steve Su\n>   [mailto:s.su at qut.edu.",
-      "thread_id": "thread-d32a57100f78",
-      "thread_depth": 0,
+      "thread_id": "thread-fc341c411a1e",
+      "thread_depth": 1,
       "month": "2002-12"
     },
     {
@@ -1727,12 +1727,12 @@
       "date": "2002-12-13T13:53:50Z",
       "subject": "Re: mcnemar test",
       "subject_clean": "mcnemar test",
-      "in_reply_to": null,
+      "in_reply_to": "<1A4AC4BAB9C50A42854582B69B08C03411C74A@MSGMARBIO05>",
       "references": [],
       "body_plain": "I had previously modified the mcnemar.test to eliminate cases of zero\ndenominators and decrement the associated degrees of freedom. Heberto Ghezzo\nadvises that the degrees of freedom should not be decremented in situations\nwhere a  cell could be expected to be non-zero at larger sample sizes:\n\nHello, In contingency table analysis one reduces the degrees of freedom\nof a Chi-Sq by the presence of 'structural zeros' i.e. positions in the\ntable that 'by design' are impossible to occur. If a cell is zero due to\nsampling variation, it is a data point equal zero and no df should be\nsubtracted.\nIn the McNemar test is the same, if 2 corresponding cells (1,3) and\n(3,1) in the example are both zero, that is perfect agreement! no\nsubtraction of df. A better computerized solution would be to add\nepsilon=0.0000001 to each denominator, the final Chi-sq will be\nminimally affected or use denoms[denoms==0]<-1 if the denom is zero so\nis the numerator and the contribution to the total Chi2 will be zero.\nJust my 2 CDN(Quebec) cents\n\nThis almost corresponds to the way degrees of freedom are handled in a\nStuart-Maxwell test. The only difference for a 3 X 3 that I can see is\ntaking the Chi-square at one less degree of freedom with Stuart-Maxwell,\nwhich may be appropriate for this example (this difference between tests\nholds for equal-levels situations). But here I just leave the degrees of\nfreedom alone as recommended. Editing the test to replace 0-denoms with\n1's...\n\n        #Revision M Fowler Dec 12 2002 (as per Ghezzo)\n        #Replacing 0's with 1 for all denominators\n        #This gives the same result as removing the 0-denoms/nums or \n        # adding a small value (0.0000001) to all denoms but leaving df\nalone\n        #Leaving the degrees of freedom as is\n        denoms[denoms == 0] <- 1\n        #End of revision\n\nproduces (same data as earlier example below)...\n\n> mcnx.test(table(x,y))\n\n        McNemar's chi-square test without continuity correction\n\ndata:  table(x, y) \nMcNemar's chi-square = 3, df = 3, p-value = 0.3916 \n\nThe p-value here for 3 df seems more believable for this example than the\n.0833 we got for 1 df. But we don't have much in the way of confidence that\nwe're resolving the issue appropriately. For now I'll just flag\nunequal-levels test results as dubious. It might be more helpful generally\nto address the way mcnemar.test ascribes degrees of freedom beyond 2 X 2\ndata, and the solution to the unequal-levels problem may be a result.\n\nPREVIOUS EMAILS\n\nYesterday I asked for any insights on the failure of mcnemar.test to resolve\nsituations in which either of x or y has levels not obtained for the other.\nPete Meyer responded that I might modify the original function to eliminate\nzero-denominator pairs and reduce the degrees of freedom accordingly. So,\nvery tentatively, I made the following revisions (just the 3 lines bounded\nby comments) to mcnemar.test (calling it mcnx.test):\n\n        .\n        .\n        .\n        storage.mode(cr.cl) <- \"double\"\n        t.cr.cl <- t(cr.cl)\n        upper.triang <- row(cr.cl) < col(cr.cl)\n        dif <- cr.cl[upper.triang] - t.cr.cl[upper.triang]\n        correct <- as.logical(correct) && (r == 2) && (abs(dif) >= 1)\n        nums <- if(r == 2) (abs(dif) - ifelse(correct, 1, 0))^2 else dif^2\n        denoms <- cr.cl[upper.triang] + t.cr.cl[upper.triang]\n        #Revision M Fowler Dec 11 2002 (as per Meyer)\n        #Eliminating nums, denoms pairs where denom equal zero\n        #Reducing the degrees of freedom by 1 per eliminated pair\n        nums <- nums[denoms != 0]\n        r <- r - (length(denoms) - length(nums))\n        denoms <- denoms[denoms != 0]\n        #End of revision\n        if(any(denoms == 0)) warning(\n                        \"Sums of some counts [i,j] + [j,i] are zero.\nStatistic undefined.\"\n                        )\n        ret.val <- list(statistic = sum(nums/denoms), parameters = (r * (r -\n1))/\n                2, method = if(correct) \n                        \"McNemar's chi-square test with continuity\ncorrection\"\n                 else \"McNemar's chi-square test without continuity\ncorrection\",\n                data.name = if(is.matrix(x)) deparse(substitute(x)) else\npaste(\n                        deparse(substitute(x)), \" and \",\ndeparse(substitute(y)),\n                        sep = \"\"))\n        .\n        .\n        .\n\nThis gives an 'apparently' reasonable result for the example (see 'Original\nQuestion' just below):\n\n mcnx.test(table(x,y))\n\n        McNemar's chi-square test without continuity correction\n\ndata:  table(x, y) \nMcNemar's chi-square = 3, df = 1, p-value = 0.0833 \n\nDoes anyone on the S-News list have enough familiarity with this test to\nvalidate/invalidate the revision?\n\nOrignal question:\n\nI have paired series of categorical observations of good, bad, or\nindifferent. Where both x and y exhibit occurrences of the same levels, the\ntest works. However, if a level only occurs for one of x or y, the test\nreturns the following:\n\n#Example: Paired observations of Good=1, Indifferent=2, Bad=3\nx_c(1,1,1,1,1,2,2,2,2,2)\ny_c(1,1,1,1,2,2,2,2,3,3)\nx_factor(x,levels=1:3)\ny_factor(y,levels=1:3)\nmcnemar.test(table(x,y))\n\nWarning messages:\n  Sums of some counts [i,j] + [j,i] are zero. Statistic undefined. in:\nmcnemar.te\\\n        st(table(x, y))\n\n        McNemar's chi-square test without continuity correction\n\ndata:  table(x, y) \nMcNemar's chi-square = NA, df = 3, p-value = NA \n\nCan anyone offer any insights?\n\nResponse from Pete Meyer:\nHi Mark!\n \nHere's your table:\n   1 2 3 \n1  4 1 0\n2  0 3 2\n3  0 0 0\n\nMcNemar's test compares the off-diagonal\nelements in pairs.  Under the null, the probability\nof being above or below the diagonal is 1/2.  The\nSplus code (which you can see by typing\nmcnemar.test without the parentheses or argument)\nadds up chi-square terms for each of the three pairs\nof off-diagonal elements.  However, for the pair 3,1\nand 1,3 there are no observations, so the denominator\nfor that comparison is 0 and the result is undefined.\nProbably a reasonable way to approach this would be\nto restrict to non-zero pairs and reduce the df by 1.\nYou could write that into the code and save as\nmcnemar.test2.  I don't know if that changes the\nasymptotics (because of the exclusion of one dimension\nbased on the observed data).  It's an ad hoc solution.\n\nPete Meyer\n\n____________________________________________\nPeter M. Meyer, PhD\nAssistant Professor and Director, Section of Biostatistics\nDepartment of Preventive Medicine \nRush-Presbyterian-St. Luke's Medical Center\nRush University\n\n1700 W. Van Buren, Suite 470\nChicago, Illinois   60612-3244\nPhone  312-942-2337\nFax      312-942-7224",
       "body_snippet": "I had previously modified the mcnemar.test to eliminate cases of zero\ndenominators and decrement the associated degrees of freedom. Heberto Ghezzo\nadvises that the degrees of freedom should not be dec",
-      "thread_id": "thread-d0c75af65129",
-      "thread_depth": 0,
+      "thread_id": "thread-c7491189070b",
+      "thread_depth": 1,
       "month": "2002-12"
     },
     {
@@ -2043,12 +2043,12 @@
       "date": "2002-12-16T20:23:05Z",
       "subject": "unique permutations",
       "subject_clean": "unique permutations",
-      "in_reply_to": null,
+      "in_reply_to": "<9D7EF737FA4C6F4FBBFC52FC30B836901E533B@nihexchange7.nih.gov>",
       "references": [],
       "body_plain": "Many thanks to B.Ripley and  J. Holtman for prompt response to my request\nregarding exclusion of non-unique columns from a matrix.\n\nBrian Ripley:\nm[, !duplicated(as.data.frame(t(m)))]\n\nJames Holtman:\nm1 <- apply(X = m, MARGIN = 2, FUN = function(x)\n        {\n                paste(x, collapse = \":\")\n        }\n        )\nm[, match(unique(m1), m1)] \n\nWonderful!\n\nSimon Rosenfeld\nNCI",
       "body_snippet": "Many thanks to B.Ripley and  J. Holtman for prompt response to my request\nregarding exclusion of non-unique columns from a matrix.\n\nBrian Ripley:\nm[, !duplicated(as.data.frame(t(m)))]\n\nJames Holtman:\n",
-      "thread_id": "thread-9a7470bb4d5c",
-      "thread_depth": 0,
+      "thread_id": "thread-7e19bd49d4e4",
+      "thread_depth": 1,
       "month": "2002-12"
     },
     {
@@ -2221,12 +2221,12 @@
       "date": "2002-12-19T14:00:20Z",
       "subject": "Re: san francisco bay coastline",
       "subject_clean": "san francisco bay coastline",
-      "in_reply_to": null,
+      "in_reply_to": "<000201c2a6da$16ac09d0$6f6594d1@williamkd8c4rp>",
       "references": [],
       "body_plain": "Check out the website\n\nhttp://rimmer.ngdc.noaa.gov/coast/\n\nfrom which you can extract coastline lat/long data in a format suitable for\nuse in S-PLUS.\n\nJVA\n\n`·.,,  ><(((º>   `·.,,  ><(((º>   `·.,,  ><(((º>\n\nJean V. Adams\nStatistician\nU.S. Geological Survey\nGreat Lakes Science Center\nc/o Marquette Biological Station\n1924 Industrial Parkway\nMarquette, MI 49855  U.S.A.\nphone: (906) 226-1212\nFAX: 906-226-3632\nweb site: www.glsc.usgs.gov\ne-mail: jean_adams at usgs.gov\n\n                                                                                \n                                                         \n                      \"Diego Holmgren\"                                          \n                                                         \n                      <holmgren at sonic.net>             To:       \n<s-news at lists.biostat.wustl.edu>                                        \n                      Sent by:                         cc:                      \n                                                         \n                      s-news-owner at lists.biosta        Subject:  [S] san \nfrancisco bay coastline                                         \n                      t.wustl.edu                                               \n                                                         \n                                                                                \n                                                         \n                                                                                \n                                                         \n                      12/18/2002 04:11 PM                                       \n                                                         \n                                                                                \n                                                         \n                                                                                \n                                                         \n\nHello, does anyone have a dataset of SFB coastline (including west delta\nand islands) that Splus recognize?\n\nThanks\n\nDiego\n\nDiego Holmgren\n\nSan Francisco State University\n\nRomberg Tiburon Center\n\n3152 Paradise Dr.\n\nTiburon, CA 94920\n\nphone: 415- 338 3516\nfax: 415- 435 7121\nemail: holmgren at sfsu.edu",
       "body_snippet": "Check out the website\n\nhttp://rimmer.ngdc.noaa.gov/coast/\n\nfrom which you can extract coastline lat/long data in a format suitable for\nuse in S-PLUS.\n\nJVA\n\n`·.,,  ><(((º>   `·.,,  ><(((º>   `·.,,  ><(",
-      "thread_id": "thread-cb170b84806e",
-      "thread_depth": 0,
+      "thread_id": "thread-a13ea3fe527d",
+      "thread_depth": 1,
       "month": "2002-12"
     },
     {
@@ -2321,12 +2321,12 @@
       "date": "2002-12-19T18:20:48Z",
       "subject": "Re: round function - help",
       "subject_clean": "round function - help",
-      "in_reply_to": null,
+      "in_reply_to": "<000601c2a785$830b9ae0$7efea8c0@PADMA>",
       "references": [],
       "body_plain": "For what it's worth, neither round nor floor, pushed to extremes, will do\nexactly what one would want, doubtless a/c of machine rep problems:\n\nfloor(3.4999999999999+.5)   \n[1] 3                                   --- this one is OK, but:\n\n> floor(3.49999999999999999999999+.5)\n[1] 4\n> round(3.49999999999999999999999)\n[1] 4\n> floor(2.49999999999999999999999+.5)\n[1] 3\n> round(2.49999999999999999999999) \n\n[1] 2                                            OK, but\n> round(2.500000000000000000000000001)\n[1] 2\n\n-----Original Message-----\nFrom: ripley at stats.ox.ac.uk [mailto:ripley at stats.ox.ac.uk]\nSent: Thursday, December 19, 2002 12:48 PM\nTo: Padma Illindra\nCc: Snews (E-mail)\nSubject: Re: [S] round function - help\n\nOn Thu, 19 Dec 2002, Padma Illindra wrote:\n\n> All,\n>\n> I am trying to round a decimal value to the nearest whole number.\n>\n> Ex: 2.5 to 3\n> 3.5 to 4\n> 2.4 to 2\n> 2.6 to 3\n>\n> But the round function is following the rule 'round to even'.  Is there\nany\n> way that I can use the rule 'round to high number' if the decimal vlaue is\n> >= 0.5 instead of 'round to even' rule?\n\nfloor(x+0,5)\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595\n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "For what it's worth, neither round nor floor, pushed to extremes, will do\nexactly what one would want, doubtless a/c of machine rep problems:\n\nfloor(3.4999999999999+.5)   \n[1] 3                       ",
-      "thread_id": "thread-a723517fe0b6",
-      "thread_depth": 0,
+      "thread_id": "thread-51ee9649ea80",
+      "thread_depth": 1,
       "month": "2002-12"
     },
     {
@@ -2343,8 +2343,8 @@
       ],
       "body_plain": "On Thu, 19 Dec 2002, Dorfman_A wrote:\n\n> For what it's worth, neither round nor floor, pushed to extremes, will do\n> exactly what one would want, doubtless a/c of machine rep problems:\n\nIt's worth an apology, I think.\n\nThe numbers you entered are not what gets represented in\nthe computer.\n\n> 3.49999999999999999999999 - 3.5\n[1] 0\n\n....\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595",
       "body_snippet": "On Thu, 19 Dec 2002, Dorfman_A wrote:\n\n> For what it's worth, neither round nor floor, pushed to extremes, will do\n> exactly what one would want, doubtless a/c of machine rep problems:\n\nIt's worth an ",
-      "thread_id": "thread-a723517fe0b6",
-      "thread_depth": 1,
+      "thread_id": "thread-51ee9649ea80",
+      "thread_depth": 2,
       "month": "2002-12"
     },
     {
@@ -2371,12 +2371,12 @@
       "date": "2002-12-19T18:40:06Z",
       "subject": "Re: round function - help",
       "subject_clean": "round function - help",
-      "in_reply_to": null,
+      "in_reply_to": "<000601c2a785$830b9ae0$7efea8c0@PADMA>",
       "references": [],
       "body_plain": "Heck, \n\n> 3.4999999999999999999999\n[1] 3.5\n\nI definitely think Padma is looking for floor(x + .5). \n\nThere are good reasons to use a \"round to even\" rule and one should be\ncareful about overriding it with this. \n\n-----Original Message-----\nFrom: ripley at stats.ox.ac.uk [mailto:ripley at stats.ox.ac.uk] \nSent: Thursday, December 19, 2002 1:26 PM\nTo: Dorfman_A\nCc: Padma Illindra; Snews (E-mail)\nSubject: Re: [S] round function - help\n\nOn Thu, 19 Dec 2002, Dorfman_A wrote:\n\n> For what it's worth, neither round nor floor, pushed to extremes, will\n\n> do exactly what one would want, doubtless a/c of machine rep problems:\n\nIt's worth an apology, I think.\n\nThe numbers you entered are not what gets represented in\nthe computer.\n\n> 3.49999999999999999999999 - 3.5\n[1] 0\n\n....\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595\n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Heck, \n\n> 3.4999999999999999999999\n[1] 3.5\n\nI definitely think Padma is looking for floor(x + .5). \n\nThere are good reasons to use a \"round to even\" rule and one should be\ncareful about overriding it ",
-      "thread_id": "thread-2fc4b9098617",
-      "thread_depth": 0,
+      "thread_id": "thread-51ee9649ea80",
+      "thread_depth": 1,
       "month": "2002-12"
     },
     {
@@ -2457,12 +2457,12 @@
       "date": "2002-12-20T01:44:39Z",
       "subject": "Fwd: RE: matrix/array/table form into columnar form.",
       "subject_clean": "matrix/array/table form into columnar form.",
-      "in_reply_to": null,
+      "in_reply_to": "<3e026b72.160d7d.12272@imap.qut.edu.au>",
       "references": [],
       "body_plain": "Dear All,\n\nThanks you Nick and Tim for your extremely fast responses! \n\nPerhaps the easiest way is to do: \n\nas.data.frame.array(junk,row.dims=1:3)\n\nMaybe there ought to be as.data.frame.matrix, as.data.frame.table etc..!\n\nTo add the matrices inside an array, I propose to cbind the matrices and\nindex them with reference numbers to do rowSums or coSums as required. \n\nSteve. \n\n> -----Original Message-----\n> From: Steve Yu Shuo Su [mailto:s.su at qut.edu.au]\n> Sent: Friday, December 20, 2002 11:00 AM\n> To: s-news at lists.biostat.wustl.edu\n> Subject: [S] matrix/array/table form into columnar form.\n> \n> \n> Dear All,\n> \n> One of the frequent thing we have to do in terms of data \n> analysis is to\n> translate the matrix/array/table form of data into a columnar form.\n> \n> For example suppose I have the following array:\n> \n> junk<-array(c(1:8, 11:18, 111:118), dim = c(2,4,3)) \n> \n> # I will want to create this into columnar form which uses:\n> \n> cbind(c(junk),rep(1:ncol(junk),dim(junk)[1]*dim(junk)[3]),rep(\n> 1:nrow(junk),dim(junk)[2]*dim(junk)[3])\n> \n> # Will do what I want.\n> \n> However, is this the only way? As it seems to be rather \n> inefficient and is\n> there a command that will sort of collapse them down into \n> columnar form?\n> The other question I have is to do with adding the matrices inside an\n> array, so how do I add the matrices in the junk array elegantly?\n> \n> Thanks in advance.\n> \n> Steve.\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n> \n----- End Forwarded Message -----",
       "body_snippet": "Dear All,\n\nThanks you Nick and Tim for your extremely fast responses! \n\nPerhaps the easiest way is to do: \n\nas.data.frame.array(junk,row.dims=1:3)\n\nMaybe there ought to be as.data.frame.matrix, as.dat",
-      "thread_id": "thread-0e418181c766",
-      "thread_depth": 0,
+      "thread_id": "thread-032d98e0cd14",
+      "thread_depth": 1,
       "month": "2002-12"
     },
     {
@@ -2669,12 +2669,12 @@
       "date": "2002-12-27T16:41:23Z",
       "subject": "Fwd: RE: Error in randome seed",
       "subject_clean": "Error in randome seed",
-      "in_reply_to": null,
+      "in_reply_to": "<3e0b2167.15de26.2510@imap.qut.edu.au>",
       "references": [],
       "body_plain": "----- Message Forwarded on 28/12/02 -----\nFrom: \"Susan Rasch\" <srasch at insightful.com>\nTo: \"Steve Su\" <s.su at qut.edu.au>\nSubject: RE: [S] Error in randome seed\nDate: Fri, 27 Dec 2002 06:08:50 -0800\n\nsorry about that!  The link is to our known bugs site.  Here is the\nrelevant excerpt:\n\n- -----------\nRandom seed may become corrupt \n\nData import or other procedures may fail with an error message about a bad\n.Random.seed. \n\nThe following error message may appear when attempting to import data or\nuse statistical procedures:\n\nProblem in sample: Bad \".Random.seed\": should have 12 values: 1\n\nThis sometimes occurs following a failed data import.\n\nWorkaround: execute the following at the command line, and the problem will\ndisappear.\n\nrm(.Random.seed)\n\nThis resets the random number generator seed to its initial value -- see\nhelp(.Random.seed) for more information. -----------\n\nThis is on the list to be fixed for the next release of S-PLUS.\n\nRegards,\nSusan\n\n- -----Original Message-----\nFrom: Steve Su [mailto:s.su at qut.edu.au]\nSent: Thursday, December 26, 2002 7:28 PM\nTo: Susan Rasch\nSubject: RE: [S] Error in randome seed\nImportance: High\n\nDear Susan,\n\nThanks for your mail but your link does not work for me? \n\nSteve.\n\n- -----Original Message-----\nFrom: Susan Rasch [mailto:srasch at insightful.com] \nSent: Friday, 27 December 2002 1:36 AM\nTo: s.su at qut.edu.au\nSubject: RE: [S] Error in randome seed\n\nsee info on this under our known bugs:\n\nhttp://www.insightful.com/support/faqdetail.asp?FAQID=137&IsArchive=0\n\n-susan\n\n- -----Original Message-----\nFrom: Steve Yu Shuo Su [mailto:s.su at qut.edu.au]\nSent: Thursday, December 26, 2002 7:34 AM\nTo: s-news at lists.biostat.wustl.edu\nSubject: [S] Error in randome seed\n\nDear All,\n\nI have been getting the following message when running simulations:\n\nProblem in rpois: Bad \".Random.seed\": should have 12 values: c(220, \n106, 91, 235, 274, 156, 197, 328, 288, 159, 36, 323, 21, .... \nUse traceback() to see the call stack\n\nI resolve this by using set.seed command, does anyone have similar\nproblems\nlike this before?\n\nSteve.\n- --------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news\n\n- ----- End Forwarded Message -----",
       "body_snippet": "----- Message Forwarded on 28/12/02 -----\nFrom: \"Susan Rasch\" <srasch at insightful.com>\nTo: \"Steve Su\" <s.su at qut.edu.au>\nSubject: RE: [S] Error in randome seed\nDate: Fri, 27 Dec 2002 06:08:50 -080",
-      "thread_id": "thread-a4cdaff97d3d",
-      "thread_depth": 0,
+      "thread_id": "thread-c56d8e2de664",
+      "thread_depth": 1,
       "month": "2002-12"
     },
     {
@@ -2787,12 +2787,12 @@
       "date": "2002-12-28T21:00:18Z",
       "subject": "Re: histogram from summarized data..",
       "subject_clean": "histogram from summarized data..",
-      "in_reply_to": null,
+      "in_reply_to": "<F127U8gpqiLoGCUyZqo00037794@hotmail.com>",
       "references": [],
       "body_plain": "Thanks a lot. I have just realised I might have to use \"barplot\" for the \nproblem. Thanks to Prof. Harrell for his reply, but my problem is a bit \ndifferent from the logistic case but they meet when binning the data.\n\nThanks again.\n\nVumani Dlamini\n\n##############\n> On Sat, 28 Dec 2002 16:51:44 +0000\n> Vumani Dlamini <dvumani at hotmail.com> wrote:\n>\n> >\n>\n> > Dear S users:\n>\n> >\n>\n> > I am trying to perform a diagnostic similar to a logistic regression\n>\n> > diagnostic where one compares an empirical distribution of the response\n>\n> > after categorizing a continuous covariate. Thus I have grouped the\n>\n> > continuous covariate and computed the probability of a success for each\n> of\n>\n> > the groups. I would like to plot a histogram from these and then overlay\n> the\n>\n> > fitted curve from the model (logistic regression), to visualize how well\n> the\n>\n> > model \"fits\" and where any discrepancies occur.\n>\n> >\n>\n> > I tried computing mid points of the goups and plotted them against the\n>\n> > probability of a success as a frequency, but it did not work. Hope S\n> user\n>\n> > will be able to help me.\n>\n> >\n>\n> >\n>\n> > Vumani Dlamini\n>\n> > CSO, Swaziland\n>\n> >\n>\n>\n>\n> lowess is a superior method for doing that as it does not require binning\n> of X.  The plsmo function in the Hmisc library selects the right option to\n> lowess in the case of binary Y.  To check against a fitted model, look at\n> the rcspline.plot function in the Hmisc library.  -Frank\n>\n> >\n>\n> >\n>\n> >\n>\n> > _________________________________________________________________\n>\n> > STOP MORE SPAM with the new MSN 8 and get 3 months FREE*.\n>\n> >\n> http://join.msn.com/?page=features/junkmail&xAPID=42&PS=47575&PI=7324&DI=7474&SU=\n>\n> >\n> http://www.hotmail.msn.com/cgi-bin/getmsg&HL=1216hotmailtaglines_stopmorespam_3mf\n>\n> >\n>\n> > --------------------------------------------------------------------\n>\n> > This message was distributed by s-news at lists.biostat.wustl.edu.  To\n>\n> > unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n>\n> > the BODY of the message:  unsubscribe s-news\n>\n>\n>\n> --\n> Frank E Harrell Jr              Prof. of Biostatistics & Statistics\n> Div. of Biostatistics & Epidem. Dept. of Health Evaluation Sciences\n> U. Virginia School of Medicine  http://hesweb1.med.virginia.edu/biostat\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n\n_________________________________________________________________\n\nAdd photos to your e-mail with MSN 8. Get 3 months FREE*. \nhttp://join.msn.com/?page=features/featuredemail&xAPID=42&PS=47575&PI=7324&DI=7474&SU= \nhttp://www.hotmail.msn.com/cgi-bin/getmsg&HL=1216hotmailtaglines_addphotos_3mf",
       "body_snippet": "Thanks a lot. I have just realised I might have to use \"barplot\" for the \nproblem. Thanks to Prof. Harrell for his reply, but my problem is a bit \ndifferent from the logistic case but they meet when b",
-      "thread_id": "thread-2c9cdcdbaeaa",
-      "thread_depth": 0,
+      "thread_id": "thread-d2696b41eaf2",
+      "thread_depth": 1,
       "month": "2002-12"
     },
     {
@@ -2905,12 +2905,12 @@
       "date": "2002-12-30T13:14:10Z",
       "subject": "Re: extracting pixel values from a TIF in S+",
       "subject_clean": "extracting pixel values from a TIF in S+",
-      "in_reply_to": null,
+      "in_reply_to": "<F5c1xuFhlGLjordHiNU00016b76@hotmail.com>",
       "references": [],
       "body_plain": "I have had success reading TIFF images using the libtiff routines\n(www.libtiff.org).  My problem was actually somewhat harder: I was reading\n\"psuedo-tiff\" files as produced by HP and Molecular Dynamics imagers in the\nbiochemistry labs; these are usually used to image Western blots.  The tiff\nformat allows for application specific tags, e.g., extra information, to be\nadded to the file, and one of these tags was needed by my analysis.  In order\nto store a wide dynamic range of values in a small file, the scanners actually\nwrite 16 bit integer files with value = round(sqrt(actual value * scale)) --\nand the scale was one of the \"extra\" tags.  (My final analysis didn't actually \nneed the scale, but I got tired of all the invalid tag warning messages each\ntime I read a file).\n\n  First, download and compile the library.  If the supplied \"readtiff\" and\n\"dumptiff\" routines can make sense of your files, then you are in business.\nI can supply a copy of my S and C code.  The extra tags were a pain, but other-\nwise it's pretty simple.  \n\n  This was all done on Unix and Linux.  You mileage may vary with inferior\noperating systems....\n\n        Terry Therneau",
       "body_snippet": "I have had success reading TIFF images using the libtiff routines\n(www.libtiff.org).  My problem was actually somewhat harder: I was reading\n\"psuedo-tiff\" files as produced by HP and Molecular Dynamic",
-      "thread_id": "thread-3fbded169d81",
-      "thread_depth": 0,
+      "thread_id": "thread-e2ca2269499d",
+      "thread_depth": 1,
       "month": "2002-12"
     },
     {
@@ -3079,24 +3079,14 @@
     {
       "id": "thread-ee46d403948c",
       "subject": "forcing intercept through zero",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Mike Richman"
-      ],
-      "started": "2002-12-03T00:01:14Z",
-      "last_reply": "2002-12-03T00:01:14Z",
-      "root_message_id": "msg-ee46d403948c"
-    },
-    {
-      "id": "thread-b7ce1fc705cd",
-      "subject": "forcing intercept through zero",
-      "message_count": 1,
-      "participants": [
+        "Mike Richman",
         "Petr Pikal"
       ],
-      "started": "2002-12-03T07:14:42Z",
+      "started": "2002-12-03T00:01:14Z",
       "last_reply": "2002-12-03T07:14:42Z",
-      "root_message_id": "msg-b7ce1fc705cd"
+      "root_message_id": "msg-ee46d403948c"
     },
     {
       "id": "thread-ea59a480e351",
@@ -3192,26 +3182,16 @@
     {
       "id": "thread-fcca188c86fb",
       "subject": "mode of objects",
-      "message_count": 3,
+      "message_count": 4,
       "participants": [
         "Burbidge, Robert",
+        "Gunter, Bert",
         "John Fox",
         "ripley at stats.ox.ac.uk"
       ],
       "started": "2002-12-04T10:57:05Z",
       "last_reply": "2002-12-04T13:39:55Z",
       "root_message_id": "msg-fcca188c86fb"
-    },
-    {
-      "id": "thread-16b323fbbf60",
-      "subject": "mode of objects",
-      "message_count": 1,
-      "participants": [
-        "Gunter, Bert"
-      ],
-      "started": "2002-12-04T13:01:52Z",
-      "last_reply": "2002-12-04T13:01:52Z",
-      "root_message_id": "msg-16b323fbbf60"
     },
     {
       "id": "thread-1d10c63a9e6b",
@@ -3227,12 +3207,13 @@
     {
       "id": "thread-9293e87f38a8",
       "subject": "Efficiency Question",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
+        "CHASALOW, SCOTT [AG/1000]",
         "Dimitris Rizopoulos"
       ],
       "started": "2002-12-04T19:51:10Z",
-      "last_reply": "2002-12-04T19:51:10Z",
+      "last_reply": "2002-12-05T01:50:38Z",
       "root_message_id": "msg-9293e87f38a8"
     },
     {
@@ -3269,48 +3250,27 @@
       "root_message_id": "msg-a34fa5d36afd"
     },
     {
-      "id": "thread-92da357fb818",
-      "subject": "Efficiency Question",
-      "message_count": 1,
-      "participants": [
-        "CHASALOW, SCOTT [AG/1000]"
-      ],
-      "started": "2002-12-04T22:46:13Z",
-      "last_reply": "2002-12-04T22:46:13Z",
-      "root_message_id": "msg-92da357fb818"
-    },
-    {
-      "id": "thread-4854a8dd2b44",
-      "subject": "Efficiency Question",
-      "message_count": 1,
-      "participants": [
-        "CHASALOW, SCOTT [AG/1000]"
-      ],
-      "started": "2002-12-05T01:50:38Z",
-      "last_reply": "2002-12-05T01:50:38Z",
-      "root_message_id": "msg-4854a8dd2b44"
-    },
-    {
       "id": "thread-aa5718a38944",
       "subject": "Using R Packages in S-Plus",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Trudi O'Farrell",
         "ripley at stats.ox.ac.uk"
       ],
       "started": "2002-12-05T04:51:08Z",
-      "last_reply": "2002-12-05T07:01:19Z",
+      "last_reply": "2002-12-10T01:53:41Z",
       "root_message_id": "msg-aa5718a38944"
     },
     {
       "id": "thread-f86b3c64495f",
       "subject": "Simulation in Splus",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
+        "Liaw, Andy",
         "Steve Su"
       ],
       "started": "2002-12-05T05:21:13Z",
-      "last_reply": "2002-12-05T05:21:13Z",
+      "last_reply": "2002-12-05T13:44:14Z",
       "root_message_id": "msg-f86b3c64495f"
     },
     {
@@ -3336,18 +3296,6 @@
       "root_message_id": "msg-96bfa25e6e21"
     },
     {
-      "id": "thread-e34bbf5f2674",
-      "subject": "Simulation in Splus",
-      "message_count": 2,
-      "participants": [
-        "Liaw, Andy",
-        "Steve Su"
-      ],
-      "started": "2002-12-05T13:14:58Z",
-      "last_reply": "2002-12-05T13:44:14Z",
-      "root_message_id": "msg-e34bbf5f2674"
-    },
-    {
       "id": "thread-c45db0c9de68",
       "subject": "axes-limits for trellis fcts. cloud and wireframe",
       "message_count": 1,
@@ -3361,24 +3309,14 @@
     {
       "id": "thread-510c217d7f58",
       "subject": "bwplot box plot with vertical boxes",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "FolkesM at pac.dfo-mpo.gc.ca"
-      ],
-      "started": "2002-12-05T18:56:48Z",
-      "last_reply": "2002-12-05T18:56:48Z",
-      "root_message_id": "msg-510c217d7f58"
-    },
-    {
-      "id": "thread-c861431146b5",
-      "subject": "bwplot box plot with vertical boxes",
-      "message_count": 1,
-      "participants": [
+        "FolkesM at pac.dfo-mpo.gc.ca",
         "Liaw, Andy"
       ],
-      "started": "2002-12-05T20:04:51Z",
+      "started": "2002-12-05T18:56:48Z",
       "last_reply": "2002-12-05T20:04:51Z",
-      "root_message_id": "msg-c861431146b5"
+      "root_message_id": "msg-510c217d7f58"
     },
     {
       "id": "thread-2f0f88120e2f",
@@ -3405,12 +3343,15 @@
     {
       "id": "thread-a9b38ef9f29b",
       "subject": "SPLUS on a Mac",
-      "message_count": 1,
+      "message_count": 4,
       "participants": [
-        "Marcia A. Ciol"
+        "David Smith",
+        "M.Salmon at city.ac.uk",
+        "Marcia A. Ciol",
+        "SH Heisterkamp"
       ],
       "started": "2002-12-06T00:16:33Z",
-      "last_reply": "2002-12-06T00:16:33Z",
+      "last_reply": "2002-12-06T19:26:20Z",
       "root_message_id": "msg-a9b38ef9f29b"
     },
     {
@@ -3424,28 +3365,6 @@
       "started": "2002-12-06T07:03:42Z",
       "last_reply": "2002-12-06T07:37:53Z",
       "root_message_id": "msg-3d46a70eeba8"
-    },
-    {
-      "id": "thread-6961426351dd",
-      "subject": "SPLUS on a Mac",
-      "message_count": 1,
-      "participants": [
-        "M.Salmon at city.ac.uk"
-      ],
-      "started": "2002-12-06T07:24:41Z",
-      "last_reply": "2002-12-06T07:24:41Z",
-      "root_message_id": "msg-6961426351dd"
-    },
-    {
-      "id": "thread-8a26ca5ac0c9",
-      "subject": "SPLUS on a Mac",
-      "message_count": 1,
-      "participants": [
-        "SH Heisterkamp"
-      ],
-      "started": "2002-12-06T08:03:32Z",
-      "last_reply": "2002-12-06T08:03:32Z",
-      "root_message_id": "msg-8a26ca5ac0c9"
     },
     {
       "id": "thread-253d178768ad",
@@ -3485,50 +3404,17 @@
     {
       "id": "thread-18220025eb35",
       "subject": "Splus for MacOS X",
-      "message_count": 3,
+      "message_count": 7,
       "participants": [
+        "A.J. Rossini",
         "Mark E. Irwin",
         "Paul, David A",
+        "cstrato",
         "ripley at stats.ox.ac.uk"
       ],
       "started": "2002-12-06T17:23:46Z",
-      "last_reply": "2002-12-06T17:43:15Z",
-      "root_message_id": "msg-18220025eb35"
-    },
-    {
-      "id": "thread-9b2947aa9a0f",
-      "subject": "Splus for MacOS X",
-      "message_count": 3,
-      "participants": [
-        "A.J. Rossini",
-        "Paul, David A",
-        "cstrato"
-      ],
-      "started": "2002-12-06T18:09:09Z",
       "last_reply": "2002-12-06T19:31:59Z",
-      "root_message_id": "msg-9b2947aa9a0f"
-    },
-    {
-      "id": "thread-a3f030f0b189",
-      "subject": "Splus for MacOS X",
-      "message_count": 1,
-      "participants": [
-        "Paul, David A"
-      ],
-      "started": "2002-12-06T19:09:15Z",
-      "last_reply": "2002-12-06T19:09:15Z",
-      "root_message_id": "msg-a3f030f0b189"
-    },
-    {
-      "id": "thread-08658fc77b75",
-      "subject": "SPLUS on a Mac",
-      "message_count": 1,
-      "participants": [
-        "David Smith"
-      ],
-      "started": "2002-12-06T19:26:20Z",
-      "last_reply": "2002-12-06T19:26:20Z",
-      "root_message_id": "msg-08658fc77b75"
+      "root_message_id": "msg-18220025eb35"
     },
     {
       "id": "thread-628dbf7c5ad2",
@@ -3590,12 +3476,13 @@
     {
       "id": "thread-70a7240c4659",
       "subject": "S+Plus 2000 on Windows XP",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Baraldo, Christian",
         "Buzz Burhans"
       ],
       "started": "2002-12-09T21:44:40Z",
-      "last_reply": "2002-12-09T21:44:40Z",
+      "last_reply": "2002-12-10T10:29:30Z",
       "root_message_id": "msg-70a7240c4659"
     },
     {
@@ -3610,17 +3497,6 @@
       "root_message_id": "msg-ccfb0d971fa6"
     },
     {
-      "id": "thread-0450325f9814",
-      "subject": "Using R Packages in S-Plus",
-      "message_count": 1,
-      "participants": [
-        "Trudi O'Farrell"
-      ],
-      "started": "2002-12-10T01:53:41Z",
-      "last_reply": "2002-12-10T01:53:41Z",
-      "root_message_id": "msg-0450325f9814"
-    },
-    {
       "id": "thread-ea9432238c30",
       "subject": "IDEAL2003 Call-for-paper (Paper Submission Due Date: December 31, 2002 !!)",
       "message_count": 1,
@@ -3632,25 +3508,14 @@
       "root_message_id": "msg-ea9432238c30"
     },
     {
-      "id": "thread-daba9224ab1a",
-      "subject": "S+Plus 2000 on Windows XP",
-      "message_count": 1,
-      "participants": [
-        "Baraldo, Christian"
-      ],
-      "started": "2002-12-10T10:29:30Z",
-      "last_reply": "2002-12-10T10:29:30Z",
-      "root_message_id": "msg-daba9224ab1a"
-    },
-    {
       "id": "thread-c7491189070b",
       "subject": "mcnemar test",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Fowler, Mark"
       ],
       "started": "2002-12-10T12:14:11Z",
-      "last_reply": "2002-12-10T12:14:11Z",
+      "last_reply": "2002-12-13T13:53:50Z",
       "root_message_id": "msg-c7491189070b"
     },
     {
@@ -3679,47 +3544,27 @@
     {
       "id": "thread-c986e1094929",
       "subject": "Type I and III sum of squares",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
+        "Bill.Venables at CMIS.CSIRO.AU",
+        "Liaw, Andy",
         "jo jiao"
       ],
       "started": "2002-12-11T08:22:57Z",
-      "last_reply": "2002-12-11T08:22:57Z",
+      "last_reply": "2002-12-11T20:26:15Z",
       "root_message_id": "msg-c986e1094929"
     },
     {
       "id": "thread-6e15545d23fc",
       "subject": "Splitting data",
-      "message_count": 1,
-      "participants": [
-        "Arjun Bhandari"
-      ],
-      "started": "2002-12-11T08:48:20Z",
-      "last_reply": "2002-12-11T08:48:20Z",
-      "root_message_id": "msg-6e15545d23fc"
-    },
-    {
-      "id": "thread-d969efd8152c",
-      "subject": "Type I and III sum of squares",
-      "message_count": 1,
-      "participants": [
-        "Bill.Venables at CMIS.CSIRO.AU"
-      ],
-      "started": "2002-12-11T08:51:59Z",
-      "last_reply": "2002-12-11T08:51:59Z",
-      "root_message_id": "msg-d969efd8152c"
-    },
-    {
-      "id": "thread-07959b84b99d",
-      "subject": "splitting data",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Arjun Bhandari",
         "jingshan zhang"
       ],
-      "started": "2002-12-11T08:57:07Z",
+      "started": "2002-12-11T08:48:20Z",
       "last_reply": "2002-12-11T09:52:05Z",
-      "root_message_id": "msg-07959b84b99d"
+      "root_message_id": "msg-6e15545d23fc"
     },
     {
       "id": "thread-550e4dc00130",
@@ -3756,17 +3601,6 @@
       "root_message_id": "msg-13be84ec5364"
     },
     {
-      "id": "thread-11d342bc5b16",
-      "subject": "Type I and III sum of squares",
-      "message_count": 1,
-      "participants": [
-        "Liaw, Andy"
-      ],
-      "started": "2002-12-11T20:26:15Z",
-      "last_reply": "2002-12-11T20:26:15Z",
-      "root_message_id": "msg-11d342bc5b16"
-    },
-    {
       "id": "thread-3eb0c112207b",
       "subject": "Announcement of the release of version 2.0 of the forward search library for SPLUS",
       "message_count": 3,
@@ -3782,24 +3616,14 @@
     {
       "id": "thread-fc341c411a1e",
       "subject": "aggregate, agg.sum,agg.length",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Steve Su"
-      ],
-      "started": "2002-12-12T11:38:17Z",
-      "last_reply": "2002-12-12T11:38:17Z",
-      "root_message_id": "msg-fc341c411a1e"
-    },
-    {
-      "id": "thread-d32a57100f78",
-      "subject": "aggregate, agg.sum,agg.length",
-      "message_count": 1,
-      "participants": [
+        "Steve Su",
         "Wright, Kevin"
       ],
-      "started": "2002-12-12T14:08:05Z",
+      "started": "2002-12-12T11:38:17Z",
       "last_reply": "2002-12-12T14:08:05Z",
-      "root_message_id": "msg-d32a57100f78"
+      "root_message_id": "msg-fc341c411a1e"
     },
     {
       "id": "thread-aa44e3582aba",
@@ -3880,17 +3704,6 @@
       "root_message_id": "msg-8d92b012e615"
     },
     {
-      "id": "thread-d0c75af65129",
-      "subject": "mcnemar test",
-      "message_count": 1,
-      "participants": [
-        "Fowler, Mark"
-      ],
-      "started": "2002-12-13T13:53:50Z",
-      "last_reply": "2002-12-13T13:53:50Z",
-      "root_message_id": "msg-d0c75af65129"
-    },
-    {
       "id": "thread-ccf6c3b28985",
       "subject": "altering precision of a column in a data frame",
       "message_count": 1,
@@ -3950,13 +3763,13 @@
     {
       "id": "thread-7e19bd49d4e4",
       "subject": "unique permutations",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Rosenfeld, Simon (NIH/NCI)",
         "ripley at stats.ox.ac.uk"
       ],
       "started": "2002-12-15T16:01:37Z",
-      "last_reply": "2002-12-15T16:48:26Z",
+      "last_reply": "2002-12-16T20:23:05Z",
       "root_message_id": "msg-7e19bd49d4e4"
     },
     {
@@ -4024,17 +3837,6 @@
       "started": "2002-12-16T17:45:23Z",
       "last_reply": "2002-12-16T17:45:23Z",
       "root_message_id": "msg-a3879b5ada75"
-    },
-    {
-      "id": "thread-9a7470bb4d5c",
-      "subject": "unique permutations",
-      "message_count": 1,
-      "participants": [
-        "Rosenfeld, Simon (NIH/NCI)"
-      ],
-      "started": "2002-12-16T20:23:05Z",
-      "last_reply": "2002-12-16T20:23:05Z",
-      "root_message_id": "msg-9a7470bb4d5c"
     },
     {
       "id": "thread-055dcaf4c2cb",
@@ -4106,12 +3908,13 @@
     {
       "id": "thread-a13ea3fe527d",
       "subject": "san francisco bay coastline",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Diego Holmgren"
+        "Diego Holmgren",
+        "Jean V Adams"
       ],
       "started": "2002-12-18T21:11:52Z",
-      "last_reply": "2002-12-18T21:11:52Z",
+      "last_reply": "2002-12-19T14:00:20Z",
       "root_message_id": "msg-a13ea3fe527d"
     },
     {
@@ -4135,17 +3938,6 @@
       "started": "2002-12-19T10:30:11Z",
       "last_reply": "2002-12-19T10:30:11Z",
       "root_message_id": "msg-0279da0212ac"
-    },
-    {
-      "id": "thread-cb170b84806e",
-      "subject": "san francisco bay coastline",
-      "message_count": 1,
-      "participants": [
-        "Jean V Adams"
-      ],
-      "started": "2002-12-19T14:00:20Z",
-      "last_reply": "2002-12-19T14:00:20Z",
-      "root_message_id": "msg-cb170b84806e"
     },
     {
       "id": "thread-5565eb087b64",
@@ -4172,8 +3964,10 @@
     {
       "id": "thread-51ee9649ea80",
       "subject": "round function - help",
-      "message_count": 4,
+      "message_count": 7,
       "participants": [
+        "Dorfman_A",
+        "Hachey, Mark (IMS)",
         "Padma Illindra",
         "gordon dinetto",
         "ripley at stats.ox.ac.uk"
@@ -4181,18 +3975,6 @@
       "started": "2002-12-19T17:38:57Z",
       "last_reply": "2002-12-19T21:11:44Z",
       "root_message_id": "msg-51ee9649ea80"
-    },
-    {
-      "id": "thread-a723517fe0b6",
-      "subject": "round function - help",
-      "message_count": 2,
-      "participants": [
-        "Dorfman_A",
-        "ripley at stats.ox.ac.uk"
-      ],
-      "started": "2002-12-19T18:20:48Z",
-      "last_reply": "2002-12-19T18:26:20Z",
-      "root_message_id": "msg-a723517fe0b6"
     },
     {
       "id": "thread-be71c9ce4d07",
@@ -4206,38 +3988,16 @@
       "root_message_id": "msg-be71c9ce4d07"
     },
     {
-      "id": "thread-2fc4b9098617",
-      "subject": "round function - help",
-      "message_count": 1,
-      "participants": [
-        "Hachey, Mark (IMS)"
-      ],
-      "started": "2002-12-19T18:40:06Z",
-      "last_reply": "2002-12-19T18:40:06Z",
-      "root_message_id": "msg-2fc4b9098617"
-    },
-    {
       "id": "thread-032d98e0cd14",
       "subject": "matrix/array/table form into columnar form.",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Steve Yu Shuo Su",
         "Sundar Dorai-Raj"
       ],
       "started": "2002-12-20T00:59:30Z",
-      "last_reply": "2002-12-20T01:12:13Z",
-      "root_message_id": "msg-032d98e0cd14"
-    },
-    {
-      "id": "thread-0e418181c766",
-      "subject": "matrix/array/table form into columnar form.",
-      "message_count": 1,
-      "participants": [
-        "Steve Yu Shuo Su"
-      ],
-      "started": "2002-12-20T01:44:39Z",
       "last_reply": "2002-12-20T01:44:39Z",
-      "root_message_id": "msg-0e418181c766"
+      "root_message_id": "msg-032d98e0cd14"
     },
     {
       "id": "thread-fe2387703d9f",
@@ -4332,12 +4092,12 @@
     {
       "id": "thread-c56d8e2de664",
       "subject": "Error in randome seed",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Steve Yu Shuo Su"
       ],
       "started": "2002-12-26T15:33:59Z",
-      "last_reply": "2002-12-26T15:33:59Z",
+      "last_reply": "2002-12-27T16:41:23Z",
       "root_message_id": "msg-c56d8e2de664"
     },
     {
@@ -4350,17 +4110,6 @@
       "started": "2002-12-27T15:06:53Z",
       "last_reply": "2002-12-27T15:06:53Z",
       "root_message_id": "msg-ed9ba0b5c618"
-    },
-    {
-      "id": "thread-a4cdaff97d3d",
-      "subject": "Error in randome seed",
-      "message_count": 1,
-      "participants": [
-        "Steve Yu Shuo Su"
-      ],
-      "started": "2002-12-27T16:41:23Z",
-      "last_reply": "2002-12-27T16:41:23Z",
-      "root_message_id": "msg-a4cdaff97d3d"
     },
     {
       "id": "thread-1691bdcf8a4d",
@@ -4376,38 +4125,28 @@
     {
       "id": "thread-e2ca2269499d",
       "subject": "extracting pixel values from a TIF in S+",
-      "message_count": 3,
+      "message_count": 4,
       "participants": [
         "Patrik Öhagen",
         "Phillip Staford",
+        "Terry Therneau",
         "ripley at stats.ox.ac.uk"
       ],
       "started": "2002-12-28T00:21:31Z",
-      "last_reply": "2002-12-28T10:00:32Z",
+      "last_reply": "2002-12-30T13:14:10Z",
       "root_message_id": "msg-e2ca2269499d"
     },
     {
       "id": "thread-d2696b41eaf2",
       "subject": "histogram from summarized data..",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Frank E Harrell Jr",
         "Vumani Dlamini"
       ],
       "started": "2002-12-28T16:51:44Z",
-      "last_reply": "2002-12-28T20:26:09Z",
-      "root_message_id": "msg-d2696b41eaf2"
-    },
-    {
-      "id": "thread-2c9cdcdbaeaa",
-      "subject": "histogram from summarized data..",
-      "message_count": 1,
-      "participants": [
-        "Vumani Dlamini"
-      ],
-      "started": "2002-12-28T21:00:18Z",
       "last_reply": "2002-12-28T21:00:18Z",
-      "root_message_id": "msg-2c9cdcdbaeaa"
+      "root_message_id": "msg-d2696b41eaf2"
     },
     {
       "id": "thread-588a9ce973aa",
@@ -4442,17 +4181,6 @@
       "started": "2002-12-30T11:24:58Z",
       "last_reply": "2002-12-30T11:24:58Z",
       "root_message_id": "msg-70aeefd5f30a"
-    },
-    {
-      "id": "thread-3fbded169d81",
-      "subject": "extracting pixel values from a TIF in S+",
-      "message_count": 1,
-      "participants": [
-        "Terry Therneau"
-      ],
-      "started": "2002-12-30T13:14:10Z",
-      "last_reply": "2002-12-30T13:14:10Z",
-      "root_message_id": "msg-3fbded169d81"
     },
     {
       "id": "thread-a15fae48906f",

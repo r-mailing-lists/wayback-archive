@@ -406,12 +406,12 @@
       "date": "2002-02-05T13:38:19Z",
       "subject": "Re: memory and randomization",
       "subject_clean": "memory and randomization",
-      "in_reply_to": null,
+      "in_reply_to": "<3C6A34CD@iit1s21>",
       "references": [],
       "body_plain": "Have you tried the \"For\" loop (ie capital \"for\")?\nThis might pose a quick fix (clears dynamic memory).\nBe careful about the .Audit file getting too big.\nAlso make sure that your code is as efficient as possible--\nno unnecessary storage of big vectors or matrices.\n(takes more time but is worth it later)\nAnother option would\nbe to write shell script (if working in UNIX)\nto call S-PLUS for each iteration\n(ie shutting S down after each one and thus clearing the memory).\nAn even quicker/no memory-worries route would be to\nprogram it up in Fortran or C.\n\nWhen running big simulations, and other computationally intense\nalgorithms it's usually optimal to combine S-PLUS with C or Fortran\nfor speed and to avoid the problems you are having.\nOne can program the \"brute force\" work in C, with calls to S-PLUS\nto utilize some of the wonderful model fitting algorithms\nit offers, for instance.\n\nGood luck\n\nErin Kammann, ScD\nSenior Biostatistician\nAlkermes, Inc\nCambridge, MA\n\n-----Original Message-----\nFrom: haud8928 [mailto:haud8928 at postoffice.uri.edu]\nSent: Monday, February 04, 2002 8:31 PM\nTo: s-news\nSubject: [S] memory and randomization\n\nHello s-plus users\n              I tried to run a program for all randomization methods, \nbootstrap and jackknife to test the significant of the regression\ncoefficients \nin a linear regression model. \nI used 2 loops one with 1000 iterations ( this loop is used to get new data\nat \nevery time , new dependent variable and independent variables \"simulation\")\nthe inside loop with 100 iterations (this loop contains all randomization \napproaches ,bootstrap and jackknife).\nI used the for loop command.I got good results when I used 100 iterations in\n\nthe simulation but when I tried to use 1000 iterations ,I had an error\nmessage \non the screen saying that the computer run out of virtual memory and more\nhad \nto be \ncreated. What I think is happening is that the program creates vectors for \nevery single iteration and keep them in the main memory hence the reason for\n\nrunning out of it. I think that there should be a command I can use it\nsomehow \nto remove or clear the memory instead of storing it.\n\nI am a new user for s-plus and I don't know how I can deal with this\nproblem.\nThanks alot for any help\n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Have you tried the \"For\" loop (ie capital \"for\")?\nThis might pose a quick fix (clears dynamic memory).\nBe careful about the .Audit file getting too big.\nAlso make sure that your code is as efficient a",
-      "thread_id": "thread-f24cb6faf300",
-      "thread_depth": 0,
+      "thread_id": "thread-af7ff63eb7e1",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -438,12 +438,12 @@
       "date": "2002-02-05T19:02:16Z",
       "subject": "Re: memory and randomization",
       "subject_clean": "memory and randomization",
-      "in_reply_to": null,
+      "in_reply_to": "<3C6A34CD@iit1s21>",
       "references": [],
       "body_plain": "some good thoughts here by erin.  \n\ni do have a question about the original post:\n<I used 2 loops one with 1000 iterations ( this loop is used to get new data\nat every time , new dependent variable and independent variables\n\"simulation\")\nthe inside loop with 100 iterations (this loop contains all randomization \napproaches ,bootstrap and jackknife).>\n\nfirst, within your 1000 iteration loop you generate a new dataset, say x.\n\nnow, i am somewhat puzzled by what you are doing with the jackknife inside\nthe inner loop.\n\nare you recalculating the jackknife 100 times on x in the inner loop?? (if\nyou are - try taking the jackknife out of the inner loop)\n\nare you using the inner 100 iteration loop to calculate the individual\ndelete-k versions of the statistic by hand?  if so, try using the built-in\njackknife and you won't need the inner loop (go to help and type jackknife).\nif you want to roll-your-own, then vectorize it.\n\nfor the bootstrap:\nare you recalculating an actual bootstrap estimate 100 times and taking the\nmean/media/other or are you running a roll-your-own version of the\nbootstrap?\nyou might try using the built-in bootstrap without an inner loop.  if you\nare using the built-in bootstrap 100 times what kind of variance are you\ntrying to simulate?\n\nthe only way i can think of, that you really need an inner loop, is if you\nare doing some unusual version of the bootstrap such as a sequential\nbootstrap.\n\nthe best thing to do with a simulation loop is not to nest it unless you are\nforced to.\n\ngood luck\nbob\n\n-----Original Message-----\nFrom: Erin Kammann [mailto:Kammann_Erin at alkermes.com]\nSent: Tuesday, February 05, 2002 8:38 AM\nTo: 'haud8928'; s-news\nSubject: Re: [S] memory and randomization\n\nHave you tried the \"For\" loop (ie capital \"for\")?\nThis might pose a quick fix (clears dynamic memory).\nBe careful about the .Audit file getting too big.\nAlso make sure that your code is as efficient as possible--\nno unnecessary storage of big vectors or matrices.\n(takes more time but is worth it later)\nAnother option would\nbe to write shell script (if working in UNIX)\nto call S-PLUS for each iteration\n(ie shutting S down after each one and thus clearing the memory).\nAn even quicker/no memory-worries route would be to\nprogram it up in Fortran or C.\n\nWhen running big simulations, and other computationally intense\nalgorithms it's usually optimal to combine S-PLUS with C or Fortran\nfor speed and to avoid the problems you are having.\nOne can program the \"brute force\" work in C, with calls to S-PLUS\nto utilize some of the wonderful model fitting algorithms\nit offers, for instance.\n\nGood luck\n\nErin Kammann, ScD\nSenior Biostatistician\nAlkermes, Inc\nCambridge, MA\n\n-----Original Message-----\nFrom: haud8928 [mailto:haud8928 at postoffice.uri.edu]\nSent: Monday, February 04, 2002 8:31 PM\nTo: s-news\nSubject: [S] memory and randomization\n\nHello s-plus users\n              I tried to run a program for all randomization methods, \nbootstrap and jackknife to test the significant of the regression\ncoefficients \nin a linear regression model. \nI used 2 loops one with 1000 iterations ( this loop is used to get new data\nat \nevery time , new dependent variable and independent variables \"simulation\")\nthe inside loop with 100 iterations (this loop contains all randomization \napproaches ,bootstrap and jackknife).\nI used the for loop command.I got good results when I used 100 iterations in\n\nthe simulation but when I tried to use 1000 iterations ,I had an error\nmessage \non the screen saying that the computer run out of virtual memory and more\nhad \nto be \ncreated. What I think is happening is that the program creates vectors for \nevery single iteration and keep them in the main memory hence the reason for\n\nrunning out of it. I think that there should be a command I can use it\nsomehow \nto remove or clear the memory instead of storing it.\n\nI am a new user for s-plus and I don't know how I can deal with this\nproblem.\nThanks alot for any help\n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "some good thoughts here by erin.  \n\ni do have a question about the original post:\n<I used 2 loops one with 1000 iterations ( this loop is used to get new data\nat every time , new dependent variable an",
-      "thread_id": "thread-918dff23dbd4",
-      "thread_depth": 0,
+      "thread_id": "thread-af7ff63eb7e1",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -640,12 +640,12 @@
       "date": "2002-02-06T13:22:29Z",
       "subject": "Re: Drawing abline on trellis plot",
       "subject_clean": "Drawing abline on trellis plot",
-      "in_reply_to": null,
+      "in_reply_to": "<008201c1aea7$fbadd710$7efea8c0@PADMA>",
       "references": [],
       "body_plain": "You need to use the \"panel.abline\" function in the \"panel\" argument to the\ntrellis call. See Help for trellis.args and read the section on trellis\npanel functions in the Programmers Guide.\n\nBert Gunter\nBiometrics Research RY 70-38\nMerck & Company\nP.O. Box 2000\nRahway, NJ 07065-0900\nPhone: (732) 594-7765\nmailto: bert_gunter at merck.com\n\n\"The business of the statistician is to catalyze the scientific learning\nprocess.\"      -- George E.P. Box\n\n-----Original Message-----\nFrom: Padma Illindra [mailto:pillindra at quantros.com]\nSent: Tuesday, February 05, 2002 7:48 PM\nTo: Snews (E-mail)\nSubject: [S] Drawing abline on trellis plot\n\nHi all,\n\nCan any of you help me out how to draw a line on Trellis plot.\n\nI have a trellis xyplot.  I need to draw a line of the mean value of the\nfirst column of the data frame on xyplot (parallel to x-axis).\nI tried with abline as shown below and it is not working.\n\n================================================\n\ndf <- DATA1\nprint(df)\n\nzPlot <- xyplot(as.numeric(DATA1[,1]) ~ as.numeric(DATA1[,2]), type=\"b\")\nprint(zPlot)\nabline(mean(DATA1[,1]),0)\n\n=======================================================\n\nBut when I tried the same abline as shown below with plot command it works.\n\nplot(as.numeric(DATA1[,2]), as.numeric(DATA1[,1]), type = \"b\" )\nabline(mean(DATA1[,1]),0)\n\n====================================================\n\nCan any of you let me know if there is any special command in trellis Plots\nto draw the lines.\n\nThanks in advance for the help.\n\nPadma\n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "You need to use the \"panel.abline\" function in the \"panel\" argument to the\ntrellis call. See Help for trellis.args and read the section on trellis\npanel functions in the Programmers Guide.\n\nBert Gunte",
-      "thread_id": "thread-7fd472f9d2f1",
-      "thread_depth": 0,
+      "thread_id": "thread-7293b389d134",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -722,12 +722,12 @@
       "date": "2002-02-06T15:52:38Z",
       "subject": "Re: difference equations",
       "subject_clean": "difference equations",
-      "in_reply_to": null,
+      "in_reply_to": "<F45TIVvLVKi3s1wsXZZ0000704b@hotmail.com>",
       "references": [],
       "body_plain": "David,\n\nmy suggestion would be to contact the group\nat the University of Rhode Island mathematics\ndepartment that is\nperhaps the most active and largest DE group\naround. (www.math.uri.edu)\n(in particular, Mustafa Kulenovic,\nGerry Ladas, Ed Grove, Norman\nProkup, Richard Devault, or Jeff Feuer \nshould be helpful). Their work may \nalso be in mathematica, or some other symbolic\nequation language, but you can always interface\nthat with S-PLUS to get what you want.\n\nGood luck,\nErin Kammann\nAlkermes, Inc\n\n-----Original Message-----\nFrom: David Cairns [mailto:kennycairns at hotmail.com]\nSent: Tuesday, February 05, 2002 5:36 PM\nTo: s-news at lists.biostat.wustl.edu\nSubject: [S] difference equations\n\nDoes anyone have any S-plus code they would be willing to share which solves\n\ndifference equations, before I, as someone said recently, reinvent the \nwheel.\n\nAny hints or pointers would be very gratefully received.\n\nBest Wishes\n\nDavid Cairns\n\nResearch Student\nUniversity of Sheffield\nUK\n\n_________________________________________________________________\nMSN Photos is the easiest way to share and print your photos: \nhttp://photos.msn.com/support/worldwide.aspx\n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "David,\n\nmy suggestion would be to contact the group\nat the University of Rhode Island mathematics\ndepartment that is\nperhaps the most active and largest DE group\naround. (www.math.uri.edu)\n(in particu",
-      "thread_id": "thread-cc678ca4e4d5",
-      "thread_depth": 0,
+      "thread_id": "thread-5d4b0a510d06",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -738,12 +738,12 @@
       "date": "2002-02-06T16:36:24Z",
       "subject": "Re: Another newbie question about computation time",
       "subject_clean": "Another newbie question about computation time",
-      "in_reply_to": null,
+      "in_reply_to": "<F9D44AC0D89CD311B9E3000629385C40044D9E64@marconi.open.ac.uk>",
       "references": [],
       "body_plain": "Many thanks to those who replied.\n\nProf Ripley and Michael Prager both suggested cutting and pasting from the\nscript window to the commands window, which seems to do the business --\nabout 12 minutes for each of four iterations of\n\nthingN <- foo(xN, yN)\ndump.data(\"thingN\", \"D:\\\\folder\\\\thingN\")\nrm(thingN)\n\nTo quote Michael's reply, the explanation is that:\n\n>Memory management in S+ is idiosyncratic. It saves all kinds of \n>intermediate results in case it needs to back out of an incomplete \n>evaluation. A script is considered a single evaluation and causes that \n>problem. It is claimed that S+ 6 works better in this regard.\n\nProf Ripley points out -- very usefully: it might have been the next thing I\ntried -- that submitting from a script window implicitly uses source(), and\nthat using this explicitly would encounter the same difficulties; instead\nbear in mind that:\n\n>The only ways that avoid this slow-down with a script are to \n>use splus.exe\n>/BATCH or sqpe.exe: see `S Programming' for fuller details.  \n>But pasting\n>into the command window is usually also effective.\n\nMichael's explanation was on the lines of what I had been expecting (purely\non the basis of a memory that I had seen similar points made in previous\nposts), and the following further contributions bear on this:\n\nJames Holtman helpfully provided a reminder that one can monitor one's\nsystem's use of resources under Windows using the built-in performance\nmonitor.\n\nJames Janisse pointed out that one could get into trouble with inappropriate\ncombinations of versions of S+ and Windows. He reported that successive\nsimulations, which took equal amounts of time when run in S+ 2k under Win98,\ntook progressively longer times after upgrading from a 600 MHz Pentium to a\n1.9GHz with Win2k. Upgrading to S+ 6 made the problem go away.\n\nNow I have some further questions:\n\n1) to Michael: you wrote\n\n> write the script, but do not run it from the script \n>window. Instead, select all the text (Ctrl-A) and copy it to the Windows \n>clipboard (Ctrl-C).  Then make the S-Plus commands window active and paste \n>in the program (Ctrl-V).\n\nIn fact, as implied above, I went direct from script to command window. Was\nthere any particular reason for your proposal, or was it just what came to\nmind at the time?\n\n2) I thought that introducing \n\ndump.data(\"thingN\", \"D:\\\\folder\\\\thingN\")\nrm(thingN)\n\nwould obviate the problem of S+ hanging on to intermediate output. As it\nturned out, it was a palliative rather than a complete solution.\n\nBut why? Presumably multiple instances of\n\nthingN <- foo(xN, yN)\n\nalone are causing S+ to cling to more stuff than when each object is removed\nafter data.dump() -- which in the case of foo() is 10^5 numbers plus the\nassociated L-moment calculations mentioned: rather a lot...\n\nWhat is being retained by successive\n\nthingN <- foo(xN, yN)\ndump.data(\"thingN\", \"D:\\\\folder\\\\thingN\")\nrm(thingN)\n\nMy guess is \"copies of each thingN\" (which saved as files come to about 167k\neach). Is this right?\n\nJulian Wells\nOU Business School\nThe Open University\nWalton Hall\nMilton Keynes\nMK7 6AA\nUnited Kingdom\n+44 1908 654658",
       "body_snippet": "Many thanks to those who replied.\n\nProf Ripley and Michael Prager both suggested cutting and pasting from the\nscript window to the commands window, which seems to do the business --\nabout 12 minutes f",
-      "thread_id": "thread-5c4babbb31a2",
-      "thread_depth": 0,
+      "thread_id": "thread-88616b208746",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -754,12 +754,12 @@
       "date": "2002-02-06T17:56:26Z",
       "subject": "Question in lme",
       "subject_clean": "Question in lme",
-      "in_reply_to": null,
+      "in_reply_to": "<20020204142918.22461.qmail@web20109.mail.yahoo.com>",
       "references": [],
       "body_plain": "<P align=justify>Dear all, </P>\n<P align=justify></P>\n<P align=justify>My name is Dimitris Rizopoulos and I\nam a new S plus 2000 user for Windows</P>\n<P align=justify></P>\n<P align=justify>I have a data set consisting of\nrepeated measures, ordered in time, on a collection of\nindividuals. These individuals are 250 pregnant women\nwho are diagnosed as being susceptible to suffering\nfrom diabetes of pregnancy.</P>\n<P align=justify></P>\n<P align=justify>In order to analyze this data set I\nuse linear mixed ? effects models from nlme3 library.\nFor every model I used, the plots of the standardized\nresiduals versus the fitted values gives a clear\nindication of within ? group heteroscedasticity.\nBecause the fitted values are bounded away from zero,\nI chose to use the varPower variance function to model\nheteroscedasticity. However, when I use varPower\nfunction I get, several times, the following warning\nmessage:</P>\n<P align=justify></P>\n<DIR><FONT face=\"Courier New\">\n<P><FONT size=4>Warning messages:</FONT></P>\n<P><FONT size=4>Warning in ms( ~ - logLik(lmeSt,\nlmePars), start = list(lmePars = c(coef(lmeSt))), :\nFALSE CONVERGENCE.</FONT></P></FONT>\n<P align=justify></P></DIR>\n<P align=justify>Why does this happen and what I\nshould do to overcome this problem.</P>\n<P align=justify></P>\n<P align=justify>Thanks in advance for any suggestions.</P>\n\n____________________________________________________________\nDo You Yahoo!?\nΑποκτήστε τη δωρεάν @yahoo.gr διεύθυνση σας στο http://www.otenet.gr",
       "body_snippet": "<P align=justify>Dear all, </P>\n<P align=justify></P>\n<P align=justify>My name is Dimitris Rizopoulos and I\nam a new S plus 2000 user for Windows</P>\n<P align=justify></P>\n<P align=justify>I have a da",
-      "thread_id": "thread-e0ba538c6507",
-      "thread_depth": 0,
+      "thread_id": "thread-9d560c0b2818",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -852,12 +852,12 @@
       "date": "2002-02-07T01:09:02Z",
       "subject": "SIGKDD 2002 - Call for Workshop/Tutorial/Panel Proposals",
       "subject_clean": "SIGKDD 2002 - Call for Workshop/Tutorial/Panel Proposals",
-      "in_reply_to": null,
+      "in_reply_to": "<20020207010912Z579625-29176+333@sunkay.cs.ualberta.ca>",
       "references": [],
       "body_plain": "SIGKDD -- WORKSHOPS/TUTORIALS/PANELS\nCALL FOR PROPOSALS -- DEADLINE: FEBRUARY 22, 2002\n\nThe Eighth ACM SIGKDD International Conference on\nKnowledge Discovery and Data Mining\nJuly 23-26, 2002\nEdmonton, Alberta, Canada\n\nCall for Workshop, Tutorial, and Panel Proposals\n\nIn the past few years, the ACM SIGKDD conference has established itself\nas one of the premier conferences on knowledge discovery and data\nmining.  To continue with this tradition, the eighth ACM SIGKDD\nconference will provide a forum for the academic researchers and\nindustry practitioners to share their research and experience. The\nconference will be co-located with AAAI. It will feature keynote\npresentations, plenary paper presentations, poster presentations,\ntutorials, workshops, panels, as well as the KDD Cup competition.\n\nThe organizing committee is soliciting proposals for Workshops,\nTutorials and Panels related to KDD. (details below)\nMore details can be found at http://www.acm.org/sigkdd/kdd2002/\n\n----------------------------------------------------------\nCall for Workshop Proposals\n\nWorkshops Chair:\nRenee Miller\nUniversity of Toronto, Canada\n(miller at cs.toronto.edu)\n\nThe KDD-2002 organizing committee invites proposals for workshops to\nbe held in conjunction with the conference. The purpose of these\nworkshops is to provide participants with the opportunity to discuss\nnovel research ideas on focused technical topics in an informal\nsetting. Researchers and practitioners from all segments of the\ndata-mining community are invited to submit proposals for review. The\norganizers of approved workshops are expected to define the workshop's\nfocus, gather and review submissions, and decide upon final program\ncontent. They may elect to form organizing or program committees for\nassistance in these tasks.\n\nPROPOSAL DETAILS\nProposals should be no more than 3 pages in length, and must include\nthe following information:\n\n1.Description of the research issues that will be the focus of the workshop.\n2.Reasons why the topic is of interest.\n3.Contact information (address, email, phone) for all organizers, and\n  a designated primary contact.\n4.List of potential reviewers, authors, and attendees (if possible).\n\nProposers are encouraged to have their drafts reviewed by potential\nworkshop participants before submission.\n\nIMPORTANT DATES\nFebruary 22, 2002 --- Workshop proposals due\nMarch 25, 2002 --- Notification of proposal acceptance\nJuly 23, 2002 --- KDD-2002 workshops held\n\nWorkshop proposals should be sent by e-mail to the Workshops Chair,\nRen&eacutee J. Miller (miller at cs.toronto.edu), by the submission\ndeadline of February 22, 2002. PDF format is highly preferred.\n\n----------------------------------------------------------\nCall for Tutorial Proposals\n\nTutorials Chair:\nAlexander Hinneburg\nUniversity of Halle, Germany\n(hinneburg at informatik.uni-halle.de)\n\nProposals should be submitted electronically to the Tutorials\nChair. Proposals may take the form of plain text, Postscript, PDF,\nMicrosoft Word, Microsoft Powerpoint, or some combination of\nthese. Contact the Tutorials Chair if you wish to provide\nnon-electronic supporting materials along with your proposal.\n\nPROPOSAL DETAILS\nTutorial proposals should address the following issues:\n\nBasic information: Title, brief description, names and contact\ninformation for each tutor.\nAudience: What is the intended audience for the tutorial, e.g., novice\nusers of statistical techniques, expert researchers in text mining, or\ndatabase administrators.\nInterest: Why is this topic important/interesting to the KDD\ncommunity? Provide some informal evidence that people would\nattend. Evidence might include related workshops, conference sessions,\npapers, communities, etc.\nCoverage: How deep/broad is the proposed tutorial? How valuable would\nthe tutorial be with the given scope?\nBackground: What background will be required of the audience?\n\nEnough materials should be included in the proposal to provide a sense\nof the scope and depth of the tutorial. The more details that can be\nprovided, the better; up to and including actual overhead slides.\n\nFor optimal preparation of the conference please indicate if you like\nto use non-standard or additional supplementary equipment. The\nstandard equipment includes a LCD projector, an overhead projector, a\nsingle projection screen and cordless microphones.\n\nThe proposal should also include some biographical information on each\ntutor (including WWW address, if applicable). This information should\ndescribe the qualifications of each presenter with respect to the\ntutorial's topic. On the other hand, the tutors should not focus\nmainly on their own research results. A KDD tutorial is NOT a forum\nfor promoting one's research or product. If, for certain parts of the\ntutorial, the material comes directly from the tutors' own research or\nproduct, please indicate this in the proposal.\n\nIMPORTANT DATES\nFebruary 22, 2002 --- Tutorial proposals due\nMarch 25, 2002 --- Notification of proposal acceptance\nMay 30, 2002 --- Camera ready copy of tutorial notes\nJuly 23, 2002 --- KDD-2002 tutorials held\n\nFor further information, please contact Alexander Hinneburg\n(hinneburg at informatik.uni-halle.de).\n\n----------------------------------------------------------\nCall for Panel Proposals\n\nPanels Chair:\nRajeev Rastogi\nBell Labs, USA\n(rastogi at research.bell-labs.com)\n\nThe Eighth International Conference on Knowledge Discovery and Data\nMining (KDD-2002) is the premiere event for the data mining community,\nexpected to bring together leading researchers from academia and\nindustry. Among other activities, the conference program includes\npanels, and the program committee invites submission of proposals for\nthem.\n\nPanel proposals are expected to address new, exciting, and\ncontroversial issues. They should include:\n\n1.Summary of the topics to be covered.\n2.Name, affiliation and contact information for the panel chair.\n3.Names and affiliations of up to four panelists (in addition to the\npanel chair) who have made a commitment to participate.\n4.Short summary of their position statements.\n5.Brief biography of each participant.\n\nA mix of industry and academic panel members is encouraged.\n\nPanel proposals should be submitted electronically in ASCII format to\nthe Panels Chair, Rajeev Rastogi (rastogi at research.bell-labs.com).\n\nIMPORTANT DATES\nFebruary 22, 2002 --- Panel proposals due\nMarch 25, 2002 --- Notification of proposal acceptance\n\n----------------------------------------------------------\n\n----------------\nKAW-list home: http://www.swi.psy.uva.nl/mailing-lists/kaw/home.html\n      archive: http://www.swi.psy.uva.nl/mailing-lists/kaw/recent.html",
       "body_snippet": "SIGKDD -- WORKSHOPS/TUTORIALS/PANELS\nCALL FOR PROPOSALS -- DEADLINE: FEBRUARY 22, 2002\n\nThe Eighth ACM SIGKDD International Conference on\nKnowledge Discovery and Data Mining\nJuly 23-26, 2002\nEdmonton,",
-      "thread_id": "thread-24c93892c67d",
-      "thread_depth": 0,
+      "thread_id": "thread-db1842fc98cd",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -916,12 +916,12 @@
       "date": "2002-02-07T06:28:59Z",
       "subject": "Question in lme",
       "subject_clean": "Question in lme",
-      "in_reply_to": null,
+      "in_reply_to": "<20020204142918.22461.qmail@web20109.mail.yahoo.com>",
       "references": [],
       "body_plain": "I am sorry for the html message I sent, it was a\nmistake. Here is what I would like to ask:\n\nDear all, \n\nMy name is Dimitris Rizopoulos and I am a new S plus\n2000 user for Windows\n\nI have a data set consisting of repeated measures,\nordered in time, on a collection of individuals. These\nindividuals are 250 pregnant women who are diagnosed\nas being susceptible to suffering from diabetes of\npregnancy.\n\nIn order to analyze this data set I use linear mixed ?\neffects models from nlme3 library. For every model I\nused, the plots of the standardized residuals versus\nthe fitted values gives a clear indication of within ?\ngroup heteroscedasticity. Because the fitted values\nare bounded away from zero, I chose to use the\nvarPower variance function to model\nheteroscedasticity. However, when I use varPower\nfunction I get, several times, the following warning\nmessage:\n\nWarning messages:\n  Warning in ms( ~  - logLik(lmeSt, lmePars), start =\nlist(lmePars = c(coef(lmeSt))), : FALSE CONVERGENCE.\n\nWhy does this happen and what I should do to overcome\nthis problem.\n\nThanks in advance for any suggestions.\n\n=====\nDimitris Rizopoulos Undergraduate Student\nDepartment of Statistics\nAthens University of Economics and Business\nwww.stat-athens.aueb.gr\n\n____________________________________________________________\nDo You Yahoo!?\nΑποκτήστε τη δωρεάν @yahoo.gr διεύθυνση σας στο http://www.otenet.gr",
       "body_snippet": "I am sorry for the html message I sent, it was a\nmistake. Here is what I would like to ask:\n\nDear all, \n\nMy name is Dimitris Rizopoulos and I am a new S plus\n2000 user for Windows\n\nI have a data set c",
-      "thread_id": "thread-a0ab7562b0c0",
-      "thread_depth": 0,
+      "thread_id": "thread-9d560c0b2818",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -998,12 +998,12 @@
       "date": "2002-02-07T15:21:00Z",
       "subject": "Re: X*log(X)",
       "subject_clean": "X*log(X)",
-      "in_reply_to": null,
+      "in_reply_to": "<007301c1afe1$cd0d7c40$cf867018@bloor.phub.net.cable.rogers.com>",
       "references": [],
       "body_plain": "You should definite following function :\n\nF(x) = x*log(x) when x > 0, and F(x) = 0 when x = \n0.\n\n \n\nx*log(x) goes to 0 in limit (when x goes to 0), but it is \nnot definite in point 0, and it's the reason S+ returns NA.\n\nGood Luck\n\n    Kuba\n\n>",
       "body_snippet": "You should definite following function :\n\nF(x) = x*log(x) when x > 0, and F(x) = 0 when x = \n0.\n\n \n\nx*log(x) goes to 0 in limit (when x goes to 0), but it is \nnot definite in point 0, and it's the rea",
-      "thread_id": "thread-4f8cc12ca0a0",
-      "thread_depth": 0,
+      "thread_id": "thread-10c3aa4d016c",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -1030,12 +1030,12 @@
       "date": "2002-02-07T15:24:20Z",
       "subject": "FW: apply function to mutliple columns",
       "subject_clean": "apply function to mutliple columns",
-      "in_reply_to": null,
+      "in_reply_to": "<58CAB2332C0DD511BC7900A0C9EA316D013D12F3@dasmtyjqf009.amedd.army.mil>",
       "references": [],
       "body_plain": "I don't think you can use the MARGIN argument directly to do what you want.\nI would approach the problem by creating a new data frame that 'stacks' the\ndata from adjacent columns into a single column, and then calling apply:\n\n        dat <- data.frame( x1=rnorm(1000), x2=rnorm(1000), x3=rnorm(1000,2),\nx4=rnorm(1000,2) )\n\n        stacked <- rbind( as.matrix(dat[,c(1,3)]), as.matrix(dat[,c(2,4)]) )\n\n        apply(stacked, 2, sum)\n\n-Greg\n\n> -----Original Message-----\n> From: Bliese, Paul D MAJ WRAIR-Wash DC\n> [mailto:Paul.Bliese at NA.AMEDD.ARMY.MIL]\n> Sent: Wednesday, February 06, 2002 9:40 PM\n> To: 's-news at lists.biostat.wustl.edu'\n> Subject: [S] apply function to mutliple columns\n> \n> \n> Sorry if this is a FAQ -- I did search the archives, but \n> perhaps I didn't\n> give it the right search options.\n> \n> Anyhow, if one has a data frame and wants to apply a function to each\n> column, then the apply function works great:\n> \n> >apply(MYDATA,2,function)\n> \n> From the help file I know that Argument 2 is MARGIN where 1 \n> stands for rows\n> and 2 for columns.  I believe, however, that MARGIN allows \n> more flexible\n> than just operating on rows and columns (I can't figure it \n> out from help,\n> though).\n> \n> For instance, would it be possible to specify a MARGIN value \n> that would\n> allow me to successively apply a function to every two \n> columns in the data\n> frame?\n> \n> For a simple example, if my data frame had 50 columns, and I wanted to\n> create a new data frame with 25 columns where each column in \n> the new data\n> frame was the sum (or other function) of two consecutive \n> columns (column\n> 1+2, column 3+4, column 5+6, etc) could I use apply?  If so, how?\n> \n> Thanks,\n> \n> Paul Bliese\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n> \n\nLEGAL NOTICE\nUnless expressly stated otherwise, this message is confidential and may be \nprivileged. It is intended for the addressee(s) only. Access to this E-mail by \nanyone else is unauthorized. If you are not an addressee, any disclosure or \ncopying of the contents of this E-mail or any action taken (or not taken) in \nreliance on it is unauthorized and may be unlawful. If you are not an \naddressee, please inform the sender immediately.",
       "body_snippet": "I don't think you can use the MARGIN argument directly to do what you want.\nI would approach the problem by creating a new data frame that 'stacks' the\ndata from adjacent columns into a single column,",
-      "thread_id": "thread-c6662341dc51",
-      "thread_depth": 0,
+      "thread_id": "thread-a3d7e4749273",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -1080,12 +1080,12 @@
       "date": "2002-02-07T15:52:06Z",
       "subject": "Re: apply function to mutliple columns",
       "subject_clean": "apply function to mutliple columns",
-      "in_reply_to": null,
+      "in_reply_to": "<58CAB2332C0DD511BC7900A0C9EA316D013D12F3@dasmtyjqf009.amedd.army.mil>",
       "references": [],
       "body_plain": "I replied privately, but as the \"solution\" below made it to the list, I\nthink it's important to publicly note that  a better approach is NOT to use\napply() at all. SImple subscripting will so it as in dat[,c(1,3)]+\ndat[,c(2,4)] . With many columns, the seq() function can be used instead of\nc(). Variants of this can be used with functions other than '+' . The point\nis, AVOID the use of apply family functions, which are really glorified\nfor() loops, if possible by using subscripting. Results can be orders of\nmagnitude faster.\n\nCheers,\n\nBert Gunter\nBiometrics Research RY 70-38\nMerck & Company\nP.O. Box 2000\nRahway, NJ 07065-0900\nPhone: (732) 594-7765\nmailto: bert_gunter at merck.com\n\n\"The business of the statistician is to catalyze the scientific learning\nprocess.\"      -- George E.P. Box\n\n-----Original Message-----\nFrom: Warnes, Gregory R [mailto:gregory_r_warnes at groton.pfizer.com]\nSent: Thursday, February 07, 2002 10:24 AM\nTo: 's-news at lists.biostat.wustl.edu'\nSubject: FW: [S] apply function to mutliple columns\n\nI don't think you can use the MARGIN argument directly to do what you want.\nI would approach the problem by creating a new data frame that 'stacks' the\ndata from adjacent columns into a single column, and then calling apply:\n\n        dat <- data.frame( x1=rnorm(1000), x2=rnorm(1000), x3=rnorm(1000,2),\nx4=rnorm(1000,2) )\n\n        stacked <- rbind( as.matrix(dat[,c(1,3)]), as.matrix(dat[,c(2,4)]) )\n\n        apply(stacked, 2, sum)\n\n-Greg\n\n> -----Original Message-----\n> From: Bliese, Paul D MAJ WRAIR-Wash DC\n> [mailto:Paul.Bliese at NA.AMEDD.ARMY.MIL]\n> Sent: Wednesday, February 06, 2002 9:40 PM\n> To: 's-news at lists.biostat.wustl.edu'\n> Subject: [S] apply function to mutliple columns\n> \n> \n> Sorry if this is a FAQ -- I did search the archives, but \n> perhaps I didn't\n> give it the right search options.\n> \n> Anyhow, if one has a data frame and wants to apply a function to each\n> column, then the apply function works great:\n> \n> >apply(MYDATA,2,function)\n> \n> From the help file I know that Argument 2 is MARGIN where 1 \n> stands for rows\n> and 2 for columns.  I believe, however, that MARGIN allows \n> more flexible\n> than just operating on rows and columns (I can't figure it \n> out from help,\n> though).\n> \n> For instance, would it be possible to specify a MARGIN value \n> that would\n> allow me to successively apply a function to every two \n> columns in the data\n> frame?\n> \n> For a simple example, if my data frame had 50 columns, and I wanted to\n> create a new data frame with 25 columns where each column in \n> the new data\n> frame was the sum (or other function) of two consecutive \n> columns (column\n> 1+2, column 3+4, column 5+6, etc) could I use apply?  If so, how?\n> \n> Thanks,\n> \n> Paul Bliese\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n> \n\nLEGAL NOTICE\nUnless expressly stated otherwise, this message is confidential and may be\nprivileged. It is intended for the addressee(s) only. Access to this E-mail\nby anyone else is unauthorized. If you are not an addressee, any disclosure\nor copying of the contents of this E-mail or any action taken (or not taken)\nin reliance on it is unauthorized and may be unlawful. If you are not an\naddressee, please inform the sender immediately.\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "I replied privately, but as the \"solution\" below made it to the list, I\nthink it's important to publicly note that  a better approach is NOT to use\napply() at all. SImple subscripting will so it as in",
-      "thread_id": "thread-fbfdaf22292c",
-      "thread_depth": 0,
+      "thread_id": "thread-a3d7e4749273",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -1096,12 +1096,12 @@
       "date": "2002-02-07T15:54:40Z",
       "subject": "FW: apply function to mutliple columns",
       "subject_clean": "apply function to mutliple columns",
-      "in_reply_to": null,
+      "in_reply_to": "<58CAB2332C0DD511BC7900A0C9EA316D013D12F3@dasmtyjqf009.amedd.army.mil>",
       "references": [],
       "body_plain": "Try sapply.  In this case you want to send it the indices of the columns of\ninterest.  In your case, you want to iterate through 1/2 of the columns.\nThe following will take the difference of two adjoining columns:\n\nx.1 <- matrix(runif(100), ncol=10)\nx.2 <- sapply(1:(ncol(x.1)/2), function(x)\n    {\n        x.1[,x*2-1] - x.1[,x*2]\n    })\n\n---------------------- Forwarded by James Holtman/CIMG/CVG on 02/07/2002\n10:51 ---------------------------\n\n\"Warnes, Gregory R\" <gregory_r_warnes at groton.pfizer.com>\n@lists.biostat.wustl.edu on 02/07/2002 10:24:20\n\nSent by:  s-news-owner at lists.biostat.wustl.edu\n\nTo:   \"'s-news at lists.biostat.wustl.edu'\" <s-news at lists.biostat.wustl.edu>\ncc:\nSubject:  FW: [S] apply function to mutliple columns\n\nI don't think you can use the MARGIN argument directly to do what you want.\nI would approach the problem by creating a new data frame that 'stacks' the\ndata from adjacent columns into a single column, and then calling apply:\n\n     dat <- data.frame( x1=rnorm(1000), x2=rnorm(1000), x3=rnorm(1000,2),\nx4=rnorm(1000,2) )\n\n     stacked <- rbind( as.matrix(dat[,c(1,3)]), as.matrix(dat[,c(2,4)]) )\n\n     apply(stacked, 2, sum)\n\n-Greg\n\n> -----Original Message-----\n> From: Bliese, Paul D MAJ WRAIR-Wash DC\n> [mailto:Paul.Bliese at NA.AMEDD.ARMY.MIL]\n> Sent: Wednesday, February 06, 2002 9:40 PM\n> To: 's-news at lists.biostat.wustl.edu'\n> Subject: [S] apply function to mutliple columns\n>\n>\n> Sorry if this is a FAQ -- I did search the archives, but\n> perhaps I didn't\n> give it the right search options.\n>\n> Anyhow, if one has a data frame and wants to apply a function to each\n> column, then the apply function works great:\n>\n> >apply(MYDATA,2,function)\n>\n> From the help file I know that Argument 2 is MARGIN where 1\n> stands for rows\n> and 2 for columns.  I believe, however, that MARGIN allows\n> more flexible\n> than just operating on rows and columns (I can't figure it\n> out from help,\n> though).\n>\n> For instance, would it be possible to specify a MARGIN value\n> that would\n> allow me to successively apply a function to every two\n> columns in the data\n> frame?\n>\n> For a simple example, if my data frame had 50 columns, and I wanted to\n> create a new data frame with 25 columns where each column in\n> the new data\n> frame was the sum (or other function) of two consecutive\n> columns (column\n> 1+2, column 3+4, column 5+6, etc) could I use apply?  If so, how?\n>\n> Thanks,\n>\n> Paul Bliese\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>\n\nLEGAL NOTICE\nUnless expressly stated otherwise, this message is confidential and may be\nprivileged. It is intended for the addressee(s) only. Access to this E-mail\nby anyone else is unauthorized. If you are not an addressee, any disclosure\nor copying of the contents of this E-mail or any action taken (or not\ntaken) in reliance on it is unauthorized and may be unlawful. If you are\nnot an addressee, please inform the sender immediately.\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news\n\n--\n\nNOTICE:  The information contained in this electronic mail transmission is\nintended by Convergys Corporation for the use of the named individual or\nentity to which it is directed and may contain information that is\nprivileged or otherwise confidential.  If you have received this electronic\nmail transmission in error, please delete it from your system without\ncopying or forwarding it, and notify the sender of the error by reply email\nor by telephone (collect), so that the sender's address records can be\ncorrected.",
       "body_snippet": "Try sapply.  In this case you want to send it the indices of the columns of\ninterest.  In your case, you want to iterate through 1/2 of the columns.\nThe following will take the difference of two adjoi",
-      "thread_id": "thread-e8fe53349a7e",
-      "thread_depth": 0,
+      "thread_id": "thread-a3d7e4749273",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -1112,12 +1112,12 @@
       "date": "2002-02-07T16:07:28Z",
       "subject": "Re: X*log(X)",
       "subject_clean": "X*log(X)",
-      "in_reply_to": null,
+      "in_reply_to": "<007301c1afe1$cd0d7c40$cf867018@bloor.phub.net.cable.rogers.com>",
       "references": [],
       "body_plain": "lim(x*ln(x)) as x goes to 0 = -lim(-ln(x)/(1/x)). Both -ln(x) and 1/x go \nto +infinity so apply l'Hospital's rule.\n\nlim(x*ln(x)) = -lim[-(1/x)/-(1/x^2)]=-lim(x)=0.\n\nUse x*ifelse(x>0,log(x),0), assuming no negative x.\n\nRoy Robertson\nSenior Research Statistician\nRohm and Haas, Co.\nSpring House Technology Center\n727 Norristown Road\nPO Box 0904\nSpring House, PA 19477-0904\n7B, 207g\n\nVoice: 215-619-5446\nFAX:   215-619-1616\njroyrobertson at rohmhaas.com\n\n\"Opinions expressed are mine and not those of Rohm and Haas Company\".\n\n\"Marc Schwartz\" <MSchwartz at medanalytics.com>\nSent by: s-news-owner at lists.biostat.wustl.edu\n02/07/2002 10:18 AM\nPlease respond to MSchwartz\n\n \n        To:     \"'Ray Haraf'\" <rayharaf at rogers.com>, \n<s-news at lists.biostat.wustl.edu>\n        cc: \n        Subject:        Re: [S] X*log(X)\n\nRay,\n \nActually, I believe that you will find that the log function goes to \nnegative infinity as x approaches 0.  Thus the result of 0*log(0) is NaN.\n \nMarc\n-----Original Message-----\nFrom: s-news-owner at lists.biostat.wustl.edu \n[mailto:s-news-owner at lists.biostat.wustl.edu]On Behalf Of Ray Haraf\nSent: Thursday, February 07, 2002 8:15 AM\nTo: s-news at lists.biostat.wustl.edu\nSubject: [S] X*log(X)\n\nDear S+ Users,\n \nS+ returns NA for x*log(x) when x = 0. I expect 0 as it is known that \nx*ln(x) goes to 0 in limit as x goes to 0. Can someone help?\n \nRay.",
       "body_snippet": "lim(x*ln(x)) as x goes to 0 = -lim(-ln(x)/(1/x)). Both -ln(x) and 1/x go \nto +infinity so apply l'Hospital's rule.\n\nlim(x*ln(x)) = -lim[-(1/x)/-(1/x^2)]=-lim(x)=0.\n\nUse x*ifelse(x>0,log(x),0), assumin",
-      "thread_id": "thread-0cb2f63a45b8",
-      "thread_depth": 0,
+      "thread_id": "thread-10c3aa4d016c",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -1128,12 +1128,12 @@
       "date": "2002-02-07T16:23:49Z",
       "subject": "Re: X*log(X)",
       "subject_clean": "X*log(X)",
-      "in_reply_to": null,
+      "in_reply_to": "<007301c1afe1$cd0d7c40$cf867018@bloor.phub.net.cable.rogers.com>",
       "references": [],
       "body_plain": "Ray,\n\n \n\nA quick follow up \nto clarify, as pointed out to me by Joseph Lucke:\n\n \n\nI failed to \ndifferentiate between the math versus the software code.  My \napologies.\n\n \n\nThe NA is the \nresult of the inability from a software perspective to represent the result, \nsince it is \"undefined\" when x=0.  If you review the component steps \nwhen x=0, you get:\n\n \n\n> \nlog(0)\n[1] -Inf\n\n> \n0*-Inf\n[1] NA\n\nIn your code, you \nshould include a check for x>0 and explicitly define the result as \n0 when x <= 0, if that is result you wish to achieve.  Curiously, in the \nhelp for \"ifelse\", you find the following example code:\n\n \n\nlog(ifelse(x>0, x, NA))\n\n \n\nSpin that \naround and you get:\n\n \n\nx * \nifelse(x>0, log(x), 0)\n\n \n\nwhich may help to \nachieve your goal.\n\n \n\n \n\n \n\nSorry for any \nconfusion.  Thanks Joseph.  Time for another cup of coffee...  \n;-)\n\n \n\nMarc",
       "body_snippet": "Ray,\n\n \n\nA quick follow up \nto clarify, as pointed out to me by Joseph Lucke:\n\n \n\nI failed to \ndifferentiate between the math versus the software code.  My \napologies.\n\n \n\nThe NA is the \nresult of the",
-      "thread_id": "thread-d62b9acb100e",
-      "thread_depth": 0,
+      "thread_id": "thread-10c3aa4d016c",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -1144,12 +1144,12 @@
       "date": "2002-02-07T16:32:35Z",
       "subject": "Re: X*log(X)",
       "subject_clean": "X*log(X)",
-      "in_reply_to": null,
+      "in_reply_to": "<007301c1afe1$cd0d7c40$cf867018@bloor.phub.net.cable.rogers.com>",
       "references": [],
       "body_plain": "Rewrite X*log(X) as log(X) / (1/X).  Then invoke l'Hopital's rule (take the\nderivative of\nboth the numerator and denominator).  The limit of this result (as X -> 0)\nis 0.\n\n                                                                                \n                       \n                    \"Bob Porter\"                                                \n                       \n                    <rjporter at mindspring.com>         To:     \n<MSchwartz at MedAnalytics.com>, \"'Ray      \n                    Sent by:                          Haraf'\" \n<rayharaf at rogers.com>,                   \n                    s-news-owner at lists.biostat        \n<s-news at lists.biostat.wustl.edu>                 \n                    .wustl.edu                        cc:                       \n                       \n                                                      Subject:     Re: [S] \nX*log(X)                    \n                                                                                \n                       \n                    02/07/2002 10:46 AM                                         \n                       \n                                                                                \n                       \n                                                                                \n                       \n\nMark ROTE:\nActually, I believe that you will find that the log function goes to\nnegative infinity as x approaches 0.\nIRITE:\nHmm.  I have approached zero in log functions before and have never gotten\nto negative infinity.  If you have gotten there, tell us what you found!\n\n;-}\n\n-Bob Porter\n\n ----- Original Message -----\n From: Marc Schwartz\n To: 'Ray Haraf' ; s-news at lists.biostat.wustl.edu\n Sent: Thursday, February 07, 2002 10:18 AM\n Subject: Re: [S] X*log(X)\n\n Ray,\n\n Actually, I believe that you will find that the log function goes to\n negative infinity as x approaches 0.  Thus the result of 0*log(0) is NaN.\n\n Marc\n -----Original Message-----\n From: s-news-owner at lists.biostat.wustl.edu [\n mailto:s-news-owner at lists.biostat.wustl.edu]On Behalf Of Ray Haraf\n Sent: Thursday, February 07, 2002 8:15 AM\n To: s-news at lists.biostat.wustl.edu\n Subject: [S] X*log(X)\n\n Dear S+ Users,\n\n S+ returns NA for x*log(x) when x = 0. I expect 0 as it is known that\n x*ln(x) goes to 0 in limit as x goes to 0. Can someone help?\n\n Ray.",
       "body_snippet": "Rewrite X*log(X) as log(X) / (1/X).  Then invoke l'Hopital's rule (take the\nderivative of\nboth the numerator and denominator).  The limit of this result (as X -> 0)\nis 0.\n\n                            ",
-      "thread_id": "thread-2690863b6f48",
-      "thread_depth": 0,
+      "thread_id": "thread-10c3aa4d016c",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -1192,12 +1192,12 @@
       "date": "2002-02-07T16:42:43Z",
       "subject": "Re: X*log(X)",
       "subject_clean": "X*log(X)",
-      "in_reply_to": null,
+      "in_reply_to": "<007301c1afe1$cd0d7c40$cf867018@bloor.phub.net.cable.rogers.com>",
       "references": [],
       "body_plain": "On Thu, 7 Feb 2002, Bob Porter wrote:\n\n> Mark ROTE: Actually, I believe that you will find that the log\n> function goes to negative infinity as x approaches 0.\n\n> IRITE: Hmm.  I have approached zero in log functions before and have\n> never gotten to negative infinity.  If you have gotten there, tell us\n> what you found!\n\nI think the two of you are speaking (writing?) at cross purposes.\n\n log x -> -Inf as x -> 0 whereas x log x -> 0 as x -> 0.\n\nBack to the original question, I believe S is doing the correct thing by\nreporting 0 * log(0) as NA.  Limits of x*y where x -> 0 and y -> Inf could\ntake different values.  Its zero in the x log x case, 1 when y = 1/x, and\nInf when y = 1/x^2.  To get around the NA case for x log x I would write a\nnew function which returned 0 when input 0.\n\nMark\n\n______________________________________\nMark E. Irwin                      (irwin at stat.ohio-state.edu)\nStatistical Computing Scientist    <http://www.stat.ohio-state.edu/~irwin>\nDepartment of Statistics\nOhio State University",
       "body_snippet": "On Thu, 7 Feb 2002, Bob Porter wrote:\n\n> Mark ROTE: Actually, I believe that you will find that the log\n> function goes to negative infinity as x approaches 0.\n\n> IRITE: Hmm.  I have approached zero i",
-      "thread_id": "thread-e8462714f33a",
-      "thread_depth": 0,
+      "thread_id": "thread-10c3aa4d016c",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -1258,12 +1258,12 @@
       "date": "2002-02-07T19:10:50Z",
       "subject": "Re: apply function to mutliple columns",
       "subject_clean": "apply function to mutliple columns",
-      "in_reply_to": null,
+      "in_reply_to": "<58CAB2332C0DD511BC7900A0C9EA316D013D12F3@dasmtyjqf009.amedd.army.mil>",
       "references": [],
       "body_plain": "To be clear, Gunter's code and my code accomplish two different things.  \n\nI (mis?)read Bliese's question as\n        'How can I apply a function to the contents of two ajacent columns\nas a single _unit_?'\nand provided example code showing how this could be accomplished using\nstandard S idioms.\n\nGunter, and later James Holtmann, appear to have (correctly?) read the\nquestion as\n        'How can I apply a function to the adjacent _elements_ of 2 adjacent\ncolumns?'\nThey each provide code to answer this question.\n\nSince we read the question differently, our responses also differ.  \n\nAs to whether one should avoid '*apply' functions in general, I think that\nlargely depends on the problem at hand.  With small datasets, it is often\nmuch faster to use a simple to understand and implement method than to find\nthe fastest one. For large problems, it can be worth finding a more\nefficient method.\n\n-Greg\n\n> -----Original Message-----\n> From: Gunter, Bert [mailto:bert_gunter at merck.com]\n> Sent: Thursday, February 07, 2002 10:52 AM\n> To: 'Warnes, Gregory R'; 's-news at lists.biostat.wustl.edu'\n> Subject: RE: [S] apply function to mutliple columns\n> \n> \n> I replied privately, but as the \"solution\" below made it to \n> the list, I\n> think it's important to publicly note that  a better approach \n> is NOT to use\n> apply() at all. SImple subscripting will so it as in dat[,c(1,3)]+\n> dat[,c(2,4)] . With many columns, the seq() function can be \n> used instead of\n> c(). Variants of this can be used with functions other than \n> '+' . The point\n> is, AVOID the use of apply family functions, which are really \n> glorified\n> for() loops, if possible by using subscripting. Results can \n> be orders of\n> magnitude faster.\n> \n> Cheers,\n> \n> Bert Gunter\n> Biometrics Research RY 70-38\n> Merck & Company\n> P.O. Box 2000\n> Rahway, NJ 07065-0900\n> Phone: (732) 594-7765\n> mailto: bert_gunter at merck.com\n> \n> \"The business of the statistician is to catalyze the \n> scientific learning\n> process.\"      -- George E.P. Box\n> \n> \n> \n> \n> -----Original Message-----\n> From: Warnes, Gregory R [mailto:gregory_r_warnes at groton.pfizer.com]\n> Sent: Thursday, February 07, 2002 10:24 AM\n> To: 's-news at lists.biostat.wustl.edu'\n> Subject: FW: [S] apply function to mutliple columns\n> \n> \n> \n> I don't think you can use the MARGIN argument directly to do \n> what you want.\n> I would approach the problem by creating a new data frame \n> that 'stacks' the\n> data from adjacent columns into a single column, and then \n> calling apply:\n> \n>       dat <- data.frame( x1=rnorm(1000), x2=rnorm(1000), \n> x3=rnorm(1000,2),\n> x4=rnorm(1000,2) )\n> \n>       stacked <- rbind( as.matrix(dat[,c(1,3)]), \n> as.matrix(dat[,c(2,4)]) )\n> \n>       apply(stacked, 2, sum)\n> \n> -Greg\n> \n> > -----Original Message-----\n> > From: Bliese, Paul D MAJ WRAIR-Wash DC\n> > [mailto:Paul.Bliese at NA.AMEDD.ARMY.MIL]\n> > Sent: Wednesday, February 06, 2002 9:40 PM\n> > To: 's-news at lists.biostat.wustl.edu'\n> > Subject: [S] apply function to mutliple columns\n> > \n> > \n> > Sorry if this is a FAQ -- I did search the archives, but \n> > perhaps I didn't\n> > give it the right search options.\n> > \n> > Anyhow, if one has a data frame and wants to apply a \n> function to each\n> > column, then the apply function works great:\n> > \n> > >apply(MYDATA,2,function)\n> > \n> > From the help file I know that Argument 2 is MARGIN where 1 \n> > stands for rows\n> > and 2 for columns.  I believe, however, that MARGIN allows \n> > more flexible\n> > than just operating on rows and columns (I can't figure it \n> > out from help,\n> > though).\n> > \n> > For instance, would it be possible to specify a MARGIN value \n> > that would\n> > allow me to successively apply a function to every two \n> > columns in the data\n> > frame?\n> > \n> > For a simple example, if my data frame had 50 columns, and \n> I wanted to\n> > create a new data frame with 25 columns where each column in \n> > the new data\n> > frame was the sum (or other function) of two consecutive \n> > columns (column\n> > 1+2, column 3+4, column 5+6, etc) could I use apply?  If so, how?\n> > \n> > Thanks,\n> > \n> > Paul Bliese\n> > --------------------------------------------------------------------\n> > This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> > unsubscribe send e-mail to \n> s-news-request at lists.biostat.wustl.edu with\n> > the BODY of the message:  unsubscribe s-news\n> > \n> \n> \n> LEGAL NOTICE\n> Unless expressly stated otherwise, this message is \n> confidential and may be\n> privileged. It is intended for the addressee(s) only. Access \n> to this E-mail\n> by anyone else is unauthorized. If you are not an addressee, \n> any disclosure\n> or copying of the contents of this E-mail or any action taken \n> (or not taken)\n> in reliance on it is unauthorized and may be unlawful. If you \n> are not an\n> addressee, please inform the sender immediately.\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>",
       "body_snippet": "To be clear, Gunter's code and my code accomplish two different things.  \n\nI (mis?)read Bliese's question as\n        'How can I apply a function to the contents of two ajacent columns\nas a single _uni",
-      "thread_id": "thread-e46d5fae7e66",
-      "thread_depth": 0,
+      "thread_id": "thread-a3d7e4749273",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -1274,12 +1274,12 @@
       "date": "2002-02-07T20:09:31Z",
       "subject": "AR(1) in gnls",
       "subject_clean": "AR(1) in gnls",
-      "in_reply_to": null,
+      "in_reply_to": "<3B6B9A9E977ED311B10500A0C9B412690451D371@oryx.uthscsa.edu>",
       "references": [],
       "body_plain": "S+'ers\n\nAfter some investigation, I am pleased to report that I have been able to confirm the theoretical AR(1) relations I expected.  The simplistic relation I was looking for was a wrong one.  Sorry to bother the list.\n\nJoseph F. Lucke, PhD\n\nStatistical Scientist\n\nFamily Nursing Care (MC 7951)\n\nSchool of Nursing\n\nUniversity of Texas Health Science Center at San Antonio\n\n7703 Floyd Curl Drive\n\nSan Antonio, TX 78229-3900\n\nVoice: 210 567 0474\n\nFax:    210 567-5822 \n\nwww.uthscsa.edu",
       "body_snippet": "S+'ers\n\nAfter some investigation, I am pleased to report that I have been able to confirm the theoretical AR(1) relations I expected.  The simplistic relation I was looking for was a wrong one.  Sorry",
-      "thread_id": "thread-b068b5c815bc",
-      "thread_depth": 0,
+      "thread_id": "thread-439abde9b585",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -1296,8 +1296,8 @@
       ],
       "body_plain": "According to the Splus programmer's guide**, lapply is more efficient than \na for loop (and apply calls lapply to do it's work).  (Because lapply does \nspecial things with memory compared to for).  This is my experience in \npractice as well -- I could do many things by using lapply that I couldn't \ndo with for loops because of time or memory consumption of the for loop.\n\n[This is of course not to say that there are no faster ways of doing some \ncomputations than using lapply.]\n\n**(In Chapter 22, \"Simulations with S+\", \"The advantages of lapply\", Splus \nProgrammers Guides Splus6 for Windows)\n\n-- Tony Plate\n\nAt 10:52 AM 2/7/2002 -0500, Gunter, Bert wrote:\n> The point\n> is, AVOID the use of apply family functions, which are really glorified\n> for() loops, if possible by using subscripting. Results can be orders of\n> magnitude faster.\n>\n> Cheers,",
       "body_snippet": "According to the Splus programmer's guide**, lapply is more efficient than \na for loop (and apply calls lapply to do it's work).  (Because lapply does \nspecial things with memory compared to for).  Th",
-      "thread_id": "thread-fbfdaf22292c",
-      "thread_depth": 1,
+      "thread_id": "thread-a3d7e4749273",
+      "thread_depth": 2,
       "month": "2002-02"
     },
     {
@@ -1308,12 +1308,12 @@
       "date": "2002-02-07T21:20:53Z",
       "subject": "Re: efficiency of apply() vs for(){}",
       "subject_clean": "efficiency of apply() vs for(){}",
-      "in_reply_to": null,
+      "in_reply_to": "<5.1.0.14.0.20020207134452.00af05e8@a.paloma.com>",
       "references": [],
       "body_plain": "The original question (and several subsequent responses) is, IMHO, a case of\nbringing out a canon to shoot a mouse.  *apply have their merits (if not\nspeed, than at least code readability), but for the particular task that was\nasked, it is an overkill.\n\nJust my $0.02...\n\nAndy\n\n> -----Original Message-----\n> From: Tony Plate [mailto:tplate at blackmesacapital.com]\n> Sent: Thursday, February 07, 2002 4:04 PM\n> To: Gunter, Bert; 's-news at lists.biostat.wustl.edu'\n> Subject: [S] efficiency of apply() vs for(){}\n> \n> \n> According to the Splus programmer's guide**, lapply is more \n> efficient than \n> a for loop (and apply calls lapply to do it's work).  \n> (Because lapply does \n> special things with memory compared to for).  This is my \n> experience in \n> practice as well -- I could do many things by using lapply \n> that I couldn't \n> do with for loops because of time or memory consumption of \n> the for loop.\n> \n> [This is of course not to say that there are no faster ways \n> of doing some \n> computations than using lapply.]\n> \n> **(In Chapter 22, \"Simulations with S+\", \"The advantages of \n> lapply\", Splus \n> Programmers Guides Splus6 for Windows)\n> \n> -- Tony Plate\n> \n> At 10:52 AM 2/7/2002 -0500, Gunter, Bert wrote:\n> >The point\n> >is, AVOID the use of apply family functions, which are \n> really glorified\n> >for() loops, if possible by using subscripting. Results can \n> be orders of\n> >magnitude faster.\n> >\n> >Cheers,\n> \n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>",
       "body_snippet": "The original question (and several subsequent responses) is, IMHO, a case of\nbringing out a canon to shoot a mouse.  *apply have their merits (if not\nspeed, than at least code readability), but for th",
-      "thread_id": "thread-28e288674364",
-      "thread_depth": 0,
+      "thread_id": "thread-a3d7e4749273",
+      "thread_depth": 3,
       "month": "2002-02"
     },
     {
@@ -1324,12 +1324,12 @@
       "date": "2002-02-07T21:25:02Z",
       "subject": "Re: efficiency of apply() vs for(){}",
       "subject_clean": "efficiency of apply() vs for(){}",
-      "in_reply_to": null,
+      "in_reply_to": "<5.1.0.14.0.20020207134452.00af05e8@a.paloma.com>",
       "references": [],
       "body_plain": "I don't think the original post was saying that the apply() family was as\ninefficient as for loops, the point was that subscripting is more efficient\nthan both when appropriate.\n\n--Matt\n\nMessage sent by:\n====================================================================\n Matt Austin          | Statistician \n maustin at amgen.com    | Clinical Development, Oncology  \n Voice 805/447-7431   | Amgen Inc.\n Fax   805/499-4916   | \n------------------------------------------------------------------\n One Amgen Center    MS: 24-2-C     Thousand Oaks, CA    91320-1789\n====================================================================\n\n-----Original Message-----\nFrom: Tony Plate [mailto:tplate at blackmesacapital.com]\nSent: Thursday, February 07, 2002 1:04 PM\nTo: Gunter, Bert; 's-news at lists.biostat.wustl.edu'\nSubject: [S] efficiency of apply() vs for(){}\n\nAccording to the Splus programmer's guide**, lapply is more efficient than \na for loop (and apply calls lapply to do it's work).  (Because lapply does \nspecial things with memory compared to for).  This is my experience in \npractice as well -- I could do many things by using lapply that I couldn't \ndo with for loops because of time or memory consumption of the for loop.\n\n[This is of course not to say that there are no faster ways of doing some \ncomputations than using lapply.]\n\n**(In Chapter 22, \"Simulations with S+\", \"The advantages of lapply\", Splus \nProgrammers Guides Splus6 for Windows)\n\n-- Tony Plate\n\nAt 10:52 AM 2/7/2002 -0500, Gunter, Bert wrote:\n>The point\n>is, AVOID the use of apply family functions, which are really glorified\n>for() loops, if possible by using subscripting. Results can be orders of\n>magnitude faster.\n>\n>Cheers,\n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "I don't think the original post was saying that the apply() family was as\ninefficient as for loops, the point was that subscripting is more efficient\nthan both when appropriate.\n\n--Matt\n\nMessage sent ",
-      "thread_id": "thread-acca0c6d269a",
-      "thread_depth": 0,
+      "thread_id": "thread-a3d7e4749273",
+      "thread_depth": 3,
       "month": "2002-02"
     },
     {
@@ -1364,22 +1364,6 @@
       "body_snippet": "There appears to be some confusion in your \npost.  Theil's U is does not use X*log(X) (although entropy measures \ndo).  One of the pleasures of S is that you can implement simple measures \nand express",
       "thread_id": "thread-da7a2a0a93d3",
       "thread_depth": 1,
-      "month": "2002-02"
-    },
-    {
-      "id": "msg-7fad776b0e20",
-      "message_id": "<004201c1b05a$ad7c8a50$7efea8c0@PADMA>",
-      "from_name": "Padma Illindra",
-      "from_email_hash": "8742873eddc330e440a83789754114432100b5571949f129be8133bc7381f857",
-      "date": "2002-02-08T04:40:03Z",
-      "subject": "Changing Type of box in a graph to Trellis xyplot",
-      "subject_clean": "Changing Type of box in a graph to Trellis xyplot",
-      "in_reply_to": null,
-      "references": [],
-      "body_plain": "Hi all,\n\nCan any of you let me know how to change the type of box in xyplot of\nTrellis charts?\n\nI am looking for the functionality similar to bty=\"o\", \"l\", \"7\" or \"c\"  in\nTrellis xy plot\ni.e, par(bty=l);\nI tried this in the following and didn't work.\n\nThe parameter bty=\"l\" in panel=function(x,y) didn't change the box type to L\nshape.  Always I have the rectangular or o shape irrespective of \"bty\"\nparameter.\n\n----------------------------------------------------------------------------\n--------------------------------------------\n\nzz1 <- xyplot(as.numeric(agg3[,i]) ~as.numeric(agg3[,3]),\n    ylim = c(minYlim,maxYlim),\n    panel=function(x, y){ panel.xyplot(x,y,type=\"b\",pch=18, cex=1.3, lwd=5,\nbty=\"l\", col=1);},\n    scales = list(x = list(at = as.numeric(agg3[,3]),\n                           labels =\npaste((as.character(agg3[,1])),\"\",(substring(as.character(agg3[,2]),3,4)),se\np=\"\"), crt=0, line=1.3)),\n    xlab = \"Data Report Period\",\n    ylab=arg2)\n\n----------------------------------------------------------------------------\n-----------------------------------------------\n\nThe parameter bty=\"l\" in panel=function(x,y) didn't change the box type to L\nshape.  Always I have the rectangular or o shape irrespective of \"bty\"\nparameter.\n\nCould any of you let me know how to change the graph to type L.\n\nThanks in advance for the help.\n\nPadma",
-      "body_snippet": "Hi all,\n\nCan any of you let me know how to change the type of box in xyplot of\nTrellis charts?\n\nI am looking for the functionality similar to bty=\"o\", \"l\", \"7\" or \"c\"  in\nTrellis xy plot\ni.e, par(bty=",
-      "thread_id": "thread-7fad776b0e20",
-      "thread_depth": 0,
       "month": "2002-02"
     },
     {
@@ -1606,12 +1590,12 @@
       "date": "2002-02-09T01:28:51Z",
       "subject": "Re: Modify incrementation in a for loop - summary",
       "subject_clean": "Modify incrementation in a for loop - summary",
-      "in_reply_to": null,
+      "in_reply_to": "<3B1DF09C9A08D3118D310008C7913C45076E0298@RLC00AEX006>",
       "references": [],
       "body_plain": "If you want your for loop to increment by 2 rather than by 1, give it a\nvector that does this\n\n        for( i in seq(1,20,by=2))\n                print(i)\n\n-GReg\n\n> -----Original Message-----\n> From: yves.claveau at mnr.gov.on.ca [mailto:yves.claveau at mnr.gov.on.ca]\n> Sent: Friday, February 08, 2002 5:59 PM\n> To: s-news at lists.biostat.wustl.edu\n> Subject: [S] Modify incrementation in a for loop - summary\n> \n> \n> Hi,\n>       Thanks to Jim Pratt, Bill Dunlap, Zhang Jingshan and \n> Giovanni Petris\n> for answering to my question. \n> \n>       It is not possible to modify \"i\" within the loop. I \n> have to think\n> another way to do the job. All pointed out some inconsistencies in my\n> question. See below how my question should have been.\n> \n>       This has been a loooonnnng weeek ...\n> \n>       Yves\n> \n> --------------------------------------------------------------\n> --------------\n> -----------\n> Hi,\n>       I need to modify the incrementation in a for loop so my \n> script can\n> go two steps ahead instead of one. I tried three different \n> approaches (see\n> below) but none of them works. I obviously looked for an \n> answer in S-Plus\n> book and in S-News archive but no answer. Any suggestion? I \n> use S-Plus 6.0\n> release 2 under Windows NT\n> \n>       Thank you in advance,\n> \n>       Yves\n> \n> Approaches tested:\n> \n> 1) for(i in 1:20)\n>       {\n>       if ... {next}\n>       i <- i + 1\n>       }\n> \n> Error message: \" Object \"x\" not found in frame 1 for \n> permanent assignment\n> (maybe assigned a `for' loop variable?)\"\n> \n> 2) for(i in 1:20)\n>       {\n>       if ... {next}\n>       i <<- i + 1\n>       }\n> \n> Error message: \" Object \"x\" not found in frame 1 for \n> permanent assignment\n> (maybe assigned a `for' loop variable?)\"\n> \n> 3) for(i in 1:20)\n>       {\n>       if ... {next}\n>       assign(i, i + 1, frame=1)\n>       }\n> \n> No error message but it doesn't work!\n> \n> -------------------------------------------\n> Yves Claveau, M.Sc. F.\n> Ontario Forest Research Institute\n> 1235 Queen St. E.\n> Sault Ste Marie, ON\n> P6A 2E5\n> \n> Ph.: (705) 946-2981 ext. 252\n> Fax.: (705) 946-2030\n> Email: yves.claveau at mnr.gov.on.ca\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n> \n\nLEGAL NOTICE\nUnless expressly stated otherwise, this message is confidential and may be \nprivileged. It is intended for the addressee(s) only. Access to this E-mail by \nanyone else is unauthorized. If you are not an addressee, any disclosure or \ncopying of the contents of this E-mail or any action taken (or not taken) in \nreliance on it is unauthorized and may be unlawful. If you are not an \naddressee, please inform the sender immediately.",
       "body_snippet": "If you want your for loop to increment by 2 rather than by 1, give it a\nvector that does this\n\n        for( i in seq(1,20,by=2))\n                print(i)\n\n-GReg\n\n> -----Original Message-----\n> From: y",
-      "thread_id": "thread-24b9db728fa2",
-      "thread_depth": 0,
+      "thread_id": "thread-f723a48cf3a0",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -1630,22 +1614,6 @@
       "body_snippet": "If I may hazard a guess... I think you need to use a while loop rather \nthan torturing your for loop.\n\nEric\n\nyves.claveau at mnr.gov.on.ca wrote:\n\n> Hi,\n>         I need to modify the incrementation i",
       "thread_id": "thread-3d8b98953d18",
       "thread_depth": 1,
-      "month": "2002-02"
-    },
-    {
-      "id": "msg-4873f4117eaf",
-      "message_id": "<000201c1b111$e3a3ae80$7efea8c0@PADMA>",
-      "from_name": "Padma Illindra",
-      "from_email_hash": "8742873eddc330e440a83789754114432100b5571949f129be8133bc7381f857",
-      "date": "2002-02-09T02:31:32Z",
-      "subject": "Importing data using StatServer 2000",
-      "subject_clean": "Importing data using StatServer 2000",
-      "in_reply_to": null,
-      "references": [],
-      "body_plain": "Hi all,\n\nI am using statserver 2000 for creating analytics in our developement\nprocess.  I am trying to download data from oracle database by checking\noption \"Allow data input from database\"  to import in to a format that is\navailable in statserver using option \"Allow data output to file\" by checking\nthis option when creating the option.\n\nHere is the code for the analytic that I am using:\n\n----------------------------------------------------------------------------\n-----\n\n\"entry.TQSaveDF\" <-\nfunction(ao, args, objs, basedOnAOs)\n{\n#Entry point function generated by web tools, SS 2000\n#Convert input data and parameters, if any\nOpenGraphicsDevice(ao)  #Initialize graphics, capture GUI warnings\n#Perform analysis here. Place any functions you are defining OUTSIDE of this\nentry point function.\n#Put your S-PLUS code here\ndfOut1 <- get.default(objs[1], immediate=T)\n#cat(html.table(dfOut1))\nCloseGraphicsDevice(ao,height = 6.5,width = 8.25)  #Export graphics\n#dfOut1 <- PrepareOutputDataFrame(dfOut1)\nwrite.table(dfOut1, file=\"UnstackData\")\nassign(\"dfOut1\",dfOut1,frame=1)\n#Prepare dataframes for output, if any\n#Return output parameters and dataframes, if any\nlist(c(), \"dfOut1\")\n}\n\n------------------------------------------------------------------\n\nWhen I download the data, say, to an excel format, it is adding the names of\ncolumns in the database as the first column in the output file.  And when I\nsave the file in to the format specified, it will save everything as a\ngeneral format (loosing the data type of column).  Could you please let me\nknow how to retain the type of theeach field in Oracle database in the\noutput format file (like excel, SAS etc.).   Also I came to know that it is\nthe same problem with other data formats like SAS datafile (.sd2) format. It\nis saving the data as all varchar datatypes.\n\nI would greatly appreciate if any of you know the resolution to this kind of\nproblem.\n\nThanks in advance ofr the help,\n\nPadma\n\nPadma Illindra\n      MSCS, MSES\nSystems Analyst,\n\nQuantros, Inc\n5361 Randall Place\nFremont, CA 94538",
-      "body_snippet": "Hi all,\n\nI am using statserver 2000 for creating analytics in our developement\nprocess.  I am trying to download data from oracle database by checking\noption \"Allow data input from database\"  to impor",
-      "thread_id": "thread-4873f4117eaf",
-      "thread_depth": 0,
       "month": "2002-02"
     },
     {
@@ -1757,12 +1725,12 @@
       "date": "2002-02-11T00:01:33Z",
       "subject": "Re: string operators",
       "subject_clean": "string operators",
-      "in_reply_to": null,
+      "in_reply_to": "<1508FB10AFDBD211854D0090273C410708A1F838@com83-178.medicine.uiowa.edu>",
       "references": [],
       "body_plain": "I usually just add a large enough power of ten, convert to character then\nlop off the leading 1 with substring. \n\n> substring(as.character(1e10+x),2)\n\nIf you want a concatenation operator that does things like SAS \"a\" | \"b\",\nyou can create an infix operator like so:\n\n\"%p%\" <- function(a,b) paste(a,b,sep=\"\")\n\nand use it thus\n\n\"a\" %p% \"b\"\n\nSee help(Syntax) to find out the precedence of this operator.\n\nNick Ellis\nCSIRO Marine Research   mailto:Nick.Ellis at csiro.au\nPO Box 120                      ph    +61 (07) 3826 7260\nCleveland QLD 4163      fax   +61 (07) 3826 7222\nAustralia                       http://www.marine.csiro.au\n \n\n> -----Original Message-----\n> From: Hunsicker, Lawrence [mailto:lawrence-hunsicker at uiowa.edu]\n> Sent: Monday, February 11, 2002 1:14 AM\n> To: 's-news at lists.biostat.wustl.edu'\n> Subject: [S] string operators\n> \n> \n> Again, hello team:\n> \n> I have been trying to figure out how to do a couple of things \n> with strings\n> in S-Plus:\n> \n> Specifically, I need to build a unique patient ID by \n> concatenating a center\n> number with a patient (within center) number, with a space \n> between the two.\n> (I didn't invent this format.  I am simply stuck with it.)  \n> In SAS, I do:\n> \n>       pid=put(ctr,Z5.) | ' ' | put(pat,Z5.)\n> \n> I have figured out that for the concatenation in S-Plus I can use\n> paste(ctr,' ',pat,sep=''), but I have not figured out how to \n> pad at the\n> front with zeros (as in a format Z5.).  Also, I have not \n> found a simple\n> concatenation operator in S-Plus.  I know that I can define one easily\n> enough with paste, but isn't there one built it?  If so, what \n> is it?  I\n> can't find anything about string operators in any of the \n> documentation.\n> \n> Thanks again for the help.\n> \n> Larry Hunsicker\n> \n> \n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>",
       "body_snippet": "I usually just add a large enough power of ten, convert to character then\nlop off the leading 1 with substring. \n\n> substring(as.character(1e10+x),2)\n\nIf you want a concatenation operator that does th",
-      "thread_id": "thread-1480e989ccf9",
-      "thread_depth": 0,
+      "thread_id": "thread-066b3a674a49",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -1773,12 +1741,12 @@
       "date": "2002-02-11T09:50:37Z",
       "subject": "Fw: modelling an exponential asymptotic relationship",
       "subject_clean": "modelling an exponential asymptotic relationship",
-      "in_reply_to": null,
+      "in_reply_to": "<00d101c1b0c1$23c7d500$e5656f83@zoo.cam.ac.uk>",
       "references": [],
       "body_plain": "I have Splus 2000 professional. I am a PhD zoology student without a strong\nmathematical background so please let me know if some of this doesn't make\nsense.\n\nI am trying to fit a model based on an exponential asymptotic relationship:\ndensity = exp( A - B * exp( -C * x ))\nwhere A, B and C are the parameters I am trying to estimate:\nA = asymptote, B = difference between the asymptote and the intercept, C =\nslope.\nTherefore, I will need to carry out a non-linear analysis.\n\nMy y variable is count data and I am assuming poisson errors so in order to\nmodel density as a function of the x variable I need to use area as an\noffset:\n\ncount = area * exp( A - B * exp( -C * x ))\n\nI need to run a model in Splus that will give the values of parameters A, B\nand C that minimise the poisson deviance and hence these will be maximum\nlikelihood estimations.\nI think the poisson deviance that I am trying to minimise should be:\n-2 * ( -area * exp( A - B * exp( -C * x )) + count * ln( area * exp( A - B *\nexp( -C * x ))) - count! )\n\nPlease can someone let me know how to do this? Please bear in mind that I\nhave 150,000 rows of data for some of my datasets. It looks as if one ought\nto be able to minimise the deviance using the ms() function but if so, I'm\nnot sure how. Would it be best to do this using the NUOPT add-on (which I\ndon't have yet) and if so, how?\n\nThank you very much in advance,\n\nTom Day",
       "body_snippet": "I have Splus 2000 professional. I am a PhD zoology student without a strong\nmathematical background so please let me know if some of this doesn't make\nsense.\n\nI am trying to fit a model based on an ex",
-      "thread_id": "thread-6bc0e364512b",
-      "thread_depth": 0,
+      "thread_id": "thread-6725a887ef01",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -1847,8 +1815,8 @@
       ],
       "body_plain": "the truth is that S-plus uses enormous amounts of memory.\nIn Huud's problem, one can guess that little more than\n107*15000*8*2= ~25Mb should be enough\n(assuming 8 bytes per value), but obviously the program\nrequires more than that.\nIn one of my problems, I had calculated that about 70Mb\nwould be enough, but the program stopped, complaining\nit could not obtain dynamic memory while it was already\nusing some 400Mb...\n\ne.e.",
       "body_snippet": "the truth is that S-plus uses enormous amounts of memory.\nIn Huud's problem, one can guess that little more than\n107*15000*8*2= ~25Mb should be enough\n(assuming 8 bytes per value), but obviously the p",
-      "thread_id": "thread-6bc0e364512b",
-      "thread_depth": 1,
+      "thread_id": "thread-6725a887ef01",
+      "thread_depth": 2,
       "month": "2002-02"
     },
     {
@@ -1960,12 +1928,12 @@
       "date": "2002-02-11T18:26:47Z",
       "subject": "Re: apply function to mutliple columns",
       "subject_clean": "apply function to mutliple columns",
-      "in_reply_to": null,
+      "in_reply_to": "<58CAB2332C0DD511BC7900A0C9EA316D013D12F3@dasmtyjqf009.amedd.army.mil>",
       "references": [],
       "body_plain": "> AVOID the use of apply family functions, which are really \n> glorified for() loops, if possible by using subscripting.\n\nThat's not quite true, in S-PLUS 6 at least.  In S-PLUS 6 for Windows,\nthe common case of apply() on a matrix is implemented in C++, not S.\nIt's been carefully coded for speed and especially memory efficiency.\nIt can be much faster than the equivalent for loop, especially if the\nfor loop uses a lot of memory.  This benefit will be added to the Unix\nversion with S-PLUS 6.1.\n\napply() on arrays of dimension 3 and later uses sapply() internally,\nafter re-arranging the array -- see the apply() source for details.\n\n# David Smith\n\n-- \nDavid M Smith <dsmith at insightful.com>\nS-PLUS Product Marketing Manager, Insightful Corp, Seattle WA\nTel: +1 (206) 802 2360\nFax: +1 (206) 283 6310\n\nInsightful Corporation provides analytical solutions leveraging\nS-PLUS, StatServer, S-PLUS Analytic Server and consulting services.\nSee www.insightful.com for details. \n\n> -----Original Message-----\n> From: Gunter, Bert [mailto:bert_gunter at merck.com]\n> Sent: Thursday, February 07, 2002 07:52\n> To: 'Warnes, Gregory R'; 's-news at lists.biostat.wustl.edu'\n> Subject: Re: [S] apply function to mutliple columns\n> \n> \n> I replied privately, but as the \"solution\" below made it to \n> the list, I\n> think it's important to publicly note that  a better approach \n> is NOT to use\n> apply() at all. SImple subscripting will so it as in dat[,c(1,3)]+\n> dat[,c(2,4)] . With many columns, the seq() function can be \n> used instead of\n> c(). Variants of this can be used with functions other than \n> '+' . The point\n> is, AVOID the use of apply family functions, which are really \n> glorified\n> for() loops, if possible by using subscripting. Results can \n> be orders of\n> magnitude faster.\n> \n> Cheers,\n> \n> Bert Gunter\n> Biometrics Research RY 70-38\n> Merck & Company\n> P.O. Box 2000\n> Rahway, NJ 07065-0900\n> Phone: (732) 594-7765\n> mailto: bert_gunter at merck.com\n> \n> \"The business of the statistician is to catalyze the \n> scientific learning\n> process.\"      -- George E.P. Box\n> \n> \n> \n> \n> -----Original Message-----\n> From: Warnes, Gregory R [mailto:gregory_r_warnes at groton.pfizer.com]\n> Sent: Thursday, February 07, 2002 10:24 AM\n> To: 's-news at lists.biostat.wustl.edu'\n> Subject: FW: [S] apply function to mutliple columns\n> \n> \n> \n> I don't think you can use the MARGIN argument directly to do \n> what you want.\n> I would approach the problem by creating a new data frame \n> that 'stacks' the\n> data from adjacent columns into a single column, and then \n> calling apply:\n> \n>       dat <- data.frame( x1=rnorm(1000), x2=rnorm(1000), \n> x3=rnorm(1000,2),\n> x4=rnorm(1000,2) )\n> \n>       stacked <- rbind( as.matrix(dat[,c(1,3)]), \n> as.matrix(dat[,c(2,4)]) )\n> \n>       apply(stacked, 2, sum)\n> \n> -Greg\n> \n> > -----Original Message-----\n> > From: Bliese, Paul D MAJ WRAIR-Wash DC\n> > [mailto:Paul.Bliese at NA.AMEDD.ARMY.MIL]\n> > Sent: Wednesday, February 06, 2002 9:40 PM\n> > To: 's-news at lists.biostat.wustl.edu'\n> > Subject: [S] apply function to mutliple columns\n> > \n> > \n> > Sorry if this is a FAQ -- I did search the archives, but \n> > perhaps I didn't\n> > give it the right search options.\n> > \n> > Anyhow, if one has a data frame and wants to apply a \n> function to each\n> > column, then the apply function works great:\n> > \n> > >apply(MYDATA,2,function)\n> > \n> > From the help file I know that Argument 2 is MARGIN where 1 \n> > stands for rows\n> > and 2 for columns.  I believe, however, that MARGIN allows \n> > more flexible\n> > than just operating on rows and columns (I can't figure it \n> > out from help,\n> > though).\n> > \n> > For instance, would it be possible to specify a MARGIN value \n> > that would\n> > allow me to successively apply a function to every two \n> > columns in the data\n> > frame?\n> > \n> > For a simple example, if my data frame had 50 columns, and \n> I wanted to\n> > create a new data frame with 25 columns where each column in \n> > the new data\n> > frame was the sum (or other function) of two consecutive \n> > columns (column\n> > 1+2, column 3+4, column 5+6, etc) could I use apply?  If so, how?\n> > \n> > Thanks,\n> > \n> > Paul Bliese\n> > --------------------------------------------------------------------\n> > This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> > unsubscribe send e-mail to \n> s-news-request at lists.biostat.wustl.edu with\n> > the BODY of the message:  unsubscribe s-news\n> > \n> \n> \n> LEGAL NOTICE\n> Unless expressly stated otherwise, this message is \n> confidential and may be\n> privileged. It is intended for the addressee(s) only. Access \n> to this E-mail\n> by anyone else is unauthorized. If you are not an addressee, \n> any disclosure\n> or copying of the contents of this E-mail or any action taken \n> (or not taken)\n> in reliance on it is unauthorized and may be unlawful. If you \n> are not an\n> addressee, please inform the sender immediately.\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n> \n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>",
       "body_snippet": "> AVOID the use of apply family functions, which are really \n> glorified for() loops, if possible by using subscripting.\n\nThat's not quite true, in S-PLUS 6 at least.  In S-PLUS 6 for Windows,\nthe com",
-      "thread_id": "thread-a6d6ded740ac",
-      "thread_depth": 0,
+      "thread_id": "thread-a3d7e4749273",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -1976,12 +1944,12 @@
       "date": "2002-02-11T19:12:58Z",
       "subject": "memory and randomization",
       "subject_clean": "memory and randomization",
-      "in_reply_to": null,
+      "in_reply_to": "<3C6A34CD@iit1s21>",
       "references": [],
       "body_plain": "Hi\nI sent this email a week ago and some of you suggested that I use the command\nFor(capital f) instead of the for-loop command . When I tried to do that I got\nan error message saying that object  j and i  are not defined . j and i are \nthe\nindex for the For loop.. Does anyone know the reason for this error?\nThanks for your help.\n\nHello s-plus users\n              I tried to run a program for all randomization methods,\nbootstrap and jackknife to test the significant of the regression coefficients\nin a linear regression model.\nI used 2 loops one with 1000 iterations ( this loop is used to get new data at\nevery time , new dependent variable and independent variables \"simulation\")\nthe inside loop with 100 iterations (this loop contains all randomization\napproaches ,bootstrap and jackknife).\nI used the for loop command.I got good results when I used 100 iterations in\nthe simulation but when I tried to use 1000 iterations ,I had an error message\non the screen saying that the computer run out of virtual memory and more had\nto be\ncreated. What I think is happening is that the program creates vectors for\nevery single iteration and keep them in the main memory hence the reason for\nrunning out of it. I think that there should be a command I can use it somehow\nto remove or clear the memory instead of storing it.\n\nI am a new user for s-plus and I don't know how I can deal with this problem.\nThanks alot for any help\n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Hi\nI sent this email a week ago and some of you suggested that I use the command\nFor(capital f) instead of the for-loop command . When I tried to do that I got\nan error message saying that object  j a",
-      "thread_id": "thread-8b1d7d446fe7",
-      "thread_depth": 0,
+      "thread_id": "thread-af7ff63eb7e1",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -2058,12 +2026,12 @@
       "date": "2002-02-12T14:24:43Z",
       "subject": "Re: Calculus in Splus",
       "subject_clean": "Calculus in Splus",
-      "in_reply_to": null,
+      "in_reply_to": "<CFA6739DD532764AA51E7459970BF0E202E8172C@ns-bco-mse3.im.battelle.org>",
       "references": [],
       "body_plain": "David\n\nCheck out Chapter 36 of your S-PLUS Guide to Statistics, Volume 2.  Although S+ has some primitive capabilities in symbolic differentiation, S+ is not a symbolic mathematics package --- S+ is not Mathematica or Maple or MuPlus.\n\nJoe\n\n-----Original Message-----\n\nFrom: Paul, David A [mailto:paulda at BATTELLE.ORG]\n\nSent: Tuesday, February 12, 2002 6:10 AM\n\nTo: 's-news at lists.biostat.wustl.edu'\n\nSubject: [S] Calculus in Splus\n\nMy question is perhaps indicative of the fact that I am relatively\n\nnew to Splus:\n\nWhat routines/libraries are available to perform calculus in Splus?\n\nI am specifically thinking of finding univariate and multivariate\n\nmaxima & minima, taking derivatives (partial or otherwise) and \n\nsetting equal to zero and solving, analytical integration, and \n\nnumerical integration.\n\nIf some/all of the above interests are not possible, then knowing\n\nthis would also be helpful.\n\nThanks in advance!\n\nRegards,\n\nDavid Alan Paul, Ph.D.\n\nBattelle Memorial Institute - SDAS\n\npaulda at battelle.org\n\n614-424-3176\n\n614-424-4611 (fax)\n\nhttp://www.battelle.org/statistics\n\n--------------------------------------------------------------------\n\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\n\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "David\n\nCheck out Chapter 36 of your S-PLUS Guide to Statistics, Volume 2.  Although S+ has some primitive capabilities in symbolic differentiation, S+ is not a symbolic mathematics package --- S+ is n",
-      "thread_id": "thread-7f018376eb2d",
-      "thread_depth": 0,
+      "thread_id": "thread-2d0897b05f4b",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -2236,12 +2204,12 @@
       "date": "2002-02-13T17:03:15Z",
       "subject": "Question in lme",
       "subject_clean": "Question in lme",
-      "in_reply_to": null,
+      "in_reply_to": "<20020204142918.22461.qmail@web20109.mail.yahoo.com>",
       "references": [],
       "body_plain": "Dear S users,\n\nI have a question for you:\n\nlibrary(nlme3)\noptions(contrasts=c(\"contr.treatment\", \"contr.poly\"))\nfmBW.lme <- lme(weight~Time*Diet, BodyWeight,\nrandom=~Time, weights=varPower(),\ncontrol=list(maxIter=2, msMaxIter=5, returnObject=T))\n\nWarning messages:\n  Warning in ms( ~  - logLik(lmeSt, lmePars), start =\nlist(lmePars = c(coef(lmeSt))), : ITERATION LIMIT\nREACHED WITHOUT OTHER CONVERGENCE\nWarning messages:\n  Warning in ms( ~  - logLik(lmeSt, lmePars), start =\nlist(lmePars = c(coef(lmeSt))), : ITERATION LIMIT\nREACHED WITHOUT OTHER CONVERGENCE\nWarning messages:\n  Warning in ms( ~  - logLik(lmeSt, lmePars), start =\nlist(lmePars = c(coef(lmeSt))), : ITERATION LIMIT\nREACHED WITHOUT OTHER CONVERGENCE\nError in lme.formula(weight ~ Time * Diet, BodyWe..:\nMaximum number of iterations reached without\nconvergence.\n\nIn lmeContol I chose returnObject=T, according to the\nhelp file, the fitted object should be returned when\nthe maximum number of iterations is reached without\nconvergence of the algorithm instead of this I get the\nError message above. Why does this happen?\n\nAny suggestions would be appreciated.\n\n=====\nDimitris Rizopoulos Undergraduate Student\nDepartment of Statistics\nAthens University of Economics and Business\nwww.stat-athens.aueb.gr\n\n____________________________________________________________\nDo You Yahoo!?\nΑποκτήστε τη δωρεάν @yahoo.gr διεύθυνση σας στο http://www.otenet.gr",
       "body_snippet": "Dear S users,\n\nI have a question for you:\n\nlibrary(nlme3)\noptions(contrasts=c(\"contr.treatment\", \"contr.poly\"))\nfmBW.lme <- lme(weight~Time*Diet, BodyWeight,\nrandom=~Time, weights=varPower(),\ncontrol=",
-      "thread_id": "thread-d1f29448c5d9",
-      "thread_depth": 0,
+      "thread_id": "thread-9d560c0b2818",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -2432,12 +2400,12 @@
       "date": "2002-02-14T22:29:29Z",
       "subject": "Re: Summary: Names(), and ANOTHER QUESTION!",
       "subject_clean": "Summary: Names(), and ANOTHER QUESTION!",
-      "in_reply_to": null,
+      "in_reply_to": "<8986151694190742869D08450EE4DCDE08EC8C@amu-exch.ensco.win>",
       "references": [],
       "body_plain": "Thanks, David.  SPLUS 6 V2 is what I have.  I played around with it so much I \nforgot to add something.  I got that error when I put as.vector() around the \ntapply() function.  I am trying to bind the means and standard deviations into \none matrix/data frame with rows associated with hours:\n\n        Mean    StDev\n0       18      2.1\n1       19      1.9\n2       17      2.2\n3       21      2.1\n4       20      2.0\n.\n.\n.\n23      18      1.8\n\nThere are 3 sets of means and standard deviations and some other calculations, \nfor a total of 21 columns.  Using as.vector() made the binding easier.  Like I \nsaid, there will be some columns where the data will be totally missing, and I \nwould like the output from the mean and stdev calculations to show all NA's if \nthere are no data available for the calculations.  Also, I have one set where \nthere are data at hours 17, 19, and 21, but none at the other hours.  I would \nlike them to be in their appropriate rows, but so far I've only been able to \nget them into the first 3 rows (for hours 0, 1, and 2), and they repeat until \nthe column is filled with 24 numbers to match the other columns.  Let me know \nwhat other info I can provide.  It's 5:30 PM EST, so I am going home now, but \nwill be in by 10:00 tomorrow morning.  Thanks for the help.\n\nw\n\n-----Original Message-----\nFrom: David Smith [mailto:dsmith at insightful.com] \nSent: Thursday, February 14, 2002 5:09 PM\nTo: Lambert.Winnie\nSubject: RE: [S] Summary: Names(), and ANOTHER QUESTION!\n\nWhich version of S-PLUS are you using?  I don't see that behaviour:\n\n> Speed <- 1:10\n> Hour <- 1:10\n> good <- rep(F, 10)\n> Spd.mean <- tapply(Speed[good], Hour[good], mean)\n> Spd.stdv <- tapply(Speed[good], Hour[good], stdev)\n> Spd.mean\nNULL\nattr(, \"names\"):\ncharacter(0)\n> Spd.stdv\nNULL\nattr(, \"names\"):\ncharacter(0)\n\n\"Invalid S-PLUS object\" shouldn't happen for any user program, so this looks \nlike a bug.  Check you've upgraded to Release 2 (Help > Upgrade\nS-PLUS) -- this may be a bug that's been fixed since release 1.\n\nHope this helps,\n# David Smith\n\n-- \nDavid M Smith <dsmith at insightful.com>\nS-PLUS Product Marketing Manager, Insightful Corp, Seattle WA\nTel: +1 (206) 802 2360\nFax: +1 (206) 283 6310\n\nInsightful Corporation provides analytical solutions leveraging S-PLUS, \nStatServer, S-PLUS Analytic Server and consulting services. See \nwww.insightful.com for details. \n\n> -----Original Message-----\n> From: Lambert.Winnie [mailto:lambert.winifred at ensco.com]\n> Sent: Thursday, February 14, 2002 13:49\n> To: s-news at lists.biostat.wustl.edu\n> Subject: [S] Summary: Names(), and ANOTHER QUESTION!\n> \n> \n> Thanks to Steve McKinney and Tom Jagger of Insightful for\n> providing the correct code to do what is needed in my script, \n> and to Bert Gunter for the suggestion to understand assign() \n> more clearly.\n> \n> First, Bert's suggested to look at the Help file for\n> assign(). The first argument must be a single character \n> string. names(get(outfile)) is NULL, hence the error message. \n> \n> Here is the code that works from Steve McKinney, seconded by\n> Tom Jagger:\n> \n> > commandString <- paste(\"names(\", outfile, \") <- out.names\", sep=\"\") \n> > eval(parse(text = commandString))\n> \n> Thanks to all.\n> \n> Now for my next question which is probably a little more\n> legitimate.  I'm using a logical to categorize data by ranges \n> of wind speed.  There are times when the category with high \n> speeds > 30 knots is empty.  I want to calculate the mean and \n> standard deviation of the winds by hour in all categories.  \n> As far as I know, tapply() is the fastest, easiest, most \n> efficient way of doing this:\n> \n> > good <- Speed > 30 & !is.na(Speed)\n> > Spd.mean <- tapply(Speed[good], Hour[good], mean)\n> > Spd.stdv <- tapply(Speed[good], Hour[good], stdev)\n> \n> When every element in good is F, I get the error\n> \n> Problem: Invalid S-PLUS object: Spd.mean\n> Problem: Invalid S-PLUS object: Spd.stdv\n> \n> I'm sure this makes total sense, after all there are no\n> indices to do the calculations with.  The commands above work \n> quite nicely when there are T's in good.  What I would like \n> in this situation is to have an NA output for every hour that \n> does not have data in it.  In the particular case I am \n> showing, all hours would have NA.  In some other cases, only \n> some of the hours are associated with all F's.  I would like \n> NA's for those hours, too.  Obviously, the tapply command \n> will not work for me in these special cases.  Can anyone \n> suggest a function, or group of functions, that will?\n> \n> Thanks much, and Happy Valentine's Day!\n> \n> **************************************************************\n> *********\n> Winifred C. Lambert                Senior Scientist/Meteorologist\n> ENSCO, Inc.\n> Aerospace Sciences and Engineering Division\n> 1980 N. Atlantic Ave, Suite 230\n> Cocoa Beach, FL  32931\n> VOICE: 321.853.8130  FAX: 321.853.8415 lambert.winifred at ensco.com\n> \n> AMU Quarterly Reports are available online: \n> http://science.ksc.nasa.gov/amu/home.html\n> **************************************************************\n> *********\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To \n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with \n> the BODY of the message:  unsubscribe s-news\n>",
       "body_snippet": "Thanks, David.  SPLUS 6 V2 is what I have.  I played around with it so much I \nforgot to add something.  I got that error when I put as.vector() around the \ntapply() function.  I am trying to bind the",
-      "thread_id": "thread-70bd7c482967",
-      "thread_depth": 0,
+      "thread_id": "thread-8b9c366c9305",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -2562,12 +2530,12 @@
       "date": "2002-02-15T14:52:49Z",
       "subject": "Re: Strange behaviour of function groupedData",
       "subject_clean": "Strange behaviour of function groupedData",
-      "in_reply_to": null,
+      "in_reply_to": "<17B97E5BC727D411896500606D9384B504E4321A@clvmxsusr03.brw.hmrag.com>",
       "references": [],
       "body_plain": "Bert:\n\nThanks for the reply. \nHere is a second problem. I am writing the following function:\n\nxx_function(data, area, subject){\n        ng_dim(data)[1]\n        fvalue.a_rep(0,ng)\n        for(ii in 1:ng){\n        data1_data.frame(unlist(data[ii,]),time,area, subject)\n        names(data1)_c(\"y\", \"time\", \"area\", \"subject\")\n        assign('data1', data1, frame=1)\n        data1_groupedData(y~area+time|subject,\ndata=data1,labels=list(x=\"Time\", y=\"Expression\"))\n        ata1.lme_anova(lme(y~area+time,data=data1, random=~1 | subject,\ncontrol=lmeControl()))\n        fvalue.a[ii]_data1.lme[2,3]\n        }\n        return(fvalue.a)\n}\n\ndata is 10 row by 22 matrix. I wanted to use lme for all the rows of data.\nWhen I use Bert's suggestion, \nthere is no error message anymore, but the function reurn a list of constant\nvalues which should not happen since\nthe 10 rows in data are totally different. So, the problem seems to be that\nlme is using the same data1 for all the iterations. \n\nAny suggesions? \n\nSean\n\n-----Original Message-----\nFrom: Gunter, Bert [mailto:bert_gunter at merck.com]\nSent: Friday, February 15, 2002 7:54 AM\nTo: Ge, Nanxiang PH/US\nSubject: RE: [S] Strange behaviour of function groupedData\n\nThis is a consequence of the s-plus static scoping (Best reference: Venables\nand Ripley: S Programming). Add the statement: assign('data1',data1,\nframe=1)  after the names(data1)... line and it will work.\n\nBert Gunter\nBiometrics Research RY 70-38\nMerck & Company\nP.O. Box 2000\nRahway, NJ 07065-0900\nPhone: (732) 594-7765\nmailto: bert_gunter at merck.com\n\n\"The business of the statistician is to catalyze the scientific learning\nprocess.\"      -- George E.P. Box\n\n-----Original Message-----\nFrom: Nanxiang.Ge at aventis.com [mailto:Nanxiang.Ge at aventis.com]\nSent: Thursday, February 14, 2002 5:32 PM\nTo: s-news at lists.biostat.wustl.edu\nSubject: [S] Strange behaviour of function groupedData\n\nHi, All:\n\n        I am experiencing the following problem with function groupedData. \nI am writing function \n\nxx_function(data, time, area, subject){\n\n        data1_data.frame(unlist(data[1,]),time,area, subject)\n        names(data1)_c(\"y\", \"time\", \"area\", \"subject\")\n   data1_groupedData(y~area+time|subject, data=data1,labels=list(x=\"Time\",\ny=\"Expression\")\n       return(lme(y~area+time,data=data1, random=~1 | subject,\ncontrol=lmeControl()))\n}\n\nWhen I run this function, there is an error message saying that object data1\nis not found in the call of groupedData even though I created within the\nfunction and I can print something out before the line of call to\ngroupedData. I guess this is related to the \"frame\" concpt but have not\nfigured it out. \n\nAny suggestions? \n\nNanxiang Ge\nDrug Discovery Biostatistics\nAventis Pharmaceuticals\nMail Stop B-203C\nP.O.Box 6800\nRoute 202-206\nBridgewater, NJ 08807-6800\n\nTel: (908) 231-2477\nFax:(908) 231-3891\n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Bert:\n\nThanks for the reply. \nHere is a second problem. I am writing the following function:\n\nxx_function(data, area, subject){\n        ng_dim(data)[1]\n        fvalue.a_rep(0,ng)\n        for(ii in 1:n",
-      "thread_id": "thread-5853038c1daf",
-      "thread_depth": 0,
+      "thread_id": "thread-636950db8605",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -2626,12 +2594,12 @@
       "date": "2002-02-15T19:18:31Z",
       "subject": "getting day/month/year from a timeDate object",
       "subject_clean": "getting day/month/year from a timeDate object",
-      "in_reply_to": null,
+      "in_reply_to": "<7A2D33263A119742B8D90CDB2318F26A284EEF@ntserver2.kmv.com>",
       "references": [],
       "body_plain": "I thank the following people who replied to my question about\ngetting day/month/year from a timeDate object:\n \n        Vadim Kutsyy\n        Thomas Jagger\n        Chuck Taylor\n        Dave Cacela \n        Jeffrey Wang\n        Albert Nigrin\n        Allen Humbolt\n        Trevor Marshall\n        Henrik Aalborg Nielsen \n        Wils Corrigan\n\nMy original posting, and excerpts from their replies, are given below.\n\nThank you,\n\nMatt Kurbat\n\nORIGINAL QUESTION:\n\n-----Original Message-----\n\nDear All,\n\nI am now starting to use S-PLUS 6 on a PC \n(after an unfortunate Splus hiatus).  \n\nI would like to strip off the month/day/year \nas integers from a timeDate object.\nFor example, given \"temp\" below:\n        temp<-(VIX8602$Date)[1]\n        > temp\n        [1] 1/2/1986 0:00:00 AM\n\n        data.class(VIX8602$Date)\n        > data.class(VIX8602$Date)\n        [1] \"timeDate\"\n\nI'd like to have functions \"MonthFunction\" and \"YearFunction\" \nto be able to do something like:\n\n        MM<-MonthFunction(temp)\n        >MM\n        >1\n\n        YY<-YearFunction(temp)\n        >YY\n        >1986\n\nAny suggestions?\n\nThanks!\nMatt\n\n--------------------------------------------------------------------\n--------------------------------------------------------------------\n--------------------------------------------------------------------\n\nEXCERPTS FROM REPLIES:\n\n-------------------------------------------\n\nMonthFn <- function(timeDateValue)\n{\n        DateObject <- dates(as.numeric(timeDateValue))\n        as.numeric(substring(format(DateObject, format = \"m/d/year\"),\n                1., 2.))\n}\nYearFn <- function(timeDateValue)\n{\n        DateObject <- dates(as.numeric(timeDateValue))\n        as.numeric(substring(format(DateObject, format = \"m/d/year\"),\n                7., 10.))\n}\n\n-------------------------------------------\n\nw<-timeDate(date(),in.format=\"%w %m %d %H:%M:%S %Z %Y\",zone=\"PST\")\nw\n[1] 02/15/2002 07:59:32.000\n\nNow, we can use extractor functions to get month, day, year:\nHowever, one should note that these return an ordered class\nvariables, factors with levels.\n> years(w)\n[1] 2002\n\n 2002 \n\n> months(w)\n[1] Feb\nLevels (first 5 out of 12):\n[1] \"Jan\" \"Feb\" \"Mar\" \"Apr\" \"May\"\n\n Jan < Feb < Mar < Apr < May < Jun < Jul < Aug < Sep < Oct < Nov < Dec \n\n> days(w)\n[1] 15\nLevels (first 5 out of 31):\n[1] \"1\" \"2\" \"3\" \"4\" \"5\"\n\n--------------------------------------------------------------\n> td <- timeDate(\"2/15/2002\")\n> td\n[1] 2/15/2002 0:00:00 AM\n> as.integer(days(td))\n[1] 15\n> as.integer(months(td))\n[1] 2\n> as.integer(as.character(years(td)))\n[1] 2002\n\n-------------------------------------------------------------------\n\nLook at the help files for mdy(), months(), years(), etc.\n\n-------------------------------------------------------------------\n\ntare a look at timeDate() function and timeCalendar formating.  You need to\nspesify in and out format.  Here is an example base on what I've seen in\nyour example:\n\nMonthFunction<-function(date)\n        timeDate(date, in.format=\"%m/%d/%Y %H:%M:%S %p\",\n                      format=\"%02m\")\nYearFunction<-function(date)\n        timeDate(date, in.format=\"%m/%d/%Y %H:%M:%S %p\",\n                           format=\"%Y\")\ndate<-\"1/2/1986 0:00:00 AM\"\nMonthFunction(date)\nYearFunction(date)\n\nyou fill have format like\n\nin.format=\"%m/%d/%Y %H:%M:%S %p\"\n\n-------------------------------------------------------------------\n\nHi.  Have you tried substring()?  If you always use the format MM/DD/YYYY\n(i.e. temp <- \"01/02/1986 0:00:00 AM\")\nthen you can use  \n\nMM <- substring(temp,1,2)\nDD <- substring(temp,4,5)\nYYYY <- substring(temp,7,10).\n\nIn the help language reference page for timeDate() the last example is  \n \n## Get today's date in yyyymmdd format\ntimeDate(date(), in.format=\"%w %m %d %H:%M:%S %Z %Y\",\n      format=\"%Y%02m%02d\")\n\nTo me it looks like this could be used to do the same by replacing\nformat=\"%02m\" to just get the month, but I just get NA returned (Splus6.0\nWindows NT) and have therefore always used substring().",
       "body_snippet": "I thank the following people who replied to my question about\ngetting day/month/year from a timeDate object:\n \n        Vadim Kutsyy\n        Thomas Jagger\n        Chuck Taylor\n        Dave Cacela \n    ",
-      "thread_id": "thread-fcc5d568d395",
-      "thread_depth": 0,
+      "thread_id": "thread-4fcd0a3d60a7",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -2648,8 +2616,8 @@
       ],
       "body_plain": "Hi,\nIs there a S function that implements the boosting procedure?\n\nThanks,\nKai Yu",
       "body_snippet": "Hi,\nIs there a S function that implements the boosting procedure?\n\nThanks,\nKai Yu",
-      "thread_id": "thread-fcc5d568d395",
-      "thread_depth": 1,
+      "thread_id": "thread-4fcd0a3d60a7",
+      "thread_depth": 2,
       "month": "2002-02"
     },
     {
@@ -2782,8 +2750,8 @@
       ],
       "body_plain": "Hi,\nHere are answers I recieved for my question.\nBarker Chris suggested that Frank Harrell has boosting functions in his\nHMISC library (see http://hesweb1.med.virginia.edu/biostat/s/index.html).\nBut I can't find those functions in the library after a quick check. \n\nHoller Keith and D.Mckenzie mentioned the MART software by Friedman from\nStanford may help.\n\nThanks for all the helps.\n\nKai Yu\n\nOn Fri, 15 Feb 2002, Kai Yu wrote:\n\n> Hi,\n> Is there a S function that implements the boosting procedure?\n> \n> \n> Thanks,\n> Kai Yu\n> \n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>",
       "body_snippet": "Hi,\nHere are answers I recieved for my question.\nBarker Chris suggested that Frank Harrell has boosting functions in his\nHMISC library (see http://hesweb1.med.virginia.edu/biostat/s/index.html).\nBut I",
-      "thread_id": "thread-fcc5d568d395",
-      "thread_depth": 2,
+      "thread_id": "thread-4fcd0a3d60a7",
+      "thread_depth": 3,
       "month": "2002-02"
     },
     {
@@ -2801,8 +2769,8 @@
       ],
       "body_plain": "What I have in my Hmisc and Design libraries are functions implementing \nTibshirani's bootstrap bumping.  That must have been what Chris Barker was \nthinking of.  -Frank Harrell\n\nOn Sun, 17 Feb 2002 15:29:17 -0500 (EST)\nKai Yu <kyu at mpi.com> wrote:\n\n> Hi,\n> Here are answers I recieved for my question.\n> Barker Chris suggested that Frank Harrell has boosting functions in his\n> HMISC library (see http://hesweb1.med.virginia.edu/biostat/s/index.html).\n> But I can't find those functions in the library after a quick check. \n> \n> Holler Keith and D.Mckenzie mentioned the MART software by Friedman from\n> Stanford may help.\n> \n> Thanks for all the helps.\n> \n> Kai Yu\n> \n> On Fri, 15 Feb 2002, Kai Yu wrote:\n> \n> > Hi,\n> > Is there a S function that implements the boosting procedure?\n> > \n> > \n> > Thanks,\n> > Kai Yu\n> > \n> > --------------------------------------------------------------------\n> > This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> > unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> > the BODY of the message:  unsubscribe s-news\n> > \n> \n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n\n-- \nFrank E Harrell Jr              Prof. of Biostatistics & Statistics\nDiv. of Biostatistics & Epidem. Dept. of Health Evaluation Sciences\nU. Virginia School of Medicine  http://hesweb1.med.virginia.edu/biostat",
       "body_snippet": "What I have in my Hmisc and Design libraries are functions implementing \nTibshirani's bootstrap bumping.  That must have been what Chris Barker was \nthinking of.  -Frank Harrell\n\nOn Sun, 17 Feb 2002 1",
-      "thread_id": "thread-fcc5d568d395",
-      "thread_depth": 3,
+      "thread_id": "thread-4fcd0a3d60a7",
+      "thread_depth": 4,
       "month": "2002-02"
     },
     {
@@ -2861,12 +2829,12 @@
       "date": "2002-02-18T17:04:36Z",
       "subject": "Logic problem",
       "subject_clean": "Logic problem",
-      "in_reply_to": null,
+      "in_reply_to": "<8986151694190742869D08450EE4DCDE08EC8E@amu-exch.ensco.win>",
       "references": [],
       "body_plain": "It was easier than I thought.  Must be Monday.  I had some lunch, got some \nnutrition in my brain and figured out:\n\ngood <- !(df$Year %%4 != 0 & df$Day == 29)\n\nThanks to Bert Gunter and James Holtman for quick replies.  Here are their \nsolutions:\n\n> bad <- frame$year %% 4 != 0 &frame$month=='February' & frame$day >28 (B.G.)\n\n> good <- ((x.1$year %% 4) == 0) | x.1$day <= 28 (J.H.)\n\nSorry for the intrusion and my ignorance...\n\nw\n\n***********************************************************************\nWinifred C. Lambert                Senior Scientist/Meteorologist\nENSCO, Inc.\nAerospace Sciences and Engineering Division\n1980 N. Atlantic Ave, Suite 230\nCocoa Beach, FL  32931\nVOICE: 321.853.8130  FAX: 321.853.8415 lambert.winifred at ensco.com\n\nAMU Quarterly Reports are available online: \nhttp://science.ksc.nasa.gov/amu/home.html\n***********************************************************************\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To unsubscribe \nsend e-mail to s-news-request at lists.biostat.wustl.edu with the BODY of the \nmessage:  unsubscribe s-news",
       "body_snippet": "It was easier than I thought.  Must be Monday.  I had some lunch, got some \nnutrition in my brain and figured out:\n\ngood <- !(df$Year %%4 != 0 & df$Day == 29)\n\nThanks to Bert Gunter and James Holtman ",
-      "thread_id": "thread-4138bbe95638",
-      "thread_depth": 0,
+      "thread_id": "thread-211df0956266",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -3173,12 +3141,12 @@
       "date": "2002-02-20T22:04:10Z",
       "subject": "Re: using Rpart to obtain trees with given size",
       "subject_clean": "using Rpart to obtain trees with given size",
-      "in_reply_to": null,
+      "in_reply_to": "<Pine.OSF.4.10.10202191418430.9958-100000@orac.mpi.com>",
       "references": [],
       "body_plain": "Kai Yu asks:\n \n I am trying to build a tree model using rpart. I need a way to get the\ntree with any given number of splits. Checking the cp table (using \nprintcp) can't help in many cases. For example, given the following CP\ntable,\n        CP nsplit rel error xerror     xstd \n1 0.050633      0   1.00000 1.0000 0.036718\n2 0.035443      1   0.94937 1.0734 0.036796\n3 0.022785      3   0.87848 1.0810 0.036794\n4 0.020253      7   0.78228 1.0633 0.036795\n\nI can't get a tree with the best 2 splits.\n \n----------------------------------------------------------\n\n No, you can't get said tree.  Neither can I. \n You need to read the tree literature (I'd recommend the CART book by\nBrieman, Friedman, Olshen and Stone).\n  In the case you display, there is not a `best' 2 split tree according to\nthe complexity ordering.  If you did summary(fit) you would notice that\nevery split is labeled with a complexity parameter, and that some of them\nare tied.  Hence there is no cutoff value that trims exactly the number\nof nodes that you desire.\n\n        Terry Therneau",
       "body_snippet": "Kai Yu asks:\n \n I am trying to build a tree model using rpart. I need a way to get the\ntree with any given number of splits. Checking the cp table (using \nprintcp) can't help in many cases. For exampl",
-      "thread_id": "thread-9d8bf5a3f5d9",
-      "thread_depth": 0,
+      "thread_id": "thread-ca744ffecf35",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -3458,12 +3426,12 @@
       "date": "2002-02-22T22:43:48Z",
       "subject": "Re: Summary: Splus vs. R & Linux vs. Windows",
       "subject_clean": "Summary: Splus vs. R & Linux vs. Windows",
-      "in_reply_to": null,
+      "in_reply_to": "<CFA6739DD532764AA51E7459970BF0E203B6FA48@ns-bco-mse3.im.battelle.org>",
       "references": [],
       "body_plain": "The easiest way to get unix shells and utilities seems to be to install\ncygwin (http://www.cygwin.com/).\n\n-Greg\n\n> -----Original Message-----\n> From: Matt Calder [mailto:calder at phz.com]\n> Sent: Friday, February 22, 2002 5:11 PM\n> To: Michael Prager\n> Cc: s-news at lists.biostat.wustl.edu\n> Subject: Re: [S] Summary: Splus vs. R & Linux vs. Windows\n> \n> \n> Michael,\n>       About a year ago I tried a multitude of these ported \n> shells in an effort\n> to compile perl from source (it would not compile from the \n> standard command\n> prompt). I was not able to accomplish this task with either. \n> In addition, I\n> wanted an alternative shell to run under emacs on windows (98 \n> to be precise).\n> Again after much effort I was unable to get acceptable \n> results. Perhaps these\n> are not the best yardsticks to measure a shell by. If I \n> recall correctly I tried\n> a port of bash, csh, tcsh, and 4DOS. \n> \n>       Matt\n> \n> \n> On Fri, 22 Feb 2002, Michael Prager wrote:\n> \n> > At 03:57 PM 02/22/2002 -0500, Matt Calder wrote:\n> > \n> > >Right, what windows lacks is a decent shell in which to use these \n> > >tools.  If anyone knows otherwise please share.\n> > \n> > Last time I investigated, most of the Unix shells had been \n> ported to \n> > Windows, if that's what you mean by \"decent.\" Most of them \n> are available free.\n> > \n> > A more MS-like shell is available commercially. That is 4NT \n> (or 4DOS for \n> > the DOS-based Windows versions) from JP Software. Those \n> shells provide \n> > command aliasing and abbreviation; directory history \n> recall; command \n> > recall, completion, and editing; ability to associate \n> command files with \n> > interpreters; and more, while retaining quite close \n> compatibility with the \n> > native MS shells. What the JP programs don't provide is a direct \n> > translation of Unix shell scripting languages (which to me \n> are overly \n> > cryptic); however, you can easily use Python or other \n> scripting language \n> > (or use the 4NT/4DOS extended batch language, certainly no \n> worse than that \n> > of the Unix shells).\n> > \n> > Another option would be to install a complete Unix \n> emulation layer, like \n> > the MKS toolkit or (I believe) cygwin.\n> > \n> > There are excellent Windows character-based file managers, \n> editors, etc., \n> > available for free or at nominal cost.\n> > \n> > Those are some of the options for making Windows shell usage more \n> > interesting and productive. Whether any person will find \n> them as good as, \n> > worse than, or about the same as some of the Unix shells \n> will be a matter \n> > of taste (and perhaps habit).\n> > \n> > (Note that none of the above should be construed as \n> official NOAA opinion \n> > or endorsement.)\n> > \n> > -- \n> > Michael Prager, Ph.D.                <Mike.Prager at noaa.gov>\n> > NOAA Beaufort Laboratory\n> > Beaufort, North Carolina  28516\n> > http://shrimp.ccfhrb.noaa.gov/~mprager/\n> > ***\n> > \n> > \n> \n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n> \n\nLEGAL NOTICE\nUnless expressly stated otherwise, this message is confidential and may be \nprivileged. It is intended for the addressee(s) only. Access to this E-mail by \nanyone else is unauthorized. If you are not an addressee, any disclosure or \ncopying of the contents of this E-mail or any action taken (or not taken) in \nreliance on it is unauthorized and may be unlawful. If you are not an \naddressee, please inform the sender immediately.",
       "body_snippet": "The easiest way to get unix shells and utilities seems to be to install\ncygwin (http://www.cygwin.com/).\n\n-Greg\n\n> -----Original Message-----\n> From: Matt Calder [mailto:calder at phz.com]\n> Sent: Fri",
-      "thread_id": "thread-010b7431c954",
-      "thread_depth": 0,
+      "thread_id": "thread-3d52dd30fab9",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -3742,8 +3710,8 @@
       ],
       "body_plain": "Hello Willi ,\nI had the same problem .\nIt is easy to simulate if you know a little linear algebra & multivariate\nstatistics .\n\nthere is  a theorem in multivariate statistics which allow you to simulate :\n\nif X (k*1) vector which has multivariate normal distribution with parameters\n[MU(k*1), SIGMA(k*k)]\n\n[[Which MU is the mean vector and SIGMA is variance - covariance matrix ]]\n\nTheorem states that :\n\nif A*X has a multivariate normal distribution mentioned above and A(j*k) is\na constant matrix (collection of linear combinations of X vector) then A*X\nhas\nmultivariate normal distribution with parameters (A*MU , A*SIGMA*A')\nwhich A' is transpose matrix of A.\n\nYour problem is a special case of this theorem :\n\nSimulate X as normal distribution with parameters [0,I(k*k)] which I(k*k) is\nan Identity matrix ,\nmaybe you couldn't find a procedure in S+ which simulates Multivariate\nNormal .\n\nIt can be solved also by simulating k independent Normal(0.1) x's . [use\nrnorm(n,mu,sigma) in S+]\n\nthen you should find Rho^0.5 which Rho is your desired correlation matrix ,\nSquare root of matrix can be found by spectal decomposition of matrix (see a\nlinear algebra book) , (I think is in enough to write  in S+ \"rho^0.5\")\n\nNow using theorem above :\nA=Rho^0.5\nX multivariate normal distribution with parameters [0,I(k*k)]\nA*X has multivariate normal distribution with parameters (0 , Rho)\n\nAX is your desired vector of random normal variables\n\nThis theorem mentioned in below book , you can find it in most multivariate\nstatistics references .\nI used :\nApplied Multivariate Statistics - R.A.Johnson & D.W.Wichern -2nd edition\n:page127\n\n& just 1 question remains :\n\nIs there another method for assessing desired correlation matrix without\nmultivariate normal distribution (for example iid uniform distribution\nvector )?\n\nI tried to answer it , but I found that there is not such a direct and\nsimple method mentioned above.\n\nIf you change normal distribution to another , you should change your method\nfor simulation .\n\nand finally , If you had problem for this simulation in (theory or running\nin S+) , I will be happy to help you .\nmy address is below\n\nBest Wishes\n\nVahid.\n\n------------------------------------------------------\nVahid Partovi Nia\nB.Sc student of statistics ,\nFerdowsi University of Mashhad , Iran .\n\nwww.geocities.com/vahidpartovinia/\nvahidpartovinia at yahoo.com\n------------------------------------------------------\n\nAttention : if you chose your desired correlation (rho) matrix positive\ndefinit  _and_  symmetric , correlation matrix for x's is also positive\ndefinite  _and_  symmetric and you won't have previous problems .\n\n----- Original Message -----\nFrom: <Willi.Weber at aventis.com>\nTo: <vograno at arbitrade.com>; <ezivot at u.washington.edu>;\n<s-news at lists.biostat.wustl.edu>\nSent: Tuesday, February 26, 2002 11:24 AM\nSubject: Re: [S] simulate correlation matrices\n\n> I thought so far, that a covariance matrix is symmetric to the diagonal\n> axis?\n> I tried:\n> x <- matrix(rnorm(5*5), ncol=5)\n> > t(x)%%x\n>            [,1]        [,2]        [,3]        [,4]       [,5]\n> [1,]  0.0000000 -0.15417309  0.03567755  0.61815453  1.3748462\n> [2,] -0.0895276  0.00000000  0.20452335 -0.16291966 -0.6726954\n> [3,] -0.4599585  0.02824674  0.00000000 -0.05002809  0.2847527\n> [4,] -0.2125452 -0.73217427 -0.11275733  0.00000000  0.4920405\n> [5,]  0.3828471  0.10637537 -0.07138546  0.05963281  0.0000000\n>\n> I may add t(x)%%x + diag(nrow(x))*sd*sd to get a full covariance matrix,\nbut\n> would like to mirror the lower triangle matrix to the upper triangle\nmatrix\n> before calculating the correlation matrix.\n> Any help?\n>\n> Willi Weber, MD PhD\n> > ---------------------------------------------\n> > Specialist in Clinical Pharmacology\n> > Head of Population PK/PD\n> > Aventis Pharma Deutschland\n> > Drug Innovation & Approval\n> > Lead Optimization / DMPK\n> > Building H840, Room 451\n> > D-65926 Frankfurt am Main\n> > ---------------------------------------------\n> > Phone: ++49 69 305 / 15485\n> > ---------------------------------------------\n> >\n>\n>\n>\n> -----Original Message-----\n> From: Vadim Ogranovich [mailto:vograno at arbitrade.com]\n> Sent: Tuesday, February 26, 2002 3:56 AM\n> To: 'Eric Zivot'; S-News\n> Subject: Re: [S] simulate correlation matrices\n>\n>\n> Here is one possible way.\n>\n> You can first generate a positive semi-definite matrix of covariances,\ncov,\n> and then convert it to the correlation matrix: cor[i,j] =\n> cov[i,j]/sqrt(cov[i,i]*cov[j,j]). You can use ?outer function to do it\n> efficiently.\n>\n> In turn, the covariance matrix can, for example, be generated as\n> x <- matrix(rnorm(5*5), ncol=5)\n> cov <- t(x) %*% x\n>\n> P.S. Note that non-negative determinant is a necessary, but not\nsufficient,\n> condition for a matrix to be a covariance matrix. You need a stronger\n> property of being semi-definite\n>\n> -----Original Message-----\n> From: Eric Zivot [mailto:ezivot at u.washington.edu]\n> Sent: Monday, February 25, 2002 6:02 PM\n> To: S-News\n> Subject: [S] simulate correlation matrices\n>\n>\n> I am trying to simulate random 5 x 5 correlation matrices and I am getting\n> negative determinants for some of the correlation matrices. Apparently, my\n> method is not working. Does anyone have a reliable method for generating\n> valid arbitrary correlation matrices? thanks, ez\n>\n> Eric Zivot\n> Associate Professor\n> Department of Economics\n> Box 353330\n> University of Washington\n> (206) 543-6715\n> http://faculty.washington.edu/ezivot\n> http://myprofile.cos.com/zivote47\n>\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>\n> --------------------------------------------------\n> DISCLAIMER\n> This e-mail, and any attachments thereto, is intended only for use by the\n> addressee(s) named herein and may contain legally privileged and/or\n> confidential information.  If you are not the intended recipient of this\n> e-mail, you are hereby notified that any dissemination, distribution or\n> copying of this e-mail, and any attachments thereto, is strictly\nprohibited.\n> If you have received this e-mail in error, please immediately notify me\nand\n> permanently delete the original and any copy of any e-mail and any\nprintout\n> thereof.\n>\n> E-mail transmission cannot be guaranteed to be secure or error-free.  The\n> sender therefore does not accept liability for any errors or omissions in\n> the contents of this message which arise as a result of e-mail\ntransmission.\n>\n> NOTICE REGARDING PRIVACY AND CONFIDENTIALITY\n>\n> Knight Trading Group may, at its discretion, monitor and review the\ncontent\n> of all e-mail communications.\n>\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n\n_________________________________________________________\nDo You Yahoo!?\nGet your free @yahoo.com address at http://mail.yahoo.com",
       "body_snippet": "Hello Willi ,\nI had the same problem .\nIt is easy to simulate if you know a little linear algebra & multivariate\nstatistics .\n\nthere is  a theorem in multivariate statistics which allow you to simulat",
-      "thread_id": "thread-bde098ee777e",
-      "thread_depth": 1,
+      "thread_id": "thread-9689f5e1e949",
+      "thread_depth": 2,
       "month": "2002-02"
     },
     {
@@ -3770,12 +3738,12 @@
       "date": "2002-02-26T02:56:20Z",
       "subject": "Re: simulate correlation matrices",
       "subject_clean": "simulate correlation matrices",
-      "in_reply_to": null,
+      "in_reply_to": "<GPECKMJDPHIDALEELIMHKEPGCDAA.ezivot@u.washington.edu>",
       "references": [],
       "body_plain": "Here is one possible way.\n\nYou can first generate a positive semi-definite matrix of covariances, cov,\nand then convert it to the correlation matrix: cor[i,j] =\ncov[i,j]/sqrt(cov[i,i]*cov[j,j]). You can use ?outer function to do it\nefficiently.\n\nIn turn, the covariance matrix can, for example, be generated as\nx <- matrix(rnorm(5*5), ncol=5)\ncov <- t(x) %*% x\n\nP.S. Note that non-negative determinant is a necessary, but not sufficient,\ncondition for a matrix to be a covariance matrix. You need a stronger\nproperty of being semi-definite\n\n-----Original Message-----\nFrom: Eric Zivot [mailto:ezivot at u.washington.edu]\nSent: Monday, February 25, 2002 6:02 PM\nTo: S-News\nSubject: [S] simulate correlation matrices\n\nI am trying to simulate random 5 x 5 correlation matrices and I am getting\nnegative determinants for some of the correlation matrices. Apparently, my\nmethod is not working. Does anyone have a reliable method for generating\nvalid arbitrary correlation matrices? thanks, ez\n\nEric Zivot\nAssociate Professor\nDepartment of Economics\nBox 353330\nUniversity of Washington\n(206) 543-6715\nhttp://faculty.washington.edu/ezivot\nhttp://myprofile.cos.com/zivote47\n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news\n\n-------------------------------------------------- \nDISCLAIMER \nThis e-mail, and any attachments thereto, is intended only for use by the\naddressee(s) named herein and may contain legally privileged and/or\nconfidential information.  If you are not the intended recipient of this\ne-mail, you are hereby notified that any dissemination, distribution or\ncopying of this e-mail, and any attachments thereto, is strictly prohibited.\nIf you have received this e-mail in error, please immediately notify me and\npermanently delete the original and any copy of any e-mail and any printout\nthereof. \n\nE-mail transmission cannot be guaranteed to be secure or error-free.  The\nsender therefore does not accept liability for any errors or omissions in\nthe contents of this message which arise as a result of e-mail transmission.\n\nNOTICE REGARDING PRIVACY AND CONFIDENTIALITY \n\nKnight Trading Group may, at its discretion, monitor and review the content\nof all e-mail communications.",
       "body_snippet": "Here is one possible way.\n\nYou can first generate a positive semi-definite matrix of covariances, cov,\nand then convert it to the correlation matrix: cor[i,j] =\ncov[i,j]/sqrt(cov[i,i]*cov[j,j]). You c",
-      "thread_id": "thread-4d3f68efc5dc",
-      "thread_depth": 0,
+      "thread_id": "thread-9689f5e1e949",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -3786,12 +3754,12 @@
       "date": "2002-02-26T07:54:15Z",
       "subject": "Re: simulate correlation matrices",
       "subject_clean": "simulate correlation matrices",
-      "in_reply_to": null,
+      "in_reply_to": "<GPECKMJDPHIDALEELIMHKEPGCDAA.ezivot@u.washington.edu>",
       "references": [],
       "body_plain": "I thought so far, that a covariance matrix is symmetric to the diagonal\naxis?\nI tried:\nx <- matrix(rnorm(5*5), ncol=5)\n> t(x)%%x\n           [,1]        [,2]        [,3]        [,4]       [,5] \n[1,]  0.0000000 -0.15417309  0.03567755  0.61815453  1.3748462\n[2,] -0.0895276  0.00000000  0.20452335 -0.16291966 -0.6726954\n[3,] -0.4599585  0.02824674  0.00000000 -0.05002809  0.2847527\n[4,] -0.2125452 -0.73217427 -0.11275733  0.00000000  0.4920405\n[5,]  0.3828471  0.10637537 -0.07138546  0.05963281  0.0000000\n\nI may add t(x)%%x + diag(nrow(x))*sd*sd to get a full covariance matrix, but\nwould like to mirror the lower triangle matrix to the upper triangle matrix\nbefore calculating the correlation matrix.\nAny help?\n\nWilli Weber, MD PhD\n> ---------------------------------------------\n> Specialist in Clinical Pharmacology\n> Head of Population PK/PD\n> Aventis Pharma Deutschland\n> Drug Innovation & Approval\n> Lead Optimization / DMPK\n> Building H840, Room 451\n> D-65926 Frankfurt am Main\n> ---------------------------------------------\n> Phone: ++49 69 305 / 15485\n> ---------------------------------------------\n> \n\n-----Original Message-----\nFrom: Vadim Ogranovich [mailto:vograno at arbitrade.com]\nSent: Tuesday, February 26, 2002 3:56 AM\nTo: 'Eric Zivot'; S-News\nSubject: Re: [S] simulate correlation matrices\n\nHere is one possible way.\n\nYou can first generate a positive semi-definite matrix of covariances, cov,\nand then convert it to the correlation matrix: cor[i,j] =\ncov[i,j]/sqrt(cov[i,i]*cov[j,j]). You can use ?outer function to do it\nefficiently.\n\nIn turn, the covariance matrix can, for example, be generated as\nx <- matrix(rnorm(5*5), ncol=5)\ncov <- t(x) %*% x\n\nP.S. Note that non-negative determinant is a necessary, but not sufficient,\ncondition for a matrix to be a covariance matrix. You need a stronger\nproperty of being semi-definite\n\n-----Original Message-----\nFrom: Eric Zivot [mailto:ezivot at u.washington.edu]\nSent: Monday, February 25, 2002 6:02 PM\nTo: S-News\nSubject: [S] simulate correlation matrices\n\nI am trying to simulate random 5 x 5 correlation matrices and I am getting\nnegative determinants for some of the correlation matrices. Apparently, my\nmethod is not working. Does anyone have a reliable method for generating\nvalid arbitrary correlation matrices? thanks, ez\n\nEric Zivot\nAssociate Professor\nDepartment of Economics\nBox 353330\nUniversity of Washington\n(206) 543-6715\nhttp://faculty.washington.edu/ezivot\nhttp://myprofile.cos.com/zivote47\n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news\n\n-------------------------------------------------- \nDISCLAIMER \nThis e-mail, and any attachments thereto, is intended only for use by the\naddressee(s) named herein and may contain legally privileged and/or\nconfidential information.  If you are not the intended recipient of this\ne-mail, you are hereby notified that any dissemination, distribution or\ncopying of this e-mail, and any attachments thereto, is strictly prohibited.\nIf you have received this e-mail in error, please immediately notify me and\npermanently delete the original and any copy of any e-mail and any printout\nthereof. \n\nE-mail transmission cannot be guaranteed to be secure or error-free.  The\nsender therefore does not accept liability for any errors or omissions in\nthe contents of this message which arise as a result of e-mail transmission.\n\nNOTICE REGARDING PRIVACY AND CONFIDENTIALITY \n\nKnight Trading Group may, at its discretion, monitor and review the content\nof all e-mail communications. \n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "I thought so far, that a covariance matrix is symmetric to the diagonal\naxis?\nI tried:\nx <- matrix(rnorm(5*5), ncol=5)\n> t(x)%%x\n           [,1]        [,2]        [,3]        [,4]       [,5] \n[1,]  0",
-      "thread_id": "thread-bde098ee777e",
-      "thread_depth": 0,
+      "thread_id": "thread-9689f5e1e949",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -3824,8 +3792,8 @@
       ],
       "body_plain": "You want t(x)%*%x, not t(x)%%x.\n\nGiovanni\n\n> I thought so far, that a covariance matrix is symmetric to the diagonal\n> axis?\n> I tried:\n> x <- matrix(rnorm(5*5), ncol=5)\n> > t(x)%%x\n>            [,1]        [,2]        [,3]        [,4]       [,5] \n> [1,]  0.0000000 -0.15417309  0.03567755  0.61815453  1.3748462\n> [2,] -0.0895276  0.00000000  0.20452335 -0.16291966 -0.6726954\n> [3,] -0.4599585  0.02824674  0.00000000 -0.05002809  0.2847527\n> [4,] -0.2125452 -0.73217427 -0.11275733  0.00000000  0.4920405\n> [5,]  0.3828471  0.10637537 -0.07138546  0.05963281  0.0000000\n> \n> I may add t(x)%%x + diag(nrow(x))*sd*sd to get a full covariance matrix, but\n> would like to mirror the lower triangle matrix to the upper triangle matrix\n> before calculating the correlation matrix.\n> Any help?\n> \n> Willi Weber, MD PhD\n\n-- \n\n __________________________________________________\n[                                                  ]\n[ Giovanni Petris                 GPetris at uark.edu ]\n[ Department of Mathematical Sciences              ]\n[ University of Arkansas - Fayetteville, AR 72701  ]\n[ Ph: (501) 575-6324, 575-8630 (fax)               ]\n[ http://definetti.uark.edu/~gpetris/              ]\n[__________________________________________________]",
       "body_snippet": "You want t(x)%*%x, not t(x)%%x.\n\nGiovanni\n\n> I thought so far, that a covariance matrix is symmetric to the diagonal\n> axis?\n> I tried:\n> x <- matrix(rnorm(5*5), ncol=5)\n> > t(x)%%x\n>            [,1] ",
-      "thread_id": "thread-bde098ee777e",
-      "thread_depth": 1,
+      "thread_id": "thread-9689f5e1e949",
+      "thread_depth": 2,
       "month": "2002-02"
     },
     {
@@ -4086,12 +4054,12 @@
       "date": "2002-02-28T09:52:16Z",
       "subject": "Fw: Wilcoxon Two-Sample Test statistic",
       "subject_clean": "Wilcoxon Two-Sample Test statistic",
-      "in_reply_to": null,
+      "in_reply_to": "<20020228093705.30411.qmail@web11606.mail.yahoo.com>",
       "references": [],
       "body_plain": "FYI:\n\nThe Biostatistics Group at the Mayo Clinic (Rochester, MN) has S-Plus\nfunctions for calculating the area under an ROC curve and making ROC plots.\n\nCiao,\n\nMichael\n\n************************************\nMichael Ian Westphal, PhD Candidate\nDepartment of Environmental Science, Policy, & Mgt\nUniversity of California at Berkeley\n\nThe Ecology Centre\nDepartment of Zoology and Entomology\nUniversity of Queensland\nSt. Lucia, QLD 4072\nhttp://www.ecology.uq.edu.au\nTel:   61 7 3365 1671\nFax:   61 7 3365 1655\nHome Tel:  61 7 3719 5638\n\n----- Original Message -----\nFrom: \"james mugodo\" <jmugodo at yahoo.com>\nTo: <s-news at lists.biostat.wustl.edu>\nSent: Thursday, February 28, 2002 7:37 PM\nSubject: [S] Wilcoxon Two-Sample Test statistic\n\n> Hi all\n>\n> I have generated logistic regression models, GAMs and\n> classification tree models for presence absence data.\n> I want to compare their predictive performance using\n> the statistic of the area under the curve of a ROC\n> plot. I want to estimate the Area under the curve of a\n> ROC plot by dividing the Wilcoxon two-sample test\n> statistic by the product of the absence and presence\n> data (Hanley and McNeil, 1982).\n>\n> The problem is that S-Plus gives the normal Z\n> statistic without specifying the Wilcoxon two-sample\n> test statistic. How can I tell S-Plus to give me the\n> Wilcoxon two-sample test statistic?\n>\n> Any other ways of estimating the area under the curve\n> of a ROC plot using S-Plus would be most appreciated.\n>\n> Hanley, J.A. and McNeil, B.J. (1982), \"The Meaning and\n> Use of the Area under a Receiver Operating\n> Characteristic (ROC) Curve,\" Radiology, 143 29 -36.\n>\n> thanks and cheers\n>\n> James\n>\n>\n> __________________________________________________\n> Do You Yahoo!?\n> Yahoo! Greetings - Send FREE e-cards for every occasion!\n> http://greetings.yahoo.com\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>",
       "body_snippet": "FYI:\n\nThe Biostatistics Group at the Mayo Clinic (Rochester, MN) has S-Plus\nfunctions for calculating the area under an ROC curve and making ROC plots.\n\nCiao,\n\nMichael\n\n*******************************",
-      "thread_id": "thread-70b43dfd62a2",
-      "thread_depth": 0,
+      "thread_id": "thread-35cebff8188b",
+      "thread_depth": 1,
       "month": "2002-02"
     },
     {
@@ -4365,12 +4333,12 @@
     {
       "id": "thread-9d560c0b2818",
       "subject": "Question in lme",
-      "message_count": 1,
+      "message_count": 4,
       "participants": [
         "Dimitris Rizopoulos"
       ],
       "started": "2002-02-04T14:29:18Z",
-      "last_reply": "2002-02-04T14:29:18Z",
+      "last_reply": "2002-02-13T17:03:15Z",
       "root_message_id": "msg-9d560c0b2818"
     },
     {
@@ -4476,12 +4444,14 @@
     {
       "id": "thread-af7ff63eb7e1",
       "subject": "memory and randomization",
-      "message_count": 1,
+      "message_count": 4,
       "participants": [
+        "Bob Baskin",
+        "Erin Kammann",
         "haud8928"
       ],
       "started": "2002-02-05T01:31:03Z",
-      "last_reply": "2002-02-05T01:31:03Z",
+      "last_reply": "2002-02-11T19:12:58Z",
       "root_message_id": "msg-af7ff63eb7e1"
     },
     {
@@ -4496,17 +4466,6 @@
       "root_message_id": "msg-1d639becec65"
     },
     {
-      "id": "thread-f24cb6faf300",
-      "subject": "memory and randomization",
-      "message_count": 1,
-      "participants": [
-        "Erin Kammann"
-      ],
-      "started": "2002-02-05T13:38:19Z",
-      "last_reply": "2002-02-05T13:38:19Z",
-      "root_message_id": "msg-f24cb6faf300"
-    },
-    {
       "id": "thread-3da670d3ced2",
       "subject": "Bootstrapping factor analysis loadings",
       "message_count": 1,
@@ -4516,17 +4475,6 @@
       "started": "2002-02-05T14:44:52Z",
       "last_reply": "2002-02-05T14:44:52Z",
       "root_message_id": "msg-3da670d3ced2"
-    },
-    {
-      "id": "thread-918dff23dbd4",
-      "subject": "memory and randomization",
-      "message_count": 1,
-      "participants": [
-        "Bob Baskin"
-      ],
-      "started": "2002-02-05T19:02:16Z",
-      "last_reply": "2002-02-05T19:02:16Z",
-      "root_message_id": "msg-918dff23dbd4"
     },
     {
       "id": "thread-d223a938d937",
@@ -4543,23 +4491,25 @@
     {
       "id": "thread-5d4b0a510d06",
       "subject": "difference equations",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "David Cairns"
+        "David Cairns",
+        "Erin Kammann"
       ],
       "started": "2002-02-05T22:36:19Z",
-      "last_reply": "2002-02-05T22:36:19Z",
+      "last_reply": "2002-02-06T15:52:38Z",
       "root_message_id": "msg-5d4b0a510d06"
     },
     {
       "id": "thread-7293b389d134",
       "subject": "Drawing abline on trellis plot",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Gunter, Bert",
         "Padma Illindra"
       ],
       "started": "2002-02-06T00:48:23Z",
-      "last_reply": "2002-02-06T00:48:23Z",
+      "last_reply": "2002-02-06T13:22:29Z",
       "root_message_id": "msg-7293b389d134"
     },
     {
@@ -4609,26 +4559,15 @@
       "root_message_id": "msg-ad4a473e0a4c"
     },
     {
-      "id": "thread-7fd472f9d2f1",
-      "subject": "Drawing abline on trellis plot",
-      "message_count": 1,
-      "participants": [
-        "Gunter, Bert"
-      ],
-      "started": "2002-02-06T13:22:29Z",
-      "last_reply": "2002-02-06T13:22:29Z",
-      "root_message_id": "msg-7fd472f9d2f1"
-    },
-    {
       "id": "thread-88616b208746",
       "subject": "Another newbie question about computation time",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "P.J.Wells at open.ac.uk",
         "Prof Brian D Ripley"
       ],
       "started": "2002-02-06T13:31:27Z",
-      "last_reply": "2002-02-06T14:40:27Z",
+      "last_reply": "2002-02-06T16:36:24Z",
       "root_message_id": "msg-88616b208746"
     },
     {
@@ -4652,39 +4591,6 @@
       "started": "2002-02-06T15:11:39Z",
       "last_reply": "2002-02-06T15:11:39Z",
       "root_message_id": "msg-da17114cac24"
-    },
-    {
-      "id": "thread-cc678ca4e4d5",
-      "subject": "difference equations",
-      "message_count": 1,
-      "participants": [
-        "Erin Kammann"
-      ],
-      "started": "2002-02-06T15:52:38Z",
-      "last_reply": "2002-02-06T15:52:38Z",
-      "root_message_id": "msg-cc678ca4e4d5"
-    },
-    {
-      "id": "thread-5c4babbb31a2",
-      "subject": "Another newbie question about computation time",
-      "message_count": 1,
-      "participants": [
-        "P.J.Wells at open.ac.uk"
-      ],
-      "started": "2002-02-06T16:36:24Z",
-      "last_reply": "2002-02-06T16:36:24Z",
-      "root_message_id": "msg-5c4babbb31a2"
-    },
-    {
-      "id": "thread-e0ba538c6507",
-      "subject": "Question in lme",
-      "message_count": 1,
-      "participants": [
-        "Dimitris Rizopoulos"
-      ],
-      "started": "2002-02-06T17:56:26Z",
-      "last_reply": "2002-02-06T17:56:26Z",
-      "root_message_id": "msg-e0ba538c6507"
     },
     {
       "id": "thread-3178b84546fb",
@@ -4732,20 +4638,9 @@
       "root_message_id": "msg-2f7dae6049dc"
     },
     {
-      "id": "thread-24c93892c67d",
-      "subject": "SIGKDD 2002 - Call for Workshop/Tutorial/Panel Proposals",
-      "message_count": 1,
-      "participants": [
-        "Osmar Zaiane"
-      ],
-      "started": "2002-02-07T01:09:02Z",
-      "last_reply": "2002-02-07T01:09:02Z",
-      "root_message_id": "msg-24c93892c67d"
-    },
-    {
       "id": "thread-db1842fc98cd",
       "subject": "SIGKDD 2002 - Call for Workshop/Tutorial/Panel Proposals",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Osmar Zaiane"
       ],
@@ -4767,24 +4662,20 @@
     {
       "id": "thread-a3d7e4749273",
       "subject": "apply function to mutliple columns",
-      "message_count": 1,
+      "message_count": 9,
       "participants": [
-        "Bliese, Paul D MAJ WRAIR-Wash DC"
+        "Austin, Matt",
+        "Bliese, Paul D MAJ WRAIR-Wash DC",
+        "David Smith",
+        "Gunter, Bert",
+        "Liaw, Andy",
+        "Tony Plate",
+        "Warnes, Gregory R",
+        "james.holtman at convergys.com"
       ],
       "started": "2002-02-07T02:40:08Z",
-      "last_reply": "2002-02-07T02:40:08Z",
+      "last_reply": "2002-02-11T18:26:47Z",
       "root_message_id": "msg-a3d7e4749273"
-    },
-    {
-      "id": "thread-a0ab7562b0c0",
-      "subject": "Question in lme",
-      "message_count": 1,
-      "participants": [
-        "Dimitris Rizopoulos"
-      ],
-      "started": "2002-02-07T06:28:59Z",
-      "last_reply": "2002-02-07T06:28:59Z",
-      "root_message_id": "msg-a0ab7562b0c0"
     },
     {
       "id": "thread-7e1db58207fe",
@@ -4812,26 +4703,19 @@
     {
       "id": "thread-10c3aa4d016c",
       "subject": "X*log(X)",
-      "message_count": 3,
+      "message_count": 8,
       "participants": [
         "Bob Porter",
+        "JRoyRobertson at rohmhaas.com",
+        "Jakub Stokwiszewski",
         "Marc Schwartz",
-        "Ray Haraf"
+        "Mark E. Irwin",
+        "Ray Haraf",
+        "sjganocy at goodyear.com"
       ],
       "started": "2002-02-07T14:14:48Z",
-      "last_reply": "2002-02-07T15:46:47Z",
+      "last_reply": "2002-02-07T16:42:43Z",
       "root_message_id": "msg-10c3aa4d016c"
-    },
-    {
-      "id": "thread-4f8cc12ca0a0",
-      "subject": "X*log(X)",
-      "message_count": 1,
-      "participants": [
-        "Jakub Stokwiszewski"
-      ],
-      "started": "2002-02-07T15:21:00Z",
-      "last_reply": "2002-02-07T15:21:00Z",
-      "root_message_id": "msg-4f8cc12ca0a0"
     },
     {
       "id": "thread-213e5412a0ea",
@@ -4845,17 +4729,6 @@
       "root_message_id": "msg-213e5412a0ea"
     },
     {
-      "id": "thread-c6662341dc51",
-      "subject": "apply function to mutliple columns",
-      "message_count": 1,
-      "participants": [
-        "Warnes, Gregory R"
-      ],
-      "started": "2002-02-07T15:24:20Z",
-      "last_reply": "2002-02-07T15:24:20Z",
-      "root_message_id": "msg-c6662341dc51"
-    },
-    {
       "id": "thread-977e448d4e77",
       "subject": "Huge matrix output makes Splus freeze for hours",
       "message_count": 1,
@@ -4867,70 +4740,14 @@
       "root_message_id": "msg-977e448d4e77"
     },
     {
-      "id": "thread-fbfdaf22292c",
-      "subject": "apply function to mutliple columns",
-      "message_count": 2,
-      "participants": [
-        "Gunter, Bert",
-        "Tony Plate"
-      ],
-      "started": "2002-02-07T15:52:06Z",
-      "last_reply": "2002-02-07T21:03:59Z",
-      "root_message_id": "msg-fbfdaf22292c"
-    },
-    {
-      "id": "thread-e8fe53349a7e",
-      "subject": "apply function to mutliple columns",
-      "message_count": 1,
-      "participants": [
-        "james.holtman at convergys.com"
-      ],
-      "started": "2002-02-07T15:54:40Z",
-      "last_reply": "2002-02-07T15:54:40Z",
-      "root_message_id": "msg-e8fe53349a7e"
-    },
-    {
-      "id": "thread-0cb2f63a45b8",
-      "subject": "X*log(X)",
-      "message_count": 1,
-      "participants": [
-        "JRoyRobertson at rohmhaas.com"
-      ],
-      "started": "2002-02-07T16:07:28Z",
-      "last_reply": "2002-02-07T16:07:28Z",
-      "root_message_id": "msg-0cb2f63a45b8"
-    },
-    {
-      "id": "thread-d62b9acb100e",
-      "subject": "X*log(X)",
-      "message_count": 1,
-      "participants": [
-        "Marc Schwartz"
-      ],
-      "started": "2002-02-07T16:23:49Z",
-      "last_reply": "2002-02-07T16:23:49Z",
-      "root_message_id": "msg-d62b9acb100e"
-    },
-    {
-      "id": "thread-2690863b6f48",
-      "subject": "X*log(X)",
-      "message_count": 1,
-      "participants": [
-        "sjganocy at goodyear.com"
-      ],
-      "started": "2002-02-07T16:32:35Z",
-      "last_reply": "2002-02-07T16:32:35Z",
-      "root_message_id": "msg-2690863b6f48"
-    },
-    {
       "id": "thread-439abde9b585",
       "subject": "AR(1) in gnls",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Lucke, Joseph F"
       ],
       "started": "2002-02-07T16:33:25Z",
-      "last_reply": "2002-02-07T16:33:25Z",
+      "last_reply": "2002-02-07T20:09:31Z",
       "root_message_id": "msg-439abde9b585"
     },
     {
@@ -4943,17 +4760,6 @@
       "started": "2002-02-07T16:40:27Z",
       "last_reply": "2002-02-07T16:40:27Z",
       "root_message_id": "msg-fa2fb313650f"
-    },
-    {
-      "id": "thread-e8462714f33a",
-      "subject": "X*log(X)",
-      "message_count": 1,
-      "participants": [
-        "Mark E. Irwin"
-      ],
-      "started": "2002-02-07T16:42:43Z",
-      "last_reply": "2002-02-07T16:42:43Z",
-      "root_message_id": "msg-e8462714f33a"
     },
     {
       "id": "thread-29803d40dbe3",
@@ -4978,50 +4784,6 @@
       "root_message_id": "msg-9b90eefaff52"
     },
     {
-      "id": "thread-e46d5fae7e66",
-      "subject": "apply function to mutliple columns",
-      "message_count": 1,
-      "participants": [
-        "Warnes, Gregory R"
-      ],
-      "started": "2002-02-07T19:10:50Z",
-      "last_reply": "2002-02-07T19:10:50Z",
-      "root_message_id": "msg-e46d5fae7e66"
-    },
-    {
-      "id": "thread-b068b5c815bc",
-      "subject": "AR(1) in gnls",
-      "message_count": 1,
-      "participants": [
-        "Lucke, Joseph F"
-      ],
-      "started": "2002-02-07T20:09:31Z",
-      "last_reply": "2002-02-07T20:09:31Z",
-      "root_message_id": "msg-b068b5c815bc"
-    },
-    {
-      "id": "thread-28e288674364",
-      "subject": "efficiency of apply() vs for(){}",
-      "message_count": 1,
-      "participants": [
-        "Liaw, Andy"
-      ],
-      "started": "2002-02-07T21:20:53Z",
-      "last_reply": "2002-02-07T21:20:53Z",
-      "root_message_id": "msg-28e288674364"
-    },
-    {
-      "id": "thread-acca0c6d269a",
-      "subject": "efficiency of apply() vs for(){}",
-      "message_count": 1,
-      "participants": [
-        "Austin, Matt"
-      ],
-      "started": "2002-02-07T21:25:02Z",
-      "last_reply": "2002-02-07T21:25:02Z",
-      "root_message_id": "msg-acca0c6d269a"
-    },
-    {
       "id": "thread-da7a2a0a93d3",
       "subject": "Theil's U",
       "message_count": 3,
@@ -5032,17 +4794,6 @@
       "started": "2002-02-07T23:09:28Z",
       "last_reply": "2002-02-10T16:12:19Z",
       "root_message_id": "msg-da7a2a0a93d3"
-    },
-    {
-      "id": "thread-7fad776b0e20",
-      "subject": "Changing Type of box in a graph to Trellis xyplot",
-      "message_count": 1,
-      "participants": [
-        "Padma Illindra"
-      ],
-      "started": "2002-02-08T04:40:03Z",
-      "last_reply": "2002-02-08T04:40:03Z",
-      "root_message_id": "msg-7fad776b0e20"
     },
     {
       "id": "thread-c6259f97d32d",
@@ -5081,12 +4832,13 @@
     {
       "id": "thread-6725a887ef01",
       "subject": "modelling an exponential asymptotic relationship",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
+        "Eric Elguero",
         "Thomas Day"
       ],
       "started": "2002-02-08T16:53:31Z",
-      "last_reply": "2002-02-08T16:53:31Z",
+      "last_reply": "2002-02-11T13:43:56Z",
       "root_message_id": "msg-6725a887ef01"
     },
     {
@@ -5149,12 +4901,13 @@
     {
       "id": "thread-f723a48cf3a0",
       "subject": "Modify incrementation in a for loop - summary",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Warnes, Gregory R",
         "yves.claveau at mnr.gov.on.ca"
       ],
       "started": "2002-02-08T22:59:12Z",
-      "last_reply": "2002-02-08T22:59:12Z",
+      "last_reply": "2002-02-09T01:28:51Z",
       "root_message_id": "msg-f723a48cf3a0"
     },
     {
@@ -5167,28 +4920,6 @@
       "started": "2002-02-09T00:14:16Z",
       "last_reply": "2002-02-09T00:14:16Z",
       "root_message_id": "msg-a30d8c613cdd"
-    },
-    {
-      "id": "thread-24b9db728fa2",
-      "subject": "Modify incrementation in a for loop - summary",
-      "message_count": 1,
-      "participants": [
-        "Warnes, Gregory R"
-      ],
-      "started": "2002-02-09T01:28:51Z",
-      "last_reply": "2002-02-09T01:28:51Z",
-      "root_message_id": "msg-24b9db728fa2"
-    },
-    {
-      "id": "thread-4873f4117eaf",
-      "subject": "Importing data using StatServer 2000",
-      "message_count": 1,
-      "participants": [
-        "Padma Illindra"
-      ],
-      "started": "2002-02-09T02:31:32Z",
-      "last_reply": "2002-02-09T02:31:32Z",
-      "root_message_id": "msg-4873f4117eaf"
     },
     {
       "id": "thread-b25aae1964ba",
@@ -5227,36 +4958,14 @@
     {
       "id": "thread-066b3a674a49",
       "subject": "string operators",
-      "message_count": 1,
-      "participants": [
-        "Hunsicker, Lawrence"
-      ],
-      "started": "2002-02-10T15:14:03Z",
-      "last_reply": "2002-02-10T15:14:03Z",
-      "root_message_id": "msg-066b3a674a49"
-    },
-    {
-      "id": "thread-1480e989ccf9",
-      "subject": "string operators",
-      "message_count": 1,
-      "participants": [
-        "Nick.Ellis at csiro.au"
-      ],
-      "started": "2002-02-11T00:01:33Z",
-      "last_reply": "2002-02-11T00:01:33Z",
-      "root_message_id": "msg-1480e989ccf9"
-    },
-    {
-      "id": "thread-6bc0e364512b",
-      "subject": "modelling an exponential asymptotic relationship",
       "message_count": 2,
       "participants": [
-        "Eric Elguero",
-        "Thomas Day"
+        "Hunsicker, Lawrence",
+        "Nick.Ellis at csiro.au"
       ],
-      "started": "2002-02-11T09:50:37Z",
-      "last_reply": "2002-02-11T13:43:56Z",
-      "root_message_id": "msg-6bc0e364512b"
+      "started": "2002-02-10T15:14:03Z",
+      "last_reply": "2002-02-11T00:01:33Z",
+      "root_message_id": "msg-066b3a674a49"
     },
     {
       "id": "thread-8628765d4f72",
@@ -5317,28 +5026,6 @@
       "root_message_id": "msg-f53e797d10e5"
     },
     {
-      "id": "thread-a6d6ded740ac",
-      "subject": "apply function to mutliple columns",
-      "message_count": 1,
-      "participants": [
-        "David Smith"
-      ],
-      "started": "2002-02-11T18:26:47Z",
-      "last_reply": "2002-02-11T18:26:47Z",
-      "root_message_id": "msg-a6d6ded740ac"
-    },
-    {
-      "id": "thread-8b1d7d446fe7",
-      "subject": "memory and randomization",
-      "message_count": 1,
-      "participants": [
-        "haud8928"
-      ],
-      "started": "2002-02-11T19:12:58Z",
-      "last_reply": "2002-02-11T19:12:58Z",
-      "root_message_id": "msg-8b1d7d446fe7"
-    },
-    {
       "id": "thread-f05b769c51f4",
       "subject": "Subsetting matrices",
       "message_count": 2,
@@ -5353,12 +5040,13 @@
     {
       "id": "thread-2d0897b05f4b",
       "subject": "Calculus in Splus",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Lucke, Joseph F",
         "Paul, David A"
       ],
       "started": "2002-02-12T12:09:59Z",
-      "last_reply": "2002-02-12T12:09:59Z",
+      "last_reply": "2002-02-12T14:24:43Z",
       "root_message_id": "msg-2d0897b05f4b"
     },
     {
@@ -5371,17 +5059,6 @@
       "started": "2002-02-12T14:03:35Z",
       "last_reply": "2002-02-12T14:03:35Z",
       "root_message_id": "msg-4a626f830b67"
-    },
-    {
-      "id": "thread-7f018376eb2d",
-      "subject": "Calculus in Splus",
-      "message_count": 1,
-      "participants": [
-        "Lucke, Joseph F"
-      ],
-      "started": "2002-02-12T14:24:43Z",
-      "last_reply": "2002-02-12T14:24:43Z",
-      "root_message_id": "msg-7f018376eb2d"
     },
     {
       "id": "thread-4d45c3ac38db",
@@ -5484,17 +5161,6 @@
       "root_message_id": "msg-e6299e4e4c1a"
     },
     {
-      "id": "thread-d1f29448c5d9",
-      "subject": "Question in lme",
-      "message_count": 1,
-      "participants": [
-        "Dimitris Rizopoulos"
-      ],
-      "started": "2002-02-13T17:03:15Z",
-      "last_reply": "2002-02-13T17:03:15Z",
-      "root_message_id": "msg-d1f29448c5d9"
-    },
-    {
       "id": "thread-aaf4afe42303",
       "subject": "Summary: Rotating labels using postscript device",
       "message_count": 1,
@@ -5587,34 +5253,23 @@
     {
       "id": "thread-8b9c366c9305",
       "subject": "Summary: Names(), and ANOTHER QUESTION!",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Lambert.Winnie"
       ],
       "started": "2002-02-14T21:48:30Z",
-      "last_reply": "2002-02-14T21:48:30Z",
-      "root_message_id": "msg-8b9c366c9305"
-    },
-    {
-      "id": "thread-70bd7c482967",
-      "subject": "Summary: Names(), and ANOTHER QUESTION!",
-      "message_count": 1,
-      "participants": [
-        "Lambert.Winnie"
-      ],
-      "started": "2002-02-14T22:29:29Z",
       "last_reply": "2002-02-14T22:29:29Z",
-      "root_message_id": "msg-70bd7c482967"
+      "root_message_id": "msg-8b9c366c9305"
     },
     {
       "id": "thread-636950db8605",
       "subject": "Strange behaviour of function groupedData",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Nanxiang.Ge at aventis.com"
       ],
       "started": "2002-02-14T22:32:12Z",
-      "last_reply": "2002-02-14T22:32:12Z",
+      "last_reply": "2002-02-15T14:52:49Z",
       "root_message_id": "msg-636950db8605"
     },
     {
@@ -5631,12 +5286,14 @@
     {
       "id": "thread-4fcd0a3d60a7",
       "subject": "getting day/month/year from a timeDate object",
-      "message_count": 1,
+      "message_count": 5,
       "participants": [
+        "Frank E Harrell Jr",
+        "Kai Yu",
         "Kurbat, Matt"
       ],
       "started": "2002-02-15T02:49:18Z",
-      "last_reply": "2002-02-15T02:49:18Z",
+      "last_reply": "2002-02-18T01:03:36Z",
       "root_message_id": "msg-4fcd0a3d60a7"
     },
     {
@@ -5676,17 +5333,6 @@
       "root_message_id": "msg-192289403ac9"
     },
     {
-      "id": "thread-5853038c1daf",
-      "subject": "Strange behaviour of function groupedData",
-      "message_count": 1,
-      "participants": [
-        "Nanxiang.Ge at aventis.com"
-      ],
-      "started": "2002-02-15T14:52:49Z",
-      "last_reply": "2002-02-15T14:52:49Z",
-      "root_message_id": "msg-5853038c1daf"
-    },
-    {
       "id": "thread-31414e7b1cb5",
       "subject": "... ANOTHER QUESTION! Answer Found...",
       "message_count": 1,
@@ -5718,19 +5364,6 @@
       "started": "2002-02-15T16:57:42Z",
       "last_reply": "2002-02-15T16:57:42Z",
       "root_message_id": "msg-77420dc7a55d"
-    },
-    {
-      "id": "thread-fcc5d568d395",
-      "subject": "getting day/month/year from a timeDate object",
-      "message_count": 4,
-      "participants": [
-        "Frank E Harrell Jr",
-        "Kai Yu",
-        "Kurbat, Matt"
-      ],
-      "started": "2002-02-15T19:18:31Z",
-      "last_reply": "2002-02-18T01:03:36Z",
-      "root_message_id": "msg-fcc5d568d395"
     },
     {
       "id": "thread-10dbdd189731",
@@ -5803,12 +5436,12 @@
     {
       "id": "thread-211df0956266",
       "subject": "Logic problem",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Lambert.Winnie"
       ],
       "started": "2002-02-18T16:20:47Z",
-      "last_reply": "2002-02-18T16:20:47Z",
+      "last_reply": "2002-02-18T17:04:36Z",
       "root_message_id": "msg-211df0956266"
     },
     {
@@ -5821,17 +5454,6 @@
       "started": "2002-02-18T16:29:31Z",
       "last_reply": "2002-02-18T16:29:31Z",
       "root_message_id": "msg-8d352029334d"
-    },
-    {
-      "id": "thread-4138bbe95638",
-      "subject": "Logic problem",
-      "message_count": 1,
-      "participants": [
-        "Lambert.Winnie"
-      ],
-      "started": "2002-02-18T17:04:36Z",
-      "last_reply": "2002-02-18T17:04:36Z",
-      "root_message_id": "msg-4138bbe95638"
     },
     {
       "id": "thread-e6e8a3d0457f",
@@ -5925,12 +5547,13 @@
     {
       "id": "thread-ca744ffecf35",
       "subject": "using Rpart to obtain trees with given size",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Kai Yu"
+        "Kai Yu",
+        "Terry Therneau"
       ],
       "started": "2002-02-19T19:29:14Z",
-      "last_reply": "2002-02-19T19:29:14Z",
+      "last_reply": "2002-02-20T22:04:10Z",
       "root_message_id": "msg-ca744ffecf35"
     },
     {
@@ -5987,17 +5610,6 @@
       "started": "2002-02-20T15:59:48Z",
       "last_reply": "2002-02-20T15:59:48Z",
       "root_message_id": "msg-9f2bd7eee138"
-    },
-    {
-      "id": "thread-9d8bf5a3f5d9",
-      "subject": "using Rpart to obtain trees with given size",
-      "message_count": 1,
-      "participants": [
-        "Terry Therneau"
-      ],
-      "started": "2002-02-20T22:04:10Z",
-      "last_reply": "2002-02-20T22:04:10Z",
-      "root_message_id": "msg-9d8bf5a3f5d9"
     },
     {
       "id": "thread-8e52a6d724d7",
@@ -6080,14 +5692,15 @@
     {
       "id": "thread-3d52dd30fab9",
       "subject": "Summary: Splus vs. R & Linux vs. Windows",
-      "message_count": 10,
+      "message_count": 11,
       "participants": [
         "Frank E Harrell Jr",
         "Matt Calder",
         "Michael Prager",
         "Paul, David A",
         "Prof Brian Ripley",
-        "S.D.Byers"
+        "S.D.Byers",
+        "Warnes, Gregory R"
       ],
       "started": "2002-02-22T19:40:25Z",
       "last_reply": "2002-02-23T19:14:44Z",
@@ -6114,17 +5727,6 @@
       "started": "2002-02-22T21:27:55Z",
       "last_reply": "2002-02-22T21:27:55Z",
       "root_message_id": "msg-19d0521b518e"
-    },
-    {
-      "id": "thread-010b7431c954",
-      "subject": "Summary: Splus vs. R & Linux vs. Windows",
-      "message_count": 1,
-      "participants": [
-        "Warnes, Gregory R"
-      ],
-      "started": "2002-02-22T22:43:48Z",
-      "last_reply": "2002-02-22T22:43:48Z",
-      "root_message_id": "msg-010b7431c954"
     },
     {
       "id": "thread-6ced144a4101",
@@ -6220,37 +5822,17 @@
     {
       "id": "thread-9689f5e1e949",
       "subject": "simulate correlation matrices",
-      "message_count": 1,
+      "message_count": 5,
       "participants": [
-        "Eric Zivot"
-      ],
-      "started": "2002-02-26T02:02:28Z",
-      "last_reply": "2002-02-26T02:02:28Z",
-      "root_message_id": "msg-9689f5e1e949"
-    },
-    {
-      "id": "thread-4d3f68efc5dc",
-      "subject": "simulate correlation matrices",
-      "message_count": 1,
-      "participants": [
-        "Vadim Ogranovich"
-      ],
-      "started": "2002-02-26T02:56:20Z",
-      "last_reply": "2002-02-26T02:56:20Z",
-      "root_message_id": "msg-4d3f68efc5dc"
-    },
-    {
-      "id": "thread-bde098ee777e",
-      "subject": "simulate correlation matrices",
-      "message_count": 3,
-      "participants": [
+        "Eric Zivot",
         "Giovanni Petris",
+        "Vadim Ogranovich",
         "Vahid Partovi Nia",
         "Willi.Weber at aventis.com"
       ],
-      "started": "2002-02-26T07:54:15Z",
+      "started": "2002-02-26T02:02:28Z",
       "last_reply": "2002-02-26T14:15:02Z",
-      "root_message_id": "msg-bde098ee777e"
+      "root_message_id": "msg-9689f5e1e949"
     },
     {
       "id": "thread-2a9ad7f2a177",
@@ -6382,25 +5964,15 @@
     {
       "id": "thread-35cebff8188b",
       "subject": "Wilcoxon Two-Sample Test statistic",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Frank E Harrell Jr",
+        "Michael Ian Westphal",
         "james mugodo"
       ],
       "started": "2002-02-28T09:37:05Z",
       "last_reply": "2002-02-28T14:05:28Z",
       "root_message_id": "msg-35cebff8188b"
-    },
-    {
-      "id": "thread-70b43dfd62a2",
-      "subject": "Wilcoxon Two-Sample Test statistic",
-      "message_count": 1,
-      "participants": [
-        "Michael Ian Westphal"
-      ],
-      "started": "2002-02-28T09:52:16Z",
-      "last_reply": "2002-02-28T09:52:16Z",
-      "root_message_id": "msg-70b43dfd62a2"
     },
     {
       "id": "thread-dee2237cdeb8",

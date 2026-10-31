@@ -239,12 +239,12 @@
       "date": "2002-09-05T00:32:55Z",
       "subject": "Re: how to skip rows when reading in data?",
       "subject_clean": "how to skip rows when reading in data?",
-      "in_reply_to": null,
+      "in_reply_to": "<54017820CBCEE64F9E68970332C1377225492F@mhemtymsg01.mcgraw-hill.com>",
       "references": [],
       "body_plain": "You can do it using a pipe connection provided you have some unix tools (eg\ncygwin on Windows). For instance the unix \"head -n file\" command prints the\nfirst n lines of file, so you need a way of finding the number of lines in\nfile. One crude way is to scan it in:\n\n> length(scan(\"myfile\",sep=\"\\n\")) \n[1] 50\n> con <- pipe(\"head -49 myfile\")\n> scan(con,sep=\"\\n\")\n\nMore subtle is to use unix \"wc -l file\" to find the file length, then stick\nit into the head command using `` syntax. This worked on my cygwin window\n\ncygwin% head -`wc -l myfile | awk '{print $1-1}'` myfile\n\nbut when I tried to put it into a pipe connection, I got an error dialog\nbox. Anyone know why?\n\ncon <- pipe(\"head -`wc -l myfile | awk '{print $1-1}'` myfile\")\nscan(con,sep=\"\\n\") # gives an error dialog box!\n\n(Windows 2000/Splus 6.0.3)\n\nNick Ellis\nCSIRO Marine Research   mailto:Nick.Ellis at csiro.au\nPO Box 120                      ph    +61 (07) 3826 7260\nCleveland QLD 4163      fax   +61 (07) 3826 7222\nAustralia                       http://www.marine.csiro.au\n \n\n> -----Original Message-----\n> From: Voelkle, Manuel [mailto:Manuel_Voelkle at ctb.com]\n> Sent: Thursday, September 05, 2002 4:12 AM\n> To: s-news at lists.biostat.wustl.edu\n> Subject: [S] how to skip rows when reading in data?\n> \n> \n> Dear all,\n> \n> I am using s-plus professional 2000 and I am trying to read \n> in data files of\n> different length using the \"scan\" command. Unfortunately the \n> last row always\n> consists of notes, which should be skipped prior to reading \n> in the data.\n> While I am aware that I can skip the first n lines, I do not \n> know how to\n> skip the last line(s).\n> \n> Thank you very much for your help\n> \n> Manuel\n> \n>   \n> \n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>",
       "body_snippet": "You can do it using a pipe connection provided you have some unix tools (eg\ncygwin on Windows). For instance the unix \"head -n file\" command prints the\nfirst n lines of file, so you need a way of find",
-      "thread_id": "thread-b796ed809f85",
-      "thread_depth": 0,
+      "thread_id": "thread-75847f4c32ba",
+      "thread_depth": 1,
       "month": "2002-09"
     },
     {
@@ -255,12 +255,12 @@
       "date": "2002-09-05T01:50:49Z",
       "subject": "Re: how to skip rows when reading in data?",
       "subject_clean": "how to skip rows when reading in data?",
-      "in_reply_to": null,
+      "in_reply_to": "<54017820CBCEE64F9E68970332C1377225492F@mhemtymsg01.mcgraw-hill.com>",
       "references": [],
       "body_plain": "> -----Original Message-----\n> From: Nick.Ellis at csiro.au [mailto:Nick.Ellis at csiro.au]\n> \n> You can do it using a pipe connection provided you have some \n> unix tools (eg\n> cygwin on Windows). For instance the unix \"head -n file\" \n> command prints the\n> first n lines of file, so you need a way of finding the \n> number of lines in\n> file. One crude way is to scan it in:\n> \n> > length(scan(\"myfile\",sep=\"\\n\")) \n> [1] 50\n> > con <- pipe(\"head -49 myfile\")\n> > scan(con,sep=\"\\n\")\n> \n> More subtle is to use unix \"wc -l file\" to find the file \n> length, then stick\n> it into the head command using `` syntax. This worked on my \n> cygwin window\n> \n> cygwin% head -`wc -l myfile | awk '{print $1-1}'` myfile\n> \n> but when I tried to put it into a pipe connection, I got an \n> error dialog\n> box. Anyone know why?\n> \n> con <- pipe(\"head -`wc -l myfile | awk '{print $1-1}'` myfile\")\n> scan(con,sep=\"\\n\") # gives an error dialog box!\n> \n> (Windows 2000/Splus 6.0.3)\n> \n\nHere's a way that uses the unix wc, avoids the `` syntax and doesn't\ngenerate an error\n\ncon <- pipe(paste(\"head -\",scan(pipe(\"wc -l myfile\"))[1],\" myfile\",sep=\"\"))\nscan(con,sep=\"\\n\")\n\nNick\n\n> Nick Ellis\n> CSIRO Marine Research mailto:Nick.Ellis at csiro.au\n> PO Box 120                    ph    +61 (07) 3826 7260\n> Cleveland QLD 4163            fax   +61 (07) 3826 7222\n> Australia                     http://www.marine.csiro.au\n>  \n> \n> > -----Original Message-----\n> > From: Voelkle, Manuel [mailto:Manuel_Voelkle at ctb.com]\n> > Sent: Thursday, September 05, 2002 4:12 AM\n> > To: s-news at lists.biostat.wustl.edu\n> > Subject: [S] how to skip rows when reading in data?\n> > \n> > \n> > Dear all,\n> > \n> > I am using s-plus professional 2000 and I am trying to read \n> > in data files of\n> > different length using the \"scan\" command. Unfortunately the \n> > last row always\n> > consists of notes, which should be skipped prior to reading \n> > in the data.\n> > While I am aware that I can skip the first n lines, I do not \n> > know how to\n> > skip the last line(s).\n> > \n> > Thank you very much for your help\n> > \n> > Manuel\n> > \n> >   \n> > \n> > --------------------------------------------------------------------\n> > This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> > unsubscribe send e-mail to \n> s-news-request at lists.biostat.wustl.edu with\n> > the BODY of the message:  unsubscribe s-news\n> > \n> \n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>",
       "body_snippet": "> -----Original Message-----\n> From: Nick.Ellis at csiro.au [mailto:Nick.Ellis at csiro.au]\n> \n> You can do it using a pipe connection provided you have some \n> unix tools (eg\n> cygwin on Windows). Fo",
-      "thread_id": "thread-a21c5da91ddf",
-      "thread_depth": 0,
+      "thread_id": "thread-75847f4c32ba",
+      "thread_depth": 1,
       "month": "2002-09"
     },
     {
@@ -327,8 +327,8 @@
       ],
       "body_plain": "Not in S+2000, I am afraid: this was my idea too but connections\nare only in S-PLUS >= 5.0\n\nOn Thu, 5 Sep 2002 Nick.Ellis at csiro.au wrote:\n\n> You can do it using a pipe connection provided you have some unix tools (eg\n> cygwin on Windows). For instance the unix \"head -n file\" command prints the\n> first n lines of file, so you need a way of finding the number of lines in\n> file. One crude way is to scan it in:\n>\n> > length(scan(\"myfile\",sep=\"\\n\"))\n> [1] 50\n> > con <- pipe(\"head -49 myfile\")\n> > scan(con,sep=\"\\n\")\n>\n> More subtle is to use unix \"wc -l file\" to find the file length, then stick\n> it into the head command using `` syntax. This worked on my cygwin window\n>\n> cygwin% head -`wc -l myfile | awk '{print $1-1}'` myfile\n>\n> but when I tried to put it into a pipe connection, I got an error dialog\n> box. Anyone know why?\n>\n> con <- pipe(\"head -`wc -l myfile | awk '{print $1-1}'` myfile\")\n> scan(con,sep=\"\\n\") # gives an error dialog box!\n>\n> (Windows 2000/Splus 6.0.3)\n>\n> Nick Ellis\n> CSIRO Marine Research mailto:Nick.Ellis at csiro.au\n> PO Box 120                    ph    +61 (07) 3826 7260\n> Cleveland QLD 4163            fax   +61 (07) 3826 7222\n> Australia                     http://www.marine.csiro.au\n>\n>\n> > -----Original Message-----\n> > From: Voelkle, Manuel [mailto:Manuel_Voelkle at ctb.com]\n> > Sent: Thursday, September 05, 2002 4:12 AM\n> > To: s-news at lists.biostat.wustl.edu\n> > Subject: [S] how to skip rows when reading in data?\n> >\n> >\n> > Dear all,\n> >\n> > I am using s-plus professional 2000 and I am trying to read\n> > in data files of\n> > different length using the \"scan\" command. Unfortunately the\n> > last row always\n> > consists of notes, which should be skipped prior to reading\n> > in the data.\n> > While I am aware that I can skip the first n lines, I do not\n> > know how to\n> > skip the last line(s).\n> >\n> > Thank you very much for your help\n> >\n> > Manuel\n> >\n> >\n> >\n> > --------------------------------------------------------------------\n> > This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> > unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> > the BODY of the message:  unsubscribe s-news\n> >\n>\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595",
       "body_snippet": "Not in S+2000, I am afraid: this was my idea too but connections\nare only in S-PLUS >= 5.0\n\nOn Thu, 5 Sep 2002 Nick.Ellis at csiro.au wrote:\n\n> You can do it using a pipe connection provided you have ",
-      "thread_id": "thread-b796ed809f85",
-      "thread_depth": 1,
+      "thread_id": "thread-75847f4c32ba",
+      "thread_depth": 2,
       "month": "2002-09"
     },
     {
@@ -421,12 +421,12 @@
       "date": "2002-09-05T18:56:11Z",
       "subject": "quantile smoothers",
       "subject_clean": "quantile smoothers",
-      "in_reply_to": null,
+      "in_reply_to": "<200209051608.LAA11520@casbah.it.northwestern.edu>",
       "references": [],
       "body_plain": "Thank you for the responses to my query regarding quantile\nsmoothers.  The responses are summarized below.\n\nEd Malthouse\n\n------------------------------------------------------------------------\n\n>From Andy Liaw\n\nUsing Prof. Koenker's rq library, you can do quantile regression.\nUsing\nsplines as predictors, you can do a smooth quantile regression.\n\nHere's a function courtesy of Prof. Koenker, which trace out various\nquantile curves.\n\nsmoothrq.plot <- function(x, y, ...) {\n  plot(x, y, ...)\n  taus <- 1:99/100\n  X <- bs(x,knots = quantile(x), intercept=T)\n  X[is.na(X)] <- 0\n  z <- seq(min(x),max(x),length=200)\n  Z <- bs(z,knots = quantile(x), intercept = TRUE)\n#fit_matrix(0,ncol(X),length(taus))\n  k <- 0\n  for(tau in taus) {\n    k <- k + 1\n    fit[,k] <- rq(X, y, tau, int = FALSE, ci = FALSE)$coef\n    lines(z,Z %*% fit[,k])\n  }\n}\n\n--------------------------------------------------------------------\n>From Tim Hesterberg\n\nOn statlib, http://lib.stat.cmu.edu/S/, is:\n\nquantreg\n      Routines to compute quantile regressions including analogues of\n      trimmed means for the linear model.  Updated version contains\n      new functions implementing new forms of rank tests for linear\n      models based on the dual quantile regression\n      process. (roger at ysidro.econ.uiuc.edu)[23/Aug/91] [1/Jun/95](48\n     kbytes)\n\n-----------------------------------------------------------------------\n>From Leonid Gibiansky\n\nAt one point when I needed this, I used a quick and dirty multi-step\n(not\ntoo general) procedure:\n1. Found mean line (lowess, etc.)\n2. Separated all points into two sets that lie above and below the\nmean line\n3. Found the mean of the upper and the lower halves, thus creating 25 and\n75th percentiles.\nLeonid\n\n--------------------------------------------------------------------------\n>From Bert Gunter\n\nI know that this has been discussed in the literature, I think by Koenker\nand Bassett. So you might try a literature search (something with \"weighted\nquantile estimation\", maybe). You should also try checking the S and R\narchives, as I suspect there's something there (try looking for something to\ndo with weighted quantile estimation).",
       "body_snippet": "Thank you for the responses to my query regarding quantile\nsmoothers.  The responses are summarized below.\n\nEd Malthouse\n\n------------------------------------------------------------------------\n\n>Fro",
-      "thread_id": "thread-628b050d95b9",
-      "thread_depth": 0,
+      "thread_id": "thread-01ab82bd6105",
+      "thread_depth": 1,
       "month": "2002-09"
     },
     {
@@ -717,12 +717,12 @@
       "date": "2002-09-07T00:07:41Z",
       "subject": "First max of a vector",
       "subject_clean": "First max of a vector",
-      "in_reply_to": null,
+      "in_reply_to": "<3.0.6.32.20020906175533.0094d790@pop.srv.ualberta.ca>",
       "references": [],
       "body_plain": "Hi S-group,\nIs anyone aware of a function in S-plus which returns the index (position)\nof the first global max of a vector x? ... I would appreciate any\nsuggestions..\n\nRegards\nAbdul\n\n__________________________________________________________________\nAbdulkadir Ahmed Hussein\nDepartment of Mathematical Sciences\nUniversity of Alberta\nEdmonton, Alberta\nCanada T6G 2G1\nOffice: CAB 664\nPhone: (403)436-4943\n                W3: http://www.stat.ualberta.ca/~hussein\n\n                Email: hussein at math.ualberta.ca\nvisit also: www.stat.ualberta.ca/~brg\n___________________________________________________________________",
       "body_snippet": "Hi S-group,\nIs anyone aware of a function in S-plus which returns the index (position)\nof the first global max of a vector x? ... I would appreciate any\nsuggestions..\n\nRegards\nAbdul\n\n_________________",
-      "thread_id": "thread-936f98a4c9ab",
-      "thread_depth": 0,
+      "thread_id": "thread-f9f7ffa5e8bf",
+      "thread_depth": 1,
       "month": "2002-09"
     },
     {
@@ -749,12 +749,12 @@
       "date": "2002-09-07T04:55:48Z",
       "subject": "Re: Beta-binomial rv generator",
       "subject_clean": "Beta-binomial rv generator",
-      "in_reply_to": null,
+      "in_reply_to": "<20020904200415.44591.qmail@mail.com>",
       "references": [],
       "body_plain": "One simple technique is to make use of the fact that the beta-binomial is a\nmixture of binomial and beta distributions.  Here is a simple function to\ngenerate beta-binomial random variables:\n\nbetabinom <- function(nsim=1, size=1, shape1, shape2) {\npmix <- rbeta(nsim, shape1, shape2)\nrbinom(nsim, size, prob=pmix)\n}\n\nwhere \"nsim\" is the number of rvs that you want, \"size\" is the number of\nbernoulli trials, and \"shape1\" and \"shape2\" are the parameters of the beta\ndistribution.\n\nHope this helps,\nRavi.\n\n-----Original Message-----\nFrom: abu taher <abu_snews at mail.com>\nTo: s-news at lists.biostat.wustl.edu <s-news at lists.biostat.wustl.edu>\nDate: Wednesday, September 04, 2002 6:20 PM\nSubject: [S] Beta-binomial rv generator\n\n>Hi,\n>Does anyone has written Splus function for generating random numbers from\nbeta-binomial distribution?  I'll appreciate any help on this.\n>\n>Thanks.\n>\n>Abu\n>--\n>__________________________________________________________\n>Sign-up for your own FREE Personalized E-mail at Mail.com\n>http://www.mail.com/?sr=signup\n>\n>--------------------------------------------------------------------\n>This message was distributed by s-news at lists.biostat.wustl.edu.  To\n>unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n>the BODY of the message:  unsubscribe s-news",
       "body_snippet": "One simple technique is to make use of the fact that the beta-binomial is a\nmixture of binomial and beta distributions.  Here is a simple function to\ngenerate beta-binomial random variables:\n\nbetabino",
-      "thread_id": "thread-0fa850300855",
-      "thread_depth": 0,
+      "thread_id": "thread-d3000932b022",
+      "thread_depth": 1,
       "month": "2002-09"
     },
     {
@@ -967,12 +967,12 @@
       "date": "2002-09-09T17:28:35Z",
       "subject": "Re: First max of a vector",
       "subject_clean": "First max of a vector",
-      "in_reply_to": null,
+      "in_reply_to": "<3.0.6.32.20020906175533.0094d790@pop.srv.ualberta.ca>",
       "references": [],
       "body_plain": "A while ago (like about 12 years ago) I was running into the problem of\nneeding the indices of the maximum elements of the rows (or columns) of\na matrix.  Think of this as a vectorized version of doing the calculation\nrepeatedly on many vectors.  I wrote the following function which calls\na Fortran subroutine (simple enough that it would be trivial to rewrite\nit in C, for the large group who thinks Fortran went out with the Beatles).\nDoesn't deal with NA, so if you think you might have those you could \nturn them all into -1e322 or whatever.\n\ncolmax<-function(x)\n{       # return index of maximum element in each column\nif(!is.matrix(x)) stop(\"must be a matrix\")\nstorage.mode(x)<-\"double\"\n.Fortran(\"colmax\",as.integer(nrow(x)),as.integer(ncol(x)),x,\n        index=rep.int(1,ncol(x)))$index\n}\n\nrowmax<-function(x)\n{       # return index of maximum element in each row\nif(!is.matrix(x)) stop(\"must be a matrix\")\nstorage.mode(x)<-\"double\"\n.Fortran(\"rowmax\",as.integer(nrow(x)),as.integer(ncol(x)),x,\n        index=rep.int(1,nrow(x)))$index\n}\n\n---------------------------------------------------------------------------\n\n        subroutine colmax(n,m,x,index)\n        integer n,m,index(m)\n        double precision x(n,m),xmax\n        if(n .eq. 1) return\n        do 1 i=1,m\n        xmax=x(1,i)\n        do 1 j=2,n\n        if (xmax .ge. x(j,i)) go to 1\n        index(i)=j\n        xmax=x(j,i)\n   1    continue\n        return\n        end\n\n        subroutine rowmax(n,m,x,index)\n        integer n,m,index(n)\n        double precision x(n,m),xmax\n        if(m .eq. 1) return\n        do 1 i=1,n\n        xmax=x(i,1)\n        do 1 j=2,m\n        if (xmax .ge. x(i,j)) go to 1\n        index(i)=j\n        xmax=x(i,j)\n   1    continue\n        return\n        end",
       "body_snippet": "A while ago (like about 12 years ago) I was running into the problem of\nneeding the indices of the maximum elements of the rows (or columns) of\na matrix.  Think of this as a vectorized version of doin",
-      "thread_id": "thread-a61dca0dc0c7",
-      "thread_depth": 0,
+      "thread_id": "thread-f9f7ffa5e8bf",
+      "thread_depth": 1,
       "month": "2002-09"
     },
     {
@@ -1105,8 +1105,8 @@
       ],
       "body_plain": "Dear all,\nWhen i want to include in a graph, some text and a value associated , i'm\ndoing that in 2 steps.\nFirst add the text with text(x,y, \"my result= \"), then\ntext(x+1,y+1,myobject$myvalue)\nDoes somebody know how to do that with only one call to text?\nI tried text(x,y, cat(\"myresult= \", myobject$myvalue) ) but it doesn't work.\n\nThanks in advance\n\nO__ ---- Alain Le Tertre\n c/ /'_ --- Institut de Veille Sanitaire (InVS)\n(*) \\(*) -- 12 rue du val d'Osne\n~~~~~~~~~~ - 94415 Saint Maurice cedex FRANCE\nVoice: 33 1 41 79 67 50 Fax: 33 1 41 79 67 68\nemail: a.letertre at invs.sante.fr",
       "body_snippet": "Dear all,\nWhen i want to include in a graph, some text and a value associated , i'm\ndoing that in 2 steps.\nFirst add the text with text(x,y, \"my result= \"), then\ntext(x+1,y+1,myobject$myvalue)\nDoes so",
-      "thread_id": "thread-0fa850300855",
-      "thread_depth": 1,
+      "thread_id": "thread-d3000932b022",
+      "thread_depth": 2,
       "month": "2002-09"
     },
     {
@@ -1141,8 +1141,8 @@
       ],
       "body_plain": "Hi,\n\nWould using \"paste\" within the text command work? Something like:\n\ntext(x, y, paste(\"my result=\", myobject$myvalue))\n\nJames.\n\nAlain LE TERTRE wrote:\n\n> Dear all,\n> When i want to include in a graph, some text and a value associated , i'm\n> doing that in 2 steps.\n> First add the text with text(x,y, \"my result= \"), then\n> text(x+1,y+1,myobject$myvalue)\n> Does somebody know how to do that with only one call to text?\n> I tried text(x,y, cat(\"myresult= \", myobject$myvalue) ) but it doesn't work.\n>\n> Thanks in advance\n>\n>\n>\n> O__ ---- Alain Le Tertre\n> c/ /'_ --- Institut de Veille Sanitaire (InVS)\n> (*) \\(*) -- 12 rue du val d'Osne\n> ~~~~~~~~~~ - 94415 Saint Maurice cedex FRANCE\n> Voice: 33 1 41 79 67 50 Fax: 33 1 41 79 67 68\n> email: a.letertre at invs.sante.fr\n>\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>\n>",
       "body_snippet": "Hi,\n\nWould using \"paste\" within the text command work? Something like:\n\ntext(x, y, paste(\"my result=\", myobject$myvalue))\n\nJames.\n\nAlain LE TERTRE wrote:\n\n> Dear all,\n> When i want to include in a gra",
-      "thread_id": "thread-0fa850300855",
-      "thread_depth": 2,
+      "thread_id": "thread-d3000932b022",
+      "thread_depth": 3,
       "month": "2002-09"
     },
     {
@@ -1159,8 +1159,8 @@
       ],
       "body_plain": "Thanks for the quick reply from James McBroom and Bernard Cerutti.\n\nUsing paste instead of cat gives the correct answer\n\ntext(x, y, paste(\"my result=\", myobject$myvalue))\n\nThanks again\n\nO__ ---- Alain Le Tertre\n c/ /'_ --- Institut de Veille Sanitaire (InVS)\n(*) \\(*) -- 12 rue du val d'Osne\n~~~~~~~~~~ - 94415 Saint Maurice cedex FRANCE\nVoice: 33 1 41 79 67 50 Fax: 33 1 41 79 67 68\nemail: a.letertre at invs.sante.fr\n\nAlain LE TERTRE wrote:\n\n>Dear all,\n>When i want to include in a graph, some text and a value associated , i'm\n>doing that in 2 steps.\n>First add the text with text(x,y, \"my result= \"), then\n>text(x+1,y+1,myobject$myvalue)\n>Does somebody know how to do that with only one call to text?\n>I tried text(x,y, cat(\"myresult= \", myobject$myvalue) ) but it doesn't\nwork.\n>\n>Thanks in advance\n>\n>O__ ---- Alain Le Tertre\n> c/ /'_ --- Institut de Veille Sanitaire (InVS)\n>(*) \\(*) -- 12 rue du val d'Osne\n>~~~~~~~~~~ - 94415 Saint Maurice cedex FRANCE\n>Voice: 33 1 41 79 67 50 Fax: 33 1 41 79 67 68\n>email: a.letertre at invs.sante.fr\n>\n>--------------------------------------------------------------------\n>This message was distributed by s-news at lists.biostat.wustl.edu.  To\n>unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n>the BODY of the message:  unsubscribe s-news\n>\n>\n>\n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Thanks for the quick reply from James McBroom and Bernard Cerutti.\n\nUsing paste instead of cat gives the correct answer\n\ntext(x, y, paste(\"my result=\", myobject$myvalue))\n\nThanks again\n\nO__ ---- Alain",
-      "thread_id": "thread-0fa850300855",
-      "thread_depth": 3,
+      "thread_id": "thread-d3000932b022",
+      "thread_depth": 4,
       "month": "2002-09"
     },
     {
@@ -2014,12 +2014,12 @@
       "date": "2002-09-18T01:01:21Z",
       "subject": "Re: do.call and apply",
       "subject_clean": "do.call and apply",
-      "in_reply_to": null,
+      "in_reply_to": "<Pine.GSO.4.44.0209170049220.2927-100000@elaine5.Stanford.EDU>",
       "references": [],
       "body_plain": "The call to the random functions can be vectorized, so we don't need\napply().\n\n> df\n   dist arg1 arg2 arg3 \n1 runif    1    2    5\n2 rnorm    1    9    2\n3 runif    1    0    1\n4 runif    1    3    7\n5 rnorm    1    0    1\n> df$rv <- numeric(nrow(df))\n> for (i in levels(df$dist)) {\n+ sub <- df$dist==i\n+ df$rv[sub] <- do.call(i,unname(as.list(df[sub,2:4])))\n+ }\n> df\n   dist arg1 arg2 arg3        rv \n1 runif    1    2    5 2.7498141\n2 rnorm    1    9    2 8.7244524\n3 runif    1    0    1 0.1537715\n4 runif    1    3    7 3.6484866\n5 rnorm    1    0    1 1.3450812\n\nNick Ellis\nCSIRO Marine Research   mailto:Nick.Ellis at csiro.au\nPO Box 120                      ph    +61 (07) 3826 7260\nCleveland QLD 4163      fax   +61 (07) 3826 7222\nAustralia                       http://www.marine.csiro.au\n \n\n> -----Original Message-----\n> From: Robert Anthony Canales [mailto:rcanales at Stanford.EDU]\n> Sent: Tuesday, September 17, 2002 5:59 PM\n> To: s-news at lists.biostat.wustl.edu\n> Subject: [S] do.call and apply\n> \n> \n> Hello,\n> I have a function which creates a dataframe, based on user \n> input, similar\n> to the sample below.\n> \n> runif 1       2       5\n> rnorm 1       9       2\n> runif 1       0       1\n> runif 1       3       7\n> rnorm 1       0       1\n> \n> The first column is a character corresponding to a function, \n> the second\n> column corresponds to the number of random values and the remaining\n> columns designate the parameters of the distribution.  I would like to\n> produce a vector of random values, one per row, corresponding to the\n> random distribution command and the parameters in the \n> dataframe.  To avoid\n> looping over each row my initial guess was to use some combination of\n> 'do.call' and 'apply', however because of the args=list() parameter\n> required of 'do.call' I'm having trouble specifying the arguments to\n> 'apply'.  Could anyone offer advice?\n> \n> Thanks,\n> Robert\n> \n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>",
       "body_snippet": "The call to the random functions can be vectorized, so we don't need\napply().\n\n> df\n   dist arg1 arg2 arg3 \n1 runif    1    2    5\n2 rnorm    1    9    2\n3 runif    1    0    1\n4 runif    1    3    7\n",
-      "thread_id": "thread-cf0ae73d74bc",
-      "thread_depth": 0,
+      "thread_id": "thread-d1e047dcf45b",
+      "thread_depth": 1,
       "month": "2002-09"
     },
     {
@@ -2114,12 +2114,12 @@
       "date": "2002-09-19T02:01:56Z",
       "subject": "problem with predict.lme",
       "subject_clean": "problem with predict.lme",
-      "in_reply_to": null,
+      "in_reply_to": "<3D89D019.25236.1094B080@localhost>",
       "references": [],
       "body_plain": "Hi all\n\nI am having a little problem with predict.lme. The model I am using is\n\na404.fit<-lme(lcpue~fyear + time.start + soi , \nrandom=~1|vesselkey/fmonth, \ndata= a404.cpue.data.80.3)\n\nwhere fyear, vesselkey and fmonth are factors. \nI pass to  predict.lme a404.fit along with a data frame which consists of a \nrange of \nvalues for one of the fixed variables and the other fixed variables set to a \nvalue with \nlevel =0. \n\neg (soi is the variable of interest) \n\n soi time.start fyear1 \n-25.4000000 12.25 1993-94 \n-22.8842105 12.25 1993-94 \n.........\n 19.8842105 12.25 1993-94 \n 22.4000000 12.25 1993-94 \n\nthe problem I get when I use predict.lme is that Splus shuts down. I have mange \nto \ntrack the location of problem down to a within predict.lme. The problem occurs \nwith\n model.frame(fixed,dataMix)\nIf anyone has any suggestions why it occurs and possible solutions it would be \ngreatly appreciated\nThanks in advance\nNEV\n\n-------------------------------------------------------------------------------------------\nNeville Phillips\nNational Institute of Water and Atmospheric Research (NIWA)\nPO Box 14-901\nKilbirnie\nWellington\n\nPhone 386 0300 x8504\nFax 386 0674\n\nEmail n.phillips at niwa.co.nz web http://www.niwa.cri.nz",
       "body_snippet": "Hi all\n\nI am having a little problem with predict.lme. The model I am using is\n\na404.fit<-lme(lcpue~fyear + time.start + soi , \nrandom=~1|vesselkey/fmonth, \ndata= a404.cpue.data.80.3)\n\nwhere fyear, ve",
-      "thread_id": "thread-7a346be21bc7",
-      "thread_depth": 0,
+      "thread_id": "thread-8278221d6abc",
+      "thread_depth": 1,
       "month": "2002-09"
     },
     {
@@ -2162,12 +2162,12 @@
       "date": "2002-09-19T12:51:47Z",
       "subject": "Re: Splus and C question",
       "subject_clean": "Splus and C question",
-      "in_reply_to": null,
+      "in_reply_to": "<OFEA9E2B49.AFF47D41-ON44256C39.002471DB@adiaweb.adia.co.ae>",
       "references": [],
       "body_plain": "To pass an Splus matrix to C, and then use it within C as a matrix, you\nneed to establish indexing.  The example below is taken from the survival\nlibrary.\n   coxph.fit calls the C routine coxfit2 as\n   \n            coxfit <- .C(\"coxfit2\", iter=as.integer(maxiter),\n                   as.integer(n),\n                   as.integer(nvar), stime,\n                   sstat,\n                   x= x[sorted,] ,\n                   etc...\nwhere dim(x) = c(n, nvar).  \n\nThe relevant code from coxfit2.c is below (every blank line below should\nhave \"...\" perhaps, to show that I've skipped over material not relevant to\nthis example).  The S_dmatrix routine is part of Splus.\n\n/*\n** here is a cox regression program, written in C\n**  the input parameters are\n**\n**       maxiter      :number of iterations\n**       nused        :number of people\n**       nvar         :number of covariates\n**       time(n)      :time of event or censoring for person i\n**       status(n)    :status for the ith person    1=dead , 0=censored\n**       covar(nv,n)  :covariates for person i.\n**                        Note that S sends this in column major order.\n......\n\ndouble **S_dmatrix(double*, int, int);\n\nvoid coxfit2(long   *maxiter,   long   *nusedx,    long   *nvarx, \n             double *time,      long   *status,    double *covar2, \n\n    int     nused, nvar;\n    double **covar;\n    \n    nused = *nusedx;\n    nvar  = *nvarx;\n    covar= S_dmatrix(covar2, nused, nvar);\n\n    /*\n    ** Subtract the mean from each covar, as this makes the regression\n    **  much more stable\n    */\n    for (i=0; i<nvar; i++) {\n        temp=0;\n        for (person=0; person<nused; person++) temp += covar[i][person];\n        temp /= nused;\n        means[i] = temp;\n        for (person=0; person<nused; person++) covar[i][person] -=temp;\n        }\n\n        \n-----\n Last: I only work on one machine platform.  Looking at S Programming by\nVenables and Ripley, I see that some other internal S routines have name\ndifferences in Windows and R.  Is it S_dmatrix, Sdmatrix, just dmatrix, ...?\nSomeone else will have to answer that.\n\n        Terry Therneau",
       "body_snippet": "To pass an Splus matrix to C, and then use it within C as a matrix, you\nneed to establish indexing.  The example below is taken from the survival\nlibrary.\n   coxph.fit calls the C routine coxfit2 as\n ",
-      "thread_id": "thread-66739e85e082",
-      "thread_depth": 0,
+      "thread_id": "thread-830d40a18725",
+      "thread_depth": 1,
       "month": "2002-09"
     },
     {
@@ -2381,6 +2381,22 @@
       "month": "2002-09"
     },
     {
+      "id": "msg-7fb211174d0c",
+      "message_id": "<3.0.6.32.20021123013054.0088c930@shaker.med.umn.edu>",
+      "from_name": "Gabriel Baud-Bovy",
+      "from_email_hash": "67b31c6401601f1b22081e58949fb06bf211c1a97c95c17a8b69e29ee202add1",
+      "date": "2002-09-22T06:51:32Z",
+      "subject": ".Call interface with S-plus 6.0 question",
+      "subject_clean": ".Call interface with S-plus 6.0 question",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Dear S-Plus users,\n\nI am porting functions that are working well with SP2000 to\nS-PLUS 6.0 Rel. 2 (Windows 2000). Some of these functions\nuse the .Call interface to replace the .C interface with the\npointers argument. These functions are compiled \nwith Visual C++ 6.0 through the CHAPTER -m command.\n\nTesting has revealed some problems. All functions work apparently well \nafter  being loaded the first time. But if I detach the library and \nreattach it  afterwards and try to use them again, then some of them \ndo not work anymore.\n\nLet me explain with a simplified example:\n\n>libary(\"mscdll5\",lib.loc=...,first=T) #load library for the first time\n>.Call(\"fnMscFile\",as.character(\"aa001.msc\"))\n\nThis works fine. The C-function (see source code below) creates and \nreturns a list with two elements. \n\n>detach(2)                            \n>libary(\"msdll5\",lib.loc=...,first=T) \n.Call(\"fnMscFile\",as.character(\"aa001.msc\"))\n\nThis time, nothing is returned and there is no error message (Note\nthat with the simplified function below, it takes detaching and reattaching\nthe libary several times before the problem occurs). It is as if the \nC function is not anymore called.\n\nCan somebody give me an idea of what could be wrong? \n\nGabriel Baud-Bovy\n\n-----------------------------------------\n#include  <S.h>\n\ns_object *fnMscFile(s_object *SFname) {\n        S_EVALUATOR\n\n        s_object *SList;\n        s_object *SPos;\n        s_object *SLabels;\n\n        *SPos = NEW_INTEGER(10);\n        *SLabels = NEW_CHARACTER(10);\n        *SList = NEW_LIST(2);\n\n        SET_ELEMENT(SList,0,SLabels);\n        SET_ELEMENT(SList,1,SPos);\n        return(SList);\n}\n-------------------------------------",
+      "body_snippet": "Dear S-Plus users,\n\nI am porting functions that are working well with SP2000 to\nS-PLUS 6.0 Rel. 2 (Windows 2000). Some of these functions\nuse the .Call interface to replace the .C interface with the\np",
+      "thread_id": "thread-7fb211174d0c",
+      "thread_depth": 0,
+      "month": "2002-09"
+    },
+    {
       "id": "msg-1e6bcb2217da",
       "message_id": "<Pine.LNX.4.44.0209230147040.21041-100000@jindan.homedns.org>",
       "from_name": "Jindan Zhou",
@@ -2479,6 +2495,22 @@
       "month": "2002-09"
     },
     {
+      "id": "msg-6f634128f64a",
+      "message_id": "<3.0.6.32.20021123115525.00828430@shaker.med.umn.edu>",
+      "from_name": "Gabriel Baud-Bovy",
+      "from_email_hash": "67b31c6401601f1b22081e58949fb06bf211c1a97c95c17a8b69e29ee202add1",
+      "date": "2002-09-23T16:44:26Z",
+      "subject": ".Call interface with S-plus 6.0",
+      "subject_clean": ".Call interface with S-plus 6.0",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Dear S-Plus users,\n\nI have copied the function \"makeseq\" in the Programmer's \nGuide p. 682  (SPlus 6.0 Rel. 2 on Windows 2000).  The function \nis compiled with Visual C++ 6.0 using the CHAPTER -m command.\nThen I load it with library() command.\n\nAs with my previous example, the function stops working after\ndetaching and reattaching the library several times. There are\nno error messages whatsoever.\n\nHas anyone encountered a similar problem?\n\nGabriel",
+      "body_snippet": "Dear S-Plus users,\n\nI have copied the function \"makeseq\" in the Programmer's \nGuide p. 682  (SPlus 6.0 Rel. 2 on Windows 2000).  The function \nis compiled with Visual C++ 6.0 using the CHAPTER -m comm",
+      "thread_id": "thread-6f634128f64a",
+      "thread_depth": 0,
+      "month": "2002-09"
+    },
+    {
       "id": "msg-428b9fa93f15",
       "message_id": "<3D8F455B.3F7CF36@email.unc.edu>",
       "from_name": "Matthew Hayes",
@@ -2539,6 +2571,22 @@
       "body_plain": "Dear members,\n\nS+ version 6.2 for Windows 2000\n\nI've created histograms with apply and have 2 questions:\n\napply(data[,1:4],2,hist)\n\ngives me  6 histograms; the first 2 are repeated and since the x labels are a \nvector for the first 2 and all the rest  x, I changed to:\n\npar(mfrow=c(2,2))\napply(data[,1:4],2,function (x) hist(x, xlab=name.cols(data[,1:4])))\n\nWhich gives me 6 histograms (the first 2 repeated) and all of them are named \nthe same (the first column name in data).  I've tried putting in a vector of \nnames for xlab and they are still all named with the first name in the vector. \n\nHow do I get the correct number of histograms and how do I get the column names \nas x labels?\n\nI would appreciate any suggestions.\nThanks,\nBeth",
       "body_snippet": "Dear members,\n\nS+ version 6.2 for Windows 2000\n\nI've created histograms with apply and have 2 questions:\n\napply(data[,1:4],2,hist)\n\ngives me  6 histograms; the first 2 are repeated and since the x lab",
       "thread_id": "thread-51d38ed13aba",
+      "thread_depth": 0,
+      "month": "2002-09"
+    },
+    {
+      "id": "msg-d4d996f83c60",
+      "message_id": "<3.0.6.32.20021123231225.0087d340@shaker.med.umn.edu>",
+      "from_name": "Gabriel Baud-Bovy",
+      "from_email_hash": "67b31c6401601f1b22081e58949fb06bf211c1a97c95c17a8b69e29ee202add1",
+      "date": "2002-09-23T23:14:05Z",
+      "subject": "Error with some functions when loading, unloading and reloading DLL",
+      "subject_clean": "Error with some functions when loading, unloading and reloading DLL",
+      "in_reply_to": null,
+      "references": [],
+      "body_plain": "Dear S-Plus users,\n\nI have been trying to port a library with a DLL from SP2000 to\nSP6.0 or SP6.1. \n\nI get the following error message with the execution of some\nfuntions using the .Call interface after I have detached (with \ndetach()) and reattached a library (with library()) on S-PLUS 6.1 \nPro, Visual C++6.0 Service Pack 5, Windows 2000:\n\nProblem: internal error: trying to set internal exit ation in frame 0,\nmust be between 1 and 4.\nUse traceback() to see the call stack\n\nError during wrapup: Invalid frame number (0) in set_frame\nEngine connection failure - shutting down S-PLUS recommended.\n\nCompilation is ok and the functions that cause this error seems\nto work well as long as I have not detached and reattached\nthe library. The Prog. Guide (P. 655) mentions the possibility of\nusing synchronize() but how do you unload the DLL before \nrebuilding it? \n\nI would appreciate if anybody could enlighten me on this question\nor on one of my previous ones. Thank you for your attention.\n\nGabriel Baud-Bovy",
+      "body_snippet": "Dear S-Plus users,\n\nI have been trying to port a library with a DLL from SP2000 to\nSP6.0 or SP6.1. \n\nI get the following error message with the execution of some\nfuntions using the .Call interface aft",
+      "thread_id": "thread-d4d996f83c60",
       "thread_depth": 0,
       "month": "2002-09"
     },
@@ -2635,12 +2683,12 @@
       "date": "2002-09-24T11:16:16Z",
       "subject": "Spatial Autoregression with Poisson Response Variable",
       "subject_clean": "Spatial Autoregression with Poisson Response Variable",
-      "in_reply_to": null,
+      "in_reply_to": "<001801c25d74$e5086f80$0400a8c0@hpnotebook>",
       "references": [],
       "body_plain": "There does not appear to be a way to pass a canonical link function to\nthe S-PLUS SpatialStats function slm(). Not all is lost however. A\nsolution to this problem has recently been pioneered by Ole Christensen\nand Paulo Ribeiro with the development of an R package called geoRglm.\nThere is an excellent overview article on the package in the R News,\nvol. 2.2 June 2002.\n\nTim McDonough\nPhD Candidate in Political Economy\nUniversity of Texas at Dallas\n\n-----Original Message-----\nFrom: Tim McDonough [mailto:tmcd at utd.edu] \nSent: Monday, September 16, 2002 06:34 AM\nTo: 's-news at lists.biostat.wustl.edu'\nSubject: Spatial Autoregression with Poisson Response Variable\n\nI would like to use slm() to estimate an SAR on a response variable that\nis Poisson distributed (count data). How does one pass the canonical\nlink function (log in this case) to slm()?\n\nTim McDonough\nPhD Candidate in Political Economy\nUniversity of Texas at Dallas",
       "body_snippet": "There does not appear to be a way to pass a canonical link function to\nthe S-PLUS SpatialStats function slm(). Not all is lost however. A\nsolution to this problem has recently been pioneered by Ole Ch",
-      "thread_id": "thread-c4d08f984ef5",
-      "thread_depth": 0,
+      "thread_id": "thread-40ad51018849",
+      "thread_depth": 1,
       "month": "2002-09"
     },
     {
@@ -2683,12 +2731,12 @@
       "date": "2002-09-24T14:44:18Z",
       "subject": "Re: xlab with apply, hist",
       "subject_clean": "xlab with apply, hist",
-      "in_reply_to": null,
+      "in_reply_to": "<sd8f1fb6.069@gwsmtp.ohsu.edu>",
       "references": [],
       "body_plain": "Beth:\n\nThe apply(hist) behavior appears to be a bug. INSIGHTFUL PLEASE TAKE NOTE! I\nwas able to reproduce it as follows:\n\n>x_matrix(rnorm(100),nc=10)\n>apply(x[,1:4],2,hist)\n\n## produced 6 histograms, first 2 repeated.\n\n>apply(x,2,hist)  # produced 12 histograms! \n\nThis appears to be some sort of interaction of apply with hist().\n\nHowever the labeling problem is not a bug. In your command:\napply(data[,1:4],2,function (x) hist(x, xlab=name.cols(data[,1:4])))\n\nthe xlab argument is the same character string vector of length 4 at each\ncall of hist. hist() xlab needs a single character string, not 4 of them,\nand so just uses the first each time. To do what you want, using a loop is\nsimpler and no slower, I believe:\n\nnamecol_name.cols(data[,1:4])\nfor(i in 1:4)hist(data[,i],xlab=namecol[i])\n\nCheers,\n\nBert Gunter\nBiometrics Research RY 70-38\nMerck & Company\nP.O. Box 2000\nRahway, NJ 07065-0900\nPhone: (732) 594-7765\nmailto: bert_gunter at merck.com\n\n\"The business of the statistician is to catalyze the scientific learning\nprocess.\"      -- George E.P. Box\n\nDear members,\n\nS+ version 6.2 for Windows 2000\n\nI've created histograms with apply and have 2 questions:\n\napply(data[,1:4],2,hist)\n\ngives me  6 histograms; the first 2 are repeated and since the x labels are\na vector for the first 2 and all the rest  x, I changed to:\n\npar(mfrow=c(2,2))\napply(data[,1:4],2,function (x) hist(x, xlab=name.cols(data[,1:4])))\n\nWhich gives me 6 histograms (the first 2 repeated) and all of them are named\nthe same (the first column name in data).  I've tried putting in a vector of\nnames for xlab and they are still all named with the first name in the\nvector. \n\nHow do I get the correct number of histograms and how do I get the column\nnames as x labels?\n\nI would appreciate any suggestions.\nThanks,\nBeth\n\n--------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news\n\n------------------------------------------------------------------------------\nNotice: This e-mail message, together with any attachments, contains \ninformation of Merck & Co., Inc. (Whitehouse Station, New Jersey, USA) that may \nbe confidential, proprietary copyrighted and/or legally privileged, and is \nintended solely for the use of the individual or entity named on this message. \nIf you are not the intended recipient, and have received this message in error, \nplease immediately return this by e-mail and then delete it.\n\n==============================================================================",
       "body_snippet": "Beth:\n\nThe apply(hist) behavior appears to be a bug. INSIGHTFUL PLEASE TAKE NOTE! I\nwas able to reproduce it as follows:\n\n>x_matrix(rnorm(100),nc=10)\n>apply(x[,1:4],2,hist)\n\n## produced 6 histograms, ",
-      "thread_id": "thread-c2a67cbf0ada",
-      "thread_depth": 0,
+      "thread_id": "thread-51d38ed13aba",
+      "thread_depth": 1,
       "month": "2002-09"
     },
     {
@@ -2755,8 +2803,8 @@
       ],
       "body_plain": "I have had this problem before and have reported it to Insightful last year.\nThis is, as Tony Plate said, due to a side effect due to the attempt to use\na \"fast\" method for apply.  A simple way to avoid this side-effect is to\nmake the function in apply return some value, such as follows:\n\n    x_matrix(rnorm(100),nc=10)\n    apply(x[,1:4],2,function(x) {hist(x);1})\n\nRavi.\n\n----- Original Message -----\nFrom: \"Gunter, Bert\" <bert_gunter at merck.com>\nTo: \"'Beth Wilmot'\" <wilmotb at ohsu.edu>\nCc: \"s-news (E-mail)\" <s-news at lists.biostat.wustl.edu>; \"Support Splus\n(E-mail)\" <support at insightful.com>\nSent: Tuesday, September 24, 2002 10:44 AM\nSubject: Re: [S] xlab with apply, hist\n\n> Beth:\n>\n> The apply(hist) behavior appears to be a bug. INSIGHTFUL PLEASE TAKE NOTE!\nI\n> was able to reproduce it as follows:\n>\n> >x_matrix(rnorm(100),nc=10)\n> >apply(x[,1:4],2,hist)\n>\n> ## produced 6 histograms, first 2 repeated.\n>\n> >apply(x,2,hist)  # produced 12 histograms!\n>\n> This appears to be some sort of interaction of apply with hist().\n>\n> However the labeling problem is not a bug. In your command:\n> apply(data[,1:4],2,function (x) hist(x, xlab=name.cols(data[,1:4])))\n>\n> the xlab argument is the same character string vector of length 4 at each\n> call of hist. hist() xlab needs a single character string, not 4 of them,\n> and so just uses the first each time. To do what you want, using a loop is\n> simpler and no slower, I believe:\n>\n> namecol_name.cols(data[,1:4])\n> for(i in 1:4)hist(data[,i],xlab=namecol[i])\n>\n> Cheers,\n>\n> Bert Gunter\n> Biometrics Research RY 70-38\n> Merck & Company\n> P.O. Box 2000\n> Rahway, NJ 07065-0900\n> Phone: (732) 594-7765\n> mailto: bert_gunter at merck.com\n>\n> \"The business of the statistician is to catalyze the scientific learning\n> process.\"      -- George E.P. Box\n>\n>\n> Dear members,\n>\n> S+ version 6.2 for Windows 2000\n>\n>\n> I've created histograms with apply and have 2 questions:\n>\n> apply(data[,1:4],2,hist)\n>\n> gives me  6 histograms; the first 2 are repeated and since the x labels\nare\n> a vector for the first 2 and all the rest  x, I changed to:\n>\n> par(mfrow=c(2,2))\n> apply(data[,1:4],2,function (x) hist(x, xlab=name.cols(data[,1:4])))\n>\n> Which gives me 6 histograms (the first 2 repeated) and all of them are\nnamed\n> the same (the first column name in data).  I've tried putting in a vector\nof\n> names for xlab and they are still all named with the first name in the\n> vector.\n>\n> How do I get the correct number of histograms and how do I get the column\n> names as x labels?\n>\n> I would appreciate any suggestions.\n> Thanks,\n> Beth\n>\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>\n> --------------------------------------------------------------------------\n----\n> Notice: This e-mail message, together with any attachments, contains\ninformation of Merck & Co., Inc. (Whitehouse Station, New Jersey, USA) that\nmay be confidential, proprietary copyrighted and/or legally privileged, and\nis intended solely for the use of the individual or entity named on this\nmessage. If you are not the intended recipient, and have received this\nmessage in error, please immediately return this by e-mail and then delete\nit.\n>\n>\n============================================================================\n==\n>\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news",
       "body_snippet": "I have had this problem before and have reported it to Insightful last year.\nThis is, as Tony Plate said, due to a side effect due to the attempt to use\na \"fast\" method for apply.  A simple way to avo",
-      "thread_id": "thread-c2a67cbf0ada",
-      "thread_depth": 1,
+      "thread_id": "thread-51d38ed13aba",
+      "thread_depth": 2,
       "month": "2002-09"
     },
     {
@@ -2815,12 +2863,12 @@
       "date": "2002-09-24T18:36:06Z",
       "subject": "truncated normal distribution",
       "subject_clean": "truncated normal distribution",
-      "in_reply_to": null,
+      "in_reply_to": "<OE17G10Gai4omRXf2LT0000009d@hotmail.com>",
       "references": [],
       "body_plain": "Hi, all,\n\nIf you have seen my formal letter with the \nsame subject, please ignore this message.\n\n \n\nMy problem is, I want to generate random \nvariables from N(0,5) in S-plus, and I need the data truncated at its 5th and \n95th percentiles then discard those 10 percent data. What is the command for \nit?\n\n \n\nThanks in advance.\n\nCai",
       "body_snippet": "Hi, all,\n\nIf you have seen my formal letter with the \nsame subject, please ignore this message.\n\n \n\nMy problem is, I want to generate random \nvariables from N(0,5) in S-plus, and I need the data trunc",
-      "thread_id": "thread-98cb2cb9ee5b",
-      "thread_depth": 0,
+      "thread_id": "thread-2a5beb270ed7",
+      "thread_depth": 1,
       "month": "2002-09"
     },
     {
@@ -2986,12 +3034,12 @@
       "date": "2002-09-25T18:03:48Z",
       "subject": "Re: Bar labels with barplot()",
       "subject_clean": "Bar labels with barplot()",
-      "in_reply_to": null,
+      "in_reply_to": "<27C204BD76CBC142BA1AE46D62A8548EA3207E@nihexchange9.nih.gov>",
       "references": [],
       "body_plain": "Jim \nPratt and Steve Hogan suggested setting adj=0 to left-align the \nlabels.\n\nI \nactually tried it as an option inside barplot, which didn't \nwork.\n\nBut \nwhen I just tried it separately inside axis(), it did work.\n\n \n\nThanks \nfor the quick help.\n\nMyong-Hee\n\nMyong-Hee Sung, Ph.D. \n\nMolecular Statistics and \nBioinformatics Section \nBiometric Research Branch \nNational Cancer Institute \nNational Institutes of Health \n6130 Executive Blvd. EPN Room 8146, MSC 7434 \nBethesda, MD 20892-7434 \n\nsungm at mail.nih.gov \nphone: 301-402-0364 \nfax:    301-402-0560 \n\nhttp://linus.nci.nih.gov/~brb/sungm.html \n\n>   -----Original Message-----\n> From: Sung, Myong-Hee (NCI)\n>\n> Sent: Wednesday, September 25, 2002 1:42 PM\n> To:\n>   s-news at wubios.wustl.edu\n> Subject: Bar labels with\n>   barplot()\n>\n>\n>\n>   I\n>   need to make a presentation-quality barplot with long names\n>   for\n>\n>   the\n>   individual bars.  So I rotated the bar labels using srt but now\n>   the\n>\n>   apparently center aligned labels intrude into the\n>   bars.\n>\n>   Either I need to left-align the labels or put some\n>   margin between\n>\n>   the\n>   axis and the labels.\n>\n>   I've\n>   tried mgp which should modify the margin according to the\n>\n>   documentation.  It produced no\n>   effect.\n>\n>\n>\n>   Can somebody tell me how to do this? (SPLUS2000\n>   Win2000)\n> Thanks in\n>   advance.\n>\n>   Myong-Hee Sung, Ph.D.\n>\n>   Molecular Statistics and\n>   Bioinformatics Section\n> Biometric Research Branch\n> National Cancer Institute\n> National Institutes of Health\n> 6130 Executive Blvd. EPN Room 8146, MSC 7434\n>\n> Bethesda, MD 20892-7434\n>\n>   sungm at mail.nih.gov\n> phone: 301-402-0364\n> fax:    301-402-0560\n>\n> http://linus.nci.nih.gov/~brb/sungm.html",
       "body_snippet": "Jim \nPratt and Steve Hogan suggested setting adj=0 to left-align the \nlabels.\n\nI \nactually tried it as an option inside barplot, which didn't \nwork.\n\nBut \nwhen I just tried it separately inside axis()",
-      "thread_id": "thread-8afd7ca821c9",
-      "thread_depth": 0,
+      "thread_id": "thread-7053fdce2772",
+      "thread_depth": 1,
       "month": "2002-09"
     },
     {
@@ -3102,12 +3150,12 @@
       "date": "2002-09-26T08:09:54Z",
       "subject": "export from command line",
       "subject_clean": "export from command line",
-      "in_reply_to": null,
+      "in_reply_to": "<C89B44E6684BD411A84B0008C7BF17A4013437D3@obelix.kispi.unizh.ch>",
       "references": [],
       "body_plain": "Sorry for my previous message, given below, and thanks to\nOrestis.Papasouliotis (Orestis.Papasouliotis at serono.com), who indicated\nwhere the problem was.\nI had not read the help carefully enough. export.data requires the NAME, as\na character string, of the object to be exported, rather than the object\nitself.\nL.  Molinari\n============================\nS+2000, Rel.3 under Windows 2000\nI have been trying to export data to EXCEL from the command line as follows:\n-------------\nS+>export.data(zz2,FileName=\"D:\\\\zz2.xls\",FileType=\"EXCEL\")\n-----------\nI always get the message:\n-------------\nERROR:Cannot export DataSet = \"{0\". The data must be committed to the\ndatabase first suc\nh as calling assign(...,immediate = T).\n---------\n======================",
       "body_snippet": "Sorry for my previous message, given below, and thanks to\nOrestis.Papasouliotis (Orestis.Papasouliotis at serono.com), who indicated\nwhere the problem was.\nI had not read the help carefully enough. ex",
-      "thread_id": "thread-23c0492ed7d0",
-      "thread_depth": 0,
+      "thread_id": "thread-39cea1097f8b",
+      "thread_depth": 1,
       "month": "2002-09"
     },
     {
@@ -3118,12 +3166,12 @@
       "date": "2002-09-26T09:55:53Z",
       "subject": "export from command line",
       "subject_clean": "export from command line",
-      "in_reply_to": null,
+      "in_reply_to": "<C89B44E6684BD411A84B0008C7BF17A4013437D3@obelix.kispi.unizh.ch>",
       "references": [],
       "body_plain": "Sorry for my previous message, given below, and thanks to\nOrestis.Papasouliotis  and Dowle, Matthew, who indicated where the problem\nwas.\nI had not read the help carefully enough. export.data requires the NAME, as\na character string, of the object to be exported, rather than the object\nitself.\nL.  Molinari\n============================\nS+2000, Rel.3 under Windows 2000\nI have been trying to export data to EXCEL from the command line as follows:\n-------------\nS+>export.data(zz2,FileName=\"D:\\\\zz2.xls\",FileType=\"EXCEL\")\n-----------\nI always get the message:\n-------------\nERROR:Cannot export DataSet = \"{0\". The data must be committed to the\ndatabase first suc\nh as calling assign(...,immediate = T).\n---------\n======================",
       "body_snippet": "Sorry for my previous message, given below, and thanks to\nOrestis.Papasouliotis  and Dowle, Matthew, who indicated where the problem\nwas.\nI had not read the help carefully enough. export.data requires",
-      "thread_id": "thread-36ad95b76032",
-      "thread_depth": 0,
+      "thread_id": "thread-39cea1097f8b",
+      "thread_depth": 1,
       "month": "2002-09"
     },
     {
@@ -3296,12 +3344,12 @@
       "date": "2002-09-28T02:32:52Z",
       "subject": "Re: A problem with \"best.basis()\"",
       "subject_clean": "A problem with \"best.basis()\"",
-      "in_reply_to": null,
+      "in_reply_to": "<200209270719.AA00042@impromptu.nifty.com>",
       "references": [],
       "body_plain": "S-Plus users\nE-mail: s-news at lists.biostat.wustl.edu\n\nP.S.\n\n   The Best.basis() I am using is in S+Wavelets Version 1.1 Release 2..\nThe S+Wavelets was added on on S-Plus2000J.\n\n   *****    Kunio Takezawa, Ph.D. (takezawa at affrc.go.jp)    *****\n*****     <http://cse.inada.affrc.go.jp/takezawa/patent-c.html>    *****",
       "body_snippet": "S-Plus users\nE-mail: s-news at lists.biostat.wustl.edu\n\nP.S.\n\n   The Best.basis() I am using is in S+Wavelets Version 1.1 Release 2..\nThe S+Wavelets was added on on S-Plus2000J.\n\n   *****    Kunio Tak",
-      "thread_id": "thread-31c12cc10a12",
-      "thread_depth": 0,
+      "thread_id": "thread-ff5af3f74506",
+      "thread_depth": 1,
       "month": "2002-09"
     },
     {
@@ -3360,12 +3408,12 @@
       "date": "2002-09-29T01:25:12Z",
       "subject": "Re: fit the MLE of gamma dist",
       "subject_clean": "fit the MLE of gamma dist",
-      "in_reply_to": null,
+      "in_reply_to": "<OE70VviFluZw0VclXez00001cf9@hotmail.com>",
       "references": [],
       "body_plain": "Let's \ntake a bigger sample:\n\n \n\n> y <- rgamma(5000, shape = 4, \nrate = 5)\n> fm <- glm(y ~ 1, Gamma(link = identity))\n\n> \nlibrary(MASS)\n\n> shape <- \ngamma.shape(fm)$alpha\n> rate <- shape/coef(fm)\n> c(shape = shape, \nrate = as(rate, \n\"vector\"))\n    shape     rate \n\n 4.016532 5.028475\n\n \n\nAlternatively:\n\n \n\n> gm <- ms(~ -log(dgamma(y, \nshape = shape, rate = rate)), \n\n    start = c(shape=4, rate=5), \ntrace = T)\n> coef(gm)\n    shape     \nrate \n 4.016532 5.028475\n\nOf \ncourse this is only half the story.  If you want standard errors you need \nto do a bit more work, but the information is there in the object fm and the \noutput from gamma.shape(), which is part of the MASS \nlibrary.\n\n \n\nThis \nis a fascinating simple problem and I could go on and on about it.  In fact \nI think I will.\n\n \n\nIn \nthe MASS library for S-PLUS 6.x there is (courtesy of BDR) now a \nfunction optim() that not only optimises but optionally gets you a Hessian at \nthe optimum.  So another way of finding the mle and getting an approximate \nvariance matrix as well is as follows:\n\n \n\n> \nfgamma <- function(par, y) \n\n        - sum(log(dgamma(y, \nshape = par[1], rate = par[2])))\n> par <- c(shape = 4, rate = \n5)\n> hm <- optim(par, fgamma, hessian = T, y = y)\n\n> se <- \nsqrt(diag(solve(hm$hessian)))  # don't forget to invert!\n> \ncbind(hm$par, \nse)\n                       \nse \nshape 4.016415 0.07722422\n rate 5.028294 \n0.10298544\n\nEasy \npeasy.\n\n \n\nBill Venables .\n\n \n\nBill \nVenables.\n\n>   -----Original Message-----\n> From: Weijie Cai\n>   [mailto:wjcai2001 at hotmail.com]\n> Sent: Sunday, September 29, 2002 4:43\n>   AM\n> To: S-plus mail list\n> Subject: [S] fit the MLE of gamma\n>   dist\n>\n>\n>\n>   hi, all,\n>\n>   suppose I have a dataset generated from\n>   rgamma(500,4,5), now I want to get the MLE for 4 and 5, how to program it?\n>   someone suggested me to use ms( ), but I don't know how to deal with\n>   it.\n>\n>\n>\n>   Thanks in advance.\n>\n>   W.Cai",
       "body_snippet": "Let's \ntake a bigger sample:\n\n \n\n> y <- rgamma(5000, shape = 4, \nrate = 5)\n> fm <- glm(y ~ 1, Gamma(link = identity))\n\n> \nlibrary(MASS)\n\n> shape <- \ngamma.shape(fm)$alpha\n> rate <- shape/coef(fm)\n> c(",
-      "thread_id": "thread-09d26865d6b3",
-      "thread_depth": 0,
+      "thread_id": "thread-57f2e3d704fc",
+      "thread_depth": 1,
       "month": "2002-09"
     },
     {
@@ -3376,12 +3424,12 @@
       "date": "2002-09-29T02:15:32Z",
       "subject": "merge data.frames by timeDate",
       "subject_clean": "merge data.frames by timeDate",
-      "in_reply_to": null,
+      "in_reply_to": "<OF3410309E.EE8FE0AB-ON86256C3D.0069601B@cr.usgs.gov>",
       "references": [],
       "body_plain": "Dave, I have found timeDate to be so mysterious and klunky that I have\ngiven up on it (Splus 6.0, but I think it is the same).  Merge, graphs, and\nquite a few other operations that should be straightforward give you\ngarbage.  I wrote a few simple functions to compute year , month, and day\n(NOT as factors, which even SPlus 2000 returned for some reason, but as\nnumbers) and use those to merge.  A lot of my data are daily so I don't\ncare about the time, but I think it has something to do with time zones.\nThe transition between daylight time and standard time will catch you too. \n\nMy suggestion in Splus 6.x is to avoid timeDate for most numerical operations.\n\nWim\n\nDate: Mon, 23 Sep 2002 14:29:24 -0500\nFrom: \"David L Lorenz\" <lorenz at usgs.gov>\nTo: s-news at lists.biostat.wustl.edu\nSubject: merge data.frames by timeDate\nMessage-ID: <OF3410309E.EE8FE0AB-ON86256C3D.0069601B at cr.usgs.gov>\n\n  I am using S-PLUS 6.1 on a windows 2000 PC. I was able to merge to data\nsets by dates format columns in S-PLUS 2000, but I do not seem to be able\nto do that in S-PLUS 6.1 using the timeDate format.  I tried to merge data\nsets using the Data->Merge dialog and the merge function.  Neither\nworked--I got empty output data sets.  I also tried an example where the\noutput formats of the timeDate columns were identical and that also failed.\n  The data do have identical, matching times.  I was able to create a dummy\ncolumn in each data set using the as.double function and got exactly what I\nexpected for a merged data set.  I also used the which function to compare\nthe timeDate columns in each data.frame and got the correct matching line\nnumber for each of the couple times I tried. I used which to find which\nline number matched a specific datum in one of the data sets.  That means\nthe == function does find correct matches between timeDate data.\n  Has anybody tried merging data set on a timeDate column in S-PLUS 6.1?\nDid it work?\nDave\n\n======================\nDr. Wim Kimmerer\nRomberg Tiburon Center\nSan Francisco State University\n3152 Paradise Drive\nTiburon CA 94920\nPh. (415) 338-3515\nFax (415) 435-7120\nhttp://online.sfsu.edu/~kimmerer/",
       "body_snippet": "Dave, I have found timeDate to be so mysterious and klunky that I have\ngiven up on it (Splus 6.0, but I think it is the same).  Merge, graphs, and\nquite a few other operations that should be straightf",
-      "thread_id": "thread-277365fc9364",
-      "thread_depth": 0,
+      "thread_id": "thread-03b0cf32d9c6",
+      "thread_depth": 1,
       "month": "2002-09"
     },
     {
@@ -3392,12 +3440,12 @@
       "date": "2002-09-29T02:15:37Z",
       "subject": "very basic question: object of class \"named\"",
       "subject_clean": "very basic question: object of class \"named\"",
-      "in_reply_to": null,
+      "in_reply_to": "<2AD55759A5B6D611BBEE009027DE7961197927@icex2.cc.ic.ac.uk>",
       "references": [],
       "body_plain": "The \"named\" data type blindsided me too when I tried to use tapply and put\nthe result in a dataframe.  It is an utterly stupid concept and shouldn't\nbe in there, but of course you didn't know it was there except by accident\nbecause you could read the Splus 6 documentation for a week and never find\nit.  How many other examples are there like this?  I have found at least a\ndozen, so I suspect there are many.\n\nThe work-around is simple: just use as.numeric(df$x,df$z, mean)\n\nBUT: you shouldn't have to do this.\n\nWim\n\nOriginal question:\n\nI apologise for what I suspect is a very simple question.  I have been using\nthe tapply function to summarise data held in a dataframe by category, such\nas:\n\nav <- tapply(df$x,df$z, mean)\n\nwhere df is the dataframe, x is a continuous variable which falls into\ncategories z.\n\nThe object \"av\" returned from this operation apears in the object explorer\nas class \"named\".  The online help indicates that tapply returns an array,\nbut is.array(av) is F.  I am unable to open \"av\" for editing or viewing\nusing the explorer, and unsure of how to handle it.  Can it be coereced to\nsomething more convenient, like a dataframe ?  Am I making a mistake ?  Many\nthanks for enlightenment.\n\nI'm using splus 6 release 2 for windows 2000.\n\nJonathan Dakin\nClinical research fellow\nImperial College\n\n======================\nDr. Wim Kimmerer\nRomberg Tiburon Center\nSan Francisco State University\n3152 Paradise Drive\nTiburon CA 94920\nPh. (415) 338-3515\nFax (415) 435-7120\nhttp://online.sfsu.edu/~kimmerer/",
       "body_snippet": "The \"named\" data type blindsided me too when I tried to use tapply and put\nthe result in a dataframe.  It is an utterly stupid concept and shouldn't\nbe in there, but of course you didn't know it was t",
-      "thread_id": "thread-0da88bc837e1",
-      "thread_depth": 0,
+      "thread_id": "thread-353ff5c2548c",
+      "thread_depth": 1,
       "month": "2002-09"
     },
     {
@@ -3414,8 +3462,8 @@
       ],
       "body_plain": "I agree that the timeDate objects can be mysterious at first. Insightful's \nmanual description of these objects is a bit confusion. And, Insightful does \nnot make clear which functions operate correctly on them and which do not. For \nmerging data on timeDate, I recommend creating timeSeries objects and then \nusing the function seriesMerge. I don't think this works at the gui level (I \nkeep bugging Insightful to improve the gui support for timeSeries objects). \nAlso, you do have to be careful about time zone issues and I recommend setting \nthe time zone to GMT using the options command to avoid any strangeness. In \nS-PLUS 6 for windows, the time zone of the timeDate object was set according to \nthe windows regional setting. In S-PLUS 6.1, I believe the default is now GMT.\n\nHowever, after figuring out how they work I found the new time series objects \n(timeDate and timeSeries) to be extremely powerful and useful, especially for \ndealing with high frequency financial data. My recent book, Modeling Financial \nTime Series with S-PLUS, Springer 2002, emphasizes the usefulness of the new \ntime series objects in S-PLUS 6. See, in particular, chapter 2 on time series \nspecification, manipulation and visualization.\n\nUnfortunately, Insightful has not integrated the new timeSeries objects into \nall of the statistical fitting functions. However, you can always strip away \nthe timeDate information of a timeSeries by extracting the data using the \nseriesData function. The new S+FinMetrics module I helped develop is built \naround the new timeSeries objects and all of the functions work correctly with \ntimeDate and timeSeries objects.\n\nIf you work a lot with time series data, I wouldn't give up on the timeDate and \ntimeSeries objects. They are extremely powerful and useful.\n\nez\nOn Sat, 28 Sep 2002, Wim Kimmerer wrote:\n\n> Dave, I have found timeDate to be so mysterious and klunky that I have\n> given up on it (Splus 6.0, but I think it is the same).  Merge, graphs, and\n> quite a few other operations that should be straightforward give you\n> garbage.  I wrote a few simple functions to compute year , month, and day\n> (NOT as factors, which even SPlus 2000 returned for some reason, but as\n> numbers) and use those to merge.  A lot of my data are daily so I don't\n> care about the time, but I think it has something to do with time zones.\n> The transition between daylight time and standard time will catch you too. \n> \n> My suggestion in Splus 6.x is to avoid timeDate for most numerical operations.\n> \n> Wim\n> \n> \n> \n> \n> Date: Mon, 23 Sep 2002 14:29:24 -0500\n> From: \"David L Lorenz\" <lorenz at usgs.gov>\n> To: s-news at lists.biostat.wustl.edu\n> Subject: merge data.frames by timeDate\n> Message-ID: <OF3410309E.EE8FE0AB-ON86256C3D.0069601B at cr.usgs.gov>\n> \n>   I am using S-PLUS 6.1 on a windows 2000 PC. I was able to merge to data\n> sets by dates format columns in S-PLUS 2000, but I do not seem to be able\n> to do that in S-PLUS 6.1 using the timeDate format.  I tried to merge data\n> sets using the Data->Merge dialog and the merge function.  Neither\n> worked--I got empty output data sets.  I also tried an example where the\n> output formats of the timeDate columns were identical and that also failed.\n>   The data do have identical, matching times.  I was able to create a dummy\n> column in each data set using the as.double function and got exactly what I\n> expected for a merged data set.  I also used the which function to compare\n> the timeDate columns in each data.frame and got the correct matching line\n> number for each of the couple times I tried. I used which to find which\n> line number matched a specific datum in one of the data sets.  That means\n> the == function does find correct matches between timeDate data.\n>   Has anybody tried merging data set on a timeDate column in S-PLUS 6.1?\n> Did it work?\n> Dave\n> \n> \n> ======================\n> Dr. Wim Kimmerer\n> Romberg Tiburon Center\n> San Francisco State University\n> 3152 Paradise Drive\n> Tiburon CA 94920\n> Ph. (415) 338-3515\n> Fax (415) 435-7120\n> http://online.sfsu.edu/~kimmerer/\n> \n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>",
       "body_snippet": "I agree that the timeDate objects can be mysterious at first. Insightful's \nmanual description of these objects is a bit confusion. And, Insightful does \nnot make clear which functions operate correct",
-      "thread_id": "thread-277365fc9364",
-      "thread_depth": 1,
+      "thread_id": "thread-03b0cf32d9c6",
+      "thread_depth": 2,
       "month": "2002-09"
     },
     {
@@ -3490,12 +3538,12 @@
       "date": "2002-09-30T14:38:27Z",
       "subject": "Re: fit the MLE of gamma dist",
       "subject_clean": "fit the MLE of gamma dist",
-      "in_reply_to": null,
+      "in_reply_to": "<OE70VviFluZw0VclXez00001cf9@hotmail.com>",
       "references": [],
       "body_plain": "What \nabout the fitdistr function in the MASS library (S-Plus 6.0 for Windows)?  \nSeems to provide a very nice front-end to nlminb, with vcov matrix estimated \nwith vcov.nlminb of MASS:\n\n \n\n> \nfitdistr(y,dgamma,start=list(shape=4,rate=5))\n    \nshape        \nrate      \n  4.044972     \n5.035894   \n (0.07821524) (0.1037563 )\n\n \n\n(The \nexact values naturally differ from Bill's because it's a different \nsample.)\n\n \n\nBrad\n\n>   -----Original Message-----\n> From: Bill.Venables at CMIS.CSIRO.AU\n>   [mailto:Bill.Venables at CMIS.CSIRO.AU]\n> Sent: Saturday, September 28,\n>   2002 19:25 PM\n> To: wjcai2001 at hotmail.com;\n>   s-news at lists.biostat.wustl.edu\n> Subject: Re: [S] fit the MLE of gamma\n>   dist\n>\n>\n>\n>   Let's take a bigger sample:\n>\n>\n>\n>   > y <- rgamma(5000, shape =\n>   4, rate = 5)\n> > fm <- glm(y ~ 1, Gamma(link =\n>   identity))\n>\n>\n>   > library(MASS)\n>\n>   > shape <-\n>   gamma.shape(fm)$alpha\n> > rate <- shape/coef(fm)\n> > c(shape =\n>   shape, rate = as(rate,\n>   \"vector\"))\n>     shape     rate\n>\n>  4.016532 5.028475\n>\n>\n>\n>   Alternatively:\n>\n>\n>\n>   > gm <- ms(~ -log(dgamma(y,\n>   shape = shape, rate = rate)),\n>\n>       start = c(shape=4, rate=5),\n>   trace = T)\n> > coef(gm)\n>\n>   shape     rate\n>  4.016532\n>   5.028475\n>\n>\n>\n>   Of\n>   course this is only half the story.  If you want standard errors you need\n>   to do a bit more work, but the information is there in the object fm and the\n>   output from gamma.shape(), which is part of the MASS\n>   library.\n>\n>\n>\n>   This is a fascinating simple problem and I could go on and on\n>   about it.  In fact I think I will.\n>\n>\n>\n>   In\n>   the MASS library for S-PLUS 6.x there is (courtesy of BDR) now a\n>   function optim() that not only optimises but optionally gets you a Hessian at\n>   the optimum.  So another way of finding the mle and getting an\n>   approximate variance matrix as well is as follows:\n>\n>\n>\n>   > fgamma <- function(par, y)\n>\n>           - sum(log(dgamma(y,\n>   shape = par[1], rate = par[2])))\n> > par <- c(shape = 4, rate =\n>   5)\n> > hm <- optim(par, fgamma, hessian = T, y = y)\n>\n> > se\n>   <- sqrt(diag(solve(hm$hessian)))  # don't forget to invert!\n> >\n>   cbind(hm$par,\n>   se)\n>\n>   se\n> shape 4.016415 0.07722422\n>  rate 5.028294\n>   0.10298544\n>\n>\n>   Easy peasy.\n>\n>\n>\n>   Bill Venables .\n>\n>\n>\n>\n>\n>\n>   Bill Venables.\n>\n>   >     -----Original Message-----\n> > From: Weijie Cai\n> >     [mailto:wjcai2001 at hotmail.com]\n> > Sent: Sunday, September 29, 2002\n> >     4:43 AM\n> > To: S-plus mail list\n> > Subject: [S] fit the MLE of\n> >     gamma dist\n> >\n> >\n> >\n> >     hi, all,\n> >\n> >     suppose I have a dataset generated\n> >     from rgamma(500,4,5), now I want to get the MLE for 4 and 5, how to program\n> >     it? someone suggested me to use ms( ), but I don't know how to deal with\n> >     it.\n> >\n> >\n> >\n> >     Thanks in\n> >     advance.\n> >\n> >     W.Cai",
       "body_snippet": "What \nabout the fitdistr function in the MASS library (S-Plus 6.0 for Windows)?  \nSeems to provide a very nice front-end to nlminb, with vcov matrix estimated \nwith vcov.nlminb of MASS:\n\n \n\n> \nfitdist",
-      "thread_id": "thread-c664566e8397",
-      "thread_depth": 0,
+      "thread_id": "thread-57f2e3d704fc",
+      "thread_depth": 1,
       "month": "2002-09"
     },
     {
@@ -3554,12 +3602,12 @@
       "date": "2002-09-30T19:25:20Z",
       "subject": "Re: extract standard error for a coefficient in lm model",
       "subject_clean": "extract standard error for a coefficient in lm model",
-      "in_reply_to": null,
+      "in_reply_to": "<9BCAC308B27CAD4196D8AC9ADF037AAA03111B0A@wlmmsx01.nemours.org>",
       "references": [],
       "body_plain": "Many thanks to Iyue, Jason, Bert and Dimitris.   Your responses are very\nhelpful!  \n\nHuihua \n\n> -----Original Message-----\n> From: Iyue Sung [SMTP:ISung at neri.org]\n> Sent: Monday, September 30, 2002 2:48 PM\n> To:   'Hui-Hua Li'\n> Subject:      RE: [S] extract standard error for a coefficient in lm model\n> \n> \n> Hui-Hua, here's an example:\n> \n> > temp.lm <- lm(xxxxx)\n> > temp<- summary(temp.lm)$coefficients\n> \n> 'temp' is a matrix with columns corresponding\n> to 1) coefficients, 2) SEs,  3) T-statistic and 4) p-value.\n> So, \"temp[,2]\" returns the SEs.\n> \n> \n> Type \"objects(temp.lm)\" to see other things you cane extract.\n> \n> \n> -Iyue\n> \n> \n> > -----Original Message-----\n> > From: Hui-Hua Li [mailto:huihuali at NEMOURS.ORG]\n> > Sent: Monday, September 30, 2002 2:06 PM\n> > To: 's-news at lists.biostat.wustl.edu'\n> > Subject: [S] extract standard error for a coefficient in lm model\n> > \n> > \n> > Hi, \n> > Does anyone know how to extract the standard error for a \n> > coefficient in \"lm\"\n> > model in splus? \n> > Many thanks in advance, \n> > Huihua Li \n> > Statistics Program \n> > University of Delaware\n> > \n> > \n> > --------------------------------------------------------------------\n> > This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> > unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> > the BODY of the message:  unsubscribe s-news\n> >",
       "body_snippet": "Many thanks to Iyue, Jason, Bert and Dimitris.   Your responses are very\nhelpful!  \n\nHuihua \n\n> -----Original Message-----\n> From: Iyue Sung [SMTP:ISung at neri.org]\n> Sent: Monday, September 30, 2002",
-      "thread_id": "thread-cdcd6b8e1056",
-      "thread_depth": 0,
+      "thread_id": "thread-8b2d8cc0811b",
+      "thread_depth": 1,
       "month": "2002-09"
     },
     {
@@ -3689,12 +3737,14 @@
     {
       "id": "thread-75847f4c32ba",
       "subject": "how to skip rows when reading in data?",
-      "message_count": 1,
+      "message_count": 4,
       "participants": [
+        "Nick.Ellis at csiro.au",
+        "Prof Brian Ripley",
         "Voelkle, Manuel"
       ],
       "started": "2002-09-04T18:11:53Z",
-      "last_reply": "2002-09-04T18:11:53Z",
+      "last_reply": "2002-09-05T10:52:35Z",
       "root_message_id": "msg-75847f4c32ba"
     },
     {
@@ -3711,12 +3761,15 @@
     {
       "id": "thread-d3000932b022",
       "subject": "Beta-binomial rv generator",
-      "message_count": 1,
+      "message_count": 5,
       "participants": [
+        "Alain LE TERTRE",
+        "James McBroom",
+        "Ravi Varadhan",
         "abu taher"
       ],
       "started": "2002-09-04T20:04:15Z",
-      "last_reply": "2002-09-04T20:04:15Z",
+      "last_reply": "2002-09-10T10:08:24Z",
       "root_message_id": "msg-d3000932b022"
     },
     {
@@ -3729,29 +3782,6 @@
       "started": "2002-09-04T22:57:18Z",
       "last_reply": "2002-09-04T22:57:18Z",
       "root_message_id": "msg-8c4ab43f0cff"
-    },
-    {
-      "id": "thread-b796ed809f85",
-      "subject": "how to skip rows when reading in data?",
-      "message_count": 2,
-      "participants": [
-        "Nick.Ellis at csiro.au",
-        "Prof Brian Ripley"
-      ],
-      "started": "2002-09-05T00:32:55Z",
-      "last_reply": "2002-09-05T10:52:35Z",
-      "root_message_id": "msg-b796ed809f85"
-    },
-    {
-      "id": "thread-a21c5da91ddf",
-      "subject": "how to skip rows when reading in data?",
-      "message_count": 1,
-      "participants": [
-        "Nick.Ellis at csiro.au"
-      ],
-      "started": "2002-09-05T01:50:49Z",
-      "last_reply": "2002-09-05T01:50:49Z",
-      "root_message_id": "msg-a21c5da91ddf"
     },
     {
       "id": "thread-b15198969aa3",
@@ -3801,12 +3831,12 @@
     {
       "id": "thread-01ab82bd6105",
       "subject": "quantile smoothers",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Edward Malthouse"
       ],
       "started": "2002-09-05T16:08:01Z",
-      "last_reply": "2002-09-05T16:08:01Z",
+      "last_reply": "2002-09-05T18:56:11Z",
       "root_message_id": "msg-01ab82bd6105"
     },
     {
@@ -3830,17 +3860,6 @@
       "started": "2002-09-05T17:37:46Z",
       "last_reply": "2002-09-05T17:37:46Z",
       "root_message_id": "msg-d6d0c8070f24"
-    },
-    {
-      "id": "thread-628b050d95b9",
-      "subject": "quantile smoothers",
-      "message_count": 1,
-      "participants": [
-        "Edward Malthouse"
-      ],
-      "started": "2002-09-05T18:56:11Z",
-      "last_reply": "2002-09-05T18:56:11Z",
-      "root_message_id": "msg-628b050d95b9"
     },
     {
       "id": "thread-4c8203dff5fc",
@@ -3981,26 +4000,16 @@
     {
       "id": "thread-f9f7ffa5e8bf",
       "subject": "First max of a vector",
-      "message_count": 3,
+      "message_count": 5,
       "participants": [
         "Abdulkadir Hussein",
+        "Alan Zaslavsky",
         "Martin Maechler",
         "Michael M. Meyer"
       ],
       "started": "2002-09-06T23:55:33Z",
-      "last_reply": "2002-09-09T08:01:04Z",
+      "last_reply": "2002-09-09T17:28:35Z",
       "root_message_id": "msg-f9f7ffa5e8bf"
-    },
-    {
-      "id": "thread-936f98a4c9ab",
-      "subject": "First max of a vector",
-      "message_count": 1,
-      "participants": [
-        "Abdulkadir Hussein"
-      ],
-      "started": "2002-09-07T00:07:41Z",
-      "last_reply": "2002-09-07T00:07:41Z",
-      "root_message_id": "msg-936f98a4c9ab"
     },
     {
       "id": "thread-e11eec85e652",
@@ -4012,19 +4021,6 @@
       "started": "2002-09-07T00:23:23Z",
       "last_reply": "2002-09-07T00:23:23Z",
       "root_message_id": "msg-e11eec85e652"
-    },
-    {
-      "id": "thread-0fa850300855",
-      "subject": "Beta-binomial rv generator",
-      "message_count": 4,
-      "participants": [
-        "Alain LE TERTRE",
-        "James McBroom",
-        "Ravi Varadhan"
-      ],
-      "started": "2002-09-07T04:55:48Z",
-      "last_reply": "2002-09-10T10:08:24Z",
-      "root_message_id": "msg-0fa850300855"
     },
     {
       "id": "thread-fa372c8fc127",
@@ -4117,17 +4113,6 @@
       "started": "2002-09-09T15:28:22Z",
       "last_reply": "2002-09-09T15:28:22Z",
       "root_message_id": "msg-00a581fbd48a"
-    },
-    {
-      "id": "thread-a61dca0dc0c7",
-      "subject": "First max of a vector",
-      "message_count": 1,
-      "participants": [
-        "Alan Zaslavsky"
-      ],
-      "started": "2002-09-09T17:28:35Z",
-      "last_reply": "2002-09-09T17:28:35Z",
-      "root_message_id": "msg-a61dca0dc0c7"
     },
     {
       "id": "thread-c8dce0aa6efd",
@@ -4522,12 +4507,12 @@
     {
       "id": "thread-40ad51018849",
       "subject": "Spatial Autoregression with Poisson Response Variable",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Tim McDonough"
       ],
       "started": "2002-09-16T11:33:35Z",
-      "last_reply": "2002-09-16T11:33:35Z",
+      "last_reply": "2002-09-24T11:16:16Z",
       "root_message_id": "msg-40ad51018849"
     },
     {
@@ -4589,14 +4574,15 @@
     {
       "id": "thread-d1e047dcf45b",
       "subject": "do.call and apply",
-      "message_count": 3,
+      "message_count": 4,
       "participants": [
         "John Fox",
+        "Nick.Ellis at csiro.au",
         "Robert Anthony Canales",
         "Sundar Dorai-Raj"
       ],
       "started": "2002-09-17T07:58:57Z",
-      "last_reply": "2002-09-17T13:05:37Z",
+      "last_reply": "2002-09-18T01:01:21Z",
       "root_message_id": "msg-d1e047dcf45b"
     },
     {
@@ -4644,17 +4630,6 @@
       "root_message_id": "msg-4173f4c6d685"
     },
     {
-      "id": "thread-cf0ae73d74bc",
-      "subject": "do.call and apply",
-      "message_count": 1,
-      "participants": [
-        "Nick.Ellis at csiro.au"
-      ],
-      "started": "2002-09-18T01:01:21Z",
-      "last_reply": "2002-09-18T01:01:21Z",
-      "root_message_id": "msg-cf0ae73d74bc"
-    },
-    {
       "id": "thread-b65e73689144",
       "subject": "Using merge to match data set",
       "message_count": 3,
@@ -4680,34 +4655,24 @@
     {
       "id": "thread-8278221d6abc",
       "subject": "problem with predict.lme",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Neville Phillips"
       ],
       "started": "2002-09-19T01:24:41Z",
-      "last_reply": "2002-09-19T01:24:41Z",
-      "root_message_id": "msg-8278221d6abc"
-    },
-    {
-      "id": "thread-7a346be21bc7",
-      "subject": "problem with predict.lme",
-      "message_count": 1,
-      "participants": [
-        "Neville Phillips"
-      ],
-      "started": "2002-09-19T02:01:56Z",
       "last_reply": "2002-09-19T02:01:56Z",
-      "root_message_id": "msg-7a346be21bc7"
+      "root_message_id": "msg-8278221d6abc"
     },
     {
       "id": "thread-830d40a18725",
       "subject": "Splus and C question",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Arjun Bhandari"
+        "Arjun Bhandari",
+        "Terry Therneau"
       ],
       "started": "2002-09-19T06:40:37Z",
-      "last_reply": "2002-09-19T06:40:37Z",
+      "last_reply": "2002-09-19T12:51:47Z",
       "root_message_id": "msg-830d40a18725"
     },
     {
@@ -4720,17 +4685,6 @@
       "started": "2002-09-19T11:45:38Z",
       "last_reply": "2002-09-19T11:45:38Z",
       "root_message_id": "msg-5fb0f4d7a1ee"
-    },
-    {
-      "id": "thread-66739e85e082",
-      "subject": "Splus and C question",
-      "message_count": 1,
-      "participants": [
-        "Terry Therneau"
-      ],
-      "started": "2002-09-19T12:51:47Z",
-      "last_reply": "2002-09-19T12:51:47Z",
-      "root_message_id": "msg-66739e85e082"
     },
     {
       "id": "thread-77df85f46f9c",
@@ -4866,6 +4820,17 @@
       "root_message_id": "msg-31543ba772f8"
     },
     {
+      "id": "thread-7fb211174d0c",
+      "subject": ".Call interface with S-plus 6.0 question",
+      "message_count": 1,
+      "participants": [
+        "Gabriel Baud-Bovy"
+      ],
+      "started": "2002-09-22T06:51:32Z",
+      "last_reply": "2002-09-22T06:51:32Z",
+      "root_message_id": "msg-7fb211174d0c"
+    },
+    {
       "id": "thread-1e6bcb2217da",
       "subject": "Fine tuning graphics",
       "message_count": 2,
@@ -4924,6 +4889,17 @@
       "root_message_id": "msg-555fd8d722fe"
     },
     {
+      "id": "thread-6f634128f64a",
+      "subject": ".Call interface with S-plus 6.0",
+      "message_count": 1,
+      "participants": [
+        "Gabriel Baud-Bovy"
+      ],
+      "started": "2002-09-23T16:44:26Z",
+      "last_reply": "2002-09-23T16:44:26Z",
+      "root_message_id": "msg-6f634128f64a"
+    },
+    {
       "id": "thread-428b9fa93f15",
       "subject": "switching axes on partition plot",
       "message_count": 1,
@@ -4948,25 +4924,40 @@
     {
       "id": "thread-03b0cf32d9c6",
       "subject": "merge data.frames by timeDate",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
-        "David L Lorenz"
+        "David L Lorenz",
+        "Eric Zivot",
+        "Wim Kimmerer"
       ],
       "started": "2002-09-23T19:29:24Z",
-      "last_reply": "2002-09-23T19:29:24Z",
+      "last_reply": "2002-09-29T09:42:49Z",
       "root_message_id": "msg-03b0cf32d9c6"
     },
     {
       "id": "thread-51d38ed13aba",
       "subject": "xlab with apply, hist",
-      "message_count": 2,
+      "message_count": 4,
       "participants": [
         "Beth Wilmot",
+        "Gunter, Bert",
+        "Ravi Varadhan",
         "Tony Plate"
       ],
       "started": "2002-09-23T21:05:33Z",
-      "last_reply": "2002-09-24T15:26:18Z",
+      "last_reply": "2002-09-24T16:49:00Z",
       "root_message_id": "msg-51d38ed13aba"
+    },
+    {
+      "id": "thread-d4d996f83c60",
+      "subject": "Error with some functions when loading, unloading and reloading DLL",
+      "message_count": 1,
+      "participants": [
+        "Gabriel Baud-Bovy"
+      ],
+      "started": "2002-09-23T23:14:05Z",
+      "last_reply": "2002-09-23T23:14:05Z",
+      "root_message_id": "msg-d4d996f83c60"
     },
     {
       "id": "thread-f283e7fc9b35",
@@ -5002,17 +4993,6 @@
       "root_message_id": "msg-16f2ab8adeeb"
     },
     {
-      "id": "thread-c4d08f984ef5",
-      "subject": "Spatial Autoregression with Poisson Response Variable",
-      "message_count": 1,
-      "participants": [
-        "Tim McDonough"
-      ],
-      "started": "2002-09-24T11:16:16Z",
-      "last_reply": "2002-09-24T11:16:16Z",
-      "root_message_id": "msg-c4d08f984ef5"
-    },
-    {
       "id": "thread-ef1095a89688",
       "subject": "rpart2 for S+ 2000",
       "message_count": 1,
@@ -5033,18 +5013,6 @@
       "started": "2002-09-24T14:28:57Z",
       "last_reply": "2002-09-24T14:28:57Z",
       "root_message_id": "msg-d720f86e0de1"
-    },
-    {
-      "id": "thread-c2a67cbf0ada",
-      "subject": "xlab with apply, hist",
-      "message_count": 2,
-      "participants": [
-        "Gunter, Bert",
-        "Ravi Varadhan"
-      ],
-      "started": "2002-09-24T14:44:18Z",
-      "last_reply": "2002-09-24T16:49:00Z",
-      "root_message_id": "msg-c2a67cbf0ada"
     },
     {
       "id": "thread-878f278574e5",
@@ -5094,7 +5062,7 @@
     {
       "id": "thread-2a5beb270ed7",
       "subject": "truncated normal distribution",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Simon Jackman",
         "Weijie Cai"
@@ -5102,17 +5070,6 @@
       "started": "2002-09-24T18:13:14Z",
       "last_reply": "2002-09-24T19:19:10Z",
       "root_message_id": "msg-2a5beb270ed7"
-    },
-    {
-      "id": "thread-98cb2cb9ee5b",
-      "subject": "truncated normal distribution",
-      "message_count": 1,
-      "participants": [
-        "Weijie Cai"
-      ],
-      "started": "2002-09-24T18:36:06Z",
-      "last_reply": "2002-09-24T18:36:06Z",
-      "root_message_id": "msg-98cb2cb9ee5b"
     },
     {
       "id": "thread-45c5fb02ae75",
@@ -5152,24 +5109,13 @@
     {
       "id": "thread-7053fdce2772",
       "subject": "Bar labels with barplot()",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Sung, Myong-Hee (NCI)"
       ],
       "started": "2002-09-25T17:41:34Z",
-      "last_reply": "2002-09-25T17:41:34Z",
-      "root_message_id": "msg-7053fdce2772"
-    },
-    {
-      "id": "thread-8afd7ca821c9",
-      "subject": "Bar labels with barplot()",
-      "message_count": 1,
-      "participants": [
-        "Sung, Myong-Hee (NCI)"
-      ],
-      "started": "2002-09-25T18:03:48Z",
       "last_reply": "2002-09-25T18:03:48Z",
-      "root_message_id": "msg-8afd7ca821c9"
+      "root_message_id": "msg-7053fdce2772"
     },
     {
       "id": "thread-89fe4bac8a3d",
@@ -5208,7 +5154,7 @@
     {
       "id": "thread-39cea1097f8b",
       "subject": "export from command line",
-      "message_count": 2,
+      "message_count": 4,
       "participants": [
         "Molinari, Luciano",
         "Tony Plate"
@@ -5216,28 +5162,6 @@
       "started": "2002-09-26T07:17:22Z",
       "last_reply": "2002-09-26T14:58:34Z",
       "root_message_id": "msg-39cea1097f8b"
-    },
-    {
-      "id": "thread-23c0492ed7d0",
-      "subject": "export from command line",
-      "message_count": 1,
-      "participants": [
-        "Molinari, Luciano"
-      ],
-      "started": "2002-09-26T08:09:54Z",
-      "last_reply": "2002-09-26T08:09:54Z",
-      "root_message_id": "msg-23c0492ed7d0"
-    },
-    {
-      "id": "thread-36ad95b76032",
-      "subject": "export from command line",
-      "message_count": 1,
-      "participants": [
-        "Molinari, Luciano"
-      ],
-      "started": "2002-09-26T09:55:53Z",
-      "last_reply": "2002-09-26T09:55:53Z",
-      "root_message_id": "msg-36ad95b76032"
     },
     {
       "id": "thread-4a2ca988f13a",
@@ -5253,12 +5177,13 @@
     {
       "id": "thread-353ff5c2548c",
       "subject": "very basic question: object of class \"named\"",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Dakin, Jonathan"
+        "Dakin, Jonathan",
+        "Wim Kimmerer"
       ],
       "started": "2002-09-26T12:20:22Z",
-      "last_reply": "2002-09-26T12:20:22Z",
+      "last_reply": "2002-09-29T02:15:37Z",
       "root_message_id": "msg-353ff5c2548c"
     },
     {
@@ -5308,12 +5233,12 @@
     {
       "id": "thread-ff5af3f74506",
       "subject": "A problem with \"best.basis()\"",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "impromptu at nifty.com"
       ],
       "started": "2002-09-27T07:19:05Z",
-      "last_reply": "2002-09-27T07:19:05Z",
+      "last_reply": "2002-09-28T02:32:52Z",
       "root_message_id": "msg-ff5af3f74506"
     },
     {
@@ -5339,17 +5264,6 @@
       "root_message_id": "msg-8b57a0aef362"
     },
     {
-      "id": "thread-31c12cc10a12",
-      "subject": "A problem with \"best.basis()\"",
-      "message_count": 1,
-      "participants": [
-        "impromptu at nifty.com"
-      ],
-      "started": "2002-09-28T02:32:52Z",
-      "last_reply": "2002-09-28T02:32:52Z",
-      "root_message_id": "msg-31c12cc10a12"
-    },
-    {
       "id": "thread-b6d8411cc205",
       "subject": "blank and missing graphs for lme residual plots",
       "message_count": 1,
@@ -5363,12 +5277,14 @@
     {
       "id": "thread-57f2e3d704fc",
       "subject": "fit the MLE of gamma dist",
-      "message_count": 1,
+      "message_count": 3,
       "participants": [
+        "Biggerstaff, Brad J.",
+        "Bill.Venables at CMIS.CSIRO.AU",
         "Weijie Cai"
       ],
       "started": "2002-09-28T18:43:19Z",
-      "last_reply": "2002-09-28T18:43:19Z",
+      "last_reply": "2002-09-30T14:38:27Z",
       "root_message_id": "msg-57f2e3d704fc"
     },
     {
@@ -5381,40 +5297,6 @@
       "started": "2002-09-28T22:23:07Z",
       "last_reply": "2002-09-28T22:23:07Z",
       "root_message_id": "msg-954d91118563"
-    },
-    {
-      "id": "thread-09d26865d6b3",
-      "subject": "fit the MLE of gamma dist",
-      "message_count": 1,
-      "participants": [
-        "Bill.Venables at CMIS.CSIRO.AU"
-      ],
-      "started": "2002-09-29T01:25:12Z",
-      "last_reply": "2002-09-29T01:25:12Z",
-      "root_message_id": "msg-09d26865d6b3"
-    },
-    {
-      "id": "thread-277365fc9364",
-      "subject": "merge data.frames by timeDate",
-      "message_count": 2,
-      "participants": [
-        "Eric Zivot",
-        "Wim Kimmerer"
-      ],
-      "started": "2002-09-29T02:15:32Z",
-      "last_reply": "2002-09-29T09:42:49Z",
-      "root_message_id": "msg-277365fc9364"
-    },
-    {
-      "id": "thread-0da88bc837e1",
-      "subject": "very basic question: object of class \"named\"",
-      "message_count": 1,
-      "participants": [
-        "Wim Kimmerer"
-      ],
-      "started": "2002-09-29T02:15:37Z",
-      "last_reply": "2002-09-29T02:15:37Z",
-      "root_message_id": "msg-0da88bc837e1"
     },
     {
       "id": "thread-692c9d90efd4",
@@ -5461,17 +5343,6 @@
       "root_message_id": "msg-72476d4f19ca"
     },
     {
-      "id": "thread-c664566e8397",
-      "subject": "fit the MLE of gamma dist",
-      "message_count": 1,
-      "participants": [
-        "Biggerstaff, Brad J."
-      ],
-      "started": "2002-09-30T14:38:27Z",
-      "last_reply": "2002-09-30T14:38:27Z",
-      "root_message_id": "msg-c664566e8397"
-    },
-    {
       "id": "thread-869fb243a462",
       "subject": "Accessing Column Notes",
       "message_count": 1,
@@ -5485,12 +5356,12 @@
     {
       "id": "thread-8b2d8cc0811b",
       "subject": "extract standard error for a coefficient in lm model",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Hui-Hua Li"
       ],
       "started": "2002-09-30T18:05:42Z",
-      "last_reply": "2002-09-30T18:05:42Z",
+      "last_reply": "2002-09-30T19:25:20Z",
       "root_message_id": "msg-8b2d8cc0811b"
     },
     {
@@ -5503,17 +5374,6 @@
       "started": "2002-09-30T19:03:25Z",
       "last_reply": "2002-09-30T19:03:25Z",
       "root_message_id": "msg-88effcc1ccf9"
-    },
-    {
-      "id": "thread-cdcd6b8e1056",
-      "subject": "extract standard error for a coefficient in lm model",
-      "message_count": 1,
-      "participants": [
-        "Hui-Hua Li"
-      ],
-      "started": "2002-09-30T19:25:20Z",
-      "last_reply": "2002-09-30T19:25:20Z",
-      "root_message_id": "msg-cdcd6b8e1056"
     },
     {
       "id": "thread-152ee52325ae",

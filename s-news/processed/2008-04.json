@@ -268,8 +268,8 @@
       ],
       "body_plain": "On Mon, 7 Apr 2008, Robert A LaBudde wrote:\n\n> I'd say there is a problem with an iterative\n> algorithm for a fractional power of a number near\n> one. I ran your problem in R v.2.6.2 and got:\n> ...\n>  > system.time(ttt.test.sqrt <- ttt.test^0.5)\n>     user  system elapsed\n>     0.06    0.01    0.07\n>\n> I suppose Insightful should look into their algorithm, if it takes 13 minutes.\n>\n> I would recommend you use \"sqrt()\" instead of\n> \"^0.5\" as a workaround. It's usually better to do this anyway.\n\nSplus uses that standard math library's pow() function.  We do not\nwrite our own code for things like that, although we do have to write\nwrappers to work around known problems in the math library's functions\n(e.g., they do know about our missing value flags and don't always do\nthe right things for Inf).\n\nThe root cause is that the 64-bit gcc 3.4.5 version of pow(x,y) is\nextremely slow when x is 1 bit away from 1 in either direction (1+2^-52\nor 1-2^-53) and y is quite close or equal to 0.5.  Our tests did not\ncheck those cases.\n\nI just changed the C code in Splus to use sqrt(x) instead of\npow(x,0.5).  Later I looked at R's C code (src/main/arithmetic.c) and\nnoticed that it does the same thing unless one is using gcc 4.3:\n   /* work around a bug in May 2007 snapshots of gcc pre-4.3.0 */\n   #if __GNUC__ == 4 && __GNUC_MINOR__ == 3\n       return (y == 2.0) ? x*x : pow(x, y);\n   #else\n       return (y == 2.0) ? x*x : ((y == 0.5) ? sqrt(x) : pow(x, y));\n   #endif\nI don't know if it does this to avoid a speed problem or for some other\nreason.  The checkin comment says\n   \"work around an optimization bug in currnt gcc pre-4.3.0\"\n\nYou can still detect the problem in R (compiled with gcc 3.4.5\nin 64-bit mode on Linux) if you use a power quite close to 0.5:\n   R64> unix.time(rep(1+2^-52,1000) ^ 0.5) # uses C sqrt()\n      user  system elapsed\n         0       0       0\n   R64> unix.time(rep(1+2^-52,1000) ^ (0.5+2^-46)) # uses C pow()\n      user  system elapsed\n     2.177   0.000   2.177\n\n> >Allmost  13 minutes to take 826015 square roots of numbers near 1?\n\n----------------------------------------------------------------------------\nBill Dunlap\nInsightful Corporation\nbill at insightful dot com\n360-428-8146\n\n \"All statements in this message represent the opinions of the author and do\n not necessarily reflect Insightful Corporation policy or position.\"",
       "body_snippet": "On Mon, 7 Apr 2008, Robert A LaBudde wrote:\n\n> I'd say there is a problem with an iterative\n> algorithm for a fractional power of a number near\n> one. I ran your problem in R v.2.6.2 and got:\n> ...\n> ",
-      "thread_id": "thread-0bce93e9f523",
-      "thread_depth": 1,
+      "thread_id": "thread-aad43fa7b15b",
+      "thread_depth": 2,
       "month": "2008-04"
     },
     {
@@ -280,12 +280,12 @@
       "date": "2008-04-08T00:40:56Z",
       "subject": "Re: Square root of a vector taking for ever!",
       "subject_clean": "Square root of a vector taking for ever!",
-      "in_reply_to": null,
+      "in_reply_to": "<OFF97A4AD8.5D7DDE4E-ON85257424.0056E11B-85257424.005E8274@spgdag.ca>",
       "references": [],
       "body_plain": "I'd say there is a problem with an iterative \nalgorithm for a fractional power of a number near \none. I ran your problem in R v.2.6.2 and got:\n\n> ttt.test <- sample(c(0.99999999999999978, 0.99999999999999978,\n+                      1.0000000000000002, 1.0000000000000002,\n+                      1.0000000000000002, 1.0000000000000002,\n+                      0.99999999999999978, 1.0000000000000002,\n+                      0.99999999999999978, 0.99999999999999978), size =\n+ 826015,\n+                    replace = T)\n> class(ttt.test)\n[1] \"numeric\"\n> length(ttt.test)\n[1] 826015\n> system.time(ttt.test.sqrt <- ttt.test^0.5)\n   user  system elapsed\n   0.06    0.01    0.07\n\nI suppose Insightful should look into their algorithm, if it takes 13 minutes.\n\nI would recommend you use \"sqrt()\" instead of \n\"^0.5\" as a workaround. It's usually better to do this anyway.\n\nAt 01:12 PM 4/7/2008, gerald.jean at dgag.ca wrote:\n> Hello there,\n>\n> I am running :\n>\n> S-PLUS : Copyright (c) 1988, 2007 Insightful Corp.\n> S : Copyright Insightful Corp.\n> Version 8.0.4  for Linux 2.4.21-37.EL, 64-bit : 2007\n>\n> Running \"summary.glm\" twice on the output of \"dglm\" (a function by Gordon\n> Smyth for dispersion modeling) takes roughly 20 minutes??  I made a private\n> version of \"summary.glm\" trying to track down where the bottle neck is.\n> Here is what I found:\n>\n> the instruction: \"wt <- wt^0.5\" is the one that's eating up all the time.\n> I then inserted a \"return(wt)\" statement in the function and played around\n> with this \"named\" vector.  I \"unnamed\" the vector but the timing was\n> basically the same.  I tracked the problem down to taking square root of\n> numbers very close to \"1\".  To make a long story short I'll show you the\n> same command ran on the above machine, Linux 64-bit machine, and on a\n> 32-bit Windows version:\n>\n> --------------------------------------------------------------------------------\n> ttt.test <- sample(c(0.99999999999999978, 0.99999999999999978,\n>                      1.0000000000000002, 1.0000000000000002,\n>                      1.0000000000000002, 1.0000000000000002,\n>                      0.99999999999999978, 1.0000000000000002,\n>                      0.99999999999999978, 0.99999999999999978), size =\n> 826015,\n>                    replace = T)\n> class(ttt.test)\n> [1] \"numeric\"\n> mysummary(ttt.test)\n>                    Min.                1st Qu.                 Median\n>  9.9999999999999985e-03 9.9999999999999985e-03 9.9999999999999985e-03\n>                    Mean                3rd Qu.                   Max.\n>  1.0000000000000000e-02 1.0000000000000002e-02 1.0000000000000002e-02\n>                       N                    Sum\n>  8.2601500000000000e+05 8.2601500000000000e+05\n> length(ttt.test)\n> [1] 826015\n> resources(ttt.test.sqrt <- ttt.test^0.5)\n>  User time    =  0 h.  12 min.  39.060000000000172804 s.\n>  System time  =  0 h.   0 min.   0.019999999999999574 s.\n>  CPU time     =  0 h.  12 min.  39.080000000000154614 s.\n>  Elapsed time =  0 h.  12 min.  39.860000000000582077 s.\n>  Child        =  0 h.   0 min.   0.000000000000000000 s.\n>  % CPU        =  99.9\n>  Memory usage:\n>       Cache   = 0 Bytes\n>       Working = 13.217104M Bytes\n> --------------------------------------------------------------------------------\n> Allmost  13 minutes to take 826015 square roots of numbers near 1?\n> Now on the 32-bit Windows machine.\n>\n> S-PLUS : Copyright (c) 1988, 2007 Insightful Corp.\n> S : Copyright Insightful Corp.\n> Enterprise Developer Version 8.0.4  for Microsoft Windows : 2007\n>\n> ttt.test <- sample(c(0.99999999999999978, 0.99999999999999978,\n>                      1.0000000000000002, 1.0000000000000002,\n>                      1.0000000000000002, 1.0000000000000002,\n>                      0.99999999999999978, 1.0000000000000002,\n>                      0.99999999999999978, 0.99999999999999978), size =\n> 826015,\n>                    replace = T)\n> class(ttt.test)\n> [1] \"numeric\"\n> options(digits = 17)\n> mysummary(ttt.test)\n>                 Min.             1st Qu.             Median Mean\n> 3rd Qu.\n>  0.99999999999999978 0.99999999999999978 1.0000000000000002    1\n> 1.0000000000000002\n>                Max.      N                     Sum\n>  1.0000000000000002 826015  8.2601500000000000e+05\n> length(ttt.test)\n> [1] 826015\n> resources(ttt.test.sqrt <- ttt.test^0.5)\n>  User time    =  0 h.  0 min.  0.260999999999999900 s.\n>  System time  =  0 h.  0 min.  0.010000000000000009 s.\n>  CPU time     =  0 h.  0 min.  0.270999999999999910 s.\n>  Elapsed time =  0 h.  0 min.  0.271000000000015010 s.\n>  Child        =  0 h.  0 min.  0.000000000000000000 s.\n>  % CPU        =  100\n>  Memory usage:\n>       Cache   = 0 Bytes\n>       Working = 13.232343M Bytes\n> --------------------------------------------------------------------------------\n> It is only\n>\n> (12 * 60 + 39.860000000000582077) / 0.271000000000015010\n> [1] 2803.9114391142380 times faster???  I know that a problem that fits in\n>\n> 32-bit will run faster in 32-bit than in 64-bit BUT I doubt very much that\n> it\n> explains such a difference?  Am I missing something???\n>\n> Thanks for any support,\n>\n> Gérald Jean\n> Conseiller senior en statistiques, Actuariat\n> télephone            : (418) 835-4900 poste (7639)\n> télecopieur          : (418) 835-6657\n> courrier électronique: gerald.jean at dgag.ca\n>\n> \"In God we trust, all others must bring data\"  W. Edwards Deming\n>\n>\n> Le message ci-dessus, ainsi que les documents l'accompagnant, sont destinés\n> uniquement aux personnes identifiées et peuvent contenir des informations\n> privilégiées, confidentielles ou ne pouvant être divulguées. Si vous avez\n> reçu ce message par erreur, veuillez le détruire.\n>\n> This communication (and/or the attachments) is intended for named\n> recipients only and may contain privileged or confidential information\n> which is not to be disclosed. If you received this communication by mistake\n> please destroy all copies.\n>\n>\n> --------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n\n================================================================\nRobert A. LaBudde, PhD, PAS, Dpl. ACAFS  e-mail: ral at lcfltd.com\nLeast Cost Formulations, Ltd.            URL: http://lcfltd.com/\n824 Timberlake Drive                     Tel: 757-467-0954\nVirginia Beach, VA 23464-3239            Fax: 757-467-2947\n\n\"Vere scire est per causas scire\"\n================================================================",
       "body_snippet": "I'd say there is a problem with an iterative \nalgorithm for a fractional power of a number near \none. I ran your problem in R v.2.6.2 and got:\n\n> ttt.test <- sample(c(0.99999999999999978, 0.9999999999",
-      "thread_id": "thread-0bce93e9f523",
-      "thread_depth": 0,
+      "thread_id": "thread-aad43fa7b15b",
+      "thread_depth": 1,
       "month": "2008-04"
     },
     {
@@ -352,8 +352,8 @@
       ],
       "body_plain": "Hello Bill,\n\nthanks for looking into that problem.  You said you changed the Splus code,\nin \"summary.glm\" I assume, to \"sqrt(x)\" rather than \"x^0.5\".  Unfortunately\nit doesn't solve the problem, takes just as long to run on the Linux 64-bit\nversion of Splus!\n\n> ttt.test <- sample(c(0.99999999999999978, 0.99999999999999978,\n+                      1.0000000000000002, 1.0000000000000002,\n+                      1.0000000000000002, 1.0000000000000002,\n+                      0.99999999999999978, 1.0000000000000002,\n+                      0.99999999999999978, 0.99999999999999978), size =\n826015,\n+                    replace = T)\n> class(ttt.test)\n[1] \"numeric\"\n> mysummary(ttt.test)\n   Min. 1st Qu. Median   Mean 3rd Qu.   Max.      N    Sum\n      1      1       1      1      1       1 826015 826015\n> resources(ttt.test.sqrt <- sqrt(ttt.test))\n\n User time    =  0 h.  12 min.  39.33 s.\n System time  =  0 h.   0 min.   0.06 s.\n CPU time     =  0 h.  12 min.  39.39 s.\n Elapsed time =  0 h.  12 min.  40.24 s.\n Child        =  0 h.   0 min.   0.00 s.\n % CPU        =  99.89\n Memory usage:\n      Cache   = 0 Bytes\n      Working = 13.217072M Bytes\n\nI find this annoying since I extensively use summary.glm; I suppose I'll\nmake a private copy and check for closeness to \"1\" before taking sqrt.\n\nGérald Jean\nConseiller senior en statistiques, Actuariat\ntélephone            : (418) 835-4900 poste (7639)\ntélecopieur          : (418) 835-6657\ncourrier électronique: gerald.jean at dgag.ca\n\n\"In God we trust, all others must bring data\"  W. Edwards Deming\n\n                                                                           \n             Bill Dunlap                                                   \n             <bill@insightful.                                             \n             com>                                                        A \n                                       Robert A LaBudde <ral at lcfltd.com>   \n             2008/04/07 20:09                                           cc \n                                       gerald.jean at dgag.ca,                \n                                       s-news at wubios.wustl.edu,            \n                                       support at insightful.com              \n                                                                     Objet \n                                       Re: [S] Square root of a vector     \n                                       taking for ever!                    \n                                                                           \n                                                                           \n                                                                           \n                                                                           \n                                                                           \n                                                                           \n\nOn Mon, 7 Apr 2008, Robert A LaBudde wrote:\n\n> I'd say there is a problem with an iterative\n> algorithm for a fractional power of a number near\n> one. I ran your problem in R v.2.6.2 and got:\n> ...\n>  > system.time(ttt.test.sqrt <- ttt.test^0.5)\n>     user  system elapsed\n>     0.06    0.01    0.07\n>\n> I suppose Insightful should look into their algorithm, if it takes 13\nminutes.\n>\n> I would recommend you use \"sqrt()\" instead of\n> \"^0.5\" as a workaround. It's usually better to do this anyway.\n\nSplus uses that standard math library's pow() function.  We do not\nwrite our own code for things like that, although we do have to write\nwrappers to work around known problems in the math library's functions\n(e.g., they do know about our missing value flags and don't always do\nthe right things for Inf).\n\nThe root cause is that the 64-bit gcc 3.4.5 version of pow(x,y) is\nextremely slow when x is 1 bit away from 1 in either direction (1+2^-52\nor 1-2^-53) and y is quite close or equal to 0.5.  Our tests did not\ncheck those cases.\n\nI just changed the C code in Splus to use sqrt(x) instead of\npow(x,0.5).  Later I looked at R's C code (src/main/arithmetic.c) and\nnoticed that it does the same thing unless one is using gcc 4.3:\n   /* work around a bug in May 2007 snapshots of gcc pre-4.3.0 */\n   #if __GNUC__ == 4 && __GNUC_MINOR__ == 3\n       return (y == 2.0) ? x*x : pow(x, y);\n   #else\n       return (y == 2.0) ? x*x : ((y == 0.5) ? sqrt(x) : pow(x, y));\n   #endif\nI don't know if it does this to avoid a speed problem or for some other\nreason.  The checkin comment says\n   \"work around an optimization bug in currnt gcc pre-4.3.0\"\n\nYou can still detect the problem in R (compiled with gcc 3.4.5\nin 64-bit mode on Linux) if you use a power quite close to 0.5:\n   R64> unix.time(rep(1+2^-52,1000) ^ 0.5) # uses C sqrt()\n      user  system elapsed\n         0       0       0\n   R64> unix.time(rep(1+2^-52,1000) ^ (0.5+2^-46)) # uses C pow()\n      user  system elapsed\n     2.177   0.000   2.177\n\n> >Allmost  13 minutes to take 826015 square roots of numbers near 1?\n\n----------------------------------------------------------------------------\n\nBill Dunlap\nInsightful Corporation\nbill at insightful dot com\n360-428-8146\n\n \"All statements in this message represent the opinions of the author and\ndo\n not necessarily reflect Insightful Corporation policy or position.\"\n\nLe message ci-dessus, ainsi que les documents l'accompagnant, sont destinés\nuniquement aux personnes identifiées et peuvent contenir des informations\nprivilégiées, confidentielles ou ne pouvant être divulguées. Si vous avez\nreçu ce message par erreur, veuillez le détruire.\n\nThis communication (and/or the attachments) is intended for named\nrecipients only and may contain privileged or confidential information\nwhich is not to be disclosed. If you received this communication by mistake\nplease destroy all copies.",
       "body_snippet": "Hello Bill,\n\nthanks for looking into that problem.  You said you changed the Splus code,\nin \"summary.glm\" I assume, to \"sqrt(x)\" rather than \"x^0.5\".  Unfortunately\nit doesn't solve the problem, takes",
-      "thread_id": "thread-0bce93e9f523",
-      "thread_depth": 2,
+      "thread_id": "thread-aad43fa7b15b",
+      "thread_depth": 3,
       "month": "2008-04"
     },
     {
@@ -449,12 +449,12 @@
       "date": "2008-04-09T15:55:48Z",
       "subject": "Re: Simulation of Weibull survival data",
       "subject_clean": "Simulation of Weibull survival data",
-      "in_reply_to": null,
+      "in_reply_to": "<1876.169.226.147.190.1207753555.squirrel@webmail.albany.edu>",
       "references": [],
       "body_plain": "If x ~ as an exponential, then x^p is distributed as a Weibull for p>0.  So \nsimulation of the data is easy using rexp().\n \n        Terry Therneau",
       "body_snippet": "If x ~ as an exponential, then x^p is distributed as a Weibull for p>0.  So \nsimulation of the data is easy using rexp().\n \n        Terry Therneau",
-      "thread_id": "thread-f1b670aacbf6",
-      "thread_depth": 0,
+      "thread_id": "thread-3662147f0834",
+      "thread_depth": 1,
       "month": "2008-04"
     },
     {
@@ -933,26 +933,15 @@
     {
       "id": "thread-aad43fa7b15b",
       "subject": "Square root of a vector taking for ever!",
-      "message_count": 1,
-      "participants": [
-        "gerald.jean at dgag.ca"
-      ],
-      "started": "2008-04-07T17:12:17Z",
-      "last_reply": "2008-04-07T17:12:17Z",
-      "root_message_id": "msg-aad43fa7b15b"
-    },
-    {
-      "id": "thread-0bce93e9f523",
-      "subject": "Square root of a vector taking for ever!",
-      "message_count": 3,
+      "message_count": 4,
       "participants": [
         "Bill Dunlap",
         "Robert A LaBudde",
         "gerald.jean at dgag.ca"
       ],
-      "started": "2008-04-08T00:40:56Z",
+      "started": "2008-04-07T17:12:17Z",
       "last_reply": "2008-04-08T13:51:52Z",
-      "root_message_id": "msg-0bce93e9f523"
+      "root_message_id": "msg-aad43fa7b15b"
     },
     {
       "id": "thread-84d8c288ab88",
@@ -1004,24 +993,14 @@
     {
       "id": "thread-3662147f0834",
       "subject": "Simulation of Weibull survival data",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Terry Therneau",
         "ef9999 at albany.edu"
       ],
       "started": "2008-04-09T15:05:55Z",
-      "last_reply": "2008-04-09T15:05:55Z",
-      "root_message_id": "msg-3662147f0834"
-    },
-    {
-      "id": "thread-f1b670aacbf6",
-      "subject": "Simulation of Weibull survival data",
-      "message_count": 1,
-      "participants": [
-        "Terry Therneau"
-      ],
-      "started": "2008-04-09T15:55:48Z",
       "last_reply": "2008-04-09T15:55:48Z",
-      "root_message_id": "msg-f1b670aacbf6"
+      "root_message_id": "msg-3662147f0834"
     },
     {
       "id": "thread-1336c8d330b0",

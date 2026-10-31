@@ -406,12 +406,12 @@
       "date": "2001-09-05T13:08:04Z",
       "subject": "Re: Error in integrate function",
       "subject_clean": "Error in integrate function",
-      "in_reply_to": null,
+      "in_reply_to": "<7885CDD53840874980B0409FD6E3F6822E52CD@med-core05.med.wayne.edu>",
       "references": [],
       "body_plain": "i think you have created an integrand that fools integrate() into thinking\nit has converged when it hasn't even gotten close to the heart of the\nmatter.  your function is zero on a long interval.  you know your function\nshould be zero between -cut and cut (where you have defined cut to be\nqnorm(percentile, mu, sigma).  if you integrate over the interval (cut,inf)\n(and multiply by two) instead of on the interval (-inf,inf), i think\nintegrate() will handle your problem.\n\njust for grins i wrote a function that integrates over a specified range and\ni think it shows you have a problem integrating from -inf to inf when the\npercentile reaches 0.90.  i think that as the percentile approaches 0.90 the\ncut value you are calculating is moving far enough out (around 39.44) that\nthe integration method is missing most of the positive stuff and\nconcentrating it's mass where the function is zero.  because the function is\nso dead zero on this interval and the interval is pretty wide, integrate()\nthinks it has converged.\n\ni wrote the integral as twice the integral from 0 to inf instead of -inf to\ninf just to show there is a not a problem with negative values.  if you\ndon't want to do it this way integrate from -inf to cut and then from cut to\ninf.\n\none other minor point.  instead of typing out the density for the normal\ndistribution i used the function dnorm().  it might have some internal\nnumerical advantages as well as saving typing.    \n\n> #\n# a test function that integrates over the range from x.lower to x.upper\n# note that the originally specified integral was from -Inf to Inf\n# it can be obtained as twice the integral from 0 to Inf\n#\ntest.int <- function(x.cut, mu, sigma, x.lower, x.upper\n        )\n{\n        integrand <- function(x, x.cut, mu, sigma)\n        {\n                ifelse(abs(x) <= x.cut, 0, 1) * ((abs(x\n                        ) - x.cut)^2) * dnorm(x, mu, \n                        sigma)\n        }\n        integrate(integrand, lower = x.lower, upper = \n                x.upper, x.cut = x.cut, mu = mu, sigma\n                 = sigma)$integral\n}\n> mu <- 0\n> sigma <- 30   #\n#\n#this shows the problem happens for 0.90\n#the zero part is the integral from 0 up to the cutoff point\n#the positive part is the integral from the cutoff point to Inf\n#the integral labelled bad is from 0 to Inf\n#\n> for(j in 1:5) {\n#set the quantile value \n        cutoff <- 0.9 - (5 - j)/40\n        x.cut <- qnorm(cutoff, mu, sigma)\n        cat(\"\\ncutoff =\", cutoff, \" zero part =\", 2 * \n                test.int(x.cut, mu, sigma, 0, x.cut), \n                \" positive =\", 2 * test.int(x.cut, mu, \n                sigma, x.cut, Inf), \" bad =\", 2 * \n                test.int(x.cut, mu, sigma, 0, Inf))\n}\n#\n\ncutoff = 0.8  zero part = 0  positive = 190.878054035429  bad =\n190.87804765611\ncutoff = 0.825  zero part = 0  positive = 156.493781017803  bad =\n156.493776013058\ncutoff = 0.85  zero part = 0  positive = 125.056054623997  bad =\n125.056057091174\ncutoff = 0.875  zero part = 0  positive = 96.4970662234676  bad =\n96.4964605880666\ncutoff = 0.9  zero part = 0  positive = 70.7891030575817  bad =\n4.9595807897377e-008\n\n> for(j in 1:5) {\n#\n#this shows the problem can be avoided by backing off a bit from 0\n#\n#set the quantile value \n        cutoff <- 0.9\n        x.cut <- qnorm(cutoff, mu, sigma)\n        cat(\"\\ncutoff =\", cutoff, \" zero part =\", 2 * \n                test.int(x.cut, mu, sigma, 0, x.cut), \n                \" positive =\", 2 * test.int(x.cut, mu, \n                sigma, x.cut, Inf), \" bad =\", 2 * \n                test.int(x.cut, mu, sigma, (j - 1)/5, \n                Inf))\n}\n\ncutoff = 0.9  zero part = 0  positive = 70.7891030575817  bad =\n4.9595807897377e-008\ncutoff = 0.9  zero part = 0  positive = 70.7891030575817  bad =\n70.7891033245454\ncutoff = 0.9  zero part = 0  positive = 70.7891030575817  bad =\n70.7891044792472\ncutoff = 0.9  zero part = 0  positive = 70.7891030575817  bad =\n70.7891421848829\ncutoff = 0.9  zero part = 0  positive = 70.7891030575817  bad =\n70.7891029356781\n\nas a reference, the method for integration in s+ (plagarized from the s+\nhelp file):\n\nMETHOD\n\nImplements adaptive 15-point Gauss-Kronrod quadrature based on the Fortran\nfunction dqage and dqagie from QUADPACK (Piessens et al. 1983) in NETLIB\n(Dongarra and Grosse 1987).\n\nREFERENCES\n\nPiessens, R., deDoncker-Kapenga, E., Uberhuber, C., and Kahaner, D. (1983).\nQUADPACK: A Subroutine Package for Automatic Integration. Springer, Berlin.\nDongarra, J. J., and Grosse, E. (1987). Distribution of mathematical\nsoftware via electronic mail, Communications of the ACM 30, pp. 403-407.\n\nmy opinions are my own, etc. etc.\ngood luck\nbob\n\np.s. bytheway - what the heck is your method trying to do?\n\n> -----Original Message-----\n> From: Janisse, James [mailto:jjanis at med.wayne.edu]\n> Sent: Sunday, September 02, 2001 2:04 PM\n> To: s-news at lists.biostat.wustl.edu\n> Subject: [S] Error in integrate function\n> \n> \n> I am running some simulations where I perform the following\n> transformation.\n>  \n> x <- abs(rnorm(2000,0,30))\n> x.new <- ifelse(x <= quantile(x, c(0.90)), 0, 0 + (x - quantile(x,\n> c(0.90)))^2)\n>  \n> Using this transformation x.new is a linear/quadratic function of x.\n>  \n> I want to get the expected value of x.new given that the original\n> distribution before any transformations were done came from a normal\n> distribution with population mean = 0 and standard deviation = 30.  To\n> do this I have been using the equation for the normal pdf and the\n> integrate function within S-PLUS 2000 Release 2 for Windows 98.\n>  \n> To do this for other transformations I have been using the integrate\n> function as follows.\n>  \n> For cutting at the median of the abs(rnorm(n,0,30)\n>  \n> > integrand <- function(x)\n> {\n>  mu <- 0\n>  sd <- 30\n>  cut <- qnorm(0.75, 0, 30)        \n>  ifelse(abs(x) <= cut, 0, 1/((2 * pi)^0.5 * sd) * (abs(x) - cut)^2 *\n> exp( - (x - mu)^2/(2 * sd^2)))\n> }\n> > integrate(integrand,-Inf,Inf)[1]\n> $integral:\n> [1] 268.9142\n> \n> This is very close to what I get in a single simulation\n>  \n> > x <- abs(rnorm(2000,0,30))\n> > x.new <- ifelse(x <= quantile(x, c(0.50)), 0, 0 + (x - quantile(x,\n> c(0.50)))^2)\n> > mean(x.new)\n> [1] 266.7916\n> \n>  \n> The above function works fine when the cut point is below\n> qnorm(0.89,0,30).  Once I use a cut of qnorm(0.90,0,30) or higher the\n> value of the integrand is very close to 0 and wrong.\n>  \n> > integrand <- function(x)\n> {\n>  mu <- 0\n>  sd <- 30\n>  cut <- qnorm(0.89, 0, 30)        \n>  ifelse(abs(x) <= cut, 0, 1/((2 * pi)^0.5 * sd) * (abs(x) - cut)^2 *\n> exp( - (x - mu)^2/(2 * sd^2)))\n> }\n> > integrate(integrand,-Inf,Inf)[1]\n> $integral:\n> [1] 80.72986\n> \n> > integrand <- function(x)\n> {\n>  mu <- 0\n>  sd <- 30\n>  cut <- qnorm(0.9, 0, 30)        \n>  ifelse(abs(x) <= cut, 0, 1/((2 * pi)^0.5 * sd) * (abs(x) - cut)^2 *\n> exp( - (x - mu)^2/(2 * sd^2)))\n> }\n> > integrate(integrand,-Inf,Inf)[1]\n> $integral:\n> [1] 4.959581e-008\n>  \n> For the cut I want the integrate function gives the following result\n>  \n> > integrand <- function(x)\n> {\n>  mu <- 0\n>  sd <- 30\n>  cut <- qnorm(0.95, 0, 30)      #qnorm(0.95,0,30) is the same \n> as cutting\n> at the 90% of abs(rnorm(n,0,30))  \n>  ifelse(abs(x) <= cut, 0, 1/((2 * pi)^0.5 * sd) * (abs(x) - cut)^2 *\n> exp( - (x - mu)^2/(2 * sd^2)))\n> }\n> > integrate(integrand,-Inf,Inf)[1:4]\n> $integral:\n> [1] 4.959581e-008\n> $abs.error:\n> [1] 9.805412e-008\n> $subdivisions:\n> [1] 1\n> $message:\n> [1] \"normal termination\"\n> \n> The value of the integral should be close to \n>  \n> > x <- abs(rnorm(2000,0,30))\n> > x.new <- ifelse(x <= quantile(x, c(0.90)), 0, 0 + (x - quantile(x,\n> c(0.90)))^2)\n> > mean(x.new)\n> [1] 31.42144\n> \n> Can anyone shed some light on this behavior.  If there is \n> something I am\n> missing I can't figure it out.  I know that the integrate \n> function isn't\n> solving the integrand properly since it is only using 1 \n> subdivision even\n> though the termination is normal.  Is this a bug in the integrate\n> function?\n>  \n> James Janisse\n> Center for Healthcare Effectiveness Research\n> Wayne State University\n> Detroit, MI\n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>",
       "body_snippet": "i think you have created an integrand that fools integrate() into thinking\nit has converged when it hasn't even gotten close to the heart of the\nmatter.  your function is zero on a long interval.  you",
-      "thread_id": "thread-f5de704ac1ac",
-      "thread_depth": 0,
+      "thread_id": "thread-193cd61ec7c2",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -609,12 +609,12 @@
       "date": "2001-09-05T22:35:22Z",
       "subject": "Re: dimnames in Sparc Splus 6.0",
       "subject_clean": "dimnames in Sparc Splus 6.0",
-      "in_reply_to": null,
+      "in_reply_to": "<15253.31719.88959.727681@delphioutpost.com>",
       "references": [],
       "body_plain": "Partly to provide information, partly to be contrary perhaps, let me\ncomment a bit on Tim's comments.\n\n  The \"problem\" -- Gary Sabot would like the results of x[, aSingleColum],\nwhere x is a data frame, to retain the row names of x as labels.\n\n  The problem behind the problem: the newest releases of Splus, those based on\nthe \"version 4\" engine from John Chambers at Lucent, have built into them\na dependence on a new class structure.  That new class structure has a\nsevere shortcoming (at least one) that makes it impossible to impliment ANY\nsolution to Gary's problem.  Tim stated that \"unfortunately it (the new\n[.data.frame) makes assumptions about the type of data that is included in\nthe data frame that may be unjustified.\"  Precisely -- the assumption is that\nyou won't run into one of the restrictions due to new-style classes.\n\n  Tim's other two reasons-- that names slow things down, and that the names\nthat get \"glued on\" might not be the ones you really want -- are good\narguments for leaving the \"as shipped\" default behavior as is.  However, in the\nspirit of the S goal \"To turn ideas into software, quickly and faithfully\"\n(Chambers), he should be able to impliment his default for his machine.\nI will distinguish between being able to retain the names, and having those\nnames automatically printed in all cases -- the second is much harder because\nof the many specialized print functions.\n\n  The new style classes have the significant restriction that absolutely\nno \"extra\" information may be attached to such an object, and have it remain\nof the original class.  This may be good computer science, but the notion that\nevery necessary attribute of a class will be visualized at the class's\nconception is naive in practicality.  After 10+ years of working with the\nsurvival code, I still make additions to the basic objects.  (Perhaps I'm\njust slow?)\n   Thus, an integer vector with names is no longer an integer vector, it is\nan object of another type.  A special class \"named\" was created to allow for\nnamed integer, double, character and logical vectors, but no such work has\nbeen done for timeDates, factors, Surv objects, etc, etc, etc.  If any of\nthese is the contents of the selected column of X, there is no way to keep\nboth the object and a list of associated names.   We have encountered a\nsimilar problem with our local version of sas.get, which retained the SAS\nlabel attribute of each element of the data frame.  Luckily, the number of\nkinds of variable that can be created is small, so we have built a set of\nlocal classes for labeled integers, doubles, characters, factors, and dates.\n(I have heard that the 'named' class itself caused many a headache for\nSeattle.)\n\n   I personally think that although the new class structure is useful for\ncertain very simple objects (such as a timeDate), conversion of the results\nof a model fit (lm, glm, coxph) to this form will be a gross and near\ncrippling mistake.   \n\n        Terry Therneau",
       "body_snippet": "Partly to provide information, partly to be contrary perhaps, let me\ncomment a bit on Tim's comments.\n\n  The \"problem\" -- Gary Sabot would like the results of x[, aSingleColum],\nwhere x is a data fram",
-      "thread_id": "thread-cdbc30093068",
-      "thread_depth": 0,
+      "thread_id": "thread-fee276285c2a",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -691,12 +691,12 @@
       "date": "2001-09-06T11:32:56Z",
       "subject": "Re: Text with accents in plots",
       "subject_clean": "Text with accents in plots",
-      "in_reply_to": null,
+      "in_reply_to": "<5.1.0.14.2.20010906100738.00a71fb0@picasso.vet-alfort.fr>",
       "references": [],
       "body_plain": "> From: Tristan Lorino <lorino at vet-alfort.fr>\n> Subject: [S] Text with accents in plots\n> \n> I would like to put some text in plots... but in french. How can I write \n> accented letters?\n\nYou can use ISO-Latin coding in S-Plus plotted text strings going to\nPostScript.  That gives you all accented characters required for\nWest European languages.  You can enter the characters using the octal\ncoding.\n\nI'm not sure how these characters will plot on various other devices.\n\nSee help for ps.options().  This file gives the following example for\nEuropean usage:\n\n        ps.options (paper=\"A4\", setfont=ps.setfont.latin1)",
       "body_snippet": "> From: Tristan Lorino <lorino at vet-alfort.fr>\n> Subject: [S] Text with accents in plots\n> \n> I would like to put some text in plots... but in french. How can I write \n> accented letters?\n\nYou can u",
-      "thread_id": "thread-70709dfbb1da",
-      "thread_depth": 0,
+      "thread_id": "thread-cb3b0b8947a6",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -749,8 +749,8 @@
       ],
       "body_plain": "On Thu, 6 Sep 2001, Alan Zaslavsky wrote:\n\n> > From: Tristan Lorino <lorino at vet-alfort.fr>\n> > Subject: [S] Text with accents in plots\n> >\n> > I would like to put some text in plots... but in french. How can I write\n> > accented letters?\n>\n> You can use ISO-Latin coding in S-Plus plotted text strings going to\n> PostScript.  That gives you all accented characters required for\n> West European languages.  You can enter the characters using the octal\n> coding.\n>\n> I'm not sure how these characters will plot on various other devices.\n>\n> See help for ps.options().  This file gives the following example for\n> European usage:\n>\n>       ps.options (paper=\"A4\", setfont=ps.setfont.latin1)\n\nFunny idea of `Europe' they have ....\n\nI was about to tell you that I have just ported postscriptfonts to\nS-PLUS 6 for Windows, and will be putting an example in MASS4.\nAs I don't have most of the afms there (or on my Linux box), I grabbed\nthem from a TeX distribution and created a 256x35 array with the\nwidths for the standard fonts that is used for those fonts.\n\nThe library section is on the MASS3 site,\nhttp://www.stats.ox.ac.uk/pub/MASS3/Winlibs\n\nWould you be interested in the patched source code?\n\nOf course the `Europeans' in the R team made it all much easier there\nfor Danish, Swiss German, Austrian, ....\n\nBrian\n\n-- \nBrian D. Ripley,                  ripley at stats.ox.ac.uk\nProfessor of Applied Statistics,  http://www.stats.ox.ac.uk/~ripley/\nUniversity of Oxford,             Tel:  +44 1865 272861 (self)\n1 South Parks Road,                     +44 1865 272860 (secr)\nOxford OX1 3TG, UK                Fax:  +44 1865 272595",
       "body_snippet": "On Thu, 6 Sep 2001, Alan Zaslavsky wrote:\n\n> > From: Tristan Lorino <lorino at vet-alfort.fr>\n> > Subject: [S] Text with accents in plots\n> >\n> > I would like to put some text in plots... but in frenc",
-      "thread_id": "thread-70709dfbb1da",
-      "thread_depth": 1,
+      "thread_id": "thread-cb3b0b8947a6",
+      "thread_depth": 2,
       "month": "2001-09"
     },
     {
@@ -813,12 +813,12 @@
       "date": "2001-09-06T16:08:27Z",
       "subject": "Re: poly.transform",
       "subject_clean": "poly.transform",
-      "in_reply_to": null,
+      "in_reply_to": "<3B977754.7B3D775D@swissonline.ch>",
       "references": [],
       "body_plain": "Thanks for your suggestion, it works well for the coefficients \n(setting intercept=F). However, is there also a way to get the SE \nand t/p-values for the transformed coefficients?\n\n> Try passing only the 3 coefficients that are the result of poly().\n> \n> e.g., poly.transform(poly(inf.mort,3),coef(fit5)[2:4])\n> \n> (i will try this when I get to work later -- I've messed around with\n>  poly.transform a lot).  you might need to pass the model object \nalso.\n> \n> \n______________________________________________________________________\n_\n> \n>                            DON MCKENZIE\n> \n>                         Research Ecologist\n>               College of Forest Resources, Box 352100\n>                       University of Washington\n>                         Seattle, WA 98195\n> \n>                             206.616.4095\n>                         dmck at u.washington.edu\n> \n> \n______________________________________________________________________\n_\n> \n> \n> On Thu, 6 Sep 2001, Pedram Sendi wrote:\n> \n> > Dear All,\n> >\n> > I have the following questions and it would be great if you could \nhelp\n> > me out with an answer:\n> >\n> > i) I am editinig a graph and add different features using \nabline(),\n> > text(), box() etc....how can I remove the added text, line, box, \netc.\n> > from the figure?\n> >\n> > ii) Assume I fit a model using poly:\n> >\n> > Call: lm(formula = swiss.fertility ~ poly(inf.mort, 3) + \neducation)\n> > Residuals:\n> >     Min     1Q  Median    3Q   Max\n> >  -15.88 -5.754 -0.9621 5.755 21.56\n> >\n> > Coefficients:\n> >                       Value Std. Error  t value Pr(>|t|)\n> >        (Intercept)  79.1729   1.9131    41.3849   0.0000\n> > poly(inf.mort, 3)1  29.9641   8.5859     3.4899   0.0011\n> > poly(inf.mort, 3)2   6.8769   8.5435     0.8049   0.4254\n> > poly(inf.mort, 3)3  -3.3909   8.5794    -0.3952   0.6947\n> >          education  -0.8225   0.1322    -6.2211   0.0000\n> >\n> > Now, I want to have the parameter estimates for poly in the usual \nform\n> > (not orthogonal form), I use\n> >\n> >  poly.transform(poly(inf.mort,3),coef(fit5))\n> >\n> > and get the error message below:\n> >\n> > Error in poly.transform(poly(inf.mort, 3), c..: wrong length for \ncoefs.\n> >\n> > Any suggestions how to convert the coefficients?\n> >\n> > Many thanks in advance.\n> > Pedram\n> >\n> >\n> > \n---------------------------------------------------------------------\n> > This message was distributed by s-news at lists.biostat.wustl.edu.  \nTo\n> > unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu \nwith\n> > the BODY of the message:  unsubscribe s-news\n> >",
       "body_snippet": "Thanks for your suggestion, it works well for the coefficients \n(setting intercept=F). However, is there also a way to get the SE \nand t/p-values for the transformed coefficients?\n\n> Try passing only ",
-      "thread_id": "thread-39435501f714",
-      "thread_depth": 0,
+      "thread_id": "thread-c4e9a9d00249",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -845,12 +845,12 @@
       "date": "2001-09-06T17:30:26Z",
       "subject": "Re: Bug in anova.lme ?",
       "subject_clean": "Bug in anova.lme ?",
-      "in_reply_to": null,
+      "in_reply_to": "<777F3F91D3F3D4118CCA00508B953E190195DEC4@usrymx06.merck.com>",
       "references": [],
       "body_plain": "Many thanks to Bill Dunlap for his prompt and **insightful** reply. \n\nIt does appear to be a bug of sorts in anova.lme. The details are a bit\narcane,as Bill's reply below shows, so this may not be of general interest.\nBut I appreciate the help. Also, as the simple workaround that I mentioned\nin my query is readily available, it's not the sort of thing that anyone\nshould lose sleep over.\n\nBill's reply follows with my original message below it.\n\n-- Bert Gunter\n\nBill Dunlap's reply:******************\n\nI haven't reproduced the problem, but this sort of problem in do.call\ngenerally\nmeans that the called function assumes its arguments are names or perhaps\nshort calls to functions and uses deparse(substitute(x)) expecting it to\nreturn one\nstring.  With do.call it will get a lot of strings, e.g.,\n\n   > f<-function(x){ deparse(substitute(x)) }\n   > f(qwert)\n   [1] \"qwert\"\n   > f(log(qwert))\n   [1] \"log(qwert)\"\n   > f(1:100)\n   [1] \"1:100\"\n   > do.call(\"f\", list(1:100))\n   [1] \"c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,\n20, 21, 22,\"\n   [2] \"\\t23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38,\n39, 40, \"\n   [3] \"\\t41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56,\n57, 58, \"\n   [4] \"\\t59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74,\n75, 76, \"\n   [5] \"\\t77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92,\n93, 94, \"\n   [6] \"\\t95, 96, 97, 98, 99, 100)\"\n\nThis happens because do.call passes in the value of the argument, not an\nexpression\nthat evaluates to the value of the argument.\n\nI suspect anova.lme's problem comes from\n\n                for(i in 1:rt) {\n                        if(inherits(object[[i]], \"nlme\")) {\n                                resp[i] <- as.character(deparse(object[[i]]$\n                                  call$object[[2]]))\n                        }\n\nbut I don't have a quick fix for it, as I'm not sure what things resp is\nused for.  The standard solutions are to\n        (a) use deparse(short=T,...) or deparse(...)[1] to truncate the\ndeparsed\n        expression.  It will generally not be parsable then.\n        (b) use paste(collapse=\"\\n\",deparse(...)) to paste all the lines\ntogether.\n        It can be a huge character string then.\n\n----------------------------------------------------------------------------\nBill Dunlap                                      22461 Mt Vernon-Big Lake Rd\nInsightful Corporation                           Mount Vernon, WA 98274\nbill at insightful.com                              360-428-8146\n \"Formerly known as MathSoft, Insightful Corporation provides analytical\n solutions leveraging S-PLUS, StatServer, S-PLUS Analytic Server and\n consulting services.\"\n\n \"All statements in this message represent the opinions of the author and do\n not necessarily reflect Insightful Corporation policy or position.\"\n\n***********************************************************\n\n-----Original Message-----\nFrom: Gunter, Bert [mailto:bert_gunter at merck.com]\nSent: Thursday, September 06, 2001 12:10 PM\nTo: s-news (E-mail)\nSubject: [S] Bug in anova.lme ?\n\nHi all:\n\nI have a question about anova.lme (latest SP2000 version of nlme library).\n\nI created 2 simple class 'lme' objects, z1 and z2, say, via calls of form\nz<-lme(fixed=...,random=..., data=indata,...).\nThis is done within a function and the actualcalling  procedure is a bit\nmore complicated, but I think irrelevant.\n\nIf, still within the function, I hard code the line:\n\nanova(z1, z2)\n\nthings work fine. However, if I instead code:\n\ndo.call('anova',list(z1,z2))\n\nI get the error \"Error in\n\"row.names<-.default\"(aod,unlist(lapply(as.list(anc..: should have 2 names,\nsupplied 229 \"\n\nI got around this by using eval(parse) to parse and evaluate the text of the\ncall, but this is a bit ugly. I do not understand why do.call doesn't work.\nThe traceback shows that the problem occurs in anova.lme -- it seems not to\nbe getting and/or properly parsing the argument list. Is this an anova.lme\nbug or a Bert Gunter bug?\n\nMany thanks,\n\nBert Gunter\nBiometrics Research RY 70-38\nMerck & Company\nP.O. Box 2000\nRahway, NJ 07065-0900\nPhone: (732) 594-7765\nmailto: bert_gunter at merck.com\n\n\"The business of the statistician is to catalyze the scientific learning\nprocess.\"      -- George E.P. Box\n\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Many thanks to Bill Dunlap for his prompt and **insightful** reply. \n\nIt does appear to be a bug of sorts in anova.lme. The details are a bit\narcane,as Bill's reply below shows, so this may not be of ",
-      "thread_id": "thread-cb51fa0db95d",
-      "thread_depth": 0,
+      "thread_id": "thread-ebb1be64426e",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -912,12 +912,12 @@
       "date": "2001-09-07T11:45:10Z",
       "subject": "Re: model.tables.aov",
       "subject_clean": "model.tables.aov",
-      "in_reply_to": null,
+      "in_reply_to": "<E15fBOY-0000ND-00@paix.brain.riken.go.jp>",
       "references": [],
       "body_plain": "Hi Tadashi,\n\nFor some reason that option has been removed in S-PLUS 6.  Perhaps it's \nbecause type='adj.means' gives SAS's controversial Least Square Means.  Now \nyou have to use multicomp with comparisons='none' to get adjusted means.\n\nDennis\n\n> From: Tadashi SUGIHARA <sugi at paix.brain.riken.go.jp>\n> Reply-To: sugi at postman.riken.go.jp\n> To: s-news at lists.biostat.wustl.edu\n> Subject: [S] model.tables.aov\n> Date: Fri, 07 Sep 2001 11:29:26 +0900\n>\n> Dear Splus users:\n>\n>\n>\n> Let me ask about model.tables.aov.\n>\n>\n>\n> In Splus6 for Linux, on-line help says that model.tables.aov has\n> an optional argument \"type.\"  type=\"adj.means\" seems to be available,\n> however, if I specify this,\n>\n> Problem in match.arg(type, c(\"effects\", \"means\", \"re..: Argument \"type\"\n> should be one of: \"effects\", \"means\", \"residuals\", \"feffects\"\n>\n> is on the terminal.  I have been checking this problem with data \"gun\"\n> which appears in on-line help.\n>\n> Why doesn't \"adj.means\" work?  And how can I make it work?\n>\n>\n>\n> By the way, in previous Splus5 for Linux, this type=\"adj.means\" worked.\n>\n>\n>\n> Any suggestion, pointers are welcomed.\n>\n>\n>\n> Thanks in advance.\n>\n>\n>\n> Yours,\n>\n>\n>\n> - -Tadashi\n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n\n_________________________________________________________________\nGet your FREE download of MSN Explorer at http://explorer.msn.com/intl.asp",
       "body_snippet": "Hi Tadashi,\n\nFor some reason that option has been removed in S-PLUS 6.  Perhaps it's \nbecause type='adj.means' gives SAS's controversial Least Square Means.  Now \nyou have to use multicomp with compar",
-      "thread_id": "thread-67aa1dcdfa7b",
-      "thread_depth": 0,
+      "thread_id": "thread-dc88e97a91f9",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -978,12 +978,12 @@
       "date": "2001-09-07T15:31:35Z",
       "subject": "Re: File/Object Locations",
       "subject_clean": "File/Object Locations",
-      "in_reply_to": null,
+      "in_reply_to": "<D7E1E71C0658D4118C9D00104B6D756D139CCB@amu01>",
       "references": [],
       "body_plain": "Jim,\n\nThe objects() command sees only 3 objects that I created: dirdiff,\nheights, and towers.  I don't know what .Last.value or last.dump are\n(see below).\n\n> objects()\n[1] \".Last.value\" \"dirdiff\"     \"heights\"     \"last.dump\"   \"towers\"   \n\nThere are 28 other objects in the directory with the weird S-PLUS naming\nconvention of _(number), e.g. \"_20\", 3 _sum4* objects, a _nonfi object,\nand a _db3.1 object.  The objecst that it can see show the names as seen\nabove in the directory as well as in S-PLUS.  For some reason, it is not\nseeing all the \"_(number)\" objects.\n\nW\n\n-----Original Message-----\nFrom: Jim Pratt [mailto:JimP at sonuspharma.com]\nSent: Friday, September 07, 2001 11:00 AM\nTo: Winifred Lambert\nSubject: RE: [S] File/Object Locations\n\nWinifred,\n\nBefore going to far, try typing in objects() from the command line to\nsee that your objects are there.\n\nJim Pratt\n\n-----Original Message-----\nFrom: Winifred Lambert [mailto:lambert.winifred at ensco.com]\nSent: Friday, September 07, 2001 7:54 AM\nTo: S-PLUS Newsgroup (E-mail)\nSubject: [S] File/Object Locations\n\nAll,\n\nI am using S-PLUS 2000/Windows 2000.\n\nI think I may have violated some sacred law about moving objects/files\nthat can be viewed in the Object Explorer from one directory to another.\n\nI began a project using the default directory C:\\Program\nFiles\\sp2000\\users\\Administration\\_Data.  After creating 10 or so data\nframes, 5 or so lists, and 10 or so various other objects, it became\nclear to me that I would run out of room on my C: drive.  I decided to\nmove the objects over to my D: drive on which there is copious space\navailable.\n\nI created a _Data folder in the directory I wanted to work in on the D:\ndrive and just moved all the objects from the C:\\..._Data folder to my\nnew D:\\..._Data folder.  I only moved the objects I created with my\ndata, not any of the _sum* files or anything else.  In the Object\nExplorer, I attached the new D: database in the first position, then\nwent into Advanced on the pull down menu and chose what objects I wanted\nin the explorer display, then did apply.  To my great disappointment,\nthe Object Explorer could not find any objects in the new D: folder,\neven though they were all there and I had attached their folder as the\n#1 database to look in.\n\nThat's pretty much it.  I think I included all the details, but feel\nfree to ask me questions if anything does not make sense.  My questions\nare: Is it possible to move objects from the directory they were\noriginally created in and still be able to see them in the Object\nExplorer, and, if so, What is the correct procedure to do so?\n\nThanks much.\n\nwin\n\n*************************************************\nWinifred C. Lambert            Senior Scientist/Meteorologist\nENSCO, Inc.\nAerospace Sciences and Engineering Division\n1980 N Atlantic Ave, Suite 230\nCocoa Beach, FL  32931\nVOICE:  321.853.8130           FAX:  321.853.8415\nlambert.winifred at ensco.com\n\nAMU Quarterly Reports are available online:\nhttp://science.ksc.nasa.gov/amu/home.html\n*************************************************\n \n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Jim,\n\nThe objects() command sees only 3 objects that I created: dirdiff,\nheights, and towers.  I don't know what .Last.value or last.dump are\n(see below).\n\n> objects()\n[1] \".Last.value\" \"dirdiff\"     ",
-      "thread_id": "thread-302365a3e6a2",
-      "thread_depth": 0,
+      "thread_id": "thread-46651c4f26b8",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -1010,12 +1010,12 @@
       "date": "2001-09-07T15:59:52Z",
       "subject": "Re: File/Object Locations",
       "subject_clean": "File/Object Locations",
-      "in_reply_to": null,
+      "in_reply_to": "<D7E1E71C0658D4118C9D00104B6D756D139CCB@amu01>",
       "references": [],
       "body_plain": "I am beginning to convert SPlus 2K databases (on a Windows 2000 platform) to\nSPlus 6.  I have noticed that data files that begin with a capital letter\nare not migrated by the migration wizard.  Renaming the file to lower case\nsolves the problem.  Is this a \"feature\" or a bug?  Did I just miss\nsomething in the documentation?\n\nDoes not migrate:       FOOBAR\nDoes migrate:           foobar\n\nThanks for your help,\n\nGreg Johnson\nForest Research Coordinator\nWillamette Industries, Inc.\ngjohnson at wii.com\n5419792063 at typetalk.ruralcellular.com",
       "body_snippet": "I am beginning to convert SPlus 2K databases (on a Windows 2000 platform) to\nSPlus 6.  I have noticed that data files that begin with a capital letter\nare not migrated by the migration wizard.  Renami",
-      "thread_id": "thread-b7157f990e45",
-      "thread_depth": 0,
+      "thread_id": "thread-46651c4f26b8",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -1162,8 +1162,8 @@
       ],
       "body_plain": "Hi, Dennis.\n\n> For some reason that option has been removed in S-PLUS 6.  Perhaps it's \n> because type='adj.means' gives SAS's controversial Least Square Means.  Now \n> you have to use multicomp with comparisons='none' to get adjusted means.\n> \n\nI see.  Thank you very much.\n\n> >Dear Splus users:\n> >\n> >Let me ask about model.tables.aov.\n> >\n> >In Splus6 for Linux, on-line help says that model.tables.aov has\n> >an optional argument \"type.\"  type=\"adj.means\" seems to be available,\n> >however, if I specify this,\n> >\n> >Problem in match.arg(type, c(\"effects\", \"means\", \"re..: Argument \"type\"\n> >should be one of: \"effects\", \"means\", \"residuals\", \"feffects\"\n> >\n> >is on the terminal.  I have been checking this problem with data \"gun\"\n> >which appears in on-line help.\n> >\n> >Why doesn't \"adj.means\" work?  And how can I make it work?\n> >\n> >By the way, in previous Splus5 for Linux, this type=\"adj.means\" worked.\n> >\n> >Any suggestion, pointers are welcomed.\n> >\n> >Thanks in advance.\n> >\n> >Yours,\n> >\n> >- -Tadashi",
       "body_snippet": "Hi, Dennis.\n\n> For some reason that option has been removed in S-PLUS 6.  Perhaps it's \n> because type='adj.means' gives SAS's controversial Least Square Means.  Now \n> you have to use multicomp with ",
-      "thread_id": "thread-67aa1dcdfa7b",
-      "thread_depth": 1,
+      "thread_id": "thread-dc88e97a91f9",
+      "thread_depth": 2,
       "month": "2001-09"
     },
     {
@@ -1256,12 +1256,12 @@
       "date": "2001-09-09T23:34:39Z",
       "subject": "Re: glm - statistical question",
       "subject_clean": "glm - statistical question",
-      "in_reply_to": null,
+      "in_reply_to": "<409B678FC2558E4F925766483302C811238F7A@BUS1.bus.olemiss.edu>",
       "references": [],
       "body_plain": "> -----Original Message-----\n> From: Boylan, Richard [mailto:rboylan at bus.olemiss.edu]\n> Sent: Monday, 10 September 2001 6:40 AM\n> To: s-news at biostat.wustl.edu\n> Subject: [S] glm - statistical question\n> \n> \n> In order to test a submodel, Venables & Ripley, 2000, p 215, suggest a\n> chi-squared test. However, in many cases, the glm procedure will\n> automatically change the number of observations in the submodel, and\n> so my question is what is the proper test when this happens.  An\n> example should make things easier to understand.\n> \n> Suppose the data is (y, x, , year), where y is coded 0/1.  Also,\n> assume that for some values of year,  \n> all observations of y are the same.\n> \n> reg1 <- glm(y ~ x, family = binomial(link = logit) )\n> \n> The following runs as it should.\n> \n> reg11 <- update(reg1,.~. + year)\n> g <- reg1$deviance - reg11$deviance\n> deg <- length(table(district)) - 1\n> 1 - pchisq(g,df=deg)\n\nThat really is the long way round.  You could just do\n\n> anova(reg1, reg11, test = \"Chi\")\n\n> \n> However,  if one runs\n>\n> reg11 <- update(reg1,.~. + as.factor(year))\n>\n> Splus will estimate the model only for a subset of the data, the years\n> for which y has values of  both 0 and 1.  \n\nActually, no.  It still uses all the data, but under some situations you\ncould get probabilities estimated as 0 or 1, in which case the linear\npredictor is effectively (+ or -) infinite, and so a neat theory in the\nlogistic scale is not available.  This is unlikely, though, if you have a\nregression variable, x, which is not constant over the classes of the year\nfactor.  If it is constant over the year some of the year classes you have\nlinear dependence in the predictors and the dimension of the covariate space\nis not as large as you thought.  This can be thought of as a design failure\nin some sense.\n\n> So, one can run the\n> chi-squared test, however, I don't think the answer will be meaningful. \n\nIt is meaningful enough, but the asympototic theory on which it relies may\nnot apply.  Even this is not necessarily true, though: it may still be a\nreasonable approximation.  Cases differ, of course.\n\n> One way around this is to run the first regression on the subset of\n> the data which has variations in y for all existing values of year,\n> however, this generates a correlation between the x & y variables. Are\n> there other ways of solving the problem?  Thanks.\n\nThere is a problem: you may not have enough data to answer the questions you\nare trying to address.  Even exact tests are not going to help much, I\nsuspect.  As far as I know, the only way round this problem is the obvious\none: get more, and perhaps better targeted, data.\n\nSorry about that, but sometimes (as Freud used to say) a cigar is just a\ncigar.\n\nBill Venables.\n\nBill Venables, \nCMIS, CSIRO Marine Laboratories, \nPO Box 120, Cleveland, Qld. 4163\nPhone: +61 7 3826 7251  Fax: +61 7 3826 7304\n<mailto: Bill.Venables at cmis.csiro.au>\nhttp://www.cmis.csiro.au/bill.venables/",
       "body_snippet": "> -----Original Message-----\n> From: Boylan, Richard [mailto:rboylan at bus.olemiss.edu]\n> Sent: Monday, 10 September 2001 6:40 AM\n> To: s-news at biostat.wustl.edu\n> Subject: [S] glm - statistical qu",
-      "thread_id": "thread-2bdd4edfdd56",
-      "thread_depth": 0,
+      "thread_id": "thread-e66f5e81c372",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -1406,12 +1406,12 @@
       "date": "2001-09-10T14:22:06Z",
       "subject": "glm - statistical question",
       "subject_clean": "glm - statistical question",
-      "in_reply_to": null,
+      "in_reply_to": "<409B678FC2558E4F925766483302C811238F7A@BUS1.bus.olemiss.edu>",
       "references": [],
       "body_plain": "I sent yesterday a question regarding glm. I am including it in the bottom of the message.  I received detailed answer by Professor Venables and Professors Ripley pointed several mistakes and misundestandings on my party.  For anyone waiting for a summary of their replies, since I am still a bit confused, it will take me a while to post a detailed summary.  If anyone wants me to just forwards Professors Venables & Ripley responese, I will be happy post those replies. \n\nIn order to test a submodel, Venables & Ripley, 2000, p 215, suggest a chi-square test. However, in many cases, the glm procedure will automatically change the number of observations in the submodel, and so my question is what is the proper test when this happens. An example should make things easier to understand.\n\nSuppose the data is (y, x, , year), where y is coded 0/1. Also, assume that for some values of year,\n\nall observations of y are the same.\n\nreg1 <- glm(y ~ x, family = binomial(link = logit) )\n\nThe following runs as it should.\n\nreg11 <- update(reg1,.~. + year)\n\ng <- reg1$deviance - reg11$deviance\n\ndeg <- length(table(district)) - 1\n\n1 - pchisq(g,df=deg)\n\nHowever, if one runs\n\nreg11 <- update(reg1,.~. + as.factor(year)),\n\nSplus will estimate the model only for a subset of the data, the years for which y has values\n\nof both 0 and 1. So, one can run the chisquare test, however, I don't think the answer will be meaningful.\n\nOne way around this is to run the first regression on the subset of the data which has variations in y for all existing values of year, however, this generates a correlation between the x & y variables. Are there other ways of solving the problem? Thanks.",
       "body_snippet": "I sent yesterday a question regarding glm. I am including it in the bottom of the message.  I received detailed answer by Professor Venables and Professors Ripley pointed several mistakes and misundes",
-      "thread_id": "thread-80a6107bbdc6",
-      "thread_depth": 0,
+      "thread_id": "thread-e66f5e81c372",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -1536,12 +1536,12 @@
       "date": "2001-09-10T17:09:15Z",
       "subject": "FW: Summary: File/Object Locations",
       "subject_clean": "Summary: File/Object Locations",
-      "in_reply_to": null,
+      "in_reply_to": "<D7E1E71C0658D4118C9D00104B6D756D139CDC@amu01>",
       "references": [],
       "body_plain": "All,\n\nI just received this precious little nugget of information from Chuck\nTaylor and thought it important enough to share.  Thanks a bunch, Chuck!\n\nWin\n\n-----Original Message-----\nFrom: Chuck Taylor [mailto:chuck at insightful.com]\nSent: Monday, September 10, 2001 12:40 PM\nTo: Winifred Lambert\nSubject: Re: [S] Summary: File/Object Locations\n\nOn Fri, 7 Sep 2001, Winifred Lambert wrote:\n\n> I should realize by now that S-PLUS has a function for just about any\n> basic thing you want to do.  I *did not* move the _nonfi file, and in\nmy\n> wild flailing about to find my objects, I seem to have written over\nthe\n> original one.  I think I will have to delete my _XX objects and start\n> over. \n\nRecent releases of S-PLUS on Unix and Windows have a utility function\ncalled \"recover.nonfiles\", which lets you recover from a deleted or\ncorrupted ___nonfi (or ___nonfile) file.  It is not well documented,\nbut is pretty straightforward to use.\n\nWhen the ___nonfi/___nonfile file is deleted or corrupted, the objects\nare not lost, but the names of the objects are no longer available.  \nThe utility finds all the __xx files and one-by-one shows each object to\nyou and prompts you for a name.  In Windows the object pops up in a\nNotepad window.  After examining the object, close the Notepad window.  \nYou will then be prompted for a name for that object.  Continue the\nprocess until all recovered objects have been identified.\n\n--\nChuck Taylor <ctaylor at insightful.com>   Insightful Corporation\nSenior Quality Assurance Engineer       1700 Westlake Ave. N., Suite 500\nwww.insightful.com                      Seattle, WA 98109 USA\n\nFormerly known as MathSoft, Insightful Corporation provides analytical\nsolutions leveraging S-PLUS, StatServer, S-PLUS Analytic Server and \nconsulting services.",
       "body_snippet": "All,\n\nI just received this precious little nugget of information from Chuck\nTaylor and thought it important enough to share.  Thanks a bunch, Chuck!\n\nWin\n\n-----Original Message-----\nFrom: Chuck Taylor",
-      "thread_id": "thread-14442026b019",
-      "thread_depth": 0,
+      "thread_id": "thread-ad3a6be6d915",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -1584,12 +1584,12 @@
       "date": "2001-09-11T09:02:41Z",
       "subject": "Fw: comparing models - chi sq or F?",
       "subject_clean": "comparing models - chi sq or F?",
-      "in_reply_to": null,
+      "in_reply_to": "<00a101c13a17$33eccba0$9b8050c2@ucl.ac.uk>",
       "references": [],
       "body_plain": "I tried to post this yesterday, but I think our server failed.  Forgive me if \nyou get two copies of this message...\n\nDear list, I am using SPLUS 2000 on Windows 95 and am confused about how SPLUS \ncompares models when trying to get the most parsimonious answer.\n\nI have a set of data measured on individual animals where the response is the \nproportion of time spent feeding, and a list of predictors that characterise \nthe animal being observed (sex, age etc).  I have analysed the data using the \nquasi-family of GLMs with a logit link and assumed constant variance.  The data \nare very underdispersed (dispersion parameter = 0.02).\n\nWhen I am conducting stepwise removals of predictor terms to see if they are \nsignificant in the model, I have been using Chi-square values in the \"compare \nmodels\" dialogue box.  However, the results of this suggest that none of my \npredictors are significant in the model (p-values are often 0.95 or higher!).  \nIf I conduct the same comparison of models using the F-statistic, I get much \nlower p-values (and much more reasonable ones in my opinion).  I have two \nquestions from this:\n1) how are the p-values calculated for the comparison of models - is it simply \nfrom the difference in residual deviances between the two models (and \nrespective dfs), or does it make assumptions about the underlying model \nstructure?\n2) how does the underdispersed nature of my data affect the comparison of \nmodels?\n\nThank you in advance.\n\nDavid\n\n------------------------------------------------------\nDavid Cope,\nInstitute of Zoology,\nZoological Society of London,\nRegent's Park,\nLondon, NW1 4RY.\nTel (work): 020 7449 6690\nTel (home): 01903 744611\nWeb: www.zsl.org/ioz/\n         www.wwt.org.uk\n\n-----------------------------------------------------------------------\n\n______________________________________________________\nThis e-mail has been sent in confidence to the named addressee(s).\nIf you are not the intended recipient, you must not disclose or distribute \nit in any form, and you are asked to contact the sender immediately.\nViews or opinions expressed in this communication may not be those \nof The Zoological Society of London and, therefore, The Zoological \nSociety of London does not accept legal responsibility for the contents \nof this message.  The recipient(s) must be aware that e-mail is not a \nsecure communication medium and that the contents of this mail may \nhave been altered by a third party in transit.\nIf you have any issues regarding this mail please contact:\nadministrator at zsl.org.\n________________________________________________________",
       "body_snippet": "I tried to post this yesterday, but I think our server failed.  Forgive me if \nyou get two copies of this message...\n\nDear list, I am using SPLUS 2000 on Windows 95 and am confused about how SPLUS \nco",
-      "thread_id": "thread-9614d7667e60",
-      "thread_depth": 0,
+      "thread_id": "thread-c2c3538d5641",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -1833,8 +1833,8 @@
       ],
       "body_plain": "This message contains\n* comments on implementation details of versions of [.data.frame\n  posted Sept 6\n* recommend that you not mask [.data.frame; safer alternative\n* comments on old-style vs new-style classes.\n\nI wrote:\n>>Gary Sabot just posted a version of [.data.frame for which\n>>        X[,aSingleColumn]          # where X is a data frame\n>>adds the row names of the data frame as names to the vector\n>>that is returned.\n>>\n>>Unfortunately, that version of [.data.frame makes assumptions about\n>>the type of data included in data frames that are often unjustified.\n>>This causes it to mess up with some kinds of data, including: ...\n\nTerry Therneau wrote:\n>  Partly to provide information, partly to be contrary perhaps, let me\n>comment a bit on Tim's comments.\n>\n>  The \"problem\" -- Gary Sabot would like the results of x[, aSingleColum],\n>where x is a data frame, to retain the row names of x as labels.\n>\n>  The problem behind the problem: the newest releases of Splus, those based on\n>the \"version 4\" engine from John Chambers at Lucent, have built into them\n>a dependence on a new class structure.  That new class structure has a\n>severe shortcoming (at least one) that makes it impossible to impliment ANY\n>solution to Gary's problem.  Tim stated that \"unfortunately it (the new\n>[.data.frame) makes assumptions about the type of data that is included in\n>the data frame that may be unjustified.\"  Precisely -- the assumption is that\n>you won't run into one of the restrictions due to new-style classes.\n\nI'm thinking of something different, an implementation detail.  This\nis not an issue of old classes vs new classes (though I will touch on\nthat later).\n\nThe version of [.data.frame first posted by Sabot uses some dangerous,\nand unnecessary, manipulations involving unlist() and as.vector() to\nmanipulate a data frame containing a single variable.  These will\ndestroy the structure of various objects, whether new-style or\nold-style classed objects (including factors and matrices).\n\nThe second posted version is safer; explicitly extract\nthe variable from the data frame using subscripting rather than unlist(),\nand then do:\n    names(result) <- namesResult\n\nThis would work as long as \"names<-\" is well-behaved for the object.\n\nTerry is correct about the inflexibility of new-style classes.\nFor such an object, one cannot just do\n        names(object) <- result\nand expect it to work, unless the designer of the class has done\nthings right, by defining a \"names<-\" method for the class.\nThis could do one of:\n* add the names to part of the object, contained in one slot;\n  for example see:\n        library(\"missing\"); selectMethod(\"names<-\", \"miVariable\")\n   where the key line is:\n        names(x@Data) <- value\n* return an object with a different class, with the same slots\n  and one additional for the names.\n* discard the names, give a warning, and return the original object\n  (consider this a last resort).\n\nWhen I sent that second version of [.data.frame to Sabot I warned that it\nmight not work for all objects.  It would fail for matrices (yes, one\ncan include a matrix in a data frame).  That particular problem could\nbe fixed by replacing\n        names(result) <- namesResult\nwith\n        rowIds(result) <- namesResult\nbut there are still likely to be other problems.\n\nI recommend that you, gentle user, NOT mask a fundamental function\nlike [.data.frame.  This could lead to bugs that are hard to track\ndown.  You'll be happier, and Insightful tech support will thank you :-)\nInstead use a function like extractVariableAddNames specifically for\nthat purpose.\n\nTerry continued to comment on the difference between old-style\nand new-style classes:\n>  The new style classes have the significant restriction that absolutely\n>no \"extra\" information may be attached to such an object, and have it remain\n>of the original class.  This may be good computer science, but the notion that\n>every necessary attribute of a class will be visualized at the class's\n>conception is naive in practicality.  After 10+ years of working with the\n>survival code, I still make additions to the basic objects.  (Perhaps I'm\n>just slow?)\n>...\n>   I personally think that although the new class structure is useful for\n>certain very simple objects (such as a timeDate), conversion of the results\n>of a model fit (lm, glm, coxph) to this form will be a gross and near\n>crippling mistake.   \n\nI concur -- old-style objects have a strong advantage when one may add\nto a class in the future.  I'm in the middle of a project now where\nwe're adding optional components to the bootstrap and related objects.\nOne could add an optional component to a new-style object by defining\nan inheriting class that adds the component, but this can get\nunwieldy; you'd need 2^k classes to handle k optional components.\n\nA second advantage of old-style object is that many functions\nwork on the objects without additional work.\nFor example, consider an old-style object consisting of\na numeric object (vector or array) with some attributes.\nVarious functions such as length(), dim(), names(), names<-,\nand numerical functions such as mean(), stdev(), sin(),\nall handle the object without additional work, operating on the\nnumeric data.  You only need to write methods for functions which\nneed to do something special with the attributes.\nTo convert that class to a new-style object, with the numeric\ndata in one slot and the attributes in other slots, requires that\nyou write methods for the functions mentioned and many others.\n\nOn the other hand, new-style classes have some advantages, e.g. their\nunambiguous definition means they can be manipulated directly by C++\ncode.\n\n========================================================\n| Tim Hesterberg       Research Scientist              |\n| timh at insightful.com  Insightful Corp.                |\n| (206)283-8802x319    1700 Westlake Ave. N, Suite 500 |\n| (206)283-6310 (fax)  Seattle, WA 98109-3044, U.S.A.  |\n========================================================\nFormerly known as MathSoft, Insightful Corporation provides analytical\nsolutions leveraging S-PLUS, StatServer, and Consulting services",
       "body_snippet": "This message contains\n* comments on implementation details of versions of [.data.frame\n  posted Sept 6\n* recommend that you not mask [.data.frame; safer alternative\n* comments on old-style vs new-styl",
-      "thread_id": "thread-cdbc30093068",
-      "thread_depth": 1,
+      "thread_id": "thread-fee276285c2a",
+      "thread_depth": 2,
       "month": "2001-09"
     },
     {
@@ -1985,8 +1985,8 @@
       ],
       "body_plain": "I would like to give the strongest possible second\nto Terry's note.  The current design of SV4 is\nseriously broken.  I have turned to some of the\ngreatest S programmers in the world to try to\nfix the attribute and multiple inheritance problems\nin S language version 4 but there is simply no fix\nthat is useful and practical.\n\nOne thing I've always bragged about to SAS users\nis the ability of S programmers to add attributes\nto objects \"on the fly\".  This advantage has\nvanished in SV4.\n\nIn my Hmisc and Design libraries I tried to convert\none of the functions (latex) to use the new class\nsystem and the task turned out to be impossible\ndue to SV4's need for all specific methods (in my\ncase latex conversion methods) to have the same arguments.\nThis is not a reasonable requirement, as conversion\nof different objects to LaTeX code requires different\noptions (e.g., converting a regression model fit\nto LaTeX algebraic form requires vastly different\noptions than converting a matrix to a table).\nSo I gave up and Hmisc and Design make no use\nof the new SV4 class mechanism.  I have had to\nwrite my on [.data.frame to preserve \"label\"\nattributes of variables.\n\nI found that porting my libraries to R is taking\nless time than making them compatible with SV4.\nThis simply should not be.  I hope that some \nmajor rethinking is taking place.\n\nI am puzzled how R developers seeks so much user input\nbefore making major changes while the commercial product\ndoes not.\n\nPlease forgive me for taking such a negative\ntone today.  I know that I am on edge because\nof the tragedies that have taken place.  But\nI wanted others to know that Terry Therneau is\nnot alone in his concerns about SV4.\n\nFrank Harrell\n\nTerry Therneau wrote:\n> \n>   Partly to provide information, partly to be contrary perhaps, let me\n> comment a bit on Tim's comments.\n> \n>   The \"problem\" -- Gary Sabot would like the results of x[, aSingleColum],\n> where x is a data frame, to retain the row names of x as labels.\n> \n>   The problem behind the problem: the newest releases of Splus, those based on\n> the \"version 4\" engine from John Chambers at Lucent, have built into them\n> a dependence on a new class structure.  That new class structure has a\n> severe shortcoming (at least one) that makes it impossible to impliment ANY\n> solution to Gary's problem.  Tim stated that \"unfortunately it (the new\n> [.data.frame) makes assumptions about the type of data that is included in\n> the data frame that may be unjustified.\"  Precisely -- the assumption is that\n> you won't run into one of the restrictions due to new-style classes.\n> \n>   Tim's other two reasons-- that names slow things down, and that the names\n> that get \"glued on\" might not be the ones you really want -- are good\n> arguments for leaving the \"as shipped\" default behavior as is.  However, in \n> the\n> spirit of the S goal \"To turn ideas into software, quickly and faithfully\"\n> (Chambers), he should be able to impliment his default for his machine.\n> I will distinguish between being able to retain the names, and having those\n> names automatically printed in all cases -- the second is much harder because\n> of the many specialized print functions.\n> \n>   The new style classes have the significant restriction that absolutely\n> no \"extra\" information may be attached to such an object, and have it remain\n> of the original class.  This may be good computer science, but the notion that\n> every necessary attribute of a class will be visualized at the class's\n> conception is naive in practicality.  After 10+ years of working with the\n> survival code, I still make additions to the basic objects.  (Perhaps I'm\n> just slow?)\n>    Thus, an integer vector with names is no longer an integer vector, it is\n> an object of another type.  A special class \"named\" was created to allow for\n> named integer, double, character and logical vectors, but no such work has\n> been done for timeDates, factors, Surv objects, etc, etc, etc.  If any of\n> these is the contents of the selected column of X, there is no way to keep\n> both the object and a list of associated names.   We have encountered a\n> similar problem with our local version of sas.get, which retained the SAS\n> label attribute of each element of the data frame.  Luckily, the number of\n> kinds of variable that can be created is small, so we have built a set of\n> local classes for labeled integers, doubles, characters, factors, and dates.\n> (I have heard that the 'named' class itself caused many a headache for\n> Seattle.)\n> \n>    I personally think that although the new class structure is useful for\n> certain very simple objects (such as a timeDate), conversion of the results\n> of a model fit (lm, glm, coxph) to this form will be a gross and near\n> crippling mistake.\n> \n>         Terry Therneau\n> \n> \n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n\n-- \nFrank E Harrell Jr              Prof. of Biostatistics & Statistics\nDiv. of Biostatistics & Epidem. Dept. of Health Evaluation Sciences\nU. Virginia School of Medicine  http://hesweb1.med.virginia.edu/biostat",
       "body_snippet": "I would like to give the strongest possible second\nto Terry's note.  The current design of SV4 is\nseriously broken.  I have turned to some of the\ngreatest S programmers in the world to try to\nfix the ",
-      "thread_id": "thread-cdbc30093068",
-      "thread_depth": 1,
+      "thread_id": "thread-fee276285c2a",
+      "thread_depth": 2,
       "month": "2001-09"
     },
     {
@@ -2051,8 +2051,8 @@
       ],
       "body_plain": "I'll have to take exception to some of Frank's comments here.  In\nparticular, he says \"the current design of SV4 is seriously broken\".  It\nain't broken -- it's just different.\n\nI can't speak for John Chambers' intentions, but for me the Sv4 classes\nprovide an avenue for creating less error prone, more self-consistent code.\nYes, you do pay a small price in flexibility for this.  But the fact that\nprograms can *guarantee* the structure of Sv4 objects makes programming with\nthem much easier (once you get used to the new syntax) and much more\nconsistent.  The lack of flexibility is part of the design, not a broken\nfeature.  The recent discussion about data frames and their loose definition\nis a case in point about how the fluid nature of Sv3 objects can cause\nproblems in the long run.\n\nThat's not to say that Sv3 objects aren't useful!  And fortunately JMC spent\na lot of time ensuring that the Sv3 object model would continue to work in\nSv4.  You *can* still attach arbitrary attributes to Sv3 objects in Sv4 --\nmuch of the modelling code still uses this feature (and will continue to do\nso).  The problem Frank is referring to relate to attaching attributes to\natomic objects (vectors and lists, for example), which in Sv4 gives them a\nclass.  (Remember the confusion between class and data.class in Sv3?  This\nis an effect of fixing that problem.)\n\nTo address some of Frank's other points:\n\n> I found that porting my libraries to R is taking\n> less time than making them compatible with SV4.\n> This simply should not be.  I hope that some\n> major rethinking is taking place.\n\nI'd like to reassure the s-news folks that this is an atypical case. Judging\nfrom my experiences working with hundreds of beta testers and reports from\ncurrent S-PLUS 6 users, your Sv3 code (S-PLUS 2000 / S-PLUS 3.4) will\ngenerally work with S-PLUS 6 unchanged in at least 95% of cases.  We even\nprovide a Migration Wizard in the Windows version to help with some of the\nother cases.  If you're doing some really funky things with the Sv3 classes\nyou may have some problems, but these are usually easily resolved.  (This\nwas not the case in Frank's particular case, alas, where much of the code in\nquestion depended on adding attributes to objects while still relying on Sv3\nclass assumptions for atomic objects.)\n\nTo give an example from the other side of the fence, Charlie Roosen (of\nInsightful) ported the bootstrap library (representing thousands of lines of\ncode) from Sv3 to Sv4 and had this to say:\n\n\"In porting the bootstrap and various other bits of code, I didn't\nhave to change much.  Basically just changing log() to logb() and\nclass() to oldClass() in some places.  [The Migration Wizard takes care of\nchanges like this -- DMS]\n\n\"My view is that the product is highly backwards compatible.  There\nare a handful of code changes needed if someone has Sv3 classes.\nThe Sv4 system can just be avoided when flexibility is needed.\"\n\nIn short, if you're worried about migrating to S-PLUS 6 ... don't be.  Even\nif you're not interested in the nuances of object-oriented programming, the\nbenefits of the improved memory management are worth it alone.\n\n> I am puzzled how R developers seeks so much user input\n> before making major changes while the commercial product\n> does not.\n\nI'd also take exception to this (sorry Frank, please do forgive my\ncontrariness!).  Despite Sv4 being essentially a complete rewrite on Sv3 we\ntook backwards-compatibility issues extremely seriously.  We had feedback\nfrom hundreds of testers, and as such issues arose we addressed them where\npossible.  With such a large change to the code-base some incompatibilities\nin niche areas were inevitable.  To say that the commercial product does not\nseek user input just ain't so.\n\nIf anyone would like to discuss this in more detail, please feel free to\ncontact me personally.\n\n# David Smith\n\n--\nDavid M Smith <dsmith at insightful.com>\nS-PLUS Product Marketing Manager, Insightful Corp, Seattle WA\nTel: +1 (206) 283 8802 x360\nFax: +1 (206) 283 0347\n\nLearn how Merck, Proctor & Gamble, Merrill Lynch and others are using\nS-PLUS, deploying Web-based analytics and more at the 2001 S-PLUS User\nConference being held in Philadelphia, October 18-19 -\nwww.insightful.com/events/2001uc.\n\n> -----Original Message-----\n> From: s-news-owner at lists.biostat.wustl.edu\n> [mailto:s-news-owner at lists.biostat.wustl.edu]On Behalf Of Frank E\n> Harrell Jr\n> Sent: Thursday, September 13, 2001 07:58\n> To: Terry Therneau\n> Cc: s-news at lists.biostat.wustl.edu; timh at insightful.com\n> Subject: Re: [S] dimnames in Sparc Splus 6.0\n>\n>\n> I would like to give the strongest possible second\n> to Terry's note.  The current design of SV4 is\n> seriously broken.  I have turned to some of the\n> greatest S programmers in the world to try to\n> fix the attribute and multiple inheritance problems\n> in S language version 4 but there is simply no fix\n> that is useful and practical.\n>\n> One thing I've always bragged about to SAS users\n> is the ability of S programmers to add attributes\n> to objects \"on the fly\".  This advantage has\n> vanished in SV4.\n>\n> In my Hmisc and Design libraries I tried to convert\n> one of the functions (latex) to use the new class\n> system and the task turned out to be impossible\n> due to SV4's need for all specific methods (in my\n> case latex conversion methods) to have the same arguments.\n> This is not a reasonable requirement, as conversion\n> of different objects to LaTeX code requires different\n> options (e.g., converting a regression model fit\n> to LaTeX algebraic form requires vastly different\n> options than converting a matrix to a table).\n> So I gave up and Hmisc and Design make no use\n> of the new SV4 class mechanism.  I have had to\n> write my on [.data.frame to preserve \"label\"\n> attributes of variables.\n>\n> I found that porting my libraries to R is taking\n> less time than making them compatible with SV4.\n> This simply should not be.  I hope that some\n> major rethinking is taking place.\n>\n> I am puzzled how R developers seeks so much user input\n> before making major changes while the commercial product\n> does not.\n>\n> Please forgive me for taking such a negative\n> tone today.  I know that I am on edge because\n> of the tragedies that have taken place.  But\n> I wanted others to know that Terry Therneau is\n> not alone in his concerns about SV4.\n>\n> Frank Harrell\n>\n>\n>\n> Terry Therneau wrote:\n> >\n> >   Partly to provide information, partly to be contrary perhaps, let me\n> > comment a bit on Tim's comments.\n> >\n> >   The \"problem\" -- Gary Sabot would like the results of x[,\n> aSingleColum],\n> > where x is a data frame, to retain the row names of x as labels.\n> >\n> >   The problem behind the problem: the newest releases of Splus,\n> those based on\n> > the \"version 4\" engine from John Chambers at Lucent, have built\n> into them\n> > a dependence on a new class structure.  That new class structure has a\n> > severe shortcoming (at least one) that makes it impossible to\n> impliment ANY\n> > solution to Gary's problem.  Tim stated that \"unfortunately it (the new\n> > [.data.frame) makes assumptions about the type of data that is\n> included in\n> > the data frame that may be unjustified.\"  Precisely -- the\n> assumption is that\n> > you won't run into one of the restrictions due to new-style classes.\n> >\n> >   Tim's other two reasons-- that names slow things down, and\n> that the names\n> > that get \"glued on\" might not be the ones you really want -- are good\n> > arguments for leaving the \"as shipped\" default behavior as is.\n> However, in the\n> > spirit of the S goal \"To turn ideas into software, quickly and\n> faithfully\"\n> > (Chambers), he should be able to impliment his default for his machine.\n> > I will distinguish between being able to retain the names, and\n> having those\n> > names automatically printed in all cases -- the second is much\n> harder because\n> > of the many specialized print functions.\n> >\n> >   The new style classes have the significant restriction that absolutely\n> > no \"extra\" information may be attached to such an object, and\n> have it remain\n> > of the original class.  This may be good computer science, but\n> the notion that\n> > every necessary attribute of a class will be visualized at the class's\n> > conception is naive in practicality.  After 10+ years of\n> working with the\n> > survival code, I still make additions to the basic objects.\n> (Perhaps I'm\n> > just slow?)\n> >    Thus, an integer vector with names is no longer an integer\n> vector, it is\n> > an object of another type.  A special class \"named\" was created\n> to allow for\n> > named integer, double, character and logical vectors, but no\n> such work has\n> > been done for timeDates, factors, Surv objects, etc, etc, etc.\n> If any of\n> > these is the contents of the selected column of X, there is no\n> way to keep\n> > both the object and a list of associated names.   We have encountered a\n> > similar problem with our local version of sas.get, which\n> retained the SAS\n> > label attribute of each element of the data frame.  Luckily,\n> the number of\n> > kinds of variable that can be created is small, so we have\n> built a set of\n> > local classes for labeled integers, doubles, characters,\n> factors, and dates.\n> > (I have heard that the 'named' class itself caused many a headache for\n> > Seattle.)\n> >\n> >    I personally think that although the new class structure is\n> useful for\n> > certain very simple objects (such as a timeDate), conversion of\n> the results\n> > of a model fit (lm, glm, coxph) to this form will be a gross and near\n> > crippling mistake.\n> >\n> >         Terry Therneau\n> >\n> >\n> > ---------------------------------------------------------------------\n> > This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> > unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> > the BODY of the message:  unsubscribe s-news\n>\n> --\n> Frank E Harrell Jr              Prof. of Biostatistics & Statistics\n> Div. of Biostatistics & Epidem. Dept. of Health Evaluation Sciences\n> U. Virginia School of Medicine  http://hesweb1.med.virginia.edu/biostat\n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news",
       "body_snippet": "I'll have to take exception to some of Frank's comments here.  In\nparticular, he says \"the current design of SV4 is seriously broken\".  It\nain't broken -- it's just different.\n\nI can't speak for John ",
-      "thread_id": "thread-cdbc30093068",
-      "thread_depth": 2,
+      "thread_id": "thread-fee276285c2a",
+      "thread_depth": 3,
       "month": "2001-09"
     },
     {
@@ -2079,12 +2079,12 @@
       "date": "2001-09-13T17:54:28Z",
       "subject": "Re: S4 classes and methods. (Was: Re: dimnames in Sparc Splus 6.0)",
       "subject_clean": "S4 classes and methods. (Was: Re: dimnames in Sparc Splus 6.0)",
-      "in_reply_to": null,
+      "in_reply_to": "<200109131632.NAA12608@tanner.math.unb.ca>",
       "references": [],
       "body_plain": "> -----Original Message-----\n> From: Rolf Turner [mailto:rolf at math.unb.ca]\n>... \n> I have not had much experience with the new classes and methods,\n> having largely stuck with Splus 3.4, but I have had some need to\n> struggle with Splus 5.1 and have found that things that were simple\n> and easy to do in 3.4 were difficult-to-impossible (for me) in 5.1.\n...\n\n> -----Original Message-----\n> From: David Smith [mailto:dsmith at insightful.com]\n \n> ...Judging\n> from my experiences working with hundreds of beta testers and \n> reports from\n> current S-PLUS 6 users, your Sv3 code (S-PLUS 2000 / S-PLUS 3.4) will\n> generally work with S-PLUS 6 unchanged in at least 95% of \n> cases....\n\nFor those of us who haven't yet upgraded, could someone (David Smith?)\nplease supply a list of the things that worked previously that won't\nwork in Splus 6.0?  A pointer to a FAQ, web site, or archived message is\nfine. I'm currently using Splus ver 4.5 for Windows. I haven't upgraded\nsince 1998 due to my previous experience with S-PLUS not being totally\nbackward compatible when I went from ver 3 to 4.  I'm seriously\nconsidering upgrading now, but Rolf's post makes me nervous and David's\npost makes me wonder how much of my existing code is in the 5% that will\nneed to be changed.  Sorry if this has already been covered on the list.\nI don't usually read every message.\n\nKG\n---------------------------------------------\nKristi Gebhart, Research Physical Scientist\nNational Park Service, Air Resources Division\ngebhart at cira.colostate.edu",
       "body_snippet": "> -----Original Message-----\n> From: Rolf Turner [mailto:rolf at math.unb.ca]\n>... \n> I have not had much experience with the new classes and methods,\n> having largely stuck with Splus 3.4, but I have",
-      "thread_id": "thread-d859008ac6be",
-      "thread_depth": 0,
+      "thread_id": "thread-8356441c4e1b",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -2113,12 +2113,12 @@
       "date": "2001-09-13T19:33:22Z",
       "subject": "Recreating a Graph from the Venable & Ripley Book",
       "subject_clean": "Recreating a Graph from the Venable & Ripley Book",
-      "in_reply_to": null,
+      "in_reply_to": "<001801c13c5f$83f1b4e0$e3435c83@apgea.army.mil>",
       "references": [],
       "body_plain": "Hi, S+ users, I've tried to recreate a graph \nwhich had a histogram superimposed with lines of density estimate and \nnormal mixture, in pp 241, 2nd Ed, Modern Applied Statistics with S-Plus by \nRipley and Venables. But I got an error message when \nI used \"wait.fdns_list(x=wait.dns$x,y=local=cf))\" at the end of pp \n243. I could overlay a normal mixture line using plot(x,y) with a \npreceding syntax (xaxs=\"d\",yaxs=\"d\",new=T), but the line was too thick. I \ndon't understand the two closed parenthesis in the above syntax. Is this a \nmisprint? Could anybody tell me why I did not get a exact graph like in the \nbook? I'm using S+2000 R2. I really appreciate your help.\n\n \n\nKyong        US \nArmy",
       "body_snippet": "Hi, S+ users, I've tried to recreate a graph \nwhich had a histogram superimposed with lines of density estimate and \nnormal mixture, in pp 241, 2nd Ed, Modern Applied Statistics with S-Plus by \nRipley",
-      "thread_id": "thread-bc0ad1229521",
-      "thread_depth": 0,
+      "thread_id": "thread-2fe71d6253a0",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -2135,8 +2135,8 @@
       ],
       "body_plain": "David,\n\nYou don't need to be forgiven for contrariness so don't worry.\nMy choice of the word \"broken\" could have been better.  Let's\ncall it \"problematic\".\n\nI think the places where we have differing views relate to\n- non-downward compatibility when adding attributes to\n  simple objects\n- the problem with multiple inheritance\n- whether the new class system has resulted in advances in\n  productivity of programmers, reliability of code, or new\n  capabilities or efficiencies\n\nAll this being said, Splus 6 is working OK for me on Linux\nexcept for a few annoying warning messages, after I've\noverridden [.data.frame and [.factor and turned off a\ncouple of features in the Hmisc library for variables\nwith the \"label\" attribute.  I also have to run old\ndata frames through a function in Hmisc called\ncleanup.import to get rid of secondary classes such\nas \"labelled\", and run data frames through \nexportDataStripped before exporting them, so that\n\"label\" attributes will not clobber the export function.\n\nJohn Chambers wrote a very constructive note which I\nappreciate.  I did consider some of the workarounds\nwhich he mentioned but found that these caused a few\nother problems.  For example, one of the workarounds,\nif I understand it, involved putting the data in a slot\nin a new \"catch all\" class of object and putting\nattributes in another slot.  Tim Hesterberg did a lot\nof work in writing this up nicely.  Ultimately I didn't\nuse it because it required demoting the data \"down\"\na level which would make the object incompatible with\nseveral old functions.\n\nAll the best,\n\nFrank\n-- \nFrank E Harrell Jr              Prof. of Biostatistics & Statistics\nDiv. of Biostatistics & Epidem. Dept. of Health Evaluation Sciences\nU. Virginia School of Medicine  http://hesweb1.med.virginia.edu/biostat",
       "body_snippet": "David,\n\nYou don't need to be forgiven for contrariness so don't worry.\nMy choice of the word \"broken\" could have been better.  Let's\ncall it \"problematic\".\n\nI think the places where we have differing ",
-      "thread_id": "thread-cdbc30093068",
-      "thread_depth": 3,
+      "thread_id": "thread-fee276285c2a",
+      "thread_depth": 4,
       "month": "2001-09"
     },
     {
@@ -2183,12 +2183,12 @@
       "date": "2001-09-13T21:13:27Z",
       "subject": "Re: Recreating a Graph from the Venable & Ripley Book",
       "subject_clean": "Recreating a Graph from the Venable & Ripley Book",
-      "in_reply_to": null,
+      "in_reply_to": "<001801c13c5f$83f1b4e0$e3435c83@apgea.army.mil>",
       "references": [],
       "body_plain": "> On Thu, 13 Sep 2001, kyong park wrote:\n\n> Hi, S+ users, I've tried to recreate a graph which had a histogram\n> superimposed with lines of density estimate and normal mixture,\n> in pp 241, 2nd Ed, Modern Applied Statistics with S-Plus by\n> Ripley and Venables. But I got an error message when I used\n> \"wait.fdns_list(x=wait.dns$x,y=local=cf))\" at the end of pp 243.\n\nYou missed a line. At the bottom of p243 / top of 244, in the version I \nhave\n(1st ed, 3rd printing of MASS):\n\nwait.fdns <- list(x = wait.dns$x, y =\n        eval(expression(dmix2(wait.dns$x, p, u1, s1, u2, s2)),\n        local = cf))\n\nIt works better if you include all the bits...\n\nSarah\n\n-- \n*--*--*--*--*--*--*--*--*--*--*--*--*--*--*\nDr. Sarah Goslee\nUSDA-ARS Jornada Experimental Range\nMSC-3JER Box 30003, NMSU\nLas Cruces, NM 88003\n(505) 646-5139\nFAX 646-5889\nsgoslee at nmsu.edu",
       "body_snippet": "> On Thu, 13 Sep 2001, kyong park wrote:\n\n> Hi, S+ users, I've tried to recreate a graph which had a histogram\n> superimposed with lines of density estimate and normal mixture,\n> in pp 241, 2nd Ed, Mo",
-      "thread_id": "thread-402537cdb693",
-      "thread_depth": 0,
+      "thread_id": "thread-2fe71d6253a0",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -2273,8 +2273,8 @@
       ],
       "body_plain": "> From: David Smith\n> Sent: Thursday, September 13, 2001 12:58 PM\n>\n> ...Despite Sv4 being essentially a complete rewrite on Sv3 we\n> took backwards-compatibility issues extremely seriously. We had\n> feedback from hundreds of testers, and as such issues arose we\n> addressed them where possible.  With such a large change to the\n> code-base some incompatibilities in niche areas were inevitable.\n\nDavid,\n\nI applaud your efforts to maintain as much backwards-compatibility as\npossible when moving to Sv4 and I don't doubt that it was a challenge.\n\nNonetheless, I would not categorize the \"dimnames stripping\" and \"class\"\nhandling changes of Splus 6.0 as \"niche areas\". It is an unfortunate\nsituation. Gary and others now face the ugly decision of laboriously\nrewriting code that uses a perfectly reasonable idiom OR adopting\nworkarounds that make it difficult to use some of the new features of S that\nInsightful/Bell Labs worked so hard to produce.\n\nI should say, I have used Splus for 10 years and think it, and its community\nof users and providers, is great. My firm has been using Splus V6.0 for our\nnewer code development, without major incident. However, as we migrate the\nour older Splus code, I hope we do not find an incompatibility that drives\nus to undertake a painful rewrite. Business is challenging enough without\nhaving to spend time maintaining code at the same level of functionality.\n\nJim Hutchinson\nPHZ Capital Partners\n321 Commonwealth Road\nWayland, MA 01778 USA\nPhone: +1-508-651-3700\nFax:   +1-508-653-1745\nEmail: hutch at phz.com",
       "body_snippet": "> From: David Smith\n> Sent: Thursday, September 13, 2001 12:58 PM\n>\n> ...Despite Sv4 being essentially a complete rewrite on Sv3 we\n> took backwards-compatibility issues extremely seriously. We had\n> ",
-      "thread_id": "thread-cdbc30093068",
-      "thread_depth": 3,
+      "thread_id": "thread-fee276285c2a",
+      "thread_depth": 4,
       "month": "2001-09"
     },
     {
@@ -2291,8 +2291,8 @@
       ],
       "body_plain": "> For those of us who haven't yet upgraded, could someone (David Smith?)\n> please supply a list of the things that worked previously that won't\n> work in Splus 6.0?\n\nThere's a list of backwards-compatibility issues in the release notes for\nS-PLUS 6, available on the web at:\n\nhttp://www.insightful.com/support/spluslatest/ReleaseNotes.htm#BackwardCompa\nt\n\nThis document is quite detailed, but the main points are:\n\n* Some functions need to be changed (e.g. class -> oldClass, log -> logb).\nThe migration wizard handles such changes.\n\n* You must now assign objects local to a function before modifying them\n\n* Atomic objects have a class.  Objects with attributes and labels have\ntheir own class (structure and named, respectively).\n\n* Code that relies on multiple inheritance may need modification (in\nsituations where objects \"x\" and \"y\" both inherit from class \"c\" but \"x\" and\n\"y\" themselves have different classes).\n\n# David Smith\n\n--\nDavid M Smith <dsmith at insightful.com>\nS-PLUS Product Marketing Manager, Insightful Corp, Seattle WA\nTel: +1 (206) 283 8802 x360\nFax: +1 (206) 283 0347\n\nLearn how Merck, Proctor & Gamble, Merrill Lynch and others are using\nS-PLUS, deploying Web-based analytics and more at the 2001 S-PLUS User\nConference being held in Philadelphia, October 18-19 -\nwww.insightful.com/events/2001uc.\n\n> -----Original Message-----\n> From: s-news-owner at lists.biostat.wustl.edu\n> [mailto:s-news-owner at lists.biostat.wustl.edu]On Behalf Of Gebhart,\n> Kristi\n> Sent: Thursday, September 13, 2001 10:54\n> To: s-news at wubios.wustl.edu\n> Subject: Re: S4 classes and methods. (Was: Re: [S] dimnames in Sparc\n> Splus 6.0)\n>\n>\n> > -----Original Message-----\n> > From: Rolf Turner [mailto:rolf at math.unb.ca]\n> >...\n> > I have not had much experience with the new classes and methods,\n> > having largely stuck with Splus 3.4, but I have had some need to\n> > struggle with Splus 5.1 and have found that things that were simple\n> > and easy to do in 3.4 were difficult-to-impossible (for me) in 5.1.\n> ...\n>\n> > -----Original Message-----\n> > From: David Smith [mailto:dsmith at insightful.com]\n>\n> > ...Judging\n> > from my experiences working with hundreds of beta testers and\n> > reports from\n> > current S-PLUS 6 users, your Sv3 code (S-PLUS 2000 / S-PLUS 3.4) will\n> > generally work with S-PLUS 6 unchanged in at least 95% of\n> > cases....\n>\n> For those of us who haven't yet upgraded, could someone (David Smith?)\n> please supply a list of the things that worked previously that won't\n> work in Splus 6.0?  A pointer to a FAQ, web site, or archived message is\n> fine. I'm currently using Splus ver 4.5 for Windows. I haven't upgraded\n> since 1998 due to my previous experience with S-PLUS not being totally\n> backward compatible when I went from ver 3 to 4.  I'm seriously\n> considering upgrading now, but Rolf's post makes me nervous and David's\n> post makes me wonder how much of my existing code is in the 5% that will\n> need to be changed.  Sorry if this has already been covered on the list.\n> I don't usually read every message.\n>\n> KG\n> ---------------------------------------------\n> Kristi Gebhart, Research Physical Scientist\n> National Park Service, Air Resources Division\n> gebhart at cira.colostate.edu\n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news",
       "body_snippet": "> For those of us who haven't yet upgraded, could someone (David Smith?)\n> please supply a list of the things that worked previously that won't\n> work in Splus 6.0?\n\nThere's a list of backwards-compat",
-      "thread_id": "thread-d859008ac6be",
-      "thread_depth": 1,
+      "thread_id": "thread-8356441c4e1b",
+      "thread_depth": 2,
       "month": "2001-09"
     },
     {
@@ -2451,12 +2451,12 @@
       "date": "2001-09-17T22:32:41Z",
       "subject": "Re: Dynamic loading problem in Splus 5.1.",
       "subject_clean": "Dynamic loading problem in Splus 5.1.",
-      "in_reply_to": null,
+      "in_reply_to": "<200109171307.KAA19860@tanner.math.unb.ca>",
       "references": [],
       "body_plain": "Rolf,\n  You wondered why your code ran in S3.4 but failed in 6.0.\n  It has been my experience that some mistakes in .C calls, mistakes that\nshould by rights be uniformly fatal, sometimes \"slip through\" in 3.4 but\nnot in 6.0.  For me this has most often been when I overreferenced an array\nby just a little bit, you found it for an integer/double mistake.\n   This is certainly not a bug in S6.  \n   \n   I use 6.0 at home on Linux and 3.4 at work on the Sun system, so have \nmoved a lot of functions back and forth.  When they don't come out the same \nwrt a .C call, the bug has always been mine.\n\n        Terry T.",
       "body_snippet": "Rolf,\n  You wondered why your code ran in S3.4 but failed in 6.0.\n  It has been my experience that some mistakes in .C calls, mistakes that\nshould by rights be uniformly fatal, sometimes \"slip through",
-      "thread_id": "thread-08f523584433",
-      "thread_depth": 0,
+      "thread_id": "thread-a3ab77afc236",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -2959,12 +2959,12 @@
       "date": "2001-09-19T20:45:23Z",
       "subject": "Re: world map on unix S+ 5.0",
       "subject_clean": "world map on unix S+ 5.0",
-      "in_reply_to": null,
+      "in_reply_to": "<v04220801b7ce73d2c691@[143.232.72.119]>",
       "references": [],
       "body_plain": "> I downloaded the world map files from http://lib.stat.cmu.edu/maps/, \n> but don't have the Lmake and Gmake programs. Does anyone know where I \n> can get those programs? or are there other world map files somewhere?\n> \nThere's a copy in ftp.mcs.vuw.ac.nz:/pub/statistics/map/Smap.tar.Z\n(34Kb).  Note though that if you have the .L, .G and .N files, you don't\nneed anything else.\n\nHope this helps,\nRay Brownrigg <ray at mcs.vuw.ac.nz>       http://www.mcs.vuw.ac.nz/~ray",
       "body_snippet": "> I downloaded the world map files from http://lib.stat.cmu.edu/maps/, \n> but don't have the Lmake and Gmake programs. Does anyone know where I \n> can get those programs? or are there other world map ",
-      "thread_id": "thread-2da21d448402",
-      "thread_depth": 0,
+      "thread_id": "thread-d45e101df86d",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -2975,12 +2975,12 @@
       "date": "2001-09-19T20:51:14Z",
       "subject": "Roots of negative numbers",
       "subject_clean": "Roots of negative numbers",
-      "in_reply_to": null,
+      "in_reply_to": "<F9D44AC0D89CD311B9E3000629385C40044D9CAD@marconi.open.ac.uk>",
       "references": [],
       "body_plain": "Professor Brian D Ripley indicated how we can get the square root of a\nnegative number:\n\n> sqrt(-9+0i)\n[1] 1.83691e-016+3i\n\nHe noted that the unexpected real part, i.e. 1.83691e-016, was a result of\nrounding. I wonder if someone could explain why\nsqrt(-9+0i) results in rounding error where as \n\n> sqrt(9)\n[1] 3\n> \ndoes not result in an error. Looking at \nsqrt() was not helpful (at least to me):\n\n sqrt()\n> sqrt\nfunction(x)\nx^0.5\n> \n\nI am running SPlus 2000 Professoinal Release 3 on a Windows NT box\n\nThanks\n\nJohn Sorkin\n\nP.S. I understand that the error is very small. Never the less, I am curious\nabout the etiology of the error.",
       "body_snippet": "Professor Brian D Ripley indicated how we can get the square root of a\nnegative number:\n\n> sqrt(-9+0i)\n[1] 1.83691e-016+3i\n\nHe noted that the unexpected real part, i.e. 1.83691e-016, was a result of\nr",
-      "thread_id": "thread-a8db54cdff06",
-      "thread_depth": 0,
+      "thread_id": "thread-0f7423aa74f5",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -3109,12 +3109,12 @@
       "date": "2001-09-20T13:23:29Z",
       "subject": "Re: Differences between UNIX and PC version of Splus",
       "subject_clean": "Differences between UNIX and PC version of Splus",
-      "in_reply_to": null,
+      "in_reply_to": "<3BA7739D.D54FED1D@asml.nl>",
       "references": [],
       "body_plain": "As far as I am concerned, unless the documentation issues in Splus are\nimproved and the backward compatibility and cross platform compatibility are\naddressed (at least via documentation) I can not consider Splus as a serious\nprogramming language.\n\n        -----Original Message-----\n        From:   Sicco Schets [SMTP:Sicco.Schets at asml.com]\n        Sent:   Thursday, September 20, 2001 4:34 AM\n        To:     Prof Brian Ripley\n        Cc:     's-news at wubios.wustl.edu'\n        Subject:        Re: [S] Differences between UNIX and PC version of\nSplus\n\n        Thanks for replies,\n\n        The PC trial version I was testing on is Splus-2000 Release 3 for\nWindows. I\n        must confess that my S programming doesn't  include any fancy OO\nprogramming\n        or the like, nor any external calls.\n        I do not create my own methods or classes either. So nothing fancy.\n        An example of the warnings/errors I got (I consider a warning just\nas bad as\n        an error since it takes just as much effort to solve) is for\ninstance the\n        'if-else' construction. Sometimes in UNIX version, if you write,\n\n        if (reg expr)\n        {\n         code\n        }\n        else\n        {\n            code\n        }\n\n        doesn't work and you need to write,\n\n        if (reg expr)\n        {\n         code\n        } else\n        {\n            code\n        }\n\n        but this is not always (???).\n\n        Or the mode of e.g a data.frame is returned by a function\ndifferently on the\n        2 platforms. And if I have a statement like 'return(list(a=bla,\nb=blabla)'\n        inside a 'tapply' then on the PC version I can reference the vars\nwith $a and\n        $b. However, on the UNIX version I can't.\n\n        Another issue is that you can have a data.frame (made with\nread.table()) with\n        a column of doubles. If you ask for the mode of this column it will\ntell you\n        it's numeric, but if you then multiply this column with any number\nyou get an\n        error stating that multiplication cannot be done on factors. Who the\nheck\n        told 'em to be a factor? The same happens if you then try to make\nthis column\n        as.numeric. The strangest thing is that the read.table command\ndoesn't turn\n        every numeric column into a 'hidden' factor, but just sometimes.\nWhy????\n        Another typical example is that you can have a data.frame fo mode\n'list',\n        which is kind of useless since you can't do much with a list (like\ncalculate\n        var()) giving errors like \"cannot coerce from mode list to double\".\nAfter\n        doing some vague manipulations of the data.frame (like using lapply\nand\n        subtracting some vector), the data.frame somehow looses its 'list'\nmode,\n        whilst when printing both versions of the same data.frame they look\nexactly\n        the same. In principle I do not like lists (and especially lists\nwithin a\n        list) as it is so difficult to get your data out in a usable form.\n\n        These are just some of the examples I can come up with now, but most\ntimes\n        the issues or of the same sort.\n        I feel that I lack the exact understanding of how Splus deal with\nmode's and\n        what the exact ins and outs are of each mode and then also how to\ndeal with\n        them. I cannot find good documentation on this subject nor do any\ncourses\n        I've seen or had really address this. Does anyone have a good\nadvice?\n\n        regards\n        Sicco\n\n        Prof Brian Ripley wrote:\n\n        > On Tue, 18 Sep 2001, Sicco Schets wrote:\n        >\n        > > Hi,\n        > >\n        > > I thought today to try a test of my Splus code, programmed under\nSplus6\n        > > for UNIX, and try it on the PC version (a trial version) to test\n        > > portability and speed.\n        >\n        > (Just checking: `the PC version' means under Windows, not Linux,\nand this\n        > is a trial of release 1, not a release candidate?  The actual\nrelease is a\n        > lot stabler.)\n        >\n        > > Conclusions:\n        > > 1) Not portable at all!!! A lot of warnings and errors in most\nbasic\n        > > things, especially with coercion.\n        > > 2) PC seems about 2-3 times faster (400MHz PC with 128MB versus\nand SUN\n        > > Ultra 60 with 512 MB).\n        > >\n        > > Is there any easy way to port S code between PC and UNIX\nversions?\n        >\n        > I am not seeing this difficulty, although perhaps as a beta tester\nI got\n        > used to some differences.  In my experience:\n        >\n        > 1) The PC version is pickier than the Unix version, especially\nabout\n        > classes and method definitions.\n        >\n        > 2) It's quite a bit faster (Windows 2000 vs Linux on the same\nhardware).\n        >\n        > According to David Smith, when 6.1 for Unix/Linux appears both\ndifferences\n        > will go away.  It might be helpful to think of the Windows version\n        > as 6.1-epsilon (not 6.0.2 or soon .3).\n        >\n        > Over the last week I have ported half a dozen libraries to S-PLUS\n6 for\n        > Windows with minimal difficulties.  Almost all those I have\nencountered\n        > stem from compiling C code, in particular the use of __stdcall in\nVC++ and\n        > incomplete or incorrect headers (not just in the code I am\ncompiling,\n        > either, but also in VC++).  I've resorted to the mingw port of gcc\nseveral\n        > times to get over this: no problem as it's a good compiler and\n        > well-supported by the S-PLUS headers.\n        >\n        > The other tedious thing was migrating help files, but I find the\nPerl\n        > script I wrote (available through the `S Programming' on-line\nmaterial)\n        > does the trick.\n        >\n        > We are moving our teaching next year (i.e. from October 1) to 6.0\non\n        > Windows and not seeing any problems in migrating material beyond\nthose\n        > mentioned above.\n        >\n        > --\n        > Brian D. Ripley,                  ripley at stats.ox.ac.uk\n        > Professor of Applied Statistics,\nhttp://www.stats.ox.ac.uk/~ripley/\n        > University of Oxford,             Tel:  +44 1865 272861 (self)\n        > 1 South Parks Road,                     +44 1865 272860 (secr)\n        > Oxford OX1 3TG, UK                Fax:  +44 1865 272595\n        >\n        >\n---------------------------------------------------------------------\n        > This message was distributed by s-news at lists.biostat.wustl.edu.\nTo\n        > unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu\nwith\n        > the BODY of the message:  unsubscribe s-news << File:\nATT136201.txt >>  << File: ATT136202.txt >>",
       "body_snippet": "As far as I am concerned, unless the documentation issues in Splus are\nimproved and the backward compatibility and cross platform compatibility are\naddressed (at least via documentation) I can not con",
-      "thread_id": "thread-2b91cfde1164",
-      "thread_depth": 0,
+      "thread_id": "thread-b7ea14ccdbc0",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -3125,12 +3125,12 @@
       "date": "2001-09-20T13:53:25Z",
       "subject": "Re: Memory faults, tracking",
       "subject_clean": "Memory faults, tracking",
-      "in_reply_to": null,
+      "in_reply_to": "<Pine.GSO.4.21.0109201502400.23970-100000@newton.gbar.dtu.dk>",
       "references": [],
       "body_plain": "Below is my most used routine for debugging C code with the kind of error\nyou report.  In your S function, replace\n        .C(\"myroutine\", x= ... \nwith\n        CC(\"myroutine\", x= ...\nand run the program.  The \"CC\" function will create a short mainline program\nDmyroutine.c which will call myroutine with exactly the same arguments that\nSplus would have called it with.  You can then compile Dmyroutine.c, link it\nwith myroutine.o, and use all of your favorite debugging tools outside of S.\n\n  Note, your S program will likely fail a few lines below the CC call, at the\nfirst point that you try to use the results of the .C call, since\nCC doesn't return anything.  This doesn't matter, because at that point the\nDmyroutine.c file has already been written.  Once you have figured out the\nbug replace CC with .C again.\n\n        Terry Therneau\n        \n------------------------------------------------\n\"CC\"<-\nfunction(subroutine, ..., NAOK = F)\n{\n        assign(\"file\", paste(\"D\", subroutine, \".c\", sep = \"\"), frame = 1)\n        assign(\"out\", function(...)\n            cat(..., file = file, append = T), frame = 1)\n        put <- function(type, name, data)\n        {\n            out(paste(type, \" \", name, \"[]\", sep = \"\"), \"= {\")\n            out(data, sep = \",\", fill = 60, labels = \"\\t\")\n            out(\"};\\n\\n\")\n        }\n        unix(paste(\"rm -f\", file))\n        args <- list(...)\n        index <- seq(along = args)\n        n <- names(args)\n        if(length(n) == 0)\n            n <- rep(\"\", length(args))\n        if(length(n) > 0)\n            n <- ifelse(n == \"\", paste(\"arg\", index, sep = \"\"), n)\n        for(i in index)\n            switch(storage.mode(args[[i]]),\n                character = put(\"static char *\", n[i], paste(\"\\\"\", args[[i]],   \n \n                    \"\\\"\", sep = \"\")),\n                integer = put(\"static long\", n[i], args[[i]]),\n                single = put(\"static float\", n[i], args[[i]]),\n                double = put(\"static double\", n[i], args[[i]]),\n                logical = put(\"static long\", n[i], args[[i]]),\n                stop(paste(\"Unknown mode\", m[i], \"for argument\", i)))\n        out(\"main() {\\n\", subroutine, \"(\", paste(n, collapse = \", \"), \");\\n}\\n\",\n            sep = \"\")\n}",
       "body_snippet": "Below is my most used routine for debugging C code with the kind of error\nyou report.  In your S function, replace\n        .C(\"myroutine\", x= ... \nwith\n        CC(\"myroutine\", x= ...\nand run the progr",
-      "thread_id": "thread-bf9e9876ec21",
-      "thread_depth": 0,
+      "thread_id": "thread-69d3d51c8cdf",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -3191,12 +3191,12 @@
       "date": "2001-09-20T16:58:34Z",
       "subject": "Re: Unix vs PC S Version problems",
       "subject_clean": "Unix vs PC S Version problems",
-      "in_reply_to": null,
+      "in_reply_to": "<777F3F91D3F3D4118CCA00508B953E190195DF07@usrymx06.merck.com>",
       "references": [],
       "body_plain": "The attachment of my response to Sicco Schets e-mail may have been\nmisleading.  But it occurred during a particularly frustrating time in using\nSplus.  I am an experienced programmer and applications developer.  I have\nworked in other languages.  I like S and its related languages in part\nbecause I have experience using APL, an older language upon which S seems to\nbe based and which I always considered one of the most powerful languages.\n\nLet me give you an example of the documentation;  I am writing an\napplication on the Windows platform in which I am using the GUI commands.\nIn order to add a title to a graph page I use GuiCreate(\"MainTitle\",...).\nIn checking the documentation in the Help file included with 2000, I find no\nindication as to which parameter to use to enter the text of the title.  I\neventually solved the problem, but the solution was not intuitive.  My time\nis expensive, I can't spend it searching for such basic information.\n\nAs far as the problem that was presented in the original e-mail,  I expect\nthat statements such as If/Else to be basic to a programming language.\nThose statements should not change whether you go backward or forward in\nversion, or across platforms.\n\nI get the feeling that Insightful is trying to sell its product as a\ndevelopment language.  If this is so they must accept the responsibility of\naddressing compatibility and documentation issues.  In fact the\ncompatibility issues can often be resolved via proper documentation.  If\nthese are not addressed then the software will probably remain a niche\nproduct.  This would be a shame as I agree that the potential for the\nlanguage is almost limitless.\n\n        Harvey\n\n        -----Original Message-----\n        From:   Gunter, Bert [SMTP:bert_gunter at merck.com]\n        Sent:   Thursday, September 20, 2001 10:40 AM\n        To:     'Monder, Harvey'\n        Cc:     's-news at wubios.wustl.edu'\n        Subject:        Re: [S] Unix vs PC S Version problems\n\n        To all: In partial defense of S-Plus and to (I hope) stimulate\nthoughtful\n        responses.\n\n        A few points:\n\n        1. The view expressed below by Harvey Monder is harsh, but makes at\nleast\n        one valid point: S is a complex language that makes a lot of demands\nof the\n        user. I would suggest that at least some of the problems experienced\nby\n        Sicco Schets may, in fact, not be problems at all, but simply a\nresult of\n        his inexperience with the language(as he, himself, acknowledged).\nThat is,\n        the usage IS documented and correct but he has simply not understood\nit\n        fully. Of course, there are problems, and I do not mean to dismiss\n        everything he wrote. I leave it to those more expert than I to sort\nthings\n        out.\n\n        2. That said, what Prof. Ripley finds clear and straightforward\nshould not\n        be used as a guide for what the rest of us should find clear and\n        straightforward. Given S-Plus's complexity, clear, effective\ndocumentation\n        is vital -- especially for applications oriented users who have no\nneed to\n        engage in S's serious software development capabilities. I think\nthat there\n        is broad agreement even among those of us who find S indispensable\nthat\n        documentation is one of S-Plus's weaker points. I know that there\nare good\n        reasons for this: given limited resources and the demands of the\n        marketplace, documentation usually takes a back seat to feature\ndevelopment.\n        I know that Insightful is trying to maintain a better balance here,\nbut they\n        clearly have room for improvement.\n\n        3. One way Insightful has tried to provide functionality to the\n        applications-oriented user (who are probably the bulk of S-Plus's\nintended\n        market) is through the S-Plus GUI. However, many of us have found\nthe GUI to\n        be more of a problem than a help. This is certainly a matter of\npersonal\n        style, and I do not mean to imply that many others have not found it\nto be\n        key to accessing S-Plus's extraordinary capabilties. But many of us\nprefer\n        the language's inherently greater flexibility and power even if we\ndon't\n        develop software. This means that the language has to serve both the\nneeds\n        of \"casual\" appliations-oriented users as well as those who want to\nwrite\n        serious data analysis software applications, for which, I think, S\nis\n        without peer (nothing else even comes close!). The recent\ncontroversy about\n        the new class system highlights the difficulty here: it may be that\nthe\n        changes that improve the languages capabilities for serious\ndevelopers may\n        make it more difficult for casual users. Again, this is a difficult\nbalance,\n        and I hope that Insightful will continue to look at this issue with\nthe\n        intention of possibly providing tools or modifications IF (and I\nemphasize\n        \"IF\") this does, indeed, turn out to be a problem for a significant\nnumber\n        of folks.\n\n        4. In the end, of course, one's choice of what to use for data\nanalysis\n        software is a personal decision that depends on one's individual\nneeds and\n        capabilities. However, I think it fair to say that any serious data\nanalyst\n        who dismisses S-Plus because of a few comments on this or any other\nlist or\n        even because of new release bugginess does themselves a disservice.\nMany of\n        us \"ordinary\" S-Plus users have found that the language's\nextraordinary\n        power, the tremendous graphics capabilities, and the enormous range\nof data\n        analysis methodology that is either built-in or available from\n        user-contributed libraries -- much of which cannot be found anywhere\nelse --\n        makes the effort worthwhile, despite the occasional frustrations.\nMay I also\n        say that the user community on this list is remarkably positive and\nhelpful;\n        having statisticians like Professors Ripley, Venables, Harrell (or\n        non-Professor Therneau) regularly monitor and offer help to users is\nsimply\n        fantastic. \n\n        So please consider S-Plus carefully. Finally, you should take\nadvantage of\n        resources beyond that immediately provided by Insightful and this\nlist --\n        especially the two books by Profs. Venables and Ripley - Modern\nApplied\n        Statistics with S-Plus(MASS) and S Programming. I have found the\nlatter to\n        be especially helpful in my own struggles with the language.\n\n        Best regards to all,\n        Bert Gunter\n        Biometrics Research RY 70-38\n        Merck & Company\n        P.O. Box 2000\n        Rahway, NJ 07065-0900\n        Phone: (732) 594-7765\n        mailto: bert_gunter at merck.com\n\n        \"The business of the statistician is to catalyze the scientific\nlearning\n        process.\"      -- George E.P. Box\n\n        -----Original Message-----\n        From: Monder, Harvey [mailto:Harvey.Monder at pharma.com]\n        Sent: Thursday, September 20, 2001 9:23 AM\n        To: 'Sicco Schets'; Prof Brian Ripley\n        Cc: 's-news at wubios.wustl.edu'\n        Subject: Re: [S] Differences between UNIX and PC version of Splus\n\n        As far as I am concerned, unless the documentation issues in Splus\nare\n        improved and the backward compatibility and cross platform\ncompatibility are\n        addressed (at least via documentation) I can not consider Splus as a\nserious\n        programming language.\n\n        \n---------------------------------------------------------------------\n        This message was distributed by s-news at lists.biostat.wustl.edu.  To\n        unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu\nwith\n        the BODY of the message:  unsubscribe s-news",
       "body_snippet": "The attachment of my response to Sicco Schets e-mail may have been\nmisleading.  But it occurred during a particularly frustrating time in using\nSplus.  I am an experienced programmer and applications ",
-      "thread_id": "thread-838dde7b8d05",
-      "thread_depth": 0,
+      "thread_id": "thread-17da51cec7bf",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -3289,12 +3289,12 @@
       "date": "2001-09-21T12:33:40Z",
       "subject": "Re: Unix vs PC S Version problems",
       "subject_clean": "Unix vs PC S Version problems",
-      "in_reply_to": null,
+      "in_reply_to": "<777F3F91D3F3D4118CCA00508B953E190195DF07@usrymx06.merck.com>",
       "references": [],
       "body_plain": "> -----Original Message-----\n> From: Monder, Harvey [mailto:Harvey.Monder at pharma.com]\n> \n> The attachment of my response to Sicco Schets e-mail may have been\n> misleading.  But it occurred during a particularly \n> frustrating time in using\n> Splus.  I am an experienced programmer and applications \n> developer.  I have\n> worked in other languages.  I like S and its related languages in part\n> because I have experience using APL, an older language upon \n> which S seems to\n> be based and which I always considered one of the most \n> powerful languages.\n\nI do not believe S is based on APL in any sense, but I could be wrong...\n \n> Let me give you an example of the documentation;  I am writing an\n> application on the Windows platform in which I am using the \n> GUI commands.\n> In order to add a title to a graph page I use \n> GuiCreate(\"MainTitle\",...).\n> In checking the documentation in the Help file included with \n> 2000, I find no\n> indication as to which parameter to use to enter the text of \n> the title.  I\n> eventually solved the problem, but the solution was not \n> intuitive.  My time\n> is expensive, I can't spend it searching for such basic information.\n\nMy guess is that you are using Splus functions written for the Splus GUI.\nIf I'm not mistaken, these functions were intended to be called/used only\nthrough the Splus GUI, not from command line or scripts.  In so, you're\nhacking the system beyond its intended use, and I don't think Insightful can\nbe blamed for not documenting those, as they may not be considered part of\nthe API.  (One may argue that these functions *should* be part of the API\nand therefore documented, but that's up to Insightful.)\n \n> As far as the problem that was presented in the original \n> e-mail,  I expect\n> that statements such as If/Else to be basic to a programming language.\n> Those statements should not change whether you go backward or \n> forward in\n> version, or across platforms.\n\nDave Smith's reply address these issues very well.\n \n> I get the feeling that Insightful is trying to sell its product as a\n> development language.  If this is so they must accept the \n> responsibility of\n> addressing compatibility and documentation issues.  In fact the\n> compatibility issues can often be resolved via proper \n> documentation.  If\n> these are not addressed then the software will probably remain a niche\n> product.  This would be a shame as I agree that the potential for the\n> language is almost limitless.\n> \n>       Harvey\n\nOne more word about cross-platform and version compatibilities.  My own\n(limited) experience is that the backward compatibility (even\ncross-platform) of Splus 6 is very good, and I haven't even need to use the\nmigration wizard yet.  (I was moving things between Splus 2000 and Splus 6\non Linux).  As Dave pointed out, forward compatibility is perhaps only for\nthose blessed with such gifts.  Try loading a .xls file created in Excel\n2000 into Excel 4.0!\n\nAndy\n\nAndy I. Liaw, PhD\nBiometrics Research          Phone: (732) 594-0820\nMerck & Co., Inc.              Fax: (732) 594-1565\nmailto:andy_liaw at merck.com",
       "body_snippet": "> -----Original Message-----\n> From: Monder, Harvey [mailto:Harvey.Monder at pharma.com]\n> \n> The attachment of my response to Sicco Schets e-mail may have been\n> misleading.  But it occurred during a",
-      "thread_id": "thread-4cf28be01acb",
-      "thread_depth": 0,
+      "thread_id": "thread-17da51cec7bf",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -3323,12 +3323,12 @@
       "date": "2001-09-21T14:29:00Z",
       "subject": "Re: Unix vs PC S Version problems",
       "subject_clean": "Unix vs PC S Version problems",
-      "in_reply_to": null,
+      "in_reply_to": "<777F3F91D3F3D4118CCA00508B953E190195DF07@usrymx06.merck.com>",
       "references": [],
       "body_plain": "Andy Liaw wrote:\n\n>My guess is that you are using Splus functions written for the \n>Splus GUI.\n>If I'm not mistaken, these functions were intended to be \n>called/used only\n>through the Splus GUI, not from command line or scripts. In so, you're\n>hacking the system beyond its intended use, and I don't think \n>Insightful can\n>be blamed for not documenting those, as they may not be \n>considered part of\n>the API.\n\nPossibly, but my first contact with S-Plus was at an Insightful\ndemonstration where the ability to record actions performed with the GUI and\nthen paste them into the command or script windows was explicitly presented\nas one of the program's selling points (it certainly sold it to me...)\n\nJulian Wells\nOU Business School\nThe Open University\nWalton Hall\nMilton Keynes\nMK7 6AA\nUnited Kingdom\n+44 1908 654658",
       "body_snippet": "Andy Liaw wrote:\n\n>My guess is that you are using Splus functions written for the \n>Splus GUI.\n>If I'm not mistaken, these functions were intended to be \n>called/used only\n>through the Splus GUI, not ",
-      "thread_id": "thread-9c215279f258",
-      "thread_depth": 0,
+      "thread_id": "thread-17da51cec7bf",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -3355,12 +3355,12 @@
       "date": "2001-09-21T15:17:14Z",
       "subject": "Re: Unix vs PC S Version problems",
       "subject_clean": "Unix vs PC S Version problems",
-      "in_reply_to": null,
+      "in_reply_to": "<777F3F91D3F3D4118CCA00508B953E190195DF07@usrymx06.merck.com>",
       "references": [],
       "body_plain": "Perhaps what I should have said is: I gave up on the Splus GUI (both using\nand programming) long ago, and have no sympathy for those who struggle with\nit.  (Sorry David.)  IMHO (and I mean IMHO), it was a strategic mistake when\nMathSoft put the Axum GUI on Splus.\n\nAndy\n\n> -----Original Message-----\n> From: P.J.Wells at open.ac.uk [mailto:P.J.Wells at open.ac.uk]\n> Sent: Friday, September 21, 2001 10:29 AM\n> To: s-news at wubios.wustl.edu\n> Subject: Re: [S] Unix vs PC S Version problems\n> \n> \n> Andy Liaw wrote:\n> \n> >My guess is that you are using Splus functions written for the \n> >Splus GUI.\n> >If I'm not mistaken, these functions were intended to be \n> >called/used only\n> >through the Splus GUI, not from command line or scripts. In \n> so, you're\n> >hacking the system beyond its intended use, and I don't think \n> >Insightful can\n> >be blamed for not documenting those, as they may not be \n> >considered part of\n> >the API.\n> \n> Possibly, but my first contact with S-Plus was at an Insightful\n> demonstration where the ability to record actions performed \n> with the GUI and\n> then paste them into the command or script windows was \n> explicitly presented\n> as one of the program's selling points (it certainly sold it to me...)\n> \n> Julian Wells\n> OU Business School\n> The Open University\n> Walton Hall\n> Milton Keynes\n> MK7 6AA\n> United Kingdom\n> +44 1908 654658\n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n>",
       "body_snippet": "Perhaps what I should have said is: I gave up on the Splus GUI (both using\nand programming) long ago, and have no sympathy for those who struggle with\nit.  (Sorry David.)  IMHO (and I mean IMHO), it w",
-      "thread_id": "thread-5b52155ba4ce",
-      "thread_depth": 0,
+      "thread_id": "thread-17da51cec7bf",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -3395,8 +3395,8 @@
       ],
       "body_plain": "S-Plus is not alone in facing this issue.  My wife had to\ninstall SPSS because it was required by a class she's\ntaking.  She needed to do a randomized blocks ANOVA.\nBy default, SPSS forces block*treatment interaction\nin the model and she had to use a \"model composer\"\nto override this.  The net effect was using the\nmouse in an incredibly tedious way to write out\na very simple additive effects formula.\n\nAnother example of GUIs causing problems: The\nS-Plus 6.0 GUI for ANOVA does not automatically\nconvert factors to S factor objects, so if one\nof your factors is an integer you will get\none degree of freedom for it no matter how many\nlevels it has.  One purpose of a GUI should be to\nprevent such user errors.\n\nAnother thing that makes me stay away from GUIs:\nWith web interfaces to systems, you can write\na web-\"gui\" to run the most commonly needed\nanalytical functions, whether running locally\nor remotely.  Such web interfaces use only\nthe computing/plotting components of the statistical\ncomputing engine and bypass its GUI anyway.\nUsing JavaScript and other scripting languages\nyou can make multiple dynamic windows pop up\nfrom the web browser as needed.\n\nFrank Harrell\n\n\"Liaw, Andy\" wrote:\n> \n> Perhaps what I should have said is: I gave up on the Splus GUI (both using\n> and programming) long ago, and have no sympathy for those who struggle with\n> it.  (Sorry David.)  IMHO (and I mean IMHO), it was a strategic mistake when\n> MathSoft put the Axum GUI on Splus.\n> \n> Andy\n> \n> > -----Original Message-----\n> > From: P.J.Wells at open.ac.uk [mailto:P.J.Wells at open.ac.uk]\n> > Sent: Friday, September 21, 2001 10:29 AM\n> > To: s-news at wubios.wustl.edu\n> > Subject: Re: [S] Unix vs PC S Version problems\n> >\n> >\n> > Andy Liaw wrote:\n> >\n> > >My guess is that you are using Splus functions written for the\n> > >Splus GUI.\n> > >If I'm not mistaken, these functions were intended to be\n> > >called/used only\n> > >through the Splus GUI, not from command line or scripts. In\n> > so, you're\n> > >hacking the system beyond its intended use, and I don't think\n> > >Insightful can\n> > >be blamed for not documenting those, as they may not be\n> > >considered part of\n> > >the API.\n> >\n> > Possibly, but my first contact with S-Plus was at an Insightful\n> > demonstration where the ability to record actions performed\n> > with the GUI and\n> > then paste them into the command or script windows was\n> > explicitly presented\n> > as one of the program's selling points (it certainly sold it to me...)\n> >\n> > Julian Wells\n> > OU Business School\n> > The Open University\n> > Walton Hall\n> > Milton Keynes\n> > MK7 6AA\n> > United Kingdom\n> > +44 1908 654658\n> > ---------------------------------------------------------------------\n> > This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> > unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> > the BODY of the message:  unsubscribe s-news\n> >\n> \n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n\n-- \nFrank E Harrell Jr              Prof. of Biostatistics & Statistics\nDiv. of Biostatistics & Epidem. Dept. of Health Evaluation Sciences\nU. Virginia School of Medicine  http://hesweb1.med.virginia.edu/biostat",
       "body_snippet": "S-Plus is not alone in facing this issue.  My wife had to\ninstall SPSS because it was required by a class she's\ntaking.  She needed to do a randomized blocks ANOVA.\nBy default, SPSS forces block*treat",
-      "thread_id": "thread-5b52155ba4ce",
-      "thread_depth": 1,
+      "thread_id": "thread-17da51cec7bf",
+      "thread_depth": 2,
       "month": "2001-09"
     },
     {
@@ -3407,12 +3407,12 @@
       "date": "2001-09-21T17:11:27Z",
       "subject": "Re: Unix vs PC S Version problems",
       "subject_clean": "Unix vs PC S Version problems",
-      "in_reply_to": null,
+      "in_reply_to": "<777F3F91D3F3D4118CCA00508B953E190195DF07@usrymx06.merck.com>",
       "references": [],
       "body_plain": "I must add my penny's worth to this thread.\n\nHarvey Monder is right on by criticizing the quality and inadequacies of \nGUI command and usage documentation, it is inadequate, inaccurate, and \nmisleading. I have passed more than one specific example to the S support \nfolks (A great bunch, have you tried them?).\n\nan aside to Andy Liaw who wrote:\n\n>My guess is that you are using Splus functions written for the Splus GUI.\n\n>If I'm not mistaken, these functions were intended to be called/used only\n\n>through the Splus GUI, not from command line or scripts.\n\nplease see the opening section of Chapter 11 of the new S-Plus 6 \nProgrammer's Guide\n\nProgramming documentation and the weather.  Must it always be so? NOTHING \ncan be done?\n\nNot true, for any of you who encountered the original Apple Lisa Manuals \nknow that. Why did Apple immediately stop having the users manuals written \n(by prospective users) before even the design stages of development? oh well.\n\nGiven this, I would suggest that as well as, or even instead of, asking \nthis group for specific bail-out info for the various traps, we all attempt \nto dig out solutions (I know most do) and ship the heartache stories to \nS-Support with specific documentation shortcomings. Conflicts, inscrutable \nlanguage, and omissions are simple to correct ONCE they have been flagged.\n\nThen perhaps we can hope the situation will slowly improve.\n\ncheers,\n\njohn\n\nJohn Fennick\njhfslf at swva.net\nj.fennick at ieee.org\nTel: 540.552.0052\nFax: 540.552.0261 (Call first for setup)\n2410 Woodland Hills Drive\nBlacksburg, VA 24060     USA",
       "body_snippet": "I must add my penny's worth to this thread.\n\nHarvey Monder is right on by criticizing the quality and inadequacies of \nGUI command and usage documentation, it is inadequate, inaccurate, and \nmisleadin",
-      "thread_id": "thread-86c4e9fb011a",
-      "thread_depth": 0,
+      "thread_id": "thread-17da51cec7bf",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -3555,12 +3555,12 @@
       "date": "2001-09-24T13:39:27Z",
       "subject": "Re: Response Surface",
       "subject_clean": "Response Surface",
-      "in_reply_to": null,
+      "in_reply_to": "<D1E587C89DE4D311A7F500105A158E5C156449@HAL>",
       "references": [],
       "body_plain": "Many thanks to Jim Garrett and Jonathan Monteleone for their responses to my\nquestion regarding response surface.  The following is the summary :\n\nIf you want software that helps you create the experimental design, it\nappears that you need S+Dox (or some other package unrelated to S, such as\nMinitab).  On the other hand, it's actually not too hard to set up a\nresponse-surface design by hand.  \n\nIf you already have data and you want to fit a model, S+Dox makes it very\nconvenient but is not required.  The model is actually a regression model.\nYou could create the required predictor variables for the regression and\nfit the regression model.  For example, if you have predictor variables X\nand W and a vector of block labels B, make B into a factor and fit\n\nresponse.model <- lm(Y ~ B + X + X^2 + W + W^2 + X * W, data = <name of\ndata frame here>)\n\nYou can then do sorts of things, such as check residuals and check the\nstatistical significance of model components.  You can also make\npredictions with this model at locations spaced over a grid, and use this\nto make a perspective or contour plot.  These things require some typing,\nso S+Dox would certainly make your life easier, but is not absolutely\nrequired.\n\nBrenda\n-----Original Message-----\nFrom: byang at astrixsoftware.com [mailto:byang at astrixsoftware.com]\nSent: Friday, September 14, 2001 3:15 PM\nTo: s-news at lists.biostat.wustl.edu\nSubject: [S] Response Surface\n\nDear S-Plus users,\n\n   Do I need Dox module to analyze Response Surface design?  How would I\nspecify Number of Blocks, Number of Center Points and Number of Runs?\n\n   Thanks in advance,\n\nRegards,\n\nBrenda Yang\n\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Many thanks to Jim Garrett and Jonathan Monteleone for their responses to my\nquestion regarding response surface.  The following is the summary :\n\nIf you want software that helps you create the experi",
-      "thread_id": "thread-0fb2d30fa243",
-      "thread_depth": 0,
+      "thread_id": "thread-7957b88cb3de",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -3571,12 +3571,12 @@
       "date": "2001-09-24T14:51:23Z",
       "subject": "FW: Have too much debt??? We can help!!!",
       "subject_clean": "Have too much debt??? We can help!!!",
-      "in_reply_to": null,
+      "in_reply_to": "<200109240704.CAA12635@wubios.wustl.edu>",
       "references": [],
       "body_plain": "How did this spam get in our newsgroup!  Can we stop it??\n\n-----Original Message-----\nFrom: Hazel Morton [mailto:hazel34 at yahoo.com]\nSent: Monday, September 24, 2001 1:24 AM\nTo: #field0#@wubios.wustl.edu\nSubject: [S] Have too much debt??? We can help!!!\n\n****************************************************************\nConsolidate all your debt into ONE, EASY monthly payment!\n\nWe will help you:\n\n*Eliminate interest charges\n*Waive late fee charges\n*Improve your credit rating\n\nAnd best of all, lower your monthly payments\nby 40%-60% and KEEP MORE CASH IN YOUR POCKET!\n\nTake just 1 minute to complete our Credit Card Consolidation\nForm and one of our experienced professional consultants will \ncontact you!\n\nhttp://www.superdebtconsolidation.com\n\nThere is no obligation and our service is fast and free!\nAll information is kept strictly confidential.\n\n******************************************************************\nSince you have received this message you have either responded to \none of our offers in the past or your address has been registered with\nus.\n If you wish to be removed please reply:\nmailto:orlando9543 at yahoo.com?subject=remove \n****************************************************************\n\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "How did this spam get in our newsgroup!  Can we stop it??\n\n-----Original Message-----\nFrom: Hazel Morton [mailto:hazel34 at yahoo.com]\nSent: Monday, September 24, 2001 1:24 AM\nTo: #field0#@wubios.wust",
-      "thread_id": "thread-a53c86243dc8",
-      "thread_depth": 0,
+      "thread_id": "thread-e1ee4aec380c",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -3699,12 +3699,12 @@
       "date": "2001-09-25T14:50:26Z",
       "subject": "Creating permanent objects through automation and VB",
       "subject_clean": "Creating permanent objects through automation and VB",
-      "in_reply_to": null,
+      "in_reply_to": "<5.1.0.14.0.20010925152805.03214568@127.0.0.1>",
       "references": [],
       "body_plain": "I'm answering Karl's VBA question to the list because it brings up other\nquestions I have been meaning to ask.\n\nI presently use S Plus 2000 and use VBA to create permanent objects with\nout any trouble.  The short answer is use the assign function.  In S Plus\n2000 there is a worked example the Automation chapter of online\nProgrammer's Guide.  Files are in samples/oleauto/vba in the S Plus program\nfolder.  There are additional examples in chapter 9 of S Programming.  I\nhaven't tried it in version 6 yet and would be interested in knowing your\nsuccess.\n\nHere is a short summary of how I do it.\n*  create a function in S Plus, make an argument for each input\n*  the function and argument names need to be valid in S Plus AND VBA so\nuse RespDF instead of resp.df\n*  everything is sent over as a data.frame (regardless of VBA definition)\nso you may want to unlist simpler inputs\n*  register the S Plus function\n     AutoSum <- function(input1, input2){\n          output <- input1 + input2\n          assign(\"out\", output, where = 1)\n     }\n     register.ole.object(\"AutoSum\")\n\nIn VBA get the inputs ready (here named pInput1 and pInput2) and put the\nfollowing code in you sub\n     Dim AutoSum As Object\n     Set AutoSum = CreateObject(\"S-Plus.AutoSum\")\n     AutoSum.input2 = pInput1\n     AutoSum.input1 = pInput2\n     AutoSum.Run\n     Set AutoSum = Nothing\n\nThis should create the object \"out\" as a permanent object.\n\nMy questions:\n*  Is there a way to send object types other than dataframes?, specifically\nI am interested in sending 3 or 4 dimensional arrays.  The objects exist in\nboth languages so it seems reasonable to be able to send them.\n*  Is there an advantage to using \".BeginTransaction\" /\n\".CommitTransaction\" over the way outlined above?  There are a lot of\nexamples but they aren't clear why it is needed.\n\nThanks, Karen\n\nHi,\n\nI've been playing around with S-Plus 6 (Windows 2000) using Visual Basic as\nan automation client to read and write data.frame objects in S-Plus. I can\nread them fine, but those that are written to S-Plus disappear when the\nVisual Basic automation client application exits.\n\nWhile I can see that this would be the intended behaviour for an automation\nclient object is a way to make the created data.frame objects permanent in\nS-plus?\n\nThanks for any advice\n\nKarl\n\n-------------------------------------------------------------------------------------------------------------------------------\n\nKarl Nissen\nProgrammer/System administrator                         Phone:  (+61 2)\n6125 4613\nSchool of Resources, Environment and Society            Fax:    (+61 2)\n6125 3770\nThe Australian National University                      e-mail:\nkarl.nissen at anu.edu.au\n-------------------------------------------------------------------------------------------------------------------------------",
       "body_snippet": "I'm answering Karl's VBA question to the list because it brings up other\nquestions I have been meaning to ask.\n\nI presently use S Plus 2000 and use VBA to create permanent objects with\nout any trouble",
-      "thread_id": "thread-5a891ab66a2f",
-      "thread_depth": 0,
+      "thread_id": "thread-6cad13a4630c",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -3750,12 +3750,12 @@
       "date": "2001-09-25T17:07:22Z",
       "subject": "Re: S-Plus 6 kudos",
       "subject_clean": "S-Plus 6 kudos",
-      "in_reply_to": null,
+      "in_reply_to": "<5.1.0.14.2.20010921142039.036aa608@enterprise.nssl.noaa.gov>",
       "references": [],
       "body_plain": ">>>>>>\nFrom: Kim Elmore <elmore at nssl.noaa.gov>\nSubject: S-Plus 6 kudos\n\nWith all of the S-Plus 6 disgruntlement that's been aired, I must say that,\nso far and for my applications, S-Plus 6 is *much* faster than S-Plus 2000.\n>>>>>>\n\nInteresing - some things seem to run slower.  I ran a little function to\nbootstrap a function of the WMW statistic.  In Splus 2000 it took 11\nseconds and in Splus 6 it took 89 seconds.\n\n----------------------------------------------------------------------\nDavid Siev                                   (515) 232-5785 ext. 153\nUSDA Center for Veterinary Biologics         (515) 232-7120 fax\n510 South 17th Street\nAmes, IA 50010                               david.siev at aphis.usda.gov\n----------------------------------------------------------------------",
       "body_snippet": ">>>>>>\nFrom: Kim Elmore <elmore at nssl.noaa.gov>\nSubject: S-Plus 6 kudos\n\nWith all of the S-Plus 6 disgruntlement that's been aired, I must say that,\nso far and for my applications, S-Plus 6 is *much",
-      "thread_id": "thread-3f360d8bfedd",
-      "thread_depth": 0,
+      "thread_id": "thread-e0763d23ac00",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -4012,12 +4012,12 @@
       "date": "2001-09-27T17:41:48Z",
       "subject": "Re: LOESS Smoother",
       "subject_clean": "LOESS Smoother",
-      "in_reply_to": null,
+      "in_reply_to": "<85256AD2.006DF57C.00@smta00.hc-sc.gc.ca>",
       "references": [],
       "body_plain": "Many thanks to Greg Snow who provided such helpful reply:\n\nHe has already replied via the list, but I 'm taking the liberty\nof posting the following from him:\n\nBest,\nSabit\n\n---------------------- Forwarded by Sabit Cakmak/HC-SC/GC/CA on 09/27/2001 01:36\nPM ---------------------------\n\nGreg Snow <snow at fisher.byu.edu> on 09/27/2001 09:48:37 AM\n\nTo:   Sabit Cakmak/HC-SC/GC/CA@HWC\ncc:   s-news at wubios.wustl.edu\n\nSubject:  Re: [S] LOESS Smoother\n\nOn Tue, 25 Sep 2001 Sabit_Cakmak at hc-sc.gc.ca wrote:\n\n>\n>\n> The loess smoother first computes the lamda % nearest-neighbours to the target\n> point,. A tricube kernel , centered at the target point, becomes zero at the\n> furthest neighbour. The smooth at the target point is the fitted value from\nthe\n> locally-weighted linear fit, with weights supplied by the kernel (Hastie\n> &Tibshirani).\n>\n> Is it possible to see those weights when we employed loess.smooth in Splus and\n> how does Splus deal with edge effects.\n\nAttached is a demonstration function for loess that helps picture what is\ngoing on (in 2 dimensions).  A sample of using it is:\n\n> source(\"loess.demo.ssc\")\n> attach(ethanol)\n> loess.demo(E,NOx)\n> loess.demo(E,NOx, span=.25)\n> loess.demo(E,NOx, degree=2)\n\nfor each run of the function, click on the graph and it will redraw to\nshow the window of points being considered, their relative weights (the\narea of the circles) and the line/curve being used to for the prediction\nat that point.  2 loess curves are drawn, the exact loess prediction and\nthe smooth that S-PLUS adds by default (they are usually pretty close).\nRight click to end the demonstration.\n\nI don't know if this is what you wanted, but it at least shows what is\ngoing on behind the scenes.\n\nTo the Mailing list:  I sent a copy of this function to the entire mailing\nlist last spring, then I received some suggestions/modifications to make\nit better.  The version attached has more features than the original so if\nyou found the original useful, take a look at the improved version.\n\n--\nGreg Snow, PhD                Office: 223A TMCB\nDepartment of Statistics      Phone:  (801) 378-7049\nBrigham Young University      Dept.:  (801) 378-4505\nProvo, UT  84602              email:  gls at byu.edu\n\nloess.demo.ssc\n\nDescription: Binary data",
       "body_snippet": "Many thanks to Greg Snow who provided such helpful reply:\n\nHe has already replied via the list, but I 'm taking the liberty\nof posting the following from him:\n\nBest,\nSabit\n\n---------------------- Forw",
-      "thread_id": "thread-2d7e621676b6",
-      "thread_depth": 0,
+      "thread_id": "thread-08299edd96f7",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -4124,12 +4124,12 @@
       "date": "2001-09-28T13:41:04Z",
       "subject": "Re: Installing S-Plus version 3.3 in Windows Millenium.",
       "subject_clean": "Installing S-Plus version 3.3 in Windows Millenium.",
-      "in_reply_to": null,
+      "in_reply_to": "<200109280354.WAA19125@wubios.wustl.edu>",
       "references": [],
       "body_plain": "Windows ME is NOTHING like Windows 2000!!!!  It's the worst every Windows\nimplementation.\n\n Save yourself the aggravation and go buy Windows 2000.\n\n-----Original Message-----\nFrom: andrey at utstat.toronto.edu [mailto:andrey at utstat.toronto.edu]\nSent: Thursday, September 27, 2001 11:53 PM\nTo: s-news at wubios.wustl.edu\nSubject: [S] Installing S-Plus version 3.3 in Windows Millenium.\n\nHello!\n\nTo recover from an equipment failure, I need to install my Windows-95 based\nS-Plus version 3.3 software onto a PC laptop running Windows Millenium\n(which is similar to Windows 2000).  Doing so directly does not install\nreliably.  As best as I can make out, the reason for this is that Windows\nMillenium has its AUTOEXEC.BAT file in the directory C:\\WINDOWS\\COMMAND\\EBD\nand not in the root directory  C:\\  so that the path command does not get\nupdated from\nSET PATH=C:\\WINDOWS;C:\\WINDOWS\\COMMAND\nto\nSET PATH=C:\\SPLUSWIN\\CMD;C:\\WINDOWS;C:\\WINDOWS\\COMMAND.\n\nThe Windows Millenium AUTOEXEC.BAT file has a line in it which reads\nPATH=C:\\WINDOWS;C:\\WINDOWS\\COMMAND.\nIs it safe to update this line to read\nPATH=C:\\SPLUSWIN\\CMD;C:\\WINDOWS;C:\\WINDOWS\\COMMAND\nand does anyone know whether this will allow S-Plus 3.3 to run reliably?\n\nI would also like to ask the same question for S-Plus version 4.3.\n\nPlease reply by e-mailing directly to:  andrey at utstat.toronto.edu\n\nWith thanks in advance,\nAndrey Feuerverger / Dept Statistics / U of Toronto\n\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news",
       "body_snippet": "Windows ME is NOTHING like Windows 2000!!!!  It's the worst every Windows\nimplementation.\n\n Save yourself the aggravation and go buy Windows 2000.\n\n-----Original Message-----\nFrom: andrey at utstat.to",
-      "thread_id": "thread-bd118d02560c",
-      "thread_depth": 0,
+      "thread_id": "thread-1d840e3ab75c",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -4158,12 +4158,12 @@
       "date": "2001-09-28T13:53:55Z",
       "subject": "Re: Installing S-Plus version 3.3 in Windows Millenium.",
       "subject_clean": "Installing S-Plus version 3.3 in Windows Millenium.",
-      "in_reply_to": null,
+      "in_reply_to": "<200109280354.WAA19125@wubios.wustl.edu>",
       "references": [],
       "body_plain": "To answer your question - changing the PATH statement as you indicated\nis not a problem.  I have had no problems running Splus under Windows ME\nbut I haven't used a version that old so I don't know if there are any\nother issues with Splus 3.3 that need to be considered. I have used\nSplus 2000 and Splus 6 for Windows without any installation problems\nunder WinME.  \n\nHope that helps,\n\nMichael Conklin\n\n>>> \"Bachman, William\" <bachmanw at globomax.com> 09/28/01 08:41AM >>>\nWindows ME is NOTHING like Windows 2000!!!!  It's the worst every\nWindows\nimplementation.\n\n Save yourself the aggravation and go buy Windows 2000.\n\n-----Original Message-----\nFrom: andrey at utstat.toronto.edu [mailto:andrey at utstat.toronto.edu] \nSent: Thursday, September 27, 2001 11:53 PM\nTo: s-news at wubios.wustl.edu \nSubject: [S] Installing S-Plus version 3.3 in Windows Millenium.\n\nHello!\n\nTo recover from an equipment failure, I need to install my Windows-95\nbased\nS-Plus version 3.3 software onto a PC laptop running Windows Millenium\n(which is similar to Windows 2000).  Doing so directly does not\ninstall\nreliably.  As best as I can make out, the reason for this is that\nWindows\nMillenium has its AUTOEXEC.BAT file in the directory\nC:\\WINDOWS\\COMMAND\\EBD\nand not in the root directory  C:\\  so that the path command does not\nget\nupdated from\nSET PATH=C:\\WINDOWS;C:\\WINDOWS\\COMMAND\nto\nSET PATH=C:\\SPLUSWIN\\CMD;C:\\WINDOWS;C:\\WINDOWS\\COMMAND.\n\nThe Windows Millenium AUTOEXEC.BAT file has a line in it which reads\nPATH=C:\\WINDOWS;C:\\WINDOWS\\COMMAND.\nIs it safe to update this line to read\nPATH=C:\\SPLUSWIN\\CMD;C:\\WINDOWS;C:\\WINDOWS\\COMMAND\nand does anyone know whether this will allow S-Plus 3.3 to run\nreliably?\n\nI would also like to ask the same question for S-Plus version 4.3.\n\nPlease reply by e-mailing directly to:  andrey at utstat.toronto.edu \n\nWith thanks in advance,\nAndrey Feuerverger / Dept Statistics / U of Toronto\n\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news\n---------------------------------------------------------------------\nThis message was distributed by s-news at lists.biostat.wustl.edu.  To\nunsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\nthe BODY of the message:  unsubscribe s-news\n******************************************************************\nIMPORTANT CONFIDENTIALITY NOTICE: The documents and accompanying\nemail communication contain confidential information belonging to\nthe sender, Custom Research Inc. and/or GfK Database Solutions,\nand are legally protected. If you are not the intended recipient,\nyou are hereby notified that any disclosure, copying, distribution\nor the taking of any action in reliance on the contents of the \ncommunicated information is strictly prohibited.\n******************************************************************",
       "body_snippet": "To answer your question - changing the PATH statement as you indicated\nis not a problem.  I have had no problems running Splus under Windows ME\nbut I haven't used a version that old so I don't know if",
-      "thread_id": "thread-bd5e447e1ffc",
-      "thread_depth": 0,
+      "thread_id": "thread-1d840e3ab75c",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -4196,8 +4196,8 @@
       ],
       "body_plain": "\"Bachman, William\" wrote:\n> \n> Windows ME is NOTHING like Windows 2000!!!!  It's the worst every Windows\n> implementation.\n> \n>  Save yourself the aggravation and go buy Windows 2000.\n\nWindows 2000 was a disaster for me.  One good thing came out\nof it after spending a lot of time trying to get \napplications that ran on Win98 working on 2000: I wiped the hard disk\nclean and went to Linux, never to return to Microsoft.  [Some\nof the problems were due to applications that needed to change\nthe registry which required me to constantly log out and\nlog back in as Administrator.  Others such as Dragon Systems\nvoice recognition software simply would not work under 2000\nwithout an expensive upgrade.]\n\nThis reminds me of the story about the wake for a\nman who was known throughout the community as being\nlazy and dishonest.  The minister asked if anyone wanted to say\nanything on behalf of the deceased.  After a long,\nembarrassing pause, someone from the back of the\nchurch said \"his brother was worse.\"\n\nWindows ME is the brother.\n\nWhile I'm on my quarterly anti-Microsoft sermon let me\nstate my lack of understanding why people are spending\nso much time on Visual Basic interfaces.  Why not use\nan open source solution (even on a Windows platform)\nthat does not limit which platform you can run on?\nYou might have your fill of Bill Gates someday too.\n\nFrank Harrell\n\n> \n> -----Original Message-----\n> From: andrey at utstat.toronto.edu [mailto:andrey at utstat.toronto.edu]\n> Sent: Thursday, September 27, 2001 11:53 PM\n> To: s-news at wubios.wustl.edu\n> Subject: [S] Installing S-Plus version 3.3 in Windows Millenium.\n> \n> Hello!\n> \n> To recover from an equipment failure, I need to install my Windows-95 based\n> S-Plus version 3.3 software onto a PC laptop running Windows Millenium\n> (which is similar to Windows 2000).  Doing so directly does not install\n> reliably.  As best as I can make out, the reason for this is that Windows\n> Millenium has its AUTOEXEC.BAT file in the directory C:\\WINDOWS\\COMMAND\\EBD\n> and not in the root directory  C:\\  so that the path command does not get\n> updated from\n> SET PATH=C:\\WINDOWS;C:\\WINDOWS\\COMMAND\n> to\n> SET PATH=C:\\SPLUSWIN\\CMD;C:\\WINDOWS;C:\\WINDOWS\\COMMAND.\n> \n> The Windows Millenium AUTOEXEC.BAT file has a line in it which reads\n> PATH=C:\\WINDOWS;C:\\WINDOWS\\COMMAND.\n> Is it safe to update this line to read\n> PATH=C:\\SPLUSWIN\\CMD;C:\\WINDOWS;C:\\WINDOWS\\COMMAND\n> and does anyone know whether this will allow S-Plus 3.3 to run reliably?\n> \n> I would also like to ask the same question for S-Plus version 4.3.\n> \n> Please reply by e-mailing directly to:  andrey at utstat.toronto.edu\n> \n> With thanks in advance,\n> Andrey Feuerverger / Dept Statistics / U of Toronto\n> \n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n> ---------------------------------------------------------------------\n> This message was distributed by s-news at lists.biostat.wustl.edu.  To\n> unsubscribe send e-mail to s-news-request at lists.biostat.wustl.edu with\n> the BODY of the message:  unsubscribe s-news\n\n-- \nFrank E Harrell Jr              Prof. of Biostatistics & Statistics\nDiv. of Biostatistics & Epidem. Dept. of Health Evaluation Sciences\nU. Virginia School of Medicine  http://hesweb1.med.virginia.edu/biostat",
       "body_snippet": "\"Bachman, William\" wrote:\n> \n> Windows ME is NOTHING like Windows 2000!!!!  It's the worst every Windows\n> implementation.\n> \n>  Save yourself the aggravation and go buy Windows 2000.\n\nWindows 2000 wa",
-      "thread_id": "thread-bd118d02560c",
-      "thread_depth": 1,
+      "thread_id": "thread-1d840e3ab75c",
+      "thread_depth": 2,
       "month": "2001-09"
     },
     {
@@ -4208,12 +4208,12 @@
       "date": "2001-09-28T14:57:39Z",
       "subject": "FW: Installing S-Plus version 3.3 in Windows Millenium.",
       "subject_clean": "Installing S-Plus version 3.3 in Windows Millenium.",
-      "in_reply_to": null,
+      "in_reply_to": "<200109280354.WAA19125@wubios.wustl.edu>",
       "references": [],
       "body_plain": "> \n> To recover from an equipment failure, I need to install my Windows-95 \n> based S-Plus version 3.3 software onto a PC laptop running Windows \n> Millenium (which is similar to Windows 2000).  Doing so directly does \n> not install reliably.  As best as I can make out, the reason for this \n> is that Windows Millenium has its AUTOEXEC.BAT file in the directory \n> C:\\WINDOWS\\COMMAND\\EBD and not in the root directory  C:\\  so that the\n\n> path command does not get updated from\n> SET PATH=C:\\WINDOWS;C:\\WINDOWS\\COMMAND\n> to\n> SET PATH=C:\\SPLUSWIN\\CMD;C:\\WINDOWS;C:\\WINDOWS\\COMMAND.\n\nHave you tried installing it directly from the disks and just creating a\nnew directory outside of the PROGRAM FILES folder?  That is what I did\nand it works fine on my WindowsME machine.  \n\nBest, Mark Hall",
       "body_snippet": "> \n> To recover from an equipment failure, I need to install my Windows-95 \n> based S-Plus version 3.3 software onto a PC laptop running Windows \n> Millenium (which is similar to Windows 2000).  Doing",
-      "thread_id": "thread-50415d7932af",
-      "thread_depth": 0,
+      "thread_id": "thread-1d840e3ab75c",
+      "thread_depth": 1,
       "month": "2001-09"
     },
     {
@@ -4357,12 +4357,13 @@
     {
       "id": "thread-193cd61ec7c2",
       "subject": "Error in integrate function",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Bob Baskin",
         "Janisse, James"
       ],
       "started": "2001-09-02T18:04:05Z",
-      "last_reply": "2001-09-02T18:04:05Z",
+      "last_reply": "2001-09-05T13:08:04Z",
       "root_message_id": "msg-193cd61ec7c2"
     },
     {
@@ -4514,15 +4515,19 @@
     {
       "id": "thread-fee276285c2a",
       "subject": "dimnames in Sparc Splus 6.0",
-      "message_count": 8,
+      "message_count": 14,
       "participants": [
+        "David Smith",
+        "Frank E Harrell Jr",
         "Gary Sabot",
+        "Jim Hutchinson",
         "Mike Prager",
         "Prof Brian D Ripley",
+        "Terry Therneau",
         "Tim Hesterberg x319"
       ],
       "started": "2001-09-05T01:12:07Z",
-      "last_reply": "2001-09-13T06:15:02Z",
+      "last_reply": "2001-09-14T14:51:30Z",
       "root_message_id": "msg-fee276285c2a"
     },
     {
@@ -4547,17 +4552,6 @@
       "started": "2001-09-05T12:51:00Z",
       "last_reply": "2001-09-05T12:51:00Z",
       "root_message_id": "msg-750d4ad37d5e"
-    },
-    {
-      "id": "thread-f5de704ac1ac",
-      "subject": "Error in integrate function",
-      "message_count": 1,
-      "participants": [
-        "Bob Baskin"
-      ],
-      "started": "2001-09-05T13:08:04Z",
-      "last_reply": "2001-09-05T13:08:04Z",
-      "root_message_id": "msg-f5de704ac1ac"
     },
     {
       "id": "thread-99e0b98fb86e",
@@ -4638,21 +4632,6 @@
       "root_message_id": "msg-596c6b193f60"
     },
     {
-      "id": "thread-cdbc30093068",
-      "subject": "dimnames in Sparc Splus 6.0",
-      "message_count": 6,
-      "participants": [
-        "David Smith",
-        "Frank E Harrell Jr",
-        "Jim Hutchinson",
-        "Terry Therneau",
-        "Tim Hesterberg x319"
-      ],
-      "started": "2001-09-05T22:35:22Z",
-      "last_reply": "2001-09-14T14:51:30Z",
-      "root_message_id": "msg-cdbc30093068"
-    },
-    {
       "id": "thread-0334c84e2b14",
       "subject": "bivariate probit model",
       "message_count": 1,
@@ -4666,13 +4645,14 @@
     {
       "id": "thread-cb3b0b8947a6",
       "subject": "Text with accents in plots",
-      "message_count": 3,
+      "message_count": 5,
       "participants": [
+        "Alan Zaslavsky",
         "Prof Brian Ripley",
         "Tristan Lorino"
       ],
       "started": "2001-09-06T08:14:42Z",
-      "last_reply": "2001-09-06T11:57:46Z",
+      "last_reply": "2001-09-06T12:04:40Z",
       "root_message_id": "msg-cb3b0b8947a6"
     },
     {
@@ -4687,26 +4667,15 @@
       "root_message_id": "msg-2eaba2ecd5e0"
     },
     {
-      "id": "thread-70709dfbb1da",
-      "subject": "Text with accents in plots",
-      "message_count": 2,
-      "participants": [
-        "Alan Zaslavsky",
-        "Prof Brian Ripley"
-      ],
-      "started": "2001-09-06T11:32:56Z",
-      "last_reply": "2001-09-06T12:04:40Z",
-      "root_message_id": "msg-70709dfbb1da"
-    },
-    {
       "id": "thread-c4e9a9d00249",
       "subject": "poly.transform",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Pedram Sendi"
+        "Pedram Sendi",
+        "psendi"
       ],
       "started": "2001-09-06T13:17:08Z",
-      "last_reply": "2001-09-06T13:17:08Z",
+      "last_reply": "2001-09-06T16:08:27Z",
       "root_message_id": "msg-c4e9a9d00249"
     },
     {
@@ -4732,37 +4701,15 @@
       "root_message_id": "msg-e1ac78f5738f"
     },
     {
-      "id": "thread-39435501f714",
-      "subject": "poly.transform",
-      "message_count": 1,
-      "participants": [
-        "psendi"
-      ],
-      "started": "2001-09-06T16:08:27Z",
-      "last_reply": "2001-09-06T16:08:27Z",
-      "root_message_id": "msg-39435501f714"
-    },
-    {
       "id": "thread-ebb1be64426e",
       "subject": "Bug in anova.lme ?",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Gunter, Bert"
       ],
       "started": "2001-09-06T16:09:41Z",
-      "last_reply": "2001-09-06T16:09:41Z",
-      "root_message_id": "msg-ebb1be64426e"
-    },
-    {
-      "id": "thread-cb51fa0db95d",
-      "subject": "Bug in anova.lme ?",
-      "message_count": 1,
-      "participants": [
-        "Gunter, Bert"
-      ],
-      "started": "2001-09-06T17:30:26Z",
       "last_reply": "2001-09-06T17:30:26Z",
-      "root_message_id": "msg-cb51fa0db95d"
+      "root_message_id": "msg-ebb1be64426e"
     },
     {
       "id": "thread-31663aaf8970",
@@ -4778,36 +4725,26 @@
     {
       "id": "thread-dc88e97a91f9",
       "subject": "model.tables.aov",
-      "message_count": 1,
-      "participants": [
-        "Tadashi SUGIHARA"
-      ],
-      "started": "2001-09-07T02:29:26Z",
-      "last_reply": "2001-09-07T02:29:26Z",
-      "root_message_id": "msg-dc88e97a91f9"
-    },
-    {
-      "id": "thread-67aa1dcdfa7b",
-      "subject": "model.tables.aov",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Dennis Malandro",
         "Tadashi SUGIHARA"
       ],
-      "started": "2001-09-07T11:45:10Z",
+      "started": "2001-09-07T02:29:26Z",
       "last_reply": "2001-09-09T10:44:20Z",
-      "root_message_id": "msg-67aa1dcdfa7b"
+      "root_message_id": "msg-dc88e97a91f9"
     },
     {
       "id": "thread-46651c4f26b8",
       "subject": "File/Object Locations",
-      "message_count": 2,
+      "message_count": 4,
       "participants": [
+        "Greg Johnson",
         "Prof Brian Ripley",
         "Winifred Lambert"
       ],
       "started": "2001-09-07T14:53:45Z",
-      "last_reply": "2001-09-07T15:22:15Z",
+      "last_reply": "2001-09-07T15:59:52Z",
       "root_message_id": "msg-46651c4f26b8"
     },
     {
@@ -4822,17 +4759,6 @@
       "root_message_id": "msg-5bae6d30139c"
     },
     {
-      "id": "thread-302365a3e6a2",
-      "subject": "File/Object Locations",
-      "message_count": 1,
-      "participants": [
-        "Winifred Lambert"
-      ],
-      "started": "2001-09-07T15:31:35Z",
-      "last_reply": "2001-09-07T15:31:35Z",
-      "root_message_id": "msg-302365a3e6a2"
-    },
-    {
       "id": "thread-4dd054f400c0",
       "subject": "How to get margins / titles in postscript()",
       "message_count": 1,
@@ -4842,17 +4768,6 @@
       "started": "2001-09-07T15:44:36Z",
       "last_reply": "2001-09-07T15:44:36Z",
       "root_message_id": "msg-4dd054f400c0"
-    },
-    {
-      "id": "thread-b7157f990e45",
-      "subject": "File/Object Locations",
-      "message_count": 1,
-      "participants": [
-        "Greg Johnson"
-      ],
-      "started": "2001-09-07T15:59:52Z",
-      "last_reply": "2001-09-07T15:59:52Z",
-      "root_message_id": "msg-b7157f990e45"
     },
     {
       "id": "thread-a6946d02b66f",
@@ -4879,12 +4794,12 @@
     {
       "id": "thread-ad3a6be6d915",
       "subject": "Summary: File/Object Locations",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "Winifred Lambert"
       ],
       "started": "2001-09-07T18:34:43Z",
-      "last_reply": "2001-09-07T18:34:43Z",
+      "last_reply": "2001-09-10T17:09:15Z",
       "root_message_id": "msg-ad3a6be6d915"
     },
     {
@@ -4968,25 +4883,15 @@
     {
       "id": "thread-e66f5e81c372",
       "subject": "glm - statistical question",
-      "message_count": 2,
+      "message_count": 4,
       "participants": [
         "Boylan, Richard",
-        "Prof Brian Ripley"
-      ],
-      "started": "2001-09-09T20:39:52Z",
-      "last_reply": "2001-09-10T06:25:31Z",
-      "root_message_id": "msg-e66f5e81c372"
-    },
-    {
-      "id": "thread-2bdd4edfdd56",
-      "subject": "glm - statistical question",
-      "message_count": 1,
-      "participants": [
+        "Prof Brian Ripley",
         "Venables, Bill (CMIS, Cleveland)"
       ],
-      "started": "2001-09-09T23:34:39Z",
-      "last_reply": "2001-09-09T23:34:39Z",
-      "root_message_id": "msg-2bdd4edfdd56"
+      "started": "2001-09-09T20:39:52Z",
+      "last_reply": "2001-09-10T14:22:06Z",
+      "root_message_id": "msg-e66f5e81c372"
     },
     {
       "id": "thread-e0652b175e92",
@@ -5047,17 +4952,6 @@
       "root_message_id": "msg-41e833374fb4"
     },
     {
-      "id": "thread-80a6107bbdc6",
-      "subject": "glm - statistical question",
-      "message_count": 1,
-      "participants": [
-        "Boylan, Richard"
-      ],
-      "started": "2001-09-10T14:22:06Z",
-      "last_reply": "2001-09-10T14:22:06Z",
-      "root_message_id": "msg-80a6107bbdc6"
-    },
-    {
       "id": "thread-4a963115a33e",
       "subject": "S-PLUS 6 MASS and nnet update",
       "message_count": 1,
@@ -5093,12 +4987,12 @@
     {
       "id": "thread-c2c3538d5641",
       "subject": "comparing models - chi sq or F?",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
         "David Cope"
       ],
       "started": "2001-09-10T16:39:45Z",
-      "last_reply": "2001-09-10T16:39:45Z",
+      "last_reply": "2001-09-11T09:02:41Z",
       "root_message_id": "msg-c2c3538d5641"
     },
     {
@@ -5124,17 +5018,6 @@
       "root_message_id": "msg-b09b476f7843"
     },
     {
-      "id": "thread-14442026b019",
-      "subject": "Summary: File/Object Locations",
-      "message_count": 1,
-      "participants": [
-        "Winifred Lambert"
-      ],
-      "started": "2001-09-10T17:09:15Z",
-      "last_reply": "2001-09-10T17:09:15Z",
-      "root_message_id": "msg-14442026b019"
-    },
-    {
       "id": "thread-035d8ef71b88",
       "subject": "error message in boot.ci()",
       "message_count": 1,
@@ -5155,17 +5038,6 @@
       "started": "2001-09-11T08:53:41Z",
       "last_reply": "2001-09-11T08:53:41Z",
       "root_message_id": "msg-31a92397806b"
-    },
-    {
-      "id": "thread-9614d7667e60",
-      "subject": "comparing models - chi sq or F?",
-      "message_count": 1,
-      "participants": [
-        "David Cope"
-      ],
-      "started": "2001-09-11T09:02:41Z",
-      "last_reply": "2001-09-11T09:02:41Z",
-      "root_message_id": "msg-9614d7667e60"
     },
     {
       "id": "thread-1464ee241c45",
@@ -5275,9 +5147,10 @@
     {
       "id": "thread-2fe71d6253a0",
       "subject": "Recreating a Graph from the Venable & Ripley Book",
-      "message_count": 3,
+      "message_count": 5,
       "participants": [
         "Prof Brian Ripley",
+        "Sarah Goslee",
         "kyong park"
       ],
       "started": "2001-09-13T14:22:23Z",
@@ -5309,10 +5182,12 @@
     {
       "id": "thread-8356441c4e1b",
       "subject": "S4 classes and methods. (Was: Re: dimnames in Sparc Splus 6.0)",
-      "message_count": 5,
+      "message_count": 7,
       "participants": [
+        "David Smith",
         "Don MacQueen",
         "Frank E Harrell Jr",
+        "Gebhart, Kristi",
         "Jeffrey J. Hallman",
         "John Chambers",
         "Rolf Turner"
@@ -5331,40 +5206,6 @@
       "started": "2001-09-13T17:10:57Z",
       "last_reply": "2001-09-13T17:10:57Z",
       "root_message_id": "msg-6805e3bb392a"
-    },
-    {
-      "id": "thread-d859008ac6be",
-      "subject": "S4 classes and methods. (Was: Re: dimnames in Sparc Splus 6.0)",
-      "message_count": 2,
-      "participants": [
-        "David Smith",
-        "Gebhart, Kristi"
-      ],
-      "started": "2001-09-13T17:54:28Z",
-      "last_reply": "2001-09-14T15:56:05Z",
-      "root_message_id": "msg-d859008ac6be"
-    },
-    {
-      "id": "thread-bc0ad1229521",
-      "subject": "Recreating a Graph from the Venable & Ripley Book",
-      "message_count": 1,
-      "participants": [
-        "kyong park"
-      ],
-      "started": "2001-09-13T19:33:22Z",
-      "last_reply": "2001-09-13T19:33:22Z",
-      "root_message_id": "msg-bc0ad1229521"
-    },
-    {
-      "id": "thread-402537cdb693",
-      "subject": "Recreating a Graph from the Venable & Ripley Book",
-      "message_count": 1,
-      "participants": [
-        "Sarah Goslee"
-      ],
-      "started": "2001-09-13T21:13:27Z",
-      "last_reply": "2001-09-13T21:13:27Z",
-      "root_message_id": "msg-402537cdb693"
     },
     {
       "id": "thread-45626565d84c",
@@ -5391,12 +5232,13 @@
     {
       "id": "thread-7957b88cb3de",
       "subject": "Response Surface",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Brenda Yang",
         "byang at Astrixsoftware.com"
       ],
       "started": "2001-09-14T19:14:47Z",
-      "last_reply": "2001-09-14T19:14:47Z",
+      "last_reply": "2001-09-24T13:39:27Z",
       "root_message_id": "msg-7957b88cb3de"
     },
     {
@@ -5424,12 +5266,13 @@
     {
       "id": "thread-a3ab77afc236",
       "subject": "Dynamic loading problem in Splus 5.1.",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Rolf Turner"
+        "Rolf Turner",
+        "Terry Therneau"
       ],
       "started": "2001-09-17T13:07:15Z",
-      "last_reply": "2001-09-17T13:07:15Z",
+      "last_reply": "2001-09-17T22:32:41Z",
       "root_message_id": "msg-a3ab77afc236"
     },
     {
@@ -5465,17 +5308,6 @@
       "started": "2001-09-17T18:34:55Z",
       "last_reply": "2001-09-17T18:34:55Z",
       "root_message_id": "msg-fb80dc92040f"
-    },
-    {
-      "id": "thread-08f523584433",
-      "subject": "Dynamic loading problem in Splus 5.1.",
-      "message_count": 1,
-      "participants": [
-        "Terry Therneau"
-      ],
-      "started": "2001-09-17T22:32:41Z",
-      "last_reply": "2001-09-17T22:32:41Z",
-      "root_message_id": "msg-08f523584433"
     },
     {
       "id": "thread-fc8855292622",
@@ -5524,9 +5356,10 @@
     {
       "id": "thread-b7ea14ccdbc0",
       "subject": "Differences between UNIX and PC version of Splus",
-      "message_count": 5,
+      "message_count": 6,
       "participants": [
         "David Smith",
+        "Monder, Harvey",
         "Prof Brian Ripley",
         "Sicco Schets"
       ],
@@ -5694,12 +5527,13 @@
     {
       "id": "thread-d45e101df86d",
       "subject": "world map on unix S+ 5.0",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Rahul M. Dodhia"
+        "Rahul M. Dodhia",
+        "Ray Brownrigg"
       ],
       "started": "2001-09-19T16:19:09Z",
-      "last_reply": "2001-09-19T16:19:09Z",
+      "last_reply": "2001-09-19T20:45:23Z",
       "root_message_id": "msg-d45e101df86d"
     },
     {
@@ -5727,13 +5561,14 @@
     {
       "id": "thread-0f7423aa74f5",
       "subject": "roots of negative numbers",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "P.J.Wells at open.ac.uk",
-        "Prof Brian D Ripley"
+        "Prof Brian D Ripley",
+        "Sorkin, John (NIA/IRP)"
       ],
       "started": "2001-09-19T17:56:10Z",
-      "last_reply": "2001-09-19T18:49:41Z",
+      "last_reply": "2001-09-19T20:51:14Z",
       "root_message_id": "msg-0f7423aa74f5"
     },
     {
@@ -5758,28 +5593,6 @@
       "started": "2001-09-19T18:41:10Z",
       "last_reply": "2001-09-19T20:10:53Z",
       "root_message_id": "msg-ca29acbb2491"
-    },
-    {
-      "id": "thread-2da21d448402",
-      "subject": "world map on unix S+ 5.0",
-      "message_count": 1,
-      "participants": [
-        "Ray Brownrigg"
-      ],
-      "started": "2001-09-19T20:45:23Z",
-      "last_reply": "2001-09-19T20:45:23Z",
-      "root_message_id": "msg-2da21d448402"
-    },
-    {
-      "id": "thread-a8db54cdff06",
-      "subject": "Roots of negative numbers",
-      "message_count": 1,
-      "participants": [
-        "Sorkin, John (NIA/IRP)"
-      ],
-      "started": "2001-09-19T20:51:14Z",
-      "last_reply": "2001-09-19T20:51:14Z",
-      "root_message_id": "msg-a8db54cdff06"
     },
     {
       "id": "thread-92447ebbced0",
@@ -5828,45 +5641,29 @@
     {
       "id": "thread-69d3d51c8cdf",
       "subject": "Memory faults, tracking",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
-        "Henrik Aalborg Nielsen"
+        "Henrik Aalborg Nielsen",
+        "Terry Therneau"
       ],
       "started": "2001-09-20T13:20:48Z",
       "last_reply": "2001-09-21T15:39:27Z",
       "root_message_id": "msg-69d3d51c8cdf"
     },
     {
-      "id": "thread-2b91cfde1164",
-      "subject": "Differences between UNIX and PC version of Splus",
-      "message_count": 1,
-      "participants": [
-        "Monder, Harvey"
-      ],
-      "started": "2001-09-20T13:23:29Z",
-      "last_reply": "2001-09-20T13:23:29Z",
-      "root_message_id": "msg-2b91cfde1164"
-    },
-    {
-      "id": "thread-bf9e9876ec21",
-      "subject": "Memory faults, tracking",
-      "message_count": 1,
-      "participants": [
-        "Terry Therneau"
-      ],
-      "started": "2001-09-20T13:53:25Z",
-      "last_reply": "2001-09-20T13:53:25Z",
-      "root_message_id": "msg-bf9e9876ec21"
-    },
-    {
       "id": "thread-17da51cec7bf",
       "subject": "Unix vs PC S Version problems",
-      "message_count": 1,
+      "message_count": 7,
       "participants": [
-        "Gunter, Bert"
+        "Frank E Harrell Jr",
+        "Gunter, Bert",
+        "John Fennick",
+        "Liaw, Andy",
+        "Monder, Harvey",
+        "P.J.Wells at open.ac.uk"
       ],
       "started": "2001-09-20T14:40:04Z",
-      "last_reply": "2001-09-20T14:40:04Z",
+      "last_reply": "2001-09-21T17:11:27Z",
       "root_message_id": "msg-17da51cec7bf"
     },
     {
@@ -5879,17 +5676,6 @@
       "started": "2001-09-20T16:25:20Z",
       "last_reply": "2001-09-20T16:25:20Z",
       "root_message_id": "msg-16913c0189d9"
-    },
-    {
-      "id": "thread-838dde7b8d05",
-      "subject": "Unix vs PC S Version problems",
-      "message_count": 1,
-      "participants": [
-        "Monder, Harvey"
-      ],
-      "started": "2001-09-20T16:58:34Z",
-      "last_reply": "2001-09-20T16:58:34Z",
-      "root_message_id": "msg-838dde7b8d05"
     },
     {
       "id": "thread-015e87825e11",
@@ -5937,17 +5723,6 @@
       "root_message_id": "msg-bf0cb709ecd4"
     },
     {
-      "id": "thread-4cf28be01acb",
-      "subject": "Unix vs PC S Version problems",
-      "message_count": 1,
-      "participants": [
-        "Liaw, Andy"
-      ],
-      "started": "2001-09-21T12:33:40Z",
-      "last_reply": "2001-09-21T12:33:40Z",
-      "root_message_id": "msg-4cf28be01acb"
-    },
-    {
       "id": "thread-1a95641676a1",
       "subject": "Summary: Switch to R?",
       "message_count": 2,
@@ -5958,17 +5733,6 @@
       "started": "2001-09-21T13:59:27Z",
       "last_reply": "2001-09-25T16:13:56Z",
       "root_message_id": "msg-1a95641676a1"
-    },
-    {
-      "id": "thread-9c215279f258",
-      "subject": "Unix vs PC S Version problems",
-      "message_count": 1,
-      "participants": [
-        "P.J.Wells at open.ac.uk"
-      ],
-      "started": "2001-09-21T14:29:00Z",
-      "last_reply": "2001-09-21T14:29:00Z",
-      "root_message_id": "msg-9c215279f258"
     },
     {
       "id": "thread-b1254368f73e",
@@ -5983,37 +5747,15 @@
       "root_message_id": "msg-b1254368f73e"
     },
     {
-      "id": "thread-5b52155ba4ce",
-      "subject": "Unix vs PC S Version problems",
-      "message_count": 2,
-      "participants": [
-        "Frank E Harrell Jr",
-        "Liaw, Andy"
-      ],
-      "started": "2001-09-21T15:17:14Z",
-      "last_reply": "2001-09-21T15:42:35Z",
-      "root_message_id": "msg-5b52155ba4ce"
-    },
-    {
-      "id": "thread-86c4e9fb011a",
-      "subject": "Unix vs PC S Version problems",
-      "message_count": 1,
-      "participants": [
-        "John Fennick"
-      ],
-      "started": "2001-09-21T17:11:27Z",
-      "last_reply": "2001-09-21T17:11:27Z",
-      "root_message_id": "msg-86c4e9fb011a"
-    },
-    {
       "id": "thread-e0763d23ac00",
       "subject": "S-Plus 6 kudos",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "David.Siev at aphis.usda.gov",
         "Kim Elmore"
       ],
       "started": "2001-09-21T19:52:57Z",
-      "last_reply": "2001-09-21T19:52:57Z",
+      "last_reply": "2001-09-25T17:07:22Z",
       "root_message_id": "msg-e0763d23ac00"
     },
     {
@@ -6064,35 +5806,14 @@
     {
       "id": "thread-e1ee4aec380c",
       "subject": "Have too much debt??? We can help!!!",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
-        "Hazel Morton"
-      ],
-      "started": "2001-09-24T05:24:28Z",
-      "last_reply": "2001-09-24T05:24:28Z",
-      "root_message_id": "msg-e1ee4aec380c"
-    },
-    {
-      "id": "thread-0fb2d30fa243",
-      "subject": "Response Surface",
-      "message_count": 1,
-      "participants": [
-        "Brenda Yang"
-      ],
-      "started": "2001-09-24T13:39:27Z",
-      "last_reply": "2001-09-24T13:39:27Z",
-      "root_message_id": "msg-0fb2d30fa243"
-    },
-    {
-      "id": "thread-a53c86243dc8",
-      "subject": "Have too much debt??? We can help!!!",
-      "message_count": 1,
-      "participants": [
+        "Hazel Morton",
         "Winifred Lambert"
       ],
-      "started": "2001-09-24T14:51:23Z",
+      "started": "2001-09-24T05:24:28Z",
       "last_reply": "2001-09-24T14:51:23Z",
-      "root_message_id": "msg-a53c86243dc8"
+      "root_message_id": "msg-e1ee4aec380c"
     },
     {
       "id": "thread-e7e6e9e652e4",
@@ -6152,12 +5873,13 @@
     {
       "id": "thread-6cad13a4630c",
       "subject": "Creating permanent objects through automation and VB",
-      "message_count": 1,
+      "message_count": 2,
       "participants": [
+        "Karen_Johnson at bd.com",
         "Karl Nissen"
       ],
       "started": "2001-09-25T05:53:34Z",
-      "last_reply": "2001-09-25T05:53:34Z",
+      "last_reply": "2001-09-25T14:50:26Z",
       "root_message_id": "msg-6cad13a4630c"
     },
     {
@@ -6172,17 +5894,6 @@
       "root_message_id": "msg-fcf7e6fcbabf"
     },
     {
-      "id": "thread-5a891ab66a2f",
-      "subject": "Creating permanent objects through automation and VB",
-      "message_count": 1,
-      "participants": [
-        "Karen_Johnson at bd.com"
-      ],
-      "started": "2001-09-25T14:50:26Z",
-      "last_reply": "2001-09-25T14:50:26Z",
-      "root_message_id": "msg-5a891ab66a2f"
-    },
-    {
       "id": "thread-a9b4ed39cac8",
       "subject": "SpatialStats/ArcView Training Course in SF",
       "message_count": 1,
@@ -6194,26 +5905,15 @@
       "root_message_id": "msg-a9b4ed39cac8"
     },
     {
-      "id": "thread-3f360d8bfedd",
-      "subject": "S-Plus 6 kudos",
-      "message_count": 1,
-      "participants": [
-        "David.Siev at aphis.usda.gov"
-      ],
-      "started": "2001-09-25T17:07:22Z",
-      "last_reply": "2001-09-25T17:07:22Z",
-      "root_message_id": "msg-3f360d8bfedd"
-    },
-    {
       "id": "thread-08299edd96f7",
       "subject": "LOESS Smoother",
-      "message_count": 2,
+      "message_count": 3,
       "participants": [
         "Greg Snow",
         "Sabit_Cakmak at hc-sc.gc.ca"
       ],
       "started": "2001-09-25T20:00:47Z",
-      "last_reply": "2001-09-27T13:48:37Z",
+      "last_reply": "2001-09-27T17:41:48Z",
       "root_message_id": "msg-08299edd96f7"
     },
     {
@@ -6339,17 +6039,6 @@
       "root_message_id": "msg-93944f82a588"
     },
     {
-      "id": "thread-2d7e621676b6",
-      "subject": "LOESS Smoother",
-      "message_count": 1,
-      "participants": [
-        "Sabit_Cakmak at hc-sc.gc.ca"
-      ],
-      "started": "2001-09-27T17:41:48Z",
-      "last_reply": "2001-09-27T17:41:48Z",
-      "root_message_id": "msg-2d7e621676b6"
-    },
-    {
       "id": "thread-ace60f123c45",
       "subject": "Slow trellis graphics in S-Plus 6 (Windows 95)",
       "message_count": 1,
@@ -6385,13 +6074,17 @@
     {
       "id": "thread-1d840e3ab75c",
       "subject": "Installing S-Plus version 3.3 in Windows Millenium.",
-      "message_count": 2,
+      "message_count": 6,
       "participants": [
+        "Bachman, William",
+        "Frank E Harrell Jr",
+        "Mark E. Hall",
+        "Michael Conklin",
         "Prof Brian Ripley",
         "andrey at utstat.toronto.edu"
       ],
       "started": "2001-09-28T03:53:00Z",
-      "last_reply": "2001-09-28T13:53:19Z",
+      "last_reply": "2001-09-28T14:57:39Z",
       "root_message_id": "msg-1d840e3ab75c"
     },
     {
@@ -6417,29 +6110,6 @@
       "root_message_id": "msg-2f5878eebbd3"
     },
     {
-      "id": "thread-bd118d02560c",
-      "subject": "Installing S-Plus version 3.3 in Windows Millenium.",
-      "message_count": 2,
-      "participants": [
-        "Bachman, William",
-        "Frank E Harrell Jr"
-      ],
-      "started": "2001-09-28T13:41:04Z",
-      "last_reply": "2001-09-28T14:43:48Z",
-      "root_message_id": "msg-bd118d02560c"
-    },
-    {
-      "id": "thread-bd5e447e1ffc",
-      "subject": "Installing S-Plus version 3.3 in Windows Millenium.",
-      "message_count": 1,
-      "participants": [
-        "Michael Conklin"
-      ],
-      "started": "2001-09-28T13:53:55Z",
-      "last_reply": "2001-09-28T13:53:55Z",
-      "root_message_id": "msg-bd5e447e1ffc"
-    },
-    {
       "id": "thread-fef381388832",
       "subject": "S+ for windows reliability",
       "message_count": 1,
@@ -6449,17 +6119,6 @@
       "started": "2001-09-28T14:22:34Z",
       "last_reply": "2001-09-28T14:22:34Z",
       "root_message_id": "msg-fef381388832"
-    },
-    {
-      "id": "thread-50415d7932af",
-      "subject": "Installing S-Plus version 3.3 in Windows Millenium.",
-      "message_count": 1,
-      "participants": [
-        "Mark E. Hall"
-      ],
-      "started": "2001-09-28T14:57:39Z",
-      "last_reply": "2001-09-28T14:57:39Z",
-      "root_message_id": "msg-50415d7932af"
     },
     {
       "id": "thread-0e06db28c2fb",

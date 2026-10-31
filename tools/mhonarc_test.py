@@ -16,17 +16,20 @@ ROT13 = str.maketrans(mhonarc._PLAIN, mhonarc._ROTATED)
 
 
 def page(message_id="199803021600.KAA01234@mail.example.com", date="Mon, 2 Mar 1998 10:00:00 -0600",
-         subject="Re: [S] lm question", body="<pre>\nTry lm(y ~ x).\n</pre>\n"):
-    """A message page as MHonArc 2.6 writes one."""
+         subject="Re: [S] lm question", body="<pre>\nTry lm(y ~ x).\n</pre>\n",
+         reply_to="199803011200.AAA00001@mail.example.org"):
+    """A message page as MHonArc 2.6 writes one; reply_to None for one with no
+    In-Reply-To or References."""
     sender = "Joe Bloggs <joe.bloggs@example.com>"
+    reference = f"<!--X-Reference: {reply_to} -->\n" if reply_to else ""
+    in_reply_to = f"<li><em>In-reply-to</em>: &lt;{reply_to}&gt;</li>\n" if reply_to else ""
     return f"""<!-- MHonArc v2.6.8 -->
 <!--X-Subject: {subject} -->
 <!--X-From-R13: {sender.translate(ROT13).replace('<', '&lt;').replace('>', '&gt;')} -->
 <!--X-Date: {date} -->
 <!--X-Message-Id: {message_id} -->
 <!--X-Content-Type: text/plain -->
-<!--X-Reference: 199803011200.AAA00001@mail.example.org -->
-<!--X-Head-End-->
+{reference}<!--X-Head-End-->
 <html><head><title>{subject}</title></head><body>
 <!--X-Head-of-Message-->
 <ul>
@@ -34,8 +37,7 @@ def page(message_id="199803021600.KAA01234@mail.example.com", date="Mon, 2 Mar 1
 <li><em>Subject</em>: {subject}</li>
 <li><em>From</em>: Joe Bloggs &lt;joe.bloggs@example.com&gt;</li>
 <li><em>Date</em>: {date}</li>
-<li><em>In-reply-to</em>: &lt;199803011200.AAA00001@mail.example.org&gt;</li>
-</ul>
+{in_reply_to}</ul>
 <!--X-Head-of-Message-End-->
 <!--X-Head-Body-Sep-Begin-->
 <hr>
@@ -132,6 +134,115 @@ class Build(unittest.TestCase):
             (d / ".cache" / "2011-09" / "msg00000.html").write_text(page(date="Thu, 1 Sep 2011 12:00:00 +0000"))
             quiet(mhonarc.build, d)
             self.assertEqual(sorted(p.name for p in (d / "raw").iterdir()), ["2011-September.mbox"])
+
+
+# A month's thread index as MHonArc writes it: msg00001 follows up msg00000,
+# msg00003 follows up msg00001, and msg00002 stands alone.
+THREADS = """<html><body>
+<div class="metaIdxNav"><a href="msg00000.html">First</a></div>
+<ul>
+<li><div class="threadGroup">
+<b><a name="00000" href="msg00000.html">lm question</a></b>, <i>Joe</i>
+<ul>
+<li><b><a name="00001" href="msg00001.html">Re: lm question</a></b>, <i>Ann</i>
+<ul>
+<li><b><a name="00003" href="msg00003.html">Re: lm question</a></b>, <i>Joe</i>
+</li>
+</ul>
+</li>
+</ul>
+</div></li>
+<li><div class="tSingle">
+<b><a name="00002" href="msg00002.html">Another question</a></b>, <i>Bo</i>
+</div></li>
+</ul>
+<a class="periodLink" href="../1998-02/threads.html">Earlier</a>
+</body></html>
+"""
+
+
+def month(d, name, pages, threads=None):
+    """Write a month's pages, msg00000 on, and its thread index, into d's cache."""
+    folder = d / ".cache" / name
+    folder.mkdir(parents=True)
+    for n, text in enumerate(pages):
+        (folder / f"msg{n:05d}.html").write_text(text)
+    if threads:
+        (folder / "threads.html").write_text(threads)
+
+
+def entries(d, mbox):
+    """The header lines of each entry of one of d's raw files."""
+    return [m.partition("\n\n")[0].split("\n") for m in mhonarc.messages((d / "raw" / mbox).read_text())]
+
+
+class ThreadParents(unittest.TestCase):
+    def test_reads_whom_each_message_follows_up_from_how_the_index_nests_it(self):
+        self.assertEqual(mhonarc.thread_parents(THREADS), {
+            "msg00000.html": None, "msg00001.html": "msg00000.html",
+            "msg00003.html": "msg00001.html", "msg00002.html": None})
+
+
+class Threads(unittest.TestCase):
+    def test_a_reply_with_no_reply_headers_follows_up_the_message_the_index_nests_it_under(self):
+        with tempfile.TemporaryDirectory() as root:
+            d = list_dir(root, {"list": "a-list"})
+            month(d, "1998-03", [page(message_id="m0@x.example", reply_to=None),
+                                 page(message_id="m1@x.example", reply_to=None),
+                                 page(message_id="m2@x.example"),
+                                 page(message_id="m3@x.example", reply_to=None)], THREADS)
+            quiet(mhonarc.build, d)
+            replies = [[line for line in e if line.startswith("In-Reply-To:")] for e in entries(d, "1998-March.mbox")]
+            self.assertEqual(replies, [[], ["In-Reply-To: <m0@x.example>"],
+                                       # its own header, not the index's say
+                                       ["In-Reply-To: <199803011200.AAA00001@mail.example.org>"],
+                                       ["In-Reply-To: <m1@x.example>"]])
+
+    def test_a_month_without_an_index_leaves_its_replies_as_they_are(self):
+        with tempfile.TemporaryDirectory() as root:
+            d = list_dir(root, {"list": "a-list"})
+            month(d, "1998-03", [page(message_id="m0@x.example", reply_to=None),
+                                 page(message_id="m1@x.example", reply_to=None)])
+            quiet(mhonarc.build, d)
+            self.assertFalse(any(line.startswith("In-Reply-To:") for e in entries(d, "1998-March.mbox") for line in e))
+
+
+class Clocks(unittest.TestCase):
+    def test_a_date_over_a_week_outside_the_month_it_arrived_in_is_the_previous_arrivals(self):
+        with tempfile.TemporaryDirectory() as root:
+            d = list_dir(root, {"list": "a-list"})
+            month(d, "1998-03", [page(message_id="m0@x.example", date="Mon, 2 Mar 1998 10:00:00 +0000"),
+                                 page(message_id="m1@x.example", date="Fri, 04 Jan 1980 09:11:35 -0500"),
+                                 # three days late, as mail can be: kept
+                                 page(message_id="m2@x.example", date="Fri, 3 Apr 1998 12:00:00 +0000"),
+                                 page(message_id="m3@x.example", date="sometime")])
+            quiet(mhonarc.build, d)
+            heads = entries(d, "1998-March.mbox")
+            dates = [[line for line in e if line.startswith(("Date:", "X-Original-Date:"))] for e in heads]
+            self.assertEqual(dates, [["Date: Mon, 02 Mar 1998 10:00:00 +0000"],
+                                     ["Date: Mon, 02 Mar 1998 10:00:00 +0000",
+                                      "X-Original-Date: Fri, 04 Jan 1980 09:11:35 -0500"],
+                                     ["Date: Fri, 03 Apr 1998 12:00:00 +0000"],
+                                     ["Date: Fri, 03 Apr 1998 12:00:00 +0000", "X-Original-Date: sometime"]])
+            self.assertEqual(heads[1][0], "From joe.bloggs at example.com  Mon Mar  2 10:00:00 1998")
+
+    def test_a_message_the_list_delivered_again_later_is_kept_once_with_its_own_date(self):
+        with tempfile.TemporaryDirectory() as root:
+            d = list_dir(root, {"list": "a-list"})
+            month(d, "1999-02", [page(message_id="again@x.example", date="Wed, 10 Feb 1999 09:00:00 +0000")])
+            month(d, "1999-04", [page(message_id="again@x.example", date="Wed, 10 Feb 1999 09:00:00 +0000"),
+                                 page(message_id="new@x.example", date="Fri, 2 Apr 1999 09:00:00 +0000")])
+            quiet(mhonarc.build, d)
+            self.assertEqual(mhonarc.MESSAGE_ID.findall((d / "raw" / "1999-February.mbox").read_text()), ["again@x.example"])
+            self.assertEqual(mhonarc.MESSAGE_ID.findall((d / "raw" / "1999-April.mbox").read_text()), ["new@x.example"])
+
+    def test_the_first_arrival_of_a_month_with_a_wrong_clock_takes_the_next_ones_date(self):
+        with tempfile.TemporaryDirectory() as root:
+            d = list_dir(root, {"list": "a-list"})
+            month(d, "1999-04", [page(message_id="m0@x.example", date="Thu, 20 Mar 2003 08:00:00 +0000"),
+                                 page(message_id="m1@x.example", date="Mon, 5 Apr 1999 09:00:00 -0500")])
+            quiet(mhonarc.build, d)
+            self.assertIn("Date: Mon, 05 Apr 1999 14:00:00 +0000", entries(d, "1999-April.mbox")[0])
 
 
 def mbox_entry(message_id, date):
